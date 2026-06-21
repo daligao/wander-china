@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>伯克希尔式研究台 · 进阶版 · 终极工作流 v3</title>
+  <style>
+    :root {
+      --bg: #0c1018;
+      --panel: #151d2b;
+      --panel2: #1a2538;
+      --border: #2a3952;
+      --text: #e9eef5;
+      --muted: #8b9cb3;
+      --accent: #d4af37;
+      --accent2: #8b7355;
+      --good: #3ecf8e;
+      --warn: #e8b84a;
+      --bad: #ff6b6b;
+      --font: "SF Pro Text", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse 100% 70% at 50% -30%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+        linear-gradient(180deg, #0e1624 0%, var(--bg) 40%);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.55;
+      padding: 1.5rem 1rem 3.5rem;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+    header h1 { font-size: 1.45rem; font-weight: 700; margin: 0 0 0.5rem; background: linear-gradient(135deg, #f0e6d3 0%, var(--accent) 50%, #c9a555 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    header .sub { margin: 0; color: var(--muted); font-size: 0.92rem; max-width: 36rem; margin-left: auto; margin-right: auto; }
+    .badges { margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; }
+    .badge { font-size: 0.72rem; padding: 0.2rem 0.55rem; border-radius: 999px; border: 1px solid var(--border); background: rgba(26, 37, 56, 0.8); color: #a8bdd9; }
+    nav.tabs { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1rem; justify-content: center; }
+    nav.tabs button { cursor: pointer; border: 1px solid var(--border); background: var(--panel2); color: #b8c9dc; padding: 0.45rem 0.75rem; border-radius: 999px; font-size: 0.82rem; }
+    nav.tabs button:hover { background: #243451; }
+    nav.tabs button.active { background: linear-gradient(160deg, #5a4a2a, #3d3420); color: #f5ead5; border-color: rgba(212, 175, 55, 0.45); }
+    .panel { display: none; animation: fade 0.2s ease; }
+    .panel.active { display: block; }
+    @keyframes fade { from { opacity: 0.6; } to { opacity: 1; } }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem 1.4rem; margin-bottom: 1rem; box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4); }
+    .card h2 { font-size: 1.05rem; margin: 0 0 0.85rem; color: #dfe8f4; font-weight: 650; display: flex; align-items: center; gap: 0.5rem; }
+    .card h2 span.num { font-size: 0.75rem; font-weight: 600; color: var(--accent); opacity: 0.9; }
+    label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.3rem; }
+    .field-hint { font-size: 0.72rem; color: #6a7d94; margin-top: 0.25rem; line-height: 1.45; }
+    input[type="text"], input[type="date"], input[type="number"], select { width: 100%; padding: 0.55rem 0.75rem; border-radius: 10px; border: 1px solid var(--border); background: #0d1420; color: var(--text); font-size: 0.95rem; }
+    input:focus { outline: none; border-color: rgba(212, 175, 55, 0.55); box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.15); }
+    .field-hint.errbox { display: none; border: 1px solid rgba(255, 107, 107, 0.45); background: rgba(255, 107, 107, 0.1); color: #ff9e9e; padding: 0.5rem 0.65rem; border-radius: 8px; margin-top: 0.35rem; font-size: 0.78rem; line-height: 1.45; }
+    .field-hint.errbox.visible { display: block; }
+    .vow-oath { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .vow-oath h3 { margin: 0 0 0.65rem; font-size: 0.95rem; color: #e8d5a3; font-weight: 650; }
+    .vow-panel { display: none; margin-top: 0.65rem; animation: fade 0.2s ease; }
+    .vow-panel.visible { display: block; }
+    textarea { width: 100%; padding: 0.65rem 0.75rem; border-radius: 10px; border: 1px solid var(--border); background: #0d1420; color: var(--text); font-size: 0.88rem; font-family: inherit; resize: vertical; }
+    .row { display: grid; gap: 0.85rem; grid-template-columns: 1fr; }
+    @media (min-width: 560px) { .row.two { grid-template-columns: 1fr 1fr; } .row.three { grid-template-columns: repeat(3, 1fr); } }
+    .likert { margin-bottom: 1rem; padding-bottom: 0.85rem; border-bottom: 1px solid rgba(42, 57, 82, 0.6); }
+    .likert-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; margin-bottom: 0.35rem; }
+    .likert-head label { margin: 0; color: #c5d4e8; font-size: 0.86rem; }
+    .likert-val { font-size: 0.78rem; color: var(--accent); text-align: right; }
+    input[type="range"] { width: 100%; accent-color: var(--accent); height: 6px; }
+    .range-labels { display: flex; justify-content: space-between; font-size: 0.65rem; color: #5d718a; margin-top: 0.2rem; }
+    .chk-grid { display: grid; gap: 0.5rem; }
+    .chk { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.86rem; color: #c8d5e6; cursor: pointer; }
+    .chk input { margin-top: 0.2rem; accent-color: var(--accent); }
+    .actions { display: grid; gap: 0.5rem; grid-template-columns: 1fr; }
+    @media (min-width: 520px) { .actions.inline2 { grid-template-columns: 1fr 1fr; } .actions.grid4 { grid-template-columns: repeat(2, 1fr); } }
+    button.primary { cursor: pointer; border: none; border-radius: 12px; padding: 0.8rem 1rem; font-size: 1rem; font-weight: 650; background: linear-gradient(165deg, #e8d5a3, #b8923a 45%, #8a6d2e); color: #1a1408; width: 100%; }
+    button.primary:hover { filter: brightness(1.05); }
+    button.ghost { cursor: pointer; border: 1px solid var(--border); border-radius: 10px; padding: 0.6rem 0.75rem; font-size: 0.88rem; font-weight: 500; background: var(--panel2); color: var(--text); width: 100%; }
+    button.ghost:hover { background: #243451; }
+    button.success { background: #1a3826; border-color: #2d8a5c; color: #7ee0b3; }
+    .sticky-bar { position: sticky; bottom: 0; z-index: 20; margin: 1rem -1rem -1rem; padding: 0.75rem 1rem; background: linear-gradient(180deg, transparent, rgba(12, 16, 24, 0.95) 30%); backdrop-filter: blur(8px); }
+    .sticky-inner { max-width: 980px; margin: 0 auto; display: grid; gap: 0.5rem; }
+    @media (min-width: 560px) { .sticky-inner { grid-template-columns: 1fr 1fr; } }
+    .results { display: none; }
+    .results.visible { display: block; }
+    .score-big { font-size: 3.2rem; font-weight: 800; background: linear-gradient(135deg, #fff 0%, var(--accent) 100%); -webkit-background-clip: text; color: transparent; }
+    .fatal-veto-banner, .dupont-warn-banner { display: none; margin-bottom: 0.75rem; padding: 0.75rem 1rem; border-radius: 10px; border: 1px solid rgba(255, 107, 107, 0.55); background: rgba(255, 107, 107, 0.12); color: #ff8a8a; font-size: 0.95rem; font-weight: 700; line-height: 1.5; }
+    .fatal-veto-banner.visible, .dupont-warn-banner.visible { display: block; }
+    .memo { background: #0d1420; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; font-size: 0.88rem; line-height: 1.65; color: #c5d4e8; white-space: pre-wrap; margin: 0; }
+    details { margin-top: 0.75rem; background: #121a28; border: 1px solid var(--border); border-radius: 10px; padding: 0.75rem; }
+    details summary { cursor: pointer; color: #aabfd6; font-size: 0.85rem; font-weight: bold; }
+    .webhook-box { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>伯克希尔式研究台 · 终极极客版</h1>
+      <p class="sub">接入杜邦分析引擎、PEG动态校验、九宫格生态定位与 Webhook 直连机制。</p>
+    </header>
+
+    <nav class="tabs" id="tabNav"></nav>
+
+    <section class="panel active" data-panel="intro">
+      <div class="card">
+        <h2>公司档案</h2>
+        <div class="row two">
+          <div><label for="coName">公司名称</label><input type="text" id="coName" placeholder="正式披露名称" /></div>
+          <div><label for="coTicker">证券代码</label><input type="text" id="coTicker" placeholder="600519" /></div>
+        </div>
+        <div class="row two" style="margin-top:0.85rem;">
+          <div><label for="asOf">数据基准日</label><input type="date" id="asOf" /></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="finance">
+      <div class="card">
+        <h2>模块 A · 财务与估值（杜邦引线）</h2>
+        <div class="row three">
+          <div><label for="roe">表观 ROE（%）</label><input type="number" id="roe" step="any" placeholder="例：18" /></div>
+          <div><label for="dte">负债权益比 D/E</label><input type="number" id="dte" step="any" placeholder="例：0.85" /><p class="field-hint">资产负债率可推算</p></div>
+          <div><label for="npm">销售净利率（%）</label><input type="number" id="npm" step="any" placeholder="例：12.5" /></div>
+        </div>
+        <div class="row three" style="margin-top:0.85rem;">
+          <div><label for="assetTurnover">总资产周转率 (次/年)</label><input type="number" id="assetTurnover" step="any" placeholder="例：0.8" /><p class="field-hint">营收 ÷ 平均总资产</p></div>
+          <div><label for="pe">市盈率 P/E</label><input type="number" id="pe" step="any" placeholder="例：18" /><p id="pegWarn" class="field-hint errbox"></p></div>
+          <div><label for="pb">市净率 P/B</label><input type="number" id="pb" step="any" placeholder="例：3.2" /></div>
+        </div>
+        <div class="row two" style="margin-top:0.85rem;">
+          <div><label for="revYoy">营收同比（%）</label><input type="number" id="revYoy" step="any" /></div>
+          <div><label for="earnYoy">净利润同比（%）</label><input type="number" id="earnYoy" step="any" /></div>
+        </div>
+        <div style="margin-top:0.85rem;">
+          <label for="ocfRatio">经营现金流 / 净利润（%）</label><input type="number" id="ocfRatio" step="any" placeholder="例：105" />
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="moat">
+      <div class="card">
+        <h2>模块 B · 护城河趋势</h2>
+        <div id="moatSliders"></div>
+        <div style="margin-top:1rem;">
+          <label for="moatTrend">护城河趋势</label>
+          <select id="moatTrend">
+            <option value="widen">不断拓宽（+10 分）</option>
+            <option value="stable" selected>维持现状（0 分）</option>
+            <option value="erode">正在被侵蚀（−20 分）</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="mgmt">
+      <div class="card"><h2>模块 C · 管理层与资本配置</h2><div id="mgmtSliders"></div></div>
+    </section>
+
+    <section class="panel" data-panel="circle">
+      <div class="card">
+        <h2>模块 E · 决策门槛与风险</h2>
+        <div class="chk-grid">
+          <label class="chk"><input type="checkbox" id="riskLeverage" /> <span style="color:#ff8a8a;">【致命】</span>极端财务杠杆</label>
+          <label class="chk"><input type="checkbox" id="riskAccounting" /> <span style="color:#ff8a8a;">【致命】</span>会计政策激进让人读不懂</label>
+        </div>
+        <div class="vow-oath">
+          <h3>核心决策：二十孔打卡誓言</h3>
+          <label class="chk"><input type="checkbox" id="vow20" /> 如果一生只能投资 20 次，我愿意把其中一次机会用在它身上。</label>
+          <div id="vow20Panel" class="vow-panel">
+            <textarea id="vow20Reason" placeholder="写下终极确信理由（核心护城河与催化剂）"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="export">
+      <div class="card">
+        <h2>工作流中枢</h2>
+        <div class="actions grid4">
+          <button type="button" class="ghost" id="btnCopyRed">复制【红军 / 进攻】Prompt</button>
+          <button type="button" class="ghost" id="btnCopyBlue">复制【蓝军 / 做空】Prompt</button>
+          <button type="button" class="ghost" id="btnExport">导出完整 JSON 档案</button>
+          <button type="button" class="ghost" id="btnExportMd">导出 Obsidian (.md)</button>
+        </div>
+        
+        <details>
+          <summary>极客高级选项：自动化 Webhook 推送</summary>
+          <div class="webhook-box">
+            <label for="webhookUrl">n8n / 自动化 Webhook URL</label>
+            <input type="text" id="webhookUrl" placeholder="http://192.168.1.100:5678/webhook/invest" />
+            <button type="button" class="ghost" id="btnPushWebhook">一键推送到本地服务器</button>
+            <p class="field-hint" id="webhookStatus"></p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <div class="results card" id="results">
+      <div id="fatalVetoBanner" class="fatal-veto-banner"></div>
+      <div id="dupontWarnBanner" class="dupont-warn-banner"></div>
+      <h2 style="font-size:1.2rem;">备忘录与知识卡片</h2>
+      <pre class="memo" id="memoBox"></pre>
+    </div>
+  </div>
+
+  <div class="sticky-bar">
+    <div class="sticky-inner">
+      <button type="button" class="primary" id="btnCalc">生成决策报告</button>
+      <button type="button" class="ghost" id="btnReset">清空</button>
+    </div>
+  </div>
+
+  <script>
+    // 基础配置与变量定义
+    const MOAT_Q = [{id:"moat_1", text:"差异化/定价权"}, {id:"moat_2", text:"客户粘性/转换成本"}];
+    const MGMT_Q = [{id:"mgmt_1", text:"资本配置纪律"}, {id:"mgmt_2", text:"坦诚与回购合理性"}];
+    const TABS = [
+      {id:"intro", label:"导览"}, {id:"finance", label:"A 财务"}, {id:"moat", label:"B 护城河"}, 
+      {id:"mgmt", label:"C 管理层"}, {id:"circle", label:"E 决策&风险"}, {id:"export", label:"流转中心"}
+    ];
+
+    // 初始化 UI
+    function initUI() {
+      const nav = document.getElementById('tabNav');
+      TABS.forEach((t, i) => {
+        let btn = document.createElement('button');
+        btn.textContent = t.label; btn.dataset.tab = t.id;
+        if(i===0) btn.classList.add('active');
+        btn.onclick = () => showTab(t.id);
+        nav.appendChild(btn);
+      });
+      document.getElementById('moatSliders').innerHTML = MOAT_Q.map(q => makeLikert(q.id, q.text)).join('');
+      document.getElementById('mgmtSliders').innerHTML = MGMT_Q.map(q => makeLikert(q.id, q.text)).join('');
+      
+      document.getElementById('vow20').addEventListener('change', e => {
+        document.getElementById('vow20Panel').classList.toggle('visible', e.target.checked);
+      });
+
+      // 绑定输入联动，计算理论 PEG 与 杜邦预警
+      ['pe', 'revYoy', 'earnYoy'].forEach(id => document.getElementById(id).addEventListener('input', checkPEG));
+      
+      // 恢复 webhook 设置
+      const savedHook = localStorage.getItem('invest_webhook_url');
+      if(savedHook) document.getElementById('webhookUrl').value = savedHook;
+    }
+
+    function showTab(id) {
+      document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+      document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === id));
+    }
+
+    function makeLikert(id, text) {
+      return `<div class="likert">
+        <div class="likert-head"><label>${text}</label></div>
+        <input type="range" id="${id}" min="1" max="5" step="1" value="3" />
+        <div class="range-labels"><span>弱</span><span>中</span><span>强</span></div>
+      </div>`;
+    }
+
+    function getVal(id) { return parseFloat(document.getElementById(id).value) || null; }
+
+    // 任务 1：动态杜邦分析引擎校验
+    function checkDuPont(inp) {
+      if(inp.roe && inp.npm && inp.assetTurnover && inp.dte != null) {
+        // 权益乘数 = 资产 / 权益 = (负债+权益)/权益 = D/E + 1
+        const equityMultiplier = inp.dte + 1;
+        const theoryROE = inp.npm * inp.assetTurnover * equityMultiplier;
+        const errRatio = Math.abs(inp.roe - theoryROE) / Math.max(0.1, theoryROE);
+        return { theoryROE, isMismatch: errRatio > 0.15 };
+      }
+      return { isMismatch: false };
+    }
+
+    // PEG 校验
+    function checkPEG() {
+      const pe = getVal('pe'), r = getVal('revYoy'), e = getVal('earnYoy');
+      const maxG = Math.max(r || 0, e || 0);
+      const peg = (pe && maxG > 0) ? pe / maxG : null;
+      const warn = document.getElementById('pegWarn');
+      if(pe > 20 && peg > 1.5) {
+        warn.classList.add('visible'); warn.textContent = `⚠️ 估值预警：PEG = ${peg.toFixed(2)}，透支未来。`;
+      } else { warn.classList.remove('visible'); }
+      return peg;
+    }
+
+    // 任务 3：成长价值生态位矩阵
+    function determineNiche(roe, peg, moatTrend) {
+      if(!roe || !peg) return "【常规/数据不足】按护城河趋势跟踪";
+      if(roe >= 15 && peg <= 1) return "【核心击球区】高盈余、被低估的戴维斯双击候选 🚀";
+      if(roe >= 15 && peg > 2) return "【伟大且昂贵】质地优良但透支未来，建议观察仓 ⏳";
+      if(roe < 8 && peg <= 1) return "【烟蒂/陷阱】便宜但生意苦哈哈，警惕价值陷阱 ⚠️";
+      return "【常规估值地带】需重点研判护城河边际变化";
+    }
+
+    // 核心综合计算
+    function synthesize() {
+      const inp = {
+        co: document.getElementById('coName').value,
+        ticker: document.getElementById('coTicker').value,
+        roe: getVal('roe'), dte: getVal('dte'), npm: getVal('npm'),
+        assetTurnover: getVal('assetTurnover'), pe: getVal('pe'),
+        revYoy: getVal('revYoy'), earnYoy: getVal('earnYoy'),
+        moatTrend: document.getElementById('moatTrend').value,
+        moatScore: (getVal('moat_1') + getVal('moat_2')) / 2 * 20, // 简易算法
+        mgmtScore: (getVal('mgmt_1') + getVal('mgmt_2')) / 2 * 20,
+        fatal: document.getElementById('riskLeverage').checked || document.getElementById('riskAccounting').checked,
+        vow: document.getElementById('vow20').checked,
+        vowReason: document.getElementById('vow20Reason').value
+      };
+
+      const peg = checkPEG();
+      const dupont = checkDuPont(inp);
+      const niche = determineNiche(inp.roe, peg, inp.moatTrend);
+      
+      let baseScore = (inp.moatScore + inp.mgmtScore + (inp.roe > 15 ? 80 : 50)) / 3;
+      if(inp.fatal) baseScore = Math.min(baseScore, 40);
+      if(inp.vow && inp.vowReason) baseScore += 5;
+
+      return { inp, peg, dupont, niche, score: Math.round(baseScore) };
+    }
+
+    // 备忘录渲染
+    function render() {
+      const { inp, peg, dupont, niche, score } = synthesize();
+      
+      // UI 反馈
+      document.getElementById('results').classList.add('visible');
+      const fBanner = document.getElementById('fatalVetoBanner');
+      fBanner.classList.toggle('visible', inp.fatal);
+      fBanner.textContent = inp.fatal ? "【致命风险触发，一票否决，建议移出股票池】" : "";
+
+      const dBanner = document.getElementById('dupontWarnBanner');
+      dBanner.classList.toggle('visible', dupont.isMismatch);
+      dBanner.textContent = dupont.isMismatch ? `【财务逻辑冲突】表观 ROE (${inp.roe}%) 与杜邦推演 (${dupont.theoryROE.toFixed(1)}%) 不符，警惕粉饰！` : "";
+
+      let memo = ``;
+      if(inp.vow && inp.vowReason) memo += `⭐⭐⭐ 20孔打卡核心仓位候选 ⭐⭐⭐\n终极确信：${inp.vowReason}\n\n`;
+      memo += `${niche}\n\n`;
+      memo += `【公司】${inp.co || '未命名'} (${inp.ticker})\n【综合评分】${score}/100\n`;
+      if(peg) memo += `【核心估值】PEG: ${peg.toFixed(2)} | P/E: ${inp.pe}\n`;
+      if(inp.roe) memo += `【盈利能力】表观 ROE: ${inp.roe}%\n`;
+      memo += `【定性打分】护城河得分: ${inp.moatScore} | 管理层得分: ${inp.mgmtScore}\n`;
+      
+      document.getElementById('memoBox').textContent = memo;
+    }
+
+    // 任务 4：Obsidian Dataview 生成
+    document.getElementById('btnExportMd').onclick = () => {
+      const { inp, peg, niche, score } = synthesize();
+      const md = `---
+tags: [投资研究, 股票档案]
+ticker: ${inp.ticker}
+date: ${new Date().toISOString().split('T')[0]}
+---
+
+## 核心指标 (Dataview)
+生态位:: ${niche}
+综合得分:: ${score}
+ROE:: ${inp.roe || '—'}
+PEG:: ${peg ? peg.toFixed(2) : '—'}
+致命风险:: ${inp.fatal}
+护城河得分:: ${inp.moatScore}
+管理层得分:: ${inp.mgmtScore}
+二十孔确信:: ${inp.vow ? inp.vowReason : '否'}
+
+## 研判备忘录
+${document.getElementById('memoBox').textContent}
+`;
+      const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+      a.download = `${inp.co || '未命名'}_分析.md`; a.click();
+    };
+
+    // 任务 2：Webhook 直连 n8n
+    document.getElementById('btnPushWebhook').onclick = async () => {
+      const url = document.getElementById('webhookUrl').value;
+      const status = document.getElementById('webhookStatus');
+      if(!url) { status.textContent = "请填入 URL"; return; }
+      localStorage.setItem('invest_webhook_url', url);
+      
+      status.style.color = "var(--text)"; status.textContent = "发送中...";
+      const payload = synthesize();
+      
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if(res.ok) {
+          status.style.color = "var(--good)"; status.textContent = "✅ 推送成功！n8n 已接收数据。";
+        } else { throw new Error(`HTTP ${res.status}`); }
+      } catch (err) {
+        status.style.color = "var(--bad)"; status.textContent = "❌ 推送失败: " + err.message + " (检查跨域或地址)";
+      }
+    };
+
+    document.getElementById('btnCalc').onclick = render;
+    
+    // 初始化
+    initUI();
+  </script>
+</body>
+</html>

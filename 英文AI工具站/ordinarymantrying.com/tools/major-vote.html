@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Which Chinese Major Will Matter in 4 Years? Vote Now</title>
+<meta name="description" content="China has 757 official university majors. AI refused to rank them — so I built a 5-year crowdsourced vote. Cast your pick and see the live leaderboard.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/major-vote.html">
+
+<!-- Open Graph -->
+<meta property="og:type"        content="website">
+<meta property="og:url"         content="https://ordinarymantrying.com/tools/major-vote.html">
+<meta property="og:title"       content="Which Chinese University Major Will Matter in 4 Years? Vote Now">
+<meta property="og:description" content="China has 757 official university majors. AI refused to rank them — so I built a 5-year crowdsourced vote. Cast your pick and see the live leaderboard.">
+<meta property="og:image"       content="https://ordinarymantrying.com/wp-content/uploads/2026/06/gaokao-major-ai-voting.png">
+<meta property="og:site_name"   content="Ordinary Man Trying">
+<meta property="og:locale"      content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="Which Chinese University Major Will Matter in 4 Years? Vote Now">
+<meta name="twitter:description" content="China has 757 official university majors. AI refused to rank them — so I built a 5-year crowdsourced vote. Cast your pick and see the live leaderboard.">
+<meta name="twitter:image"       content="https://ordinarymantrying.com/wp-content/uploads/2026/06/gaokao-major-ai-voting.png">
+
+<!-- JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "China Major Ranking — Vote",
+  "description": "A 5-year crowdsourced experiment: which of China's 757 university majors will be most valuable by 2029? Vote and track the live leaderboard.",
+  "url": "https://ordinarymantrying.com/tools/major-vote.html",
+  "applicationCategory": "EducationApplication",
+  "operatingSystem": "Any",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+  "author": {
+    "@type": "Person",
+    "name": "Ordinary Man Trying",
+    "url": "https://ordinarymantrying.com"
+  }
+}
+</script>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<style>
+:root{
+  --bg:#0f172a;--card:#1e293b;--ink:#e2e8f0;--muted:#94a3b8;--line:#334155;
+  --ac:#3b82f6;--ac-bg:rgba(59,130,246,.1);
+  --gold:#f59e0b;--green:#10b981;--green-bg:rgba(16,185,129,.08);
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.5;}
+
+/* ── Header ── */
+.hdr{text-align:center;padding:36px 20px 24px;border-bottom:1px solid var(--line);
+  background:linear-gradient(160deg,#0d1b2e 0%,#1a3560 100%);}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ac);margin-bottom:8px;}
+h1{font-size:clamp(19px,4.5vw,32px);font-weight:800;line-height:1.25;margin-bottom:8px;}
+.hint{font-size:13px;color:var(--muted);max-width:480px;margin:0 auto 16px;}
+.hint b{color:var(--ink);}
+.ctr{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;
+  font-family:var(--mono);font-size:12px;color:var(--muted);}
+.ctr .big{font-size:22px;font-weight:800;color:var(--ac);}
+
+/* ── Leaderboard table (sticky) ── */
+.lb-strip{position:sticky;top:0;z-index:100;background:var(--card);
+  border-bottom:2px solid var(--line);overflow-x:auto;}
+.lb-table{width:100%;min-width:500px;border-collapse:collapse;font-size:12px;}
+.lb-table thead tr{background:#162032;}
+.lb-table thead th{padding:7px 12px;text-align:left;font-family:var(--mono);
+  font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+  font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap;}
+.lb-table thead th:first-child{width:40px;text-align:center;}
+.lb-table thead th:last-child{width:80px;text-align:right;}
+.lb-table tbody tr{border-bottom:1px solid rgba(51,65,85,.5);transition:background .12s;}
+.lb-table tbody tr:hover{background:rgba(255,255,255,.03);}
+.lb-table tbody tr:last-child{border-bottom:none;}
+.lb-table td{padding:6px 12px;vertical-align:middle;}
+.lb-rank{font-family:var(--mono);font-size:11px;font-weight:700;text-align:center;}
+.lb-rank.r1{color:var(--gold);}
+.lb-rank.r2{color:#c0c0c0;}
+.lb-rank.r3{color:#cd7f32;}
+.lb-nm{font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:260px;}
+.lb-sub{color:var(--muted);font-size:11px;}
+.lb-vc{font-family:var(--mono);font-weight:700;color:var(--ac);text-align:right;
+  white-space:nowrap;}
+
+/* ── Page body ── */
+.page{max-width:700px;margin:0 auto;padding:24px 14px 60px;}
+
+/* ── Section heading ── */
+.sec-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.sec-hdr h2{font-size:14px;font-weight:700;}
+.sec-hdr .badge{font-size:10px;background:rgba(245,158,11,.12);color:var(--gold);
+  border:1px solid rgba(245,158,11,.3);border-radius:4px;padding:1px 7px;}
+.sec-note{font-size:12px;color:var(--muted);margin-bottom:12px;margin-top:-6px;}
+
+/* ── Major card ── */
+.mc{display:flex;flex-direction:column;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+  margin-bottom:8px;transition:border-color .15s;}
+.mc:hover{border-color:#475569;}
+.mc.ai{border-left:3px solid var(--gold);}
+.mc.voted{background:var(--green-bg);border-color:var(--green);}
+.mc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;}
+.mc-info{flex:1;min-width:0;}
+.mc-name{font-size:14px;font-weight:600;line-height:1.35;}
+.mc-meta{font-size:11px;color:var(--muted);margin-top:3px;display:flex;gap:6px;flex-wrap:wrap;}
+.ai-dot{color:var(--gold);}
+.mc-vc{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ac);
+  flex-shrink:0;padding-top:2px;}
+.vbtn{appearance:none;cursor:pointer;width:100%;height:44px;border-radius:9px;
+  font-size:15px;font-weight:700;font-family:var(--sans);letter-spacing:.01em;
+  border:2px solid var(--ac);background:var(--ac-bg);color:var(--ac);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:all .15s;}
+.vbtn:hover:not(:disabled){background:var(--ac);color:#fff;}
+.vbtn.done{border-color:var(--green);background:var(--green-bg);color:var(--green);cursor:default;}
+.vbtn:disabled:not(.done){opacity:.4;cursor:default;}
+
+
+/* ── Identity selector ── */
+.id-bar{margin:0 0 20px;padding:14px 16px;background:rgba(255,255,255,.03);
+  border:1px solid var(--line);border-radius:10px;}
+.id-label{font-size:11px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.08em;font-weight:600;margin-bottom:8px;}
+.id-pills{display:flex;flex-wrap:wrap;gap:6px;}
+.id-pill{background:rgba(255,255,255,.05);border:1px solid var(--line);
+  border-radius:20px;padding:5px 13px;font-size:12px;font-weight:600;
+  color:var(--muted);cursor:pointer;transition:all .15s;user-select:none;}
+.id-pill:hover{border-color:#475569;color:var(--ink);}
+.id-pill.sel{background:rgba(59,130,246,.15);border-color:var(--ac);color:var(--ac);}
+.id-note{font-size:11px;color:var(--muted);margin-top:8px;}
+
+/* ── Rally share button ── */
+.vote-row{display:flex;gap:8px;align-items:center;}
+.rally-btn{flex-shrink:0;background:rgba(29,155,240,.1);
+  border:1px solid rgba(29,155,240,.3);border-radius:8px;
+  padding:0 14px;height:44px;font-size:12px;font-weight:700;
+  color:#60b4f7;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.rally-btn:hover{background:rgba(29,155,240,.22);border-color:#1d9bf0;}
+
+/* ── Analysis panel ── */
+.ap-btn{width:100%;margin-top:8px;padding:8px;background:transparent;
+  border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:600;
+  color:var(--muted);cursor:pointer;transition:all .15s;letter-spacing:.02em;}
+.ap-btn:hover{border-color:var(--ac);color:var(--ac);}
+.detail-link{display:block;text-align:center;margin-top:6px;font-size:11px;
+  color:var(--muted);text-decoration:none;padding:4px;}
+.detail-link:hover{color:var(--ac);}
+
+.ap-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);
+  z-index:300;align-items:flex-end;justify-content:center;}
+.ap-overlay.open{display:flex;}
+.ap-panel{background:#1e293b;border-radius:20px 20px 0 0;
+  padding:20px 20px 36px;width:100%;max-width:600px;
+  max-height:88vh;overflow-y:auto;position:relative;
+  animation:apUp .22s ease;}
+@keyframes apUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ap-close{position:absolute;top:14px;right:16px;background:none;border:none;
+  color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px 8px;}
+.ap-close:hover{color:var(--ink);}
+.ap-handle{width:40px;height:4px;background:var(--line);border-radius:2px;
+  margin:0 auto 16px;}
+.ap-title{font-size:18px;font-weight:800;margin-bottom:2px;}
+.ap-sub{font-size:12px;color:var(--muted);margin-bottom:14px;}
+.ap-stars{font-size:24px;letter-spacing:3px;margin-bottom:14px;}
+.ap-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;}
+.ap-tag{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);
+  border-radius:20px;padding:4px 12px;font-size:12px;color:#93c5fd;}
+.ap-tag.ai{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:var(--gold);}
+.ap-sec{margin-bottom:16px;}
+.ap-sec h3{font-size:10px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--muted);font-weight:700;margin-bottom:8px;}
+.ap-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:5px;}
+.ap-list li{font-size:13px;display:flex;gap:8px;align-items:flex-start;}
+.ap-list li .ic{flex-shrink:0;font-size:12px;margin-top:1px;}
+.ap-list.pros li .ic{color:var(--green);}
+.ap-list.cons li .ic{color:#f87171;}
+.ap-list.careers li .ic{color:var(--ac);}
+.ap-divider{border:none;border-top:1px solid var(--line);margin:16px 0;}
+.ap-ask{display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:14px;background:var(--ac);border:none;border-radius:12px;
+  font-size:15px;font-weight:700;color:#fff;cursor:pointer;
+  text-decoration:none;margin-bottom:10px;transition:background .15s;}
+.ap-ask:hover{background:#2563eb;}
+.ap-rally-inner{width:100%;padding:12px;background:rgba(29,155,240,.08);
+  border:1px solid rgba(29,155,240,.25);border-radius:12px;
+  font-size:14px;font-weight:600;color:#60b4f7;cursor:pointer;transition:all .15s;}
+.ap-rally-inner:hover{background:rgba(29,155,240,.18);}
+/* ── Browse section ── */
+.browse-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.browse-bar select,
+.browse-bar input{
+  appearance:none;background:var(--card);border:1px solid var(--line);color:var(--ink);
+  border-radius:8px;padding:8px 12px;font-size:13px;font-family:var(--sans);
+  outline:none;transition:border-color .15s;}
+.browse-bar select{flex:1;min-width:120px;cursor:pointer;}
+.browse-bar input{flex:2;min-width:160px;}
+.browse-bar select:focus,
+.browse-bar input:focus{border-color:var(--ac);}
+#browse-list{display:flex;flex-direction:column;gap:6px;}
+.more-note{text-align:center;font-size:12px;color:var(--muted);padding:10px;}
+
+/* ── Divider ── */
+.divider{height:1px;background:var(--line);margin:24px 0;}
+
+/* ── Share ── */
+.share{text-align:center;padding:10px 0 20px;}
+.share p{font-size:13px;color:var(--muted);margin-bottom:10px;}
+.share-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.sbtn{appearance:none;cursor:pointer;border-radius:8px;padding:9px 18px;
+  font-size:13px;font-weight:700;font-family:var(--sans);
+  display:inline-flex;align-items:center;gap:6px;border:1px solid;transition:all .15s;}
+.sbtn-x{background:#000;border-color:#333;color:#fff;}
+.sbtn-x:hover{background:#111;}
+.sbtn-li{background:#0077b5;border-color:#0077b5;color:#fff;}
+.sbtn-li:hover{background:#006097;}
+.sbtn-fb{background:#1877f2;border-color:#1877f2;color:#fff;}
+.sbtn-fb:hover{background:#1560c8;}
+.sbtn-wa{background:#25d366;border-color:#25d366;color:#fff;}
+.sbtn-wa:hover{background:#1da851;}
+.sbtn-rd{background:#ff4500;border-color:#ff4500;color:#fff;}
+.sbtn-rd:hover{background:#dd3900;}
+.sbtn-cp{background:var(--card);border-color:var(--line);color:var(--ink);}
+.sbtn-cp:hover{border-color:var(--ac);color:var(--ac);}
+.ok{border-color:var(--green)!important;color:var(--green)!important;}
+
+.foot{text-align:center;font-size:11px;color:var(--muted);padding:0 14px 30px;line-height:1.7;}
+.foot a{color:var(--ac);text-decoration:none;}
+
+/* ── Ranking nav strip ── */
+.rank-strip{background:#0d1b2e;border-bottom:1px solid var(--line);padding:10px 14px;}
+.rank-strip-label{font-size:10px;font-family:var(--mono);text-transform:uppercase;
+  letter-spacing:.1em;color:var(--muted);margin-bottom:7px;}
+.rank-pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.rank-pills::-webkit-scrollbar{display:none;}
+.rank-pill{flex-shrink:0;padding:5px 12px;background:rgba(255,255,255,.04);
+  border:1px solid var(--line);border-radius:20px;font-size:12px;color:var(--muted);
+  text-decoration:none;white-space:nowrap;transition:all .15s;}
+.rank-pill:hover{border-color:var(--ac);color:#e2e8f0;background:rgba(59,130,246,.08);
+  text-decoration:none;}
+.rank-pill.hot{border-color:rgba(245,158,11,.4);color:#f59e0b;
+  background:rgba(245,158,11,.06);}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="tag">Live Experiment · 2026–2028</div>
+  <h1>China Has 757 University Majors.<br>Which Will Matter in 4 Years?</h1>
+  <p class="hint">Translated every major into English. <b>Vote for whatever you think will be valuable — no limit, pick as many as you like.</b> Results locked in 2028.</p>
+  <div class="ctr">
+    <span class="big" id="s-total">0</span>
+    <span>votes cast across 757 majors</span>
+  </div>
+</div>
+
+<!-- Ranking nav strip -->
+<div class="rank-strip">
+  <div class="rank-strip-label">📊 Explore Rankings &amp; Browse by Category</div>
+  <div class="rank-pills">
+    <a class="rank-pill hot" href="/tools/best-majors-china-2025.html">🏆 Best Majors 2025</a>
+    <a class="rank-pill hot" href="/tools/ai-picks-majors-china.html">🤖 AI Picks</a>
+    <a class="rank-pill hot" href="/tools/ai-resistant-majors-china.html">🛡️ AI-Resistant</a>
+    <a class="rank-pill" href="/tools/engineering-majors-china.html">⚙️ Engineering</a>
+    <a class="rank-pill" href="/tools/medicine-majors-china.html">🏥 Medicine</a>
+    <a class="rank-pill" href="/tools/science-majors-china.html">🔬 Science</a>
+    <a class="rank-pill" href="/tools/economics-majors-china.html">📈 Economics</a>
+    <a class="rank-pill" href="/tools/management-majors-china.html">💼 Management</a>
+    <a class="rank-pill" href="/tools/law-majors-china.html">⚖️ Law</a>
+    <a class="rank-pill" href="/tools/literature-majors-china.html">📝 Literature</a>
+    <a class="rank-pill" href="/tools/agriculture-majors-china.html">🌾 Agriculture</a>
+    <a class="rank-pill" href="/tools/education-majors-china.html">🎓 Education</a>
+    <a class="rank-pill" href="/tools/history-philosophy-majors-china.html">🏛️ History &amp; Philosophy</a>
+  </div>
+</div>
+
+<!-- Leaderboard table (sticky) -->
+<div class="lb-strip">
+  <table class="lb-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Major</th>
+        <th>Field</th>
+        <th>Votes</th>
+      </tr>
+    </thead>
+    <tbody id="lb"></tbody>
+  </table>
+</div>
+
+<div class="page">
+
+  <!-- Identity selector -->
+  <div class="id-bar" id="id-bar">
+    <div class="id-label">Your background (optional)</div>
+    <div class="id-pills">
+      <div class="id-pill" data-id="tech" onclick="setIdentity('tech')">💻 IT / Tech</div>
+      <div class="id-pill" data-id="health" onclick="setIdentity('health')">🏥 Healthcare</div>
+      <div class="id-pill" data-id="finance" onclick="setIdentity('finance')">📈 Finance / Business</div>
+      <div class="id-pill" data-id="edu" onclick="setIdentity('edu')">🎓 Education</div>
+      <div class="id-pill" data-id="student" onclick="setIdentity('student')">📚 Student</div>
+      <div class="id-pill" data-id="other" onclick="setIdentity('other')">👤 Other</div>
+    </div>
+    <div class="id-note" id="id-note">Optional — tells us whether you work in this field.</div>
+  </div>
+
+  <!-- Featured -->
+  <div class="sec-hdr"><h2>🤖 AI-Recommended Majors</h2><span class="badge">Vote Now</span></div>
+  <p class="sec-note">These 20 majors scored highest when I asked AI "what should a 17-year-old study today?" Start here — or skip to Browse All below.</p>
+  <div id="featured-list"></div>
+
+  <div class="divider"></div>
+
+  <!-- Browse all -->
+  <div class="sec-hdr"><h2>🔍 Browse All 757 Majors</h2></div>
+  <div class="browse-bar">
+    <select id="cat-sel">
+      <option value="">All fields</option>
+    </select>
+    <input id="search" type="text" placeholder="Search by name..." oninput="renderBrowse()">
+  </div>
+  <div id="browse-list"></div>
+
+  <div class="divider"></div>
+
+  <!-- Share -->
+  <div class="share">
+    <!-- 📺 Watch experiment CTA -->
+    <a href="https://ordinarymantrying.com/building-in-public-experiment/"
+       target="_blank"
+       style="display:block;margin:0 auto 20px;padding:14px 28px;max-width:420px;
+              background:linear-gradient(135deg,#1e3a5f,#0f172a);
+              border:2px solid rgba(59,130,246,.5);border-radius:14px;
+              font-size:15px;font-weight:700;color:#60a5fa;text-decoration:none;
+              text-align:center;transition:all .15s;line-height:1.4;"
+       onmouseover="this.style.borderColor='#3b82f6';this.style.background='linear-gradient(135deg,#1e4a7f,#0f172a)'"
+       onmouseout="this.style.borderColor='rgba(59,130,246,.5)';this.style.background='linear-gradient(135deg,#1e3a5f,#0f172a)'">
+      📺 Curious how this tool got built?<br>
+      <span style="font-size:13px;font-weight:400;color:#93c5fd;">Watch the 5-year experiment — live, real numbers →</span>
+    </a>
+    <p>Know someone choosing a major? Share this experiment.</p>
+    <div class="share-btns">
+      <button class="sbtn sbtn-x"  onclick="shareX()">𝕏 X / Twitter</button>
+      <button class="sbtn sbtn-li" onclick="shareLI()">in LinkedIn</button>
+      <button class="sbtn sbtn-fb" onclick="shareFB()">f Facebook</button>
+      <button class="sbtn sbtn-wa" onclick="shareWA()">💬 WhatsApp</button>
+      <button class="sbtn sbtn-rd" onclick="shareRD()">🔴 Reddit</button>
+      <button class="sbtn sbtn-cp" id="cbtn" onclick="copyLink()">🔗 Copy link</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="foot">
+  Source: Ministry of Education of China — Undergraduate Majors Directory 2024 · Translations via AI<br>
+  Built by <a href="https://ordinarymantrying.com">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/which-college-major-ai-refused-answer-voting-tool/">Read the story →</a>
+
+</div>
+
+<script>
+const ALL     = [{"c": "010101", "n": "Philosophy", "cat": "Philosophy", "sub": "Philosophy"}, {"c": "010102", "n": "Logic", "cat": "Philosophy", "sub": "Philosophy"}, {"c": "010103K", "n": "Religious Studies", "cat": "Philosophy", "sub": "Philosophy"}, {"c": "010104T", "n": "Ethics", "cat": "Philosophy", "sub": "Philosophy"}, {"c": "020101", "n": "Economics", "cat": "Economics", "sub": "Economics"}, {"c": "020102", "n": "Economic Statistics", "cat": "Economics", "sub": "Economics"}, {"c": "020103T", "n": "National Economics Management", "cat": "Economics", "sub": "Economics"}, {"c": "020104T", "n": "Resource and Environmental Economics", "cat": "Economics", "sub": "Economics"}, {"c": "020105T", "n": "Business Economics", "cat": "Economics", "sub": "Economics"}, {"c": "020106T", "n": "Energy Economics", "cat": "Economics", "sub": "Economics"}, {"c": "020107T", "n": "Labor Economics", "cat": "Economics", "sub": "Economics"}, {"c": "020108T", "n": "Economic Engineering", "cat": "Economics", "sub": "Economics"}, {"c": "020109T", "n": "Digital Economy", "cat": "Economics", "sub": "Economics"}, {"c": "020201K", "n": "Public Finance", "cat": "Economics", "sub": "Public Finance"}, {"c": "020202", "n": "Taxation", "cat": "Economics", "sub": "Public Finance"}, {"c": "020203TK", "n": "International Taxation", "cat": "Economics", "sub": "Public Finance"}, {"c": "020301K", "n": "Finance", "cat": "Economics", "sub": "Finance"}, {"c": "020302", "n": "Financial Engineering", "cat": "Economics", "sub": "Finance"}, {"c": "020303", "n": "Insurance", "cat": "Economics", "sub": "Finance"}, {"c": "020304", "n": "Investment", "cat": "Economics", "sub": "Finance"}, {"c": "020305T", "n": "Financial Mathematics", "cat": "Economics", "sub": "Finance"}, {"c": "020306T", "n": "Credit Management", "cat": "Economics", "sub": "Finance"}, {"c": "020307T", "n": "Economics and Finance", "cat": "Economics", "sub": "Finance"}, {"c": "020308T", "n": "Actuarial Science", "cat": "Economics", "sub": "Finance"}, {"c": "020309T", "n": "Internet Finance", "cat": "Economics", "sub": "Finance"}, {"c": "020310T", "n": "Financial Technology", "cat": "Economics", "sub": "Finance"}, {"c": "020311TK", "n": "Financial Audit", "cat": "Economics", "sub": "Finance"}, {"c": "020401", "n": "International Economics and Trade", "cat": "Economics", "sub": "Intl Economics & Trade"}, {"c": "020402", "n": "Trade Economy", "cat": "Economics", "sub": "Intl Economics & Trade"}, {"c": "020403T", "n": "International Economic Development Cooperation", "cat": "Economics", "sub": "Intl Economics & Trade"}, {"c": "030101K", "n": "Law", "cat": "Law", "sub": "Law"}, {"c": "030102T", "n": "Intellectual Property", "cat": "Law", "sub": "Law"}, {"c": "030103T", "n": "Penology", "cat": "Law", "sub": "Law"}, {"c": "030104T", "n": "Credit Risk Management and Legal Prevention", "cat": "Law", "sub": "Law"}, {"c": "030105T", "n": "International Economic and Trade Rules", "cat": "Law", "sub": "Law"}, {"c": "030106TK", "n": "Judicial Police Science", "cat": "Law", "sub": "Law"}, {"c": "030107TK", "n": "Community Correction", "cat": "Law", "sub": "Law"}, {"c": "030108TK", "n": "Discipline Inspection and Supervision", "cat": "Law", "sub": "Law"}, {"c": "030109TK", "n": "International Law", "cat": "Law", "sub": "Law"}, {"c": "030110TK", "n": "Forensic Science", "cat": "Law", "sub": "Law"}, {"c": "030111TK", "n": "National Security Studies", "cat": "Law", "sub": "Law"}, {"c": "030112TK", "n": "Overseas Interests Security", "cat": "Law", "sub": "Law"}, {"c": "030201", "n": "Political Science and Public Administration", "cat": "Law", "sub": "Political Science"}, {"c": "030202", "n": "International Politics", "cat": "Law", "sub": "Political Science"}, {"c": "030203", "n": "Diplomacy", "cat": "Law", "sub": "Political Science"}, {"c": "030204T", "n": "International Affairs and International Relations", "cat": "Law", "sub": "Political Science"}, {"c": "030205T", "n": "Philosophy, Politics and Economics", "cat": "Law", "sub": "Political Science"}, {"c": "030206TK", "n": "International Organizations and Global Governance", "cat": "Law", "sub": "Political Science"}, {"c": "030301", "n": "Sociology", "cat": "Law", "sub": "Sociology"}, {"c": "030302", "n": "Social Work", "cat": "Law", "sub": "Sociology"}, {"c": "030303T", "n": "Anthropology", "cat": "Law", "sub": "Sociology"}, {"c": "030304T", "n": "Women's Studies", "cat": "Law", "sub": "Sociology"}, {"c": "030305T", "n": "Home Economics", "cat": "Law", "sub": "Sociology"}, {"c": "030306T", "n": "Gerontology", "cat": "Law", "sub": "Sociology"}, {"c": "030307T", "n": "Social Policy", "cat": "Law", "sub": "Sociology"}, {"c": "030401", "n": "Ethnology", "cat": "Law", "sub": "Ethnology"}, {"c": "030501", "n": "Scientific Socialism", "cat": "Law", "sub": "Marxist Theory"}, {"c": "030502", "n": "History of the Communist Party of China", "cat": "Law", "sub": "Marxist Theory"}, {"c": "030503", "n": "Ideological and Political Education", "cat": "Law", "sub": "Marxist Theory"}, {"c": "030504T", "n": "Marxist Theory", "cat": "Law", "sub": "Marxist Theory"}, {"c": "030505TK", "n": "Trade Union Studies", "cat": "Law", "sub": "Marxist Theory"}, {"c": "030601K", "n": "Public Ordering", "cat": "Law", "sub": "Public Security"}, {"c": "030602K", "n": "Investigation", "cat": "Law", "sub": "Public Security"}, {"c": "030603K", "n": "Border Control Management", "cat": "Law", "sub": "Public Security"}, {"c": "030604TK", "n": "Anti-drug Studies", "cat": "Law", "sub": "Public Security"}, {"c": "030605TK", "n": "Police Dog Technology", "cat": "Law", "sub": "Public Security"}, {"c": "030606TK", "n": "Economic Crime Investigation", "cat": "Law", "sub": "Public Security"}, {"c": "030607TK", "n": "Border Control Command", "cat": "Law", "sub": "Public Security"}, {"c": "030608TK", "n": "Fire Protection Command", "cat": "Law", "sub": "Public Security"}, {"c": "030609TK", "n": "Security Guard Studies", "cat": "Law", "sub": "Public Security"}, {"c": "030610TK", "n": "Public Security Intelligence", "cat": "Law", "sub": "Public Security"}, {"c": "030611TK", "n": "Criminology", "cat": "Law", "sub": "Public Security"}, {"c": "030612TK", "n": "Public Security Management", "cat": "Law", "sub": "Public Security"}, {"c": "030613TK", "n": "Foreign-related Policing", "cat": "Law", "sub": "Public Security"}, {"c": "030614TK", "n": "Domestic Security", "cat": "Law", "sub": "Public Security"}, {"c": "030615TK", "n": "Police Command and Tactics", "cat": "Law", "sub": "Public Security"}, {"c": "030616TK", "n": "Technical Investigation", "cat": "Law", "sub": "Public Security"}, {"c": "030617TK", "n": "Coast Guard Law Enforcement", "cat": "Law", "sub": "Public Security"}, {"c": "030618TK", "n": "Public Security Political Work", "cat": "Law", "sub": "Public Security"}, {"c": "030619TK", "n": "Immigration Management", "cat": "Law", "sub": "Public Security"}, {"c": "030620TK", "n": "Entry-Exit Management", "cat": "Law", "sub": "Public Security"}, {"c": "030621TK", "n": "Anti-terrorism Policing", "cat": "Law", "sub": "Public Security"}, {"c": "030622TK", "n": "Fire Protection Political Work", "cat": "Law", "sub": "Public Security"}, {"c": "030623TK", "n": "Railway Policing", "cat": "Law", "sub": "Public Security"}, {"c": "040101", "n": "Education", "cat": "Education", "sub": "Education"}, {"c": "040102", "n": "Science Education", "cat": "Education", "sub": "Education"}, {"c": "040103", "n": "Humanities Education", "cat": "Education", "sub": "Education"}, {"c": "040104", "n": "Educational Technology", "cat": "Education", "sub": "Education"}, {"c": "040105", "n": "Arts Education", "cat": "Education", "sub": "Education"}, {"c": "040106", "n": "Preschool Education", "cat": "Education", "sub": "Education"}, {"c": "040107", "n": "Primary Education", "cat": "Education", "sub": "Education"}, {"c": "040108", "n": "Special Education", "cat": "Education", "sub": "Education"}, {"c": "040109T", "n": "Chinese Language Education", "cat": "Education", "sub": "Education"}, {"c": "040110TK", "n": "Educational Rehabilitation", "cat": "Education", "sub": "Education"}, {"c": "040111T", "n": "Health Education", "cat": "Education", "sub": "Education"}, {"c": "040112T", "n": "Cognitive Science and Technology", "cat": "Education", "sub": "Education"}, {"c": "040113T", "n": "Inclusive Education", "cat": "Education", "sub": "Education"}, {"c": "040114TK", "n": "Labor Education", "cat": "Education", "sub": "Education"}, {"c": "040115T", "n": "Family Education", "cat": "Education", "sub": "Education"}, {"c": "040116TK", "n": "Autism Education", "cat": "Education", "sub": "Education"}, {"c": "040201", "n": "Physical Education", "cat": "Education", "sub": "Physical Education"}, {"c": "040202K", "n": "Sports Training", "cat": "Education", "sub": "Physical Education"}, {"c": "040203", "n": "Social Sports Guidance and Management", "cat": "Education", "sub": "Physical Education"}, {"c": "040204K", "n": "Wushu and Traditional Ethnic Sports", "cat": "Education", "sub": "Physical Education"}, {"c": "040205", "n": "Kinesiology", "cat": "Education", "sub": "Physical Education"}, {"c": "040206T", "n": "Sports Rehabilitation", "cat": "Education", "sub": "Physical Education"}, {"c": "040207T", "n": "Leisure Sports", "cat": "Education", "sub": "Physical Education"}, {"c": "040208T", "n": "Physical Training", "cat": "Education", "sub": "Physical Education"}, {"c": "040209T", "n": "Ice and Snow Sports", "cat": "Education", "sub": "Physical Education"}, {"c": "040210TK", "n": "E-Sports and Management", "cat": "Education", "sub": "Physical Education"}, {"c": "040211TK", "n": "Intelligent Sports Engineering", "cat": "Education", "sub": "Physical Education"}, {"c": "040212TK", "n": "Sports Tourism", "cat": "Education", "sub": "Physical Education"}, {"c": "040213T", "n": "Sports Ability Development", "cat": "Education", "sub": "Physical Education"}, {"c": "040214TK", "n": "Football Sports", "cat": "Education", "sub": "Physical Education"}, {"c": "040215TK", "n": "Equestrian Sports and Management", "cat": "Education", "sub": "Physical Education"}, {"c": "040216T", "n": "Sports Wellness", "cat": "Education", "sub": "Physical Education"}, {"c": "050101", "n": "Chinese Language and Literature", "cat": "Literature", "sub": "Chinese Language & Lit"}, {"c": "050102", "n": "Chinese Language", "cat": "Literature", "sub": "Chinese Language & Lit"}, {"c": "050103", "n": "Teaching Chinese to Speakers of Other Languages", "cat": "Literature", "sub": "Chinese Language & Lit"}, {"c": "050104", "n": "Chinese Ethnic Minority Languages and Literatures", "cat": "Literature", "sub": "Chinese Language & Lit"}, {"c": "050105", "n": "Classical Philology", "cat": "Literature", "sub": "Chinese Language & Lit"}, {"c": "050106T", "n": "Applied Linguistics", "cat": "Literature", "sub": "Chinese Language & Lit"}, {"c": "050107T", "n": "Secretarial Science", "cat": "Literature", "sub": "Chinese Language & Lit"}, {"c": "050108T", "n": "Chinese Language and Culture", "cat": "Literature", "sub": "Chinese Language & Lit"}, {"c": "050109T", "n": "Sign Language Interpreting", "cat": "Literature", "sub": "Chinese Language & Lit"}, {"c": "050110T", "n": "Digital Humanities", "cat": "Literature", "sub": "Chinese Language & Lit"}, {"c": "050111T", "n": "Chinese Classics", "cat": "Literature", "sub": "Chinese Language & Lit"}, {"c": "050112T", "n": "Sinology and Chinese Studies", "cat": "Literature", "sub": "Chinese Language & Lit"}, {"c": "050113T", "n": "Applied Chinese", "cat": "Literature", "sub": "Chinese Language & Lit"}, {"c": "050201", "n": "English", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050202", "n": "Russian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050203", "n": "German", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050204", "n": "French", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050205", "n": "Spanish", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050206", "n": "Arabic", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050207", "n": "Japanese", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050208", "n": "Persian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050209", "n": "Korean", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050210", "n": "Filipino", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050211", "n": "Sanskrit and Pali", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050212", "n": "Indonesian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050213", "n": "Hindi", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050214", "n": "Cambodian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050215", "n": "Lao", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050216", "n": "Burmese", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050217", "n": "Malay", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050218", "n": "Mongolian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050219", "n": "Sinhalese", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050220", "n": "Thai", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050221", "n": "Urdu", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050222", "n": "Hebrew", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050223", "n": "Vietnamese", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050224", "n": "Hausa", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050225", "n": "Swahili", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050226", "n": "Albanian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050227", "n": "Bulgarian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050228", "n": "Polish", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050229", "n": "Czech", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050230", "n": "Slovak", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050231", "n": "Romanian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050232", "n": "Portuguese", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050233", "n": "Swedish", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050234", "n": "Serbian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050235", "n": "Turkish", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050236", "n": "Greek", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050237", "n": "Hungarian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050238", "n": "Italian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050239", "n": "Tamil", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050240", "n": "Pashto", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050241", "n": "Esperanto", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050242", "n": "Bengali", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050243", "n": "Nepali", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050244", "n": "Croatian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050245", "n": "Dutch", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050246", "n": "Finnish", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050247", "n": "Ukrainian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050248", "n": "Norwegian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050249", "n": "Danish", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050250", "n": "Icelandic", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050251", "n": "Irish", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050252", "n": "Latvian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050253", "n": "Lithuanian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050254", "n": "Slovenian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050255", "n": "Estonian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050256", "n": "Maltese", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050257", "n": "Kazakh", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050258", "n": "Uzbek", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050259", "n": "Zulu", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050260", "n": "Latin", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050261", "n": "Translation", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050262", "n": "Business English", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050263T", "n": "Amharic", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050264T", "n": "Kyrgyz", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050265T", "n": "Somali", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050266T", "n": "Turkmen", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050267T", "n": "Catalan", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050268T", "n": "Yoruba", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050269T", "n": "Armenian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050270T", "n": "Malagasy", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050271T", "n": "Georgian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050272T", "n": "Azerbaijani", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050273T", "n": "Afrikaans", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050274T", "n": "Macedonian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050275T", "n": "Tajik", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050276T", "n": "Tswana", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050277T", "n": "Ndebele", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050278T", "n": "Comorian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050279T", "n": "Creole", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050280T", "n": "Shona", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050281T", "n": "Tigrinya", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050282T", "n": "Belarusian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050283T", "n": "Maori", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050284T", "n": "Tongan", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050285T", "n": "Samoan", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050286T", "n": "Kurdish", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050287T", "n": "Bislama", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050288T", "n": "Dari", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050289T", "n": "Tetum", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050290T", "n": "Divehi", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050291T", "n": "Fijian", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050292T", "n": "Cook Islands Maori", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050293T", "n": "Kirundi", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050294T", "n": "Luxembourgish", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050295T", "n": "Kinyarwanda", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050296T", "n": "Niuean", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050297T", "n": "Tok Pisin", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050298T", "n": "Chewa", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050299T", "n": "Sesotho", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050200T", "n": "Sango", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "0502100T", "n": "Linguistics", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "0502101T", "n": "Tamazight", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "0502102T", "n": "Javanese", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "0502103T", "n": "Punjabi", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "050301", "n": "Journalism", "cat": "Literature", "sub": "Journalism & Comm"}, {"c": "050302", "n": "Radio and Television Science", "cat": "Literature", "sub": "Journalism & Comm"}, {"c": "050303", "n": "Advertising", "cat": "Literature", "sub": "Journalism & Comm"}, {"c": "050304", "n": "Communication Studies", "cat": "Literature", "sub": "Journalism & Comm"}, {"c": "050305", "n": "Editing and Publishing", "cat": "Literature", "sub": "Journalism & Comm"}, {"c": "050306T", "n": "Network and New Media", "cat": "Literature", "sub": "Journalism & Comm"}, {"c": "050307T", "n": "Digital Publishing", "cat": "Literature", "sub": "Journalism & Comm"}, {"c": "050308T", "n": "Fashion Communication", "cat": "Literature", "sub": "Journalism & Comm"}, {"c": "050309T", "n": "International Journalism and Communication", "cat": "Literature", "sub": "Journalism & Comm"}, {"c": "050310T", "n": "Exhibitions and Events", "cat": "Literature", "sub": "Journalism & Comm"}, {"c": "060101", "n": "History", "cat": "History", "sub": "History"}, {"c": "060102", "n": "World History", "cat": "History", "sub": "History"}, {"c": "060103", "n": "Archaeology", "cat": "History", "sub": "History"}, {"c": "060104", "n": "Cultural Heritage and Museology", "cat": "History", "sub": "History"}, {"c": "060105T", "n": "Cultural Relics Preservation Technology", "cat": "History", "sub": "History"}, {"c": "060106T", "n": "Foreign Languages and Foreign History", "cat": "History", "sub": "History"}, {"c": "060107T", "n": "Cultural Heritage", "cat": "History", "sub": "History"}, {"c": "060108T", "n": "Paleography", "cat": "History", "sub": "History"}, {"c": "060109T", "n": "History of Science", "cat": "History", "sub": "History"}, {"c": "070101", "n": "Mathematics and Applied Mathematics", "cat": "Science", "sub": "Mathematics"}, {"c": "070102", "n": "Information and Computing Science", "cat": "Science", "sub": "Mathematics"}, {"c": "070103T", "n": "Mathematical and Physical Foundations", "cat": "Science", "sub": "Mathematics"}, {"c": "070104T", "n": "Data Computation and Application", "cat": "Science", "sub": "Mathematics"}, {"c": "070201", "n": "Physics", "cat": "Science", "sub": "Physics"}, {"c": "070202", "n": "Applied Physics", "cat": "Science", "sub": "Physics"}, {"c": "070203", "n": "Nuclear Physics", "cat": "Science", "sub": "Physics"}, {"c": "070204T", "n": "Acoustics", "cat": "Science", "sub": "Physics"}, {"c": "070205T", "n": "Systems Science and Engineering", "cat": "Science", "sub": "Physics"}, {"c": "070206T", "n": "Quantum Information Science", "cat": "Science", "sub": "Physics"}, {"c": "070301", "n": "Chemistry", "cat": "Science", "sub": "Chemistry"}, {"c": "070302", "n": "Applied Chemistry", "cat": "Science", "sub": "Chemistry"}, {"c": "070303T", "n": "Chemical Biology", "cat": "Science", "sub": "Chemistry"}, {"c": "070304T", "n": "Molecular Science and Engineering", "cat": "Science", "sub": "Chemistry"}, {"c": "070305T", "n": "Energy Chemistry", "cat": "Science", "sub": "Chemistry"}, {"c": "070306T", "n": "Chemical Measurement and Technology", "cat": "Science", "sub": "Chemistry"}, {"c": "070307T", "n": "Resource Chemistry", "cat": "Science", "sub": "Chemistry"}, {"c": "070401", "n": "Astronomy", "cat": "Science", "sub": "Astronomy"}, {"c": "070501", "n": "Geographical Sciences", "cat": "Science", "sub": "Geographic Sciences"}, {"c": "070502", "n": "Physical Geography and Resource Environment", "cat": "Science", "sub": "Geographic Sciences"}, {"c": "070503", "n": "Human Geography and Urban-Rural Planning", "cat": "Science", "sub": "Geographic Sciences"}, {"c": "070504", "n": "Geographic Information Science", "cat": "Science", "sub": "Geographic Sciences"}, {"c": "070601", "n": "Atmospheric Sciences", "cat": "Science", "sub": "Atmospheric Sciences"}, {"c": "070602", "n": "Applied Meteorology", "cat": "Science", "sub": "Atmospheric Sciences"}, {"c": "070603T", "n": "Meteorological Technology and Engineering", "cat": "Science", "sub": "Atmospheric Sciences"}, {"c": "070604T", "n": "Earth System Science", "cat": "Science", "sub": "Atmospheric Sciences"}, {"c": "070701", "n": "Marine Sciences", "cat": "Science", "sub": "Ocean Sciences"}, {"c": "070702", "n": "Marine Technology", "cat": "Science", "sub": "Ocean Sciences"}, {"c": "070703T", "n": "Marine Resources and Environment", "cat": "Science", "sub": "Ocean Sciences"}, {"c": "070704T", "n": "Military Oceanography", "cat": "Science", "sub": "Ocean Sciences"}, {"c": "070801", "n": "Geophysics", "cat": "Science", "sub": "Geophysics"}, {"c": "070802", "n": "Space Science and Technology", "cat": "Science", "sub": "Geophysics"}, {"c": "070803T", "n": "Disaster Prevention and Mitigation Science and Engineering", "cat": "Science", "sub": "Geophysics"}, {"c": "070804TK", "n": "Planetary Science", "cat": "Science", "sub": "Geophysics"}, {"c": "070901", "n": "Geology", "cat": "Science", "sub": "Geology"}, {"c": "070902", "n": "Geochemistry", "cat": "Science", "sub": "Geology"}, {"c": "070903T", "n": "Geographic Information Science and Technology", "cat": "Science", "sub": "Geology"}, {"c": "070904T", "n": "Paleontology", "cat": "Science", "sub": "Geology"}, {"c": "071001", "n": "Biological Sciences", "cat": "Science", "sub": "Biological Sciences"}, {"c": "071002", "n": "Biotechnology", "cat": "Science", "sub": "Biological Sciences"}, {"c": "071003", "n": "Bioinformatics", "cat": "Science", "sub": "Biological Sciences"}, {"c": "071004", "n": "Ecology", "cat": "Science", "sub": "Biological Sciences"}, {"c": "071005T", "n": "Integrated Science", "cat": "Science", "sub": "Biological Sciences"}, {"c": "071006T", "n": "Neuroscience", "cat": "Science", "sub": "Biological Sciences"}, {"c": "071101", "n": "Psychology", "cat": "Science", "sub": "Psychology"}, {"c": "071102", "n": "Applied Psychology", "cat": "Science", "sub": "Psychology"}, {"c": "071201", "n": "Statistics", "cat": "Science", "sub": "Statistics"}, {"c": "071202", "n": "Applied Statistics", "cat": "Science", "sub": "Statistics"}, {"c": "071203T", "n": "Data Science", "cat": "Science", "sub": "Statistics"}, {"c": "071204T", "n": "Biostatistics", "cat": "Science", "sub": "Statistics"}, {"c": "080101", "n": "Theoretical and Applied Mechanics", "cat": "Engineering", "sub": "Mechanics"}, {"c": "080102", "n": "Engineering Mechanics", "cat": "Engineering", "sub": "Mechanics"}, {"c": "080201", "n": "Mechanical Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080202", "n": "Mechanical Design, Manufacturing and Automation", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080203", "n": "Materials Forming and Control Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080204", "n": "Mechatronic Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080205", "n": "Industrial Design", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080206", "n": "Process Equipment and Control Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080207", "n": "Vehicle Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080208", "n": "Automobile Service Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080209T", "n": "Mechanical Process Technology", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080210T", "n": "Microelectromechanical Systems Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080211T", "n": "Mechatronic Technology Education", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080212T", "n": "Automotive Maintenance Engineering Education", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080213T", "n": "Intelligent Manufacturing Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080214T", "n": "Intelligent Vehicle Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080215T", "n": "Bionic Science and Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080216T", "n": "New Energy Vehicle Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080217T", "n": "Additive Manufacturing Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080218T", "n": "Intelligent Interaction Design", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080219T", "n": "Emergency Equipment Technology and Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080220T", "n": "Agricultural and Forestry Intelligent Equipment Engineering", "cat": "Engineering", "sub": "Mechanical Engineering"}, {"c": "080301", "n": "Measurement and Control Technology and Instruments", "cat": "Engineering", "sub": "Instrumentation"}, {"c": "080302T", "n": "Precision Instruments", "cat": "Engineering", "sub": "Instrumentation"}, {"c": "080303T", "n": "Intelligent Perception Engineering", "cat": "Engineering", "sub": "Instrumentation"}, {"c": "080401", "n": "Materials Science and Engineering", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080402", "n": "Materials Physics", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080403", "n": "Materials Chemistry", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080404", "n": "Metallurgical Engineering", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080405", "n": "Metallic Materials Engineering", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080406", "n": "Inorganic Non-metallic Materials Engineering", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080407", "n": "Macromolecular Materials and Engineering", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080408", "n": "Composite Materials and Engineering", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080409T", "n": "Powder Materials Science and Engineering", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080410T", "n": "Gemology and Material Technology", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080411T", "n": "Welding Technology and Engineering", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080412T", "n": "Functional Materials", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080413T", "n": "Nanomaterials and Technology", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080414T", "n": "New Energy Materials and Devices", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080415T", "n": "Materials Design Science and Engineering", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080416T", "n": "Composite Materials Molding Engineering", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080417T", "n": "Intelligent Materials and Structures", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080418T", "n": "Optoelectronic Information Materials and Devices", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080419T", "n": "Biomaterials", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080420T", "n": "Intelligent Materials Technology", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080421T", "n": "Electronic Information Materials", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080422T", "n": "Soft Matter Science and Engineering", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080423T", "n": "Rare Earth Materials Science and Engineering", "cat": "Engineering", "sub": "Materials Science"}, {"c": "080501", "n": "Energy and Power Engineering", "cat": "Engineering", "sub": "Energy & Power"}, {"c": "080502T", "n": "Energy and Environmental Systems Engineering", "cat": "Engineering", "sub": "Energy & Power"}, {"c": "080503T", "n": "New Energy Science and Engineering", "cat": "Engineering", "sub": "Energy & Power"}, {"c": "080504T", "n": "Energy Storage Science and Engineering", "cat": "Engineering", "sub": "Energy & Power"}, {"c": "080505T", "n": "Energy Service Engineering", "cat": "Engineering", "sub": "Energy & Power"}, {"c": "080506TK", "n": "Hydrogen Energy Science and Engineering", "cat": "Engineering", "sub": "Energy & Power"}, {"c": "080507TK", "n": "Sustainable Energy", "cat": "Engineering", "sub": "Energy & Power"}, {"c": "080601", "n": "Electrical Engineering and Automation", "cat": "Engineering", "sub": "Electrical Engineering"}, {"c": "080602T", "n": "Smart Grid Information Engineering", "cat": "Engineering", "sub": "Electrical Engineering"}, {"c": "080603T", "n": "Light Sources and Illumination", "cat": "Engineering", "sub": "Electrical Engineering"}, {"c": "080604T", "n": "Electrical Engineering and Intelligent Control", "cat": "Engineering", "sub": "Electrical Engineering"}, {"c": "080605T", "n": "Intelligent Motor and Electrical Apparatus", "cat": "Engineering", "sub": "Electrical Engineering"}, {"c": "080606T", "n": "Cable Engineering", "cat": "Engineering", "sub": "Electrical Engineering"}, {"c": "080607T", "n": "Energy Internet Engineering", "cat": "Engineering", "sub": "Electrical Engineering"}, {"c": "080608TK", "n": "Smart Energy Engineering", "cat": "Engineering", "sub": "Electrical Engineering"}, {"c": "080609T", "n": "Electric Transportation Engineering", "cat": "Engineering", "sub": "Electrical Engineering"}, {"c": "080610TK", "n": "High-Power Semiconductor Science and Engineering", "cat": "Engineering", "sub": "Electrical Engineering"}, {"c": "080701", "n": "Electronic and Information Engineering", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080702", "n": "Electronic Science and Technology", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080703", "n": "Communication Engineering", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080704", "n": "Microelectronic Science and Engineering", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080705", "n": "Optoelectronic Information Science and Engineering", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080706", "n": "Information Engineering", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080707T", "n": "Radio and Television Engineering", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080708T", "n": "Underwater Acoustic Engineering", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080709T", "n": "Electronic Packaging Technology", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080710T", "n": "Integrated Circuit Design and Integrated System", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080711T", "n": "Medical Information Engineering", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080712T", "n": "Electromagnetic Field and Wireless Technology", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080713T", "n": "Radio Wave Propagation and Antenna", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080714T", "n": "Electronic Information Science and Technology", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080715T", "n": "Telecommunications Engineering and Management", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080716T", "n": "Applied Electronic Technology Education", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080717T", "n": "Artificial Intelligence", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080718T", "n": "Marine Information Engineering", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080719T", "n": "Flexible Electronics", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080720T", "n": "Intelligent Measurement and Control Engineering", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080721T", "n": "Intelligent Vision Engineering", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080801", "n": "Automation", "cat": "Engineering", "sub": "Automation"}, {"c": "080802T", "n": "Rail Traffic Signal and Control", "cat": "Engineering", "sub": "Automation"}, {"c": "080803T", "n": "Robotics Engineering", "cat": "Engineering", "sub": "Automation"}, {"c": "080804T", "n": "Postal Engineering", "cat": "Engineering", "sub": "Automation"}, {"c": "080805T", "n": "Nuclear Power Technology and Control Engineering", "cat": "Engineering", "sub": "Automation"}, {"c": "080806T", "n": "Intelligent Equipment and Systems", "cat": "Engineering", "sub": "Automation"}, {"c": "080807T", "n": "Industrial Intelligence", "cat": "Engineering", "sub": "Automation"}, {"c": "080808T", "n": "Intelligent Engineering and Creative Design", "cat": "Engineering", "sub": "Automation"}, {"c": "080901", "n": "Computer Science and Technology", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080902", "n": "Software Engineering", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080903", "n": "Network Engineering", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080904K", "n": "Information Security", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080905", "n": "Internet of Things Engineering", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080906", "n": "Digital Media Technology", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080907T", "n": "Intelligent Science and Technology", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080908T", "n": "Spatial Information and Digital Technology", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080909T", "n": "Electronic and Computer Engineering", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080910T", "n": "Data Science and Big Data Technology", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080911TK", "n": "Cyberspace Security", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080912T", "n": "New Media Technology", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080913T", "n": "Film Production", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080914TK", "n": "Secrecy Technology", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080915T", "n": "Service Science and Engineering", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080916T", "n": "Virtual Reality Technology", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080917T", "n": "Blockchain Engineering", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080918TK", "n": "Cryptography Science and Technology", "cat": "Engineering", "sub": "Computer Science"}, {"c": "081001", "n": "Civil Engineering", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "081002", "n": "Building Environment and Energy Engineering", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "081003", "n": "Water Supply and Drainage Science and Engineering", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "081004", "n": "Building Electricity and Intelligence", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "081005T", "n": "Urban Underground Space Engineering", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "081006T", "n": "Road, Bridge and River-crossing Engineering", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "081007T", "n": "Railway Engineering", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "081008T", "n": "Intelligent Construction", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "081009T", "n": "Civil, Hydraulic and Marine Engineering", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "081010T", "n": "Civil, Hydraulic and Transportation Engineering", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "081011T", "n": "Urban Water System Engineering", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "081012T", "n": "Intelligent Construction and Smart Transportation", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "081013T", "n": "Engineering Software", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "081101", "n": "Hydraulic and Hydroelectric Engineering", "cat": "Engineering", "sub": "Hydraulic Engineering"}, {"c": "081102", "n": "Hydrology and Water Resources Engineering", "cat": "Engineering", "sub": "Hydraulic Engineering"}, {"c": "081103", "n": "Port, Coastal and Ocean Engineering", "cat": "Engineering", "sub": "Hydraulic Engineering"}, {"c": "081104T", "n": "Water Affairs Engineering", "cat": "Engineering", "sub": "Hydraulic Engineering"}, {"c": "081105T", "n": "Hydraulic Science and Engineering", "cat": "Engineering", "sub": "Hydraulic Engineering"}, {"c": "081106T", "n": "Smart Water Conservancy", "cat": "Engineering", "sub": "Hydraulic Engineering"}, {"c": "081201", "n": "Geomatics Engineering", "cat": "Engineering", "sub": "Surveying & Mapping"}, {"c": "081202", "n": "Remote Sensing Science and Technology", "cat": "Engineering", "sub": "Surveying & Mapping"}, {"c": "081203T", "n": "Navigation Engineering", "cat": "Engineering", "sub": "Surveying & Mapping"}, {"c": "081204T", "n": "Geographical Condition Monitoring", "cat": "Engineering", "sub": "Surveying & Mapping"}, {"c": "081205T", "n": "Geospatial Information Engineering", "cat": "Engineering", "sub": "Surveying & Mapping"}, {"c": "081301", "n": "Chemical Engineering and Technology", "cat": "Engineering", "sub": "Chem Engineering & Pharmacy"}, {"c": "081302", "n": "Pharmaceutical Engineering", "cat": "Engineering", "sub": "Chem Engineering & Pharmacy"}, {"c": "081303T", "n": "Resource Circulation Science and Engineering", "cat": "Engineering", "sub": "Chem Engineering & Pharmacy"}, {"c": "081304T", "n": "Energy Chemical Engineering", "cat": "Engineering", "sub": "Chem Engineering & Pharmacy"}, {"c": "081305T", "n": "Chemical Engineering and Industrial Bioengineering", "cat": "Engineering", "sub": "Chem Engineering & Pharmacy"}, {"c": "081306T", "n": "Chemical Safety Engineering", "cat": "Engineering", "sub": "Chem Engineering & Pharmacy"}, {"c": "081307T", "n": "Coating Engineering", "cat": "Engineering", "sub": "Chem Engineering & Pharmacy"}, {"c": "081308T", "n": "Fine Chemicals", "cat": "Engineering", "sub": "Chem Engineering & Pharmacy"}, {"c": "081401", "n": "Geological Engineering", "cat": "Engineering", "sub": "Geology Engineering"}, {"c": "081402", "n": "Exploration Technology and Engineering", "cat": "Engineering", "sub": "Geology Engineering"}, {"c": "081403K", "n": "Resource Exploration Engineering", "cat": "Engineering", "sub": "Geology Engineering"}, {"c": "081404T", "n": "Groundwater Science and Engineering", "cat": "Engineering", "sub": "Geology Engineering"}, {"c": "081405T", "n": "Tourism Earth Science and Planning Engineering", "cat": "Engineering", "sub": "Geology Engineering"}, {"c": "081406T", "n": "Intelligent Earth Exploration", "cat": "Engineering", "sub": "Geology Engineering"}, {"c": "081407T", "n": "Resource and Environment Big Data Engineering", "cat": "Engineering", "sub": "Geology Engineering"}, {"c": "081501", "n": "Mining Engineering", "cat": "Engineering", "sub": "Mining"}, {"c": "081502", "n": "Petroleum Engineering", "cat": "Engineering", "sub": "Mining"}, {"c": "081503", "n": "Mineral Processing Engineering", "cat": "Engineering", "sub": "Mining"}, {"c": "081504", "n": "Oil and Gas Storage and Transportation Engineering", "cat": "Engineering", "sub": "Mining"}, {"c": "081505T", "n": "Mineral Resources Engineering", "cat": "Engineering", "sub": "Mining"}, {"c": "081506T", "n": "Offshore Oil and Gas Engineering", "cat": "Engineering", "sub": "Mining"}, {"c": "081507T", "n": "Intelligent Mining Engineering", "cat": "Engineering", "sub": "Mining"}, {"c": "081508TK", "n": "Carbon Storage Science and Engineering", "cat": "Engineering", "sub": "Mining"}, {"c": "081601", "n": "Textile Engineering", "cat": "Engineering", "sub": "Textile"}, {"c": "081602", "n": "Apparel Design and Engineering", "cat": "Engineering", "sub": "Textile"}, {"c": "081603T", "n": "Non-woven Materials and Engineering", "cat": "Engineering", "sub": "Textile"}, {"c": "081604T", "n": "Apparel Design and Technology Education", "cat": "Engineering", "sub": "Textile"}, {"c": "081605T", "n": "Silk Design and Engineering", "cat": "Engineering", "sub": "Textile"}, {"c": "081701", "n": "Light Chemical Engineering", "cat": "Engineering", "sub": "Light Industry"}, {"c": "081702", "n": "Packaging Engineering", "cat": "Engineering", "sub": "Light Industry"}, {"c": "081703", "n": "Printing Engineering", "cat": "Engineering", "sub": "Light Industry"}, {"c": "081704T", "n": "Flavor and Fragrance Technology and Engineering", "cat": "Engineering", "sub": "Light Industry"}, {"c": "081705T", "n": "Cosmetics Technology and Engineering", "cat": "Engineering", "sub": "Light Industry"}, {"c": "081706TK", "n": "Biomass Energy and Materials", "cat": "Engineering", "sub": "Light Industry"}, {"c": "081801", "n": "Traffic and Transportation", "cat": "Engineering", "sub": "Transportation"}, {"c": "081802", "n": "Traffic Engineering", "cat": "Engineering", "sub": "Transportation"}, {"c": "081803K", "n": "Navigation Technology", "cat": "Engineering", "sub": "Transportation"}, {"c": "081804K", "n": "Marine Engineering", "cat": "Engineering", "sub": "Transportation"}, {"c": "081805K", "n": "Aviation Technology", "cat": "Engineering", "sub": "Transportation"}, {"c": "081806T", "n": "Traffic Equipment and Control Engineering", "cat": "Engineering", "sub": "Transportation"}, {"c": "081807T", "n": "Rescue and Salvage Engineering", "cat": "Engineering", "sub": "Transportation"}, {"c": "081808TK", "n": "Marine Electronic and Electrical Engineering", "cat": "Engineering", "sub": "Transportation"}, {"c": "081809T", "n": "Rail Transit Electrification and Control", "cat": "Engineering", "sub": "Transportation"}, {"c": "081810T", "n": "Cruise Engineering and Management", "cat": "Engineering", "sub": "Transportation"}, {"c": "081811T", "n": "Smart Transportation", "cat": "Engineering", "sub": "Transportation"}, {"c": "081812T", "n": "Intelligent Transportation Engineering", "cat": "Engineering", "sub": "Transportation"}, {"c": "081901", "n": "Naval Architecture and Ocean Engineering", "cat": "Engineering", "sub": "Ocean Engineering"}, {"c": "081902T", "n": "Ocean Engineering and Technology", "cat": "Engineering", "sub": "Ocean Engineering"}, {"c": "081903T", "n": "Marine Resource Development Technology", "cat": "Engineering", "sub": "Ocean Engineering"}, {"c": "081904T", "n": "Marine Robotics", "cat": "Engineering", "sub": "Ocean Engineering"}, {"c": "081905T", "n": "Smart Ocean Technology", "cat": "Engineering", "sub": "Ocean Engineering"}, {"c": "081906T", "n": "Intelligent Marine Equipment", "cat": "Engineering", "sub": "Ocean Engineering"}, {"c": "082001", "n": "Aerospace Engineering", "cat": "Engineering", "sub": "Aerospace"}, {"c": "082002", "n": "Flight Vehicle Design and Engineering", "cat": "Engineering", "sub": "Aerospace"}, {"c": "082003", "n": "Flight Vehicle Manufacturing Engineering", "cat": "Engineering", "sub": "Aerospace"}, {"c": "082004", "n": "Flight Vehicle Power Engineering", "cat": "Engineering", "sub": "Aerospace"}, {"c": "082005", "n": "Flight Vehicle Environment and Life Support Engineering", "cat": "Engineering", "sub": "Aerospace"}, {"c": "082006T", "n": "Flight Vehicle Quality and Reliability", "cat": "Engineering", "sub": "Aerospace"}, {"c": "082007T", "n": "Flight Vehicle Airworthiness Technology", "cat": "Engineering", "sub": "Aerospace"}, {"c": "082008T", "n": "Flight Vehicle Control and Information Engineering", "cat": "Engineering", "sub": "Aerospace"}, {"c": "082009T", "n": "Unmanned Aerial Vehicle Systems Engineering", "cat": "Engineering", "sub": "Aerospace"}, {"c": "082010T", "n": "Intelligent Flight Vehicle Technology", "cat": "Engineering", "sub": "Aerospace"}, {"c": "082011T", "n": "Aerospace Intelligent Electric Propulsion Technology", "cat": "Engineering", "sub": "Aerospace"}, {"c": "082012T", "n": "Flight Vehicle Operation and Maintenance Engineering", "cat": "Engineering", "sub": "Aerospace"}, {"c": "082101", "n": "Weapon Systems and Engineering", "cat": "Engineering", "sub": "Ordnance"}, {"c": "082102", "n": "Weapon Launching Engineering", "cat": "Engineering", "sub": "Ordnance"}, {"c": "082103", "n": "Detection, Guidance and Control Technology", "cat": "Engineering", "sub": "Ordnance"}, {"c": "082104", "n": "Ammunition Engineering and Explosive Technology", "cat": "Engineering", "sub": "Ordnance"}, {"c": "082105", "n": "Special Energy Technology and Engineering", "cat": "Engineering", "sub": "Ordnance"}, {"c": "082106", "n": "Armored Vehicle Engineering", "cat": "Engineering", "sub": "Ordnance"}, {"c": "082107", "n": "Information Countermeasure Technology", "cat": "Engineering", "sub": "Ordnance"}, {"c": "082108T", "n": "Intelligent Unmanned Systems Technology", "cat": "Engineering", "sub": "Ordnance"}, {"c": "082201", "n": "Nuclear Engineering and Technology", "cat": "Engineering", "sub": "Nuclear Engineering"}, {"c": "082202", "n": "Radiation Protection and Nuclear Safety", "cat": "Engineering", "sub": "Nuclear Engineering"}, {"c": "082203", "n": "Engineering Physics", "cat": "Engineering", "sub": "Nuclear Engineering"}, {"c": "082204", "n": "Nuclear Chemical and Fuel Engineering", "cat": "Engineering", "sub": "Nuclear Engineering"}, {"c": "082301", "n": "Agricultural Engineering", "cat": "Engineering", "sub": "Agricultural Engineering"}, {"c": "082302", "n": "Agricultural Mechanization and Automation", "cat": "Engineering", "sub": "Agricultural Engineering"}, {"c": "082303", "n": "Agricultural Electrification", "cat": "Engineering", "sub": "Agricultural Engineering"}, {"c": "082304", "n": "Agricultural Building Environment and Energy Engineering", "cat": "Engineering", "sub": "Agricultural Engineering"}, {"c": "082305", "n": "Agricultural Water Conservancy Engineering", "cat": "Engineering", "sub": "Agricultural Engineering"}, {"c": "082306T", "n": "Land Consolidation Engineering", "cat": "Engineering", "sub": "Agricultural Engineering"}, {"c": "082307T", "n": "Intelligent Agricultural Equipment Engineering", "cat": "Engineering", "sub": "Agricultural Engineering"}, {"c": "082401", "n": "Forest Engineering", "cat": "Engineering", "sub": "Forestry Engineering"}, {"c": "082402", "n": "Wood Science and Engineering", "cat": "Engineering", "sub": "Forestry Engineering"}, {"c": "082403", "n": "Chemical Processing of Forest Products", "cat": "Engineering", "sub": "Forestry Engineering"}, {"c": "082404T", "n": "Furniture Design and Engineering", "cat": "Engineering", "sub": "Forestry Engineering"}, {"c": "082405T", "n": "Timber Structure Architecture and Materials", "cat": "Engineering", "sub": "Forestry Engineering"}, {"c": "082501", "n": "Environmental Science and Engineering", "cat": "Engineering", "sub": "Environmental Engineering"}, {"c": "082502", "n": "Environmental Engineering", "cat": "Engineering", "sub": "Environmental Engineering"}, {"c": "082503", "n": "Environmental Science", "cat": "Engineering", "sub": "Environmental Engineering"}, {"c": "082504", "n": "Environmental Ecological Engineering", "cat": "Engineering", "sub": "Environmental Engineering"}, {"c": "082505T", "n": "Environmental Protection Equipment Engineering", "cat": "Engineering", "sub": "Environmental Engineering"}, {"c": "082506T", "n": "Resource and Environmental Science", "cat": "Engineering", "sub": "Environmental Engineering"}, {"c": "082507T", "n": "Water Quality Science and Technology", "cat": "Engineering", "sub": "Environmental Engineering"}, {"c": "082601", "n": "Biomedical Engineering", "cat": "Engineering", "sub": "Food Science & Engineering"}, {"c": "082602T", "n": "Prosthetics and Orthotics Engineering", "cat": "Engineering", "sub": "Food Science & Engineering"}, {"c": "082603T", "n": "Clinical Engineering Technology", "cat": "Engineering", "sub": "Food Science & Engineering"}, {"c": "082604T", "n": "Rehabilitation Engineering", "cat": "Engineering", "sub": "Food Science & Engineering"}, {"c": "082605T", "n": "Health Science and Technology", "cat": "Engineering", "sub": "Food Science & Engineering"}, {"c": "082701", "n": "Food Science and Engineering", "cat": "Engineering", "sub": "Architecture"}, {"c": "082702", "n": "Food Quality and Safety", "cat": "Engineering", "sub": "Architecture"}, {"c": "082703", "n": "Grain Engineering", "cat": "Engineering", "sub": "Architecture"}, {"c": "082704", "n": "Dairy Engineering", "cat": "Engineering", "sub": "Architecture"}, {"c": "082705", "n": "Wine-making Engineering", "cat": "Engineering", "sub": "Architecture"}, {"c": "082706T", "n": "Viticulture and Enology Engineering", "cat": "Engineering", "sub": "Architecture"}, {"c": "082707T", "n": "Food Nutrition and Inspection Education", "cat": "Engineering", "sub": "Architecture"}, {"c": "082708T", "n": "Culinary and Nutrition Education", "cat": "Engineering", "sub": "Architecture"}, {"c": "082709T", "n": "Food Safety and Testing", "cat": "Engineering", "sub": "Architecture"}, {"c": "082710T", "n": "Food Nutrition and Health", "cat": "Engineering", "sub": "Architecture"}, {"c": "082711T", "n": "Edible Fungi Science and Engineering", "cat": "Engineering", "sub": "Architecture"}, {"c": "082712T", "n": "Liquor Brewing Engineering", "cat": "Engineering", "sub": "Architecture"}, {"c": "082713T", "n": "Coffee Science and Engineering", "cat": "Engineering", "sub": "Architecture"}, {"c": "082801", "n": "Architecture", "cat": "Engineering", "sub": "Safety Engineering"}, {"c": "082802", "n": "Urban and Rural Planning", "cat": "Engineering", "sub": "Safety Engineering"}, {"c": "082803", "n": "Landscape Architecture", "cat": "Engineering", "sub": "Safety Engineering"}, {"c": "082804T", "n": "Historic Building Protection Engineering", "cat": "Engineering", "sub": "Safety Engineering"}, {"c": "082805T", "n": "Human Settlement Science and Technology", "cat": "Engineering", "sub": "Safety Engineering"}, {"c": "082806T", "n": "Urban Design", "cat": "Engineering", "sub": "Safety Engineering"}, {"c": "082807T", "n": "Smart Architecture and Construction", "cat": "Engineering", "sub": "Safety Engineering"}, {"c": "082901", "n": "Safety Engineering", "cat": "Engineering", "sub": "Biomedical Engineering"}, {"c": "082902T", "n": "Emergency Technology and Management", "cat": "Engineering", "sub": "Biomedical Engineering"}, {"c": "082903T", "n": "Occupational Health Engineering", "cat": "Engineering", "sub": "Biomedical Engineering"}, {"c": "082904T", "n": "Safety Production Supervision", "cat": "Engineering", "sub": "Biomedical Engineering"}, {"c": "083001", "n": "Bioengineering", "cat": "Engineering", "sub": "Public Security Tech"}, {"c": "083002T", "n": "Biopharmaceutical", "cat": "Engineering", "sub": "Public Security Tech"}, {"c": "083003T", "n": "Synthetic Biology", "cat": "Engineering", "sub": "Public Security Tech"}, {"c": "083101K", "n": "Criminal Science and Technology", "cat": "Engineering", "sub": "Interdisciplinary Eng"}, {"c": "083102K", "n": "Fire Protection Engineering", "cat": "Engineering", "sub": "Interdisciplinary Eng"}, {"c": "083103TK", "n": "Traffic Management Engineering", "cat": "Engineering", "sub": "Interdisciplinary Eng"}, {"c": "083104TK", "n": "Security Engineering", "cat": "Engineering", "sub": "Interdisciplinary Eng"}, {"c": "083105TK", "n": "Public Security Audio-Visual Technology", "cat": "Engineering", "sub": "Interdisciplinary Eng"}, {"c": "083106TK", "n": "Rescue Command and Technology", "cat": "Engineering", "sub": "Interdisciplinary Eng"}, {"c": "083107TK", "n": "Fire Investigation", "cat": "Engineering", "sub": "Interdisciplinary Eng"}, {"c": "083108TK", "n": "Network Security and Law Enforcement", "cat": "Engineering", "sub": "Interdisciplinary Eng"}, {"c": "083109TK", "n": "Nuclear, Biological and Chemical Firefighting", "cat": "Engineering", "sub": "Interdisciplinary Eng"}, {"c": "083110TK", "n": "Coast Guard Vessel Command and Technology", "cat": "Engineering", "sub": "Interdisciplinary Eng"}, {"c": "083111TK", "n": "Data Policing Technology", "cat": "Engineering", "sub": "Interdisciplinary Eng"}, {"c": "083112TK", "n": "Food, Drug and Environmental Crime Investigation Technology", "cat": "Engineering", "sub": "Interdisciplinary Eng"}, {"c": "083201TK", "n": "Future Robotics", "cat": "Engineering", "sub": "Advanced Engineering"}, {"c": "083202TK", "n": "Cross-disciplinary Engineering", "cat": "Engineering", "sub": "Advanced Engineering"}, {"c": "090101", "n": "Agronomy", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090102", "n": "Horticulture", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090103", "n": "Plant Protection", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090104", "n": "Plant Science and Technology", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090105", "n": "Seed Science and Engineering", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090106", "n": "Protected Agriculture Science and Engineering", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090107T", "n": "Tea Science", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090108T", "n": "Tobacco Science", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090109T", "n": "Applied Biological Sciences", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090110T", "n": "Agronomy Education", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090111T", "n": "Horticulture Education", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090112T", "n": "Smart Agriculture", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090113T", "n": "Mycology Science and Engineering", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090114T", "n": "Pesticides and Fertilizers", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090115T", "n": "Biopesticide Science and Engineering", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090116TK", "n": "Biological Breeding Science", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090117TK", "n": "Biological Breeding Technology", "cat": "Agriculture", "sub": "Crop Production"}, {"c": "090201", "n": "Agricultural Resources and Environment", "cat": "Agriculture", "sub": "Nature Conservation & Ecology"}, {"c": "090202", "n": "Wildlife and Nature Reserve Management", "cat": "Agriculture", "sub": "Nature Conservation & Ecology"}, {"c": "090203", "n": "Soil and Water Conservation and Desertification Control", "cat": "Agriculture", "sub": "Nature Conservation & Ecology"}, {"c": "090204T", "n": "Biomass Science and Engineering", "cat": "Agriculture", "sub": "Nature Conservation & Ecology"}, {"c": "090205T", "n": "Land Science and Technology", "cat": "Agriculture", "sub": "Nature Conservation & Ecology"}, {"c": "090206T", "n": "Wetland Protection and Restoration", "cat": "Agriculture", "sub": "Nature Conservation & Ecology"}, {"c": "090207TK", "n": "National Park Construction and Management", "cat": "Agriculture", "sub": "Nature Conservation & Ecology"}, {"c": "090208TK", "n": "Ecological Restoration", "cat": "Agriculture", "sub": "Nature Conservation & Ecology"}, {"c": "090301", "n": "Animal Science", "cat": "Agriculture", "sub": "Animal Production"}, {"c": "090302T", "n": "Sericulture", "cat": "Agriculture", "sub": "Animal Production"}, {"c": "090303T", "n": "Apiculture", "cat": "Agriculture", "sub": "Animal Production"}, {"c": "090304T", "n": "Economic Zoology", "cat": "Agriculture", "sub": "Animal Production"}, {"c": "090305T", "n": "Equine Science", "cat": "Agriculture", "sub": "Animal Production"}, {"c": "090306T", "n": "Feed Engineering", "cat": "Agriculture", "sub": "Animal Production"}, {"c": "090307T", "n": "Smart Animal Husbandry Science and Engineering", "cat": "Agriculture", "sub": "Animal Production"}, {"c": "090401", "n": "Veterinary Medicine", "cat": "Agriculture", "sub": "Veterinary Medicine"}, {"c": "090402", "n": "Veterinary Pharmacy", "cat": "Agriculture", "sub": "Veterinary Medicine"}, {"c": "090403T", "n": "Animal and Plant Quarantine", "cat": "Agriculture", "sub": "Veterinary Medicine"}, {"c": "090404T", "n": "Laboratory Animal Science", "cat": "Agriculture", "sub": "Veterinary Medicine"}, {"c": "090405T", "n": "Traditional Chinese Veterinary Medicine", "cat": "Agriculture", "sub": "Veterinary Medicine"}, {"c": "090406TK", "n": "Veterinary Public Health", "cat": "Agriculture", "sub": "Veterinary Medicine"}, {"c": "090501", "n": "Forestry", "cat": "Agriculture", "sub": "Forestry"}, {"c": "090502", "n": "Landscape Architecture", "cat": "Agriculture", "sub": "Forestry"}, {"c": "090503", "n": "Forest Protection", "cat": "Agriculture", "sub": "Forestry"}, {"c": "090504T", "n": "Economic Forest", "cat": "Agriculture", "sub": "Forestry"}, {"c": "090505T", "n": "Smart Forestry", "cat": "Agriculture", "sub": "Forestry"}, {"c": "090601", "n": "Aquaculture", "cat": "Agriculture", "sub": "Fisheries"}, {"c": "090602", "n": "Marine Fishery Science and Technology", "cat": "Agriculture", "sub": "Fisheries"}, {"c": "090603T", "n": "Aquarium Science and Technology", "cat": "Agriculture", "sub": "Fisheries"}, {"c": "090604TK", "n": "Aquatic Animal Medicine", "cat": "Agriculture", "sub": "Fisheries"}, {"c": "090701", "n": "Pratacultural Science", "cat": "Agriculture", "sub": "Grassland Science"}, {"c": "090702T", "n": "Turfgrass Science and Engineering", "cat": "Agriculture", "sub": "Grassland Science"}, {"c": "100101K", "n": "Basic Medicine", "cat": "Medicine", "sub": "Basic Medical Sciences"}, {"c": "100102TK", "n": "Biomedical Sciences", "cat": "Medicine", "sub": "Basic Medical Sciences"}, {"c": "100103T", "n": "Biomedical Sciences", "cat": "Medicine", "sub": "Basic Medical Sciences"}, {"c": "100201K", "n": "Clinical Medicine", "cat": "Medicine", "sub": "Clinical Medicine"}, {"c": "100202TK", "n": "Anesthesiology", "cat": "Medicine", "sub": "Clinical Medicine"}, {"c": "100203TK", "n": "Medical Imaging", "cat": "Medicine", "sub": "Clinical Medicine"}, {"c": "100204TK", "n": "Optometry Medicine", "cat": "Medicine", "sub": "Clinical Medicine"}, {"c": "100205TK", "n": "Psychiatry", "cat": "Medicine", "sub": "Clinical Medicine"}, {"c": "100206TK", "n": "Radiation Medicine", "cat": "Medicine", "sub": "Clinical Medicine"}, {"c": "100207TK", "n": "Pediatrics", "cat": "Medicine", "sub": "Clinical Medicine"}, {"c": "100301K", "n": "Stomatology", "cat": "Medicine", "sub": "Dental Medicine"}, {"c": "100401K", "n": "Preventive Medicine", "cat": "Medicine", "sub": "Public Health"}, {"c": "100402", "n": "Food Hygiene and Nutrition", "cat": "Medicine", "sub": "Public Health"}, {"c": "100403TK", "n": "Maternal and Child Health Medicine", "cat": "Medicine", "sub": "Public Health"}, {"c": "100404TK", "n": "Health Supervision", "cat": "Medicine", "sub": "Public Health"}, {"c": "100405TK", "n": "Global Health", "cat": "Medicine", "sub": "Public Health"}, {"c": "100406T", "n": "Sports and Public Health", "cat": "Medicine", "sub": "Public Health"}, {"c": "100501K", "n": "Traditional Chinese Medicine", "cat": "Medicine", "sub": "Trad. Chinese Medicine"}, {"c": "100502K", "n": "Acupuncture, Moxibustion and Tuina", "cat": "Medicine", "sub": "Trad. Chinese Medicine"}, {"c": "100503K", "n": "Tibetan Medicine", "cat": "Medicine", "sub": "Trad. Chinese Medicine"}, {"c": "100504K", "n": "Mongolian Medicine", "cat": "Medicine", "sub": "Trad. Chinese Medicine"}, {"c": "100505K", "n": "Uyghur Medicine", "cat": "Medicine", "sub": "Trad. Chinese Medicine"}, {"c": "100506K", "n": "Zhuang Medicine", "cat": "Medicine", "sub": "Trad. Chinese Medicine"}, {"c": "100507K", "n": "Kazakh Medicine", "cat": "Medicine", "sub": "Trad. Chinese Medicine"}, {"c": "100508TK", "n": "Dai Medicine", "cat": "Medicine", "sub": "Trad. Chinese Medicine"}, {"c": "100509TK", "n": "Hui Medicine", "cat": "Medicine", "sub": "Trad. Chinese Medicine"}, {"c": "100510TK", "n": "Traditional Chinese Medicine Rehabilitation", "cat": "Medicine", "sub": "Trad. Chinese Medicine"}, {"c": "100511TK", "n": "Traditional Chinese Medicine Health Preservation", "cat": "Medicine", "sub": "Trad. Chinese Medicine"}, {"c": "100512TK", "n": "Traditional Chinese Medicine Pediatrics", "cat": "Medicine", "sub": "Trad. Chinese Medicine"}, {"c": "100513TK", "n": "Traditional Chinese Medicine Orthopedics and Traumatology", "cat": "Medicine", "sub": "Trad. Chinese Medicine"}, {"c": "100601K", "n": "Integrated Traditional Chinese and Western Clinical Medicine", "cat": "Medicine", "sub": "Integrative Medicine"}, {"c": "100701", "n": "Pharmacy", "cat": "Medicine", "sub": "Pharmacy"}, {"c": "100702", "n": "Pharmaceutics", "cat": "Medicine", "sub": "Pharmacy"}, {"c": "100703TK", "n": "Clinical Pharmacy", "cat": "Medicine", "sub": "Pharmacy"}, {"c": "100704T", "n": "Pharmaceutical Affairs Management", "cat": "Medicine", "sub": "Pharmacy"}, {"c": "100705T", "n": "Pharmaceutical Analysis", "cat": "Medicine", "sub": "Pharmacy"}, {"c": "100706T", "n": "Medicinal Chemistry", "cat": "Medicine", "sub": "Pharmacy"}, {"c": "100707T", "n": "Marine Pharmacy", "cat": "Medicine", "sub": "Pharmacy"}, {"c": "100708T", "n": "Cosmetic Science and Technology", "cat": "Medicine", "sub": "Pharmacy"}, {"c": "100801", "n": "Chinese Materia Medica", "cat": "Medicine", "sub": "Chinese Materia Medica"}, {"c": "100802", "n": "Chinese Materia Medica Resource and Development", "cat": "Medicine", "sub": "Chinese Materia Medica"}, {"c": "100803T", "n": "Tibetan Pharmacy", "cat": "Medicine", "sub": "Chinese Materia Medica"}, {"c": "100804T", "n": "Mongolian Pharmacy", "cat": "Medicine", "sub": "Chinese Materia Medica"}, {"c": "100805T", "n": "Chinese Materia Medica Pharmaceutics", "cat": "Medicine", "sub": "Chinese Materia Medica"}, {"c": "100806T", "n": "Chinese Medicinal Herb Cultivation and Identification", "cat": "Medicine", "sub": "Chinese Materia Medica"}, {"c": "100901K", "n": "Forensic Medicine", "cat": "Medicine", "sub": "Forensic Medicine"}, {"c": "101001", "n": "Medical Laboratory Technology", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101002", "n": "Medical Experimental Technology", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101003", "n": "Medical Imaging Technology", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101004", "n": "Optometry", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101005", "n": "Rehabilitation Therapeutics", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101006", "n": "Stomatological Medical Technology", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101007", "n": "Sanitary Inspection and Quarantine", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101008T", "n": "Audiology and Speech Rehabilitation", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101009T", "n": "Rehabilitation Physical Therapy", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101010T", "n": "Rehabilitation Occupational Therapy", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101011T", "n": "Intelligent Medical Engineering", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101012T", "n": "Biomedical Data Science", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101013T", "n": "Intelligent Imaging Engineering", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101014TK", "n": "Medical Engineering", "cat": "Medicine", "sub": "Medical Technology"}, {"c": "101101K", "n": "Nursing", "cat": "Medicine", "sub": "Nursing"}, {"c": "101102TK", "n": "Midwifery", "cat": "Medicine", "sub": "Nursing"}, {"c": "120101", "n": "Management Science", "cat": "Management", "sub": "Management Sci & Eng"}, {"c": "120102", "n": "Information Management and Information Systems", "cat": "Management", "sub": "Management Sci & Eng"}, {"c": "120103", "n": "Engineering Management", "cat": "Management", "sub": "Management Sci & Eng"}, {"c": "120104", "n": "Real Estate Development and Management", "cat": "Management", "sub": "Management Sci & Eng"}, {"c": "120105", "n": "Engineering Cost", "cat": "Management", "sub": "Management Sci & Eng"}, {"c": "120106TK", "n": "Secrecy Management", "cat": "Management", "sub": "Management Sci & Eng"}, {"c": "120107T", "n": "Postal Management", "cat": "Management", "sub": "Management Sci & Eng"}, {"c": "120108T", "n": "Big Data Management and Application", "cat": "Management", "sub": "Management Sci & Eng"}, {"c": "120109T", "n": "Engineering Auditing", "cat": "Management", "sub": "Management Sci & Eng"}, {"c": "120110T", "n": "Computational Finance", "cat": "Management", "sub": "Management Sci & Eng"}, {"c": "120111T", "n": "Emergency Management", "cat": "Management", "sub": "Management Sci & Eng"}, {"c": "120201K", "n": "Business Administration", "cat": "Management", "sub": "Business Administration"}, {"c": "120202", "n": "Marketing", "cat": "Management", "sub": "Business Administration"}, {"c": "120203K", "n": "Accounting", "cat": "Management", "sub": "Business Administration"}, {"c": "120204", "n": "Financial Management", "cat": "Management", "sub": "Business Administration"}, {"c": "120205", "n": "International Business", "cat": "Management", "sub": "Business Administration"}, {"c": "120206", "n": "Human Resource Management", "cat": "Management", "sub": "Business Administration"}, {"c": "120207", "n": "Auditing", "cat": "Management", "sub": "Business Administration"}, {"c": "120208", "n": "Asset Appraisal", "cat": "Management", "sub": "Business Administration"}, {"c": "120209", "n": "Property Management", "cat": "Management", "sub": "Business Administration"}, {"c": "120210", "n": "Cultural Industry Management", "cat": "Management", "sub": "Business Administration"}, {"c": "120211T", "n": "Labor Relations", "cat": "Management", "sub": "Business Administration"}, {"c": "120212T", "n": "Sports Economics and Management", "cat": "Management", "sub": "Business Administration"}, {"c": "120213T", "n": "Financial Accounting Education", "cat": "Management", "sub": "Business Administration"}, {"c": "120214T", "n": "Marketing Education", "cat": "Management", "sub": "Business Administration"}, {"c": "120215T", "n": "Retail Management", "cat": "Management", "sub": "Business Administration"}, {"c": "120216T", "n": "Entrepreneurship Management", "cat": "Management", "sub": "Business Administration"}, {"c": "120217TK", "n": "Customs Audit", "cat": "Management", "sub": "Business Administration"}, {"c": "120218T", "n": "Internal Auditing", "cat": "Management", "sub": "Business Administration"}, {"c": "120301", "n": "Agricultural and Forestry Economics Management", "cat": "Management", "sub": "Agricultural Management"}, {"c": "120302", "n": "Rural Regional Development", "cat": "Management", "sub": "Agricultural Management"}, {"c": "120303TK", "n": "Rural Governance", "cat": "Management", "sub": "Agricultural Management"}, {"c": "120401", "n": "Public Utility Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120402", "n": "Administrative Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120403", "n": "Labor and Social Security", "cat": "Management", "sub": "Public Administration"}, {"c": "120404", "n": "Land Resource Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120405", "n": "Urban Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120406TK", "n": "Customs Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120407T", "n": "Traffic Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120408T", "n": "Maritime Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120409T", "n": "Public Relations", "cat": "Management", "sub": "Public Administration"}, {"c": "120410T", "n": "Health Service and Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120411TK", "n": "Coast Guard Logistics Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120412T", "n": "Medical Product Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120413T", "n": "Medical Insurance", "cat": "Management", "sub": "Public Administration"}, {"c": "120414T", "n": "Elderly Care Service Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120415TK", "n": "Customs Inspection and Quarantine Safety", "cat": "Management", "sub": "Public Administration"}, {"c": "120416TK", "n": "Overseas Security Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120417T", "n": "Natural Resource Registration and Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120418T", "n": "Philanthropy Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120419TK", "n": "Aviation Security Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120420TK", "n": "Accessibility Management", "cat": "Management", "sub": "Public Administration"}, {"c": "120501", "n": "Library Science", "cat": "Management", "sub": "Library & Info Management"}, {"c": "120502", "n": "Archival Science", "cat": "Management", "sub": "Library & Info Management"}, {"c": "120503", "n": "Information Resource Management", "cat": "Management", "sub": "Library & Info Management"}, {"c": "120601", "n": "Logistics Management", "cat": "Management", "sub": "Logistics Management"}, {"c": "120602", "n": "Logistics Engineering", "cat": "Management", "sub": "Logistics Management"}, {"c": "120603T", "n": "Purchasing Management", "cat": "Management", "sub": "Logistics Management"}, {"c": "120604T", "n": "Supply Chain Management", "cat": "Management", "sub": "Logistics Management"}, {"c": "120701", "n": "Industrial Engineering", "cat": "Management", "sub": "Industrial Engineering"}, {"c": "120702T", "n": "Standardization Engineering", "cat": "Management", "sub": "Industrial Engineering"}, {"c": "120703T", "n": "Quality Management Engineering", "cat": "Management", "sub": "Industrial Engineering"}, {"c": "120801", "n": "E-commerce", "cat": "Management", "sub": "E-Commerce"}, {"c": "120802T", "n": "E-commerce and Law", "cat": "Management", "sub": "E-Commerce"}, {"c": "120803T", "n": "Cross-border E-commerce", "cat": "Management", "sub": "E-Commerce"}, {"c": "120901K", "n": "Tourism Management", "cat": "Management", "sub": "Tourism Management"}, {"c": "120902", "n": "Hospitality Management", "cat": "Management", "sub": "Tourism Management"}];
+const FEAT    = [{"c": "080901", "n": "Computer Science and Technology", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080717T", "n": "Artificial Intelligence", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080704", "n": "Microelectronic Science and Engineering", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080803T", "n": "Robotics Engineering", "cat": "Engineering", "sub": "Automation"}, {"c": "080910T", "n": "Data Science and Big Data Technology", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080911TK", "n": "Cyberspace Security", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080701", "n": "Electronic and Information Engineering", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080902", "n": "Software Engineering", "cat": "Engineering", "sub": "Computer Science"}, {"c": "080801", "n": "Automation", "cat": "Engineering", "sub": "Automation"}, {"c": "080702", "n": "Electronic Science and Technology", "cat": "Engineering", "sub": "Electronic Information"}, {"c": "080905", "n": "Internet of Things Engineering", "cat": "Engineering", "sub": "Computer Science"}, {"c": "082008T", "n": "Flight Vehicle Control and Information Engineering", "cat": "Engineering", "sub": "Aerospace"}, {"c": "081008T", "n": "Intelligent Construction", "cat": "Engineering", "sub": "Civil Engineering"}, {"c": "100201K", "n": "Clinical Medicine", "cat": "Medicine", "sub": "Clinical Medicine"}, {"c": "100301K", "n": "Stomatology", "cat": "Medicine", "sub": "Dental Medicine"}, {"c": "071001", "n": "Biological Sciences", "cat": "Science", "sub": "Biological Sciences"}, {"c": "070101", "n": "Mathematics and Applied Mathematics", "cat": "Science", "sub": "Mathematics"}, {"c": "120201K", "n": "Business Administration", "cat": "Management", "sub": "Business Administration"}, {"c": "050201", "n": "English", "cat": "Literature", "sub": "Foreign Languages"}, {"c": "020301K", "n": "Finance", "cat": "Economics", "sub": "Finance"}];
+const SEED    = {"080717T": 14, "080901": 13, "080704": 12, "080803T": 11, "080910T": 10, "080911TK": 9, "080701": 8, "080902": 8, "080801": 7, "080702": 6, "080905": 6, "082008T": 5, "081008T": 5};
+const AIPICK  = new Set(["080701", "080702", "080704", "080717T", "080801", "080803T", "080901", "080902", "080905", "080910T", "080911TK", "081008T", "082008T"]);
+const CATS    = ["Agriculture", "Economics", "Education", "Engineering", "History", "Law", "Literature", "Management", "Medicine", "Philosophy", "Science"];
+const LS_V    = 'mjv4_votes';
+const LS_MY   = 'mjv4_mine';
+const LS_ID   = 'mjv4_id';
+const WP      = '/tools/votes.php';
+const PAGE_URL= 'https://ordinarymantrying.com/tools/major-vote.html';
+const BROWSE_MAX = 60;
+
+let votes   = {};
+let myVotes = new Set();
+let userIdentity = null;
+
+// ── Init storage ──────────────────────────────────────────────────
+function initVotes() {
+  Object.assign(votes, SEED);
+  try {
+    const lv = JSON.parse(localStorage.getItem(LS_V)||'{}');
+    for (const [k,v] of Object.entries(lv)) votes[k] = Math.max(votes[k]||0,v);
+    myVotes = new Set(JSON.parse(localStorage.getItem(LS_MY)||'[]'));
+  } catch(e){}
+}
+function persist() {
+  try{
+    localStorage.setItem(LS_V, JSON.stringify(votes));
+    localStorage.setItem(LS_MY, JSON.stringify([...myVotes]));
+  }catch(e){}
+}
+
+
+// ── Identity ──────────────────────────────────────────────────────
+const IDENTITIES = [
+  {id:'tech',    label:'💻 IT / Tech'},
+  {id:'health',  label:'🏥 Healthcare'},
+  {id:'finance', label:'📈 Finance / Business'},
+  {id:'edu',     label:'🎓 Education'},
+  {id:'student', label:'📚 Student'},
+  {id:'other',   label:'👤 Other'},
+];
+function initIdentity() {
+  try { userIdentity = localStorage.getItem(LS_ID)||null; } catch(e){}
+}
+function setIdentity(id) {
+  userIdentity = (userIdentity === id) ? null : id;  // toggle
+  try {
+    if (userIdentity) localStorage.setItem(LS_ID, userIdentity);
+    else localStorage.removeItem(LS_ID);
+  } catch(e){}
+  renderIdentity();
+}
+function renderIdentity() {
+  const bar = document.getElementById('id-bar');
+  if (!bar) return;
+  bar.querySelectorAll('.id-pill').forEach(p => {
+    p.classList.toggle('sel', p.dataset.id === userIdentity);
+  });
+  const note = document.getElementById('id-note');
+  if (note) note.textContent = userIdentity
+    ? '✓ Background saved — helps us compare insider vs. outsider picks.'
+    : 'Optional — tells us whether you work in this field.';
+}
+// ── Vote ──────────────────────────────────────────────────────────
+function doVote(code) {
+  if (myVotes.has(code)) return;
+  votes[code] = (votes[code]||0) + 1;
+  myVotes.add(code);
+  persist();
+  // update all rendered instances of this card
+  document.querySelectorAll('#r-'+code).forEach(row => {
+    row.classList.add('voted');
+    const btn = row.querySelector('.vbtn');
+    const vc  = document.getElementById('v-'+code);
+    if (btn) { btn.innerHTML='✓ Voted'; btn.classList.add('done'); btn.disabled=true; }
+    const rally = row.querySelector('.rally-btn');
+    if (rally) rally.style.display='';
+    if (vc)  vc.textContent = votes[code];
+  });
+  renderLB();
+  document.getElementById('s-total').textContent =
+    Object.values(votes).reduce((a,b)=>a+b,0);
+  if(typeof gtag!=='undefined') gtag('event','vote',{event_category:'major',event_label:code});
+  fetch(WP,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({code, identity: userIdentity})}).catch(()=>{});
+}
+
+// ── Build one card ────────────────────────────────────────────────
+function slugify(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
+
+function makeCard(m) {
+  const voted = myVotes.has(m.c);
+  const ai    = AIPICK.has(m.c);
+  const vc    = votes[m.c]||0;
+  const div   = document.createElement('div');
+  div.className = 'mc' + (ai?' ai':'') + (voted?' voted':'');
+  div.id = 'r-'+m.c;
+  div.innerHTML = `
+    <div class="mc-top">
+      <div class="mc-info">
+        <div class="mc-name">${m.n}</div>
+        <div class="mc-meta">
+          ${ai?'<span class="ai-dot">🤖 AI Pick</span>':''}
+          <span>${m.sub||m.cat}</span>
+        </div>
+      </div>
+      <div class="mc-vc" id="v-${m.c}">${vc>0?vc:''}</div>
+    </div>
+    <div class="vote-row">
+      <button class="vbtn ${voted?'done':''}" ${voted?'disabled':''}
+        onclick="doVote('${m.c}')" style="flex:1">${voted?'✓ Voted':'▲ Vote'}</button>
+      <button class="rally-btn" id="rally-${m.c}"
+        style="${voted?'':'display:none'}"
+        onclick="rallyVotes(\`${m.n}\`)">📣 Rally</button>
+    </div>
+    <button class="ap-btn" onclick="showAnalysis('${m.c}')">📊 View Analysis + Ask AI</button>
+    <a class="detail-link" href="/tools/majors/${slugify(m.n)}.html">🔗 Full career outlook page →</a>`;
+  return div;
+}
+
+// ── Rally share ──────────────────────────────────────────────────
+function rallyVotes(name) {
+  const msg  = `I just voted for "${name}" as the most valuable Chinese university major in 4 years. What's yours? 🎓`;
+  const text = encodeURIComponent(msg);
+  const url  = encodeURIComponent(PAGE_URL);
+  window.open(`https://x.com/intent/tweet?text=${text}&url=${url}`,'_blank');
+}
+
+
+// ── Category analysis data ────────────────────────────────────────
+const CAT_ANALYSIS = {
+  'Engineering': {
+    tags:    ['High demand','AI growth','Global opportunities','High salary'],
+    pros:    ['Strong job market over next decade','High starting and ceiling salary','Skills transfer across industries'],
+    cons:    ['Competition increasing rapidly','Must keep learning constantly'],
+    careers: ['Software Engineer','AI Engineer','Product Manager'],
+    stars:   4
+  },
+  'Science': {
+    tags:    ['Research-driven','AI collaboration','Innovation foundation'],
+    pros:    ['Versatile analytical foundation','Research and industry both viable','International mobility'],
+    cons:    ['Academic path is long','Industry transition requires extra effort'],
+    careers: ['Research Scientist','Data Analyst','Biotech Specialist'],
+    stars:   4
+  },
+  'Medicine': {
+    tags:    ['AI-resistant','Job stability','Social impact','High salary'],
+    pros:    ['Highly stable career regardless of AI','Respected and essential profession','AI assists — does not replace clinical judgment'],
+    cons:    ['Very long training period','High academic and emotional pressure'],
+    careers: ['Physician','Medical Researcher','Health Technology Specialist'],
+    stars:   5
+  },
+  'Economics': {
+    tags:    ['Business foundation','Analytical skills','Policy relevance'],
+    pros:    ['Broad career paths in finance and policy','Strong quantitative training','Respected in global firms'],
+    cons:    ['Needs specialization to stand out','Entry-level competition is fierce'],
+    careers: ['Financial Analyst','Policy Advisor','Management Consultant'],
+    stars:   3
+  },
+  'Management': {
+    tags:    ['Leadership skills','Industry flexible','Entrepreneurship friendly'],
+    pros:    ['Applicable across all industries','Leadership and soft-skill development','Supports entrepreneurship path'],
+    cons:    ['Less technical depth than engineering','Many graduates competing for same roles'],
+    careers: ['Business Manager','Operations Director','Startup Founder'],
+    stars:   3
+  },
+  'Education': {
+    tags:    ['Stable income','Social contribution','AI tools growing'],
+    pros:    ['Strong job stability with government backing','Meaningful long-term work','AI tools expanding what teachers can do'],
+    cons:    ['Salary ceiling is lower than industry','AI is changing classroom dynamics fast'],
+    careers: ['Teacher','Education Technologist','Curriculum Designer'],
+    stars:   3
+  },
+  'Law': {
+    tags:    ['Specialized expertise','Regulation growth','AI-assisted research'],
+    pros:    ['High expertise value that AI cannot easily replicate','Essential function in growing regulatory landscape','AI assists research — judgment stays human'],
+    cons:    ['Long qualification path','Some routine legal work at risk'],
+    careers: ['Lawyer','Legal Consultant','Corporate Counsel'],
+    stars:   3
+  },
+  'Literature': {
+    tags:    ['Creative economy','Content era','Human storytelling'],
+    pros:    ['Uniquely human creativity is still valued','Content economy is booming','Cross-industry skills in UX, media, and marketing'],
+    cons:    ['AI writing tools are strong direct competition','Lower starting salary in most paths'],
+    careers: ['Content Creator','UX Writer','Media Specialist'],
+    stars:   2
+  },
+  'History': {
+    tags:    ['Critical thinking','Research depth','Cultural insight'],
+    pros:    ['Deep analytical and research skills','Unique long-term perspective on change','Valued in policy and cultural roles'],
+    cons:    ['Narrow direct career paths','Lower industry demand vs. technical fields'],
+    careers: ['Researcher','Policy Analyst','Archivist / Curator'],
+    stars:   2
+  },
+  'Philosophy': {
+    tags:    ['AI ethics demand','Logic foundation','Big picture thinking'],
+    pros:    ['AI ethics is a fast-growing specialist field','Unique problem-solving approach valued in tech','Strong foundation for law, policy, and strategy'],
+    cons:    ['Narrow traditional career paths','Harder to quantify value to employers'],
+    careers: ['AI Ethics Researcher','Policy Advisor','Strategy Consultant'],
+    stars:   3
+  },
+  'Agriculture': {
+    tags:    ['Food security priority','AgTech growth','Policy support'],
+    pros:    ['National strategic importance backed by government','AI, drone, and biotech integration is rapid','Stable demand regardless of economic cycles'],
+    cons:    ['Lower urban salary expectations','Still undervalued in public perception'],
+    careers: ['AgTech Specialist','Food Safety Engineer','Rural Development Officer'],
+    stars:   3
+  }
+};
+const DEFAULT_ANALYSIS = {
+  tags: ['Specialized field','Career potential'],
+  pros: ['Focused expertise','Clear career path','Growing with AI tools'],
+  cons: ['Competitive entry','Continuous learning required'],
+  careers: ['Specialist','Consultant','Researcher'],
+  stars: 3
+};
+
+function showAnalysis(code) {
+  const m = codeIdx[code];
+  if (!m) return;
+  const base   = CAT_ANALYSIS[m.cat] || DEFAULT_ANALYSIS;
+  const isAI   = AIPICK.has(code);
+  const stars  = Math.min(5, base.stars + (isAI ? 1 : 0));
+  const starStr= '★'.repeat(stars) + '☆'.repeat(5 - stars);
+  const prompt = `Analyze "${m.n}" (${m.sub || m.cat}, Chinese university major) for someone entering in 2025: job prospects in 4 years, how AI will affect this field, salary expectations, key skills to develop, and main career paths.`;
+  const pxUrl  = 'https://www.perplexity.ai/search?q=' + encodeURIComponent(prompt);
+
+  document.getElementById('ap-name').textContent  = m.n;
+  document.getElementById('ap-field').textContent = (m.sub && m.sub !== m.cat) ? m.cat + ' · ' + m.sub : m.cat;
+  document.getElementById('ap-stars').textContent = starStr;
+  document.getElementById('ap-tags').innerHTML = base.tags
+    .map(t => `<span class="ap-tag">${t}</span>`).join('') +
+    (isAI ? '<span class="ap-tag ai">🤖 AI Pick</span>' : '');
+  document.getElementById('ap-pros').innerHTML = base.pros
+    .map(p => `<li><span class="ic">✓</span>${p}</li>`).join('');
+  document.getElementById('ap-cons').innerHTML = base.cons
+    .map(c => `<li><span class="ic">✗</span>${c}</li>`).join('');
+  document.getElementById('ap-careers').innerHTML = base.careers
+    .map(c => `<li><span class="ic">→</span>${c}</li>`).join('');
+  document.getElementById('ap-ask').href = pxUrl;
+  document.getElementById('ap-detail').href = `/tools/majors/${slugify(m.n)}.html`;
+  document.getElementById('ap-rally').onclick = () => { closeAnalysis(); rallyVotes(m.n); };
+
+  const ov = document.getElementById('ap-overlay');
+  ov.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeAnalysis() {
+  document.getElementById('ap-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+// ── Leaderboard ───────────────────────────────────────────────────
+const codeIdx = {};
+for (const m of ALL) codeIdx[m.c] = m;
+
+function renderLB() {
+  const top = Object.entries(votes).filter(([,v])=>v>0)
+    .sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const lb = document.getElementById('lb');
+  if (!top.length) {
+    lb.innerHTML='<tr><td colspan="4" style="padding:8px 12px;font-size:12px;color:var(--muted)">No votes yet — be the first.</td></tr>';
+    return;
+  }
+  lb.innerHTML = top.map(([code,cnt],i) => {
+    const m = codeIdx[code]||{};
+    const rc = i===0?'r1':i===1?'r2':i===2?'r3':'';
+    return `<tr>
+      <td class="lb-rank ${rc}">#${i+1}</td>
+      <td class="lb-nm">${m.n||code}</td>
+      <td class="lb-sub">${m.sub||m.cat||''}</td>
+      <td class="lb-vc">${cnt} vote${cnt!==1?'s':''}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Featured ──────────────────────────────────────────────────────
+function renderFeatured() {
+  const el = document.getElementById('featured-list');
+  el.innerHTML = '';
+  FEAT.forEach(m => el.appendChild(makeCard(m)));
+}
+
+// ── Browse ────────────────────────────────────────────────────────
+function renderBrowse() {
+  const cat = document.getElementById('cat-sel').value;
+  const q   = document.getElementById('search').value.trim().toLowerCase();
+  let filtered = ALL.filter(m =>
+    (!cat || m.cat === cat) &&
+    (!q   || m.n.toLowerCase().includes(q) || m.sub.toLowerCase().includes(q))
+  );
+  const el = document.getElementById('browse-list');
+  el.innerHTML = '';
+  const shown = filtered.slice(0, BROWSE_MAX);
+  shown.forEach(m => el.appendChild(makeCard(m)));
+  if (filtered.length > BROWSE_MAX) {
+    const note = document.createElement('p');
+    note.className = 'more-note';
+    note.textContent = `Showing ${BROWSE_MAX} of ${filtered.length} — type more to narrow down.`;
+    el.appendChild(note);
+  }
+  if (!shown.length) {
+    el.innerHTML = '<p class="more-note">No majors match that search.</p>';
+  }
+}
+
+// ── Category dropdown ─────────────────────────────────────────────
+function buildCatSel() {
+  const sel = document.getElementById('cat-sel');
+  CATS.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c; o.textContent = c;
+    sel.appendChild(o);
+  });
+  sel.addEventListener('change', renderBrowse);
+}
+
+// ── Share ─────────────────────────────────────────────────────────
+const SHARE_TEXT = 'China has 757 university majors. Which ones will still matter in 4 years? Vote now — live experiment running until 2028.';
+const SHARE_URL  = encodeURIComponent(PAGE_URL);
+
+function shareX() {
+  window.open('https://x.com/intent/tweet?text='+encodeURIComponent(SHARE_TEXT)+'&url='+SHARE_URL,'_blank');
+}
+function shareLI() {
+  window.open('https://www.linkedin.com/sharing/share-offsite/?url='+SHARE_URL,'_blank');
+}
+function shareFB() {
+  window.open('https://www.facebook.com/sharer/sharer.php?u='+SHARE_URL,'_blank');
+}
+function shareWA() {
+  window.open('https://wa.me/?text='+encodeURIComponent(SHARE_TEXT+' '+PAGE_URL),'_blank');
+}
+function shareRD() {
+  window.open('https://www.reddit.com/submit?url='+SHARE_URL+'&title='+encodeURIComponent(SHARE_TEXT),'_blank');
+}
+function copyLink() {
+  navigator.clipboard.writeText(PAGE_URL).then(()=>{
+    const b=document.getElementById('cbtn');
+    b.innerHTML='✓ Copied!';b.classList.add('ok');
+    setTimeout(()=>{b.innerHTML='🔗 Copy link';b.classList.remove('ok');},2000);
+  }).catch(()=>{});
+}
+
+// ── Boot ──────────────────────────────────────────────────────────
+initVotes();
+initIdentity();
+buildCatSel();
+renderLB();
+renderFeatured();
+renderIdentity();
+renderBrowse();
+document.getElementById('s-total').textContent =
+  Object.values(votes).reduce((a,b)=>a+b,0);
+
+fetch(WP).then(r=>r.ok?r.json():null).then(d=>{
+  if(!d)return;
+  let changed=false;
+  for(const [k,v] of Object.entries(d)){
+    const nv=(SEED[k]||0)+v;
+    if(nv>(votes[k]||0)){votes[k]=nv;changed=true;}
+  }
+  if(changed){renderLB();renderFeatured();
+renderIdentity();renderBrowse();
+    document.getElementById('s-total').textContent=Object.values(votes).reduce((a,b)=>a+b,0);}
+}).catch(()=>{});
+</script>
+
+<!-- Analysis panel overlay -->
+<div class="ap-overlay" id="ap-overlay" onclick="if(event.target===this)closeAnalysis()">
+  <div class="ap-panel">
+    <button class="ap-close" onclick="closeAnalysis()">✕</button>
+    <div class="ap-handle"></div>
+    <div class="ap-title" id="ap-name"></div>
+    <div class="ap-sub" id="ap-field"></div>
+    <div class="ap-stars" id="ap-stars"></div>
+    <div class="ap-tags" id="ap-tags"></div>
+
+    <div class="ap-sec">
+      <h3>Pros</h3>
+      <ul class="ap-list pros" id="ap-pros"></ul>
+    </div>
+    <div class="ap-sec">
+      <h3>Cons</h3>
+      <ul class="ap-list cons" id="ap-cons"></ul>
+    </div>
+    <div class="ap-sec">
+      <h3>Related Careers</h3>
+      <ul class="ap-list careers" id="ap-careers"></ul>
+    </div>
+
+    <hr class="ap-divider">
+    <a class="ap-ask" id="ap-ask" href="#" target="_blank" rel="noopener">
+      🤖 Ask AI for deeper analysis →
+    </a>
+    <a class="ap-rally-inner" id="ap-detail" href="#" target="_blank"
+       style="display:block;text-align:center;text-decoration:none;margin-bottom:8px;">
+      📄 Full career outlook page →
+    </a>
+    <button class="ap-rally-inner" id="ap-rally">📣 Rally votes for this major</button>
+  </div>
+</div>
+</body>
+</html>

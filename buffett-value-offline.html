@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>伯克希尔式研究台 · 离线版</title>
+  <style>
+    :root {
+      --bg: #0c1018;
+      --panel: #151d2b;
+      --panel2: #1a2538;
+      --border: #2a3952;
+      --text: #e9eef5;
+      --muted: #8b9cb3;
+      --accent: #d4af37;
+      --accent2: #8b7355;
+      --good: #3ecf8e;
+      --warn: #e8b84a;
+      --bad: #ff6b6b;
+      --font: "SF Pro Text", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse 100% 70% at 50% -30%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+        linear-gradient(180deg, #0e1624 0%, var(--bg) 40%);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.55;
+      padding: 1.5rem 1rem 3.5rem;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    header h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem;
+      letter-spacing: 0.03em;
+      background: linear-gradient(135deg, #f0e6d3 0%, var(--accent) 50%, #c9a555 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    header .sub { margin: 0; color: var(--muted); font-size: 0.92rem; max-width: 36rem; margin-left: auto; margin-right: auto; }
+    .badges { margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; }
+    .badge {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(26, 37, 56, 0.8);
+      color: #a8bdd9;
+    }
+    .refstrip {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .refstrip a { color: #7eb8ff; }
+
+    nav.tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 1rem;
+      justify-content: center;
+    }
+    nav.tabs button {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: #b8c9dc;
+      padding: 0.45rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+    }
+    nav.tabs button:hover { background: #243451; }
+    nav.tabs button.active {
+      background: linear-gradient(160deg, #5a4a2a, #3d3420);
+      color: #f5ead5;
+      border-color: rgba(212, 175, 55, 0.45);
+    }
+
+    .panel { display: none; animation: fade 0.2s ease; }
+    .panel.active { display: block; }
+    @keyframes fade { from { opacity: 0.6; } to { opacity: 1; } }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem 1.4rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      margin: 0 0 0.85rem;
+      color: #dfe8f4;
+      font-weight: 650;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card h2 span.num {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent);
+      opacity: 0.9;
+    }
+    .concept-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin: -0.25rem 0 0.85rem;
+    }
+    .concept-tags span {
+      font-size: 0.68rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 6px;
+      background: #121a28;
+      color: #8fa6be;
+      border: 1px solid var(--border);
+    }
+
+    label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.3rem; }
+    .field-hint {
+      font-size: 0.72rem;
+      color: #6a7d94;
+      margin-top: 0.25rem;
+      line-height: 1.45;
+    }
+    input[type="text"],
+    input[type="date"],
+    input[type="number"] {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #0d1420;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    input:focus {
+      outline: none;
+      border-color: rgba(212, 175, 55, 0.55);
+      box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.15);
+    }
+    input::placeholder { color: #4f5f73; }
+
+    .row { display: grid; gap: 0.85rem; grid-template-columns: 1fr; }
+    @media (min-width: 560px) {
+      .row.two { grid-template-columns: 1fr 1fr; }
+      .row.three { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .likert {
+      margin-bottom: 1rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid rgba(42, 57, 82, 0.6);
+    }
+    .likert:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .likert-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.35rem;
+    }
+    .likert-head label { margin: 0; color: #c5d4e8; font-size: 0.86rem; }
+    .likert-val {
+      font-size: 0.78rem;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      min-width: 2rem;
+      text-align: right;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      height: 6px;
+    }
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: #5d718a;
+      margin-top: 0.2rem;
+    }
+
+    .chk-grid {
+      display: grid;
+      gap: 0.5rem;
+    }
+    .chk {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.86rem;
+      color: #c8d5e6;
+      cursor: pointer;
+    }
+    .chk input { margin-top: 0.2rem; accent-color: var(--accent); }
+
+    .actions {
+      display: grid;
+      gap: 0.5rem;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 520px) {
+      .actions.inline2 { grid-template-columns: 1fr 1fr; }
+      .actions.grid4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    button.primary {
+      cursor: pointer;
+      border: none;
+      border-radius: 12px;
+      padding: 0.8rem 1rem;
+      font-size: 1rem;
+      font-weight: 650;
+      background: linear-gradient(165deg, #e8d5a3, #b8923a 45%, #8a6d2e);
+      color: #1a1408;
+      width: 100%;
+    }
+    button.primary:hover { filter: brightness(1.05); }
+    button.ghost {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.88rem;
+      font-weight: 500;
+      background: var(--panel2);
+      color: var(--text);
+      width: 100%;
+    }
+    button.ghost:hover { background: #243451; }
+    button.danger {
+      cursor: pointer;
+      border: 1px solid rgba(255, 107, 107, 0.45);
+      border-radius: 8px;
+      padding: 0.3rem 0.5rem;
+      font-size: 0.75rem;
+      background: transparent;
+      color: #ffb4b4;
+    }
+
+    .sticky-bar {
+      position: sticky;
+      bottom: 0;
+      z-index: 20;
+      margin: 1rem -1rem -1rem;
+      padding: 0.75rem 1rem;
+      background: linear-gradient(180deg, transparent, rgba(12, 16, 24, 0.95) 30%);
+      backdrop-filter: blur(8px);
+    }
+    .sticky-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: grid;
+      gap: 0.5rem;
+    }
+    @media (min-width: 560px) {
+      .sticky-inner { grid-template-columns: 1fr 1fr; }
+    }
+
+    .results { display: none; }
+    .results.visible { display: block; }
+    .score-hero {
+      display: grid;
+      gap: 1.25rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    @media (min-width: 640px) {
+      .score-hero { grid-template-columns: 1fr 200px; }
+    }
+    .score-big {
+      font-size: 3.2rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .pillar-grid {
+      display: grid;
+      gap: 0.5rem;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: 520px) {
+      .pillar-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .pillar-chip {
+      background: #121a28;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.45rem 0.55rem;
+      font-size: 0.78rem;
+    }
+    .pillar-chip strong { display: block; color: #aabfd6; font-weight: 500; margin-bottom: 0.15rem; }
+    .pillar-chip em {
+      font-style: normal;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--good);
+    }
+    .radar-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .radar-wrap svg { max-width: 200px; height: auto; }
+
+    .verdict {
+      font-size: 1.15rem;
+      font-weight: 650;
+      margin: 0 0 0.35rem;
+    }
+    .verdict.good { color: var(--good); }
+    .verdict.warn { color: var(--warn); }
+    .verdict.bad { color: var(--bad); }
+
+    table.small {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    table.small th, table.small td {
+      padding: 0.45rem 0.35rem;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+    table.small th { color: var(--muted); font-weight: 500; }
+    .bar-wrap {
+      height: 5px;
+      background: #0d1420;
+      border-radius: 4px;
+      overflow: hidden;
+      max-width: 100px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 0.35rem;
+    }
+    .bar { height: 100%; background: linear-gradient(90deg, #2d8a5c, var(--accent)); border-radius: 4px; }
+    .tag {
+      font-size: 0.68rem;
+      padding: 0.1rem 0.4rem;
+      border-radius: 5px;
+      display: inline-block;
+    }
+    .tag.in { background: rgba(62, 207, 142, 0.15); color: #7ee0b3; }
+    .tag.out { background: #121a28; color: #6d8299; }
+
+    .memo {
+      background: #0d1420;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: #c5d4e8;
+      white-space: pre-wrap;
+      margin: 0;
+    }
+    .memo-actions { margin-top: 0.65rem; }
+
+    .warnbox {
+      background: rgba(232, 184, 74, 0.1);
+      border: 1px solid rgba(232, 184, 74, 0.35);
+      color: #f0dcb0;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .warnbox.visible { display: block; }
+    .errbox {
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.35);
+      color: #ffc9c9;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      display: none;
+      margin-bottom: 1rem;
+    }
+    .errbox.visible { display: block; }
+
+    details.method {
+      margin-top: 0.75rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    details.method summary { cursor: pointer; color: #aabfd6; }
+    details.method pre {
+      white-space: pre-wrap;
+      background: #0d1420;
+      padding: 0.85rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 0.74rem;
+      line-height: 1.5;
+    }
+
+    .saved-list { list-style: none; padding: 0; margin: 0; }
+    .saved-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.65rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .saved-list li:last-child { border-bottom: none; }
+    .saved-list button.link {
+      background: none;
+      border: none;
+      color: #7eb8ff;
+      cursor: pointer;
+      padding: 0;
+      text-align: left;
+      flex: 1;
+      font-size: 0.88rem;
+    }
+
+    footer.disclaimer {
+      margin-top: 2rem;
+      font-size: 0.74rem;
+      color: var(--muted);
+      text-align: center;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+    #fileImport { display: none; }
+
+    @media print {
+      nav.tabs, .sticky-bar, footer.disclaimer { display: none !important; }
+      body { padding-bottom: 1rem; background: #fff; color: #111; }
+      .card, .results { box-shadow: none; border: 1px solid #ccc; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>伯克希尔式研究台</h1>
+      <p class="sub">
+        离线填写：把「财报数字」与「你对护城河、管理层、安全边际、能力圈的主观判断」放在同一张表里，
+        避免只看一两个比率就做决策。
+      </p>
+      <div class="badges">
+        <span class="badge">纯本地 · 无网络请求</span>
+        <span class="badge">五支柱合成 · 权重可自动归一</span>
+        <span class="badge">导出 JSON / 备忘录</span>
+      </div>
+      <p class="refstrip">
+        概念脉络可参考外部知识库（需联网打开）：
+        <a href="https://learnbuffett.com/" target="_blank" rel="noopener">learnbuffett.com 巴菲特知识库</a>
+        — 护城河、内在价值、安全边际、能力圈、资本配置等索引与股东信原文溯源。
+      </p>
+    </header>
+
+    <nav class="tabs" id="tabNav" aria-label="模块切换"></nav>
+
+    <section class="panel active" data-panel="intro">
+      <div class="card">
+        <h2>为何要多模块？<span class="num">与知识库同构</span></h2>
+        <div class="concept-tags">
+          <span>护城河</span><span>内在价值</span><span>安全边际</span><span>能力圈</span>
+          <span>管理层</span><span>资本配置</span><span>账面价值</span><span>长期持有</span>
+        </div>
+        <p class="field-hint" style="margin:0;">
+          巴菲特在股东信里反复强调：<strong>好生意、好价格、好管理层</strong>与<strong>你能理解的范围</strong>缺一不可。
+          本工具把常见「量化」与「你必须诚实回答的定性题」拆开打分，再合成一张雷达图与备忘录——
+          分数是<strong>反思脚手架</strong>，不是预测股价的黑盒子。
+        </p>
+      </div>
+      <div class="card">
+        <h2>公司档案</h2>
+        <div class="row two">
+          <div>
+            <label for="coName">公司名称</label>
+            <input type="text" id="coName" placeholder="正式披露名称" autocomplete="off" />
+          </div>
+          <div>
+            <label for="coTicker">证券代码（可选）</label>
+            <input type="text" id="coTicker" placeholder="600519 / BRK.B" autocomplete="off" />
+          </div>
+        </div>
+        <div class="row two" style="margin-top:0.85rem;">
+          <div>
+            <label for="asOf">数据基准日（可选）</label>
+            <input type="date" id="asOf" />
+          </div>
+          <div>
+            <label for="note">口径备注（可选）</label>
+            <input type="text" id="note" placeholder="合并报表 / 扣非 / TTM…" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="finance">
+      <div class="card">
+        <h2>模块 A · 财务与估值<span class="num">财报摘录</span></h2>
+        <div class="concept-tags"><span>ROE</span><span>杠杆</span><span>利润率</span><span>P/E</span><span>P/B</span><span>成长</span></div>
+        <p class="field-hint" style="margin-top:0;margin-bottom:1rem;">
+          留空项不参与该支柱内部归一；若整条支柱未填，支柱权重分给用户完成的其它支柱。
+        </p>
+        <div class="row three">
+          <div>
+            <label for="roe">ROE（%）</label>
+            <input type="number" id="roe" step="any" placeholder="例：18" />
+            <p class="field-hint">净利润 ÷ 平均股东权益。</p>
+          </div>
+          <div>
+            <label for="dte">负债权益比 D/E</label>
+            <input type="number" id="dte" step="any" placeholder="例：0.85" />
+            <p class="field-hint">总负债 ÷ 股东权益。</p>
+          </div>
+          <div>
+            <label for="npm">销售净利率（%）</label>
+            <input type="number" id="npm" step="any" placeholder="例：12.5" />
+          </div>
+        </div>
+        <div class="row three" style="margin-top:0.85rem;">
+          <div>
+            <label for="opm">营业利润率（%）</label>
+            <input type="number" id="opm" step="any" placeholder="例：22" />
+          </div>
+          <div>
+            <label for="pe">市盈率 P/E</label>
+            <input type="number" id="pe" step="any" placeholder="例：18" />
+          </div>
+          <div>
+            <label for="pb">市净率 P/B</label>
+            <input type="number" id="pb" step="any" placeholder="例：3.2" />
+          </div>
+        </div>
+        <div class="row two" style="margin-top:0.85rem;">
+          <div>
+            <label for="revYoy">营收同比（%）</label>
+            <input type="number" id="revYoy" step="any" placeholder="+8 或 -5" />
+          </div>
+          <div>
+            <label for="earnYoy">净利润同比（%）</label>
+            <input type="number" id="earnYoy" step="any" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="moat">
+      <div class="card">
+        <h2>模块 B · 护城河与商业模式<span class="num">1–5 主观刻度</span></h2>
+        <div class="concept-tags"><span>护城河</span><span>竞争优势</span><span>商业模式</span></div>
+        <p class="field-hint" style="margin-top:0;margin-bottom:0.75rem;">
+          基于你对<strong>行业与公司</strong>的阅读：1=弱 / 3=行业平均 / 5=极强。默认中性为 3，不动_slider 也算「已表态」。
+        </p>
+        <div id="moatSliders"></div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="mgmt">
+      <div class="card">
+        <h2>模块 C · 管理层与资本配置<span class="num">1–5</span></h2>
+        <div class="concept-tags"><span>管理层</span><span>资本配置</span><span>回购</span><span>诚信</span></div>
+        <p class="field-hint" style="margin-top:0;margin-bottom:0.75rem;">
+          对照历年财报「管理层讨论」「现金流量表」「股本变动」：是否在<strong>合理价格</strong>回购、并购是否克制、沟通是否坦诚。
+        </p>
+        <div id="mgmtSliders"></div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="mos">
+      <div class="card">
+        <h2>模块 D · 安全边际与内在价值<span class="num">主观 + 可与 P/E 对照</span></h2>
+        <div class="concept-tags"><span>安全边际</span><span>内在价值</span><span>低估</span></div>
+        <div class="likert">
+          <div class="likert-head">
+            <label for="mosPrice">当前价格相对「保守内在价值」的吸引力</label>
+            <span class="likert-val" id="mosPriceVal">3</span>
+          </div>
+          <input type="range" id="mosPrice" min="1" max="5" step="1" value="3" />
+          <div class="range-labels"><span>明显高估</span><span>模糊</span><span>留足安全边际</span></div>
+        </div>
+        <div class="likert">
+          <div class="likert-head">
+            <label for="mosQuality">为「生意质量」支付溢价的意愿（高质量可接受更高估值）</label>
+            <span class="likert-val" id="mosQualityVal">3</span>
+          </div>
+          <input type="range" id="mosQuality" min="1" max="5" step="1" value="3" />
+          <div class="range-labels"><span>只看便宜</span><span>平衡</span><span>质量优先</span></div>
+        </div>
+        <p class="field-hint">
+          内在价值无法在此页精确计算；此处记录的是你对<strong>价格与价值缺口</strong>的主观判断，可与左侧 P/E、ROE 交叉验证。
+        </p>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="circle">
+      <div class="card">
+        <h2>模块 E · 能力圈与持有期<span class="num">诚实清单</span></h2>
+        <div class="concept-tags"><span>能力圈</span><span>长期持有</span><span>复利</span></div>
+        <div class="likert">
+          <div class="likert-head">
+            <label for="circleUnderstand">我是否真正理解「钱从哪来、未来五年靠什么」？</label>
+            <span class="likert-val" id="circleUnderstandVal">3</span>
+          </div>
+          <input type="range" id="circleUnderstand" min="1" max="5" step="1" value="3" />
+          <div class="range-labels"><span>不理解</span><span>部分理解</span><span>能讲清楚</span></div>
+        </div>
+        <div class="likert">
+          <div class="likert-head">
+            <label for="circleHold">我愿意持有至少 5–10 年的舒适度</label>
+            <span class="likert-val" id="circleHoldVal">3</span>
+          </div>
+          <input type="range" id="circleHold" min="1" max="5" step="1" value="3" />
+          <div class="range-labels"><span>不舒服</span><span>视情况而定</span><span>可长期陪伴</span></div>
+        </div>
+        <div class="chk-grid" style="margin-top:0.85rem;">
+          <label class="chk"><input type="checkbox" id="circleReadAR" /> 我已阅读最近一期年报（或英文 10-K）中的关键章节，而非只看行情软件数字。</label>
+          <label class="chk"><input type="checkbox" id="circleVariant" /> 我能写出三种「如果核心假设错了」的情景（需求、成本、竞争）。</label>
+        </div>
+      </div>
+      <div class="card">
+        <h2>风险标记（用于备忘录与扣分）</h2>
+        <p class="field-hint" style="margin-top:0;">勾选表示需警惕；每项最多扣一定分数，总扣分封顶。</p>
+        <div class="chk-grid">
+          <label class="chk"><input type="checkbox" id="riskCycle" /> 强周期 / 商品价格驱动盈利波动极大。</label>
+          <label class="chk"><input type="checkbox" id="riskCustomer" /> 客户或渠道高度集中。</label>
+          <label class="chk"><input type="checkbox" id="riskLeverage" /> 财务杠杆激进（即使 D/E 未填也要诚实勾选）。</label>
+          <label class="chk"><input type="checkbox" id="riskAccounting" /> 会计政策激进 / 大额商誉 / 频繁重组让人读不懂。</label>
+          <label class="chk"><input type="checkbox" id="riskRegulatory" /> 监管与政策不确定性显著。</label>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="export">
+      <div class="card">
+        <h2>数据互操作</h2>
+        <div class="actions grid4">
+          <button type="button" class="ghost" id="btnExample">载入完整演示（虚构）</button>
+          <button type="button" class="ghost" id="btnExport">导出 JSON</button>
+          <button type="button" class="ghost" id="btnImportPick">导入 JSON</button>
+          <button type="button" class="ghost" id="btnSaveLocal">保存到本机列表</button>
+        </div>
+        <input type="file" id="fileImport" accept="application/json,.json" />
+        <details class="method">
+          <summary>合成权重与扣分规则（展开）</summary>
+          <pre id="methodText"></pre>
+        </details>
+      </div>
+      <div class="card" id="savedCard">
+        <h2>本机已保存</h2>
+        <p class="field-hint" style="margin-top:0;">localStorage；清除站点数据会丢失。</p>
+        <ul class="saved-list" id="savedList"></ul>
+      </div>
+    </section>
+
+    <div class="errbox" id="errBox"></div>
+
+    <div class="results card" id="results">
+      <div class="warnbox" id="coverageWarn"></div>
+      <p style="margin:0 0 0.65rem;color:var(--muted);font-size:0.92rem;" id="companyLine"></p>
+      <div class="score-hero">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:0.75rem;flex-wrap:wrap;">
+            <span class="score-big" id="totalScore">—</span>
+            <div>
+              <p class="verdict" id="verdict"></p>
+              <p class="field-hint" id="verdictSub" style="margin:0;"></p>
+            </div>
+          </div>
+          <p class="field-hint" id="penaltyNote" style="margin-top:0.65rem;display:none;"></p>
+        </div>
+        <div class="radar-wrap" id="radarHost"></div>
+      </div>
+      <div class="pillar-grid" id="pillarChips"></div>
+      <h2 style="margin-top:1.25rem;font-size:1rem;">备忘录（可复制进笔记）</h2>
+      <pre class="memo" id="memoBox"></pre>
+      <div class="memo-actions actions inline2">
+        <button type="button" class="ghost" id="btnCopyMemo">复制备忘录</button>
+        <button type="button" class="ghost" id="btnPrint">打印 / PDF（浏览器）</button>
+      </div>
+      <h2 style="margin-top:1.25rem;font-size:1rem;">明细</h2>
+      <table class="small">
+        <thead>
+          <tr>
+            <th>维度</th>
+            <th>摘要</th>
+            <th>分</th>
+            <th>权</th>
+            <th>纳入</th>
+          </tr>
+        </thead>
+        <tbody id="detailBody"></tbody>
+      </table>
+      <p class="field-hint" id="normNote" style="margin-top:0.75rem;"></p>
+    </div>
+
+    <footer class="disclaimer">
+      本页面为离线自学与研究脚手架；定性刻度依赖你的诚实与阅读深度。
+      「learnbuffett」等外链仅供延伸阅读，本页不对其内容背书。
+      不构成投资建议。
+    </footer>
+  </div>
+
+  <div class="sticky-bar">
+    <div class="sticky-inner">
+      <button type="button" class="primary" id="btnCalc">生成合成得分与备忘录</button>
+      <button type="button" class="ghost" id="btnReset">清空全部模块</button>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  "use strict";
+
+  var SCHEMA = "buffett-workbench-v2";
+  var STORAGE_KEY = "buffett_workbench_saved_v2";
+  var STORAGE_LAST = "buffett_workbench_last_v2";
+
+  var PILLAR_WEIGHTS = {
+    finance: 0.30,
+    moat: 0.22,
+    mgmt: 0.18,
+    mos: 0.15,
+    circle: 0.15
+  };
+
+  var MOAT_Q = [
+    { id: "moat_pricing", text: "差异化 / 定价权（提价不大面积流失客户）" },
+    { id: "moat_switch", text: "客户粘性或转换成本" },
+    { id: "moat_scale", text: "规模效应或成本曲线优势" },
+    { id: "moat_network", text: "网络效应或双边平台效应（若无则打中间分）" },
+    { id: "moat_reg", text: "牌照、专利、稀缺资产等结构性壁垒" }
+  ];
+
+  var MGMT_Q = [
+    { id: "mgmt_allocate", text: "资本配置纪律（再投资 / 并购 / 分红 / 回购的平衡）" },
+    { id: "mgmt_buyback", text: "回购是否在「合理或低估」区间进行（而非抬轿）" },
+    { id: "mgmt_mna", text: "并购克制：少见「昂贵稀释收购」" },
+    { id: "mgmt_candor", text: "沟通坦诚：承认错误、会计口径清晰" }
+  ];
+
+  var RISK_PENALTY = {
+    riskCycle: 4,
+    riskCustomer: 4,
+    riskLeverage: 5,
+    riskAccounting: 6,
+    riskRegulatory: 4
+  };
+  var RISK_CAP = 18;
+
+  function clamp(x, a, b) {
+    return Math.max(a, Math.min(b, x));
+  }
+
+  function likertToScore(v) {
+    v = +v;
+    if (!Number.isFinite(v)) return null;
+    return (v - 1) * 25;
+  }
+
+  function parseOptionalNumber(el) {
+    var v = el.value.trim();
+    if (v === "") return null;
+    var n = parseFloat(v.replace(/,/g, ""));
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function scoreROE(roePct) {
+    var s;
+    if (roePct >= 20) s = 100;
+    else if (roePct >= 15) s = 82;
+    else if (roePct >= 10) s = 62;
+    else if (roePct >= 5) s = 42;
+    else s = 22;
+    return { score: s, note: roePct.toFixed(1) + "%" };
+  }
+  function scoreDE(dte) {
+    var s;
+    if (dte < 0.3) s = 100;
+    else if (dte < 0.7) s = 84;
+    else if (dte < 1.2) s = 58;
+    else if (dte < 2) s = 36;
+    else s = 14;
+    return { score: s, note: dte.toFixed(2) };
+  }
+  function scoreProfitMargin(pmPct) {
+    var s;
+    if (pmPct >= 20) s = 100;
+    else if (pmPct >= 15) s = 85;
+    else if (pmPct >= 10) s = 68;
+    else if (pmPct >= 5) s = 48;
+    else s = 26;
+    return { score: s, note: pmPct.toFixed(1) + "%" };
+  }
+  function scoreOperatingMargin(omPct) {
+    var s;
+    if (omPct >= 25) s = 100;
+    else if (omPct >= 15) s = 82;
+    else if (omPct >= 10) s = 64;
+    else if (omPct >= 5) s = 44;
+    else s = 24;
+    return { score: s, note: omPct.toFixed(1) + "%" };
+  }
+  function scorePE(pe) {
+    if (pe <= 0) return { score: 35, note: String(pe) };
+    var s;
+    if (pe >= 8 && pe <= 22) s = 92;
+    else if (pe >= 6 && pe < 8) s = 68;
+    else if (pe > 22 && pe <= 35) s = 72;
+    else if (pe > 35 && pe <= 50) s = 48;
+    else if (pe > 50) s = 28;
+    else s = 55;
+    return { score: s, note: pe.toFixed(2) };
+  }
+  function scorePB(pb) {
+    var s;
+    if (pb >= 0.8 && pb <= 4) s = 88;
+    else if (pb < 0.8) s = 72;
+    else if (pb <= 10) s = 52;
+    else s = 30;
+    return { score: s, note: pb.toFixed(2) };
+  }
+  function scoreGrowth(revYoy, earnYoy) {
+    var r = revYoy;
+    var e = earnYoy;
+    if (r == null && e == null) return null;
+    var pts = 50;
+    if (r != null) pts += clamp(r * 1.2, -15, 15);
+    if (e != null) pts += clamp(e * 0.8, -20, 20);
+    pts = clamp(pts, 0, 100);
+    var parts = [];
+    if (r != null) parts.push("营收同比 " + r.toFixed(1) + "%");
+    if (e != null) parts.push("盈利同比 " + e.toFixed(1) + "%");
+    return { score: Math.round(pts), note: parts.join(" · ") };
+  }
+
+  var FIN_WEIGHTS = {
+    roe: 0.22,
+    dte: 0.18,
+    npm: 0.14,
+    opm: 0.12,
+    pe: 0.14,
+    pb: 0.10,
+    gr: 0.10
+  };
+
+  function computeFinancePillar(inp) {
+    var rows = [];
+    var usedW = 0;
+    var sum = 0;
+    function add(name, w, filled, sc, note) {
+      rows.push({ name: name, w: w, filled: filled, score: sc, note: note });
+      if (filled && sc != null) {
+        sum += sc * w;
+        usedW += w;
+      }
+    }
+    var roeOk = inp.roe != null;
+    add("ROE", FIN_WEIGHTS.roe, roeOk, roeOk ? scoreROE(inp.roe).score : null, roeOk ? scoreROE(inp.roe).note : "—");
+    var deOk = inp.dte != null;
+    add("D/E", FIN_WEIGHTS.dte, deOk, deOk ? scoreDE(inp.dte).score : null, deOk ? scoreDE(inp.dte).note : "—");
+    var npmOk = inp.npm != null;
+    add("净利率", FIN_WEIGHTS.npm, npmOk, npmOk ? scoreProfitMargin(inp.npm).score : null, npmOk ? scoreProfitMargin(inp.npm).note : "—");
+    var opmOk = inp.opm != null;
+    add("营业利润率", FIN_WEIGHTS.opm, opmOk, opmOk ? scoreOperatingMargin(inp.opm).score : null, opmOk ? scoreOperatingMargin(inp.opm).note : "—");
+    var peOk = inp.pe != null && inp.pe > 0;
+    add(
+      "P/E",
+      FIN_WEIGHTS.pe,
+      peOk,
+      peOk ? scorePE(inp.pe).score : null,
+      peOk ? scorePE(inp.pe).note : inp.pe != null && inp.pe <= 0 ? "亏损" : "—"
+    );
+    var pbOk = inp.pb != null && inp.pb > 0;
+    add("P/B", FIN_WEIGHTS.pb, pbOk, pbOk ? scorePB(inp.pb).score : null, pbOk ? scorePB(inp.pb).note : "—");
+    var grOk = inp.revYoy != null || inp.earnYoy != null;
+    var gr = grOk ? scoreGrowth(inp.revYoy, inp.earnYoy) : null;
+    add("成长同比", FIN_WEIGHTS.gr, grOk && gr, grOk && gr ? gr.score : null, grOk && gr ? gr.note : "—");
+
+    if (usedW <= 0) return { filled: false, score: null, rows: rows, usedW: 0 };
+    return { filled: true, score: Math.round(sum / usedW), rows: rows, usedW: usedW };
+  }
+
+  function computeMoatPillar() {
+    var ids = MOAT_Q.map(function (q) {
+      return q.id;
+    });
+    var vals = ids.map(function (id) {
+      return +document.getElementById(id).value;
+    });
+    var avg = vals.reduce(function (a, b) {
+      return a + b;
+    }, 0) / vals.length;
+    var score = likertToScore(avg);
+    var note =
+      "五项均值 " +
+      avg.toFixed(2) +
+      " / 5 → " +
+      Math.round(score) +
+      " 分";
+    return { filled: true, score: Math.round(score), note: note };
+  }
+
+  function computeMgmtPillar() {
+    var ids = MGMT_Q.map(function (q) {
+      return q.id;
+    });
+    var vals = ids.map(function (id) {
+      return +document.getElementById(id).value;
+    });
+    var avg = vals.reduce(function (a, b) {
+      return a + b;
+    }, 0) / vals.length;
+    var score = likertToScore(avg);
+    return {
+      filled: true,
+      score: Math.round(score),
+      note: "四项均值 " + avg.toFixed(2) + " / 5"
+    };
+  }
+
+  function computeMosPillar() {
+    var a = likertToScore(+document.getElementById("mosPrice").value);
+    var b = likertToScore(+document.getElementById("mosQuality").value);
+    var s = Math.round((a + b) / 2);
+    return {
+      filled: true,
+      score: s,
+      note: "价格吸引力 " + document.getElementById("mosPrice").value + "/5 · 质量溢价容忍 " + document.getElementById("mosQuality").value + "/5"
+    };
+  }
+
+  function computeCirclePillar() {
+    var u = likertToScore(+document.getElementById("circleUnderstand").value);
+    var h = likertToScore(+document.getElementById("circleHold").value);
+    var base = (u + h) / 2;
+    var bonus = 0;
+    if (document.getElementById("circleReadAR").checked) bonus += 8;
+    if (document.getElementById("circleVariant").checked) bonus += 7;
+    var s = clamp(base + bonus, 0, 100);
+    return {
+      filled: true,
+      score: Math.round(s),
+      note:
+        "理解×持有舒适度折算后 " +
+        Math.round(base) +
+        "，清单加分 +" +
+        bonus +
+        "（封顶 100）"
+    };
+  }
+
+  function computeRiskPenalty() {
+    var total = 0;
+    var lines = [];
+    Object.keys(RISK_PENALTY).forEach(function (k) {
+      var el = document.getElementById(k);
+      if (el && el.checked) {
+        total += RISK_PENALTY[k];
+        lines.push(k);
+      }
+    });
+    total = Math.min(total, RISK_CAP);
+    return { points: total, keys: lines };
+  }
+
+  function buildMoatMgmtSliders() {
+    var mh = document.getElementById("moatSliders");
+    var gh = document.getElementById("mgmtSliders");
+    MOAT_Q.forEach(function (q) {
+      mh.appendChild(makeLikert(q.id, q.text));
+    });
+    MGMT_Q.forEach(function (q) {
+      gh.appendChild(makeLikert(q.id, q.text));
+    });
+  }
+
+  function makeLikert(id, text) {
+    var wrap = document.createElement("div");
+    wrap.className = "likert";
+    wrap.innerHTML =
+      '<div class="likert-head"><label for="' +
+      id +
+      '">' +
+      escapeHtml(text) +
+      '</label><span class="likert-val" id="' +
+      id +
+      'Val">3</span></div>' +
+      '<input type="range" id="' +
+      id +
+      '" min="1" max="5" step="1" value="3" />' +
+      '<div class="range-labels"><span>弱</span><span>中</span><span>强</span></div>';
+    return wrap;
+  }
+
+  function wireLikertUpdates() {
+    var ids = MOAT_Q.concat(MGMT_Q).map(function (q) {
+      return q.id;
+    });
+    ids.push("mosPrice", "mosQuality", "circleUnderstand", "circleHold");
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      var lab = document.getElementById(id + "Val");
+      if (!el || !lab) return;
+      el.addEventListener("input", function () {
+        lab.textContent = el.value;
+      });
+    });
+  }
+
+  function collectInputs() {
+    return {
+      schema: SCHEMA,
+      company: document.getElementById("coName").value.trim(),
+      ticker: document.getElementById("coTicker").value.trim(),
+      asOf: document.getElementById("asOf").value,
+      note: document.getElementById("note").value.trim(),
+      roe: parseOptionalNumber(document.getElementById("roe")),
+      dte: parseOptionalNumber(document.getElementById("dte")),
+      npm: parseOptionalNumber(document.getElementById("npm")),
+      opm: parseOptionalNumber(document.getElementById("opm")),
+      pe: parseOptionalNumber(document.getElementById("pe")),
+      pb: parseOptionalNumber(document.getElementById("pb")),
+      revYoy: parseOptionalNumber(document.getElementById("revYoy")),
+      earnYoy: parseOptionalNumber(document.getElementById("earnYoy")),
+      moat: collectLikerts(MOAT_Q),
+      mgmt: collectLikerts(MGMT_Q),
+      mosPrice: +document.getElementById("mosPrice").value,
+      mosQuality: +document.getElementById("mosQuality").value,
+      circleUnderstand: +document.getElementById("circleUnderstand").value,
+      circleHold: +document.getElementById("circleHold").value,
+      circleReadAR: document.getElementById("circleReadAR").checked,
+      circleVariant: document.getElementById("circleVariant").checked,
+      riskCycle: document.getElementById("riskCycle").checked,
+      riskCustomer: document.getElementById("riskCustomer").checked,
+      riskLeverage: document.getElementById("riskLeverage").checked,
+      riskAccounting: document.getElementById("riskAccounting").checked,
+      riskRegulatory: document.getElementById("riskRegulatory").checked
+    };
+  }
+
+  function collectLikerts(list) {
+    var o = {};
+    list.forEach(function (q) {
+      o[q.id] = +document.getElementById(q.id).value;
+    });
+    return o;
+  }
+
+  function applyInputs(data) {
+    function set(id, val, isChk) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      if (isChk) el.checked = !!val;
+      else el.value = val != null && val !== "" ? val : "";
+      var lab = document.getElementById(id + "Val");
+      if (lab && el.type === "range") lab.textContent = el.value;
+    }
+    set("coName", data.company);
+    set("coTicker", data.ticker);
+    set("asOf", data.asOf);
+    set("note", data.note);
+    set("roe", data.roe);
+    set("dte", data.dte);
+    set("npm", data.npm);
+    set("opm", data.opm);
+    set("pe", data.pe);
+    set("pb", data.pb);
+    set("revYoy", data.revYoy);
+    set("earnYoy", data.earnYoy);
+    if (data.moat) {
+      MOAT_Q.forEach(function (q) {
+        if (data.moat[q.id] != null) set(q.id, data.moat[q.id]);
+      });
+    }
+    if (data.mgmt) {
+      MGMT_Q.forEach(function (q) {
+        if (data.mgmt[q.id] != null) set(q.id, data.mgmt[q.id]);
+      });
+    }
+    if (data.mosPrice != null) set("mosPrice", data.mosPrice);
+    if (data.mosQuality != null) set("mosQuality", data.mosQuality);
+    if (data.circleUnderstand != null) set("circleUnderstand", data.circleUnderstand);
+    if (data.circleHold != null) set("circleHold", data.circleHold);
+    set("circleReadAR", data.circleReadAR, true);
+    set("circleVariant", data.circleVariant, true);
+    set("riskCycle", data.riskCycle, true);
+    set("riskCustomer", data.riskCustomer, true);
+    set("riskLeverage", data.riskLeverage, true);
+    set("riskAccounting", data.riskAccounting, true);
+    set("riskRegulatory", data.riskRegulatory, true);
+  }
+
+  function synthesize(inp) {
+    var fin = computeFinancePillar(inp);
+    var moat = computeMoatPillar();
+    var mgmt = computeMgmtPillar();
+    var mos = computeMosPillar();
+    var circle = computeCirclePillar();
+    var pillars = [
+      { key: "finance", label: "财务与估值", w: PILLAR_WEIGHTS.finance, res: fin },
+      { key: "moat", label: "护城河", w: PILLAR_WEIGHTS.moat, res: moat },
+      { key: "mgmt", label: "管理层 / 资本配置", w: PILLAR_WEIGHTS.mgmt, res: mgmt },
+      { key: "mos", label: "安全边际 / 价格", w: PILLAR_WEIGHTS.mos, res: mos },
+      { key: "circle", label: "能力圈 / 持有期", w: PILLAR_WEIGHTS.circle, res: circle }
+    ];
+
+    var used = [];
+    var sum = 0;
+    var tw = 0;
+    pillars.forEach(function (p) {
+      if (p.res.filled && p.res.score != null) {
+        used.push(p);
+        sum += p.res.score * p.w;
+        tw += p.w;
+      }
+    });
+
+    if (tw <= 0) {
+      return { error: "内部错误：无可用支柱。请刷新页面重试。" };
+    }
+
+    var raw = sum / tw;
+    var risk = computeRiskPenalty();
+    var finalScore = clamp(Math.round(raw - risk.points), 0, 100);
+
+    var rows = [];
+    pillars.forEach(function (p) {
+      var filled = p.res.filled && p.res.score != null;
+      var effW = tw > 0 ? (filled ? (p.w / tw) * 100 : 0) : 0;
+      rows.push({
+        name: p.label,
+        note: p.res.note || "—",
+        score: filled ? p.res.score : null,
+        w: p.w,
+        effPct: effW,
+        filled: filled
+      });
+    });
+
+    if (risk.points > 0) {
+      rows.push({
+        name: "风险扣分（封顶 " + RISK_CAP + "）",
+        note: "勾选 " + risk.keys.length + " 项 · 计 −" + risk.points,
+        score: null,
+        w: 0,
+        effPct: 0,
+        filled: true,
+        isRisk: true
+      });
+    }
+
+    return {
+      rawAvg: Math.round(raw),
+      finalScore: finalScore,
+      pillars: pillars,
+      financeDetail: fin,
+      risk: risk,
+      detailRows: rows,
+      tw: tw,
+      coverage: tw
+    };
+  }
+
+  function verdictFor(score) {
+    if (score >= 76) {
+      return {
+        cls: "good",
+        title: "合成视角：更适合进入「深度阅读名单」",
+        sub: "仍要用年报与竞争优势逐一核实；分数高≠立刻买入。"
+      };
+    }
+    if (score >= 56) {
+      return {
+        cls: "warn",
+        title: "中性：有待核实的关键假设",
+        sub: "优先补齐最弱支柱与风险勾选项对应的功课。"
+      };
+    }
+    return {
+      cls: "bad",
+      title: "短板明显或风险扣分较多：更适合观望或小额试错研究",
+      sub: "检查是否高估了护城河、低估了周期或会计风险。"
+    };
+  }
+
+  function renderRadar(scores) {
+    var labels = ["财务", "护城河", "管理层", "安全边际", "能力圈"];
+    var keys = ["finance", "moat", "mgmt", "mos", "circle"];
+    var vals = keys.map(function (k) {
+      var p = scores.pillars.filter(function (x) {
+        return x.key === k;
+      })[0];
+      if (!p || !p.res.filled || p.res.score == null) return 0;
+      return p.res.score;
+    });
+    var max = 100;
+    var cx = 100;
+    var cy = 100;
+    var r = 78;
+    var n = 5;
+    var pts = [];
+    for (var i = 0; i < n; i++) {
+      var ang = (-Math.PI / 2 + (i * 2 * Math.PI) / n);
+      var vi = vals[i] / max;
+      var x = cx + r * vi * Math.cos(ang);
+      var y = cy + r * vi * Math.sin(ang);
+      pts.push(x + "," + y);
+    }
+    var poly = pts.join(" ");
+    var axis = [];
+    for (var j = 0; j < n; j++) {
+      var a = (-Math.PI / 2 + (j * 2 * Math.PI) / n);
+      axis.push(
+        "<line x1=\"" +
+          cx +
+          "\" y1=\"" +
+          cy +
+          "\" x2=\"" +
+          (cx + r * Math.cos(a)) +
+          "\" y2=\"" +
+          (cy + r * Math.sin(a)) +
+          "\" stroke=\"#2a3952\" stroke-width=\"1\"/>"
+      );
+      var lx = cx + (r + 14) * Math.cos(a);
+      var ly = cy + (r + 14) * Math.sin(a);
+      axis.push(
+        "<text x=\"" +
+          lx +
+          "\" y=\"" +
+          ly +
+          "\" fill=\"#8b9cb3\" font-size=\"9\" text-anchor=\"middle\" dominant-baseline=\"middle\">" +
+          labels[j] +
+          "</text>"
+      );
+    }
+    var svg =
+      '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">' +
+      '<polygon points="' +
+      poly +
+      '" fill="rgba(212,175,55,0.25)" stroke="#d4af37" stroke-width="1.5"/>' +
+      axis.join("") +
+      "</svg>";
+    document.getElementById("radarHost").innerHTML = svg;
+  }
+
+  function buildMemo(inp, syn) {
+    var lines = [];
+    lines.push("【伯克希尔式研究备忘录】" + (inp.company || "未命名"));
+    if (inp.ticker) lines.push("代码：" + inp.ticker);
+    if (inp.asOf) lines.push("基准日：" + inp.asOf);
+    lines.push("合成得分（含风险扣分）：" + syn.finalScore + " / 100 · 合成均值（扣风险前）：" + syn.rawAvg);
+    lines.push("");
+    syn.pillars.forEach(function (p) {
+      if (p.res.filled && p.res.score != null) {
+        lines.push("- " + p.label + "：" + p.res.score + " —— " + (p.res.note || ""));
+      }
+    });
+    if (syn.financeDetail && syn.financeDetail.rows && syn.financeDetail.rows.length) {
+      lines.push("");
+      lines.push("【财务子项】");
+      syn.financeDetail.rows.forEach(function (r) {
+        if (r.filled && r.score != null) lines.push("  · " + r.name + " " + r.note + " → " + r.score);
+      });
+    }
+    if (syn.risk.points > 0) {
+      lines.push("");
+      lines.push("【风险扣分】−" + syn.risk.points + "（封顶 " + RISK_CAP + "）请逐项复核年报与行业现实。");
+    }
+    lines.push("");
+    lines.push("【下一步功课】");
+    var weakest = syn.pillars
+      .filter(function (p) {
+        return p.res.filled && p.res.score != null;
+      })
+      .sort(function (a, b) {
+        return a.res.score - b.res.score;
+      })[0];
+    if (weakest) lines.push("- 最弱支柱：" + weakest.label + "（优先补课）");
+    if (!inp.circleReadAR) lines.push("- 尚未勾选「读过年报」：建议至少通读 MD&A、现金流、附注政策。");
+    lines.push("- 若与你直觉冲突：回到护城河与管理层的定性证据，而非调和数字。");
+    lines.push("");
+    lines.push("（离线生成 · 非投资建议）");
+    return lines.join("\n");
+  }
+
+  function renderResults(inp, syn) {
+    document.getElementById("companyLine").textContent =
+      (inp.company || "未命名") +
+      (inp.ticker ? " · " + inp.ticker : "") +
+      (inp.asOf ? " · " + inp.asOf : "");
+
+    document.getElementById("totalScore").textContent = syn.finalScore;
+    var v = verdictFor(syn.finalScore);
+    document.getElementById("verdict").textContent = v.title;
+    document.getElementById("verdict").className = "verdict " + v.cls;
+    document.getElementById("verdictSub").textContent = v.sub;
+
+    var pn = document.getElementById("penaltyNote");
+    if (syn.risk.points > 0) {
+      pn.style.display = "block";
+      pn.textContent =
+        "风险扣分 −" + syn.risk.points + "（在满分合成基础上扣除，封顶 " + RISK_CAP + "）。";
+    } else {
+      pn.style.display = "none";
+      pn.textContent = "";
+    }
+
+    var chips = document.getElementById("pillarChips");
+    chips.innerHTML = "";
+    syn.pillars.forEach(function (p) {
+      if (!p.res.filled || p.res.score == null) return;
+      var d = document.createElement("div");
+      d.className = "pillar-chip";
+      d.innerHTML =
+        "<strong>" +
+        escapeHtml(p.label) +
+        "</strong><em>" +
+        p.res.score +
+        "</em>";
+      chips.appendChild(d);
+    });
+
+    renderRadar(syn);
+    document.getElementById("memoBox").textContent = buildMemo(inp, syn);
+
+    var tbody = document.getElementById("detailBody");
+    tbody.innerHTML = "";
+    syn.detailRows.forEach(function (r) {
+      var tr = document.createElement("tr");
+      var pct =
+        r.score != null
+          ? '<span class="bar-wrap"><span class="bar" style="width:' +
+            Math.round(r.score) +
+            '%"></span></span>' +
+            Math.round(r.score)
+          : "—";
+      var tag =
+        r.filled && !r.isRisk
+          ? '<span class="tag in">纳入</span>'
+          : r.isRisk
+          ? '<span class="tag out">扣分</span>'
+          : '<span class="tag out">—</span>';
+      var wp = r.isRisk ? "—" : (r.w * 100).toFixed(0) + "%";
+      tr.innerHTML =
+        "<td>" +
+        escapeHtml(r.name) +
+        "</td><td>" +
+        escapeHtml(r.note) +
+        "</td><td>" +
+        pct +
+        "</td><td>" +
+        wp +
+        "</td><td>" +
+        tag +
+        "</td>";
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById("normNote").textContent =
+      "参与合成的支柱权重合计 " +
+      (syn.tw * 100).toFixed(1) +
+      "%（相对模板）；已在参与支柱间归一。财务子模块内部亦单独归一。";
+
+    var cov = document.getElementById("coverageWarn");
+    var finN =
+      syn.financeDetail && syn.financeDetail.rows
+        ? syn.financeDetail.rows.filter(function (x) {
+            return x.filled && x.score != null;
+          }).length
+        : 0;
+    if (finN < 3) {
+      cov.classList.add("visible");
+      cov.innerHTML =
+        "<strong>财务覆盖偏低：</strong>仅 " +
+        finN +
+        " 项财务子指标。建议至少补齐 ROE、杠杆、利润率与估值中的多项。";
+    } else {
+      cov.classList.remove("visible");
+      cov.innerHTML = "";
+    }
+
+    document.getElementById("results").classList.add("visible");
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function showError(msg) {
+    var el = document.getElementById("errBox");
+    el.textContent = msg;
+    el.classList.add("visible");
+  }
+  function clearError() {
+    document.getElementById("errBox").classList.remove("visible");
+    document.getElementById("errBox").textContent = "";
+  }
+
+  function persistLast() {
+    try {
+      localStorage.setItem(STORAGE_LAST, JSON.stringify(collectInputs()));
+    } catch (e) {}
+  }
+  function loadLast() {
+    try {
+      var raw = localStorage.getItem(STORAGE_LAST);
+      if (!raw) return;
+      var o = JSON.parse(raw);
+      if (o && typeof o === "object") applyInputs(o);
+    } catch (e) {}
+  }
+
+  function loadSavedList() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    } catch (e) {
+      return [];
+    }
+  }
+  function saveSavedList(arr) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  }
+
+  function renderSavedList() {
+    var ul = document.getElementById("savedList");
+    var arr = loadSavedList();
+    ul.innerHTML = "";
+    if (!arr.length) {
+      ul.innerHTML = '<li style="border:none;color:var(--muted);font-size:0.85rem;">暂无。</li>';
+      return;
+    }
+    arr.forEach(function (item) {
+      var li = document.createElement("li");
+      var title = (item.snapshot.company || "未命名") + (item.snapshot.ticker ? " (" + item.snapshot.ticker + ")" : "");
+      var left = document.createElement("button");
+      left.type = "button";
+      left.className = "link";
+      left.textContent = title + " · " + (item.savedAt || "") + " · 分 " + item.lastScore;
+      left.addEventListener("click", function () {
+        applyInputs(item.snapshot);
+        clearError();
+        var syn = synthesize(item.snapshot);
+        if (syn.error) {
+          showError(syn.error);
+          return;
+        }
+        renderResults(item.snapshot, syn);
+        showTab("export");
+        document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      var del = document.createElement("button");
+      del.type = "button";
+      del.className = "danger";
+      del.textContent = "删除";
+      del.addEventListener("click", function () {
+        var next = loadSavedList().filter(function (x) {
+          return x.id !== item.id;
+        });
+        saveSavedList(next);
+        renderSavedList();
+      });
+      li.appendChild(left);
+      li.appendChild(del);
+      ul.appendChild(li);
+    });
+  }
+
+  var TAB_DEF = [
+    { id: "intro", label: "导览" },
+    { id: "finance", label: "A 财务" },
+    { id: "moat", label: "B 护城河" },
+    { id: "mgmt", label: "C 管理层" },
+    { id: "mos", label: "D 安全边际" },
+    { id: "circle", label: "E 能力圈&风险" },
+    { id: "export", label: "导出 / 存档" }
+  ];
+
+  function buildTabs() {
+    var nav = document.getElementById("tabNav");
+    TAB_DEF.forEach(function (t, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = t.label;
+      b.dataset.tab = t.id;
+      if (i === 0) b.classList.add("active");
+      b.addEventListener("click", function () {
+        showTab(t.id);
+      });
+      nav.appendChild(b);
+    });
+  }
+
+  function showTab(id) {
+    document.querySelectorAll("nav.tabs button").forEach(function (b) {
+      b.classList.toggle("active", b.dataset.tab === id);
+    });
+    document.querySelectorAll(".panel").forEach(function (p) {
+      p.classList.toggle("active", p.getAttribute("data-panel") === id);
+    });
+  }
+
+  function methodText() {
+    var lines = [];
+    lines.push("模板支柱权重：财务 " + PILLAR_WEIGHTS.finance * 100 + "% · 护城河 " + PILLAR_WEIGHTS.moat * 100 + "% · 管理层 " + PILLAR_WEIGHTS.mgmt * 100 + "% · 安全边际 " + PILLAR_WEIGHTS.mos * 100 + "% · 能力圈 " + PILLAR_WEIGHTS.circle * 100 + "%");
+    lines.push("归一：只有「财务支柱」可不填（清空全部财务字段）；其余支柱默认中性刻度 3/5。");
+    lines.push("风险扣分：每项勾选扣若干分，合计封顶 " + RISK_CAP + "，从合成均值后扣除。");
+    lines.push("schema: " + SCHEMA);
+    return lines.join("\n");
+  }
+
+  document.getElementById("methodText").textContent = methodText();
+
+  buildMoatMgmtSliders();
+  buildTabs();
+  wireLikertUpdates();
+
+  document.getElementById("btnCalc").addEventListener("click", function () {
+    clearError();
+    persistLast();
+    var inp = collectInputs();
+    var syn = synthesize(inp);
+    if (syn.error) {
+      showError(syn.error);
+      return;
+    }
+    renderResults(inp, syn);
+    document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  document.getElementById("btnReset").addEventListener("click", function () {
+    clearError();
+    applyInputs({
+      company: "",
+      ticker: "",
+      asOf: "",
+      note: "",
+      roe: "",
+      dte: "",
+      npm: "",
+      opm: "",
+      pe: "",
+      pb: "",
+      revYoy: "",
+      earnYoy: "",
+      mosPrice: 3,
+      mosQuality: 3,
+      circleUnderstand: 3,
+      circleHold: 3,
+      circleReadAR: false,
+      circleVariant: false,
+      riskCycle: false,
+      riskCustomer: false,
+      riskLeverage: false,
+      riskAccounting: false,
+      riskRegulatory: false
+    });
+    MOAT_Q.forEach(function (q) {
+      document.getElementById(q.id).value = 3;
+      document.getElementById(q.id + "Val").textContent = "3";
+    });
+    MGMT_Q.forEach(function (q) {
+      document.getElementById(q.id).value = 3;
+      document.getElementById(q.id + "Val").textContent = "3";
+    });
+    ["mosPrice", "mosQuality", "circleUnderstand", "circleHold"].forEach(function (id) {
+      document.getElementById(id).value = 3;
+      document.getElementById(id + "Val").textContent = "3";
+    });
+    document.getElementById("results").classList.remove("visible");
+  });
+
+  document.getElementById("btnCopyMemo").addEventListener("click", function () {
+    var t = document.getElementById("memoBox").textContent;
+    if (!t) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).catch(function () {});
+    }
+  });
+
+  document.getElementById("btnPrint").addEventListener("click", function () {
+    window.print();
+  });
+
+  document.getElementById("btnExport").addEventListener("click", function () {
+    clearError();
+    var inp = collectInputs();
+    if (!inp.company) {
+      showError("请填写公司名称后导出。");
+      return;
+    }
+    var syn = synthesize(inp);
+    var payload = {
+      schema: SCHEMA,
+      exportedAt: new Date().toISOString(),
+      snapshot: inp,
+      synthesis: syn.error ? null : syn
+    };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "buffett-workbench-" + inp.company.replace(/\s+/g, "_").slice(0, 36) + "-" + Date.now() + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  document.getElementById("btnImportPick").addEventListener("click", function () {
+    document.getElementById("fileImport").click();
+  });
+
+  document.getElementById("fileImport").addEventListener("change", function (ev) {
+    var f = ev.target.files && ev.target.files[0];
+    ev.target.value = "";
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var data = JSON.parse(reader.result);
+        var snap = data.snapshot || data;
+        if (!snap || typeof snap !== "object") throw new Error("无效文件");
+        applyInputs(snap);
+        clearError();
+        var syn = synthesize(collectInputs());
+        if (!syn.error) renderResults(collectInputs(), syn);
+      } catch (e) {
+        showError("导入失败：" + (e.message || String(e)));
+      }
+    };
+    reader.readAsText(f, "utf-8");
+  });
+
+  document.getElementById("btnSaveLocal").addEventListener("click", function () {
+    clearError();
+    var inp = collectInputs();
+    if (!inp.company) {
+      showError("填写公司名称后再保存。");
+      return;
+    }
+    var syn = synthesize(inp);
+    if (syn.error) {
+      showError(syn.error);
+      return;
+    }
+    var arr = loadSavedList();
+    arr.unshift({
+      id: "id-" + Date.now(),
+      savedAt: new Date().toISOString().slice(0, 19).replace("T", " "),
+      snapshot: inp,
+      lastScore: syn.finalScore
+    });
+    saveSavedList(arr);
+    renderSavedList();
+  });
+
+  document.getElementById("btnExample").addEventListener("click", function () {
+    clearError();
+    applyInputs({
+      company: "演示科技（虚构）",
+      ticker: "DEMO",
+      asOf: "",
+      note: "教学用途随机数字",
+      roe: 21,
+      dte: 0.45,
+      npm: 17,
+      opm: 25,
+      pe: 19,
+      pb: 3.4,
+      revYoy: 12,
+      earnYoy: 10,
+      mosPrice: 4,
+      mosQuality: 4,
+      circleUnderstand: 4,
+      circleHold: 4,
+      circleReadAR: true,
+      circleVariant: false,
+      riskCycle: false,
+      riskCustomer: false,
+      riskLeverage: false,
+      riskAccounting: false,
+      riskRegulatory: false
+    });
+    MOAT_Q.forEach(function (q, i) {
+      document.getElementById(q.id).value = 4 - (i % 2);
+      document.getElementById(q.id + "Val").textContent = document.getElementById(q.id).value;
+    });
+    MGMT_Q.forEach(function (q) {
+      document.getElementById(q.id).value = 4;
+      document.getElementById(q.id + "Val").textContent = "4";
+    });
+    document.getElementById("mosPriceVal").textContent = document.getElementById("mosPrice").value;
+    document.getElementById("mosQualityVal").textContent = document.getElementById("mosQuality").value;
+    document.getElementById("circleUnderstandVal").textContent = document.getElementById("circleUnderstand").value;
+    document.getElementById("circleHoldVal").textContent = document.getElementById("circleHold").value;
+    var syn = synthesize(collectInputs());
+    renderResults(collectInputs(), syn);
+    showTab("export");
+  });
+
+  loadLast();
+  renderSavedList();
+})();
+  </script>
+</body>
+</html>
