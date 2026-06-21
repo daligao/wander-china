@@ -1069,7 +1069,7 @@ def page(major):
 
     pros_html    = '\n'.join(f'<li><span class="ic g">✓</span>{p}</li>' for p in d['pros'])
     cons_html    = '\n'.join(f'<li><span class="ic r">✗</span>{c}</li>' for c in d['cons'])
-    careers_html = '\n'.join(f'<li><span class="ic b">→</span>{c}</li>' for c in d['careers'])
+    careers_html = '\n'.join(f'<li><span class="ic b">→</span><a href="/tools/careers/{slug(c)}.html" style="color:#60a5fa">{c}</a></li>' for c in d['careers'])
 
     # Tags come from a broader category-level set (keep them varied by having AI Pick override)
     base_tags = {
