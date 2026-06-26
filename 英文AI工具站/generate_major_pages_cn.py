@@ -401,12 +401,27 @@ ul.pros-cons li{{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;
 
 <a class="cta" href="/tools/major-vote-cn.html">← 返回757专业总览，对比更多方向</a>
 
+<div style="background:linear-gradient(135deg,#1e3a5f,#1e40af);border-radius:12px;
+  padding:20px 24px;margin:24px 0 8px;text-align:center;">
+  <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;">📋 还没想好报什么专业？</div>
+  <div style="font-size:13px;color:#93c5fd;margin-bottom:14px;">
+    填写你的情况（分数、兴趣、城市偏好……），生成一段话直接问 AI 或升学规划老师
+  </div>
+  <a href="/tools/cn/baokao/gaokao-choice-questionnaire.html" target="_blank"
+     style="display:inline-block;background:#fff;color:#1e3a5f;font-weight:700;
+            font-size:14px;padding:10px 28px;border-radius:8px;text-decoration:none;
+            transition:opacity .15s;">
+    填写报考需求问卷 →
+  </a>
+</div>
+
 </div>
 <div class="foot">
   数据参考：教育部学科专业目录 · 高校就业质量报告 · 市场薪资调研<br>
   ⚠️ 本站由AI辅助生成，内容仅供参考，请以各高校官方信息为准<br>
   <a href="/tools/major-vote-cn.html">专业对比工具</a> &nbsp;|&nbsp;
-  <a href="/tools/majors-cn/">所有专业列表</a>
+  <a href="/tools/majors-cn/">所有专业列表</a> &nbsp;|&nbsp;
+  <a href="/tools/cn/baokao/gaokao-choice-questionnaire.html">报考需求问卷</a>
 </div>
 </body></html>'''
 
@@ -491,10 +506,24 @@ h1{{font-size:clamp(22px,5vw,32px);font-weight:800;margin-bottom:8px;}}
 
 {sections}
 
+<div style="background:linear-gradient(135deg,#1e3a5f,#1e40af);border-radius:12px;
+  padding:20px 24px;margin:24px 0 8px;text-align:center;">
+  <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;">📋 还没想好报什么专业？</div>
+  <div style="font-size:13px;color:#93c5fd;margin-bottom:14px;">
+    填写你的情况，生成一段话直接问 AI 或升学规划老师
+  </div>
+  <a href="/tools/cn/baokao/gaokao-choice-questionnaire.html" target="_blank"
+     style="display:inline-block;background:#fff;color:#1e3a5f;font-weight:700;
+            font-size:14px;padding:10px 28px;border-radius:8px;text-decoration:none;">
+    填写报考需求问卷 →
+  </a>
+</div>
+
 </div>
 <div class="foot">
   数据参考：教育部学科专业目录 · 高校就业质量报告<br>
-  ⚠️ 本站由AI辅助生成，内容仅供参考，请以各高校官方信息为准
+  ⚠️ 本站由AI辅助生成，内容仅供参考，请以各高校官方信息为准<br>
+  <a href="/tools/cn/baokao/gaokao-choice-questionnaire.html" style="color:#60a5fa;">报考需求问卷</a>
 </div>
 </body></html>'''
 

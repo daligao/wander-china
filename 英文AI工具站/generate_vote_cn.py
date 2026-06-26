@@ -22,7 +22,7 @@ for major in ALL:
 
 ALL_JSON = json.dumps(ALL_CN, ensure_ascii=False)
 AIPICK_JSON = json.dumps(AIPICK_LIST)
-SEED_JSON = json.dumps(SEED)
+SEED_JSON = json.dumps({})  # 中文版从零开始，不加载英文版的种子数据
 
 # 中文学科门类映射
 CN_CATS_JS = json.dumps({
@@ -207,17 +207,17 @@ h1{{font-size:clamp(18px,4.5vw,28px);font-weight:800;line-height:1.25;margin-bot
 .vbtn:hover:not(:disabled){{background:var(--ac);color:#fff;}}
 .vbtn.done{{border-color:var(--green);background:var(--green-bg);color:var(--green);cursor:default;}}
 .vbtn:disabled:not(.done){{opacity:.4;cursor:default;}}
-.id-bar{{margin:0 0 20px;padding:14px 16px;background:rgba(255,255,255,.03);
-  border:1px solid var(--line);border-radius:10px;}}
-.id-label{{font-size:11px;color:var(--muted);text-transform:uppercase;
-  letter-spacing:.08em;font-weight:600;margin-bottom:8px;}}
-.id-pills{{display:flex;flex-wrap:wrap;gap:6px;}}
-.id-pill{{background:rgba(255,255,255,.05);border:1px solid var(--line);
-  border-radius:20px;padding:5px 13px;font-size:12px;font-weight:600;
-  color:var(--muted);cursor:pointer;transition:all .15s;user-select:none;}}
-.id-pill:hover{{border-color:#475569;color:var(--ink);}}
-.id-pill.sel{{background:rgba(59,130,246,.15);border-color:var(--ac);color:var(--ac);}}
-.id-note{{font-size:11px;color:var(--muted);margin-top:8px;}}
+.id-bar{{margin:0 0 20px;padding:14px 16px;background:rgba(59,130,246,.08);
+  border:1px solid rgba(59,130,246,.3);border-radius:10px;}}
+.id-label{{font-size:12px;color:var(--ac);text-transform:uppercase;
+  letter-spacing:.08em;font-weight:700;margin-bottom:10px;}}
+.id-pills{{display:flex;flex-wrap:wrap;gap:8px;}}
+.id-pill{{background:#1e293b;border:1px solid var(--ac);
+  border-radius:20px;padding:7px 14px;font-size:13px;font-weight:600;
+  color:var(--ac);cursor:pointer;transition:all .15s;user-select:none;}}
+.id-pill:active{{background:rgba(59,130,246,.2);}}
+.id-pill.sel{{background:rgba(59,130,246,.25);border-color:var(--ac);color:#fff;font-weight:700;}}
+.id-note{{font-size:12px;color:#60a5fa;margin-top:10px;font-weight:500;}}
 .browse-bar{{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}}
 .browse-bar select,
 .browse-bar input{{
@@ -282,6 +282,28 @@ h1{{font-size:clamp(18px,4.5vw,28px);font-weight:800;line-height:1.25;margin-bot
 .en-link{{display:block;text-align:center;padding:10px;margin-bottom:18px;
   background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);
   border-radius:8px;font-size:12px;color:#64748b;}}
+
+/* ── Share QR Modal ── */
+.share-overlay{{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);
+  z-index:300;align-items:center;justify-content:center;}}
+.share-overlay.open{{display:flex;}}
+.share-panel{{background:#1e293b;border-radius:16px;padding:24px;
+  max-width:320px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);
+  animation:shareUp .25s ease;}}
+@keyframes shareUp{{from{{transform:scale(.9);opacity:0}}to{{transform:scale(1);opacity:1}}}}
+.share-panel h3{{font-size:16px;font-weight:700;margin-bottom:14px;color:#fff;}}
+.share-qr{{width:200px;height:200px;margin:0 auto 16px;background:#fff;
+  padding:8px;border-radius:8px;}}
+.share-qr img{{width:100%;height:100%;display:block;}}
+.share-url{{font-size:12px;color:#94a3b8;word-break:break-all;margin-bottom:14px;}}
+.share-copy{{width:100%;padding:10px;background:var(--ac);color:#fff;
+  border:none;border-radius:8px;font-weight:600;cursor:pointer;}}
+.share-copy:hover{{opacity:.88;}}
+.share-copy.ok{{background:var(--green);}}
+.share-close{{margin-top:12px;}}
+.share-close button{{width:100%;padding:8px;background:transparent;border:1px solid var(--line);
+  border-radius:8px;color:var(--muted);font-weight:600;cursor:pointer;}}
+.share-close button:hover{{border-color:var(--ac);color:var(--ac);}}
 </style>
 </head>
 <body>
@@ -371,12 +393,28 @@ h1{{font-size:clamp(18px,4.5vw,28px);font-weight:800;line-height:1.25;margin-bot
 
 </div>
 
+<div style="max-width:680px;margin:24px auto 0;padding:0 14px;">
+  <div style="background:linear-gradient(135deg,#1e3a5f,#1e40af);border-radius:12px;
+    padding:20px 24px;text-align:center;">
+    <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;">📋 还没想好报什么专业？</div>
+    <div style="font-size:13px;color:#93c5fd;margin-bottom:14px;">
+      填写你的情况（分数、兴趣、城市偏好……），生成一段话直接问 AI 或升学规划老师
+    </div>
+    <a href="/tools/cn/baokao/gaokao-choice-questionnaire.html" target="_blank"
+       style="display:inline-block;background:#fff;color:#1e3a5f;font-weight:700;
+              font-size:14px;padding:10px 28px;border-radius:8px;text-decoration:none;">
+      填写报考需求问卷 →
+    </a>
+  </div>
+</div>
+
 <div class="foot">
   数据来源：教育部普通高等学校本科专业目录（2024）·  AI分析仅供参考<br>
   ⚠️ 本工具由AI辅助生成，内容不代表官方立场，请以高校招生简章为准<br>
   <a href="/tools/major-vote.html">English Version</a> ·
   <a href="/tools/majors-cn/">757个专业详情</a> ·
-  <a href="/tools/careers-cn/">259个职业前景</a>
+  <a href="/tools/careers-cn/">259个职业前景</a> ·
+  <a href="/tools/cn/baokao/gaokao-choice-questionnaire.html">报考需求问卷</a>
 </div>
 
 <script>
@@ -397,10 +435,10 @@ let myVotes = new Set();
 let userIdentity = null;
 
 function initVotes() {{
-  Object.assign(votes, SEED);
+  // 中文版从零开始，不预加载种子数据
   try {{
     const lv = JSON.parse(localStorage.getItem(LS_V)||'{{}}');
-    for (const [k,v] of Object.entries(lv)) votes[k] = Math.max(votes[k]||0,v);
+    Object.assign(votes, lv);
     myVotes = new Set(JSON.parse(localStorage.getItem(LS_MY)||'[]'));
   }} catch(e) {{}}
 }}
@@ -476,8 +514,17 @@ function makeCard(m) {{
       </div>
       <div class="mc-vc" id="v-${{m.c}}">${{vc>0?vc:''}}</div>
     </div>
-    <button class="vbtn ${{voted?'done':''}}" ${{voted?'disabled':''}}
-      onclick="doVote('${{m.c}}')">${{voted?'✓ 已支持':'▲ 我支持这个专业'}}</button>
+    <div style="display:flex;gap:6px;margin-top:8px;">
+      <button class="vbtn ${{voted?'done':''}}" ${{voted?'disabled':''}}
+        style="flex:1;"
+        onclick="doVote('${{m.c}}')">${{voted?'✓ 已支持':'▲ 我支持这个专业'}}</button>
+      <button class="ap-btn" style="flex:1;padding:8px;background:transparent;
+        border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:600;
+        color:var(--muted);cursor:pointer;transition:all .15s;"
+        onmouseover="this.style.borderColor='var(--ac)';this.style.color='var(--ac)'"
+        onmouseout="this.style.borderColor='var(--line)';this.style.color='var(--muted)'"
+        onclick="shareQR('${{m.c}}','${{m.cn||m.n}}')">🔗 为其站台</button>
+    </div>
     <button class="ap-btn" style="width:100%;margin-top:8px;padding:8px;background:transparent;
       border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:600;
       color:var(--muted);cursor:pointer;transition:all .15s;"
@@ -530,6 +577,35 @@ function showAnalysis(code) {{
 function closeAnalysis() {{
   document.getElementById('ap-overlay').classList.remove('open');
   document.body.style.overflow = '';
+}}
+
+function shareQR(code, name) {{
+  const m = codeIdx[code];
+  if (!m) return;
+  const url = location.origin + '/tools/majors-cn/' + slugify(m.n) + '.html';
+  const qrapi = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url);
+  document.getElementById('share-qr-img').src = qrapi;
+  document.getElementById('share-url-text').textContent = url;
+  document.getElementById('share-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}}
+
+function closeShare() {{
+  document.getElementById('share-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}}
+
+function copyShareURL() {{
+  const url = document.getElementById('share-url-text').textContent;
+  navigator.clipboard.writeText(url).then(() => {{
+    const btn = document.getElementById('share-copy-btn');
+    btn.innerHTML = '✓ 已复制';
+    btn.classList.add('ok');
+    setTimeout(() => {{
+      btn.innerHTML = '📋 复制链接';
+      btn.classList.remove('ok');
+    }}, 2000);
+  }}).catch(() => {{}});
 }}
 
 const codeIdx = {{}};
@@ -646,6 +722,22 @@ fetch(WP).then(r=>r.ok?r.json():null).then(d=>{{
     </div>
   </div>
 </div>
+
+<!-- 分享二维码弹窗 -->
+<div class="share-overlay" id="share-overlay" onclick="if(event.target===this)closeShare()">
+  <div class="share-panel">
+    <h3>为这个专业站台</h3>
+    <div class="share-qr">
+      <img id="share-qr-img" src="" alt="QR Code">
+    </div>
+    <div class="share-url" id="share-url-text"></div>
+    <button class="share-copy" id="share-copy-btn" onclick="copyShareURL()">📋 复制链接</button>
+    <div class="share-close">
+      <button onclick="closeShare()">关闭</button>
+    </div>
+  </div>
+</div>
+
 </body></html>'''
 
 out_path = "ordinarymantrying.com/tools/major-vote-cn.html"
