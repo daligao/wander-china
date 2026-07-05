@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Growth Calendar</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            height: auto;
+            min-height: auto;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: transparent;
+            color: #24292e;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .embed-title {
+            margin: 0 0 20px 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1b1f24;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .month-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .month-nav button {
+            padding: 6px 12px;
+            cursor: pointer;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            background-color: #ffffff;
+            font-weight: 600;
+            color: #24292e;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .month-nav button:hover {
+            background-color: #f3f4f6;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .day-name {
+            text-align: center;
+            font-weight: bold;
+            color: #586069;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+            min-height: 500px;
+        }
+
+        .day-cell {
+            background: white;
+            border: 1px solid #d0d7de;
+            border-radius: 10px;
+            padding: 12px;
+            cursor: default;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: block;
+            overflow-y: auto;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .day-cell:hover {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transform: none;
+            border-color: #d0d7de;
+        }
+
+        .date-num {
+            float: left;
+            font-size: 1.3em;
+            font-weight: 800;
+            margin-right: 8px;
+            color: #57606a;
+            line-height: 1;
+        }
+
+        .content {
+            font-size: 0.95em;
+            line-height: 1.4;
+            color: #24292e;
+            white-space: pre-wrap;
+            word-break: break-word;
+            display: inline;
+        }
+
+        .day-cell::-webkit-scrollbar { width: 4px; }
+        .day-cell::-webkit-scrollbar-thumb { background: #d0d7de; border-radius: 4px; }
+
+        .completed { background-color: #e6ffed; border-color: #34d058; border-width: 2px; }
+        .completed .date-num { color: #1a7f37; }
+        .completed .content { color: #144620; font-weight: 500; }
+
+        @media (max-width: 768px) {
+            .embed-title { flex-direction: column; align-items: flex-start; }
+            .month-nav { width: 100%; }
+            .grid { grid-auto-rows: minmax(90px, auto); gap: 8px; min-height: auto; }
+            .day-cell { padding: 8px; }
+            .date-num { font-size: 1.1em; }
+            .content { font-size: 0.9em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="embed-title">
+        <span id="month-display">2026 July</span>
+        <div class="month-nav">
+            <button onclick="changeMonth(-1)">◀ Prev</button>
+            <button onclick="changeMonth(1)">Next ▶</button>
+        </div>
+    </div>
+
+    <div class="calendar-header">
+        <div class="day-name">Sun</div><div class="day-name">Mon</div><div class="day-name">Tue</div>
+        <div class="day-name">Wed</div><div class="day-name">Thu</div><div class="day-name">Fri</div><div class="day-name">Sat</div>
+    </div>
+
+    <div class="grid" id="calendar"></div>
+</div>
+
+<script>
+    const API_URL = './daydayup-api.php';
+    let currentDate = new Date();
+    let trackerData = {};
+
+    function loadData() {
+        const formData = new FormData();
+        formData.append('action', 'load');
+
+        fetch(API_URL, { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    trackerData = data.data || {};
+                }
+                renderCalendar();
+            })
+            .catch(err => {
+                console.error('Fetch error:', err);
+                trackerData = {};
+                renderCalendar();
+            });
+    }
+
+    function renderCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        document.getElementById('month-display').innerText = `${year} ${monthNames[month]}`;
+
+        const firstDayIndex = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        const grid = document.getElementById('calendar');
+        grid.innerHTML = '';
+
+        for (let i = 0; i < firstDayIndex; i++) {
+            grid.innerHTML += `<div class="day-cell" style="background: transparent; border: none; cursor: default;"></div>`;
+        }
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            const content = trackerData[dateStr] || '';
+            const isCompleted = content.trim().length > 0 ? 'completed' : '';
+
+            grid.innerHTML += `
+                <div class="day-cell ${isCompleted}">
+                    <span class="date-num">${i}</span><span class="content">${content}</span>
+                </div>
+            `;
+        }
+    }
+
+    function changeMonth(delta) {
+        currentDate.setMonth(currentDate.getMonth() + delta);
+        renderCalendar();
+    }
+
+    loadData();
+</script>
+
+</body>
+</html>
