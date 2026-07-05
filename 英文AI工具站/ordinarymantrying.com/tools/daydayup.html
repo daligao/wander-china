@@ -166,7 +166,10 @@
             <button onclick="changeMonth(1)">Next Month ▶</button>
         </div>
         <div class="controls">
+            <button class="btn-backup" onclick="exportData()">💾 Export</button>
+            <button class="btn-backup" onclick="document.getElementById('importFile').click()">📂 Import</button>
             <button class="btn-backup" id="unlockBtn" onclick="showUnlockDialog()" style="display: none;">🔓 Unlock Edit</button>
+            <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
         </div>
     </div>
     <div class="edit-status" id="editStatus"></div>
@@ -394,6 +397,52 @@
                 });
         }
 
+        function exportData() {
+            const dataStr = JSON.stringify(trackerData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `website-growth_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+
+                    const formData = new FormData();
+                    formData.append('action', 'import');
+                    formData.append('data', JSON.stringify(importedData));
+
+                    fetch(API_URL, { method: 'POST', body: formData })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                trackerData = importedData;
+                                renderCalendar();
+                                alert("Import successful!");
+                            } else {
+                                alert("Import failed: " + data.message);
+                            }
+                        })
+                        .catch(err => alert('Network error: ' + err.message));
+                } catch (err) {
+                    alert("JSON format error!");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
 
         // Initialize on page load
         checkEditMode();
