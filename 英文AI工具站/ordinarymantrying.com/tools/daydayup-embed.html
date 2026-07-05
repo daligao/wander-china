@@ -85,7 +85,7 @@
             border: 1px solid #d0d7de;
             border-radius: 10px;
             padding: 12px;
-            cursor: pointer;
+            cursor: default;
             transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
             display: block;
             overflow-y: auto;
@@ -93,13 +93,10 @@
         }
 
         .day-cell:hover {
-            box-shadow: 0 8px 24px rgba(140,149,159,0.2);
-            transform: translateY(-2px);
-            border-color: #0969da;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transform: none;
+            border-color: #d0d7de;
         }
-
-        .day-cell.read-only { cursor: default; }
-        .day-cell.read-only:hover { transform: none; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
 
         .date-num {
             float: left;
@@ -125,18 +122,6 @@
         .completed { background-color: #e6ffed; border-color: #34d058; border-width: 2px; }
         .completed .date-num { color: #1a7f37; }
         .completed .content { color: #144620; font-weight: 500; }
-
-        /* Modal styles */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(36,41,46,0.6); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px); }
-        .modal-content { background: white; padding: 25px; border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-        .modal-content h3 { margin-top: 0; color: #24292e; font-size: 1.3rem; }
-        textarea { width: 100%; height: 150px; margin: 15px 0; padding: 12px; border: 1px solid #d0d7de; border-radius: 8px; resize: vertical; font-family: inherit; font-size: 1em; line-height: 1.5; box-sizing: border-box; background-color: #f6f8fa; transition: all 0.2s; }
-        textarea:focus { outline: none; background-color: #ffffff; border-color: #0969da; box-shadow: 0 0 0 3px rgba(9,105,218,0.3); }
-        input[type="password"] { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #d0d7de; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
-        input[type="password"]:focus { outline: none; border-color: #0969da; box-shadow: 0 0 0 3px rgba(9,105,218,0.3); }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 15px; }
-        button.btn-primary { background-color: #1f883d; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; }
-        button.btn-primary:hover { background-color: #1a7f37; }
 
         @media (max-width: 768px) {
             .embed-title { flex-direction: column; align-items: flex-start; }
@@ -167,54 +152,10 @@
     <div class="grid" id="calendar"></div>
 </div>
 
-<!-- Edit Modal -->
-<div class="modal" id="editModal">
-    <div class="modal-content">
-        <h3 id="modal-date">Edit Entry</h3>
-        <textarea id="modal-input" placeholder="What did we build today?"></textarea>
-        <div class="modal-actions">
-            <button onclick="closeModal()">Cancel</button>
-            <button class="btn-primary" onclick="saveData()">Save</button>
-        </div>
-    </div>
-</div>
-
-<!-- Unlock Modal -->
-<div class="modal" id="unlockModal">
-    <div class="modal-content">
-        <h3>🔐 Unlock Edit Mode</h3>
-        <p style="color: #586069; margin: 10px 0;">Enter edit key:</p>
-        <input type="password" id="unlockInput" placeholder="Enter edit key" onkeypress="if(event.key==='Enter') unlockEditMode()">
-        <div class="modal-actions">
-            <button onclick="closeUnlockDialog()">Cancel</button>
-            <button class="btn-primary" onclick="unlockEditMode()">Unlock</button>
-        </div>
-    </div>
-</div>
-
 <script>
     const API_URL = './daydayup-api.php';
     let currentDate = new Date();
     let trackerData = {};
-    let editingDateStr = '';
-    let isEditMode = false;
-
-    function checkEditMode() {
-        const formData = new FormData();
-        formData.append('action', 'check-mode');
-
-        fetch(API_URL, { method: 'POST', body: formData })
-            .then(r => r.json())
-            .then(data => {
-                isEditMode = data.edit_mode === true;
-                loadData();
-            })
-            .catch(err => {
-                console.error('Check mode error:', err);
-                isEditMode = false;
-                loadData();
-            });
-    }
 
     function loadData() {
         const formData = new FormData();
@@ -255,19 +196,13 @@
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
             const content = trackerData[dateStr] || '';
             const isCompleted = content.trim().length > 0 ? 'completed' : '';
-            const readOnlyClass = isEditMode ? '' : 'read-only';
 
             grid.innerHTML += `
-                <div class="day-cell ${isCompleted} ${readOnlyClass}" onclick="handleDayClick('${dateStr}')">
+                <div class="day-cell ${isCompleted}">
                     <span class="date-num">${i}</span><span class="content">${content}</span>
                 </div>
             `;
         }
-    }
-
-    function handleDayClick(dateStr) {
-        if (!isEditMode) return;
-        openModal(dateStr);
     }
 
     function changeMonth(delta) {
@@ -275,92 +210,7 @@
         renderCalendar();
     }
 
-    function openModal(dateStr) {
-        if (!isEditMode) return;
-        editingDateStr = dateStr;
-        document.getElementById('modal-date').innerText = `${dateStr}`;
-        document.getElementById('modal-input').value = trackerData[dateStr] || '';
-        document.getElementById('editModal').style.display = 'flex';
-        document.getElementById('modal-input').focus();
-    }
-
-    function closeModal() {
-        document.getElementById('editModal').style.display = 'none';
-    }
-
-    function saveData() {
-        const newContent = document.getElementById('modal-input').value.trim();
-
-        const formData = new FormData();
-        formData.append('action', 'save');
-        formData.append('date', editingDateStr);
-        formData.append('content', newContent);
-
-        fetch(API_URL, { method: 'POST', body: formData })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    if (newContent) {
-                        trackerData[editingDateStr] = newContent;
-                    } else {
-                        delete trackerData[editingDateStr];
-                    }
-                    closeModal();
-                    renderCalendar();
-                } else {
-                    alert('Save failed: ' + data.message);
-                }
-            })
-            .catch(err => alert('Network error: ' + err.message));
-    }
-
-    function showUnlockDialog() {
-        document.getElementById('unlockModal').style.display = 'flex';
-        document.getElementById('unlockInput').focus();
-    }
-
-    function closeUnlockDialog() {
-        document.getElementById('unlockModal').style.display = 'none';
-        document.getElementById('unlockInput').value = '';
-    }
-
-    function unlockEditMode() {
-        const key = document.getElementById('unlockInput').value.trim();
-        if (!key) {
-            alert('Please enter the edit key');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('action', 'unlock');
-        formData.append('key', key);
-
-        fetch(API_URL, { method: 'POST', body: formData })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    isEditMode = true;
-                    renderCalendar();
-                    closeUnlockDialog();
-                } else {
-                    alert('Invalid edit key');
-                    document.getElementById('unlockInput').value = '';
-                    document.getElementById('unlockInput').focus();
-                }
-            })
-            .catch(err => alert('Network error: ' + err.message));
-    }
-
-    checkEditMode();
-
-    window.onclick = function(event) {
-        if (event.target == document.getElementById('editModal')) {
-            closeModal();
-        }
-        if (event.target == document.getElementById('unlockModal')) {
-            closeUnlockDialog();
-        }
-    }
+    loadData();
 </script>
 
 </body>
