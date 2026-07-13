@@ -47,4 +47,4 @@ Each city needs ~10 attraction entries and a travel time matrix. If you know a C
 
 ## License
 
-MIT — use it, fork it, build on it.
+AGPL-3.0 — free to use and fork, but derivative works must also be open source.
