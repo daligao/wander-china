@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>China Trip Planner: AI Itinerary Builder for 31 Cities (No Chinese Needed)</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<meta name="description" content="Build a China travel itinerary in 30 seconds. Verified opening hours, metro routes & budget estimates for 31 cities — Shanghai, Beijing, Chengdu and more. No Chinese needed.">
+<meta name="keywords" content="China trip planner, China travel itinerary, Beijing travel guide, Shanghai travel guide, Chengdu itinerary, Xi'an travel, China vacation planner, China tourist attractions, China travel 2026, plan China trip">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/wander-china/planner.html">
+<link rel="stylesheet" href="planner.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Wander China Trip Planner","applicationCategory":"TravelApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free AI-powered China trip itinerary builder for 31 cities. Drag-and-drop attractions with verified opening hours, metro stops, and budget estimates. No Chinese needed.","url":"https://ordinarymantrying.com/tools/wander-china/planner.html","featureList":["Drag-and-drop itinerary builder","AI auto-plan algorithm","31 Chinese cities","Real opening hours and ticket prices","Metro route guidance","Budget calculator"]}</script>
+<meta property="og:image" content="https://ordinarymantrying.com/wp-content/uploads/2026/07/wander-china-planner-interface.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Wander China trip planner — drag-and-drop itinerary builder for 31 Chinese cities">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ordinarymantrying.com/wp-content/uploads/2026/07/wander-china-planner-interface.jpg">
+</head>
+<body>
+
+<div id="pageLoader">
+  <div class="pl-box">
+    <div class="pl-spin"></div>
+    <div class="pl-text">Loading Wander China…</div>
+  </div>
+</div>
+
+<header>
+  <a href="index.html" class="brand" style="text-decoration:none;color:inherit"><span class="mark">游</span><h1>Trip Planner</h1></a>
+  <span class="tag" id="cityTag">Changsha</span>
+  <div class="ctrls">
+    <label>City
+      <select id="citySel"></select>
+    </label>
+    <label>Start <input type="date" id="startDate"></label>
+    <label>Transit
+      <select id="prefMode">
+        <option value="min">Fastest</option>
+        <option value="metro">Metro</option>
+        <option value="taxi">Taxi</option>
+      </select>
+    </label>
+    <button class="btn btn-primary" id="genBtn">📋 Trip sheet</button>
+  </div>
+</header>
+
+<div class="here-bar">
+  <span>🏙️ Already in <strong id="hereBarCity">Changsha</strong>?</span>
+  <button class="here-bar-btn" onclick="toggleHere()">Get quick help for right now →</button>
+</div>
+<div class="freemium-bar">✨ First 10 AI plans free · Share once → unlock print + 5 bonus plans · Cost breakdown $3</div>
+<div class="quiz-banner" id="quizBanner">
+  <span id="quizBannerText"></span>
+  <button class="qb-close" onclick="document.getElementById('quizBanner').classList.remove('show')">✕ dismiss</button>
+</div>
+
+<div class="wrap">
+  <!-- LEFT: attraction sticky-note wall -->
+  <aside class="panel">
+    <div class="panel-hd">
+      <h2>📍 Attractions</h2>
+      <a id="cityGuideLink" href="#" target="_blank" style="display:none;margin-left:auto;font-size:12px;color:var(--brand);font-weight:700;text-decoration:none;white-space:nowrap;padding:3px 8px;border:1px solid var(--brand);border-radius:6px">📖 City Guide</a>
+      <span class="hint" id="dragHint">drag onto the timeline →</span>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="spot-wall" id="spotWall"></div>
+  </aside>
+
+  <!-- RIGHT: timeline -->
+  <main class="board">
+    <div class="day-tabs" id="dayTabs"></div>
+    <div class="day-panel">
+      <div class="day-set">
+        <label for="dayStart">🕘 Start of day</label>
+        <input type="time" id="dayStart" value="09:00">
+        <button class="day-del" id="clearDay">Clear day</button>
+        <span class="stat" id="dayStat"></span>
+      </div>
+      <div class="dropzone" id="dropzone"></div>
+    </div>
+
+    <div class="ai-section">
+      <div class="ai-left">
+        <div class="day-picker">
+          <span class="day-picker-label">How many days?</span>
+          <div class="day-picker-btns" id="dayPickerBtns">
+            <button class="dpb" data-d="1">1</button>
+            <button class="dpb" data-d="2">2</button>
+            <button class="dpb active" data-d="3">3</button>
+            <button class="dpb" data-d="4">4</button>
+            <button class="dpb" data-d="5">5</button>
+            <button class="dpb" data-d="7">7</button>
+          </div>
+        </div>
+        <div class="ai-btn-row">
+          <button class="btn btn-ai ai-big" id="aiBtn">⚡ Quick Plan</button>
+          <button class="btn btn-ai ai-big ai-ds" id="aiDeepBtn">🤖 DeepSeek Plan</button>
+        </div>
+      </div>
+      <div class="ai-section-text">
+        <p><b>Plan your whole trip automatically</b>⚡ Quick Plan — instant, local algorithm. 🤖 DeepSeek — smarter, takes ~15s. Both respect your chosen days.</p>
+      </div>
+    </div>
+
+    <div class="budget">
+      <div>
+        <div class="big" id="budgetBig">$0</div>
+        <div class="small" id="budgetSmall">on the ground only — no flights or hotels</div>
+      </div>
+      <div class="ai-hint" id="aiHint">💸 What's my <u>REAL total</u>? (flights + hotels + all) →</div>
+    </div>
+    <div class="alerts">
+      <h3>🚦 Trip health check</h3>
+      <div id="alertList"></div>
+    </div>
+  </main>
+</div>
+
+<!-- Already Here Quick Help -->
+<section class="here-section" id="hereSection">
+  <div class="here-hd">
+    <h2>🏙️ Quick help for right now</h2>
+    <p>You're already in <strong id="hereSectionCity">Changsha</strong> — here's what you actually need</p>
+  </div>
+
+  <!-- Changsha-specific cards -->
+  <div id="hereChangsha">
+    <div class="here-grid">
+
+      <div class="here-card">
+        <div class="here-card-top">
+          <div class="here-ico">🌧️</div>
+          <div><div class="here-title">It's raining — where to go?</div><div class="here-sub">4 fully indoor spots</div></div>
+        </div>
+        <div class="here-list">
+          <div class="here-item">Hunan Provincial Museum · 9 floors, all indoors <a class="here-map" href="https://maps.google.com/?q=Hunan+Provincial+Museum+Changsha" target="_blank" rel="noopener">📍 Map</a></div>
+          <div class="here-item">Super Wenheyou · 7F immersive 1980s mall, open until 3am <a class="here-map" href="https://maps.google.com/?q=Super+Wenheyou+Changsha" target="_blank" rel="noopener">📍 Map</a></div>
+          <div class="here-item">IFS Mall + KAWS · Rooftop terrace is covered <a class="here-map" href="https://maps.google.com/?q=IFS+Mall+Changsha" target="_blank" rel="noopener">📍 Map</a></div>
+          <div class="here-item">Xie Zilong Photography Museum · Stunning interior <a class="here-map" href="https://maps.google.com/?q=Xie+Zilong+Photography+Museum+Changsha" target="_blank" rel="noopener">📍 Map</a></div>
+        </div>
+      </div>
+
+      <div class="here-card">
+        <div class="here-card-top">
+          <div class="here-ico">⏱️</div>
+          <div><div class="here-title">Only 2–3 hours left</div><div class="here-sub">Best compact route — all walkable, no metro</div></div>
+        </div>
+        <div class="here-list">
+          <div class="here-item">① IFS KAWS rooftop — free, 20 min <a class="here-map" href="https://maps.google.com/?q=IFS+Mall+Changsha" target="_blank" rel="noopener">📍 Map</a></div>
+          <div class="here-item">② 3 min walk → Taiping Old Street — photos + food stalls</div>
+          <div class="here-item">③ 5 min walk → Wuyi Square — stinky tofu + milk tea</div>
+          <div class="here-item" style="color:#065f46;font-weight:700;background:#f0fdf4;border-color:#bbf7d0">Total cost ¥30–50 · All on foot · No taxi needed</div>
+        </div>
+      </div>
+
+      <div class="here-card">
+        <div class="here-card-top">
+          <div class="here-ico">🍜</div>
+          <div><div class="here-title">Where to eat right now</div><div class="here-sub">By time of day — real places, no vague tips</div></div>
+        </div>
+        <div class="here-list">
+          <div class="here-item">🌅 Breakfast: Any 米粉 (rice noodle) shop on a local street — ¥12–18</div>
+          <div class="here-item">☀️ Lunch: 大碗先生 canteen — ¥30pp, point at dishes, no English needed <a class="here-map" href="https://maps.google.com/?q=大碗先生+长沙" target="_blank" rel="noopener">📍 Map</a></div>
+          <div class="here-item">🌙 Dinner: Wuyi Square — stinky tofu + Chayan Yuese milk tea + crayfish circuit</div>
+          <div class="here-item">🌶️ Spice: say <strong>少辣 shào là</strong> for less chilli when ordering</div>
+        </div>
+      </div>
+
+      <div class="here-card">
+        <div class="here-card-top">
+          <div class="here-ico">🆘</div>
+          <div><div class="here-title">I need help right now</div><div class="here-sub">Emergency numbers · Survival phrases · Scam response</div></div>
+        </div>
+        <div class="here-list">
+          <div class="here-phrase"><span>Police emergency</span><span class="here-phrase-zh">110</span></div>
+          <div class="here-phrase"><span>Medical emergency</span><span class="here-phrase-zh">120</span></div>
+          <div class="here-phrase"><span>I need help &nbsp;→&nbsp; 我需要帮助</span><span class="here-phrase-zh">wǒ xūyào bāngzhù</span></div>
+          <div class="here-phrase"><span>Take me to hospital &nbsp;→&nbsp; 带我去医院</span><span class="here-phrase-zh">dài wǒ qù yīyuàn</span></div>
+          <div class="here-sos">🚫 Being scammed? Don't pay. Say <strong>我要报警 (wǒ yào bàojǐng)</strong> — "I will call the police." Most scammers stop immediately.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Generic fallback for other cities -->
+  <div id="hereOther" style="display:none">
+    <div class="here-other">
+      <p>For location-specific help in this city, visit the full city guide — it has indoor spot lists, food recommendations, scam warnings, and emergency contacts.</p>
+      <p style="margin-top:12px"><a id="hereGuideLink" href="cities/changsha.html">View full city guide →</a></p>
+    </div>
+  </div>
+
+  <button class="here-close-btn" onclick="toggleHere()">↑ Close quick help</button>
+</section>
+
+<!-- City Explorer -->
+<section class="city-explorer">
+  <div class="ce-hd">
+    <h2>🗺 Explore All 31 Cities</h2>
+    <p>Click any city to switch — your current day plan resets</p>
+  </div>
+  <div class="ce-grid" id="ceGrid"></div>
+</section>
+
+<!-- Trip sheet modal -->
+<div class="sheet-mask" id="sheetMask">
+  <div class="sheet">
+    <div class="sheet-hd">
+      <h2 id="sheetTitle">My Changsha trip</h2>
+      <p id="sheetSub"></p>
+    </div>
+    <div class="sheet-body" id="sheetBody"></div>
+    <div class="print-footer">
+      <div class="pf-line">✨ Made with <b>Wander China</b> — free AI trip planning for 31 Chinese cities</div>
+      <div class="pf-url">🔗 ordinarymantrying.com/tools/wander-china/planner.html</div>
+      <div class="pf-tagline">Scan or search to share with your travel buddies 🗺️</div>
+    </div>
+    <div class="sheet-foot">
+      <span class="cost" id="sheetCost"></span>
+      <button class="btn" style="background:var(--ai);color:#fff" id="shareTripBtn">📤 Share</button>
+      <button class="btn" style="background:#e5e7eb;color:#374151" id="copyBtn">📄 Copy text</button>
+      <button class="btn" style="background:var(--brand);color:#fff" onclick="doPrint()">🖨️ Print / PDF</button>
+      <button class="btn" style="background:#f3f4f6" onclick="document.getElementById('sheetMask').classList.remove('show')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Unlock modal (Ko-fi) -->
+<div class="sheet-mask" id="unlockMask">
+  <div class="sheet" style="max-width:460px">
+    <div class="sheet-hd" style="background:linear-gradient(120deg,#1a1a2e,#312e81);padding:22px 24px 18px">
+      <h2 id="ulTitle">Unlock feature</h2>
+      <p id="ulSub" style="color:rgba(255,255,255,.75);margin-top:4px;font-size:13px"></p>
+    </div>
+    <div class="sheet-body" style="padding:20px 24px">
+      <div class="ul-why">
+        <b>💡 Why we charge</b>
+        <p>We hand-curated 372+ attractions across 31 cities — metro stops, real opening hours, English-friendliness ratings, and local tips for foreign visitors. We run AI APIs for every itinerary build. Both cost money to build and maintain. Your $2–3 keeps browsing free and the data up to date.</p>
+      </div>
+      <a id="ulKofiBtn" href="#" target="_blank" class="ul-kofi-btn">
+        ☕ Buy on Ko-fi
+      </a>
+      <p class="ul-note">Ko-fi emails your code instantly after purchase — works on up to 5 devices, no account needed.</p>
+      <div class="ul-divider"></div>
+      <p class="ul-already">Already have a code?</p>
+      <div class="ul-row">
+        <label for="ulCodeInput" class="sr-only">Unlock code</label>
+        <input id="ulCodeInput" type="text" placeholder="Paste your unlock code here" autocomplete="off" spellcheck="false">
+        <button id="ulVerifyBtn">Verify →</button>
+      </div>
+      <div id="ulError" class="ul-error"></div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn" style="background:#f3f4f6" onclick="document.getElementById('unlockMask').classList.remove('show')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Data-driven detail modal -->
+<div class="detail-mask" id="detailMask">
+  <div class="detail-card">
+    <button class="phone-close" id="detailClose">✕</button>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<!-- Real total cost estimate (free number, paid deliverable) -->
+<div class="sheet-mask" id="costMask">
+  <div class="sheet" style="max-width:540px">
+    <div class="sheet-hd" style="background:linear-gradient(120deg,#6d28d9,#7c3aed)">
+      <h2>💸 Your real total trip cost</h2>
+      <p id="costSub">Free estimate · no sign-up · flights + hotels + on-the-ground</p>
+    </div>
+    <div class="sheet-body" id="costBody"></div>
+    <div class="sheet-foot">
+      <span class="cost" style="font-size:13px;color:var(--sub);font-weight:600" id="costFoot"></span>
+      <button class="btn" style="background:#f3f4f6" onclick="document.getElementById('costMask').classList.remove('show')">Close</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+<script>
+const RMB=7.2;
+const LIVE_PHOTOS=false;
+const PEXELS_KEY='';
+const _photoCache={};
+async function pexelsPhoto(q){
+  if(q in _photoCache)return _photoCache[q];
+  _photoCache[q]=null;
+  try{
+    let url;
+    if(PEXELS_KEY){
+      const r=await fetch('https://api.pexels.com/v1/search?per_page=1&orientation=landscape&query='+encodeURIComponent(q),{headers:{Authorization:PEXELS_KEY}});
+      if(r.ok){const j=await r.json();url=j.photos&&j.photos[0]&&j.photos[0].src&&j.photos[0].src.landscape;}
+    }else{
+      const r=await fetch('api-proxy.php?pexels='+encodeURIComponent(q));
+      if(r.ok){const j=await r.json();url=j.url||(j.photos&&j.photos[0]&&j.photos[0].src&&j.photos[0].src.landscape);}
+    }
+    _photoCache[q]=url||null;
+  }catch(e){_photoCache[q]=null;}
+  return _photoCache[q];
+}
+function usd(p){return Math.round(p/RMB);}
+function priceLabel(p){return p?'¥'+p+' · ~$'+usd(p):'Free';}
+function lite(rows){return rows.map((r,i)=>({id:'s'+i,nm:r[0],ic:r[3],cat:r[4],dmin:r[2],dmax:r[2],pref:'both',cl:null,
+  hr:'—',price:r[1],pn:priceLabel(r[1]),metro:'—',tip:'Popular '+r[4]+' spot. Full details coming soon.'}));}
+</script>
+<script src="cities-data.js"></script>
+<script src="planner-engine.js"></script>
+
+
+<!-- Book affiliate -->
+<div style="background:#fff8f0;border-top:1px solid #ffe0b2;border-bottom:1px solid #ffe0b2;padding:20px 20px;margin-top:32px;">
+  <div style="max-width:600px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <div style="font-size:36px;flex-shrink:0;">📖</div>
+    <div style="flex:1;min-width:200px;">
+      <div style="font-size:12px;font-weight:700;color:#c2440c;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Planning a real trip?</div>
+      <div style="font-size:15px;font-weight:800;color:#1a1a2e;margin-bottom:6px;">Lonely Planet China — 193 reviews, 4.5★</div>
+      <a href="https://amzn.to/4peKQHz" target="_blank" rel="noopener sponsored"
+         style="display:inline-flex;align-items:center;gap:5px;background:#ff9900;color:#111;font-weight:700;font-size:13px;padding:8px 16px;border-radius:7px;text-decoration:none;">
+        🛒 View on Amazon →
+      </a>
+      <span style="display:block;font-size:11px;color:#6b6b6b;margin-top:5px;">Affiliate link — helps keep this tool free.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Support footer -->
+<div style="text-align:center;padding:28px 20px 32px;border-top:1px solid #e9e6df;margin-top:32px;background:#fbf7f0">
+  <p style="font-size:13px;color:#5b6472;margin-bottom:12px">
+    Wander China is free &amp; built by one person.<br>
+    If it helped you plan, you can support more cities &amp; better data:
+  </p>
+  <a href="https://ko-fi.com/vantuanle43758" target="_blank" rel="noopener"
+     style="display:inline-flex;align-items:center;gap:8px;background:#c0392b;color:#fff;font-weight:700;font-size:14px;padding:10px 22px;border-radius:999px;text-decoration:none;transition:.18s"
+     onmouseover="this.style.background='#a93226'" onmouseout="this.style.background='#c0392b'">
+    ☕ Support on Ko-fi
+  </a>
+  <p style="font-size:11.5px;color:#5b6472;margin-top:10px">No pressure — the tool stays free either way.</p>
+</div>
+</body>
+</html>
