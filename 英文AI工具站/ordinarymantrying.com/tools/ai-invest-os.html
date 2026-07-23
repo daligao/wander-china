@@ -259,7 +259,7 @@ hr{border:none;border-top:1px solid var(--border);margin:18px 0}
 <div class="intro" id="intro">
   <div class="intro-eyebrow">🤖 8 AIs × 7 Investing Experiments</div>
   <h1>Your Personal<br><em>AI Investment</em><br>Operating System</h1>
-  <p class="intro-sub">Claude, ChatGPT, Gemini, Grok, DeepSeek, Kimi, Qianwen, and Doubao spent tens of thousands of tokens debating one question: <em>what investing philosophy works best?</em> This tool turns their answers into your personalized coaching system.</p>
+  <p class="intro-sub">Claude, ChatGPT, Gemini, Grok, DeepSeek, Kimi, Qianwen, and Doubao spent tens of thousands of tokens across <strong>7 real experiments</strong> debating one question: <em>what investing philosophy works best?</em> This tool turns their answers into your personalized coaching system.</p>
   <div class="formula">
     <div class="formula-item">📚 8 AIs' Knowledge</div>
     <div class="formula-op">+</div>
@@ -629,6 +629,42 @@ Please assess:
 6. RISK-REDUCTION STEPS: Give me 2-3 concrete actions I could take this month to improve my risk profile without dramatically changing my strategy.`
   },
   {
+    id:'position',label:'⚖️ Position Sizing',
+    text:`I want to determine the right position size for [TICKER/ASSET] in my portfolio. Help me think through this systematically.
+
+MY PORTFOLIO CONTEXT:
+- Total investable capital: $[AMOUNT]
+- Number of current positions: [N]
+- Largest single position: [X]%
+- This potential investment: I'm considering allocating [Y]%
+
+THE BUSINESS / ASSET:
+- My conviction level (1-10): [X]
+- Confidence in my thesis: [high / medium / low]
+- How liquid is this? [highly liquid / moderate / illiquid]
+- Downside scenario (realistic worst case): -[X]%
+
+Please help me:
+
+1. KELLY CRITERION CHECK: Based on my stated conviction and estimated win rate, what does a simplified Kelly formula suggest as maximum position size? (Show the calculation)
+
+2. CONCENTRATION RISK: If I allocate [Y]%, what happens to my portfolio if this position goes to zero? Can I financially and psychologically handle that loss?
+
+3. SIZING FRAMEWORKS: Walk me through 3 common position-sizing approaches:
+   - Fixed fractional (X% per position)
+   - Conviction-weighted (scale by confidence)
+   - Volatility-adjusted (size inversely to expected volatility)
+   Which is most appropriate for my situation?
+
+4. SCALING STRATEGY: Should I build this position all at once, or scale in over time? If scaling, what milestones or price levels should trigger adding more?
+
+5. EXIT SIZING: At what portfolio allocation % should I consider this position "full"? What's my trim trigger if it grows beyond that?
+
+6. FINAL RECOMMENDATION: Given everything above, what's a prudent position size range for someone with my profile?
+
+I want math and frameworks, not gut feelings.`
+  },
+  {
     id:'decision',label:'🔍 Buy / Hold / Sell Decision',
     text:`I need to make a decision about [TICKER/ASSET] in my portfolio. Current situation:
 
@@ -661,6 +697,33 @@ Give me a clear, opinionated response.`
 
 let _epActive = 0;
 
+function toggleCollapse(id, btn) {
+  const body = document.getElementById(id);
+  if (!body) return;
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : '';
+  btn.innerHTML = open ? '▶ Expand' : '▼ Collapse';
+  btn.style.color = open ? 'var(--accent-l)' : 'var(--muted)';
+}
+
+function addCollapseToPromptLib() {
+  const po = document.querySelector('.prompt-out');
+  if (!po || po.dataset.collapsible) return;
+  po.dataset.collapsible = '1';
+  const h4 = po.querySelector('h4');
+  if (!h4) return;
+  const body = document.createElement('div');
+  body.id = 'prompt-lib-body';
+  // Move everything after h4 into body
+  while (h4.nextSibling) body.appendChild(h4.nextSibling);
+  po.appendChild(body);
+  const toggle = document.createElement('button');
+  toggle.innerHTML = '▼ Collapse';
+  toggle.style.cssText = 'background:none;border:none;cursor:pointer;font-size:.72em;font-weight:700;color:var(--muted);float:right;margin-top:-2px;padding:0';
+  toggle.onclick = () => toggleCollapse('prompt-lib-body', toggle);
+  h4.appendChild(toggle);
+}
+
 function renderExtraPrompts() {
   const wrap = document.getElementById('extra-prompts-wrap');
   if (!wrap || wrap.dataset.built === '1') return;
@@ -671,14 +734,19 @@ function renderExtraPrompts() {
   ).join('');
 
   wrap.innerHTML = `<div class="extra-prompts">
-    <h4>🛠️ Universal Investor Toolkit</h4>
-    <p class="pnote">6 scenario-based prompts that work with any investing school. Copy → paste into any AI.</p>
-    <div class="ep-tabs" id="ep-tabs">${tabs}</div>
-    <div class="prompt-box"><pre id="ep-text" style="white-space:pre-wrap;font-family:inherit;color:#c4d0e6">${EXTRA_PROMPTS[0].text}</pre></div>
-    <div class="copy-actions" style="margin-top:10px">
-      <button class="copy-btn" onclick="copyEP(this)">📋 Copy Prompt</button>
-      <button class="copy-open-btn" onclick="copyEPAndOpen('claude')">↗ Copy + Open Claude</button>
-      <button class="copy-open-btn" onclick="copyEPAndOpen('chatgpt')">↗ Copy + Open ChatGPT</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <h4 style="margin:0">🛠️ Universal Investor Toolkit <span style="font-size:.75em;font-weight:600;color:var(--muted);text-transform:none;letter-spacing:0">(${EXTRA_PROMPTS.length} scenarios)</span></h4>
+      <button style="background:none;border:none;cursor:pointer;font-size:.72em;font-weight:700;color:var(--muted);padding:0" onclick="toggleCollapse('ep-body',this)">▼ Collapse</button>
+    </div>
+    <div id="ep-body">
+      <p class="pnote">${EXTRA_PROMPTS.length} scenario-based prompts that work with any investing school. Copy → paste into any AI.</p>
+      <div class="ep-tabs" id="ep-tabs">${tabs}</div>
+      <div class="prompt-box"><pre id="ep-text" style="white-space:pre-wrap;font-family:inherit;color:#c4d0e6">${EXTRA_PROMPTS[0].text}</pre></div>
+      <div class="copy-actions" style="margin-top:10px">
+        <button class="copy-btn" onclick="copyEP(this)">📋 Copy Prompt</button>
+        <button class="copy-open-btn" onclick="copyEPAndOpen('claude')">↗ Copy + Open Claude</button>
+        <button class="copy-open-btn" onclick="copyEPAndOpen('chatgpt')">↗ Copy + Open ChatGPT</button>
+      </div>
     </div>
   </div>`;
 }
@@ -740,7 +808,7 @@ function addFitChart() {
 
   const cvSection = document.getElementById('cv-section');
   if (cvSection) {
-    cvSection.insertAdjacentHTML('afterend', html);
+    cvSection.insertAdjacentHTML('beforebegin', html);
     setTimeout(() => {
       document.querySelectorAll('.chart-bar').forEach(b => { b.style.width = b.dataset.w + '%'; });
     }, 80);
@@ -796,6 +864,9 @@ function injectResultEnhancements() {
   document.getElementById('s5').insertAdjacentHTML('beforeend','<span id="_enh_done" style="display:none"></span>');
   // 1. Bar chart
   addFitChart();
+
+  // 1b. Make main prompt library collapsible
+  addCollapseToPromptLib();
 
   // 2. Extra prompts section
   const footerBox = document.querySelector('.footer-box');
