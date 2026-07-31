@@ -1,0 +1,143 @@
+<!--
+首页日历区块 - 懒加载 + 容错版本
+用途：在WordPress首页Hero和工具列表之间显示网站成长日历
+特点：
+1. 下滑到可见时才加载（不阻塞首屏）
+2. 加载超时自动降级显示静态内容
+3. 加载中显示骨架屏
+4. 即使断线也显示备用内容
+5. 5秒超时保护
+
+使用方法：
+在WordPress编辑器中选择"自定义HTML"块，粘贴这段代码
+-->
+
+<div style="max-width:1000px; margin: 80px auto; padding: 0 20px;">
+  <div style="text-align: center; margin-bottom: 40px;">
+    <h2 style="margin: 0 0 10px 0; font-size: 2rem; font-weight: 900; letter-spacing: -0.02em;">📅 Website Growth Calendar</h2>
+    <p style="font-size: 1.1rem; color: #666; margin: 0;">
+      Watch this site grow in real-time. Every tool, every feature, every day — updated here.
+    </p>
+  </div>
+
+  <!-- 日历容器 -->
+  <div id="calendar-container" style="position: relative; min-height: 700px; background: white; border-radius: 10px; overflow: hidden;">
+
+    <!-- 骨架屏（加载中显示） -->
+    <div id="calendar-skeleton" style="padding: 40px 20px; text-align: center; opacity: 0.6;">
+      <div style="height: 40px; background: #f0f0f0; border-radius: 6px; margin-bottom: 20px; animation: pulse 1.5s infinite;"></div>
+      <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px;">
+        <div style="height: 80px; background: #f0f0f0; border-radius: 6px; animation: pulse 1.5s infinite;"></div>
+        <div style="height: 80px; background: #f0f0f0; border-radius: 6px; animation: pulse 1.5s infinite;"></div>
+        <div style="height: 80px; background: #f0f0f0; border-radius: 6px; animation: pulse 1.5s infinite;"></div>
+        <div style="height: 80px; background: #f0f0f0; border-radius: 6px; animation: pulse 1.5s infinite;"></div>
+        <div style="height: 80px; background: #f0f0f0; border-radius: 6px; animation: pulse 1.5s infinite;"></div>
+        <div style="height: 80px; background: #f0f0f0; border-radius: 6px; animation: pulse 1.5s infinite;"></div>
+        <div style="height: 80px; background: #f0f0f0; border-radius: 6px; animation: pulse 1.5s infinite;"></div>
+      </div>
+      <p style="margin-top: 20px; font-size: 0.9rem; color: #999;">Loading calendar...</p>
+    </div>
+
+    <!-- iframe 容器（加载后显示） -->
+    <div id="calendar-iframe-wrapper" style="display: none;">
+      <iframe
+        id="calendar-iframe"
+        src="https://ordinarymantrying.com/tools/daydayup-embed.html"
+        width="100%"
+        height="700"
+        style="border: none; display: block;"
+        title="Website Growth Calendar"
+        loading="lazy"
+        sandbox="allow-same-origin allow-scripts">
+      </iframe>
+    </div>
+
+    <!-- 降级方案（断线时显示） -->
+    <div id="calendar-fallback" style="display: none; padding: 40px 20px; text-align: center; color: #666;">
+      <p style="font-size: 1.1rem; margin: 20px 0;">
+        📅 Calendar temporarily unavailable
+      </p>
+      <p style="font-size: 0.95rem; margin: 10px 0; color: #999;">
+        (Don't worry, the website is working fine. Try refreshing or <a href="https://ordinarymantrying.com/tools/daydayup.html" style="color: #0969da; text-decoration: none;">view the full calendar here</a>.)
+      </p>
+    </div>
+  </div>
+
+  <p style="text-align: center; margin-top: 20px; color: #999;">
+    <a href="https://ordinarymantrying.com/tools/daydayup.html" style="color: #0969da; text-decoration: none; font-weight: 600;">View Full Calendar & History →</a>
+  </p>
+</div>
+
+<!-- 加载脉动动画 -->
+<style>
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+</style>
+
+<!-- 懒加载脚本 -->
+<script>
+  (function() {
+    const container = document.getElementById('calendar-container');
+    const skeleton = document.getElementById('calendar-skeleton');
+    const iframeWrapper = document.getElementById('calendar-iframe-wrapper');
+    const fallback = document.getElementById('calendar-fallback');
+    let loaded = false;
+    let loadTimeout;
+
+    // 5秒超时 - 如果5秒还没加载就显示降级方案
+    function setLoadTimeout() {
+      loadTimeout = setTimeout(function() {
+        if (!loaded) {
+          skeleton.style.display = 'none';
+          fallback.style.display = 'block';
+          loaded = true;
+        }
+      }, 5000);
+    }
+
+    // 监听iframe加载
+    function setupIframe() {
+      const iframe = document.getElementById('calendar-iframe');
+
+      iframe.onload = function() {
+        clearTimeout(loadTimeout);
+        skeleton.style.display = 'none';
+        iframeWrapper.style.display = 'block';
+        loaded = true;
+      };
+
+      iframe.onerror = function() {
+        clearTimeout(loadTimeout);
+        skeleton.style.display = 'none';
+        fallback.style.display = 'block';
+        loaded = true;
+      };
+    }
+
+    // 使用 Intersection Observer 实现真正的懒加载
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          // 当元素进入视口时加载
+          if (entry.isIntersecting && !loaded) {
+            observer.unobserve(container);
+            setLoadTimeout();
+            setupIframe();
+            iframeWrapper.style.display = 'block'; // 触发iframe加载
+          }
+        });
+      }, {
+        rootMargin: '50px' // 提前50px开始加载
+      });
+
+      observer.observe(container);
+    } else {
+      // 浏览器不支持 Intersection Observer，立即加载
+      setLoadTimeout();
+      setupIframe();
+      iframeWrapper.style.display = 'block';
+    }
+  })();
+</script>

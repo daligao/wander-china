@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Website Growth Calendar — Track daily development of Ordinary Man Trying. See what was built each day, from launch to today.">
+    <meta name="keywords" content="website development, project tracker, web builder, daily log, development calendar">
+    <title>Website Growth Calendar — Ordinary Man Trying Daily Build Log</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f6f8fa;
+            color: #24292e;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            min-height: 600px;
+        }
+        body.embed-mode {
+            height: auto;
+            min-height: auto;
+            padding: 0;
+            background-color: transparent;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .embed-mode .header {
+            display: none;
+        }
+        .controls { display: flex; gap: 10px; align-items: center; }
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            background-color: #ffffff;
+            font-weight: 600;
+            color: #24292e;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+        button:hover { background-color: #f3f4f6; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-backup { font-size: 0.9em; padding: 6px 12px; background-color: #f6f8fa; }
+        #month-display { margin: 0; min-width: 160px; text-align: center; font-size: 1.6rem; font-weight: 700; color: #1b1f24;}
+        .edit-status { font-size: 0.85rem; color: #586069; padding: 8px 0; }
+        .edit-status.active { color: #1f883d; font-weight: 600; }
+        .embed-mode .edit-status { display: none; }
+
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+        .day-name {
+            text-align: center;
+            font-weight: bold;
+            color: #586069;
+            font-size: 1.1em;
+            letter-spacing: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+            flex-grow: 1;
+            grid-auto-rows: 1fr;
+        }
+
+        .day-cell {
+            background: white;
+            border: 1px solid #d0d7de;
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: block;
+            overflow-y: auto;
+        }
+        .day-cell:hover {
+            box-shadow: 0 8px 24px rgba(140,149,159,0.2);
+            transform: translateY(-2px);
+            border-color: #0969da;
+        }
+        .day-cell.read-only { cursor: default; }
+        .day-cell.read-only:hover { transform: none; box-shadow: none; }
+
+        .date-num {
+            float: left;
+            font-size: 1.4em;
+            font-weight: 800;
+            margin-right: 8px;
+            margin-bottom: 2px;
+            color: #57606a;
+            line-height: 1;
+        }
+
+        .content {
+            font-size: 1.05em;
+            line-height: 1.4;
+            color: #24292e;
+            white-space: pre-wrap;
+            word-break: break-word;
+            display: inline;
+        }
+
+        .day-cell::-webkit-scrollbar { width: 4px; }
+        .day-cell::-webkit-scrollbar-thumb { background: #d0d7de; border-radius: 4px; }
+
+        .completed { background-color: #e6ffed; border-color: #34d058; border-width: 2px;}
+        .completed .date-num { color: #1a7f37; }
+        .completed .content { color: #144620; font-weight: 500; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(36,41,46,0.6); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 25px; border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .modal-content h3 { margin-top: 0; color: #24292e; font-size: 1.5rem;}
+        textarea { width: 100%; height: 180px; margin: 15px 0; padding: 12px; border: 1px solid #d0d7de; border-radius: 8px; resize: vertical; font-family: inherit; font-size: 1.1em; line-height: 1.5; box-sizing: border-box; background-color: #f6f8fa; transition: all 0.2s;}
+        textarea:focus { outline: none; background-color: #ffffff; border-color: #0969da; box-shadow: 0 0 0 3px rgba(9,105,218,0.3); }
+        input[type="password"] { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #d0d7de; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
+        input[type="password"]:focus { outline: none; border-color: #0969da; box-shadow: 0 0 0 3px rgba(9,105,218,0.3); }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 15px;}
+        .btn-primary { background-color: #1f883d; color: white; border: none; font-size: 1.1em; padding: 10px 20px;}
+        .btn-primary:hover { background-color: #1a7f37; }
+        .btn-danger { background-color: #da3633; color: white; border: none; }
+        .btn-danger:hover { background-color: #b91c1c; }
+
+        /* Embed mode adjustments */
+        .embed-mode .grid { gap: 8px; }
+        .embed-mode .day-cell { padding: 10px; }
+
+        @media (max-width: 600px) {
+            body { height: auto; display: block; }
+            .grid { grid-auto-rows: minmax(100px, auto); gap: 6px; }
+            .calendar-header { gap: 6px; }
+            .day-cell { padding: 8px; min-height: 100px;}
+            .date-num { font-size: 1.2em; margin-right: 6px;}
+            .content { font-size: 0.95em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="controls">
+            <button onclick="changeMonth(-1)">◀ Previous Month</button>
+            <h2 id="month-display">2026 May</h2>
+            <button onclick="changeMonth(1)">Next Month ▶</button>
+        </div>
+        <div class="controls">
+            <button class="btn-backup" onclick="exportData()">💾 Export</button>
+            <button class="btn-backup" onclick="document.getElementById('importFile').click()">📂 Import</button>
+            <button class="btn-backup" id="unlockBtn" onclick="showUnlockDialog()" style="display: none;">🔓 Unlock Edit</button>
+            <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+        </div>
+    </div>
+    <div class="edit-status" id="editStatus"></div>
+
+    <div style="max-width:860px;margin:0 auto 16px;padding:14px 20px;background:#f6f8fa;border-radius:10px;border-left:4px solid #0366d6;font-size:14px;color:#444;line-height:1.6">
+      <strong style="color:#0366d6">What is this?</strong> — A public development log of this website. Every entry is a real record of what was built, what broke, and how problems got solved — one day at a time.
+    </div>
+
+    <div class="calendar-header">
+        <div class="day-name">Sun</div><div class="day-name">Mon</div><div class="day-name">Tue</div>
+        <div class="day-name">Wed</div><div class="day-name">Thu</div><div class="day-name">Fri</div><div class="day-name">Sat</div>
+    </div>
+
+    <div class="grid" id="calendar"></div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h3 id="modal-date">Edit Log Entry</h3>
+            <textarea id="modal-input" placeholder="What did we build today?&#10;Example:&#10;• Added 3 new life simulators&#10;• Fixed homepage CSS&#10;• Published blog post on decision-making"></textarea>
+            <div class="modal-actions">
+                <button onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveData()">Save Update</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unlock Modal -->
+    <div class="modal" id="unlockModal">
+        <div class="modal-content">
+            <h3>🔐 Unlock Edit Mode</h3>
+            <p style="color: #586069; margin: 10px 0;">Enter the edit key to enable editing:</p>
+            <input type="password" id="unlockInput" placeholder="Enter edit key" onkeypress="if(event.key==='Enter') unlockEditMode()">
+            <div class="modal-actions">
+                <button onclick="closeUnlockDialog()">Cancel</button>
+                <button class="btn-primary" onclick="unlockEditMode()">Unlock</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = './daydayup-api.php';
+        const params = new URLSearchParams(window.location.search);
+        const isEmbedMode = params.get('embed') === '1';
+
+        let currentDate = new Date();
+        let trackerData = {};
+        let editingDateStr = '';
+        let isEditMode = false;
+
+        // Apply embed mode styles
+        if (isEmbedMode) {
+            document.body.classList.add('embed-mode');
+        }
+
+        // Check edit mode status on page load
+        function checkEditMode() {
+            const formData = new FormData();
+            formData.append('action', 'check-mode');
+
+            fetch(API_URL, { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(data => {
+                    isEditMode = data.edit_mode === true;
+                    updateEditStatus();
+                    loadData();
+                })
+                .catch(err => {
+                    console.error('Check mode error:', err);
+                    isEditMode = false;
+                    updateEditStatus();
+                    loadData();
+                });
+        }
+
+        function updateEditStatus() {
+            const statusEl = document.getElementById('editStatus');
+            const unlockBtn = document.getElementById('unlockBtn');
+
+            if (isEditMode) {
+                statusEl.textContent = '✓ Edit Mode Active';
+                statusEl.classList.add('active');
+                unlockBtn.style.display = 'none';
+            } else {
+                statusEl.textContent = '📖 Read-Only Mode';
+                statusEl.classList.remove('active');
+                unlockBtn.style.display = 'inline-block';
+            }
+        }
+
+        function showUnlockDialog() {
+            document.getElementById('unlockModal').style.display = 'flex';
+            document.getElementById('unlockInput').focus();
+        }
+
+        function closeUnlockDialog() {
+            document.getElementById('unlockModal').style.display = 'none';
+            document.getElementById('unlockInput').value = '';
+        }
+
+        function unlockEditMode() {
+            const key = document.getElementById('unlockInput').value.trim();
+            if (!key) {
+                alert('Please enter the edit key');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('action', 'unlock');
+            formData.append('key', key);
+
+            fetch(API_URL, { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        isEditMode = true;
+                        updateEditStatus();
+                        renderCalendar();
+                        closeUnlockDialog();
+                    } else {
+                        alert('Invalid edit key');
+                        document.getElementById('unlockInput').value = '';
+                        document.getElementById('unlockInput').focus();
+                    }
+                })
+                .catch(err => alert('Network error: ' + err.message));
+        }
+
+        function loadData() {
+            const formData = new FormData();
+            formData.append('action', 'load');
+
+            fetch(API_URL, { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        trackerData = data.data || {};
+                    } else {
+                        console.error('Load error:', data.message);
+                        trackerData = {};
+                    }
+                    renderCalendar();
+                })
+                .catch(err => {
+                    console.error('Fetch error:', err);
+                    trackerData = {};
+                    renderCalendar();
+                });
+        }
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('month-display').innerText = `${year} ${monthNames[month]}`;
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const grid = document.getElementById('calendar');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div class="day-cell" style="background: transparent; border: none; cursor: default; box-shadow: none;"></div>`;
+            }
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const content = trackerData[dateStr] || '';
+                const isCompleted = content.trim().length > 0 ? 'completed' : '';
+                const readOnlyClass = isEditMode ? '' : 'read-only';
+
+                grid.innerHTML += `
+                    <div class="day-cell ${isCompleted} ${readOnlyClass}" onclick="handleDayClick('${dateStr}')">
+                        <span class="date-num">${i}</span><span class="content">${content}</span>
+                    </div>
+                `;
+            }
+        }
+
+        function handleDayClick(dateStr) {
+            if (!isEditMode) return;
+            openModal(dateStr);
+        }
+
+        function changeMonth(delta) {
+            currentDate.setMonth(currentDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function openModal(dateStr) {
+            if (!isEditMode) return;
+            editingDateStr = dateStr;
+            document.getElementById('modal-date').innerText = `${dateStr}`;
+            document.getElementById('modal-input').value = trackerData[dateStr] || '';
+            document.getElementById('editModal').style.display = 'flex';
+            document.getElementById('modal-input').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function saveData() {
+            const newContent = document.getElementById('modal-input').value.trim();
+
+            const formData = new FormData();
+            formData.append('action', 'save');
+            formData.append('date', editingDateStr);
+            formData.append('content', newContent);
+
+            fetch(API_URL, { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        if (newContent) {
+                            trackerData[editingDateStr] = newContent;
+                        } else {
+                            delete trackerData[editingDateStr];
+                        }
+                        closeModal();
+                        renderCalendar();
+                    } else {
+                        alert('Save failed: ' + data.message);
+                    }
+                })
+                .catch(err => {
+                    alert('Network error: ' + err.message);
+                });
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(trackerData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `website-growth_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+
+                    const formData = new FormData();
+                    formData.append('action', 'import');
+                    formData.append('data', JSON.stringify(importedData));
+
+                    fetch(API_URL, { method: 'POST', body: formData })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                trackerData = importedData;
+                                renderCalendar();
+                                alert("Import successful!");
+                            } else {
+                                alert("Import failed: " + data.message);
+                            }
+                        })
+                        .catch(err => alert('Network error: ' + err.message));
+                } catch (err) {
+                    alert("JSON format error!");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // Initialize on page load
+        checkEditMode();
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('editModal')) {
+                closeModal();
+            }
+            if (event.target == document.getElementById('unlockModal')) {
+                closeUnlockDialog();
+            }
+        }
+    </script>
+</body>
+</html>
