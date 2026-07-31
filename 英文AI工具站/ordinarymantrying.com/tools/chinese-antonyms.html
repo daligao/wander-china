@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-DBR2PMLR61");</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chinese Antonyms Game — 反义词连连看 | Match Opposite Characters</title>
+<meta name="description" content="Learn Chinese opposite words through a matching game. 380 antonym pairs across 3 difficulty levels. Click to match opposites — pinyin and English hints included. Free, no login.">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09101F;--surf:#111827;--surf2:#1A2436;--surf3:#212f47;
+  --accent:#6366F1;--accent-l:#818CF8;--accent-dim:rgba(99,102,241,.15);--accent-glow:rgba(99,102,241,.3);
+  --good:#10B981;--good-dim:rgba(16,185,129,.15);--good-glow:rgba(16,185,129,.35);
+  --bad:#EF4444;--bad-dim:rgba(239,68,68,.1);
+  --gold:#F59E0B;--gold-dim:rgba(245,158,11,.12);
+  --white:#F1F5F9;--muted:#64748B;--faint:#2D3A50;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+}
+body{background:var(--bg);color:var(--white);font-family:var(--sans);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-l);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 20px 80px;background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,.18) 0%,transparent 62%)}
+.hero-tag{font-size:.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-l);margin-bottom:16px}
+.hero h1{font-size:clamp(2.6rem,9vw,6rem);font-weight:900;letter-spacing:-.04em;line-height:1;margin-bottom:8px}
+.hero h1 em{font-style:normal;color:var(--accent-l)}
+.hero-zh{font-size:clamp(1rem,3.5vw,1.7rem);color:var(--muted);margin-bottom:22px;letter-spacing:.06em}
+.hero p{font-size:clamp(.88rem,2.5vw,1.05rem);color:var(--muted);max-width:460px;margin:0 auto 40px;line-height:1.85}
+
+/* demo tiles row */
+.demo-row{display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:44px}
+.dtile{background:var(--surf2);border:1.5px solid rgba(255,255,255,.08);border-radius:13px;padding:12px 16px;text-align:center;min-width:68px}
+.dtile.a{border-color:var(--accent);background:var(--accent-dim);box-shadow:0 0 14px var(--accent-glow)}
+.dtile.b{border-color:var(--good);background:var(--good-dim);box-shadow:0 0 14px var(--good-glow)}
+.dtile-zh{font-size:1.9rem;font-weight:700;line-height:1}
+.dtile-py{font-size:.65rem;color:var(--accent-l);margin-top:3px}
+.dtile-en{font-size:.6rem;color:var(--muted);margin-top:1px}
+.demo-arrow{font-size:1.3rem;color:var(--faint)}
+
+/* level picker */
+.level-pick{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:440px}
+.level-pick label{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.level-btns{display:flex;gap:10px;width:100%;justify-content:center}
+.lbtn{flex:1;max-width:130px;padding:14px 10px;border:1.5px solid rgba(255,255,255,.1);border-radius:12px;background:var(--surf2);color:var(--white);font-size:.9rem;font-weight:700;cursor:pointer;transition:.15s;text-align:center}
+.lbtn:hover,.lbtn.active{border-color:var(--accent);background:var(--accent-dim);color:var(--accent-l)}
+.lbtn .lbtn-sub{display:block;font-size:.65rem;font-weight:400;color:var(--muted);margin-top:4px}
+.btn-start{width:100%;max-width:440px;padding:17px;background:linear-gradient(120deg,var(--accent),var(--accent-l));border:none;border-radius:14px;color:#fff;font-size:1.05rem;font-weight:800;cursor:pointer;transition:filter .15s;margin-top:4px}
+.btn-start:hover{filter:brightness(1.12)}
+.hero-meta{margin-top:14px;font-size:.78rem;color:var(--faint)}
+
+/* ── GAME ── */
+#game{display:none;max-width:740px;margin:0 auto;padding:20px 14px 60px}
+
+/* topbar */
+.topbar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.btn-home{padding:8px 14px;border:1px solid rgba(255,255,255,.1);border-radius:8px;background:transparent;color:var(--muted);font-size:.82rem;cursor:pointer;transition:.15s}
+.btn-home:hover{border-color:var(--accent-l);color:var(--accent-l)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:.82rem;color:var(--muted)}
+.lv-badge{padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.lv-easy{background:rgba(16,185,129,.15);color:var(--good)}
+.lv-medium{background:var(--gold-dim);color:var(--gold)}
+.lv-hard{background:var(--bad-dim);color:var(--bad)}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.st{background:var(--surf);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:10px;text-align:center}
+.st-v{display:block;font-size:1.3rem;font-weight:900;letter-spacing:-.03em;line-height:1}
+.st-v.ac{color:var(--accent-l)}
+.st-v.go{color:var(--good)}
+.st-v.gd{color:var(--gold)}
+.st-l{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:3px;display:block}
+
+/* progress */
+.prog-wrap{height:4px;background:var(--faint);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-l));border-radius:99px;transition:width .6s ease}
+
+/* round label + hint toggle */
+.round-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.round-lbl{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.en-toggle{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);cursor:pointer}
+.en-toggle input{accent-color:var(--accent);width:14px;height:14px}
+
+/* status */
+.status{text-align:center;min-height:26px;margin-bottom:12px;font-size:.9rem;color:var(--muted);transition:color .2s}
+.status.good{color:var(--good)}
+.status.bad{color:var(--bad)}
+.status.hint{color:var(--accent-l)}
+
+/* tile grid */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:400px){.grid{grid-template-columns:repeat(2,1fr)}}
+
+.tile{background:var(--surf2);border:2px solid rgba(255,255,255,.07);border-radius:15px;padding:14px 6px 12px;text-align:center;cursor:pointer;transition:border-color .14s,background .14s,box-shadow .14s,transform .14s,opacity .35s,scale .35s;user-select:none;-webkit-user-select:none;position:relative}
+.tile:hover:not(.matched):not(.gone){border-color:rgba(99,102,241,.45);background:var(--surf3);transform:translateY(-2px)}
+.tile.sel{border-color:var(--accent);background:var(--accent-dim);box-shadow:0 0 0 3px var(--accent-glow),0 8px 18px rgba(99,102,241,.2);transform:translateY(-3px)}
+.tile.ok{border-color:var(--good);background:var(--good-dim);box-shadow:0 0 0 3px var(--good-glow);animation:pop .32s ease}
+.tile.no{animation:shake .38s ease;border-color:var(--bad);background:var(--bad-dim)}
+.tile.gone{opacity:0;scale:.8;pointer-events:none}
+
+@keyframes pop{0%,100%{transform:translateY(-3px) scale(1)}50%{transform:translateY(-6px) scale(1.07)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+
+.tile-zh{font-size:2.4rem;font-weight:700;line-height:1;display:block;margin-bottom:5px}
+.tile-py{font-size:.65rem;color:var(--accent-l);letter-spacing:.04em;display:block;min-height:.85rem}
+.tile-en{font-size:.62rem;color:var(--muted);display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 3px}
+
+/* action row */
+.actions{display:flex;gap:8px;justify-content:center;margin-bottom:4px}
+.act-btn{padding:9px 20px;background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:9px;color:var(--muted);font-size:.82rem;cursor:pointer;transition:.14s}
+.act-btn:hover{border-color:var(--accent-l);color:var(--accent-l)}
+.act-btn.gold:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── DONATION MODAL ── */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-ov.show{display:flex}
+.modal{background:var(--surf);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:32px 28px;max-width:380px;width:100%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.modal-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--white)}
+.modal-icon{font-size:2.4rem;margin-bottom:12px}
+.modal h3{font-size:1.3rem;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+.modal p{font-size:.87rem;color:var(--muted);line-height:1.7;margin-bottom:20px}
+.modal-qr{width:140px;height:140px;background:var(--surf2);border:1px solid rgba(255,255,255,.08);border-radius:10px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.75rem;line-height:1.5;text-align:center;padding:10px}
+.btn-coffee{display:block;width:100%;padding:13px;background:linear-gradient(120deg,var(--accent),var(--accent-l));border:none;border-radius:11px;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer;margin-bottom:10px;text-decoration:none}
+.btn-no{display:block;width:100%;padding:10px;background:transparent;border:none;color:var(--muted);font-size:.83rem;cursor:pointer}
+.btn-no:hover{color:var(--white)}
+
+/* combo flash */
+.combo-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-60%) scale(0);background:linear-gradient(120deg,var(--accent),var(--accent-l));color:#fff;font-size:1.7rem;font-weight:900;padding:12px 26px;border-radius:14px;pointer-events:none;z-index:800;transition:transform .18s cubic-bezier(.34,1.56,.64,1),opacity .3s}
+.combo-toast.show{transform:translate(-50%,-60%) scale(1)}
+
+/* ── RESULTS ── */
+#results{display:none;max-width:560px;margin:0 auto;padding:60px 20px;text-align:center}
+.res-tag{font-size:.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-l);margin-bottom:14px}
+.res-h{font-size:clamp(2rem,6vw,3.4rem);font-weight:900;letter-spacing:-.04em;margin-bottom:10px}
+.res-sub{color:var(--muted);font-size:.95rem;line-height:1.75;margin-bottom:28px}
+.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:30px}
+.res-stat{background:var(--surf);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px 10px}
+.res-n{font-size:2rem;font-weight:900;letter-spacing:-.04em;color:var(--accent-l);line-height:1}
+.res-l{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:5px}
+.btn-again{padding:15px 40px;background:linear-gradient(120deg,var(--accent),var(--accent-l));border:none;border-radius:13px;color:#fff;font-size:1rem;font-weight:800;cursor:pointer;margin-bottom:14px}
+.btn-again:hover{filter:brightness(1.1)}
+.foot{margin-top:28px;font-size:.8rem;color:var(--faint)}
+.foot a{color:var(--muted)}
+
+/* ── SEO CONTENT ── */
+.seo-wrap{max-width:760px;margin:0 auto;padding:60px 20px 80px}
+.seo-intro{margin-bottom:48px}
+.seo-intro h2{font-size:clamp(1.4rem,4vw,2rem);font-weight:800;letter-spacing:-.03em;margin-bottom:14px}
+.seo-intro p{color:var(--muted);line-height:1.85;margin-bottom:12px}
+.seo-intro a{color:var(--accent-l)}
+.faq-list{display:flex;flex-direction:column;gap:14px;margin-bottom:48px}
+.faq-item{background:var(--surf);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:20px 22px}
+.faq-q{font-weight:700;font-size:.97rem;margin-bottom:8px;color:var(--white)}
+.faq-a{color:var(--muted);font-size:.9rem;line-height:1.75}
+.faq-a a{color:var(--accent-l)}
+.seo-h3{font-size:1.1rem;font-weight:700;margin-bottom:16px;color:var(--white);letter-spacing:-.02em}
+.pair-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{background:var(--surf2);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:6px 12px;font-size:.82rem;color:var(--muted)}
+.chip strong{color:var(--white)}
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero">
+    <div class="hero-tag">Free · 380 Pairs · 3 Levels</div>
+    <h1>Chinese<br><em>Antonyms</em></h1>
+    <div class="hero-zh">反义词连连看</div>
+    <p>Click two characters that are opposites. Pinyin and English hints included. 3 difficulty levels — from basic characters to literary compounds.</p>
+
+    <div class="demo-row">
+      <div class="dtile b"><div class="dtile-zh">冷</div><div class="dtile-py">lěng</div><div class="dtile-en">cold</div></div>
+      <div class="demo-arrow">⇆</div>
+      <div class="dtile b"><div class="dtile-zh">热</div><div class="dtile-py">rè</div><div class="dtile-en">hot</div></div>
+      <div style="width:16px"></div>
+      <div class="dtile a"><div class="dtile-zh">胜</div><div class="dtile-py">shèng</div><div class="dtile-en">win</div></div>
+      <div class="demo-arrow">?</div>
+      <div class="dtile"><div class="dtile-zh">败</div><div class="dtile-py">bài</div><div class="dtile-en">lose</div></div>
+    </div>
+
+    <div class="level-pick">
+      <label>Choose difficulty</label>
+      <div class="level-btns">
+        <button class="lbtn active" id="lb-easy" onclick="pickLevel('easy',this)">
+          Easy<span class="lbtn-sub">133 basic characters</span>
+        </button>
+        <button class="lbtn" id="lb-medium" onclick="pickLevel('medium',this)">
+          Medium<span class="lbtn-sub">123 compound words</span>
+        </button>
+        <button class="lbtn" id="lb-hard" onclick="pickLevel('hard',this)">
+          Hard<span class="lbtn-sub">124 advanced pairs</span>
+        </button>
+      </div>
+      <button class="btn-start" onclick="startGame()">▶ Start Matching</button>
+      <div class="hero-meta">4 pairs per round · 30–34 rounds · combo multiplier</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── GAME ── -->
+<div id="game">
+  <div class="topbar">
+    <button class="btn-home" onclick="goHome()">← Menu</button>
+    <div class="topbar-right">
+      <span class="lv-badge" id="lv-badge">Easy</span>
+      <label class="en-toggle"><input type="checkbox" id="en-cb" checked onchange="toggleEn()"> English hints</label>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="st"><span class="st-v ac" id="s-round">1</span><span class="st-l">Round</span></div>
+    <div class="st"><span class="st-v gd" id="s-score">0</span><span class="st-l">Score</span></div>
+    <div class="st"><span class="st-v" id="s-time">0:00</span><span class="st-l">Time</span></div>
+    <div class="st"><span class="st-v go" id="s-combo">×1</span><span class="st-l">Combo</span></div>
+  </div>
+
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+
+  <div class="round-row">
+    <div class="round-lbl" id="round-lbl">Round 1 · 4 pairs left</div>
+  </div>
+
+  <div class="status" id="status">Click a tile to start</div>
+  <div class="grid" id="grid"></div>
+
+  <div class="actions">
+    <button class="act-btn gold" onclick="doHint()">💡 Hint (−20 pts)</button>
+    <button class="act-btn" onclick="skipRound()">Skip →</button>
+  </div>
+</div>
+
+<!-- ── DONATION MODAL ── -->
+<div class="modal-ov" id="donate-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeDonate()">✕</button>
+    <div class="modal-icon">☕</div>
+    <h3>Enjoying the game?</h3>
+    <p>This tool is free and ad-free. If it's helping you learn Chinese, a small tip keeps it running and motivates more tools like this.</p>
+    <a class="btn-coffee" href="https://ko-fi.com/vantuanle43758" target="_blank" onclick="donateShown=true;closeDonate()">
+      ☕ Buy me a coffee on Ko-fi
+    </a>
+    <button class="btn-no" onclick="closeDonate()">No thanks — keep playing</button>
+  </div>
+</div>
+
+<!-- ── RESULTS ── -->
+<div id="results">
+  <div class="res-tag" id="res-tag">All done!</div>
+  <h2 class="res-h" id="res-h">Well done.</h2>
+  <p class="res-sub" id="res-sub"></p>
+  <div class="res-grid">
+    <div class="res-stat"><div class="res-n" id="r-score">0</div><div class="res-l">Score</div></div>
+    <div class="res-stat"><div class="res-n" id="r-time">0:00</div><div class="res-l">Time</div></div>
+    <div class="res-stat"><div class="res-n" id="r-acc">0%</div><div class="res-l">Accuracy</div></div>
+  </div>
+  <button class="btn-again" onclick="restartSame()">Play Again</button>
+  <br>
+  <button class="btn-again" style="background:var(--surf);color:var(--muted);border:1px solid rgba(255,255,255,.1);margin-left:8px" onclick="goHome()">Try Another Level</button>
+  <div class="foot">
+    <a href="mandarin-flashcards.html">← Mandarin Flashcards</a> ·
+    <a href="https://ordinarymantrying.com/blog/">Blog</a> ·
+    <a href="https://ordinarymantrying.com/tools/">All Tools</a>
+  </div>
+</div>
+
+<div class="combo-toast" id="ctost"></div>
+
+<!-- ── SEO CONTENT (always visible to Google) ── -->
+<div class="seo-wrap" id="seo-content">
+
+  <div class="seo-intro">
+    <h2>Learn Chinese Antonyms Through Play</h2>
+    <p>This free matching game teaches you <strong>Chinese opposite words (反义词, fǎnyìcí)</strong> through an interactive click-to-match format. Every tile shows the Chinese character, its pinyin romanization, and an English translation — making it ideal for beginners and intermediate learners alike.</p>
+    <p>The game covers <strong>380 antonym pairs</strong> across three difficulty levels: single characters (Easy), two-character compound words (Medium), and advanced compounds (Hard). Each round presents 4 random pairs as 8 tiles. Match all pairs to advance, earn combo multipliers for consecutive correct matches, and use the hint button when stuck.</p>
+    <p>Also try: <a href="mandarin-flashcards.html">Mandarin Flashcards (HSK 1–3)</a> — 400 words with Anki export.</p>
+  </div>
+
+  <div class="faq-section">
+    <h2 style="font-size:clamp(1.4rem,4vw,2rem);font-weight:800;letter-spacing:-.03em;margin-bottom:20px">Frequently Asked Questions</h2>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <div class="faq-q">What is a Chinese antonym (反义词)?</div>
+        <div class="faq-a">A <strong>反义词 (fǎnyìcí)</strong> is a word that means the opposite of another word. For example, 大 (dà, big) and 小 (xiǎo, small), or 冷 (lěng, cold) and 热 (rè, hot). Learning antonym pairs is one of the most effective ways to double your vocabulary — every new word teaches you two concepts at once.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">How do I play the Chinese antonyms matching game?</div>
+        <div class="faq-a">Click any tile to select it (it turns purple), then click its opposite to make a match. A correct match turns both tiles green and awards points — consecutive correct matches earn a combo multiplier (up to ×8). A wrong match shakes the tiles red and resets your combo. Use the 💡 Hint button (−20 pts) to highlight a matching pair, or Skip to move to the next round.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">What Chinese antonym pairs does the game include?</div>
+        <div class="faq-a">The game includes 380 carefully curated pairs sourced from a Chinese antonym dictionary. The Easy level focuses on common single characters like 黑/白 (black/white), 大/小 (big/small), 冷/热 (cold/hot). The Medium and Hard levels introduce compound words like 安全/危险 (safe/dangerous), 勤劳/懒惰 (hardworking/lazy), and 坚定/动摇 (resolute/waver).</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Is this game good for HSK preparation?</div>
+        <div class="faq-a">Yes. The Easy level covers vocabulary from HSK 1–2, Medium covers HSK 3–4, and Hard covers HSK 4–6. Studying antonyms is especially effective for the HSK reading and vocabulary sections, where questions often test your ability to distinguish between similar or opposite words. Pair this game with our <a href="mandarin-flashcards.html">Mandarin Flashcards tool</a> for comprehensive HSK prep.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Does the game show pinyin?</div>
+        <div class="faq-a">Yes — every tile displays the Chinese character, its <strong>pinyin</strong> (phonetic romanization with tone marks), and an English translation. You can toggle English hints on or off during the game using the checkbox in the top bar. Pinyin is always visible to help with pronunciation.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Is this game free? Does it require an account?</div>
+        <div class="faq-a">Completely free, no account, no login, no ads. The game runs entirely in your browser — no data is sent to any server. Works on desktop and mobile.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div>
+    <h3 class="seo-h3">Sample Antonym Pairs</h3>
+    <div class="pair-chips">
+      <div class="chip"><strong>黑/白</strong> hēi/bái · black/white</div>
+      <div class="chip"><strong>大/小</strong> dà/xiǎo · big/small</div>
+      <div class="chip"><strong>冷/热</strong> lěng/rè · cold/hot</div>
+      <div class="chip"><strong>快/慢</strong> kuài/màn · fast/slow</div>
+      <div class="chip"><strong>爱/恨</strong> ài/hèn · love/hate</div>
+      <div class="chip"><strong>安全/危险</strong> ānquán/wēixiǎn · safe/dangerous</div>
+      <div class="chip"><strong>成功/失败</strong> chénggōng/shībài · succeed/fail</div>
+      <div class="chip"><strong>勤劳/懒惰</strong> qínláo/lǎnduò · hardworking/lazy</div>
+      <div class="chip"><strong>善良/凶恶</strong> shànliáng/xiōngè · kind/fierce</div>
+      <div class="chip"><strong>坚定/动摇</strong> jiāndìng/dòngyáo · resolute/waver</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FAQ Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a Chinese antonym (反义词)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A 反义词 (fǎnyìcí) is a word that means the opposite of another word. For example, 大 (big) and 小 (small), or 冷 (cold) and 热 (hot). Learning antonym pairs doubles vocabulary efficiency — every new word teaches two concepts at once."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I play the Chinese antonyms matching game?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Click any tile to select it, then click its opposite to match. Correct matches turn green and award points. Consecutive correct matches earn a combo multiplier up to ×8. Use the Hint button (−20 pts) to highlight a pair, or Skip to advance to the next round."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What Chinese antonym pairs does the game include?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The game includes 380 curated pairs: 133 single-character pairs (Easy), 123 two-character compound pairs (Medium), and 124 advanced compound pairs (Hard), all with pinyin and English translations."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this game good for HSK preparation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Easy covers HSK 1–2 vocabulary, Medium covers HSK 3–4, and Hard covers HSK 4–6. Studying antonyms is effective for HSK reading and vocabulary sections."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the game show pinyin?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes — every tile shows the Chinese character, pinyin with tone marks, and an English translation. English hints can be toggled on or off during play."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this game free and does it require an account?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Completely free, no account, no login, no ads. Runs entirely in your browser with no server communication. Works on desktop and mobile."
+      }
+    }
+  ]
+}
+</script>
+
+<script>
+const DATA={
+easy:[
+  {a:{z:'黑',p:'hēi',e:'black'},b:{z:'白',p:'bái',e:'white'}},
+  {a:{z:'有',p:'yǒu',e:'have'},b:{z:'无',p:'wú',e:'none'}},
+  {a:{z:'干',p:'gān',e:'dry'},b:{z:'湿',p:'shī',e:'wet'}},
+  {a:{z:'旧',p:'jiù',e:'old'},b:{z:'新',p:'xīn',e:'new'}},
+  {a:{z:'深',p:'shēn',e:'deep'},b:{z:'浅',p:'qiǎn',e:'shallow'}},
+  {a:{z:'直',p:'zhí',e:'straight'},b:{z:'弯',p:'wān',e:'curved'}},
+  {a:{z:'笑',p:'xiào',e:'laugh'},b:{z:'哭',p:'kū',e:'cry'}},
+  {a:{z:'香',p:'xiāng',e:'fragrant'},b:{z:'臭',p:'chòu',e:'smelly'}},
+  {a:{z:'送',p:'sòng',e:'see off'},b:{z:'迎',p:'yíng',e:'welcome'}},
+  {a:{z:'凹',p:'āo',e:'concave'},b:{z:'凸',p:'tū',e:'convex'}},
+  {a:{z:'高',p:'gāo',e:'tall'},b:{z:'低',p:'dī',e:'low'}},
+  {a:{z:'宽',p:'kuān',e:'wide'},b:{z:'窄',p:'zhǎi',e:'narrow'}},
+  {a:{z:'美',p:'měi',e:'beautiful'},b:{z:'丑',p:'chǒu',e:'ugly'}},
+  {a:{z:'浮',p:'fú',e:'float'},b:{z:'沉',p:'chén',e:'sink'}},
+  {a:{z:'负',p:'fù',e:'negative'},b:{z:'正',p:'zhèng',e:'upright'}},
+  {a:{z:'胜',p:'shèng',e:'win'},b:{z:'败',p:'bài',e:'lose'}},
+  {a:{z:'退',p:'tuì',e:'retreat'},b:{z:'进',p:'jìn',e:'advance'}},
+  {a:{z:'后',p:'hòu',e:'back'},b:{z:'先',p:'xiān',e:'first'}},
+  {a:{z:'仰',p:'yǎng',e:'look up'},b:{z:'俯',p:'fǔ',e:'bow down'}},
+  {a:{z:'利',p:'lì',e:'benefit'},b:{z:'弊',p:'bì',e:'drawback'}},
+  {a:{z:'远',p:'yuǎn',e:'far'},b:{z:'近',p:'jìn',e:'near'}},
+  {a:{z:'南',p:'nán',e:'south'},b:{z:'北',p:'běi',e:'north'}},
+  {a:{z:'咸',p:'xián',e:'salty'},b:{z:'淡',p:'dàn',e:'bland'}},
+  {a:{z:'强',p:'qiáng',e:'strong'},b:{z:'弱',p:'ruò',e:'weak'}},
+  {a:{z:'冷',p:'lěng',e:'cold'},b:{z:'热',p:'rè',e:'hot'}},
+  {a:{z:'快',p:'kuài',e:'fast'},b:{z:'慢',p:'màn',e:'slow'}},
+  {a:{z:'优',p:'yōu',e:'excellent'},b:{z:'劣',p:'liè',e:'inferior'}},
+  {a:{z:'冷',p:'lěng',e:'cold'},b:{z:'暖',p:'nuǎn',e:'warm'}},
+  {a:{z:'浊',p:'zhuó',e:'murky'},b:{z:'清',p:'qīng',e:'clear'}},
+  {a:{z:'盾',p:'dùn',e:'shield'},b:{z:'矛',p:'máo',e:'spear'}},
+  {a:{z:'明',p:'míng',e:'bright'},b:{z:'暗',p:'àn',e:'dark'}},
+  {a:{z:'西',p:'xī',e:'west'},b:{z:'东',p:'dōng',e:'east'}},
+  {a:{z:'天',p:'tiān',e:'sky'},b:{z:'地',p:'dì',e:'earth'}},
+  {a:{z:'开',p:'kāi',e:'open'},b:{z:'关',p:'guān',e:'close'}},
+  {a:{z:'死',p:'sǐ',e:'dead'},b:{z:'生',p:'shēng',e:'raw/alive'}},
+  {a:{z:'熟',p:'shú',e:'ripe'},b:{z:'生',p:'shēng',e:'raw/alive'}},
+  {a:{z:'紧',p:'jǐn',e:'tight'},b:{z:'松',p:'sōng',e:'loose'}},
+  {a:{z:'爱',p:'ài',e:'love'},b:{z:'憎',p:'zēng',e:'hate'}},
+  {a:{z:'悲',p:'bēi',e:'sad'},b:{z:'喜',p:'xǐ',e:'joy'}},
+  {a:{z:'涝',p:'lào',e:'flooded'},b:{z:'旱',p:'hàn',e:'drought'}},
+  {a:{z:'里',p:'lǐ',e:'inside'},b:{z:'外',p:'wài',e:'outside'}},
+  {a:{z:'出',p:'chū',e:'exit'},b:{z:'入',p:'rù',e:'enter'}},
+  {a:{z:'公',p:'gōng',e:'public'},b:{z:'私',p:'sī',e:'private'}},
+  {a:{z:'晴',p:'qíng',e:'sunny'},b:{z:'阴',p:'yīn',e:'cloudy'}},
+  {a:{z:'加',p:'jiā',e:'add'},b:{z:'减',p:'jiǎn',e:'subtract'}},
+  {a:{z:'长',p:'cháng',e:'long'},b:{z:'短',p:'duǎn',e:'short'}},
+  {a:{z:'吸',p:'xī',e:'inhale'},b:{z:'呼',p:'hū',e:'exhale'}},
+  {a:{z:'胖',p:'pàng',e:'fat'},b:{z:'瘦',p:'shòu',e:'thin'}},
+  {a:{z:'动',p:'dòng',e:'move'},b:{z:'静',p:'jìng',e:'still'}},
+  {a:{z:'矮',p:'ǎi',e:'short'},b:{z:'高',p:'gāo',e:'tall'}},
+  {a:{z:'粗',p:'cū',e:'coarse'},b:{z:'细',p:'xì',e:'fine'}},
+  {a:{z:'买',p:'mǎi',e:'buy'},b:{z:'卖',p:'mài',e:'sell'}},
+  {a:{z:'薄',p:'báo',e:'thin'},b:{z:'厚',p:'hòu',e:'thick'}},
+  {a:{z:'假',p:'jiǎ',e:'fake'},b:{z:'真',p:'zhēn',e:'real'}},
+  {a:{z:'降',p:'jiàng',e:'fall'},b:{z:'升',p:'shēng',e:'rise'}},
+  {a:{z:'好',p:'hǎo',e:'good'},b:{z:'坏',p:'huài',e:'bad'}},
+  {a:{z:'阳',p:'yáng',e:'sun/yang'},b:{z:'阴',p:'yīn',e:'cloudy'}},
+  {a:{z:'易',p:'yì',e:'easy'},b:{z:'难',p:'nán',e:'difficult'}},
+  {a:{z:'吞',p:'tūn',e:'swallow'},b:{z:'吐',p:'tù',e:'spit'}},
+  {a:{z:'此',p:'cǐ',e:'this'},b:{z:'彼',p:'bǐ',e:'that'}},
+  {a:{z:'古',p:'gǔ',e:'ancient'},b:{z:'今',p:'jīn',e:'present'}},
+  {a:{z:'首',p:'shǒu',e:'head'},b:{z:'尾',p:'wěi',e:'tail'}},
+  {a:{z:'甘',p:'gān',e:'sweet'},b:{z:'甜',p:'tián',e:'sweet'}},
+  {a:{z:'对',p:'duì',e:'correct'},b:{z:'错',p:'cuò',e:'wrong'}},
+  {a:{z:'饱',p:'bǎo',e:'full'},b:{z:'饿',p:'è',e:'hungry'}},
+  {a:{z:'双',p:'shuāng',e:'double'},b:{z:'单',p:'dān',e:'single'}},
+  {a:{z:'日',p:'rì',e:'sun/day'},b:{z:'夜',p:'yè',e:'night'}},
+  {a:{z:'忙',p:'máng',e:'busy'},b:{z:'闲',p:'xián',e:'idle'}},
+  {a:{z:'输',p:'shū',e:'lose'},b:{z:'赢',p:'yíng',e:'win'}},
+  {a:{z:'贬',p:'biǎn',e:'belittle'},b:{z:'褒',p:'bāo',e:'praise'}},
+  {a:{z:'早',p:'zǎo',e:'early'},b:{z:'晚',p:'wǎn',e:'late'}},
+  {a:{z:'始',p:'shǐ',e:'begin'},b:{z:'终',p:'zhōng',e:'end'}},
+  {a:{z:'稠',p:'chóu',e:'thick/dense'},b:{z:'稀',p:'xī',e:'sparse'}},
+  {a:{z:'硬',p:'yìng',e:'hard'},b:{z:'软',p:'ruǎn',e:'soft'}},
+  {a:{z:'反',p:'fǎn',e:'reverse'},b:{z:'正',p:'zhèng',e:'upright'}},
+  {a:{z:'歪',p:'wāi',e:'crooked'},b:{z:'正',p:'zhèng',e:'upright'}},
+  {a:{z:'轻',p:'qīng',e:'light'},b:{z:'重',p:'zhòng',e:'heavy'}},
+  {a:{z:'贵',p:'guì',e:'expensive'},b:{z:'贱',p:'jiàn',e:'cheap'}},
+  {a:{z:'劳',p:'láo',e:'labor'},b:{z:'逸',p:'yì',e:'leisure'}},
+  {a:{z:'落',p:'luò',e:'fall'},b:{z:'升',p:'shēng',e:'rise'}},
+  {a:{z:'前',p:'qián',e:'front'},b:{z:'后',p:'hòu',e:'back'}},
+  {a:{z:'左',p:'zuǒ',e:'left'},b:{z:'右',p:'yòu',e:'right'}},
+  {a:{z:'贫',p:'pín',e:'poor'},b:{z:'富',p:'fù',e:'rich'}},
+  {a:{z:'凉',p:'liáng',e:'cool'},b:{z:'暖',p:'nuǎn',e:'warm'}},
+  {a:{z:'是',p:'shì',e:'yes'},b:{z:'非',p:'fēi',e:'no/not'}},
+  {a:{z:'死',p:'sǐ',e:'dead'},b:{z:'活',p:'huó',e:'live'}},
+  {a:{z:'来',p:'lái',e:'come'},b:{z:'去',p:'qù',e:'go'}},
+  {a:{z:'穷',p:'qióng',e:'poor'},b:{z:'富',p:'fù',e:'rich'}},
+  {a:{z:'尖',p:'jiān',e:'pointy'},b:{z:'钝',p:'dùn',e:'blunt'}},
+  {a:{z:'老',p:'lǎo',e:'old'},b:{z:'少',p:'shǎo',e:'few'}},
+  {a:{z:'斜',p:'xié',e:'tilted'},b:{z:'正',p:'zhèng',e:'upright'}},
+  {a:{z:'大',p:'dà',e:'big'},b:{z:'小',p:'xiǎo',e:'small'}},
+  {a:{z:'多',p:'duō',e:'many'},b:{z:'少',p:'shǎo',e:'few'}},
+  {a:{z:'男',p:'nán',e:'male'},b:{z:'女',p:'nǚ',e:'female'}},
+  {a:{z:'缓',p:'huǎn',e:'slow'},b:{z:'急',p:'jí',e:'urgent'}},
+  {a:{z:'善',p:'shàn',e:'good'},b:{z:'恶',p:'è',e:'evil'}},
+  {a:{z:'分',p:'fēn',e:'divide'},b:{z:'合',p:'hé',e:'combine'}},
+  {a:{z:'存',p:'cún',e:'exist'},b:{z:'亡',p:'wáng',e:'perish'}},
+  {a:{z:'偏',p:'piān',e:'biased'},b:{z:'正',p:'zhèng',e:'upright'}},
+  {a:{z:'饥',p:'jī',e:'hungry'},b:{z:'饱',p:'bǎo',e:'full'}},
+  {a:{z:'爱',p:'ài',e:'love'},b:{z:'恨',p:'hèn',e:'hate'}},
+  {a:{z:'盈',p:'yíng',e:'profit'},b:{z:'亏',p:'kuī',e:'deficit'}},
+  {a:{z:'虚',p:'xū',e:'hollow'},b:{z:'实',p:'shí',e:'solid'}},
+  {a:{z:'雅',p:'yǎ',e:'elegant'},b:{z:'俗',p:'sú',e:'vulgar'}},
+  {a:{z:'稀',p:'xī',e:'sparse'},b:{z:'密',p:'mì',e:'dense'}},
+  {a:{z:'巧',p:'qiǎo',e:'clever'},b:{z:'拙',p:'zhuō',e:'clumsy'}},
+  {a:{z:'恩',p:'ēn',e:'grace'},b:{z:'怨',p:'yuàn',e:'resentment'}},
+  {a:{z:'曲',p:'qū',e:'curved'},b:{z:'直',p:'zhí',e:'straight'}},
+  {a:{z:'亮',p:'liàng',e:'shiny'},b:{z:'暗',p:'àn',e:'dark'}},
+  {a:{z:'文',p:'wén',e:'civil'},b:{z:'武',p:'wǔ',e:'military'}},
+  {a:{z:'推',p:'tuī',e:'push'},b:{z:'拉',p:'lā',e:'pull'}},
+  {a:{z:'问',p:'wèn',e:'ask'},b:{z:'答',p:'dá',e:'answer'}},
+  {a:{z:'主',p:'zhǔ',e:'master'},b:{z:'仆',p:'pú',e:'servant'}},
+  {a:{z:'聚',p:'jù',e:'gather'},b:{z:'散',p:'sàn',e:'scatter'}},
+  {a:{z:'首',p:'shǒu',e:'head'},b:{z:'末',p:'mò',e:'end'}},
+  {a:{z:'敌',p:'dí',e:'enemy'},b:{z:'友',p:'yǒu',e:'friend'}},
+  {a:{z:'盛',p:'shèng',e:'flourish'},b:{z:'衰',p:'shuāi',e:'decline'}},
+  {a:{z:'顺',p:'shùn',e:'comply'},b:{z:'逆',p:'nì',e:'against'}},
+  {a:{z:'祸',p:'huò',e:'misfortune'},b:{z:'福',p:'fú',e:'fortune'}},
+  {a:{z:'信',p:'xìn',e:'trust'},b:{z:'疑',p:'yí',e:'doubt'}},
+  {a:{z:'藏',p:'cáng',e:'hide'},b:{z:'露',p:'lù',e:'reveal'}},
+  {a:{z:'断',p:'duàn',e:'break'},b:{z:'续',p:'xù',e:'continue'}},
+  {a:{z:'钝',p:'dùn',e:'blunt'},b:{z:'锐',p:'ruì',e:'sharp'}},
+  {a:{z:'浓',p:'nóng',e:'dense'},b:{z:'淡',p:'dàn',e:'bland'}},
+  {a:{z:'雌',p:'cí',e:'female'},b:{z:'雄',p:'xióng',e:'male'}},
+  {a:{z:'醒',p:'xǐng',e:'awake'},b:{z:'睡',p:'shuì',e:'sleep'}},
+  {a:{z:'止',p:'zhǐ',e:'stop'},b:{z:'行',p:'xíng',e:'go'}},
+  {a:{z:'横',p:'héng',e:'horizontal'},b:{z:'竖',p:'shù',e:'vertical'}},
+  {a:{z:'涨',p:'zhǎng',e:'rise'},b:{z:'降',p:'jiàng',e:'fall'}},
+  {a:{z:'隐',p:'yǐn',e:'hidden'},b:{z:'现',p:'xiàn',e:'appear'}},
+  {a:{z:'同',p:'tóng',e:'same'},b:{z:'异',p:'yì',e:'different'}},
+  {a:{z:'浑',p:'hún',e:'muddy'},b:{z:'清',p:'qīng',e:'clear'}},
+  {a:{z:'嫩',p:'nèn',e:'tender'},b:{z:'老',p:'lǎo',e:'old'}}
+],
+medium:[
+  {a:{z:'安全',p:'ānquán',e:'safe'},b:{z:'危险',p:'wēixiǎn',e:'dangerous'}},
+  {a:{z:'胆小',p:'dǎnxiǎo',e:'timid'},b:{z:'勇敢',p:'yǒnggǎn',e:'brave'}},
+  {a:{z:'现实',p:'xiànshí',e:'realistic'},b:{z:'幻想',p:'huànxiǎng',e:'fantasy'}},
+  {a:{z:'迅速',p:'xùnsù',e:'rapid'},b:{z:'缓慢',p:'huǎnmàn',e:'slow'}},
+  {a:{z:'沉着',p:'chénzhuó',e:'composed'},b:{z:'慌乱',p:'huāngluàn',e:'flustered'}},
+  {a:{z:'火热',p:'huǒrè',e:'fiery hot'},b:{z:'冰冷',p:'bīnglěng',e:'ice cold'}},
+  {a:{z:'吵闹',p:'chǎonào',e:'noisy'},b:{z:'安静',p:'ānjìng',e:'quiet'}},
+  {a:{z:'先进',p:'xiānjìn',e:'advanced'},b:{z:'落后',p:'luòhòu',e:'lagging'}},
+  {a:{z:'扩大',p:'kuòdà',e:'expand'},b:{z:'缩小',p:'suōxiǎo',e:'shrink'}},
+  {a:{z:'喜欢',p:'xǐhuān',e:'like'},b:{z:'厌恶',p:'yànwù',e:'detest'}},
+  {a:{z:'打骂',p:'dǎmà',e:'scold & beat'},b:{z:'称赞',p:'chēngzàn',e:'praise'}},
+  {a:{z:'暗淡',p:'àndàn',e:'dim/dull'},b:{z:'明亮',p:'míngliàng',e:'bright'}},
+  {a:{z:'干净',p:'gānjìng',e:'clean'},b:{z:'肮脏',p:'āngzāng',e:'dirty'}},
+  {a:{z:'轻巧',p:'qīngqiǎo',e:'nimble'},b:{z:'笨重',p:'bènzhòng',e:'heavy & clumsy'}},
+  {a:{z:'迟钝',p:'chídùn',e:'sluggish'},b:{z:'灵敏',p:'língmǐn',e:'sensitive'}},
+  {a:{z:'黑暗',p:'hēiàn',e:'darkness'},b:{z:'光明',p:'guāngmíng',e:'brightness'}},
+  {a:{z:'秘密',p:'mìmì',e:'secret'},b:{z:'公开',p:'gōngkāi',e:'public'}},
+  {a:{z:'潮湿',p:'cháoshī',e:'damp'},b:{z:'干燥',p:'gānzào',e:'dry'}},
+  {a:{z:'简单',p:'jiǎndān',e:'simple'},b:{z:'复杂',p:'fùzá',e:'complex'}},
+  {a:{z:'坚硬',p:'jiānyìng',e:'hard/rigid'},b:{z:'柔软',p:'róuruǎn',e:'soft'}},
+  {a:{z:'缓和',p:'huǎnhé',e:'ease'},b:{z:'紧张',p:'jǐnzhāng',e:'tense'}},
+  {a:{z:'喜悦',p:'xǐyuè',e:'joyful'},b:{z:'悲伤',p:'bēishāng',e:'sorrowful'}},
+  {a:{z:'繁重',p:'fánzhòng',e:'burdensome'},b:{z:'轻松',p:'qīngsōng',e:'relaxed'}},
+  {a:{z:'怀疑',p:'huáiyí',e:'suspect'},b:{z:'相信',p:'xiāngxìn',e:'believe'}},
+  {a:{z:'表扬',p:'biǎoyáng',e:'praise'},b:{z:'批评',p:'pīpíng',e:'criticize'}},
+  {a:{z:'快乐',p:'kuàilè',e:'joyful'},b:{z:'悲哀',p:'bēiāi',e:'sorrowful'}},
+  {a:{z:'和蔼',p:'héǎi',e:'amiable'},b:{z:'粗暴',p:'cūbào',e:'rough/brutal'}},
+  {a:{z:'正常',p:'zhèngcháng',e:'normal'},b:{z:'异常',p:'yìcháng',e:'abnormal'}},
+  {a:{z:'开心',p:'kāixīn',e:'happy'},b:{z:'苦闷',p:'kǔmèn',e:'distressed'}},
+  {a:{z:'寻常',p:'xúncháng',e:'ordinary'},b:{z:'异常',p:'yìcháng',e:'abnormal'}},
+  {a:{z:'激烈',p:'jīliè',e:'intense'},b:{z:'平静',p:'píngjìng',e:'calm'}},
+  {a:{z:'嘈杂',p:'cáozá',e:'noisy'},b:{z:'寂静',p:'jìjìng',e:'silent'}},
+  {a:{z:'退化',p:'tuìhuà',e:'degenerate'},b:{z:'进化',p:'jìnhuà',e:'evolve'}},
+  {a:{z:'凝结',p:'níngjié',e:'condense'},b:{z:'溶解',p:'róngjiě',e:'dissolve'}},
+  {a:{z:'鲜艳',p:'xiānyàn',e:'vivid/colorful'},b:{z:'暗淡',p:'àndàn',e:'dim/dull'}},
+  {a:{z:'严寒',p:'yánhán',e:'bitter cold'},b:{z:'酷暑',p:'kùshǔ',e:'scorching heat'}},
+  {a:{z:'清醒',p:'qīngxǐng',e:'clear-headed'},b:{z:'糊涂',p:'hútú',e:'confused'}},
+  {a:{z:'荒芜',p:'huāngwú',e:'desolate'},b:{z:'耕种',p:'gēngzhòng',e:'cultivate'}},
+  {a:{z:'陌生',p:'mòshēng',e:'unfamiliar'},b:{z:'熟悉',p:'shúxī',e:'familiar'}},
+  {a:{z:'平坦',p:'píngtǎn',e:'flat'},b:{z:'崎岖',p:'qíqū',e:'rugged'}},
+  {a:{z:'幽静',p:'yōujìng',e:'serene'},b:{z:'喧闹',p:'xuānnào',e:'noisy'}},
+  {a:{z:'怕羞',p:'pàxiū',e:'shy'},b:{z:'大方',p:'dàfāng',e:'generous'}},
+  {a:{z:'镇定',p:'zhèndìng',e:'composed'},b:{z:'慌张',p:'huāngzhāng',e:'flustered'}},
+  {a:{z:'安谧',p:'ānmì',e:'peaceful & still'},b:{z:'嘈杂',p:'cáozá',e:'noisy'}},
+  {a:{z:'清晰',p:'qīngxī',e:'clear'},b:{z:'浑浊',p:'húnzhuó',e:'murky'}},
+  {a:{z:'光滑',p:'guānghuá',e:'smooth'},b:{z:'粗糙',p:'cūcāo',e:'rough'}},
+  {a:{z:'刚强',p:'gāngqiáng',e:'unyielding'},b:{z:'软弱',p:'ruǎnruò',e:'weak'}},
+  {a:{z:'团结',p:'tuánjié',e:'united'},b:{z:'分裂',p:'fēnliè',e:'divided'}},
+  {a:{z:'特别',p:'tèbié',e:'special'},b:{z:'一般',p:'yìbān',e:'ordinary'}},
+  {a:{z:'信奉',p:'xìnfèng',e:'believe in'},b:{z:'背弃',p:'bèiqì',e:'betray'}},
+  {a:{z:'聚拢',p:'jùlǒng',e:'gather'},b:{z:'分散',p:'fēnsàn',e:'scatter'}},
+  {a:{z:'温暖',p:'wēnnuǎn',e:'warm'},b:{z:'凉爽',p:'liángshuǎng',e:'refreshing'}},
+  {a:{z:'坚强',p:'jiānqiáng',e:'strong-willed'},b:{z:'软弱',p:'ruǎnruò',e:'weak'}},
+  {a:{z:'慎重',p:'shènzhòng',e:'prudent'},b:{z:'随便',p:'suíbiàn',e:'casual'}},
+  {a:{z:'慌忙',p:'huāngmáng',e:'hasty'},b:{z:'镇定',p:'zhèndìng',e:'composed'}},
+  {a:{z:'羞涩',p:'xiūsè',e:'shy/bashful'},b:{z:'大方',p:'dàfāng',e:'generous'}},
+  {a:{z:'扫兴',p:'sǎoxìng',e:'disappointing'},b:{z:'高兴',p:'gāoxìng',e:'happy'}},
+  {a:{z:'强盛',p:'qiángshèng',e:'powerful'},b:{z:'衰败',p:'shuāibài',e:'declining'}},
+  {a:{z:'失信',p:'shīxìn',e:'break promise'},b:{z:'守信',p:'shǒuxìn',e:'keep promise'}},
+  {a:{z:'增添',p:'zēngtiān',e:'add to'},b:{z:'减少',p:'jiǎnshǎo',e:'decrease'}},
+  {a:{z:'柔和',p:'róuhé',e:'gentle'},b:{z:'严厉',p:'yánlì',e:'strict/harsh'}},
+  {a:{z:'熟识',p:'shúshí',e:'know well'},b:{z:'生疏',p:'shēngshū',e:'unfamiliar'}},
+  {a:{z:'轻蔑',p:'qīngmiè',e:'disdain'},b:{z:'敬重',p:'jìngzhòng',e:'respect deeply'}},
+  {a:{z:'尊重',p:'zūnzhòng',e:'respect'},b:{z:'侮辱',p:'wǔrǔ',e:'insult'}},
+  {a:{z:'率领',p:'shuàilǐng',e:'lead'},b:{z:'追随',p:'zhuīsuí',e:'follow'}},
+  {a:{z:'活泼',p:'huópō',e:'lively'},b:{z:'呆板',p:'dāibǎn',e:'dull/stiff'}},
+  {a:{z:'拒绝',p:'jùjué',e:'refuse'},b:{z:'同意',p:'tóngyì',e:'agree'}},
+  {a:{z:'纯熟',p:'chúnshú',e:'adept/skilled'},b:{z:'生疏',p:'shēngshū',e:'unfamiliar'}},
+  {a:{z:'痛快',p:'tòngkuài',e:'satisfying'},b:{z:'难受',p:'nánshòu',e:'uncomfortable'}},
+  {a:{z:'伶俐',p:'línglì',e:'quick-witted'},b:{z:'笨拙',p:'bènzhuō',e:'clumsy'}},
+  {a:{z:'失败',p:'shībài',e:'fail'},b:{z:'成功',p:'chénggōng',e:'succeed'}},
+  {a:{z:'高兴',p:'gāoxìng',e:'happy'},b:{z:'伤心',p:'shāngxīn',e:'heartbroken'}},
+  {a:{z:'飞快',p:'fēikuài',e:'lightning fast'},b:{z:'缓慢',p:'huǎnmàn',e:'slow'}},
+  {a:{z:'灾害',p:'zāihài',e:'disaster'},b:{z:'幸福',p:'xìngfú',e:'happiness'}},
+  {a:{z:'喜欢',p:'xǐhuān',e:'like'},b:{z:'讨厌',p:'tǎoyàn',e:'dislike'}},
+  {a:{z:'温和',p:'wēnhé',e:'mild/gentle'},b:{z:'暴躁',p:'bàozào',e:'hot-tempered'}},
+  {a:{z:'空闲',p:'kòngxián',e:'free time'},b:{z:'忙碌',p:'mánglù',e:'busy'}},
+  {a:{z:'勇敢',p:'yǒnggǎn',e:'brave'},b:{z:'懦弱',p:'nuòruò',e:'cowardly'}},
+  {a:{z:'漂亮',p:'piàoliang',e:'pretty'},b:{z:'丑陋',p:'chǒulòu',e:'ugly'}},
+  {a:{z:'心爱',p:'xīnài',e:'beloved'},b:{z:'厌恶',p:'yànwù',e:'detest'}},
+  {a:{z:'奔跑',p:'bēnpǎo',e:'sprint'},b:{z:'停止',p:'tíngzhǐ',e:'stop'}},
+  {a:{z:'锋利',p:'fēnglì',e:'sharp'},b:{z:'迟钝',p:'chídùn',e:'sluggish'}},
+  {a:{z:'破碎',p:'pòsuì',e:'shattered'},b:{z:'完整',p:'wánzhěng',e:'intact'}},
+  {a:{z:'赶紧',p:'gǎnjǐn',e:'hurry up'},b:{z:'拖延',p:'tuōyán',e:'delay'}},
+  {a:{z:'广阔',p:'guǎngkuò',e:'vast'},b:{z:'狭小',p:'xiáxiǎo',e:'narrow & small'}},
+  {a:{z:'亲密',p:'qīnmì',e:'close'},b:{z:'疏远',p:'shūyuǎn',e:'distant'}},
+  {a:{z:'未来',p:'wèilái',e:'future'},b:{z:'现在',p:'xiànzài',e:'present'}},
+  {a:{z:'美丽',p:'měilì',e:'beautiful'},b:{z:'丑陋',p:'chǒulòu',e:'ugly'}},
+  {a:{z:'坚硬',p:'jiānyìng',e:'hard/rigid'},b:{z:'松软',p:'sōngruǎn',e:'soft & loose'}},
+  {a:{z:'粗心',p:'cūxīn',e:'careless'},b:{z:'细心',p:'xìxīn',e:'careful'}},
+  {a:{z:'热闹',p:'rènao',e:'lively/bustling'},b:{z:'寂静',p:'jìjìng',e:'silent'}},
+  {a:{z:'弯曲',p:'wānqū',e:'curved'},b:{z:'笔直',p:'bǐzhí',e:'straight'}},
+  {a:{z:'特别',p:'tèbié',e:'special'},b:{z:'普通',p:'pǔtōng',e:'ordinary'}},
+  {a:{z:'洁净',p:'jiéjìng',e:'spotless'},b:{z:'肮脏',p:'āngzāng',e:'dirty'}},
+  {a:{z:'扩散',p:'kuòsàn',e:'spread'},b:{z:'集中',p:'jízhōng',e:'concentrate'}},
+  {a:{z:'疑惑',p:'yíhuò',e:'puzzled'},b:{z:'坚信',p:'jiānxìn',e:'firmly believe'}},
+  {a:{z:'同意',p:'tóngyì',e:'agree'},b:{z:'反对',p:'fǎnduì',e:'oppose'}},
+  {a:{z:'虚心',p:'xūxīn',e:'open-minded'},b:{z:'骄傲',p:'jiāoào',e:'arrogant'}},
+  {a:{z:'弱小',p:'ruòxiǎo',e:'weak & small'},b:{z:'强大',p:'qiángdà',e:'powerful'}},
+  {a:{z:'反对',p:'fǎnduì',e:'oppose'},b:{z:'赞成',p:'zànchéng',e:'approve'}},
+  {a:{z:'正确',p:'zhèngquè',e:'correct'},b:{z:'错误',p:'cuòwù',e:'wrong'}},
+  {a:{z:'浪费',p:'làngfèi',e:'wasteful'},b:{z:'节约',p:'jiéyuē',e:'economize'}},
+  {a:{z:'贫穷',p:'pínqióng',e:'poor'},b:{z:'富裕',p:'fùyù',e:'wealthy'}},
+  {a:{z:'遥远',p:'yáoyuǎn',e:'distant'},b:{z:'附近',p:'fùjìn',e:'nearby'}},
+  {a:{z:'倔强',p:'juéjiàng',e:'stubborn'},b:{z:'温顺',p:'wēnshùn',e:'docile'}},
+  {a:{z:'谦逊',p:'qiānxùn',e:'humble'},b:{z:'骄傲',p:'jiāoào',e:'arrogant'}},
+  {a:{z:'终日',p:'zhōngrì',e:'all day long'},b:{z:'偶尔',p:'ǒuěr',e:'occasionally'}},
+  {a:{z:'殷勤',p:'yīnqín',e:'attentive'},b:{z:'冷淡',p:'lěngdàn',e:'cold/aloof'}},
+  {a:{z:'孤独',p:'gūdú',e:'lonely'},b:{z:'热闹',p:'rènao',e:'lively/bustling'}},
+  {a:{z:'奇特',p:'qítè',e:'peculiar'},b:{z:'平凡',p:'píngfán',e:'ordinary'}},
+  {a:{z:'虚幻',p:'xūhuàn',e:'illusory'},b:{z:'真实',p:'zhēnshí',e:'real'}},
+  {a:{z:'甜蜜',p:'tiánmì',e:'sweet/blissful'},b:{z:'苦涩',p:'kǔsè',e:'bitter'}},
+  {a:{z:'动摇',p:'dòngyáo',e:'waver'},b:{z:'坚定',p:'jiāndìng',e:'resolute'}},
+  {a:{z:'兴旺',p:'xīngwàng',e:'prosperous'},b:{z:'衰败',p:'shuāibài',e:'declining'}},
+  {a:{z:'勤奋',p:'qínfèn',e:'diligent'},b:{z:'懒惰',p:'lǎnduò',e:'lazy'}},
+  {a:{z:'肥胖',p:'féipàng',e:'obese'},b:{z:'消瘦',p:'xiāoshòu',e:'emaciated'}},
+  {a:{z:'提高',p:'tígāo',e:'raise'},b:{z:'降低',p:'jiàngdī',e:'lower'}},
+  {a:{z:'偶然',p:'ǒurán',e:'accidental'},b:{z:'必然',p:'bìrán',e:'inevitable'}},
+  {a:{z:'外表',p:'wàibiǎo',e:'appearance'},b:{z:'内心',p:'nèixīn',e:'inner heart'}},
+  {a:{z:'厄运',p:'èyùn',e:'misfortune'},b:{z:'幸运',p:'xìngyùn',e:'lucky'}},
+  {a:{z:'微弱',p:'wēiruò',e:'faint/weak'},b:{z:'强烈',p:'qiángliè',e:'intense'}},
+  {a:{z:'黑暗',p:'hēiàn',e:'darkness'},b:{z:'明亮',p:'míngliàng',e:'bright'}},
+  {a:{z:'害羞',p:'hàixiū',e:'shy/bashful'},b:{z:'大方',p:'dàfāng',e:'generous'}}
+],
+hard:[
+  {a:{z:'惊诧',p:'jīngchà',e:'astonished'},b:{z:'焦急',p:'jiāojí',e:'anxious'}},
+  {a:{z:'乌黑',p:'wūhēi',e:'jet black'},b:{z:'雪白',p:'xuěbái',e:'snow white'}},
+  {a:{z:'俊俏',p:'jùnqiào',e:'handsome'},b:{z:'丑陋',p:'chǒulòu',e:'ugly'}},
+  {a:{z:'轻快',p:'qīngkuài',e:'nimble & quick'},b:{z:'沉重',p:'chénzhòng',e:'heavy'}},
+  {a:{z:'增添',p:'zēngtiān',e:'add to'},b:{z:'削减',p:'xuējiǎn',e:'cut/reduce'}},
+  {a:{z:'害怕',p:'hàipà',e:'afraid'},b:{z:'勇敢',p:'yǒnggǎn',e:'brave'}},
+  {a:{z:'停止',p:'tíngzhǐ',e:'stop'},b:{z:'开始',p:'kāishǐ',e:'begin'}},
+  {a:{z:'好梦',p:'hǎomèng',e:'sweet dream'},b:{z:'恶梦',p:'èmèng',e:'nightmare'}},
+  {a:{z:'玲珑',p:'línglóng',e:'delicate & clever'},b:{z:'粗笨',p:'cūbèn',e:'clumsy/bulky'}},
+  {a:{z:'离开',p:'líkāi',e:'leave'},b:{z:'回归',p:'huíguī',e:'return'}},
+  {a:{z:'特殊',p:'tèshū',e:'special'},b:{z:'一般',p:'yìbān',e:'ordinary'}},
+  {a:{z:'送行',p:'sòngxíng',e:'see off'},b:{z:'迎接',p:'yíngjiē',e:'welcome'}},
+  {a:{z:'舒适',p:'shūshì',e:'comfortable'},b:{z:'难受',p:'nánshòu',e:'uncomfortable'}},
+  {a:{z:'早先',p:'zǎoxiān',e:'previously'},b:{z:'以后',p:'yǐhòu',e:'later'}},
+  {a:{z:'裸露',p:'luǒlù',e:'bare/exposed'},b:{z:'遮盖',p:'zhēgài',e:'cover/conceal'}},
+  {a:{z:'黎明',p:'límíng',e:'dawn'},b:{z:'黑夜',p:'hēiyè',e:'dark night'}},
+  {a:{z:'减少',p:'jiǎnshǎo',e:'decrease'},b:{z:'增加',p:'zēngjiā',e:'increase'}},
+  {a:{z:'接受',p:'jiēshòu',e:'accept'},b:{z:'拒绝',p:'jùjué',e:'refuse'}},
+  {a:{z:'悲惨',p:'bēicǎn',e:'tragic'},b:{z:'幸福',p:'xìngfú',e:'happiness'}},
+  {a:{z:'有名',p:'yǒumíng',e:'famous'},b:{z:'无名',p:'wúmíng',e:'unknown'}},
+  {a:{z:'严肃',p:'yánsù',e:'serious'},b:{z:'随和',p:'suíhé',e:'easygoing'}},
+  {a:{z:'熟悉',p:'shúxī',e:'familiar'},b:{z:'生疏',p:'shēngshū',e:'unfamiliar'}},
+  {a:{z:'忧伤',p:'yōushāng',e:'melancholy'},b:{z:'高兴',p:'gāoxìng',e:'happy'}},
+  {a:{z:'沉默',p:'chénmò',e:'silent'},b:{z:'吵闹',p:'chǎonào',e:'noisy'}},
+  {a:{z:'防御',p:'fángyù',e:'defend'},b:{z:'进攻',p:'jìngōng',e:'attack'}},
+  {a:{z:'悲哀',p:'bēiāi',e:'sorrowful'},b:{z:'高兴',p:'gāoxìng',e:'happy'}},
+  {a:{z:'高尚',p:'gāoshàng',e:'noble'},b:{z:'卑鄙',p:'bēibǐ',e:'despicable'}},
+  {a:{z:'烦恼',p:'fánnǎo',e:'worried'},b:{z:'开心',p:'kāixīn',e:'happy'}},
+  {a:{z:'阻止',p:'zǔzhǐ',e:'stop/prevent'},b:{z:'允许',p:'yǔnxǔ',e:'allow'}},
+  {a:{z:'稚拙',p:'zhìzhuō',e:'naive/clumsy'},b:{z:'老练',p:'lǎoliàn',e:'experienced'}},
+  {a:{z:'掩盖',p:'yǎngài',e:'cover up'},b:{z:'暴露',p:'bàolù',e:'expose'}},
+  {a:{z:'温柔',p:'wēnróu',e:'gentle'},b:{z:'粗暴',p:'cūbào',e:'rough/brutal'}},
+  {a:{z:'轻柔',p:'qīngróu',e:'soft & gentle'},b:{z:'粗重',p:'cūzhòng',e:'rough & heavy'}},
+  {a:{z:'旱灾',p:'hànzāi',e:'drought'},b:{z:'水灾',p:'shuǐzāi',e:'flood'}},
+  {a:{z:'密切',p:'mìqiē',e:'close/tight'},b:{z:'疏远',p:'shūyuǎn',e:'distant'}},
+  {a:{z:'可爱',p:'kě\'ài',e:'cute'},b:{z:'可憎',p:'kězēng',e:'detestable'}},
+  {a:{z:'皎洁',p:'jiǎojié',e:'pure & bright'},b:{z:'昏暗',p:'hūnàn',e:'dim/murky'}},
+  {a:{z:'付出',p:'fùchū',e:'give'},b:{z:'索取',p:'suǒqǔ',e:'demand'}},
+  {a:{z:'费解',p:'fèijiě',e:'hard to understand'},b:{z:'易懂',p:'yìdǒng',e:'easy to understand'}},
+  {a:{z:'便宜',p:'piányí',e:'cheap'},b:{z:'昂贵',p:'ángguì',e:'expensive'}},
+  {a:{z:'丰富',p:'fēngfù',e:'abundant'},b:{z:'单调',p:'dāndião',e:'monotonous'}},
+  {a:{z:'晚霞',p:'wǎnxiá',e:'evening glow'},b:{z:'朝阳',p:'zhāoyáng',e:'morning sun'}},
+  {a:{z:'精致',p:'jīngzhì',e:'exquisite'},b:{z:'粗糙',p:'cūcāo',e:'rough'}},
+  {a:{z:'猜测',p:'cāicè',e:'guess'},b:{z:'肯定',p:'kěndìng',e:'certain'}},
+  {a:{z:'清晰',p:'qīngxī',e:'clear'},b:{z:'模糊',p:'móhū',e:'vague'}},
+  {a:{z:'稀少',p:'xīshǎo',e:'scarce'},b:{z:'繁多',p:'fánduō',e:'numerous'}},
+  {a:{z:'荒芜',p:'huāngwú',e:'desolate'},b:{z:'繁盛',p:'fánshèng',e:'flourishing'}},
+  {a:{z:'出现',p:'chūxiàn',e:'appear'},b:{z:'隐藏',p:'yǐncáng',e:'hide'}},
+  {a:{z:'燃烧',p:'ránshāo',e:'burning'},b:{z:'熄灭',p:'xīmiè',e:'extinguish'}},
+  {a:{z:'平静',p:'píngjìng',e:'calm'},b:{z:'动荡',p:'dòngdàng',e:'turbulent'}},
+  {a:{z:'加重',p:'jiāzhòng',e:'aggravate'},b:{z:'减轻',p:'jiǎnqīng',e:'alleviate'}},
+  {a:{z:'缓慢',p:'huǎnmàn',e:'slow'},b:{z:'快速',p:'kuàisù',e:'fast'}},
+  {a:{z:'节省',p:'jiéshěng',e:'thrifty'},b:{z:'浪费',p:'làngfèi',e:'wasteful'}},
+  {a:{z:'茂盛',p:'màoshèng',e:'lush'},b:{z:'枯萎',p:'kūwěi',e:'withered'}},
+  {a:{z:'静寂',p:'jìngjì',e:'silent'},b:{z:'热闹',p:'rènao',e:'lively/bustling'}},
+  {a:{z:'镇静',p:'zhènjìng',e:'composed'},b:{z:'慌乱',p:'huāngluàn',e:'flustered'}},
+  {a:{z:'威武',p:'wēiwǔ',e:'mighty'},b:{z:'沮丧',p:'jǔsàng',e:'dejected'}},
+  {a:{z:'巨大',p:'jùdà',e:'enormous'},b:{z:'细小',p:'xìxiǎo',e:'tiny/fine'}},
+  {a:{z:'神秘',p:'shénmì',e:'mysterious'},b:{z:'平常',p:'píngcháng',e:'ordinary'}},
+  {a:{z:'珍贵',p:'zhēnguì',e:'precious'},b:{z:'普通',p:'pǔtōng',e:'ordinary'}},
+  {a:{z:'舒服',p:'shūfú',e:'comfortable'},b:{z:'难受',p:'nánshòu',e:'uncomfortable'}},
+  {a:{z:'牢固',p:'láogù',e:'sturdy'},b:{z:'脆弱',p:'cuìruò',e:'fragile'}},
+  {a:{z:'新鲜',p:'xīnxiān',e:'fresh'},b:{z:'陈腐',p:'chénfǔ',e:'stale/outdated'}},
+  {a:{z:'反面',p:'fǎnmiàn',e:'negative side'},b:{z:'正面',p:'zhèngmiàn',e:'positive side'}},
+  {a:{z:'粗糙',p:'cūcāo',e:'rough'},b:{z:'细腻',p:'xìnì',e:'delicate'}},
+  {a:{z:'谦虚',p:'qiānxū',e:'humble'},b:{z:'骄傲',p:'jiāoào',e:'arrogant'}},
+  {a:{z:'快乐',p:'kuàilè',e:'joyful'},b:{z:'伤心',p:'shāngxīn',e:'heartbroken'}},
+  {a:{z:'宽阔',p:'kuānkuò',e:'spacious'},b:{z:'狭窄',p:'xiázhǎi',e:'narrow'}},
+  {a:{z:'强健',p:'qiángjiàn',e:'strong & healthy'},b:{z:'软弱',p:'ruǎnruò',e:'weak'}},
+  {a:{z:'清澈',p:'qīngchè',e:'crystal clear'},b:{z:'浑浊',p:'húnzhuó',e:'murky'}},
+  {a:{z:'明白',p:'míngbai',e:'understand'},b:{z:'糊涂',p:'hútú',e:'confused'}},
+  {a:{z:'茂密',p:'màomì',e:'lush & dense'},b:{z:'稀疏',p:'xīshū',e:'sparse'}},
+  {a:{z:'愤怒',p:'fènnù',e:'furious'},b:{z:'高兴',p:'gāoxìng',e:'happy'}},
+  {a:{z:'灵活',p:'línghuó',e:'flexible'},b:{z:'笨拙',p:'bènzhuō',e:'clumsy'}},
+  {a:{z:'准许',p:'zhǔnxǔ',e:'authorize'},b:{z:'拒绝',p:'jùjué',e:'refuse'}},
+  {a:{z:'热情',p:'rèqíng',e:'enthusiastic'},b:{z:'冷淡',p:'lěngdàn',e:'cold/aloof'}},
+  {a:{z:'勤劳',p:'qínláo',e:'hardworking'},b:{z:'懒惰',p:'lǎnduò',e:'lazy'}},
+  {a:{z:'分散',p:'fēnsàn',e:'scatter'},b:{z:'聚集',p:'jùjí',e:'gather/assemble'}},
+  {a:{z:'迅速',p:'xùnsù',e:'rapid'},b:{z:'迟钝',p:'chídùn',e:'sluggish'}},
+  {a:{z:'认真',p:'rènzhēn',e:'serious'},b:{z:'马虎',p:'mǎhū',e:'careless'}},
+  {a:{z:'失败',p:'shībài',e:'fail'},b:{z:'胜利',p:'shènglì',e:'victory'}},
+  {a:{z:'犹豫',p:'yóuyù',e:'hesitate'},b:{z:'果断',p:'guǒduàn',e:'decisive'}},
+  {a:{z:'膨大',p:'péngdà',e:'expand/swell'},b:{z:'缩小',p:'suōxiǎo',e:'shrink'}},
+  {a:{z:'迟钝',p:'chídùn',e:'sluggish'},b:{z:'灵活',p:'línghuó',e:'flexible'}},
+  {a:{z:'笨重',p:'bènzhòng',e:'heavy & clumsy'},b:{z:'轻便',p:'qīngbiàn',e:'lightweight'}},
+  {a:{z:'临时',p:'línshí',e:'temporary'},b:{z:'长期',p:'chángqī',e:'long-term'}},
+  {a:{z:'慎重',p:'shènzhòng',e:'prudent'},b:{z:'马虎',p:'mǎhū',e:'careless'}},
+  {a:{z:'柔弱',p:'róuruò',e:'delicate'},b:{z:'刚强',p:'gāngqiáng',e:'unyielding'}},
+  {a:{z:'干燥',p:'gānzào',e:'dry'},b:{z:'湿润',p:'shīrùn',e:'moist'}},
+  {a:{z:'静谧',p:'jìngmì',e:'tranquil'},b:{z:'热闹',p:'rènao',e:'lively/bustling'}},
+  {a:{z:'崭新',p:'zhǎnxīn',e:'brand new'},b:{z:'陈旧',p:'chénjiù',e:'stale'}},
+  {a:{z:'开始',p:'kāishǐ',e:'begin'},b:{z:'结尾',p:'jiéwěi',e:'ending'}},
+  {a:{z:'喧闹',p:'xuānnào',e:'noisy'},b:{z:'宁静',p:'níngjìng',e:'serene'}},
+  {a:{z:'容易',p:'róngyì',e:'easy'},b:{z:'困难',p:'kùnnán',e:'difficult'}},
+  {a:{z:'凋谢',p:'diāoxiè',e:'wither'},b:{z:'盛开',p:'shèngkāi',e:'in full bloom'}},
+  {a:{z:'温暖',p:'wēnnuǎn',e:'warm'},b:{z:'寒冷',p:'hánlěng',e:'cold'}},
+  {a:{z:'朋友',p:'péngyǒu',e:'friend'},b:{z:'敌人',p:'dírén',e:'enemy'}},
+  {a:{z:'山谷',p:'shāngǔ',e:'valley'},b:{z:'山峰',p:'shānfēng',e:'mountain peak'}},
+  {a:{z:'点燃',p:'diǎnrán',e:'ignite'},b:{z:'熄灭',p:'xīmiè',e:'extinguish'}},
+  {a:{z:'神奇',p:'shénqí',e:'magical'},b:{z:'平常',p:'píngcháng',e:'ordinary'}},
+  {a:{z:'热闹',p:'rènao',e:'lively/bustling'},b:{z:'安静',p:'ānjìng',e:'quiet'}},
+  {a:{z:'关心',p:'guānxīn',e:'care for'},b:{z:'冷漠',p:'lěngmò',e:'indifferent'}},
+  {a:{z:'高傲',p:'gāoào',e:'haughty'},b:{z:'谦逊',p:'qiānxùn',e:'humble'}},
+  {a:{z:'郑重',p:'zhèngzhòng',e:'solemn'},b:{z:'轻率',p:'qīngshuài',e:'reckless'}},
+  {a:{z:'从容',p:'cóngróng',e:'calm & unhurried'},b:{z:'慌张',p:'huāngzhāng',e:'flustered'}},
+  {a:{z:'高兴',p:'gāoxìng',e:'happy'},b:{z:'难过',p:'nánguò',e:'sad/upset'}},
+  {a:{z:'淘气',p:'táoqì',e:'naughty'},b:{z:'规矩',p:'guījǔ',e:'well-behaved'}},
+  {a:{z:'反抗',p:'fǎnkàng',e:'resist'},b:{z:'顺从',p:'shùncóng',e:'obey'}},
+  {a:{z:'忠厚',p:'zhōnghòu',e:'loyal & honest'},b:{z:'奸诈',p:'jiānzhà',e:'treacherous'}},
+  {a:{z:'蜿蜒',p:'wānyán',e:'winding'},b:{z:'笔直',p:'bǐzhí',e:'straight'}},
+  {a:{z:'坚固',p:'jiāngù',e:'solid/firm'},b:{z:'脆弱',p:'cuìruò',e:'fragile'}},
+  {a:{z:'清楚',p:'qīngchǔ',e:'clear'},b:{z:'模糊',p:'móhū',e:'vague'}},
+  {a:{z:'陡峭',p:'dǒuqiào',e:'steep'},b:{z:'平坦',p:'píngtǎn',e:'flat'}},
+  {a:{z:'伟大',p:'wěidà',e:'great'},b:{z:'渺小',p:'miǎoxiǎo',e:'tiny'}},
+  {a:{z:'相同',p:'xiāngtóng',e:'identical'},b:{z:'不同',p:'bùtóng',e:'different'}},
+  {a:{z:'古老',p:'gǔlǎo',e:'ancient'},b:{z:'现代',p:'xiàndài',e:'modern'}},
+  {a:{z:'宏大',p:'hóngdà',e:'magnificent'},b:{z:'微小',p:'wēixiǎo',e:'tiny'}},
+  {a:{z:'魁梧',p:'kuíwú',e:'tall & strong'},b:{z:'矮小',p:'ǎixiǎo',e:'short & small'}},
+  {a:{z:'丰满',p:'fēngmǎn',e:'plump/full'},b:{z:'干瘪',p:'gānbiě',e:'shrunken'}},
+  {a:{z:'故人',p:'gùrén',e:'old friend'},b:{z:'新朋',p:'xīnpéng',e:'new friend'}},
+  {a:{z:'满意',p:'mǎnyì',e:'satisfied'},b:{z:'失望',p:'shīwàng',e:'disappointed'}},
+  {a:{z:'灿烂',p:'cànlàn',e:'brilliant'},b:{z:'暗淡',p:'àndàn',e:'dim/dull'}},
+  {a:{z:'凋零',p:'diāolíng',e:'wither/fall'},b:{z:'盛开',p:'shèngkāi',e:'in full bloom'}},
+  {a:{z:'希望',p:'xīwàng',e:'hope'},b:{z:'失望',p:'shīwàng',e:'disappointed'}}
+]
+};
+
+/* Fix missing b: in some entries */
+const POOL = {};
+Object.keys(DATA).forEach(lv => {
+  POOL[lv] = DATA[lv].filter(p => p.a && p.b);
+});
+
+/* ═══ STATE ═══ */
+const ROUND_SIZE = 4;
+let level = 'easy';
+let shuffled = [], roundIdx = 0, tiles = [];
+let sel = null, score = 0, combo = 1;
+let matches = 0, wrongs = 0;
+let sec = 0, timer = null;
+let hintUsed = false, donateShown = false;
+let showEn = true;
+
+/* ═══ SETUP ═══ */
+function pickLevel(lv, btn){
+  level = lv;
+  document.querySelectorAll('.lbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function startGame(){
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('game').style.display = 'block';
+
+  const badge = document.getElementById('lv-badge');
+  badge.textContent = level.charAt(0).toUpperCase()+level.slice(1);
+  badge.className = 'lv-badge lv-'+level;
+
+  shuffled = shuffle([...POOL[level]]);
+  roundIdx = 0; score = 0; combo = 1; matches = 0; wrongs = 0; sec = 0;
+  donateShown = false;
+  clearInterval(timer);
+  timer = setInterval(()=>{ sec++; updTime(); },1000);
+  loadRound();
+}
+
+function goHome(){
+  clearInterval(timer);
+  document.getElementById('game').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('hero').style.display='block';
+}
+
+function shuffle(a){ return a.sort(()=>Math.random()-.5); }
+
+/* ═══ ROUND ═══ */
+function loadRound(){
+  hintUsed = false;
+  const pairs = shuffled.slice(roundIdx*ROUND_SIZE, (roundIdx+1)*ROUND_SIZE);
+  if(!pairs.length){ endGame(); return; }
+
+  const total = Math.ceil(shuffled.length/ROUND_SIZE);
+  set('s-round', roundIdx+1);
+  set('s-score', score);
+  set('s-combo', '×'+combo);
+  document.getElementById('prog').style.width = (roundIdx/total*100)+'%';
+  document.getElementById('round-lbl').textContent =
+    `Round ${roundIdx+1} of ${total} · ${pairs.length} pairs`;
+  setStatus('Click a tile to start','');
+
+  const tdata = [];
+  pairs.forEach((p,pi)=>{
+    tdata.push({...p.a, pid:pi});
+    tdata.push({...p.b, pid:pi});
+  });
+  tiles = shuffle(tdata).map((t,i)=>({...t,id:i,gone:false}));
+  sel = null;
+  renderGrid();
+}
+
+function renderGrid(){
+  const g = document.getElementById('grid');
+  g.innerHTML='';
+  tiles.forEach(t=>{
+    const el=document.createElement('div');
+    el.className='tile'+(t.gone?' gone':'');
+    el.dataset.id=t.id;
+    el.innerHTML=`<span class="tile-zh">${t.z}</span><span class="tile-py">${t.p}</span><span class="tile-en" style="display:${showEn?'block':'none'}">${t.e}</span>`;
+    el.onclick=()=>clickTile(t.id);
+    g.appendChild(el);
+  });
+}
+
+function te(id){ return document.querySelector(`.tile[data-id="${id}"]`); }
+
+function clickTile(id){
+  const t=tiles[id];
+  if(!t||t.gone) return;
+  if(sel&&sel.id===id){ te(id).classList.remove('sel'); sel=null; setStatus('Click a tile to start',''); return; }
+  if(!sel){
+    sel=t; te(id).classList.add('sel');
+    setStatus(`${t.z} selected — click its opposite`,'hint');
+    return;
+  }
+  const a=sel, b=t;
+  const ae=te(a.id), be=te(b.id);
+  if(a.pid===b.pid){
+    matches++;
+    const pts=100*combo;
+    score+=pts; combo=Math.min(combo+1,8);
+    set('s-score',score); set('s-combo','×'+combo);
+    ae.classList.remove('sel'); ae.classList.add('ok'); be.classList.add('ok');
+    tiles[a.id].gone=tiles[b.id].gone=true;
+    setStatus(`✓ ${a.z} ↔ ${b.z} — correct! +${pts}`,'good');
+    if(combo>2) comboToast(combo);
+    setTimeout(()=>{
+      ae.classList.remove('ok'); ae.classList.add('gone');
+      be.classList.remove('ok'); be.classList.add('gone');
+      sel=null;
+      if(tiles.every(t=>t.gone)){
+        if(roundIdx>=2 && !donateShown){ setTimeout(showDonate,400); }
+        else setTimeout(nextRound,300);
+      }
+    },500);
+  } else {
+    wrongs++; combo=1; set('s-combo','×1');
+    ae.classList.remove('sel'); ae.classList.add('no'); be.classList.add('no');
+    setStatus(`✗ ${a.z} and ${b.z} are not opposites — try again`,'bad');
+    setTimeout(()=>{ ae.classList.remove('no'); be.classList.remove('no'); sel=null; setStatus('Click a tile to start',''); },650);
+  }
+}
+
+function nextRound(){
+  roundIdx++;
+  if(roundIdx*ROUND_SIZE>=shuffled.length){ endGame(); return; }
+  loadRound();
+}
+
+/* ═══ CONTROLS ═══ */
+function toggleEn(){
+  showEn=document.getElementById('en-cb').checked;
+  document.querySelectorAll('.tile-en').forEach(el=>{ el.style.display=showEn?'block':'none'; });
+}
+
+function doHint(){
+  if(hintUsed){ setStatus('Hint already used this round','bad'); return; }
+  score=Math.max(0,score-20); set('s-score',score); hintUsed=true;
+  const alive=tiles.filter(t=>!t.gone);
+  if(alive.length<2) return;
+  const pid=alive[0].pid;
+  const pair=tiles.filter(t=>t.pid===pid&&!t.gone);
+  if(pair.length<2) return;
+  pair.forEach(t=>{
+    const el=te(t.id);
+    el.style.borderColor='var(--gold)'; el.style.boxShadow='0 0 12px rgba(245,158,11,.45)';
+    setTimeout(()=>{ el.style.borderColor=''; el.style.boxShadow=''; },2200);
+  });
+  setStatus(`Hint: ${pair[0].z} ↔ ${pair[1].z} are opposites`,'hint');
+}
+
+function skipRound(){ sel=null; roundIdx++; if(roundIdx*ROUND_SIZE>=shuffled.length){ endGame(); return; } loadRound(); }
+
+/* ═══ DONATE ═══ */
+function showDonate(){ document.getElementById('donate-modal').classList.add('show'); }
+function closeDonate(){ document.getElementById('donate-modal').classList.remove('show'); setTimeout(nextRound,200); }
+
+/* ═══ RESULTS ═══ */
+function endGame(){
+  clearInterval(timer);
+  document.getElementById('game').style.display='none';
+  document.getElementById('results').style.display='block';
+  const tot=matches+wrongs, acc=tot?Math.round(matches/tot*100):100;
+  const m=Math.floor(sec/60), s=sec%60;
+  const ts=m+':'+(s<10?'0':'')+s;
+  set('r-score',score); set('r-time',ts); set('r-acc',acc+'%');
+
+  const lvLabel={easy:'Easy',medium:'Medium',hard:'Hard'}[level];
+  document.getElementById('res-tag').textContent = `${lvLabel} · All rounds complete`;
+
+  let h,sub;
+  if(acc>=95&&sec<500){h='Flawless!';sub=`${score} points in ${ts}. Almost perfect accuracy on ${lvLabel} mode. The characters are sticking — try a harder level.`;}
+  else if(acc>=85){h='Excellent!';sub=`${acc}% accuracy — the opposite pairs are becoming instinctive. Try Medium or Hard to push further.`;}
+  else if(acc>=70){h='Well done!';sub=`${acc}% accuracy across all pairs. The ones you missed are your next learning targets. Play again and watch the score climb.`;}
+  else {h='Keep going.';sub=`${matches} pairs matched correctly. Every mistake makes the next run faster. The pattern-recognition builds with repetition.`;}
+  document.getElementById('res-h').textContent=h;
+  document.getElementById('res-sub').textContent=sub;
+}
+
+function restartSame(){
+  document.getElementById('results').style.display='none';
+  startGame();
+}
+
+/* ═══ HELPERS ═══ */
+function set(id,v){ document.getElementById(id).textContent=v; }
+function setStatus(msg,cls){ const el=document.getElementById('status'); el.textContent=msg; el.className='status'+(cls?' '+cls:''); }
+function updTime(){ const m=Math.floor(sec/60),s=sec%60; set('s-time',m+':'+(s<10?'0':'')+s); }
+function comboToast(n){ const el=document.getElementById('ctost'); el.textContent='×'+n+' Combo!'; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),900); }
+</script>
+</body>
+</html>
