@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tchaikovsky Life Simulator — Nine Days Before the End</title>
+<meta name="description" content="Make the same decisions as Pyotr Tchaikovsky — composer of Swan Lake and the Pathétique Symphony, who premiered his final work nine days before his mysterious death at 53.">
+<style>
+:root{
+  --bg:#F0EEF5;--card:#F6F4FA;--ink:#100818;--muted:#503860;--line:#D8CCE8;
+  --accent:#300860;--accent-bg:#E8E2F5;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Russia · 1840–1893</div>
+  <h1>Could You Have Been<br>Pyotr Tchaikovsky?</h1>
+  <div class="cover-sub">He wrote Swan Lake, The Nutcracker, and the 1812 Overture — music heard by more people than perhaps any other composer. He lived in terror of his secret in Tsarist Russia. He premiered his final symphony — the Pathétique, a farewell in sound — nine days before dying at 53 under circumstances that have never been fully explained.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">3</div><div class="stat-l">Of the world's most-performed ballets</div></div>
+    <div class="stat"><div class="stat-n">53</div><div class="stat-l">Years of life</div></div>
+    <div class="stat"><div class="stat-n">9</div><div class="stat-l">Days: Pathétique premiere to death</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · St. Petersburg, 1862 · Age 22</div>
+<p class="narrative">You are a junior civil servant at the Ministry of Justice, trained in law, doing work you find deadening. A letter arrives: the newly founded St. Petersburg Conservatory — Russia's first modern music school — will accept you into its inaugural class. You have been attending evening music classes as an adult student. You play piano. You have never studied composition formally. Your father expects you to advance in government. Your salary is modest but certain. The future of a musician in Imperial Russia is not.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · Leave the Ministry</div>
+  <div class="d-situation">Secure government career or uncertain musical future. You are 22. Do you go?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Go — the Conservatory window is now; the civil service will always exist</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. Stay — music is a passion, not a profession; compose evenings after Ministry work</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Ask for unpaid leave — try the Conservatory without fully burning the bridge</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Tchaikovsky resigned and went. He studied under Anton Rubinstein and graduated in 1865. Within the decade he had written Romeo and Juliet, Swan Lake, and the Piano Concerto No. 1 — which Rubinstein famously called "unplayable garbage" before it became one of the most performed concertos in history. His father never fully accepted the decision. The salary he gave up was replaced by decades of precarious living, private patronage, and eventual world fame. The choice was correct in every sense except financial.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Moscow, 1877 · The Disastrous Marriage</div>
+<p class="narrative">You are 37. A student, Antonina Miliukova, has written you a series of passionate letters threatening suicide if you do not meet her. Your homosexuality is not a secret within musical circles in Moscow — but in Tsarist Russia it is a criminal offense punishable by exile to Siberia. Exposure would end your career, your freedom, possibly your life. You decide, in an act of desperate social camouflage, to marry her. Your friends warn you. You ignore them. Two weeks after the wedding you are standing in the Moscow River at night, hoping the cold water will give you pneumonia and kill you.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Marriage</div>
+  <div class="d-situation">The marriage is a catastrophe within weeks. You cannot live with her, cannot function, cannot compose. How do you extricate yourself?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Leave immediately and arrange a legal separation — the suffering is mutual; staying helps no one</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Stay — the social scandal of separation is worse than the marriage's misery</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Write to Antonina explaining everything — perhaps honesty can untangle what deception created</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Tchaikovsky collapsed completely. His brother Modest arrived and essentially carried him out of Moscow to a rest cure in Switzerland. He never lived with Antonina again. She refused to divorce him for years, occasionally threatening exposure. He was effectively married but never present. During this crisis, a wealthy widow named Nadezhda von Meck began writing him letters — she would become his patron for 14 years, providing him a stipend that funded all his greatest works, on the single condition that they never meet in person.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Europe, 1877–1890 · Von Meck</div>
+<p class="narrative">Nadezhda von Meck is a wealthy widow who loves your music. She will give you 6,000 rubles a year — enough to compose without financial panic — for one strange, non-negotiable reason: you must never meet in person. You correspond daily, sometimes at extraordinary length. She calls you "beloved friend." You tell her things you tell almost no one else. Once, at her estate, you catch a glimpse of each other by accident — you both pretend it didn't happen. For 14 years this invisible relationship is the emotional center of your life.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Invisible Patron</div>
+  <div class="d-situation">A benefactor offers you financial freedom in exchange for a relationship that exists only in letters. Do you accept these terms?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Accept — the condition is unusual but the gift is real; financial freedom for a composer is everything</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Decline — this is too eccentric an arrangement; find a more conventional patron</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Accept but push to meet — the mystery of her condition will eventually become intolerable</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Tchaikovsky accepted, and the years of von Meck's patronage (1877–1890) were his most productive. He dedicated the Fourth Symphony to her as "my best friend." The correspondence — over 1,200 letters — is one of the most extraordinary artistic correspondences in history. The arrangement ended abruptly in 1890 when she wrote claiming financial ruin and severing contact. He was devastated. He never understood why. Scholars still debate the real reason. The works written during her patronage include the Violin Concerto, the 1812 Overture, Sleeping Beauty, and The Sleeping Beauty — the core of his legacy.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Moscow, 1876 · Swan Lake</div>
+<p class="narrative">The Imperial Ballet has commissioned you to write the music for a new ballet. You have never written for ballet before. Ballet music in Imperial Russia is considered light entertainment — not serious composition. Some colleagues feel the commission is beneath your dignity as a serious symphonist. But the subject matter — a swan princess, a doomed love, a curse that can only be broken by someone willing to die — speaks to something you understand deeply.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · Ballet as High Art</div>
+  <div class="d-situation">You've been asked to write ballet music — considered a lesser form by serious musicians. Do you take it seriously or treat it as easy commission work?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Treat it as seriously as any symphony — write music that transforms the form itself</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Write serviceable dance music — fulfill the commission but save your real ambitions for orchestral work</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Decline — you won't risk your symphonic reputation on entertainment music</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Tchaikovsky poured everything into Swan Lake. The result was initially a failure — the 1877 premiere was considered too demanding and complex for dancers. But what he created was the first ballet score that required — and deserved — to be taken seriously as music, not just accompaniment. He went on to write Sleeping Beauty and The Nutcracker with the same conviction. Today these three scores are the most-performed ballets in the world. He elevated an entire art form by refusing to condescend to it.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Vienna, 1881 · The Crisis</div>
+<p class="narrative">You are staying in Vienna when a telegram arrives: your beloved sister Alexandra has died. You collapse completely. The depression that has stalked you your entire life — you called it "the black guest" — descends fully. For weeks you cannot compose. You cannot think. You write to your brother Modest that you feel you are being slowly suffocated. These periods of paralysis have always resolved eventually. You have never known when they would. In the middle of one, it is impossible to believe they ever will.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · The Black Guest</div>
+  <div class="d-situation">Depression has paralyzed you completely. How do you survive it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Keep to the routine — walk, write letters, do the small mechanical things until the music comes back</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. Wait it out passively — force nothing; the mood will lift on its own schedule</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Travel immediately — motion is the only antidote; stay nowhere long enough for it to catch up</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Tchaikovsky's lifelong practice during depression was exactly the first option — rigid routine, daily walks, letters, mechanical composition attempts even when nothing came. He wrote to von Meck that sometimes he sat at the piano and composed through the paralysis, producing work that surprised him when he read it later. His letters document the "black guest" with remarkable clinical precision. He never fully overcame the depression, but he developed what we would now call behavioral strategies to outlast it. The 1812 Overture, Swan Lake, and the Pathétique were all written partly in the intervals between episodes.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · America, 1891 · Carnegie Hall</div>
+<p class="narrative">You have been invited to America for the opening of Carnegie Hall — you will conduct your own music before New York's social elite. You are 50 and anxious about everything: the sea crossing, the food, the language, American manners. But you arrive to find yourself treated as a celebrity of the first order. The audiences go wild. American journalists call you the greatest living composer. You write to Modest that it is mortifying — you are far more celebrated here than at home in Russia.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · International Fame</div>
+  <div class="d-situation">You are celebrated in America far beyond your home reception. How do you understand this gap?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Recognize that audiences sometimes understand art better than critics — American enthusiasm is genuine, not naive</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Discount it — American audiences are unsophisticated; this isn't the recognition that matters</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Settle in America — where you are celebrated, not where you are merely known</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Tchaikovsky returned to Russia. He wrote that he found the American acclaim touching but puzzling — he had always been insecure about his music, whether it was "serious" enough, whether it would last. The American trip convinced him that his audience was real and broad. He returned to Russia and spent the last two years of his life in his most confident creative phase, producing the Nutcracker, the Sixth Symphony, and several smaller works. He died eight months after the Carnegie Hall trip, having finally understood that the world had heard him.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · St. Petersburg, October 28, 1893 · The Premiere</div>
+<p class="narrative">You conduct the premiere of your Sixth Symphony — the Pathétique — in St. Petersburg. The fourth and final movement is a slow, dying Adagio lamentoso. Symphonies traditionally end with something triumphant. This one ends with a long, quiet diminuendo into silence. The audience doesn't know how to respond. There is scattered applause, confused murmurs. You bow and go home. Nine days later you are dead. Some hear the Pathétique now as a farewell — did you know? Did you choose this ending deliberately?</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The Farewell Symphony</div>
+  <div class="d-situation">The Pathétique ends not with triumph but with exhaustion and silence. Was this conscious?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. Yes — it was the honest ending; the symphony required this shape regardless of what came after</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. No — coincidence; he had no foreknowledge of his death and the ending was simply artistic</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. Unknowable — he may have felt something approaching an end without knowing its form</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> Tchaikovsky told his brother Modest he considered the Pathétique his best work, and that he had wept while composing the finale. He wrote in a letter: "There is something in this symphony that the listener ought to be able to feel without being told." Whether he sensed death approaching, whether he had decided something, whether the cholera that killed him was the accident the official account claims — historians still argue. What is beyond argument is that the Pathétique's final movement is one of music's most devastating expressions of something ending.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · St. Petersburg, November 6, 1893 · The Death</div>
+<p class="narrative">Nine days after the Pathétique premiere, Tchaikovsky is dead. The official cause: cholera, contracted from drinking unboiled water during a St. Petersburg epidemic. This is possible. But it is also suspicious: he was seen drinking unboiled water at a restaurant, against all advice, during a cholera outbreak. Some historians have proposed that he was ordered by a "court of honor" among alumni of the School of Jurisprudence to take his own life — to avoid a homosexuality scandal that would have destroyed him and others. The evidence is circumstantial. The mystery has never resolved.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · The End</div>
+  <div class="d-situation">Accidental cholera or deliberate death chosen over exposure? Does it change how we hear the Pathétique?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. Either way, the music is unchanged — its truth exists independently of what happened in that restaurant</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. If it was chosen, the Pathétique becomes unbearable — a composed goodbye from a man who knew</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. The uncertainty is itself part of the meaning — ambiguity was how he had to live, and it's how he ended</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> The controversy continues. Tchaikovsky was buried with full honors — the Tsar sent condolences; thousands attended his funeral. If homosexuality had been exposed as the cause of death (however indirectly), no such ceremony would have occurred. His music went on to become the most widely heard orchestral and ballet music in the world. Every Christmas, millions of children watch The Nutcracker. Every Valentine's Day, Swan Lake plays somewhere. The secret he carried with such terror in life has become irrelevant — except as the hidden engine of some of the most emotionally overwhelming music ever written.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Tchaikovsky Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="bach-simulator.html">
+      <span class="next-name">Johann Sebastian Bach</span>
+      <span class="next-desc">The Baroque master who encoded his own name into his final fugue and died before finishing it</span>
+    </a>
+    <a class="next-card" href="beethoven-simulator.html">
+      <span class="next-name">Ludwig van Beethoven</span>
+      <span class="next-desc">He went deaf and wrote his most transcendent music without hearing a single note of it</span>
+    </a>
+    <a class="next-card" href="chopin-simulator.html">
+      <span class="next-name">Frédéric Chopin</span>
+      <span class="next-desc">Another Romantic composer who died at 39, composing through tuberculosis to the last</span>
+    </a>
+    <a class="next-card" href="turing-simulator.html">
+      <span class="next-name">Alan Turing</span>
+      <span class="next-desc">Another man destroyed by his country for being who he was — in the same century</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators →</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=Math.round(score/TOTAL*100);document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You understand Tchaikovsky completely — the courage to leave security for art, the discipline to work through depression, the willingness to pour private anguish into public beauty. You would have written the Pathétique. You would have conducted it nine days before the end.';else if(score>=5)t.textContent='Strong emotional and artistic instincts. You grasped most of Tchaikovsky\'s choices — the seriousness of purpose, the discipline within despair, the acceptance of an unconventional patron. A few safer choices crept in, but the music would have been real.';else if(score>=3)t.textContent='You made the understandable choices — stability, social conformity, musical convention. Tchaikovsky made those choices too, when he married Antonina. They nearly killed him. The music he\'s remembered for came from the moments he refused to.';else t.textContent='You would have stayed at the Ministry of Justice, composed evenings, and produced competent, forgotten work. Tchaikovsky\'s greatness came from the decision to risk everything for the music — and from having the entire weight of a secret life press against every note he wrote.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

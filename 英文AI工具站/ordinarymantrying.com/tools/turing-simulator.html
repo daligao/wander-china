@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alan Turing Life Simulator — Father of Computing, Broken by His Country</title>
+<meta name="description" content="Make the same decisions as Alan Turing — from cracking Enigma to creating the computer to being chemically castrated by the government he saved.">
+<style>
+:root{
+  --bg:#EEF2F5;--card:#F3F6FA;--ink:#081018;--muted:#405060;--line:#C8D4DC;
+  --accent:#0A2840;--accent-bg:#E0E8F0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">England · 1912–1954</div>
+  <h1>Could You Have Been<br>Alan Turing?</h1>
+  <div class="cover-sub">He cracked the Nazi Enigma code and historians believe he shortened WWII by two years, saving 14 million lives. The British government repaid him by chemically castrating him for being gay. He was found dead at 41, a half-eaten apple beside him. Eight decisions in one of history's most unjust lives.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">14M</div><div class="stat-l">Lives saved (est.) by Enigma work</div></div>
+    <div class="stat"><div class="stat-n">41</div><div class="stat-l">Years of life</div></div>
+    <div class="stat"><div class="stat-n">2013</div><div class="stat-l">Year he received a royal pardon</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Cambridge, 1936 · Age 23</div>
+<p class="narrative">You are a graduate student at King's College, Cambridge — awkward, brilliant, better at running marathons than at small talk. You are obsessed with a question that other mathematicians regard as philosophical decoration: can there exist a mechanical process — a set of rules — that could decide whether any mathematical statement is provable or not? Most mathematicians assume the answer is yes. You have a growing, unsettling suspicion the answer is no — and you think you can prove it by imagining a machine that doesn't yet exist.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Imaginary Machine</div>
+  <div class="d-situation">You want to prove a mathematical theorem using an imaginary computing device. Is this rigorous enough?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Yes — the imaginary machine is mathematically rigorous; if it proves undecidability, the proof is valid</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. No — proof by hypothetical machine is too abstract; find a purely formal algebraic approach</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Abandon the problem — it may simply be unprovable</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Turing published "On Computable Numbers" in 1936 — describing a theoretical "Turing Machine" that could read and write symbols on an infinite tape. He proved no such machine could decide all mathematical questions, solving Hilbert's famous Entscheidungsproblem. As a side effect, he had also invented the theoretical foundation for all digital computing. The imaginary machine became the blueprint for every computer ever built. He was 23.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Bletchley Park, 1940 · War</div>
+<p class="narrative">Britain is at war. The Germans communicate using the Enigma encryption machine — a device with 158 quintillion possible settings that resets every day at midnight. Britain's code-breakers have been failing for months. You arrive at Bletchley and conclude almost immediately that the human approach is hopeless. To crack Enigma you need to build a machine — an electromechanical device that can test thousands of settings per minute. You need funding, materials, staff. The military bureaucracy is skeptical.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · Getting Resources</div>
+  <div class="d-situation">The bureaucracy is moving too slowly. You need resources now. How do you get them?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Write directly to Churchill — bypass every layer of bureaucracy and go to the very top</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Build a prototype with whatever you have — demonstrate results before demanding resources</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Work within the system — build coalitions and convince middle management first</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Turing and three colleagues wrote directly to Winston Churchill in October 1941. Churchill wrote "Action this Day" on the memo and ordered everything Bletchley needed be provided immediately. Within weeks they had resources that would have taken months through normal channels. The "Bombe" machines followed. Enigma was broken. The directness worked because Churchill was the right person and the moment was truly desperate — a lesson in knowing when to skip the queue.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Bletchley Park, 1941 · The Terrible Logic</div>
+<p class="narrative">You are reading intercepted German messages. You know a British convoy in the Atlantic is about to be ambushed by U-boats. You know exactly where the U-boats will be. The convoy doesn't. If you warn the convoy, the Germans may suspect their code has been broken and change it. The entire Enigma operation — which is shortening the war by months, possibly years — might go dark. If you don't warn the convoy, the men on those ships will die. This is not a theoretical dilemma. This is Tuesday.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Terrible Arithmetic</div>
+  <div class="d-situation">Warning this convoy might cost the entire Enigma intelligence advantage. Not warning it costs lives today. What principle guides the decision?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Develop cover stories — find ways to issue some warnings without revealing that you've broken the code</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Always warn — no intelligence advantage justifies letting people die when you could save them</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Never warn — the intelligence is too valuable; accept that some deaths are the cost of winning</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Bletchley developed elaborate cover stories — fake reconnaissance aircraft, double-agent tips, random-seeming route changes — to use Enigma intelligence without revealing the source. Sometimes convoys were warned; sometimes they weren't. Men died so the secret could live. Historians estimate the Enigma operation shortened WWII by two years. The moral weight of that arithmetic fell on the people, like Turing, who understood exactly what was being calculated.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Manchester, 1950 · After the War</div>
+<p class="narrative">The war is over. You helped win it in ways that almost no one knows about — Bletchley is classified beyond classification. You cannot tell anyone. You receive no public honors, no acknowledgment. You are simply a mathematician at Manchester, building an actual physical computer and writing a paper about something you call "machine intelligence." The question everyone is asking about your paper is one you find philosophically confused: can machines think? You think the question is wrong.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · Can Machines Think?</div>
+  <div class="d-situation">The question "can machines think?" is unanswerable as stated. How do you make it answerable?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Replace it with a behavioral test: can a machine sustain a conversation that a human can't distinguish from a human?</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Define "thinking" philosophically first — without a definition, any test is arbitrary</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Avoid the question — "thinking" is a uniquely human concept and shouldn't apply to machines</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Turing's 1950 paper "Computing Machinery and Intelligence" proposed what he called the Imitation Game — now known as the Turing Test. Replace the unanswerable philosophical question with a behavioral one. The test reframed AI research for the next 75 years. Every chatbot, every language model, every AI assistant ever built is, in some sense, an attempt to pass Turing's test. He invented the field's central benchmark at 37, in a paper that starts: "I propose to consider the question, 'Can machines think?'"</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Manchester, 1952 · The Burglary</div>
+<p class="narrative">Your home has been burgled. You report it to the police. During the investigation you mention that the likely suspect is connected to someone you've been in a relationship with. The relationship is with a man. Homosexuality is illegal in Britain in 1952 — a criminal offense punishable by prison. In the process of reporting a burglary, you have just confessed to a crime. The police are writing it down.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · The Confession</div>
+  <div class="d-situation">You realize mid-interview that you've inadvertently told the police about an illegal relationship. Do you continue cooperating?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Continue honestly — the law is wrong and you will not lie about who you are</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. Retract immediately — claim you misspoke; the relationship wasn't what it sounded like</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Ask for a lawyer immediately and say nothing more without representation</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Turing continued cooperating with remarkable candor — almost as if expecting the police to acknowledge the obvious injustice. He wrote a detailed, explicit statement. He seemed to believe that honesty would be met with reason. Instead, he was charged with gross indecency and convicted in March 1952. The man who had decoded Enigma and invented computing was treated as a criminal. His security clearance was revoked immediately.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Manchester, 1952 · The Sentence</div>
+<p class="narrative">The judge offers you a choice: prison, or chemical castration — a course of oestrogen injections intended to eliminate sexual drive. The injections will cause your body to change — breast tissue will develop, your physical chemistry will shift. You will be altered by the state for being who you are. The alternative is prison. You have ongoing research, ongoing work, a mind that is still generating ideas at a rate that staggers your colleagues. You must choose.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · The Choice They Offered</div>
+  <div class="d-situation">Prison or chemical castration. Both are unjust. Both have consequences for your ability to work. What do you choose?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Accept the injections — prison would end your research entirely; this at least leaves the mind free</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Choose prison — refuse to let the state chemically alter your body</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Flee to France — don't accept either option from a country that owes you everything</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Turing accepted the hormone injections — "probation with chemical treatment." He continued working, continued writing, continued running. He applied for a visa to travel to Norway and was denied because of his criminal conviction. He had saved the country and the country would not let him leave it. Colleagues who knew what he had done at Bletchley watched in silence — the secret was still classified. He could not even defend himself with the truth.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · Wilmslow, 1953–1954 · The Last Year</div>
+<p class="narrative">The injections have been completed. You are working on morphogenesis — a mathematical theory of how biological patterns form, why a leopard has spots, why a sunflower has Fibonacci spirals. It is some of the most interesting work of your life. You keep a half-eaten apple on your bedside table — you've been experimenting with chemicals in your home laboratory. On June 8, 1954, your housekeeper finds you dead. The apple beside the bed has been laced with cyanide.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The End</div>
+  <div class="d-situation">The inquest rules his death a suicide. Some argue it could have been accidental — he was working with cyanide in his home lab. What do we owe the question?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. Sit with the uncertainty — we cannot know for certain, and that ambiguity is itself part of the injustice</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. Accept the suicide verdict — the treatment he received made this a foreseeable outcome</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. Insist it was accidental — a man who was actively working and planning wouldn't have chosen this</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> The inquest returned a suicide verdict. His mother, who found the idea of suicide unbearable, maintained until her death that it was a laboratory accident. Some historians agree. Others note that Turing had been reading a book of fairy tales including Snow White — the poisoned apple may have been deliberate and darkly literary. The uncertainty is unlikely to ever resolve. What is not uncertain is that the British government drove the man who saved the country to his death at 41 — for being gay.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · 2013 — The Pardon</div>
+<p class="narrative">Sixty years after Turing's death, Queen Elizabeth II grants him a royal pardon. The British government has also apologized — "on behalf of those we let down so badly." The Turing Law eventually pardons all men convicted under the same law that destroyed him. His face appears on the £50 note. His name is on a hundred schools, research centers, AI awards. The world has finally acknowledged what he did. It took until 2013.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · The Reckoning</div>
+  <div class="d-situation">A posthumous pardon has been issued. Is it enough?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. No pardon is "enough" — but acknowledgment matters, and the ongoing work of applying his ideas is the real tribute</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. Yes — an official acknowledgment and pardon is the most a government can do; accept it</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. A pardon is actually insulting — it implies he needed to be forgiven for something wrong</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> Many historians and LGBTQ+ advocates noted the irony: a "pardon" implies he did something wrong. He did nothing wrong. The law was wrong. His family preferred the framing of exoneration. The Turing Law eventually went beyond pardon — it posthumously exonerated all men convicted under the same legislation. Today the Turing Award is computing's Nobel Prize. The AI you interact with every day runs, at some level, on ideas he published before most of its creators were born. The tribute is in the machines.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Turing Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="einstein-simulator.html">
+      <span class="next-name">Albert Einstein</span>
+      <span class="next-desc">Another outsider who rewrote the laws of the universe — working as a patent clerk</span>
+    </a>
+    <a class="next-card" href="tesla-simulator.html">
+      <span class="next-name">Nikola Tesla</span>
+      <span class="next-desc">The inventor whose ideas powered the world — while he died alone and forgotten</span>
+    </a>
+    <a class="next-card" href="darwin-simulator.html">
+      <span class="next-name">Charles Darwin</span>
+      <span class="next-desc">He also held his most dangerous idea for 20 years, afraid of what the world would do with it</span>
+    </a>
+    <a class="next-card" href="nightingale-simulator.html">
+      <span class="next-name">Florence Nightingale</span>
+      <span class="next-desc">Another brilliant person punished by the institution they served — who changed it anyway</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators →</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=Math.round(score/TOTAL*100);document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You understand Turing\'s kind of mind — one that cuts through the question being asked to find the question that can actually be answered, and that refuses to lie about its own nature even when honesty is catastrophically dangerous. His legacy is in every device you\'ve ever used.';else if(score>=5)t.textContent='Strong instincts — you grasped the intellectual moves and the moral courage, even if a few choices defaulted to self-protection. Turing\'s tragedy was that self-protection was reasonable and he didn\'t choose it.';else if(score>=3)t.textContent='You chose the safer options at key moments. That\'s understandable — Turing\'s life was brutally unjust, and the choices that broke him weren\'t objectively wrong. But his refusal to lie about who he was, even at catastrophic personal cost, is what makes him who he is.';else t.textContent='You prioritized safety over honesty and pragmatism over principle at each turning point. Those choices might have kept you alive longer and protected your career. They would have made you someone else entirely.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Michael Faraday Life Simulator — From Bookbinder to Father of Electricity</title>
+<meta name="description" content="Make the same decisions as Michael Faraday — the blacksmith's son with almost no formal education who discovered electromagnetic induction, refused a knighthood, and changed civilization.">
+<style>
+:root{
+  --bg:#F2F0EA;--card:#F8F6F0;--ink:#15100A;--muted:#5A4830;--line:#DDD5C0;
+  --accent:#5A2800;--accent-bg:#F5EEE0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">England · 1791–1867</div>
+  <h1>Could You Have Been<br>Michael Faraday?</h1>
+  <div class="cover-sub">He was a blacksmith's son who left school at 13 to bind books for a living. He had almost no mathematics education. He became the greatest experimental scientist in history — discovering electromagnetic induction, the laws of electrolysis, and the principle behind every electric motor and generator on Earth. He declined a knighthood twice. Albert Einstein kept his portrait on the wall.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">1831</div><div class="stat-l">Year he discovered electromagnetic induction</div></div>
+    <div class="stat"><div class="stat-n">2×</div><div class="stat-l">Refused knighthood — preferred "Mr. Faraday"</div></div>
+    <div class="stat"><div class="stat-n">3</div><div class="stat-l">Portraits on Einstein's wall: Newton, Maxwell, Faraday</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · London, 1812 · The Lecture Notes</div>
+<p class="narrative">You are 20 years old and an apprentice bookbinder on Blandford Street. You have been educating yourself for years by reading the books that come through the shop — Lavoisier's chemistry, the Encyclopaedia Britannica, Jane Marcet's Conversations on Chemistry. You built your own Leyden jar from old bottles. Then a customer gives you tickets to the last four lectures of Humphry Davy — the most famous chemist in England, the discoverer of sodium and potassium. You sit in the gallery and take meticulous notes. 380 pages of them, with illustrations. The question is what to do with these notes.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Notes</div>
+  <div class="d-situation">You have produced a beautifully bound 380-page transcription of Davy's lectures. Do you send them to him and ask for a job?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Yes — send the bound notes with a letter asking for any position, however small, at the Royal Institution</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. No — a blacksmith's son sending notes to Humphry Davy is too presumptuous; find another entry point</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Keep them for yourself — they represent your education, not a calling card</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Faraday sent the bound notes to Davy in December 1812. Davy's first response was realistic — science offers little financial reward, stick to bookbinding. But months later, a laboratory assistant was dismissed for brawling, and Davy remembered the young man with the extraordinary notes. He hired Faraday as a chemical assistant at 25 shillings a week, less than he earned binding books. Faraday took the position the same day. Without that audacious letter, there is no Faraday in science.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Europe, 1813 · The Tour</div>
+<p class="narrative">Davy takes you on an 18-month tour of Europe — Paris, Milan, Geneva, Rome. You meet Ampere in France, discuss chemistry with Gay-Lussac, see Volta's original pile in Italy. It is the most extraordinary scientific education in the world. But Davy's wife treats you as a valet, not a colleague. She will not let you eat at the same table. She refers to you as "the servant." You are a blacksmith's son with a Cockney accent in a world that uses accents to sort people by worth. Every day of the tour is both remarkable and humiliating.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Social Position</div>
+  <div class="d-situation">Lady Davy treats you as a servant throughout the 18-month tour. Do you object?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Endure it in silence — the scientific access is worth the indignity; knowledge is permanent, status is not</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Confront Davy formally — you need professional respect to function at your best</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Return to London early — no scientific exposure is worth 18 months of daily humiliation</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Faraday endured it, writing privately in his journal about the difficulty. He used every hour of the tour for what it was — the best scientific education available in 1813. When he returned to London he had met the leading scientists of Europe, absorbed their methods, and built a mental map of where natural philosophy was heading. He was still a blacksmith's son with a Cockney accent. He was also now the most scientifically prepared young man in England. The tour that humiliated him also made him.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Royal Institution, 1821 · The Rotation</div>
+<p class="narrative">Oersted has just discovered that an electric current deflects a compass needle. The whole of European science is electrified: electricity and magnetism are connected. Your colleague William Wollaston has been trying and failing to make a wire rotate in a magnetic field. You take up the problem while Wollaston is away, approach it differently, and on September 3, 1821, you produce the first demonstration of continuous electromagnetic rotation. A wire circles endlessly around a magnet as long as the current flows. The direct ancestor of every electric motor ever built. But Wollaston hasn't been credited, and some say you stole his idea.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Credit Problem</div>
+  <div class="d-situation">Your discovery emerged from Wollaston's failed attempts. How do you handle attribution in your published paper?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Acknowledge Wollaston's prior work explicitly and explain clearly what was new and different in your approach</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Publish without mention of Wollaston — your experiment was genuinely different; his theory was wrong</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Delay publication and let Wollaston publish first, then respond with your extension of the work</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Faraday published without adequately crediting Wollaston and the resulting controversy damaged him badly. He was accused of plagiarism, almost lost Davy's support permanently, and spent months writing apologetic explanations to the scientific community. The accusation was unfair — his approach was genuinely different — but the handling was poor. From this point on Faraday became almost obsessively careful about attribution and about distinguishing precisely what was new in his own work versus what had been done by others.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Royal Institution, 1831 · The Iron Ring</div>
+<p class="narrative">It is August 29, 1831. You have wound two separate coils of wire around opposite sides of a soft iron ring. You connect one coil to a battery and watch a galvanometer needle connected to the other coil. When you connect the battery, the needle swings. When you disconnect it, the needle swings the other way. While the current flows steadily, the needle reads zero. The thing only happens during change. You have just discovered electromagnetic induction: changing magnetism creates electricity. You sit very still. Ten years of questions have just found their answer.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · First Application</div>
+  <div class="d-situation">You have discovered electromagnetic induction. What is the most important implication to pursue first?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. The mechanical generator — if you move a magnet near a wire, you can generate electricity from motion alone; this could power the world</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. The theoretical framework — you need the mathematics worked out before pursuing practical applications</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Announce the result to the Royal Society immediately — establishing priority is more urgent than follow-on experiments</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Faraday pursued the physical mechanism — within weeks he built the first primitive generator: a copper disc spinning between the poles of a magnet, producing continuous current. He had almost no mathematical training and could not write the equations, but he understood the physics so intuitively through experiment that he found what the mathematics would later describe. James Clerk Maxwell read Faraday's notebooks 30 years later and said they contained the conceptual framework for his entire field equation theory. The mathematical masterpiece of the 19th century was built on a bookbinder's drawings.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Royal Institution, 1840s · Lines of Force</div>
+<p class="narrative">You have developed a mental picture that no other physicist holds. You think of magnetic and electric force not as instantaneous action-at-a-distance but as tension in the space between objects — invisible lines of force filling space, transmitting influence from one place to another. The leading mathematical physicists of Europe consider this either wrong or, at best, a useful visualization. They have equations. You have drawings. But you believe the lines are real — that space itself is structured by these fields — and you keep saying so in public.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · Fields vs. Action-at-a-Distance</div>
+  <div class="d-situation">Your concept of "lines of force" is dismissed by mathematicians as poetic, not scientific. Your experiments support it. Do you keep advocating for it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Yes — the experimental evidence supports the field picture and the alternatives don't explain what you observe; back the experiments, not the consensus</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. No — without mathematics it is metaphysics; drop it until you can make it rigorous</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Yes, but call it a model rather than physical reality to avoid conflict with the mathematical establishment</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Faraday kept advocating for the field concept for the rest of his scientific life. Maxwell, reading Faraday's published papers and notebooks in the 1850s, realized that Faraday had grasped something that the mathematical framework of the time simply could not yet capture — and set out to provide that mathematics. The result was Maxwell's equations, which unified electricity and magnetism and predicted electromagnetic waves. Faraday had been completely correct. The lines of force were real. The space between objects is full of fields. We call them electromagnetic fields today.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · London, 1857 · The Presidency</div>
+<p class="narrative">You are 65. The Royal Society, the most prestigious scientific body in the world, asks you to become its President. It is the highest honor in British science — a position Newton held. You are, by common consensus, the greatest living experimental scientist. Your work on electromagnetic induction alone has changed the trajectory of civilization. The electric motor. The generator. The transformer. All of it traces to that iron ring in 1831. The presidency would be yours by absolute right.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · The Royal Society Presidency</div>
+  <div class="d-situation">The Royal Society offers you its presidency — the highest position in British science. Do you accept?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Decline — you are a scientist, not an administrator; the laboratory is where you belong and have always belonged</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Accept — the influence you could have on British science policy would benefit the next generation enormously</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Accept on condition that you continue your experimental work — find a balance between both roles</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Faraday declined the presidency, as he declined every administrative role offered to him throughout his life. He remained at the Royal Institution as a working scientist until his memory began to fail. He believed that scientific administration distracted from scientific work, and he wanted no distractions. The refusal of the Royal Society presidency came alongside his two refusals of knighthood — Faraday explicitly wished to die plain "Mr. Faraday" rather than Sir Michael. He kept the title because his faith tradition — the small Sandemanian Christian sect — held that worldly honors corrupted the soul.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · London, 1860s · The Failing Mind</div>
+<p class="narrative">Your memory is going. You have always had a prodigious memory — for experiments, for conversations, for the precise details of apparatus. Now names vanish. You repeat yourself. You lose the thread of arguments you have been making for years. The Christmas Lectures you have given at the Royal Institution since 1827 — among the most celebrated public science events in England — you cannot deliver as you once could. You are still there. But you are not quite there in the way that matters.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · Stepping Back</div>
+  <div class="d-situation">Your mind is declining visibly. The Christmas Lectures are suffering. What do you do?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. Step back gracefully — acknowledge the decline and reduce your public commitments before the deterioration becomes embarrassing</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. Continue at full capacity — the Christmas Lectures are important and a few lapses don't change that</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. Hand the lectures entirely to a younger colleague and focus on private laboratory work where the memory problems are less visible</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> Faraday gave his last Christmas Lecture in 1860, at age 69. He delivered it well — the lecture was on the Chemical History of a Candle, perhaps the most celebrated popular science lecture in history. He recognized it was time to stop. He retired from the Royal Institution in 1861 and spent his last years in a grace-and-favour house at Hampton Court given to him by Queen Victoria — an honor he accepted, unlike the knighthood she also offered, because it required nothing from him except to live there quietly and die.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · Hampton Court, 1867 · The Legacy</div>
+<p class="narrative">You are 75 and dying in the house the Queen gave you. You have no pension from the Royal Institution — you never thought to arrange one. You have no great accumulated wealth. You have a good marriage of 46 years. You have letters from Maxwell, from Thomson, from scientists across Europe who consider your work the foundation of theirs. Every electric motor in existence traces its principle to your iron ring. The power station, the transformer, the dynamo — yours. The field concept of physics — yours. The man who built the first generator could not pay his own electric bills if electricity bills existed.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · The Final Judgment</div>
+  <div class="d-situation">He gave civilization the electric motor and generator, declined every honor and title, and died without a pension. How do we understand this life?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. It is the most complete scientific life in history — every decision pointed toward the work and away from reward</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. He was too naive about money and status; the institutions he served should have provided better, and he should have demanded it</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. The refusals of knighthood and presidency were excessive humility that harmed science's public influence</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> Faraday died on August 25, 1867, in the chair by his study window. He is buried in Highgate Cemetery under a simple headstone that says "Michael Faraday, born 22 September 1791, died 25 August 1867" — no titles, no fellowship, no honorary degrees, because he had declined all of them. Maxwell's equations published the following year made Faraday's field concept the foundation of all physics. Einstein's three wall portraits were Newton, Maxwell, and Faraday — the three men who, between them, built the framework of modern physical reality. A blacksmith's son with no mathematics education was one of the three.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Faraday Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="tesla-simulator.html">
+      <span class="next-name">Nikola Tesla</span>
+      <span class="next-desc">The engineer who built the AC power system from Faraday's electromagnetic discoveries</span>
+    </a>
+    <a class="next-card" href="newton-simulator.html">
+      <span class="next-name">Isaac Newton</span>
+      <span class="next-desc">Another self-directed genius who worked largely alone and changed the foundations of physics</span>
+    </a>
+    <a class="next-card" href="darwin-simulator.html">
+      <span class="next-name">Charles Darwin</span>
+      <span class="next-desc">Faraday's contemporary — another careful observer who spent decades building a theory before publishing</span>
+    </a>
+    <a class="next-card" href="ramanujan-simulator.html">
+      <span class="next-name">Srinivasa Ramanujan</span>
+      <span class="next-desc">Another self-taught genius from poverty who produced work that formal education hadn't produced</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You think exactly like Faraday — pursuing experimental truth over mathematical fashion, enduring humiliation for access to knowledge, and understanding that the work matters infinitely more than titles or recognition. That clarity is exactly what produced the electromagnetic revolution.';else if(score>=5)t.textContent='Strong instincts. You understood the central choices — endure for access, back experiments over consensus, step back gracefully when the time comes. A few moments of deferring to institutional expectation crept in, but you would have produced foundational science.';else if(score>=3)t.textContent='You sought recognition and institutional support more than Faraday did. That would have cost you the focus that made electromagnetic induction possible. The bookbinder succeeded because he cared about the experiments, not the rewards. The rewards followed automatically.';else t.textContent='You would have accepted the honors, sought the security, and moderated the unconventional ideas to maintain standing. Faraday did none of this. The Christmas Lecture on a candle flame changed how a generation thought about science. The iron ring changed civilization. The knighthood would have just changed his name.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herman Melville Life Simulator — Moby-Dick, the Sea & a Genius Forgotten | Ordinary Man Trying</title>
+<meta name="description" content="Step into Herman Melville's shoes across 8 pivotal decisions — from deserting a whaling ship to writing the great American novel that nobody bought. Can you understand why genius sometimes arrives too early?">
+<style>
+:root{
+  --bg:#EBF0F5;--card:#F2F6FA;--ink:#060E18;--muted:#203050;--line:#B8C8D8;
+  --accent:#0A1830;--accent-bg:#D8E4F0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(235,240,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#060E18;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #98B0C8;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#060C18;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#E0EAF5;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.3);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#E0EAF5;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #98B0C8;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #98B0C8;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Herman Melville</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #74 of 100</p>
+  <h1 class="cover-title">Call Me Ishmael.<br>Nobody Did.</h1>
+  <p class="cover-sub">Herman Melville wrote what many now consider the greatest American novel. <em>Moby-Dick</em> sold fewer than 3,200 copies in his lifetime. His publisher lost money on it. His next book was savaged so brutally that his father-in-law tried to have him committed. He spent the last nineteen years of his writing life as a customs inspector on the New York docks, working for a salary. He died in 1891. His obituary misspelled his name. The <em>Moby-Dick</em> revival didn't begin until 1921.</p>
+  <div class="cover-facts">
+    <p>⚓ Went to sea at age 19 &nbsp;·&nbsp; 🐋 Sailed on whaling ships 1841–1844 &nbsp;·&nbsp; 📚 <strong>Moby-Dick</strong> published 1851 — sold ~3,200 copies in his lifetime &nbsp;·&nbsp; 🏢 New York customs inspector 1866–1885 &nbsp;·&nbsp; Died September 28, 1891 &nbsp;·&nbsp; Age 72 &nbsp;·&nbsp; Obituary misspelled as "Henry Melville"</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Melville's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1839</div>
+  <div class="timeline-dot">New York City · Age 19</div>
+  <div class="narrative">
+    <p>Your father is dead. He died bankrupt and possibly insane, his merchant business destroyed by speculation and the economic collapse of 1837. You are the third of eight children, and the family has no money. You have tried schoolteaching. You have tried working at your uncle's farm. You are twenty years old, uneducated beyond the rudiments, and your options in New York City in 1839 are limited.</p>
+    <p>A merchant ship, the <em>St. Lawrence</em>, is taking on hands for a voyage to Liverpool. The work is brutal — hauling lines, climbing rigging, cleaning decks. The pay is almost nothing. You will be the lowest-ranked person on the ship. But the sea is there, gray and enormous at the end of Manhattan's streets, and something in you responds to its complete indifference to your family's fallen fortunes.</p>
+    <p>You sign the papers as an ordinary seaman. The ship sails on June 5th. What you experience will become the material for your entire literary career.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1839</div>
+    <p class="decision-q">You are young, poor, and facing the Liverpool voyage as a common sailor. How do you approach this experience?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Endure it as temporary — get through the voyage, save money, and return to respectable employment as quickly as possible.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. Absorb everything: the other sailors, the officers, the Liverpool docks, the hierarchy of the ship — treat this as a university education in the actual world.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Focus on advancement — demonstrate superior intelligence so the officers promote you to a better position on the return voyage.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Keep your distance from the other sailors — the social distance between a failed merchant's son and common seamen must be maintained.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <strong>At 20, your father dead and bankrupt, your options in New York City reduced to a list you can count on one hand, you sign on as the lowest-ranked hand on the merchant ship St. Lawrence bound for Liverpool on June 5, 1839 — not because you have a plan, but because the sea is there and you have nothing better to go toward.</strong> <strong>What Melville actually did:</strong> He absorbed everything. The Liverpool voyage — the brutal hierarchy of maritime life, the poverty of the Liverpool docks, the strange brotherhood of sailors from every nation — gave him the raw material for <em>Redburn</em> (1849) and informed every subsequent work. His genius lay in his capacity to treat the world of common labor as philosophically interesting. He never maintained social distance from the men he worked alongside — and they became his greatest characters.
+    </div>
+  </div>
+
+  <div class="year-banner">1842</div>
+  <div class="timeline-dot">Nuku Hiva, Marquesas Islands · Age 22</div>
+  <div class="narrative">
+    <p>The whaling ship <em>Acushnet</em> has been at sea for eighteen months. The conditions are wretched: the captain is brutal, the food is rotten, and the whale oil you came to harvest has proved elusive. The ship puts in at Nuku Hiva in the Marquesas Islands, French Polynesia, for fresh water and provisions. Around you, the island rises in volcanic green above the black beach. Flowers you have no names for. People who have never heard of New York.</p>
+    <p>You and a shipmate named Richard Tobias Greene have a decision to make. Deserting a whaling ship is a serious offense — you can be imprisoned or forcibly returned. But the alternative is another two or three years at sea under a captain whose cruelty is documented. You have heard that the valley of Typee, just over the ridgeline, is inhabited by a tribe variously described as dangerous and welcoming. You have heard, too, that a tribe in the next valley — the Happars — are friendly and safe.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · July 1842</div>
+    <p class="decision-q">You can desert the <em>Acushnet</em> and take your chances with the Marquesas tribes, or complete the voyage under a brutal captain. What do you do?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Stay on the <em>Acushnet</em> — desertion is a crime, and you will survive the captain's cruelty. The voyage will eventually end.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. Desert with Toby Greene and head into the interior — the risk is real, but two more years under this captain is worse, and the island holds something you have to see.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. Organize the other unhappy sailors into a formal complaint to the captain — a collective grievance is harder to punish than individual desertion.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. Desert alone without telling Greene — a single man is harder to track than a pair.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <strong>On July 9, 1842, after 18 months aboard the whaling ship Acushnet under a captain documented for cruelty and a whale supply that has proved elusive, you and a man named Richard Tobias Greene jump ship at Nuku Hiva in the Marquesas Islands, climb into the island's interior without a guide or a language, and accidentally arrive in the Typee valley — the one everyone warned you about.</strong> <strong>What Melville actually did:</strong> He and Greene deserted on July 9, 1842, and climbed into the island's interior. They ended up in the Typee valley — the supposedly dangerous tribe — by accident. Melville lived with the Typee for about three to four weeks before escaping on an Australian whaling ship. The experience became his first book, <em>Typee</em> (1846), which made him briefly famous. It also gave him his lifelong subject: the encounter between Western civilization and worlds it hadn't yet ruined.
+    </div>
+  </div>
+
+  <div class="year-banner">1846</div>
+  <div class="timeline-dot">New York City · Age 26</div>
+  <div class="narrative">
+    <p>You have written an account of your time with the Typee — a warm, sensuous, sometimes dangerous month among people whose relationship to work, pleasure, and nature is utterly unlike anything New England has to offer. Your publisher John Murray wants it for his "Home and Colonial Library" series. The problem is that Murray's readers expect factual travel writing, and your account is substantially embellished. The Typee were probably not going to eat you. The violence you describe is exaggerated. The erotic content is real.</p>
+    <p>Murray wants you to cut the political commentary — your criticisms of Christian missionaries and French colonialism in the Pacific — and certify the book as strictly factual autobiography. American publishers are more relaxed about the fiction question but want the missionary criticism toned down to avoid offending the church-going public. You are a twenty-six-year-old failed sailor from a bankrupt family. This is your shot.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1846</div>
+    <p class="decision-q">Publishers want you to remove your criticisms of missionaries and colonialism from <em>Typee</em>. What do you do?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. Remove everything the publishers request — getting the book published is more important than the political content.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. Negotiate: accept some cuts for the British edition to secure publication, but restore the criticism for the American edition — and keep the essential argument intact.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. Refuse all cuts and find a publisher willing to print the book exactly as written.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. Withdraw the book entirely — if it can't be published honestly, it shouldn't be published.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <strong>You are 26, from a bankrupt family, and the British publisher John Murray will print your first book — on the condition that you remove every word criticizing Christian missionaries and French colonialism in the Pacific, which happen to be the most important things you actually observed.</strong> <strong>What Melville actually did:</strong> He accepted some cuts but fought for others. The British edition (Murray) was more heavily censored; the American edition (Wiley and Putnam) retained more of the missionary criticism. When a missionary publication attacked the book's accuracy and politics, Melville wrote a detailed, documented rebuttal. <em>Typee</em> was a modest success — enough to encourage him to write <em>Omoo</em> (1847), a sequel. His career was launched, but the experience taught him that American publishers wanted adventure, not criticism.
+    </div>
+  </div>
+
+  <div class="year-banner">1850</div>
+  <div class="timeline-dot">Pittsfield, Massachusetts · Age 30</div>
+  <div class="narrative">
+    <p>You have moved your family to a farmhouse in the Berkshires called Arrowhead, and you are writing a book about whaling. It started as a fairly conventional adventure — the chase, the hunt, the life of the whaleman at sea — the kind of book that had worked for you with <em>Typee</em>. Then you met Nathaniel Hawthorne. He lives six miles away. You have been reading <em>Mosses from an Old Manse</em> with the scalp-lifting sensation of encountering a mind that is actually seeing something.</p>
+    <p>You begin writing him letters of a philosophical intensity that surprise you both. He encourages you to go deeper — to stop writing adventure and write something that uses the whale as the occasion for something larger. You are burning through the farm's firewood. You are writing by candlelight. Your wife Elizabeth carries your meals upstairs to the desk. The whale is becoming something else: obsession, fate, God, the indifferent universe. You are thirty years old and you are writing the most ambitious book in American literature.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1850</div>
+    <p class="decision-q">Your whaling book is transforming into something far more ambitious than what your publisher expects. Do you follow where it's leading?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. Rein it in — write the adventure story your publisher contracted and save the philosophy for a future book when you have more financial security.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. Follow the book wherever it leads — let Ahab be Ahab, let the whale be everything, and trust that the work's ambition is the only thing that will make it last.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. Split it into two books: a popular adventure version and a separate philosophical work — two audiences, two markets.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. Consult your publisher first — if they won't support the expanded vision, there's no point writing a book they won't market properly.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <strong>You moved your family to Arrowhead in the Berkshires and you are six months into what was supposed to be a commercial whaling adventure, and it has become something else entirely: a 600-page metaphysical inquiry into obsession, fate, and cosmic indifference that your publisher at Harper & Brothers definitely did not contract for and your readers almost certainly do not want.</strong> <strong>What Melville actually did:</strong> He followed it. <em>Moby-Dick; or, The Whale</em> is dedicated to Hawthorne and is everything Hawthorne encouraged: metaphysical, digressive, wildly learned, simultaneously a technical manual on whaling and an inquiry into obsession, fate, and the nature of evil. It was published in October 1851. His publisher, Harper & Brothers, printed 2,915 copies. By the end of Melville's life, 3,180 total copies had been sold in the US. The book Melville wrote for the ages was ignored by his own age entirely.
+    </div>
+  </div>
+
+  <div class="year-banner">1852</div>
+  <div class="timeline-dot">New York City · Age 32</div>
+  <div class="narrative">
+    <p>The reviews of <em>Moby-Dick</em> were mixed and the sales were poor. Your publisher lost money. Your readers — the ones who made <em>Typee</em> a modest hit — are baffled by a 600-page meditation on obsession and cosmology disguised as a whaling adventure. You need money desperately: the farm has debts, Elizabeth is pregnant with your second child, and your father-in-law Lemuel Shaw — the Chief Justice of Massachusetts, a man of impeccable Boston rectitude — is watching your career with increasing alarm.</p>
+    <p>You have started writing <em>Pierre; or, The Ambiguities</em>. It is the darkest, strangest, most psychologically disturbing thing you have ever attempted — a gothic novel about incest, artistic failure, and the impossibility of moral purity. It is also, transparently, about a writer whose great book has been ignored. You know it will not sell. You write it anyway.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1852</div>
+    <p class="decision-q">After <em>Moby-Dick</em>'s commercial failure, what is the right move for your literary career?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Write the kind of book your readers want — another <em>Typee</em>, another Pacific adventure, something with a straightforward plot and no philosophy.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. Write <em>Pierre</em> — the book your mind requires, even knowing it will be received as a disaster and possibly confirm every suspicion that you have lost your grip.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. Take a break from novels entirely — write short stories and magazine pieces for income while your literary reputation recovers.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. Move to England, where Hawthorne is now stationed as US consul, and write from a distance that might give you perspective and access to British publishers.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <strong>Moby-Dick has been in print since October 1851, has sold roughly 3,000 copies, has lost your publisher money, and has baffled the readers who made Typee a modest success — and you are sitting down in 1852 to write your next book, which is darker and stranger and more commercially catastrophic than the one that just failed.</strong> <strong>What Melville actually did:</strong> He wrote <em>Pierre</em>. It was published in 1852 and reviewed as evidence of Melville's mental instability. The <em>New York Day Book</em> speculated about his sanity. His father-in-law Judge Shaw wrote to his son expressing serious concern about Melville's mental state. Yet from this period also came "Bartleby, the Scrivener" (1853) — one of the great American short stories — and <em>The Confidence-Man</em> (1857), a masterpiece that wasn't recognized as such until the 20th century.
+    </div>
+  </div>
+
+  <div class="year-banner">1856</div>
+  <div class="timeline-dot">Liverpool, England · Age 37</div>
+  <div class="narrative">
+    <p>Your father-in-law has funded a trip to Europe and the Middle East, partly as a rest cure and partly — everyone understands but nobody says — to get you away from the desk and the debts and the whiskey for a while. You stop in Liverpool to see Hawthorne, who is serving as American consul there. The two of you walk on the sand dunes at Southport for an afternoon, and Hawthorne writes something about the conversation in his journals that has been quoted ever since.</p>
+    <p>He writes that Melville "can neither believe, nor be comfortable in his unbelief, and he is too honest and courageous not to try to do one or the other." The whale, the cosmos, God's presence or absence in the world — you have been circling the same question for twenty years of writing without resolving it. Hawthorne thinks this unresolved circling is your defining characteristic. He doesn't say whether it's a weakness or a strength.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1856</div>
+    <p class="decision-q">Hawthorne describes you as unable to believe and unable to be comfortable in unbelief. What is this quality in Melville's work?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. A fatal weakness — a writer who cannot resolve his metaphysical questions produces confused, unsatisfying work.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. The source of his greatness — the refusal to settle for easy answers, in either direction, is what gives his work its electric unease and enduring power.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. A symptom of mental instability — his family's concern about his psychological health is not unfounded.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. A specifically American problem — a writer formed by Calvinist theology who can no longer believe it but has nothing to replace it with.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <strong>In 1856 at Southport, England, Nathaniel Hawthorne walks with you on the sand dunes and writes in his journal afterward that you are a man who can neither believe nor be comfortable in his unbelief — unable to settle for God or against Him, stuck permanently inside the question, too honest to choose a side.</strong> <strong>What scholars now argue:</strong> Melville's refusal to resolve the question of God, meaning, and cosmic order is precisely what makes <em>Moby-Dick</em> inexhaustible. Unlike Hawthorne (guilt) or Emerson (optimism) or Poe (horror), Melville refuses to let the universe disclose a final answer. Ahab's monomaniacal certainty and Ishmael's ironic survival both serve as answers — and cancel each other out. The book's enduring power comes from holding both simultaneously. His "unresolved" quality is not weakness. It is the form of his honesty.
+    </div>
+  </div>
+
+  <div class="year-banner">1866</div>
+  <div class="timeline-dot">New York Custom House · Age 46</div>
+  <div class="narrative">
+    <p>You take the job. Inspector Number 75 at the New York Custom House, Gansevoort Street, a four-dollar-a-day salary. You will inspect cargo ships coming into the harbor for smuggled goods. You will do this job for nineteen years. Your writing career, as a public thing, is essentially over. The last novel you published — <em>The Confidence-Man</em> in 1857 — sold almost nothing. A lecture tour failed. A book of Civil War poems, <em>Battle-Pieces</em> (1866), was ignored. The market for Herman Melville has closed.</p>
+    <p>What very few people know — what almost no one will know until scholars examine your papers after your death — is that you continue writing. The desk at home. The evenings after Elizabeth and the children are asleep. Long poems. Eventually, a novella about a young sailor named Billy Budd, who is hanged for a crime that was also an act of grace. You will not finish it. It will be found in a bread box after you die.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1866</div>
+    <p class="decision-q">You take the customs inspector job. What does this choice represent for Melville as a writer?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Defeat — a great writer acknowledging that his work has failed and the world has won.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. Wisdom — he finally accepts that literature cannot pay his family's bills and makes the responsible choice.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. A form of freedom — without the pressure of the literary marketplace, he can write without calculation, producing work like <em>Billy Budd</em> that belongs to no commercial category at all.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. The end of his story — the work produced after 1866 is minor and the customs years are simply wasted time.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <strong>In 1866, after your last novel sold almost nothing, your lecture tour failed, and your Civil War poetry was ignored, you become Inspector Number 75 at the New York Custom House on Gansevoort Street at four dollars a day — and the literary world notes your disappearance with a collective shrug.</strong> <strong>What the customs years produced:</strong> Melville published <em>Clarel</em> (1876), a 18,000-line philosophical poem about a pilgrimage to Jerusalem — almost certainly the most ambitious American poem of the 19th century and almost entirely unread. And then <em>Billy Budd, Sailor</em>, the novella found unfinished in his desk. <em>Billy Budd</em> was published posthumously in 1924, recognized as a masterpiece, and turned into an opera by Benjamin Britten in 1951. The customs years were not wasted. They were unobserved.
+    </div>
+  </div>
+
+  <div class="year-banner">1891</div>
+  <div class="timeline-dot">New York City · Age 72</div>
+  <div class="narrative">
+    <p>You die on September 28th, 1891, at home on East 26th Street, of cardiovascular disease. The <em>New York Times</em> runs a brief obituary that calls you "Henry Melville." The obituary notes that you were "once" known as the author of <em>Typee</em> and <em>Omoo</em>, and that in later years you had "fallen into a literary decline." Your family keeps <em>Billy Budd</em>'s unfinished manuscript in a bread box. The manuscript will stay there for thirty-three years.</p>
+    <p>In 1919 — twenty-eight years after your death — a British scholar named Raymond Weaver begins researching a biography. He reads <em>Moby-Dick</em>. Then he reads it again. Something happens in literary history: the book that your own century ignored begins to be read by the next one. By 1921, the centenary of your birth, there is a "Melville Revival." By 1926, <em>Moby-Dick</em> is a canonical text. By 1956, it is on every American high school curriculum. The obituary that misspelled your name has become the most ironic document in the history of American letters.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 1891</div>
+    <p class="decision-q">Melville died believing he had failed. What does his trajectory most clearly demonstrate?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. That commercial success is the only reliable measure of a book's value — popularity determines what survives.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. That genius always goes unrecognized in its own time — this is simply the tragic fate of ambitious artists.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. That the reading world sometimes needs decades to develop the critical vocabulary and emotional readiness to receive what a major work is actually doing — and that writing for your own moment is therefore the wrong ambition.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. That Melville should have written more commercially successful books first, to build the audience that might eventually have received <em>Moby-Dick</em>.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <strong>You die on September 28, 1891, on East 26th Street, and the New York Times runs a brief obituary that calls you "Henry Melville," notes that you had "fallen into a literary decline," and mentions Typee and Omoo as things you were "once" known for. Your unfinished manuscript of Billy Budd is in a bread box. It will stay there for 33 years.</strong> <strong>The Melville Revival:</strong> The revival of interest in Melville between 1919 and 1930 is one of literary history's great reversals. Readers of the 1920s — living after WWI, after Freud, after Nietzsche, after the death of easy optimism — were finally equipped to read what Melville had been saying about the darkness at the center of existence. The book hadn't changed. The readers had. <em>Moby-Dick</em> is now routinely cited as the greatest American novel. It sold 3,180 copies before its author died.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Herman Melville · 1819–1891</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"It is better to fail in originality than to succeed in imitation."<br><em style="font-size:13px;color:var(--muted);">— Herman Melville</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="twain-simulator.html" class="next-card">
+        <div class="next-card-name">Mark Twain</div>
+        <div class="next-card-sub">The Mississippi, the lie & the darkest last decades</div>
+      </a>
+      <a href="dickens-simulator.html" class="next-card">
+        <div class="next-card-name">Charles Dickens</div>
+        <div class="next-card-sub">The blacking factory, the serial, the impossible pace</div>
+      </a>
+      <a href="kafka-simulator.html" class="next-card">
+        <div class="next-card-name">Franz Kafka</div>
+        <div class="next-card-sub">Burn the manuscripts — he told Max Brod to burn them</div>
+      </a>
+      <a href="dostoevsky-simulator.html" class="next-card">
+        <div class="next-card-name">Fyodor Dostoevsky</div>
+        <div class="next-card-sub">The firing squad, the epilepsy & the gambling debts</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understood Herman Melville\'s entire trajectory: the Liverpool voyage as a university without walls, the Typee desertion as the research that made a career, the refusal to rein in Moby-Dick, the Pierre catastrophe written anyway, the customs years as freedom in disguise. You recognized that Melville was not failing — he was writing for readers who did not yet exist. They arrived in 1921, thirty years after his death. He was right to keep going.';else if(pct>=0.625)t.textContent='You tracked most of Melville\'s decisions correctly. The insight that connects them all: Melville was not unlucky. He was early. The Liverpool voyage, the Typee desertion, the book he was not supposed to write, the four-dollar customs job — each was the decision of a man writing beyond his own moment. His own century did not have the critical vocabulary to read what he was doing. The 20th century did, and validated each one.';else if(pct>=0.375)t.textContent='You felt the weight of Melville\'s choices but perhaps read some of them as defeats. They were not. He wrote Moby-Dick knowing it would confuse his readers. He wrote Pierre knowing it would confirm everyone\'s worst fears about his sanity. He kept writing in private at the customs desk for nineteen years. None of those were surrenders. They were the form his particular kind of honesty took, in a century that was not ready for it.';else t.textContent='Every choice you made was the choice a reasonable person makes when facing certain failure: rein in the book, write the commercial sequel, treat the four-dollar customs job as the end of the story. Herman Melville\'s 1891 obituary misspelled his name. By 1926 he was on every American high school curriculum. It turns out that writing for your own moment, the one that is actually in front of you, is the wrong ambition.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-DBR2PMLR61");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Warren Buffett?</title>
+<meta name="description" content="An interactive story about Warren Buffett — who started investing at 11, rejected Harvard, moved to Omaha to be his own boss, and became the greatest investor in history by refusing to be like everyone else. At every turning point, you make the call.">
+<style>
+:root {
+  --bg: #F2EDE4;
+  --card: #FAF7F2;
+  --ink: #1A0E08;
+  --muted: #7A6050;
+  --line: #DDD0C0;
+  --accent: #5C1010;
+  --accent-bg: #F9EEEE;
+  --cream: #A07840;
+  --cream-bg: #FBF6EC;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Consolas, monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;-webkit-tap-highlight-color:transparent;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(242,237,228,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#4a3020;line-height:1.8;margin-bottom:28px;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.15);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#4a3020;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--cream);background:var(--cream-bg);}
+.dopt.right .dopt-id{background:var(--cream);border-color:var(--cream);color:#fff;}
+.dopt.wrong{border-color:#8B3020;background:#FDF3F2;opacity:.7;}
+.dopt.wrong .dopt-id{background:#8B3020;border-color:#8B3020;color:#fff;}
+.dopt.correct{border-color:var(--cream);background:var(--cream-bg);border-width:2px;}
+.dopt.correct .dopt-id{background:var(--cream);border-color:var(--cream);color:#fff;}
+.reveal{display:none;border-top:1.5px solid var(--line);padding:20px 18px;animation:slideIn .35s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.reveal-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:4px 11px;border-radius:20px;margin-bottom:14px;}
+.badge-y{background:var(--cream-bg);color:var(--cream);border:1px solid #C0A060;}
+.badge-n{background:#FDF3F2;color:#8B3020;border:1px solid #D09080;}
+.reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--cream);font-weight:700;margin-bottom:6px;}
+.reveal-text{font-family:var(--serif);font-size:17px;line-height:1.5;margin-bottom:14px;}
+.reveal-explain{font-size:14px;line-height:1.85;color:#4a3020;}
+.seg{display:none;}
+.seg.shown{display:block;animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.results{padding:40px 0 20px;}
+.results-hero{text-align:center;padding:20px 0 28px;}
+.results-trophy{font-size:56px;display:block;margin-bottom:10px;}
+.results-score-big{font-family:var(--serif);font-size:64px;font-weight:700;line-height:1;letter-spacing:-.03em;}
+.results-score-big span{font-size:24px;color:var(--muted);}
+.results-sub{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+.results-title{font-family:var(--serif);font-size:22px;font-weight:700;margin:18px 0 10px;line-height:1.3;}
+.results-desc{font-size:14px;color:#4a3020;line-height:1.85;margin-bottom:24px;}
+.divider{height:1px;background:var(--line);margin:24px 0;}
+.dim-rows{display:flex;flex-direction:column;gap:14px;margin:16px 0 24px;}
+.dim-row-head{display:flex;justify-content:space-between;margin-bottom:5px;}
+.dim-row-name{font-size:13px;font-weight:700;}
+.dim-row-num{font-family:var(--mono);font-size:12px;color:var(--muted);}
+.bar-bg{height:7px;background:var(--line);border-radius:6px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:6px;width:0;transition:width 1.1s ease;}
+.bar-pa{background:var(--accent);}
+.bar-co{background:var(--cream);}
+.bar-in{background:#2A5C8A;}
+.res-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.res-card .rc-title{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.share-pre{font-family:var(--mono);font-size:12px;background:#E8E0D4;border:1px solid var(--line);border-radius:8px;padding:14px;line-height:1.8;white-space:pre-wrap;margin-bottom:12px;}
+.copy-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:15px;padding:14px 20px;border-radius:10px;width:100%;transition:filter .15s;}
+.copy-btn:hover{filter:brightness(1.15);}
+.sim-links{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.sim-links p{font-size:14px;color:#4a3020;line-height:1.7;margin-bottom:10px;}
+.sim-links a{color:var(--accent);font-weight:700;text-decoration:none;font-size:13px;margin-right:10px;display:inline-block;margin-bottom:6px;}
+.sim-links a:hover{text-decoration:underline;}
+.replay-btn{appearance:none;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:var(--sans);font-weight:600;font-size:14px;padding:13px 20px;border-radius:10px;width:100%;}
+@media(max-width:480px){.cover-title{font-size:28px;}.narrative p{font-size:16px;}}
+
+.tweet-btn{display:inline-block;margin-left:10px;padding:9px 18px;background:#000;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .2s;}
+.tweet-btn:hover{opacity:0.8;}
+
+.next-sims{margin:32px 0 8px;text-align:center;}
+.next-sims h3{font-size:14px;color:#888;margin-bottom:14px;font-weight:400;letter-spacing:.05em;text-transform:uppercase;}
+.next-sims-grid{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.next-sim-btn{display:inline-block;padding:10px 18px;border:1px solid rgba(0,0,0,.15);border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;color:var(--ink,#2d2d2d);background:#fff;transition:all .2s;}
+.next-sim-btn:hover{border-color:var(--accent,#8B6914);color:var(--accent,#8B6914);transform:translateY(-1px);}
+
+/* BOOKS */
+.books-section{max-width:900px;margin:40px auto 0;padding:0 20px 60px}
+.books-section h3{font-size:15px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px}
+.books{display:flex;gap:12px;flex-wrap:wrap}
+.book{flex:1;min-width:140px;background:rgba(255,255,255,.05);border-radius:12px;padding:14px;text-decoration:none;color:inherit;border:1px solid rgba(255,255,255,.08);transition:border-color .2s}
+.book:hover{border-color:rgba(99,102,241,.5);background:rgba(255,255,255,.08)}
+.book-icon{font-size:22px;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.book-title{font-size:13px;font-weight:700;margin-bottom:4px;line-height:1.3;color:#e2e8f0}
+.book-author{font-size:11px;color:#64748b;margin-bottom:8px}
+.book-cta{font-size:11px;font-weight:700;color:#818cf8}
+
+</style>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/buffett-simulator.html">
+<meta property="og:title" content="Warren Buffett Life Simulator — Would You Have Made His Decisions?">
+<meta property="og:description" content="An interactive story about Warren Buffett — who started investing at 11, rejected Harvard, moved to Omaha to think clearly. 7 real decisions. Would you have done the same?">
+<meta property="og:site_name" content="Ordinary Man Trying">
+<meta property="og:locale" content="en_US">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Game",
+  "name": "Warren Buffett Life Simulator",
+  "description": "Make Warren Buffett's 7 real investment decisions before seeing what he actually chose. Test if you think like the greatest investor alive.",
+  "url": "https://ordinarymantrying.com/tools/buffett-simulator.html",
+  "genre": [
+    "Educational",
+    "Simulation"
+  ],
+  "gamePlatform": "Web Browser",
+  "applicationCategory": "Game",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Ordinary Man Trying",
+    "url": "https://ordinarymantrying.com"
+  }
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Warren Buffett</span>
+  <span class="topbar-score" id="topbar-score"></span>
+</div>
+<div class="cover" id="cover">
+  <div class="cover-eyebrow">True Story · Interactive</div>
+  <h1 class="cover-title">He started investing at 11. He was rejected by Harvard. He turned down a dream job to move back to Omaha and be his own boss. He refused to buy dot-com stocks when everyone said he was finished. He became the greatest investor in history by refusing to think like everyone else. At every turning point, you make the call.</h1>
+  <p class="cover-sub">This is a life simulation. At each critical moment in Warren Buffett's real story, you face the same choice he did — before you're told what he actually did.</p>
+  <button class="start-btn" onclick="startStory()">Start the Simulation →</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+  <div class="narrative">
+    <p>Warren Edward Buffett was born on August 30, 1930, in Omaha, Nebraska. His father, Howard, was a stockbroker and later a congressman. By the time Warren was 6, he was buying six-packs of Coca-Cola for 25 cents and selling individual bottles for 5 cents each — a 20% markup. By 11, he had bought his first stock. By 13, he was filing a tax return that included a $35 deduction for the bicycle he used for his paper route.</p>
+    <p>The math was always obvious to him in a way it wasn't to most people. He didn't find it interesting that money grew when invested — he found it strange that most people didn't seem to find that interesting, and stranger still that they didn't do anything about it.</p>
+    <p>The question, across 80 years of investing, has always been the same: when the crowd is doing something, is Buffett right to do the opposite — or is Buffett wrong and the crowd correct?</p>
+    <p>He has been right more often than anyone in recorded financial history.</p>
+  </div>
+
+  <div class="decision-block" id="d1">
+    <div class="decision-header"><span>Decision 1 · 1942 · Age 11 · First Stock</span><span class="d-num">1 / 7</span></div>
+    <div class="decision-body">
+      <p class="decision-q">Buffett has saved $120. He buys 3 shares of Cities Service preferred stock at $38 each. The stock drops to $27. He's lost 30% of his savings. His sister Doris — who also bought shares on his recommendation — is upset. He can sell and cut the loss, or hold. What does he do?</p>
+      <div class="dopts" id="opts-1">
+        <button class="dopt" onclick="answer(1,'A')"><div class="dopt-id">A</div><div class="dopt-body">Sell immediately. A 30% loss at 11 years old is significant. Take the lesson and preserve what's left.</div></button>
+        <button class="dopt" onclick="answer(1,'B')"><div class="dopt-id">B</div><div class="dopt-body">Sell half — take the partial loss, protect half the investment, and reduce the pressure from his sister.</div></button>
+        <button class="dopt" onclick="answer(1,'C')"><div class="dopt-id">C</div><div class="dopt-body">Hold but immediately research whether the business has actually changed or just the price. Make the decision based on analysis, not emotion.</div></button>
+        <button class="dopt" onclick="answer(1,'D')"><div class="dopt-id">D</div><div class="dopt-body">Hold and wait for the price to recover. The business hasn't changed. The price will follow.</div></button>
+      </div>
+      <div class="reveal" id="rev-1">
+        <div class="reveal-badge" id="badge-1"></div>
+        <div class="reveal-label">What Warren Buffett Did</div>
+        <div class="reveal-text">He held. The stock recovered to $40. He sold. Then Cities Service went to $202. He sold too early — and the lesson burned into him was not "hold longer" but "the business, not the price, is what matters."</div>
+        <div class="reveal-explain"><strong>You are 11 years old, watching a stock you recommended to your sister drop 30%, and you hold it until it recovers to $40 — then sell, watching it continue to $202 without you.</strong> Buffett has told this story hundreds of times because it contains the seed of everything. Lesson one: don't panic-sell when the price drops if the business is sound. Lesson two (the one he learned by selling at $40 when it went to $202): don't sell a great business just because you've recovered your cost. He was 11. He learned both lessons at the same time. Every major investment decision he made for the next 80 years is, in some form, an application of those two lessons.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-1">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1950 · Age 20 · Harvard Rejection</div></div>
+    <div class="narrative">
+      <p>Buffett applied to Harvard Business School in 1950. He was rejected in a brief interview — the interviewer reportedly said he looked too young. This was both a humiliation and a pivot.</p>
+      <p>He had read Benjamin Graham's book, <em>The Intelligent Investor</em>, the previous year. He considered it the best book ever written on investing. He discovered that Graham taught at Columbia Business School. He applied. He was the only student Graham ever gave an A+ to.</p>
+      <p>After Columbia, Graham offered him a job at his investment partnership in New York. Buffett desperately wanted it. Graham initially declined — saying he reserved Wall Street jobs for Jewish analysts who couldn't get hired elsewhere due to discrimination — then relented and offered Buffett a position.</p>
+      <p>Buffett worked for Graham for two years. Then Graham retired and closed the partnership. Buffett was 26, with nowhere to go.</p>
+    </div>
+    <div class="decision-block" id="d2">
+      <div class="decision-header"><span>Decision 2 · 1950 · Age 20 · After Harvard Rejects Him</span><span class="d-num">2 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Harvard Business School has rejected Buffett. What does he do?</p>
+        <div class="dopts" id="opts-2">
+          <button class="dopt" onclick="answer(2,'A')"><div class="dopt-id">A</div><div class="dopt-body">Reapply to Harvard next year. Prepare more thoroughly for the interview — one rejection is not a verdict.</div></button>
+          <button class="dopt" onclick="answer(2,'B')"><div class="dopt-id">B</div><div class="dopt-body">Apply to Wharton or Stanford — elite alternatives that will achieve the same credential.</div></button>
+          <button class="dopt" onclick="answer(2,'C')"><div class="dopt-id">C</div><div class="dopt-body">Skip business school entirely. He already knows more about investing than most professors. Start the career now.</div></button>
+          <button class="dopt" onclick="answer(2,'D')"><div class="dopt-id">D</div><div class="dopt-body">Apply to Columbia specifically to study under Benjamin Graham — the man who wrote the book that changed how he thinks about money. Go to the teacher, not the institution.</div></button>
+        </div>
+        <div class="reveal" id="rev-2">
+          <div class="reveal-badge" id="badge-2"></div>
+          <div class="reveal-label">What Warren Buffett Did</div>
+          <div class="reveal-text">He applied to Columbia to study under Graham. He was accepted. He earned the only A+ Graham ever awarded. Graham offered him a job. Buffett later said: "I'm 15% Fisher and 85% Benjamin Graham." Harvard's rejection pointed him at his actual teacher.</div>
+          <div class="reveal-explain"><strong>Harvard rejects you in a brief interview because you look too young. You apply to Columbia instead, find Benjamin Graham, and earn the only A+ he ever gave — the rejection that led you to your actual teacher.</strong> Buffett has occasionally said that his rejection from Harvard was one of the best things that ever happened to him — not ironically, but as straightforward analysis. Harvard would have given him a credential and a network. Columbia gave him Graham. The intellectual framework he got from Graham — margin of safety, Mr. Market, intrinsic value, the difference between price and value — is the foundation of every investment decision he has made since 1950. No Harvard professor was going to give him that. The right rejection leads to the right room.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-2">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1956 · Age 26 · Omaha</div></div>
+    <div class="narrative">
+      <p>Graham had closed his partnership. Buffett was 26. He had worked for the best investor in America. He could have stayed in New York, joined another firm, built a career in the world's financial capital.</p>
+      <p>He moved back to Omaha.</p>
+      <p>His friends and family thought this was strange. Omaha was not where investment managers built reputations. Buffett's explanation was simple: he could think more clearly in Omaha. New York produced noise. Omaha produced nothing but time to read and think.</p>
+      <p>He founded the Buffett Partnership with $105,100 — his $100 plus investments from family members. He charged no management fee. He took 25% of profits above a 6% annual return. He ran it from his house.</p>
+    </div>
+    <div class="decision-block" id="d3">
+      <div class="decision-header"><span>Decision 3 · 1956 · Age 26 · Omaha or New York?</span><span class="d-num">3 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Buffett has worked for Graham and the partnership has closed. He can stay in New York — join a firm, build a network, be near the market. Or he can move back to Omaha and start his own fund. What does he do?</p>
+        <div class="dopts" id="opts-3">
+          <button class="dopt" onclick="answer(3,'A')"><div class="dopt-id">A</div><div class="dopt-body">Stay in New York. Proximity to the market, deal flow, and serious investors matters — Omaha is too far from the action.</div></button>
+          <button class="dopt" onclick="answer(3,'B')"><div class="dopt-id">B</div><div class="dopt-body">Take a senior role at an established New York fund — build credibility and track record before going independent.</div></button>
+          <button class="dopt" onclick="answer(3,'C')"><div class="dopt-id">C</div><div class="dopt-body">Move to Omaha but keep a Manhattan office — presence in both worlds while thinking from the quieter one.</div></button>
+          <button class="dopt" onclick="answer(3,'D')"><div class="dopt-id">D</div><div class="dopt-body">Move back to Omaha. Start the partnership from his house. Distance from Wall Street is not a disadvantage — it's the advantage. No noise, no herd, no pressure to think like everyone else.</div></button>
+        </div>
+        <div class="reveal" id="rev-3">
+          <div class="reveal-badge" id="badge-3"></div>
+          <div class="reveal-label">What Warren Buffett Did</div>
+          <div class="reveal-text">He moved back to Omaha. He ran the Buffett Partnership from his house. Over 13 years, the partnership returned 29.5% annually — compared to the Dow's 7.4%. He never had a losing year. He dissolved the partnership in 1969 because he couldn't find undervalued stocks and took control of Berkshire Hathaway instead.</div>
+          <div class="reveal-explain"><strong>You are the most successful young investor in America, trained by Wall Street's most respected mind. You move back to Omaha and run your fund from your bedroom — and return 29.5% annually for 13 years against the Dow's 7.4%.</strong> The Omaha decision is one of the most studied in investment history because it contradicts everything conventional career advice says about proximity to power. Buffett's argument was that the crowd in New York creates the crowd mentality — that being physically away from the center of market activity made it easier to see what the market was actually doing rather than what everyone said it was doing. This advantage — of deliberate distance from consensus — has arguably been the most durable structural advantage Berkshire Hathaway has had for 70 years.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-3">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1969 · Age 39 · Closing the Partnership</div></div>
+    <div class="narrative">
+      <p>By 1969, the U.S. stock market had been climbing for years. Stocks that Buffett could find at obvious discounts to their intrinsic value were becoming impossible to find. The market was no longer cheap.</p>
+      <p>Buffett faced a choice that no investment manager of his stature had ever made voluntarily: close the partnership, return all money to investors, and wait — potentially years — for undervaluation to return.</p>
+      <p>He had partners who were counting on the partnership. He had fees he was earning. He had a reputation built on consistent outperformance. The pressure to stay invested — even at elevated valuations — was enormous.</p>
+    </div>
+    <div class="decision-block" id="d4">
+      <div class="decision-header"><span>Decision 4 · 1969 · Age 39 · Closing the Partnership</span><span class="d-num">4 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Buffett cannot find undervalued stocks. The market is expensive. He can stay invested anyway — take lower returns rather than no returns — or close the partnership and return cash to investors. What does he do?</p>
+        <div class="dopts" id="opts-4">
+          <button class="dopt" onclick="answer(4,'A')"><div class="dopt-id">A</div><div class="dopt-body">Stay invested. Some positions are still acceptable if not exceptional. Closing entirely is too disruptive to partners and too dramatic a signal.</div></button>
+          <button class="dopt" onclick="answer(4,'B')"><div class="dopt-id">B</div><div class="dopt-body">Pivot to bonds or cash-equivalents within the partnership rather than closing — preserve the structure while reducing risk.</div></button>
+          <button class="dopt" onclick="answer(4,'C')"><div class="dopt-id">C</div><div class="dopt-body">Reduce the fund by 50% — return half the capital, invest the rest in his best remaining ideas.</div></button>
+          <button class="dopt" onclick="answer(4,'D')"><div class="dopt-id">D</div><div class="dopt-body">Close the partnership completely. Return all money. He has one rule: only invest when there is genuine value. If the value isn't there, the rule applies whether the market is up, down, or sideways.</div></button>
+        </div>
+        <div class="reveal" id="rev-4">
+          <div class="reveal-badge" id="badge-4"></div>
+          <div class="reveal-label">What Warren Buffett Did</div>
+          <div class="reveal-text">He closed the Buffett Partnership in 1969 and returned all capital to investors. He told them he couldn't find undervalued stocks. The market peaked the following year. The 1970s bear market was one of the worst in American history. Partners who stayed invested elsewhere were devastated.</div>
+          <div class="reveal-explain"><strong>You have never had a losing year. You voluntarily close a fund returning 29.5% annually because you cannot find undervalued stocks — and return everyone's money. The 1970s bear market devastates every manager who stayed.</strong> Buffett's letter to partners closing the fund is studied in business schools as a model of intellectual honesty. He didn't say the market was about to crash — he said he couldn't find value, and that his job was not to invest when he couldn't find value. The restraint required to close a profitable, growing fund at the height of your reputation and return money to investors is something almost no investment manager has done before or since. He then used his personal share to take control of a struggling textile company named Berkshire Hathaway — a decision he later called his biggest mistake (the textile business), because he should have bought a better business at a fair price rather than a cheap price for a bad business. Even Buffett makes mistakes. He usually documents them carefully.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-4">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1972 · Age 42 · See's Candies</div></div>
+    <div class="narrative">
+      <p>See's Candies was a California candy company with a strong brand, loyal customers, and a peculiar economic property: it could raise prices every year without losing customers. Its profits were not spectacular, but they were reliable and growing.</p>
+      <p>The asking price was $25 million. By the standards of Benjamin Graham's value investing — buy at a significant discount to tangible assets — See's was expensive. Its tangible book value was $8 million. Buffett would be paying three times book value for the brand and the pricing power.</p>
+      <p>Graham would not have bought it. Charlie Munger, Buffett's new partner, thought they should. Buffett had never paid this kind of premium for anything.</p>
+    </div>
+    <div class="decision-block" id="d5">
+      <div class="decision-header"><span>Decision 5 · 1972 · Age 42 · See's Candies</span><span class="d-num">5 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">See's Candies is available for $25 million — three times its tangible book value. Graham's framework says it's too expensive. Munger says the brand and pricing power make it worth it. What does Buffett do?</p>
+        <div class="dopts" id="opts-5">
+          <button class="dopt" onclick="answer(5,'A')"><div class="dopt-id">A</div><div class="dopt-body">Pass. Three times book value violates the Graham framework — and that framework is why he has outperformed for 25 years.</div></button>
+          <button class="dopt" onclick="answer(5,'B')"><div class="dopt-id">B</div><div class="dopt-body">Negotiate for a lower price. $25M is too rich — offer $18M and see if they'll take it.</div></button>
+          <button class="dopt" onclick="answer(5,'C')"><div class="dopt-id">C</div><div class="dopt-body">Invest as a minority stakeholder — buy a portion without the full acquisition premium.</div></button>
+          <button class="dopt" onclick="answer(5,'D')"><div class="dopt-id">D</div><div class="dopt-body">Buy it. A brand that allows annual price increases without losing customers is worth more than its book value. Graham taught him the framework — but the framework can evolve. Buy quality, not just cheapness.</div></button>
+        </div>
+        <div class="reveal" id="rev-5">
+          <div class="reveal-badge" id="badge-5"></div>
+          <div class="reveal-label">What Warren Buffett Did</div>
+          <div class="reveal-text">He bought See's Candies for $25 million. Over the next 50 years, See's generated over $2 billion in pre-tax earnings for Berkshire Hathaway on a $25 million investment — with almost no additional capital required. Buffett calls it the investment that changed his philosophy.</div>
+          <div class="reveal-explain"><strong>You pay three times book value for a candy company in 1972 — precisely what Benjamin Graham taught you never to do. Over the next 50 years, that $25 million investment generates more than $2 billion in pre-tax earnings without requiring a dollar of additional capital.</strong> See's Candies was the turning point. Before See's, Buffett was a Graham disciple: buy cheap assets, wait for price to reflect value, sell. After See's — and crucially after Munger's influence — he understood that a truly great business with durable competitive advantages is worth paying a fair price for, because it will compound value for decades without needing additional capital. "It's far better to buy a wonderful company at a fair price than a fair company at a wonderful price." That sentence — written after See's — defines Berkshire's entire investment philosophy from 1972 onward.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-5">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1987 · Age 57 · Black Monday</div></div>
+    <div class="narrative">
+      <p>On October 19, 1987 — Black Monday — the Dow Jones Industrial Average fell 22.6% in a single day. It remains the largest single-day percentage decline in stock market history. Investors who had been heavily in equities lost a fifth of their wealth in hours.</p>
+      <p>The panic was total. Television showed traders on the floor of the New York Stock Exchange looking as though they were watching a disaster in slow motion. Volume was at record levels. The phone lines to brokerages were jammed with sell orders.</p>
+      <p>Buffett did nothing. Then, the next day, he bought more Coca-Cola.</p>
+    </div>
+    <div class="decision-block" id="d6">
+      <div class="decision-header"><span>Decision 6 · 1987 · Age 57 · Black Monday</span><span class="d-num">6 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">The Dow has dropped 22% in a single day. Every indicator says a crash is underway. Buffett holds significant positions in equities. What does he do?</p>
+        <div class="dopts" id="opts-6">
+          <button class="dopt" onclick="answer(6,'A')"><div class="dopt-id">A</div><div class="dopt-body">Sell 30-40% of holdings. Lock in some gains from before the crash and preserve capital while the situation clarifies.</div></button>
+          <button class="dopt" onclick="answer(6,'B')"><div class="dopt-id">B</div><div class="dopt-body">Sell the most volatile positions. Concentrate remaining capital in the safest holdings until markets stabilize.</div></button>
+          <button class="dopt" onclick="answer(6,'C')"><div class="dopt-id">C</div><div class="dopt-body">Hold all current positions but don't buy. Wait for more clarity before adding to equities.</div></button>
+          <button class="dopt" onclick="answer(6,'D')"><div class="dopt-id">D</div><div class="dopt-body">Do nothing on Monday. On Tuesday, look for what's now on sale. The businesses haven't changed. The prices have. Buy Coca-Cola.</div></button>
+        </div>
+        <div class="reveal" id="rev-6">
+          <div class="reveal-badge" id="badge-6"></div>
+          <div class="reveal-label">What Warren Buffett Did</div>
+          <div class="reveal-text">He didn't sell anything on Black Monday. He started buying Coca-Cola stock in the following months — buying quietly through the market turmoil until Berkshire owned 7% of the company by 1989. The Coca-Cola position is now worth over $25 billion on a $1.3 billion investment.</div>
+          <div class="reveal-explain"><strong>On October 19, 1987, the Dow drops 22.6% — the largest single-day crash in stock market history. Every brokerage phone line in America is jammed with sell orders. You don't sell anything. The next day, you start buying Coca-Cola.</strong> Buffett's explanation for not selling during Black Monday is characteristic: "The stock market is there to serve you, not to instruct you." A 22% drop in one day doesn't mean the underlying businesses are worth 22% less — it means a lot of people are panicking simultaneously. Panic creates opportunity. His purchase of Coca-Cola after the crash — a consumer products brand with consistent pricing power, global distribution, and a century of brand equity — was a direct application of everything he had learned from See's Candies. The business decides the value. The market decides the price. The gap between the two is where the money is.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-6">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1999 · Age 69 · The Dot-Com Bubble</div></div>
+    <div class="narrative">
+      <p>In 1999, the internet bubble was at its peak. Technology stocks were rising 100%, 200%, 300% in months. Amazon, Pets.com, Webvan, Cisco, Intel — every tech stock seemed to defy gravity. Analysts on television were naming price targets that assumed infinite growth forever.</p>
+      <p>Berkshire Hathaway's stock price declined by 19.9% in 1999. The S&P 500 was up 21%. Warren Buffett was being openly mocked. Barron's published a cover story titled "What's Wrong, Warren?" Forbes published a column arguing that Buffett had "lost his touch" and didn't understand the new economy.</p>
+      <p>He didn't buy a single internet stock.</p>
+    </div>
+    <div class="decision-block" id="d7">
+      <div class="decision-header"><span>Decision 7 · 1999 · Age 69 · The Dot-Com Bubble</span><span class="d-num">7 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Berkshire is down 20% while tech stocks are up triple digits. The financial press says Buffett has lost his touch. He doesn't understand the new economy. He has the capital to participate. What does he do?</p>
+        <div class="dopts" id="opts-7">
+          <button class="dopt" onclick="answer(7,'A')"><div class="dopt-id">A</div><div class="dopt-body">Allocate a small portion — 5-10% of Berkshire — to internet stocks. Acknowledge that the new economy may be different, and hedge against being wrong.</div></button>
+          <button class="dopt" onclick="answer(7,'B')"><div class="dopt-id">B</div><div class="dopt-body">Buy the most established tech companies — Microsoft, Cisco, Intel — that have real earnings even if valuations are high.</div></button>
+          <button class="dopt" onclick="answer(7,'C')"><div class="dopt-id">C</div><div class="dopt-body">Stay silent publicly. Don't buy tech stocks, but also don't publicly criticize the bubble — it's not his place to tell the market it's wrong.</div></button>
+          <button class="dopt" onclick="answer(7,'D')"><div class="dopt-id">D</div><div class="dopt-body">Don't buy a single internet stock. Give the speech saying why. Accept the criticism. The rule hasn't changed: only buy what you can value, only buy when the price is below that value. He can't value businesses with no earnings. He won't pretend he can.</div></button>
+        </div>
+        <div class="reveal" id="rev-7">
+          <div class="reveal-badge" id="badge-7"></div>
+          <div class="reveal-label">What Warren Buffett Did</div>
+          <div class="reveal-text">He bought nothing. He gave a speech at Allen & Company's Sun Valley conference in July 1999 explicitly predicting that internet stock returns would disappoint. He was publicly mocked. In March 2000, the Nasdaq began its 78% decline. Berkshire rose 49% from 2000 to 2002 while the market collapsed.</div>
+          <div class="reveal-explain"><strong>In 1999, Berkshire drops 19.9% while the S&P rises 21% and tech stocks triple. Barron's publishes a cover story asking "What's Wrong, Warren?" You don't buy a single internet stock. The Nasdaq peaks in March 2000 and falls 78%. Berkshire rises 49% while the market collapses.</strong> The 1999-2000 dot-com episode is considered the clearest demonstration of Buffett's most fundamental quality: the ability to hold his position when the entire world is telling him he's wrong. This is not stubbornness — it's the specific form of intellectual confidence that his entire career is built on. He has a framework. He applies it consistently. When the framework says don't buy, he doesn't buy. When the crowd says the framework is broken, he says: "Then let's see." He is still in Omaha. Berkshire Hathaway is still the company he controls. He is still buying businesses with durable competitive advantages at prices below their intrinsic value. He has been doing this for 70 years. He has not had a decade where his framework failed to work.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-epilogue">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">Omaha, Still</div></div>
+    <div class="narrative">
+      <p>Warren Buffett still lives in the house he bought in 1958 in Omaha, Nebraska, for $31,500. He still eats at the same diner. He still drinks multiple Coca-Colas a day. He is, at this writing, the sixth-richest person in the world, with a net worth of approximately $130 billion, the large majority of which he has pledged to charity through the Giving Pledge.</p>
+      <p>He has given away more money than any individual in American history — over $50 billion, primarily to the Bill & Melinda Gates Foundation and to his children's foundations.</p>
+      <p>He started investing at 11. He is still doing it at 94.</p>
+      <p>His most important quality is not his intelligence — there are smarter people who have made less money. It's not his work ethic — he reads for five to six hours a day, but many people work harder. It's not his network — he deliberately built one in Omaha rather than Wall Street.</p>
+      <p>It is his willingness to be wrong in public, for years, while being right in principle. The crowd is usually wrong at the extremes. Being right at the extremes requires being willing to be alone there. Most people find that intolerable. Buffett has found it comfortable for 80 years.</p>
+    </div>
+    <div class="results" id="seg-results">
+      <div class="results-hero">
+        <span class="results-trophy" id="res-trophy">💰</span>
+        <div class="results-score-big" id="res-score">0<span>/7</span></div>
+        <div class="results-sub">decisions matched Warren Buffett</div>
+      </div>
+      <h2 class="results-title" id="res-title"></h2>
+      <p class="results-desc" id="res-desc"></p>
+      <div class="divider"></div>
+      <div class="dim-rows">
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Patience</span><span class="dim-row-num" id="d-pa-num">0/3</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-pa" id="d-pa-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Conviction</span><span class="dim-row-num" id="d-co-num">0/2</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-co" id="d-co-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Independence</span><span class="dim-row-num" id="d-in-num">0/2</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-in" id="d-in-bar"></div></div>
+        </div>
+      </div>
+      <div class="res-card">
+        <div class="rc-title">Share your result</div>
+        
+<div class="next-sims"><h3>Try another simulator</h3><div class="next-sims-grid"><a class="next-sim-btn" href="jobs-simulator.html">Steve Jobs</a><a class="next-sim-btn" href="musk-simulator.html">Elon Musk</a><a class="next-sim-btn" href="mandela-simulator.html">Nelson Mandela</a></div></div>
+<div class="share-pre" id="share-pre"></div>
+        <button class="copy-btn" onclick="copyShare(event)">Copy to clipboard</button>
+<a class="tweet-btn" id="tweet-btn" href="#" onclick="return shareTweet()" rel="noopener">𝕏 Share Result</a>
+      </div>
+
+      <div class="res-card" style="text-align:center;">
+        <div class="rc-title">📚 Go Deeper — Read the Book</div>
+        <p style="font-size:14px;color:#4a3020;line-height:1.7;margin-bottom:14px;">The definitive biography of Warren Buffett — tracing how a newspaper-delivering kid from Omaha became the world's greatest investor through patience, discipline, and 80 years of compounding.</p>
+        <a href="https://amzn.to/4w2cpWB" target="_blank" rel="noopener" style="display:inline-block;background:#FF9900;color:#111;font-weight:700;padding:10px 22px;border-radius:6px;text-decoration:none;font-size:14px;">📖 View on Amazon →</a>
+        <p style="font-size:11px;color:#999;margin-top:10px;">As an Amazon Associate I earn from qualifying purchases.</p>
+      </div>
+
+      <div class="sim-links" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-left:4px solid var(--accent,#60a5fa);border-radius:12px;padding:18px 20px;margin-bottom:14px;">
+  
+  <p style="font-size:13px;font-weight:700;color:inherit;margin-bottom:10px;">🎮 Try another legendary life:</p>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;">
+    <a href="zhangxue-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🏍️ Zhang Xue</a>
+    <a href="disney-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🏰 Walt Disney</a>
+    <a href="honda-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🔧 Soichiro Honda</a>
+    <a href="curie-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">⚗️ Marie Curie</a>
+    <a href="jobs-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">📱 Steve Jobs</a>
+    <a href="rowling-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">📚 J.K. Rowling</a>
+    <a href="oprah-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🌟 Oprah Winfrey</a>
+    <a href="musk-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🛸 Elon Musk</a>
+    <a href="mandela-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">✊ Nelson Mandela</a>
+    <a href="hawking-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🔭 Stephen Hawking</a>
+  </div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);">
+    <a href="https://ordinarymantrying.com/tools/" style="font-size:13px;color:var(--accent,#60a5fa);font-weight:700;text-decoration:none;">→ See all 11 simulators + free tools</a>
+  </div>
+</div>
+      <div class="res-card">
+        <div class="rc-title">About this simulator</div>
+        <p style="font-size:14px;color:#4a3020;line-height:1.85;">This simulator is part of <a href="https://ordinarymantrying.com" style="color:var(--accent);font-weight:700;text-decoration:none;">ordinarymantrying.com</a> — a blog about one ordinary person using AI to navigate investing, side hustles, and building things in public. All events are based on documented historical accounts of Warren Buffett's life.</p>
+      </div>
+      <button class="replay-btn" onclick="location.reload()">↺ Play again</button>
+      <div style="height:48px;"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+<script>
+var TOTAL=7;
+var DECISIONS={1:{zx:'D',dim:'patience'},2:{zx:'D',dim:'independence'},3:{zx:'D',dim:'independence'},4:{zx:'D',dim:'conviction'},5:{zx:'D',dim:'conviction'},6:{zx:'D',dim:'patience'},7:{zx:'D',dim:'patience'}};
+var NEXT_SEG={1:'seg-1',2:'seg-2',3:'seg-3',4:'seg-4',5:'seg-5',6:'seg-6',7:'seg-epilogue'};
+var DIM_MAX={patience:3,conviction:2,independence:2};
+var scores={patience:0,conviction:0,independence:0};
+var totalCorrect=0,answered={};
+function startStory(){document.getElementById('cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('topbar-score').style.display='block';document.getElementById('topbar-score').textContent='0 / '+TOTAL;window.scrollTo({top:0,behavior:'smooth'});}
+function answer(num,chosen){if(answered[num])return;answered[num]=chosen;var d=DECISIONS[num];var correct=(chosen===d.zx);if(correct){totalCorrect++;scores[d.dim]++;}var opts=document.querySelectorAll('#opts-'+num+' .dopt');opts.forEach(function(btn){btn.classList.add('disabled');var id=btn.querySelector('.dopt-id').textContent.trim();if(id===chosen&&correct)btn.classList.add('right');if(id===chosen&&!correct)btn.classList.add('wrong');if(id===d.zx&&!correct)btn.classList.add('correct');});var badge=document.getElementById('badge-'+num);if(correct){badge.className='reveal-badge badge-y';badge.textContent='✓ Same as Warren Buffett';}else{badge.className='reveal-badge badge-n';badge.textContent='✗ You chose '+chosen+' — Buffett chose '+d.zx;}document.getElementById('rev-'+num).style.display='block';document.getElementById('topbar-score').textContent=totalCorrect+' / '+TOTAL;setTimeout(function(){var next=document.getElementById(NEXT_SEG[num]);next.classList.add('shown');setTimeout(function(){next.scrollIntoView({behavior:'smooth',block:'start'});},80);if(num===TOTAL)showResults();},950);}
+function showResults(){setTimeout(function(){var s=totalCorrect;var trophies=['🌱','🌱','📈','📈','🏅','🏅','🥇','💰'];document.getElementById('res-trophy').textContent=trophies[s]||'💰';document.getElementById('res-score').innerHTML=s+'<span>/'+TOTAL+'</span>';var title,desc;if(s===TOTAL){title='You think like Warren Buffett.';desc='Perfect score. Every decision matched his. You have the same quality that separates him from every other investor who has ever lived: the comfort of being wrong in public for years while being right in principle. That comfort is rarer than intelligence.';}else if(s>=5){title='You have his patience.';desc=s+' out of 7. Most of the time, you held the position. The gaps are where Buffett refused to move because the market was moving — and those refusals are why he has had no losing decade in 70 years.';}else if(s>=3){title='You have his instinct.';desc=s+' out of 7. More than half the time, you found the patient, contrarian path. The gap between knowing the right move and being comfortable sitting alone with it is where most investors lose their edge. Buffett has never lost his.';}else{title='You followed the crowd. He didn\'t.';desc=s+' out of 7. Your choices were reasonable by market consensus. Buffett\'s were not — they were consistently against consensus when consensus was wrong at the extremes. He has been doing this for 70 years. The crowd has been wrong at the extremes every single time. He has been right.';}document.getElementById('res-title').textContent=title;document.getElementById('res-desc').textContent=desc;setTimeout(function(){var paMax=DIM_MAX.patience,coMax=DIM_MAX.conviction,inMax=DIM_MAX.independence;document.getElementById('d-pa-num').textContent=scores.patience+'/'+paMax;document.getElementById('d-co-num').textContent=scores.conviction+'/'+coMax;document.getElementById('d-in-num').textContent=scores.independence+'/'+inMax;document.getElementById('d-pa-bar').style.width=((scores.patience/paMax)*100)+'%';document.getElementById('d-co-bar').style.width=((scores.conviction/coMax)*100)+'%';document.getElementById('d-in-bar').style.width=((scores.independence/inMax)*100)+'%';},300);document.getElementById('share-pre').textContent='I just played the Warren Buffett Life Simulator and matched '+totalCorrect+'/'+TOTAL+' of his real decisions.\n\nBuffett rejected Harvard, moved to Omaha to think clearly, refused to buy dot-com stocks\nwhen everyone said he\'d lost his touch — and became the greatest investor in history.\n\nPatience '+scores.patience+'/'+DIM_MAX.patience+'  ·  Conviction '+scores.conviction+'/'+DIM_MAX.conviction+'  ·  Independence '+scores.independence+'/'+DIM_MAX.independence+'\n\nWould you have made the same choices? ordinarymantrying.com/tools/buffett-simulator.html';document.getElementById('seg-epilogue').scrollIntoView({behavior:'smooth',block:'start'});},600);}
+function shareTweet(){var text=document.getElementById('share-pre').textContent;if(!text||text.trim()===''){alert('Finish the simulator first to share your result!');return false;}var url='https://x.com/intent/tweet?text='+encodeURIComponent(text.substring(0,240));window.open(url,'_blank','width=550,height=450');return false;}
+function copyShare(evt){var text=document.getElementById('share-pre').textContent;var btn=evt.target;function restore(){btn.textContent='Copy to clipboard';}if(navigator.clipboard){navigator.clipboard.writeText(text).then(function(){btn.textContent='✓ Copied!';setTimeout(restore,2000);});}else{var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='✓ Copied!';setTimeout(restore,2000);}}
+</script>
+
+  <!-- BOOKS -->
+  <div class="books-section">
+    <h3>📚 The books behind this framework</h3>
+    <div class="books">
+      <a class="book" href="#" data-enc="aHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC8wMDYwNTU1NjYxP3RhZz1vcmRpbmFyeW1hbnRyeXRyLTIw" target="_blank" rel="noopener">
+        <div class="book-icon" style="background:linear-gradient(135deg,#1E3A5F,#1d4ed8)">📘</div>
+        <div class="book-title">The Intelligent Investor</div>
+        <div class="book-author">Benjamin Graham</div>
+        <div class="book-cta">Get on Amazon →</div>
+      </a>
+      <a class="book" href="#" data-enc="aHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC8xOTUzOTUzMjU1P3RhZz1vcmRpbmFyeW1hbnRyeXRyLTIw" target="_blank" rel="noopener">
+        <div class="book-icon" style="background:linear-gradient(135deg,#1C1A0F,#b45309)">📙</div>
+        <div class="book-title">Poor Charlie's Almanack</div>
+        <div class="book-author">Charlie Munger</div>
+        <div class="book-cta">Get on Amazon →</div>
+      </a>
+      <a class="book" href="#" data-enc="aHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC8wNzQzMjAwNDAzP3RhZz1vcmRpbmFyeW1hbnRyeXRyLTIw" target="_blank" rel="noopener">
+        <div class="book-icon" style="background:linear-gradient(135deg,#1A3A1A,#15803d)">📗</div>
+        <div class="book-title">One Up on Wall Street</div>
+        <div class="book-author">Peter Lynch</div>
+        <div class="book-cta">Get on Amazon →</div>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('[data-enc]').forEach(el => {
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        window.open(atob(el.dataset.enc), '_blank', 'noopener');
+      });
+    });
+  </script>
+
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

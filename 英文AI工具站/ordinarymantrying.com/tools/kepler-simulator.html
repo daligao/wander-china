@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Johannes Kepler Life Simulator — He Mapped the Music of the Spheres</title>
+<meta name="description" content="Make the same decisions as Johannes Kepler — who discovered the laws of planetary motion, spent six years defending his mother from witchcraft charges, and died trying to collect unpaid salary.">
+<style>
+:root{
+  --bg:#F2EEE8;--card:#F8F5F0;--ink:#14100A;--muted:#503818;--line:#D8C8A8;
+  --accent:#402800;--accent-bg:#F0E0C0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Holy Roman Empire · 1571–1630</div>
+  <h1>Could You Have Been<br>Johannes Kepler?</h1>
+  <div class="cover-sub">He was born premature in a small German town, suffered severe smallpox at four that left him with permanently damaged vision, and spent his life in the middle of the Thirty Years' War. He discovered that planets move in ellipses, not circles — the first true law of planetary motion. He spent six years defending his mother from charges of witchcraft while still producing his greatest scientific work. He died in 1630 trying to collect 12,000 florins in unpaid salary, catching a fever on the journey.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">3</div><div class="stat-l">Laws of planetary motion — foundation of all astronomy</div></div>
+    <div class="stat"><div class="stat-n">6</div><div class="stat-l">Years defending his mother from witchcraft charges</div></div>
+    <div class="stat"><div class="stat-n">1630</div><div class="stat-l">Died collecting unpaid salary — 12,000 florins owed</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Tübingen, 1594 · Copernicus</div>
+<p class="narrative">You are training for the Lutheran ministry at Tübingen when your mathematics professor, Michael Maestlin, teaches you Copernicus's heliocentric model privately — alongside the official geocentric Ptolemaic system. Something about the Copernican system grips you with the force of religious conviction: the Sun at the center, the planets orbiting around it. It is beautiful. It is mathematically elegant. It is also officially controversial — Copernicus's book is not yet on the Index but heliocentrism is not safe to advocate openly. Your career in the church will not benefit from defending it. Then you are sent to teach mathematics in Graz instead of becoming a minister, and the decision is made for you.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · Copernicus</div>
+  <div class="d-situation">The Copernican system is beautiful and controversial. Do you publicly advocate for it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Yes — the mathematical beauty of heliocentrism is itself evidence of its truth; defend it openly and work to demonstrate it</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. No — advocate for it cautiously and privately; open support in 1594 is dangerous for a career in Lutheran ministry</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Use it mathematically without endorsing it cosmologically — treat it as a useful calculating tool without claiming it describes reality</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Kepler became one of the most passionate public advocates for heliocentrism in history. His first book, Mysterium Cosmographicum (1596), was an attempt to explain the spacing of the planets using Plato's nested geometric solids — it was wrong in its specific claims but breathtakingly ambitious and clearly committed to the Copernican model as physical reality. Maestlin helped him publish it. Tycho Brahe read it and invited Kepler to Prague. Galileo received a copy and wrote that he found it interesting but had not read it carefully. Kepler's advocacy for Copernicus was total and lifelong — and ultimately decisive for the acceptance of heliocentrism.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Prague, 1601 · Tycho Brahe's Data</div>
+<p class="narrative">You have come to Prague to work with Tycho Brahe — the greatest observational astronomer in history, whose 20 years of naked-eye planetary observations are the most precise ever made. Tycho is a difficult, imperious man who keeps his data locked away, sharing only what he chooses. He assigns you to work on Mars — the planet with the most complex and difficult orbit. Tycho dies suddenly in October 1601, after only 18 months of your working together. His data is legally his heirs' property. You have the data. His family demands its return. You spend months negotiating access to what you need.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · Brahe's Data</div>
+  <div class="d-situation">Tycho Brahe's observations are the most precise in history. His heirs control them. Do you copy the key data while negotiations continue?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Yes — the data is too important to lose to a legal dispute; copy what you need for the Mars calculations and negotiate in parallel</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. No — respect the legal situation; wait for proper access arrangements before using the data</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Negotiate aggressively for the entire archive — offer to publish Brahe's observations with full credit to ensure their preservation</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Kepler did keep copies of Brahe's data and continued working with them while the legal situation was unresolved. His use of Brahe's observations has been called ethically questionable by some historians and practically inevitable by others — without the data, there are no laws of planetary motion. The eventual agreement gave Kepler access to all the observations in exchange for completing the Rudolphine Tables (planetary position tables using Brahe's data). The Tables, when finally published in 1627, were dedicated to both Brahe and the Emperor Rudolf. Brahe's data made Kepler's laws possible. Kepler's mathematical genius made the data meaningful.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Prague, 1605 · The Ellipse</div>
+<p class="narrative">You have been working on the orbit of Mars for four years. Every circular orbit you fit to Brahe's observations is wrong — off by up to 8 minutes of arc. Eight minutes seems tiny. Brahe's observations are accurate to 2 minutes. The discrepancy is real. You write: "These 8 minutes alone would have led me to reform all of astronomy." You spend months trying every possible alternative. Then you try an ellipse. The planet's orbit fits the data perfectly. An ellipse. Not a circle. Planets do not move in circles. The entire Greek-Christian tradition of perfect heavenly circles is wrong. You have your first law: planets move in ellipses, with the Sun at one focus.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Ellipse</div>
+  <div class="d-situation">Your calculation shows planetary orbits are ellipses, not circles. Two thousand years of astronomical tradition says otherwise. How confident are you?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Completely — the data requires the ellipse; 8 minutes of arc is too precise to be measurement error in Brahe's observations; publish the result</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Not yet — verify across multiple planets before publishing; Mars may be a special case</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Publish but frame it as tentative — the philosophical implications are enormous; give the community time to adjust</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Kepler published in Astronomia Nova (1609) with complete confidence. The book presents all three of his laws (two are in this volume; the third came in 1619) with the full derivation from Brahe's data. He was explicit that the ellipse was not a mathematical device but described reality — this was a physical claim, not a calculating tool. Newton read Astronomia Nova carefully 60 years later and it was the foundation on which he built the gravitational inverse-square law. Kepler's willingness to follow the data past the circle was the most important act of observational courage in the history of astronomy.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Württemberg, 1615 · The Witch Trial</div>
+<p class="narrative">Your mother Katharina is 68. A neighbor has accused her of witchcraft — of giving her a potion that caused illness. In 1615 this is not a metaphorical accusation. Witchcraft is a capital offense. Your mother has a difficult personality and many enemies in her small village. Other accusations accumulate: she was seen talking to a strange light; she killed a man's cattle; she dug up the bones of a child from the churchyard. She is held under house arrest, then in prison. The trial will take years. You are the Imperial Mathematician. Your mother may be executed. You must defend her.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Defense</div>
+  <div class="d-situation">Your mother is accused of witchcraft. Defending her publicly will be costly to your career and may not succeed. Do you take on her defense?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Yes, completely — she is your mother and the charges are false; spend whatever it takes, however long it takes, to defend her</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Hire legal counsel and support from a distance — your scientific position makes direct involvement politically dangerous</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Seek a compromise — negotiate a lesser penalty rather than full acquittal; a complete defense risks a more severe outcome</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Kepler mounted a complete personal defense of his mother that took six years and produced a 128-page document refuting every specific accusation. He traveled repeatedly to Württemberg, dealt with hostile local officials, managed his mother's difficult personality, and maintained his scientific work simultaneously. The defense was successful — Katharina Kepler was released in October 1621, having been held in prison under threat of torture and execution. She died the following year. Kepler wrote to her during the trial: "Don't worry about me. Keep your spirits up." He was the most eminent scientist in Europe. He spent six years saving his mother from a witch trial. Both things are true.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Linz, 1619 · Harmonices Mundi</div>
+<p class="narrative">In the middle of his mother's witchcraft trial, you publish Harmonices Mundi — the Harmony of the World. It contains your third law of planetary motion (the relationship between a planet's orbital period and its distance from the Sun), buried inside a larger argument about the musical harmonies produced by the planets' orbital velocities. You have found what you consider the most beautiful mathematical relationship in astronomy. You write: "I give myself up to sacred fury." The book is dedicated to King James I of England and the Holy Roman Emperor. You believe you have heard the music of the spheres.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · The Harmonics</div>
+  <div class="d-situation">Your most important mathematical discovery (the third law) is embedded in a larger mystical framework about cosmic musical harmony. Is this combination right?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Yes — the mathematics and the mysticism are both genuine; separating them would falsify the work and the mind that produced it</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. No — publish the third law separately and clearly; the mystical framework obscures the scientific discovery</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Yes, but acknowledge the combination more clearly — let readers know what is mathematical law and what is speculative harmony</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Kepler published the third law inside the Harmonices Mundi exactly as he had conceived it — as part of a larger vision of mathematical beauty in the cosmos. The third law (T² ∝ a³ — the square of a planet's orbital period is proportional to the cube of its mean distance from the Sun) is the most important result in the book. Newton used it directly to derive the inverse-square law of gravitation. The mystical context did not prevent the mathematics from being extracted and used. Kepler's combination of mathematical precision and cosmic mysticism is what 17th-century science looked like from the inside.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Linz and Sagan, 1620s · The Thirty Years' War</div>
+<p class="narrative">The Thirty Years' War has been tearing through Central Europe since 1618. You have been expelled from Linz for refusing to sign the Formula of Concord (a Lutheran doctrinal statement) — you have heterodox views on the Eucharist. You are expelled from Catholic territories for being Lutheran. You are expelled from Lutheran territories for being doctrinally nonconformist. You keep moving — to Sagan, to Ulm — completing the Rudolphine Tables while armies march through the territories you work in. You are 55 and have never had a secure permanent position since Brahe's death.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · Religious Conformity</div>
+  <div class="d-situation">Converting to Catholicism would give you better access to positions and patronage in the Catholic territories that control Europe's intellectual centers. Do you convert?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. No — your conscience cannot sign what your conscience does not believe; do the work wherever you can do it honestly</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Yes — institutional religion is a political system, not a sincere belief; convert for access and continue the real work</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. No, but negotiate — find positions in territories where your specific doctrinal views are tolerated; there must be somewhere</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Kepler refused to convert and was repeatedly expelled or excluded from positions because of his doctrinal position. He held his specific views about the nature of the Eucharist with the same conviction he held about the elliptical shape of planetary orbits — if it was true it was true, and he would not sign otherwise. This cost him enormous professional security and income. He died partly because he could not collect the 12,000 florins owed to him in salary from an empire whose religious politics made payment complicated. The astronomical work was done anyway, between evictions, during a war.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · Regensburg, 1630 · The Last Journey</div>
+<p class="narrative">You are 58. You are owed 12,000 florins in unpaid salary from the Holy Roman Empire — accumulated over years of service to three emperors. You travel to Regensburg to collect it. You arrive in a weakened condition. Within days you develop a fever. You die on November 15, 1630. The 12,000 florins are not collected. Your family is left without income. Your second wife Susanna survives you by 25 years; she is also owed the salary. The Thirty Years' War continues for 18 more years. The planets continue in their ellipses regardless of any of this.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The Final Journey</div>
+  <div class="d-situation">He made the journey to collect unpaid salary in poor health, caught fever, and died. Was the journey worth taking?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. Yes — the salary was owed to his family and he had every reason to expect the journey would succeed; he could not have known it would kill him</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. No — his health was compromised; the money was less important than the remaining scientific work; wait for a better time</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. The question is wrong — he was a man who spent his life doing what was necessary regardless of the risk; this was no different</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> Kepler died in Regensburg and was buried in St. Peter's churchyard. His grave was destroyed during the Thirty Years' War. The epitaph he had written for himself survives: "I measured the skies, now the shadows I measure. Skybound was the mind, earthbound the body rests." The salary was never collected. The Rudolphine Tables, which he had completed and published in 1627, were used by navigators across Europe for the next century. Newton built the Principia on Kepler's three laws. The planets have been moving in ellipses throughout all of this. Kepler was the first to know it.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · The Legacy</div>
+<p class="narrative">Kepler's three laws of planetary motion are the foundation of all celestial mechanics. Every space mission launched since 1957 has used them. Newton's law of universal gravitation was derived from them. Kepler also founded modern optics — his work on how lenses form images is still taught in introductory physics. He was the first person to correctly describe the mechanism of human vision, to explain how telescopes work, and to discover that tides are caused by the Moon. He did all of this while defending his mother from witchcraft charges, being expelled from multiple territories during a catastrophic war, and dying trying to collect unpaid salary.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · What Made This Possible</div>
+  <div class="d-situation">He produced foundational work in astronomy and optics under conditions designed to prevent it. What was essential?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. The conviction that the mathematics describes physical reality — following the 8 minutes of arc to the ellipse required believing the numbers more than the tradition</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. Tycho Brahe's data — without the most precise observations in pre-telescope history, the laws could not have been discovered</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. The Thirty Years' War displacement — moving repeatedly through different territories exposed him to a breadth of scholarly resources he would not have found in one place</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> Both Kepler's conviction and Brahe's data were necessary — neither alone was sufficient. Brahe had the data but no mathematical framework to interpret it. Kepler had the mathematical imagination but no observations precise enough to test against. Their 18 months of collaboration, and Kepler's subsequent six years working with the data, produced the laws. What was essential to Kepler specifically was the willingness to trust 8 minutes of arc over 2,000 years of circular tradition. That trust — in measurement over authority — is the beginning of modern science.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Kepler Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="galileo-simulator.html">
+      <span class="next-name">Galileo</span>
+      <span class="next-desc">Kepler's contemporary — who also defended heliocentrism and also paid a personal price for it</span>
+    </a>
+    <a class="next-card" href="newton-simulator.html">
+      <span class="next-name">Isaac Newton</span>
+      <span class="next-desc">The physicist who read Kepler's three laws and derived the law of universal gravitation from them</span>
+    </a>
+    <a class="next-card" href="darwin-simulator.html">
+      <span class="next-name">Charles Darwin</span>
+      <span class="next-desc">Another scientist who trusted data over tradition — with equally revolutionary consequences</span>
+    </a>
+    <a class="next-card" href="cantor-simulator.html">
+      <span class="next-name">Georg Cantor</span>
+      <span class="next-desc">Another mathematician who followed the mathematics past what the establishment could accept</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You think exactly like Kepler — trust the mathematics over tradition, copy the data if you must, defend your mother completely, refuse to convert for convenience, follow the 8 minutes of arc to the ellipse. Every planet in the solar system confirms you were right. They move in ellipses. They always have.';else if(score>=5)t.textContent='Strong instincts. You understood the core choices — Copernicus over caution, data over tradition, complete defense of Katharina, the third law in its context. A few choices sought more safety or institutional support, but you would have found the laws of planetary motion.';else if(score>=3)t.textContent='You sought more verification before publishing, kept the mathematics separate from the mysticism, and considered conversion for career advancement. Those choices would have produced a more cautious and more forgettable astronomer. The ellipse required the willingness to be completely wrong about everything circles represented.';else t.textContent='You deferred to the circular tradition, waited for more data, hired lawyers for your mother from a safe distance, and converted for access to better positions. Kepler did none of this. The planets he discovered orbit in ellipses. The life he lived was also an ellipse — off-center, unexpected, and governed by invisible forces.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

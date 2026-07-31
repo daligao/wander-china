@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Florence Nightingale Life Simulator — The Lady with the Numbers</title>
+<meta name="description" content="Make the same decisions as Florence Nightingale — from Victorian drawing rooms to Crimean war hospitals. She didn't just bring a lamp. She brought statistics.">
+<style>
+:root{
+  --bg:#EEF4F2;--card:#F2F7F5;--ink:#081810;--muted:#406050;--line:#C8DCD8;
+  --accent:#1A4A3A;--accent-bg:#E0EDE9;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">England → Crimea · 1820–1910</div>
+  <h1>Could You Have Been<br>Florence Nightingale?</h1>
+  <div class="cover-sub">They called her the Lady with the Lamp. She preferred the Lady with the Statistics. She walked into a military hospital where 42% of soldiers were dying — not from bullets, but from filth — and she used a pie chart to end the killing. Eight decisions. Could you have made them?</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">42% → 2%</div><div class="stat-l">Mortality she achieved in 6 months</div></div>
+    <div class="stat"><div class="stat-n">90</div><div class="stat-l">Years of life</div></div>
+    <div class="stat"><div class="stat-n">830</div><div class="stat-l">Pages of evidence to Royal Commission</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Embley Park, England, 1837 · Age 17</div>
+<p class="narrative">You are a 17-year-old daughter of a wealthy English family — educated in multiple languages, well-traveled, expected to marry brilliantly and host dinner parties for the rest of your life. And then one February morning, in the garden of your family's Hampshire estate, you experience what you will later call a divine calling: a voice telling you to serve God through the care of the sick. Nursing in 1837 is not a profession. It is what destitute women do in hospitals that are barely better than prisons. Telling your mother will be like announcing you want to be a scullery maid.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Calling</div>
+  <div class="d-situation">You believe you have been called to nursing. Your family will be horrified. Do you tell them?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Tell them honestly — you will pursue nursing regardless of their reaction</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. Keep it secret — begin visiting hospitals quietly without telling your family</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Compromise — agree to marry first, then pursue nursing once you're established</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Nightingale told her family — and spent the next 14 years fighting them. Her mother had what she called "rages" at the idea. Her father eventually allowed her to study mathematics privately (which would prove crucial). When she asked to train at Salisbury Hospital, her family declared it "a disgrace." She waited. She studied. She visited hospitals secretly. She refused to marry. At 31, she finally got to Germany for nursing training. The 14-year delay was not defeat — it was accumulation. By the time she arrived in Crimea, she knew more about hospital administration than most doctors.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Kaiserwerth, Germany, 1851 · Age 31</div>
+<p class="narrative">You are 31 — older than most women who become nurses, older than most women who do anything professional at all in 1851. Your family has finally, reluctantly, allowed you to spend three months at a nursing institute in Kaiserwerth. You have been preparing for this your whole adult life. But three months is nothing. Fourteen years of delay has brought you here for ninety days.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Lost Years</div>
+  <div class="d-situation">You finally have three months of real training. Was waiting fourteen years worth it — or did you lose your most formative years to family pressure?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Yes — fourteen years of reading, observing hospitals, and studying statistics made these three months transformative</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. No — you wasted your twenties deferring to family; the delay was cowardice</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Unclear — the delay was painful but you can't know what you would have become without it</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Nightingale later described the Kaiserwerth experience as the moment she became a professional — not just an interested amateur. But the fourteen years weren't wasted: she had used them to become a trained statistician, a prolific reader of hospital administration literature from across Europe, and a skilled writer of reports. When she arrived in Crimea, the depth of her analytical preparation was what separated her from every other reformer. The delay was painful. It was also formative in ways she couldn't have planned.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · London, October 1854 · The Request</div>
+<p class="narrative">The Times of London has published dispatches from the Crimean War that are making readers sick with shame. British soldiers are dying in Scutari — not from Russian bullets, but from cholera, typhus, and dysentery in conditions the reporter describes as worse than the worst London slum. The Secretary of War, Sidney Herbert, is a friend of yours. He has written to ask you to go to Scutari and organize the nursing. You have 38 nurses assembled and waiting. The army's medical establishment does not want you there.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · Into the War</div>
+  <div class="d-situation">The army's doctors will resist you. The conditions will be catastrophic. Your health may not survive it. Do you go?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Go immediately — this is exactly what your calling was for</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Decline — conditions are too dangerous for women; write a report instead</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Go, but demand formal military rank and authority first</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Nightingale went. She arrived in Scutari on November 4, 1854 and found a hospital full of men lying on the floor in their own filth, rats in the wards, blocked sewers running under the building, and a mortality rate of 42%. Military doctors were hostile — they resented her authority and her presence. She did not demand rank. She worked around them: organizing supplies, cleaning wards, keeping records. By February 1856, the mortality rate had fallen to 2%. The data told the story she couldn't speak aloud in a room full of generals.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Scutari Hospital, 1855 · The Lamp</div>
+<p class="narrative">Soldiers have started calling you "The Lady with the Lamp" — you walk the wards at night with a lantern, checking on the men, 4 miles of beds per night. Men who are delirious reach out to touch your shadow as you pass. The image is spreading in newspapers back in England. Artists are painting it. Poems are being written. You are becoming a Victorian saint figure — gentle, feminine, angelic. The myth is building even as the reality of what you're doing — scrubbing floors, organizing sewage removal, fighting bureaucrats, doing mortality statistics at midnight — is completely invisible to the public.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Angel Image</div>
+  <div class="d-situation">The "Lady with the Lamp" image is making you famous and generating enormous public support and donations. But it's sentimentalizing work that is actually statistical and administrative. Do you correct it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Neither encourage nor correct it — the image generates funding and political leverage; use what works</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Actively correct it — sentimental myths undermine the scientific credibility of nursing reform</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Actively embrace it — feminine image is the only language politicians understand; ride it fully</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Nightingale was deeply ambivalent about the "Lady with the Lamp" myth — she found it condescending — but she was too politically shrewd to reject it. The sentimental image kept her in the newspapers, generated the public pressure that forced Parliamentary inquiries, and made her untouchable to the military establishment that loathed her. She used the myth as a shield while doing the actual work of a systems reformer behind it. It was a masterclass in Victorian-era public relations: give the public what they need to feel; use the feeling to change the facts.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · London, 1858 · The Rose Diagram</div>
+<p class="narrative">You have been back in England for two years, chronically ill (you contracted a fever in Crimea that left you bedridden for much of the rest of your life), and you are preparing your evidence for a Royal Commission on the Health of the Army. You have the data. You know what it shows: soldiers in military hospitals die far more often from preventable disease than from wounds. The challenge is getting politicians to understand statistics. Most cannot read a table. You have an idea for a new kind of chart — a polar area diagram, like a pie chart divided by month — that will show the causes of death visually, inescapably, without requiring anyone to be able to read a number.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · The Data Visualization</div>
+  <div class="d-situation">You have invented a new kind of statistical chart that makes complex mortality data instantly readable. Politicians will understand it in seconds. Do you use it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Yes — design the charts so that ignorant politicians can understand the truth at a single glance</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. No — use standard statistical tables; oversimplifying data is intellectually dishonest</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Commission a journalist to translate the data into prose — your job is research, not communication</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Nightingale's "coxcomb" or "rose diagram" — created in 1858 — is now considered one of the most important innovations in data visualization history. She divided a circle into 12 wedges (one per month) and used three colors to show causes of death: blue for preventable disease, red for wounds, black for other causes. The blue dwarfed the red. Parliament could see at a glance what years of medical testimony had failed to communicate: the army was killing its own soldiers with filth, not with battle. The chart changed the law.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · London, 1857 · The Royal Commission</div>
+<p class="narrative">You have been asked to give evidence to the Royal Commission on army health — but women are not allowed to testify formally before government commissions in 1857. You cannot appear in person. You can, however, submit written evidence. Your testimony, submitted in writing while you are confined to bed with illness, will be 830 pages long.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · Working Around the Rules</div>
+  <div class="d-situation">You cannot testify in person. You can write. How do you respond to the exclusion?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Submit 830 pages of written evidence — become the definitive authority by sheer force of documentation</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Demand the right to testify in person — the exclusion is unconstitutional and must be challenged</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Coach male witnesses to present your findings — work through the men who have access</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Nightingale submitted 830 pages of evidence that became, effectively, the final report. The Commission adopted her recommendations almost entirely. She also personally coached Sidney Herbert, the Commission's chairman, on what questions to ask and what answers to expect — she was writing both sides of a government investigation from a sickbed. Her written evidence reformed the entire sanitary design of British military hospitals. The exclusion from formal testimony was worked around so completely that it became irrelevant.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · London, 1860 · The Nightingale Fund</div>
+<p class="narrative">The public has raised £45,000 in your name — equivalent to millions today — as a thank-you for your work in Crimea. It is now called the Nightingale Fund. You could use it to rest, to recover your health, to travel, to finally stop pushing the broken body that has been collapsing on you since Scutari. Instead, you are planning to use it to found a nursing school at St Thomas's Hospital in London. You are bedridden much of the time. You intend to run the school from your bedroom.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The School</div>
+  <div class="d-situation">You have £45,000, chronic illness, and an ambition to transform nursing into a profession. How do you proceed?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. Found the school and govern it from bed — your mind works perfectly well horizontal</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. Recover your health first — you can found the school once you're physically able to run it properly</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. Donate the money to an existing hospital rather than build something new</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> The Nightingale Training School at St Thomas's Hospital opened in 1860. Nightingale designed its curriculum, selected its candidates, and supervised its operation from her bedroom for years. She wrote nursing textbooks, corresponded with hundreds of graduates, and answered letters about hospital policy from around the world — all while rarely leaving her bed. Her illness gave her an unusual form of power: because she couldn't travel or attend meetings, everyone came to her. Her apartment became the center of British nursing reform for thirty years.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · A Life Unconventional · The Marriage Question</div>
+<p class="narrative">You received at least one serious marriage proposal that you accepted and then withdrew from — from Richard Monckton Milnes, a man you had genuine feelings for. You told him you needed a more active life than marriage would allow. Victorian marriage, for a woman of your class, meant subservience to a husband's social calendar, his decisions, his ambitions. You chose instead a life of chronic illness, enormous influence, and permanent solitude — work right up until the end, dying at 90 in your London apartment.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · The Life Chosen</div>
+  <div class="d-situation">You rejected marriage for a life of work. Knowing what that life cost you — the loneliness, the illness, the isolation — was it the right choice?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. Yes — marriage would have meant subservience; single life gave you everything you actually wanted to do</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. No — you sacrificed genuine love for institutions that changed more slowly than you hoped</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. The question is wrong — women shouldn't have to choose between love and ambition</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> Nightingale lived to 90, reforming British healthcare from her London apartment until nearly the end. In her last decades she worked on sanitation reform in India, developed the first standardized hospital statistics systems, and continued training nurses. She was the first woman admitted to the Royal Statistical Society. At 87, Edward VII awarded her the Order of Merit — the first woman to receive it. When she died in 1910, her family declined a state funeral at her request. She was buried quietly in Hampshire. The influence has never stopped.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Nightingale Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="curie-simulator.html">
+      <span class="next-name">Marie Curie</span>
+      <span class="next-desc">Another woman who changed science while the scientific establishment tried to ignore her</span>
+    </a>
+    <a class="next-card" href="darwin-simulator.html">
+      <span class="next-name">Charles Darwin</span>
+      <span class="next-desc">He also used patient observation and data to change what everyone assumed was true</span>
+    </a>
+    <a class="next-card" href="austen-simulator.html">
+      <span class="next-name">Jane Austen</span>
+      <span class="next-desc">A Victorian-era woman who chose her own path and reshaped culture from a small room</span>
+    </a>
+    <a class="next-card" href="galileo-simulator.html">
+      <span class="next-name">Galileo Galilei</span>
+      <span class="next-desc">Another reformer who used evidence to fight the establishment — and paid a heavy price</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators →</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=Math.round(score/TOTAL*100);document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='Exceptional. You think like Nightingale — pragmatic, data-driven, willing to use whatever tool (including a sentimental myth) gets the job done. You understand that lasting reform requires political intelligence, not just moral clarity.';else if(score>=5)t.textContent='Strong instincts. You understood most of Nightingale\'s key moves — the evidence-based approach, the willingness to work around obstacles rather than collide with them. A few moments of idealism or impatience slipped in, but you\'d have improved something real.';else if(score>=3)t.textContent='You had the compassion but reached for purity over pragmatism at crucial moments. Nightingale\'s genius was her willingness to use every available tool — including a myth she privately found condescending — to change what actually happened in hospitals.';else t.textContent='You would have been a caring, principled reformer who changed very little. Nightingale\'s greatness lay not in her goodness but in her hard-headedness: she knew that being right wasn\'t enough. You had to make the powerful understand you were right, and then make them feel they chose it themselves.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

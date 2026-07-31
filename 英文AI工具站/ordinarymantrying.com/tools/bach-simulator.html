@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Johann Sebastian Bach?</title>
+<meta name="description" content="He wrote 1,128 compositions, had 20 children, was imprisoned for quitting a job, and was nearly forgotten until 79 years after his death. 8 decisions from the greatest composer who ever lived.">
+<meta property="og:title" content="What Would You Do If You Were Johann Sebastian Bach?">
+<meta property="og:description" content="Had 20 children, was jailed for wanting to quit, wrote music so complex AI still analyzes it. 8 decisions from Bach's life.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/bach-simulator.html">
+<style>
+:root{
+  --bg:#F5F0E5;--card:#FCF9F0;--ink:#1A1000;--muted:#504020;--line:#D4C090;
+  --accent:#4A3010;--accent-bg:#F2EAD0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,240,229,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#1A1000;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C8A860;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#181000;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F8F0D8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#181000;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F8F0D8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C8A860;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#181000;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#1A1000;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F8F0D8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C8A860;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#F8F0D8;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#D0B070;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Johann Sebastian Bach</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #40</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Bach?</h1>
+  <p class="cover-sub">He had 20 children, walked 400 kilometers to hear a great organist play, was imprisoned for wanting to quit a job, wrote 1,128 compositions across 65 years, and died nearly forgotten. It wasn't until 79 years after his death — when a 20-year-old prodigy named Mendelssohn performed the St. Matthew Passion — that the world understood what Bach had made. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Johann Sebastian Bach</strong> (1685–1750) · German composer and organist · Born Eisenach, Thuringia; father Johann Ambrosius Bach was a court musician · Orphaned at age 9; raised by older brother Johann Christoph · Worked successively as organist at Arnstadt (1703), Mühlhausen (1707), Weimar (1708), Köthen (1717), and Leipzig (1723–1750) · Married twice: Maria Barbara (died 1720) and Anna Magdalena (married 1721) · 20 children total, 10 survived to adulthood · Major works: <em>Brandenburg Concertos</em>, <em>The Well-Tempered Clavier</em>, Mass in B minor, St. Matthew Passion, Goldberg Variations, <em>The Art of Fugue</em> · At death, considered an old-fashioned craftsman. Revival began in 1829 with Mendelssohn's performance of the St. Matthew Passion — the first in 100 years.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1705, Arnstadt</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Walk to Lübeck</span></div>
+<div class="year-banner">1705</div>
+<div class="timeline-dot">Arnstadt · Age 20</div>
+<div class="narrative">
+  <p>You are 20, organist at the New Church in Arnstadt. You have a month of leave approved to travel to Lübeck — 400 kilometers north — to hear Dieterich Buxtehude, the greatest organist in Germany, perhaps in all of Europe. You decide to walk.</p>
+  <p>You walk 400 kilometers. You arrive in Lübeck and stay for four months, listening, studying, absorbing everything. You miss three months of work without permission. Your church council is furious. You don't entirely care. You needed to hear this, and you did.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Unauthorized Journey</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Bach walked 400 km to hear Buxtehude and stayed four months without authorization. What does this episode reveal about his priorities?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Irresponsibility — he had a job and contractual obligations, and he ignored them for his own musical interests. His church council's anger was justified.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">B</span><span class="dopt-body">He understood that his musical development was the asset that made him worth employing — and that no employer could give him what Buxtehude could. The short-term irresponsibility was a long-term investment in the ability that would define his career. He was right about what mattered more.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">It was a young man's risk that happened to pay off. At 20, he had little to lose. The same choice at 35, with a family and established position, would have been very different.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">Buxtehude's influence</div>
+      <p><strong>You walk 400 kilometers, stay four months instead of the approved one, and return with Buxtehude's influence already audible in your playing — which the Arnstadt council separately reprimands you for, citing the "strange variations" and "foreign sounds" you have introduced into the hymns.</strong> Dieterich Buxtehude (c.1637–1707) was the leading organist in northern Germany — his Sunday evening organ concerts in Lübeck, the <em>Abendmusiken</em>, drew audiences from across the region. Bach walked approximately 400 km each way — the historical accounts of the walk are well-documented. He stayed from November 1705 to February 1706, four months instead of the approved one. His church council in Arnstadt formally reprimanded him for the unauthorized absence and also, separately, for the "strange variations" and "foreign sounds" he'd started introducing into his hymn accompaniments after returning — meaning Buxtehude's influence had already changed his playing. Handel also visited Buxtehude, but chose not to stay. Telemann also passed through. Bach is the one who walked 400 kilometers and stayed. The musical results are detectable in his output for the next decade.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · Imprisoned for Quitting</span></div>
+<div class="year-banner">1717</div>
+<div class="timeline-dot">Weimar · Age 32</div>
+<div class="narrative">
+  <p>You have been court organist and chamber musician at the Weimar court for nine years. You have written some of your greatest organ works here. But the court Kapellmeister has died, and instead of promoting you to the position, Duke Wilhelm Ernst has appointed someone else. You request permission to leave and take a better position at the court of Köthen.</p>
+  <p>The Duke refuses. You insist. The Duke has you arrested and imprisoned in the "County Judge's place of detention" for four weeks, for "too stubbornly forcing the issue of his dismissal." You are released on December 2, "with notice of his unfavorable discharge."</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Imprisoned for Ambition</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Bach pushed hard enough to quit his Weimar position that he was imprisoned for a month. Was this stubbornness a flaw or a strength?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">A</span><span class="dopt-body">Strength — the Köthen position was with Prince Leopold, who genuinely loved music and gave Bach freedom to write secular instrumental music rather than just church music. The Brandenburg Concertos were written at Köthen. A month in jail was a reasonable price for six years of creative freedom.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">Flaw — a more politically skilled person would have found a way to leave without imprisonment, possibly maintaining the Duke's goodwill. Bach's stubbornness cost him relationships he could have used later.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Neither — in 18th-century Germany, the relationship between court musicians and employers was essentially contractual servitude. The Duke was behaving within his rights. Bach was pushing against a system, not just being stubborn about a personal preference.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">Köthen and the Brandenburg Concertos</div>
+      <p><strong>The Brandenburg Concertos were written as a job application to the Margrave of Brandenburg in 1721. The Margrave apparently never performed them, apparently never acknowledged receiving them, and they were found in his estate after his death. Six concertos written to impress a man who showed no interest are now among the most performed orchestral works in history.</strong> At Köthen (1717–1723), Bach worked for Prince Leopold, who was 23 years old, played violin and viola da gamba, and genuinely loved music — he sang and participated in court performances. For the first time, Bach had a patron who was a real musical collaborator. The position was kapellmeister rather than church organist, so he wrote primarily secular instrumental music: the <em>Brandenburg Concertos</em>, violin concertos, the first book of the <em>Well-Tempered Clavier</em>, the orchestral suites. The Brandenburg Concertos were submitted to the Margrave of Brandenburg in 1721 as a job application — the Margrave never performed them and apparently never acknowledged receipt. They were found in the Margrave's estate after his death. The six concertos, written apparently to demonstrate Bach's range to a potential employer who showed no interest, are now among the most performed orchestral works in history.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · All Twenty-Four Keys</span></div>
+<div class="year-banner">1722</div>
+<div class="timeline-dot">Köthen · Age 37</div>
+<div class="narrative">
+  <p>The dominant tuning systems of your era favor certain keys and make others sound wrong. Music written in C major sounds fine; music written in B major sounds out of tune on most instruments. A new tuning system — "well temperament" — distributes the tuning compromises more evenly, making all 24 major and minor keys usable, though each with a slightly different character.</p>
+  <p>You write a set of 24 preludes and fugues — one in every major and minor key — to prove this works. You call it <em>Das Wohltemperierte Clavier</em>. The Well-Tempered Clavier. You do it again 20 years later. Together they are called "the Old Testament of music."</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Well-Tempered Clavier</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Bach wrote 48 preludes and fugues in all 24 keys partly to demonstrate a new tuning system. What was the larger significance of this project?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">It established equal temperament as the standard — it showed that all keys could be used, which expanded the harmonic possibilities available to composers forever after.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">It was the definitive study of counterpoint — the real achievement is the 48 fugues, which map out virtually every technique of contrapuntal composition. Composers used it as a textbook for centuries.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — the tuning system and the compositional mastery were inseparable in one project. Bach did what he always did: used a technical or structural constraint (all 24 keys) as a creative challenge and produced something that exceeded its original purpose. The WTC is simultaneously a tuning demonstration, a compositional encyclopedia, and 48 individual pieces of music, each with its own character.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">The Old Testament of music</div>
+      <p><strong>Chopin wrote his own 24 Preludes in all keys in explicit homage. Beethoven learned the WTC as a child in Bonn. Mozart's counterpoint study was organized around it. A demonstration of a tuning system became the essential keyboard text of the next two centuries.</strong> Hans von Bülow, the 19th-century pianist and conductor, called the Well-Tempered Clavier the "Old Testament" and Beethoven's piano sonatas the "New Testament" of keyboard music. The WTC's influence is immeasurable: Chopin wrote his own set of 24 preludes in all keys in explicit homage. Beethoven learned the WTC as a child in Bonn. Mozart's counterpoint study was organized around it. Modern music theory pedagogically traces the expansion of harmonic language from the WTC — the 24 keys Bach demonstrated as equally usable are the same 24 keys that composers from Beethoven to Brahms to jazz musicians have explored ever since. On the technical question of tuning: historians still debate whether Bach intended "equal temperament" (all half-steps exactly equal) or one of the various "well-tempered" systems where intervals differ slightly. The squiggle Bach drew on the title page may encode the specific tuning he intended; this is still argued.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · For God Alone</span></div>
+<div class="year-banner">1723</div>
+<div class="timeline-dot">Leipzig · Age 38</div>
+<div class="narrative">
+  <p>Prince Leopold of Köthen has married. His new wife has no interest in music, and Leopold's musical enthusiasm has cooled with marriage. You need a new position. You become Kantor of St. Thomas's School in Leipzig — essentially director of music for the city's churches, with responsibility for training choirboys, composing cantatas for every Sunday service, and supervising music at four churches.</p>
+  <p>You write a new cantata every week, or nearly so, for years. On every manuscript you write "SDG" — <em>Soli Deo Gloria</em>. To God alone the glory. You also write "JJ" — <em>Jesu Juva</em>. Jesus, help. You are working very hard.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — Writing for God or Patrons?</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Bach wrote "SDG — to God alone the glory" on virtually all his religious music. How should we understand this in a man who also fiercely pursued better employment and salary throughout his career?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">The SDG was genuine — his career ambitions were separate from his artistic purpose. He pursued better positions to improve working conditions and support his large family; the music itself was always offered to God.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">The SDG was partly conventional — religious dedication was expected from church musicians, and marking manuscripts this way was standard professional practice. His real motivation was musical, not theological.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">The distinction doesn't hold. For Bach, musical perfection and divine service were the same thing — God was honored by the most complete and skillful music possible. The career ambition was in service of the music, and the music was in service of God. The three motivations weren't competing; they were aligned.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">Bach's theology of music</div>
+      <p><strong>Bach marked hundreds of manuscripts "SDG — Soli Deo Gloria." He also complained constantly about working conditions in Leipzig, applied for multiple positions simultaneously, and spent his final years lobbying for a court title specifically to gain leverage over the city council. Both facts are thoroughly documented. He saw no contradiction between them.</strong> Bach was a Lutheran whose faith appears to have been genuine and deep. He owned a large theological library — 80+ volumes — including the complete works of Luther and extensive Biblical commentary, which he annotated carefully. His marginalia in his Bible show engagement with the texts his music set. The "SDG" and "JJ" markings appear consistently across decades, not just on major works. At the same time, he was very practical about employment: he applied for multiple positions simultaneously, complained constantly about working conditions in Leipzig (under-resourced, underpaid, insufficient talent in the choir), and spent the last years of his life seeking a court title from the Dresden court specifically to gain leverage over the Leipzig city council. He wrote flattering secular cantatas for various courts hoping for patronage. The combination of genuine religious devotion and practical careerism is not contradictory in an 18th-century church musician — it describes the job.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · Goldberg Variations</span></div>
+<div class="year-banner">1741</div>
+<div class="timeline-dot">Leipzig · Age 56</div>
+<div class="narrative">
+  <p>A Russian count — Johann Carl von Keyserlingk, Russian ambassador to the Dresden court — suffers from insomnia. His young harpsichordist, Johann Gottlieb Goldberg (possibly your former student, age 14), plays for him during sleepless nights. Keyserlingk asks you for something Goldberg could play that would be soothing yet engaging enough to keep him awake at the instrument. You write 30 variations on a bass line — the most complex set of keyboard variations ever written.</p>
+  <p>The count reportedly kept the variations on his music stand, referring to them as "my variations." He never seems to have paid you for them, though the legend says he presented you with a golden goblet filled with 100 louis d'or.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Goldberg Variations</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Goldberg Variations were supposedly written to help an insomniac fall asleep. They are 80 minutes of immense mathematical complexity. What does this tell us about Bach's relationship to commissions?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">He misunderstood the brief — a commission for sleep music didn't require 30 variations with elaborate canons, mirror structures, and a quodlibet. He gave the patron far more than was asked for, which wasn't necessarily helpful.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">He always did more than was asked because he couldn't help it. Every commission became an opportunity to explore the fullest implications of the form. The sleep music just happened to be the occasion — the real project was always "what can variations on a bass line be?" He answered that question more completely than anyone has since.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">The insomnia story is probably apocryphal — the music is far too complex and demanding to function as a sleep aid. The actual occasion for the composition may have been different, and the legend was attached later.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">The structure of the Goldbergs</div>
+      <p><strong>The sleep-music commission produced 30 variations built over a 32-note bass line, with every third variation a canon ascending from Canon at the Unison to Canon at the Ninth. Glenn Gould recorded it in 1955 as his debut record — it became one of the best-selling classical recordings in history. He recorded it again in 1981, a year before he died, and the two recordings are still compared as the two poles of possible interpretation.</strong> The Goldberg Variations (BWV 988) has a precise architecture: an aria, 30 variations, the aria repeated. Every third variation is a canon — Canon at the Unison, at the Second, at the Third, all the way through Canon at the Ninth. The non-canon variations include French overtures, arabesques, a fughetta, a quodlibet (final variation before the aria return) that quotes two folk songs simultaneously. The whole thing is built over a 32-note bass line that repeats through all 30 variations. Glenn Gould recorded it in 1955 as his first record — it became one of the bestselling classical recordings in history. He recorded it again in 1981, one year before his death, and the two recordings — one young and virtuosic, one old and slow — are now compared as the two poles of possible interpretation. The legend about the insomnia commission first appeared in Bach's obituary and may be true, partially true, or the kind of explanatory story that attaches itself to great works.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Art of Fugue</span></div>
+<div class="year-banner">1748</div>
+<div class="timeline-dot">Leipzig · Age 63</div>
+<div class="narrative">
+  <p>Your eyesight is failing. You spend the last two years of your life working on a project that seems to have no patron, no occasion, no specific purpose other than itself: <em>The Art of Fugue</em>. It is a comprehensive demonstration of everything fugue — the most complex form of contrapuntal music — can do. One theme, transformed and elaborated through 14 fugues and 4 canons.</p>
+  <p>The final fugue, Contrapunctus XIV, breaks off mid-phrase. The last notes in the manuscript, in the hand of your son Carl Philipp Emanuel, read: "NB. While working on this fugue, in which the name BACH appears in the counterpoint, the author died." The letters B-A-C-H in German notation are the notes B♭, A, C, B♮.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Unfinished Fugue</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Bach wove his own name (B-A-C-H) into the final fugue of the Art of Fugue, which broke off unfinished when he died. Was this an act of vanity or of something else?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Vanity — encoding his name into the final fugue was a signature move, claiming ownership of a work he was submitting to the musical world. It's the same impulse as Michelangelo's Pietà signature.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">B</span><span class="dopt-body">Theological — in Bach's tradition, the alphabet had numerical values (A=1, B=2, etc.), and Bach's name summed to 14, a significant number in Lutheran numerology. Encoding his name was a way of signing his soul into the work, making himself an element of the music the way his initials "SDG" dedicated it upward. Not ego but signature in the deeper sense.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">The name-encoding was a compositional device — B♭, A, C, B♮ is a musically interesting four-note motif, and Bach used it because it worked as a fugue subject. The personal connection was secondary to the musical logic.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">B-A-C-H</div>
+      <p><strong>In German notation the letters B-A-C-H spell four musical pitches: B♭, A, C, B♮. Bach encoded his own name into the bass line of the final fugue of the Art of Fugue. Then the manuscript stops. Whether he died before finishing it or left it unfinished deliberately has been debated for 270 years. No completion has become standard.</strong> In German musical notation, the note we call B♭ is called H, and the note we call B♮ is called B. This means the letters B-A-C-H spell out four distinct musical pitches: B♭, A, C, B♮. Bach didn't invent using his name as a musical motif — other composers had done it — but his final use in Contrapunctus XIV is the most dramatic instance: the fugue is building toward its resolution, the B-A-C-H subject enters in the bass, and then the manuscript stops. The question of whether the fugue was deliberately left unfinished (as a statement about the incompleteness of human endeavor vs. divine perfection) or simply stopped when Bach died has been debated for 270 years. Several scholars have attempted to complete it; none of the completions has become standard. The break in the manuscript is now considered one of the most haunting moments in music history.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Failed Surgery</span></div>
+<div class="year-banner">1750</div>
+<div class="timeline-dot">Leipzig · Age 64</div>
+<div class="narrative">
+  <p>Your eyesight has been deteriorating for years. In 1749 and 1750, you undergo two eye surgeries performed by the British "oculist" John Taylor — a flamboyant traveling surgeon who was performing eye operations across Europe. Taylor also operated on George Frideric Handel around the same time. Both operations fail. Both Handel and Bach are left severely visually impaired or blind. Taylor later wrote in his autobiography that he had operated on "a famous master of music" in Leipzig.</p>
+  <p>The surgery may have caused your final illness. On July 28, 1750, you die — reportedly after a brief period of recovered sight, followed by a stroke. You are 65.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Risk of Surgery</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Bach underwent risky eye surgery late in life that likely contributed to his death. Given that he had his wife, children, and the Art of Fugue — was it the right call?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">No — John Taylor was not a reliable surgeon (Handel's surgery also failed), and the risks of 18th-century eye operations were enormous. Bach should have known better than to trust a traveling showman with his eyesight.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">The call was reasonable given what he knew. In 1750, John Taylor was one of the most famous eye surgeons in Europe — you couldn't know he was largely a fraud without retrospect. A composer going blind would naturally seek any available treatment. The tragic outcome doesn't make the decision wrong.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">The surgery question is secondary. Bach was 64 and had lived a life of enormous physical and creative demands — 20 children, decades of pressure, the Leipzig position's exhausting requirements. His health was likely already failing, and the surgery may have been incidental to his death.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">John Taylor and his famous patients</div>
+      <p><strong>John Taylor also operated on Handel's eyes around the same time. Both patients lost their sight afterward. Voltaire described Taylor as "the most famous charlatan of the century." In 1750, he was one of the most famous eye surgeons in Europe — you could not know that without retrospect.</strong> John Taylor (1703–1772) was one of the most famous and most unreliable doctors of the 18th century. He styled himself "Chevalier Taylor, Ophthalmiater Pontifical, Imperial, and Royal" and traveled across Europe operating on patients of high social standing. He was described by Voltaire as "the most famous charlatan of the century." He operated on Handel's eyes in 1758 and Bach's in 1749–1750; both patients lost their sight afterward. He wrote in his autobiography about operating on "a great master of music" in Leipzig who initially improved then relapsed — the timeline matches Bach. Despite his notoriety, he practiced for decades and operated on thousands. Medical historians consider him a transitional figure: technically trained but operating at the edge of what early-18th-century surgery could actually accomplish.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Revival</span></div>
+<div class="year-banner">1829</div>
+<div class="timeline-dot">Berlin · 79 years after Bach's death</div>
+<div class="narrative">
+  <p>It is March 11, 1829. Johann Sebastian Bach has been dead for 79 years. His sons — Carl Philipp Emanuel, Wilhelm Friedemann, Johann Christian — became far more famous than their father during his lifetime. J.S. Bach himself was known as a skilled craftsman, technically accomplished but old-fashioned, a practitioner of a dense contrapuntal style that the Classical era had moved beyond.</p>
+  <p>A 20-year-old composer named Felix Mendelssohn has found a manuscript copy of the St. Matthew Passion in a Berlin paper shop, being used to wrap cheese. Tonight he conducts its first public performance in a hundred years, in Berlin, to a sold-out house. The reaction is overwhelming. The Bach revival has begun.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — Forgotten for 79 Years</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Bach was considered out of fashion at his death and nearly forgotten until Mendelssohn's 1829 revival. What does this say about the relationship between great art and recognition?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Quality is eventually recognized — Bach's greatness was real, and it took time but the world eventually found its way to him. The 79-year delay shows that recognition can be slow but is ultimately reliable.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Recognition is contingent — if Mendelssohn hadn't happened to find that manuscript, Bach might have been lost. Other composers of comparable achievement are lost. Bach's revival was lucky, not inevitable.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The revival needed the right moment — Romanticism created the aesthetic context in which Bach's complexity could be heard as depth rather than mere craft. The music didn't change; what changed was what listeners were looking for. Great art is real but its recognition requires an audience ready to receive it. Bach wrote the SDG — to God alone the glory — which may be the only reliable reader he counted on.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">The Bach revival</div>
+      <p><strong>Felix Mendelssohn has been privately studying the St. Matthew Passion since 1823, when his teacher showed it to him. He performs it in 1829 — 79 years after your death, when you have been considered old-fashioned and largely forgotten. He is 20 years old. The cheese-wrapping story is not true. The music had been there the entire time.</strong> Felix Mendelssohn's 1829 performance of the St. Matthew Passion was a cultural earthquake. Mendelssohn had found the manuscript copy at the house of his friend Eduard Rietz, not in a paper shop — the cheese-wrapping story is probably embellished. He had been studying it privately since 1823, when his teacher Carl Friedrich Zelter, who possessed the copy, showed it to him. The 1829 performance, with a doubled choir and orchestra, was the first public performance in roughly a century, and it sparked a wave of interest in Bach's music that hasn't stopped since. The Bach-Gesellschaft was founded in 1850 to publish his complete works. The project took 50 years and 46 volumes. The New Bach-Werke-Verzeichnis catalogue lists 1,128 compositions. The SDG marking appears on hundreds of them. Whether God noticed is between Bach and God; the rest of the world eventually did.</p>
+    </div>
+  </div>
+</div>
+
+<div class="ending" id="ending">
+  <div class="ending-score" id="final-score">0/8</div>
+  <div class="ending-label">Your Bach Score</div>
+  <div class="ending-title" id="final-title"></div>
+  <div class="ending-body" id="final-body"></div>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue the Series</div>
+  <div class="next-grid">
+    <a class="next-card" href="mozart-simulator.html">
+      <span class="next-name">Wolfgang Amadeus Mozart</span>
+      <span class="next-desc">Born 25 years after Bach. The Classical style that made Bach seem old-fashioned — but Mozart studied the WTC.</span>
+    </a>
+    <a class="next-card" href="beethoven-simulator.html">
+      <span class="next-name">Ludwig van Beethoven</span>
+      <span class="next-desc">Learned Bach's WTC as a boy. His late quartets — the most Bachian music of the Romantic era — came after he went deaf.</span>
+    </a>
+    <a class="next-card" href="hokusai-simulator.html">
+      <span class="next-name">Katsushika Hokusai</span>
+      <span class="next-desc">A contemporary in Japan who also worked with obsessive completeness across 60 years. Also outlived his era's fashion.</span>
+    </a>
+    <a class="next-card" href="shakespeare-simulator.html">
+      <span class="next-name">William Shakespeare</span>
+      <span class="next-desc">Also worked within rigid institutional structures — the theater company, the patron system — and produced immortal work inside them.</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <p>Bach's story is one of 100 historical life simulators on this site. Each one asks: given the same constraints, pressures, and information — what would you have chosen?</p>
+  <p><a href="simulators.html">Browse all simulators →</a></p>
+</div>
+
+</div>
+</div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="Soli Deo Gloria";body="You understand Bach's world the way Bach understood music — not as a collection of individual pieces but as a unified structure with deep internal logic. You see how the career ambitions, the theology, the counterpoint, and the 20 children fit together into one life oriented toward a single purpose.";}else if(pct>=0.625){title="The Well-Tempered Ear";body="You grasp most of what made Bach who he was: the combination of technical mastery, genuine faith, and stubborn self-assertion. The finer points of 18th-century Lutheran culture and musical theory are where your intuitions diverge from the historical record, but the core is right.";}else if(pct>=0.375){title="The Patient Listener";body="You appreciate Bach's achievement but see his life through modern categories that don't quite fit — separating religious devotion from career ambition, questioning whether the risk-taking was rational, second-guessing choices made in conditions you haven't fully internalized. The music stands regardless.";}else{title="You Would Have Preferred Handel";body="You tend toward recognition during one's lifetime, clear patron relationships, and work that reaches its audience immediately. Handel — baroque, popular, celebrated in his own time — is probably your Baroque composer. That's not wrong. Handel was great too. But he didn't leave the Art of Fugue."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

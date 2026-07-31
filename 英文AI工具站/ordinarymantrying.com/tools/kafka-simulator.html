@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Franz Kafka?</title>
+<meta name="description" content="He worked at an insurance office while writing The Metamorphosis. He asked his best friend to burn all his work. His best friend didn't. 8 decisions.">
+<meta property="og:title" content="What Would You Do If You Were Franz Kafka?">
+<meta property="og:description" content="The insurance office, the three broken engagements, the tuberculosis, and the instruction to burn everything. 8 decisions from the most private great writer of the 20th century.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/kafka-simulator.html">
+<style>
+:root{
+  --bg:#F3F4F0;--card:#FAFAF8;--ink:#0E100A;--muted:#4A5038;--line:#C8CDB8;
+  --accent:#2A3A1A;--accent-bg:#EEF0E8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(243,244,240,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#0A120A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #A8B898;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#1A2A10;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0F4E8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#0A180A;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0F4E8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #A8B898;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#1A2A10;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.quote-block{background:var(--ink);color:#F0F4E8;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#7A8A70;margin-top:12px;font-family:var(--mono);}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#0A120A;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F0F4E8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #A8B898;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.cta-box{background:var(--accent);color:#F0F4E8;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#B0C8A0;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Franz Kafka</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #23</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Kafka?</h1>
+  <p class="cover-sub">He worked at an insurance office by day and wrote through the night. He was engaged three times and broke it off every time. He wrote <em>The Trial</em> and <em>The Castle</em> and left them unfinished. He gave all his manuscripts to his best friend Max Brod with instructions to burn everything after his death. Max Brod didn't. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Franz Kafka</strong> (1883–1924) · Czech-German novelist · Wrote in German in Prague · Published work in his lifetime: <em>The Metamorphosis</em> (1915), <em>In the Penal Colony</em> (1919), and a small number of short stories and sketches · Unpublished at death: <em>The Trial</em>, <em>The Castle</em>, <em>Amerika</em> · Cause of death: laryngeal tuberculosis, at 40, in a sanatorium near Vienna · Only became widely read after his friend Max Brod defied his wishes and published the manuscripts · "Kafkaesque" entered multiple languages as an adjective for oppressive, absurd bureaucratic systems.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1907, Prague</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Insurance Office</span></div>
+<div class="year-banner">1907</div>
+<div class="timeline-dot">Prague · Age 24</div>
+<div class="narrative">
+  <p>You have a law degree you did not particularly want and a job offer at an Italian insurance company that requires you to work afternoons and evenings. Max Brod, your closest friend, is urging you to take it — the hours are manageable and the salary is acceptable. There is also a position available at the Workers' Accident Insurance Institute for the Kingdom of Bohemia in Prague, which has better hours but less prestige.</p>
+  <p>You want to write. You know you want to write. The question is what structure of daily life will best permit it. An office job during the day and writing at night? Or something else entirely?</p>
+  <p>You take the insurance job. The Italian company's hours turn out to be longer than promised; after months, you transfer to the Workers' Accident Insurance Institute, where you will work for 14 years. The hours are 8 to 2. The afternoons and evenings are yours. You write at night, from 11pm to 2 or 3 in the morning, when the house is quiet and your family is asleep.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Insurance Job</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You are 24. You want to write. The insurance office will consume 6 hours of your best cognitive energy every day. Is this the right structure?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">A</span><span class="dopt-body">Take the insurance job. Security is what makes writing possible without the desperation that distorts it. The constraint of 6 hours a day may even help — scarcity forces concentration.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Find a part-time position, or tutoring work, that requires fewer hours and leaves more time. The insurance career is a trap — it will grow, absorb you, and the writing will keep getting pushed to later.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">Ask your father for support — a stipend for 2 years to write seriously before taking any job. The timing is right: you are young, you have no family to support, and the writing needs full attention now.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Kafka actually did — and what the job gave him</div>
+      <p><strong>You keep this job for 14 years, write after midnight, and produce The Metamorphosis in a three-week burst — without ever quitting.</strong> Kafka took the insurance job and worked at the Workers' Accident Insurance Institute until illness forced him to stop in 1922. He was, by all accounts, a skilled and conscientious employee — his reports on workplace safety were clear, technically precise, and occasionally showed the bureaucratic black humor of his fiction. He wrote in diary entries about hating the office but also about the structure it provided. The division — office by day, literature by night — produced most of what we now call Kafka's work. Whether writing without the job would have produced more, or something different, or nothing at all, is unknowable. He wrote The Metamorphosis in a sustained three-week burst in November–December 1912.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Night That Made Everything</span></div>
+<div class="year-banner">1912</div>
+<div class="timeline-dot">Prague · Age 29</div>
+<div class="narrative">
+  <p>On the night of September 22–23, 1912, you sit down at 10pm and write "The Judgment" — a complete short story — without stopping, finishing at 6am. Eight hours. One sitting. One story. You write in your diary afterward: "Only in this way can writing be done, only with such coherence, with such a complete opening out of the body and the soul."</p>
+  <p>The experience is important to you because it shows what the writing can be when the conditions are right — when the resistance drops, when you stop judging in the middle and just follow the thing wherever it goes. You have been fighting with your own sentences for years, crossing out and revising and abandoning. This is different.</p>
+  <p>Two months later, in November and December, you write The Metamorphosis. Gregor Samsa wakes as a giant insect. The family's reaction is the story. You finish it in three weeks. You know immediately that it is better than anything you have written before.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Metamorphosis</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have written something you know is significant. What do you do with it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Publish it as widely as possible. It is the strongest work you have produced. The point of writing is communication — get it to readers.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">Publish it in a small literary journal, accept that the readership will be limited, and start the next thing. Publication is necessary but not the primary focus. The writing is the primary focus.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Hold it. Revise extensively before releasing anything. The draft is good but not finished — and finished is better than good.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Kafka actually did</div>
+      <p><strong>You win the cover argument: no drawing of the insect.</strong> Kafka published The Metamorphosis in a small literary journal, Die Weißen Blätter, in 1915, and as a standalone book with Kurt Wolff Verlag the same year. He was meticulous about one detail: the cover. He was concerned the publisher might commission an illustration of the insect, which he considered would ruin the story. He wrote to the publisher: "The insect itself is not to be drawn. It is not even to be seen from a distance." The cover shows a man on a staircase, head hidden in his hands. Kafka was right about the illustration. The published book received some positive notices and essentially no wide readership during his lifetime.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>A book must be the axe for the frozen sea within us.</q>
+  <div class="q-attr">— Franz Kafka, letter to Oskar Pollak, January 27, 1904</div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · Felice Bauer</span></div>
+<div class="year-banner">1912</div>
+<div class="timeline-dot">Prague · Age 29</div>
+<div class="narrative">
+  <p>On the same night you met Felice Bauer at Max Brod's house in Prague in August 1912 — before "The Judgment," before The Metamorphosis — you wrote in your diary a precise physical description of her: plain face, bare throat, blouse worn carelessly. You also wrote: "As I was taking my seat I looked at her closely for the first time, by the time I was seated I already had an unshakeable opinion."</p>
+  <p>Over the next five years, you write her hundreds of letters. You are engaged twice and break it off both times — once at the "tribunal" in a Berlin hotel in July 1914 when Felice, her sister, and a mutual friend confront you with your contradictory behavior; once in 1917 when the tuberculosis diagnosis provides a medical reason to end what was already an impossible situation. You are also briefly engaged to a third woman, Julie Wohryzek, which also ends.</p>
+  <p>You are not incapable of love. You are incapable of the ordinary life that follows love: the apartment, the children, the Sundays, the compromised writing. You cannot resolve the contradiction.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Engagements</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You love Felice Bauer and cannot commit to her. The engagement is destroying both of you. What is actually in the way?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Your father. Hermann Kafka's dominating presence has made every form of adult independence feel dangerous. Marry, move away, build your own household — the break with the father is the real act that makes the rest possible.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">The writing. Marriage requires a life that is incompatible with what the writing demands. The solitude, the irregular hours, the total absorption — a wife and children would end the work.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, inseparably. The father and the writing are not separate problems. The writing is partly a response to the father — a space that belongs entirely to you. Marriage is another form of annexation you cannot accept.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Kafka's own letters say</div>
+      <p><strong>You write 100 pages to your father and never send them — and that undelivered letter becomes the clearest account of your life you ever produce.</strong> Kafka's 1919 "Letter to His Father" — never sent, 100 pages long — describes his father as the dominant psychological fact of his life: a large, loud, successful businessman who made Kafka feel permanently inadequate and whose approval he both craved and could not obtain. His letters to Felice contain explicit passages about the incompatibility of marriage and writing: "Writing and I love each other in a way that is exclusive and leaves no place for any other love." He could not choose between them. The five years with Felice — hundreds of letters, two broken engagements, almost no actual time together — is the strangest love story in literary biography.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Diagnosis</span></div>
+<div class="year-banner">1917</div>
+<div class="timeline-dot">Prague · Age 34</div>
+<div class="narrative">
+  <p>In August 1917, you cough blood. Tuberculosis is diagnosed. You write to Max Brod: "I have a headache, so I can't write much. To give you the essential: I have tuberculosis." Then: "Don't take this as a misfortune; it is rather a gift of grace."</p>
+  <p>You mean it. The tuberculosis gives you a legitimate, inarguable reason to leave the insurance office, break the engagement with Felice, leave Prague for the countryside, stop the obligations that the ordinary world places on you. You have been trying and failing to get out of these obligations through will alone. The disease does it without permission required.</p>
+  <p>At the same time, you know the disease will probably kill you. It is 1917; effective treatment does not yet exist. You are 34. The work — The Trial, The Castle, Amerika — exists only in manuscript, unfinished, in a trunk in Prague.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Relief of Illness</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You called the tuberculosis a "gift of grace." How seriously did you mean that?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">It was dark humor, not genuine belief. The disease is terrible. The relief of having a socially acceptable reason to withdraw doesn't change that it is a terminal diagnosis.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">B</span><span class="dopt-body">Completely seriously. You had been trying to escape for years — the office, the family, the engagements — and failing every time. The tuberculosis was the only force strong enough to create the space you needed. The relief was genuine.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">You meant it in the moment and regretted the statement later. As the disease progressed and the work remained unfinished, the "gift" framing became harder to maintain.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What Kafka's diaries show</div>
+      <p><strong>The grace period lasts about two years. By 1924 the disease has reached your larynx and you can no longer swallow — you correct the proofs of "A Hunger Artist" while dying in a sanatorium near Vienna.</strong> The "gift of grace" reading held for a while. Kafka spent time in rural sanatoriums, the clean air helped, he wrote more. Then the disease progressed. By 1922, his lungs were too damaged for him to continue working at the insurance institute; he took early retirement with a pension. He spent his final two years moving between sanatoriums and staying with his sister Ottla. In this period he met Dora Diamant, with whom he fell genuinely in love, and moved to Berlin — the only time in his life he lived outside Prague or temporary sanatoriums. He died in a sanatorium near Vienna in June 1924, of laryngeal tuberculosis so severe he could no longer swallow.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Castle</span></div>
+<div class="year-banner">1922</div>
+<div class="timeline-dot">Spindelmühle, Czech mountains · Age 38</div>
+<div class="narrative">
+  <p>You began The Castle in January 1922 and worked on it intensively for months. The novel follows K., a land surveyor who arrives in a village and tries to gain access to the Castle that governs the village — and is unable to, ever, through an increasingly labyrinthine series of bureaucratic obstacles and indirect communications. The Castle remains permanently, incomprehensibly out of reach.</p>
+  <p>You stop writing The Castle in September 1922. The novel is unfinished — it breaks off mid-sentence in Chapter 20 of what would have been longer. You tell Max Brod you cannot finish it. Brod asks what would have happened to K. You say K. would have died in the village, worn out by the struggle. The Castle itself would never be reached. The answer to the bureaucratic problem is death — not solution.</p>
+  <p>You do not destroy the manuscript.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Leaving The Castle Unfinished</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Castle stops mid-sentence. You know the ending would be K.'s death — never reaching the Castle. Why not finish it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">The illness made finishing impossible. If you had had two more years of health, The Castle would have been completed. The unfinished state is a product of circumstance, not intention.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">The unfinished state is the point. A Castle that is never reached and a novel that never ends are the same thing. Finishing the novel would have required a conclusion that the novel's own logic refused.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">You stopped because you knew the ending and could not write it. Writing K.'s death — the final defeat — was something you could not bring yourself to commit to the page.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Kafka told Brod — and what scholars conclude</div>
+      <p><strong>The Castle breaks off mid-sentence, and sixty years of scholarly argument eventually concludes that the unfinished state is the only honest form a novel about an unreachable Castle could take.</strong> Max Brod published The Castle in 1926, two years after Kafka's death, adding a chapter break at the mid-sentence stop and a note explaining the manuscript's condition. His edition ends with the famous broken sentence: "She held out her hand to K." Brod's edition also presented the novel as three books rather than one continuous manuscript. For decades, readers read a Brod-constructed Kafka. A critical edition in 1983 restored the original continuous text. The scholarly consensus is now that the unfinished state is not simply a product of illness — the three "unfinished" novels (The Trial, The Castle, Amerika) were all left in states that their formal logic seems to require. They do not end because they cannot end. Ending would contradict what they are about.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Dora Diamant</span></div>
+<div class="year-banner">1923</div>
+<div class="timeline-dot">Berlin · Age 40</div>
+<div class="narrative">
+  <p>In the summer of 1923, at a vacation camp on the Baltic Sea, you meet Dora Diamant — a 25-year-old woman from a Hasidic Jewish family who has escaped to Berlin and is working in the camp kitchen. You are 40, visibly ill, unable to eat solid food. Within weeks you have made a decision you have never made before: you want to live with someone. You want to leave Prague and go to Berlin.</p>
+  <p>You ask Dora's father for permission — he is Hasidic, traditional, and you write to his rabbi for a verdict. The rabbi's response is one word: No. You go to Berlin anyway.</p>
+  <p>Berlin in 1923 is in the middle of the hyperinflation crisis — prices doubling daily, your Prague pension worth almost nothing after currency conversion. You and Dora live in poverty, cold, hungry. You are dying. You describe these months as the happiest of your life. You write stories — "The Burrow," "Josephine the Singer" — and burn them in the apartment stove. Dora lets you.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Berlin with Dora</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You are dying. You are in Berlin in poverty and cold. You call these the happiest months of your life. What made them that?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Distance from Prague and your father. The geographic separation finally created the psychological space you had never managed to create any other way. The happiness was the absence of the old weight.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">B</span><span class="dopt-body">Dora. For the first time, another person accepted you completely — including the illness, the writing, the burning of manuscripts, all of it. Love that requires no performance or apology produces a different quality of life even when the material conditions are terrible.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">The clarity that dying brings. When you know the time is limited, the secondary anxieties — the father, the engagements, the office — fall away. What remains is what actually matters. The happiness was the product of necessity.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What Dora Diamant said, decades later</div>
+      <p><strong>She calls Berlin your happiest months — then spends the next fifty years trying to recover the manuscripts the Gestapo seize from her apartment in 1933. Most are never found.</strong> Dora Diamant outlived Kafka by more than 50 years and spent much of that time trying to protect and recover his papers — the Gestapo confiscated her copies of his manuscripts in 1933; most were never recovered. She gave interviews well into old age and was consistent: Kafka was happy in Berlin, genuinely happy, in a way she had not seen in anyone before or since. She described him as a person for whom the ordinary happiness other people seemed to manage naturally was always out of reach — and who, in Berlin, simply stopped trying to reach it and found something better by accident. She said that he burned manuscripts in the stove as casually as burning letters, without grief, without drama. He did not think of them as monuments. She kept what she could.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Final Instruction</span></div>
+<div class="year-banner">1924</div>
+<div class="timeline-dot">Kierling Sanatorium, Vienna · Age 40</div>
+<div class="narrative">
+  <p>You are in the Kierling Sanatorium outside Vienna. The laryngeal tuberculosis has progressed to the point where you cannot eat; you are being fed intravenously. You can speak only in a whisper. You are correcting the proofs of your last story collection — "A Hunger Artist" — which will be published after your death. You are 40. You know you are dying.</p>
+  <p>You have already given Max Brod your instructions: burn everything. All manuscripts, all diaries, all letters. Nothing to survive. You gave him these instructions years ago, and repeated them. Brod told you, years ago, that he would not do it. You kept giving him the manuscripts anyway.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — Burn Everything</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have given Brod your manuscripts with instructions to burn them. He told you he wouldn't. You gave them to him anyway. What did you actually want?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">You wanted them burned. The instruction was genuine. By giving them to Brod knowing he wouldn't burn them, you were making one last failed attempt at destruction — the same kind of failure that left the manuscripts unfinished rather than destroyed earlier.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">You didn't know what you wanted. The instruction to burn was genuine and so was the choice to give the manuscripts to someone who explicitly said he wouldn't. Both were true simultaneously. The contradiction is the answer.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">You wanted them preserved. The burning instruction was a form of self-protection — if you asked for preservation and Brod failed to arrange it, you would be responsible. By asking for destruction, you transferred the responsibility for survival entirely to Brod.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Brod said — and what scholars argue</div>
+      <p><strong>The manuscripts survive a world war in a box in Tel Aviv and require litigation in two countries — resolved only in 2019 — because you gave them to the one man who told you directly he would not obey.</strong> Max Brod published his account in a 1937 memoir: "Franz Kafka clearly wished, in his innermost being, that his works should survive, otherwise he would not have left the task to me, knowing as he did — since I had expressly told him so — that I would not fulfill his wish." Many scholars agree. Others argue Brod was rationalizing his own decision. The Kafka estate dispute continued into the 21st century — Brod took the manuscripts to Tel Aviv when he fled Prague in 1939, and ownership passed through his heirs to the National Library of Israel in 2019 after decades of litigation. A third position: that Kafka's ambivalence was structural, not accidentally biographical — he was the writer who wrote about men trapped in systems they cannot exit and cannot accept, so of course his relationship to his own manuscripts was identical.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · Afterward</span></div>
+<div class="year-banner">June 3, 1924</div>
+<div class="timeline-dot">Kierling Sanatorium · Age 40</div>
+<div class="narrative">
+  <p>You die on June 3, 1924. You are correcting proofs. You ask the doctor for a morphine injection, then change your mind. Then you ask again. Your last coherent communication, to the doctor: "Don't go away." He stays.</p>
+  <p>Brod publishes The Trial in 1925. The Castle in 1926. Amerika in 1927. Within a decade, Kafka is being read across Europe. Within two decades, he is considered one of the great writers of the 20th century. The word "Kafkaesque" is in widespread use by the 1940s.</p>
+  <p>The Nazis burn his books in Prague in 1933 — nine years after his death, well after the publication of The Trial and The Castle. Three of his sisters die in concentration camps: Elli, Valli, and Ottla. Dora Diamant loses her daughter, flees Europe, eventually reaches England. The manuscripts are in a box in Brod's apartment in Tel Aviv.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Posthumous Kafka</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Kafka the world knows — The Trial, The Castle, the diaries — exists because Brod defied his wishes. Is the world better for it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Yes, unambiguously. These are among the most important works of the 20th century. A writer's posthumous wishes cannot override the world's legitimate interest in great literature.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">No. What Kafka wanted should have been honored. There is something wrong with a literary culture that celebrates works their author explicitly did not want preserved. The greatness of the work doesn't justify the violation.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The question is the wrong frame. Kafka gave the manuscripts to a man who had told him they would not be burned. He kept doing this over years. The "violation" was structured into the instruction. Brod did what Kafka — partially, contradictorily — wanted.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">The question scholars still argue about</div>
+      <p><strong>Courts require until 2019 to settle who owns the work of a man who asked for its destruction — because the man who asked for destruction chose a guardian who had promised, in advance, not to comply.</strong> The Kafka estate case — which concluded in 2019 with the manuscripts going to the National Library of Israel — required courts in Switzerland and Israel to adjudicate exactly this question: what did Kafka actually want, and does it matter legally? The courts found that Brod's decision to preserve and publish was legally valid under the circumstances. The philosophical question remains open. What is clear: the Kafka the world has is a construction — partially by Kafka, partially by Brod, partially by the scholars who have since produced critical editions correcting Brod's edits. The man who asked for destruction produced the works. The friend who refused to destroy produced the reputation. Both were necessary.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Kafka's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="cta-box">
+  <p>Kafka wrote about men trapped in systems they cannot escape, and he lived inside one — the insurance office, his father's apartment, his own ambivalence. The difference between Kafka and his characters is that Kafka also burned manuscripts in a stove and called Berlin the happiest time of his life. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All 25 Life Simulators — Freud, Nietzsche, Darwin, Dostoevsky and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/freud-simulator.html" style="color:var(--accent)">Freud Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Kept the Manuscripts";body="You matched Kafka's most contradictory moves: the insurance job taken for structural reasons and held for 14 years, The Metamorphosis published modestly without an illustration of the insect, the engagement to Felice diagnosed as a structural impossibility rather than a fixable problem, the tuberculosis called a gift of grace, The Castle left unfinished because the logic of an unreachable Castle required it, the Berlin months with Dora identified as genuine happiness despite poverty and dying, and the manuscripts handed to the one man who had promised not to burn them. You understood that the burn instruction and the choice of Brod were both simultaneously genuine. Most people pick one.";}else if(pct>=0.625){title="The Night Writer";body="You matched Kafka's fundamental pattern — the insurance job as structure, the work as primary focus, the willingness to leave things unfinished. Where you likely diverged: the final instruction. Most people say they would have wanted the manuscripts preserved or burned, not held in both positions at once. Kafka's characteristic move was to make contradictory positions simultaneously true, hand the problem to someone else, and die. That is the hardest thing to match.";}else if(pct>=0.375){title="The More Decisive Kafka";body="You consistently made cleaner choices than Kafka did — clearer relationships, wider publication, finished novels, unambiguous final instructions. These are coherent choices. Kafka's three major novels are all unfinished. His engagement correspondence with Felice runs to 500 pages and produced two broken engagements and almost no actual time together. His burn instruction went to a man who said he wouldn't obey it. The ambiguity was the method, not the failure.";}else{title="The Insurance Official's Version";body="You chose resolution at almost every fork: publish widely, leave Felice decisively, finish The Castle, give unambiguous burning instructions. The Kafka this produces would have been more professionally settled and almost certainly less important. The Kafka the world reads is a product of 14 years of night writing, three unfinished novels, 500 letters to a woman he never married, and a destruction order handed to someone who said he'd ignore it. Clean choices produce clean books. Kafka's books are not clean."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

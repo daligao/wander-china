@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Galileo Galilei?</title>
+<meta name="description" content="He discovered Jupiter's moons, proved the Earth moves, and was forced to recant by the Inquisition. Died under house arrest at 78. 8 decisions from the father of modern science.">
+<meta property="og:title" content="What Would You Do If You Were Galileo Galilei?">
+<meta property="og:description" content="Invented a new telescope, saw things no one had seen, and was put on trial for the truth. 8 decisions from the life of Galileo.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/galileo-simulator.html">
+<style>
+:root{
+  --bg:#F0EEF5;--card:#F9F8FC;--ink:#0A0820;--muted:#403858;--line:#C4B8D8;
+  --accent:#3A1060;--accent-bg:#EAE4F4;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(240,238,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#0A0820;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C0B0D8;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#080818;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#EEE8F8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#080818;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#EEE8F8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C0B0D8;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#080818;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#0A0820;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#EEE8F8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C0B0D8;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#EEE8F8;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#C0A8F0;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Galileo Galilei</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #38</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Galileo?</h1>
+  <p class="cover-sub">He built a better telescope, pointed it at the sky, and saw things that shattered 2,000 years of accepted truth. Moons orbiting Jupiter. A sun with spots. Mountains on the Moon. The Earth moved. For saying so, the Inquisition forced him to kneel and recant. He died blind, under house arrest. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Galileo Galilei</strong> (1564–1642) · Italian astronomer, physicist, mathematician · Born Pisa; father was a musician and music theorist · Studied medicine, then switched to mathematics · Professor at Padua (1592–1610), the most productive period of his life · Improved the telescope (1609), not invented — but used it to transform astronomy · Published <em>Sidereus Nuncius</em> (1610): described Jupiter's four moons, mountains on the Moon, thousands of new stars · Placed under house arrest (1633) after the Inquisition trial; continued working there · Went blind in 1638; dictated final work <em>Discorsi</em> to students · Died 1642, the same year Newton was born.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1589, Pisa</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · Against Aristotle</span></div>
+<div class="year-banner">1589</div>
+<div class="timeline-dot">Pisa · Age 25</div>
+<div class="narrative">
+  <p>You are a young mathematics professor at the University of Pisa. For 2,000 years, Aristotle's claim has been accepted without question: heavier objects fall faster than lighter ones. No one has tested it. It is simply known.</p>
+  <p>You find Aristotle's reasoning unconvincing. The conclusion follows from general principles about nature's order, not from observation. And when you think carefully about what would actually happen — when you run the logic — the conclusion seems wrong. A ten-pound weight and a one-pound weight, dropped simultaneously: they would land together, wouldn't they?</p>
+  <p>The famous story of the Leaning Tower is probably a legend. But the question was real.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — Experiment vs Authority</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Galileo challenged Aristotle's physics not just with argument but with experiment. What was the deeper significance of this method?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">It was a practical improvement — experiments give clearer answers than arguments, so it's simply a better way to settle disputes about physical facts.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">It was a philosophical revolution — he replaced authority with evidence as the final arbiter of physical truth, which was a complete restructuring of how knowledge is established.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — the practical and philosophical were inseparable. The experiment only matters because he combined measurement with mathematical description, showing that nature speaks in numbers. This combination — controlled experiment + mathematical law — is what became modern science.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">Galileo's method</div>
+      <p><strong>The Leaning Tower story is almost certainly a legend — invented a century after your death. What you actually do is roll balls down ramps, time them with a water clock, and find that the universe expresses itself as an equation.</strong> Galileo's key innovation wasn't simply "test things empirically" — ancient Greeks did that too. His revolution was combining controlled experiment with precise mathematical description. He rolled balls down inclined planes, measured distances and times carefully, and found that distance = ½ × g × t². This mathematical relationship held across all his experiments. He wasn't just saying "observation beats Aristotle" — he was saying nature follows precise mathematical laws that can be discovered by careful measurement and expressed as equations. This is the foundation of physics as we know it. Albert Einstein called Galileo "the father of modern physics" specifically for this methodological combination.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Telescope</span></div>
+<div class="year-banner">1609</div>
+<div class="timeline-dot">Padua · Age 45</div>
+<div class="narrative">
+  <p>A Dutch spectacle maker has invented a device: two lenses in a tube that makes distant objects appear closer. Galileo hears about it. Within 24 hours of learning the principle, he has built one himself — and kept improving it until he had an instrument roughly 30 times more powerful than the original.</p>
+  <p>Most people immediately see the military and naval applications: you can spot enemy ships hours before they reach port. You demonstrate it to the Venetian Senate. They are delighted. Your salary is doubled.</p>
+  <p>But you have something else in mind. You point it at the sky.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Pointing at the Sky</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Galileo wasn't the only person with a telescope in 1609 — others had one too. Why did he make the discoveries that changed astronomy?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">He had a better telescope. His technical improvements (30× magnification vs the original 3×) simply allowed him to see things others couldn't.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">He had the right theoretical framework. Because he was already skeptical of the Earth-centered model, he knew what to look for and understood what he was seeing.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, plus he moved faster. Better instrument, right theoretical lens, AND he published within months — the combination of technical skill, theoretical preparation, and speed of execution locked in the discoveries as his. Credit in science often goes to whoever publishes first.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">The telescope race of 1609</div>
+      <p><strong>Thomas Harriot sketches the Moon through a telescope before you do — and never publishes. You publish Sidereus Nuncius within months of your first observations. History gives you the credit; Harriot's drawings aren't discovered until the 20th century.</strong> Thomas Harriot in England was also observing the Moon with a telescope in 1609 — in fact his first sketches predate Galileo's. But Harriot didn't publish. Galileo published <em>Sidereus Nuncius</em> in March 1610, just months after his first observations, while his ink was still wet. The book went through multiple printings immediately and made him famous across Europe. Harriot's drawings weren't discovered until the 20th century. Galileo's combination of a better instrument (his grinding skills were exceptional), astronomical knowledge to interpret what he saw, and drive to publish quickly is what made him the discoverer. The history of science is full of simultaneous discovery; the person who publishes becomes the one remembered.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · Jupiter's Moons</span></div>
+<div class="year-banner">1610</div>
+<div class="timeline-dot">Padua · Age 46</div>
+<div class="narrative">
+  <p>On the night of January 7, 1610, you observe four small points of light near Jupiter. Over the following nights, you watch them move. They are not stars — they orbit Jupiter.</p>
+  <p>This is shattering. For 2,000 years, the accepted cosmology held that everything in the heavens revolves around the Earth. Here are four objects that demonstrably do not. They revolve around Jupiter. If these moons orbit Jupiter, there is no reason everything else must orbit Earth.</p>
+  <p>You name them the "Medicean Stars" after your hoped-for patron, Cosimo II de' Medici. You publish immediately.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — Moons of Jupiter</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Galileo's discovery of Jupiter's four moons was the strongest observational evidence yet against the Earth-centered universe. Why was it so powerful?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">It showed the universe was bigger than thought — there were objects far beyond Earth that no one had seen, which expanded the scope of what had to be explained.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">B</span><span class="dopt-body">It broke the "everything revolves around Earth" claim with an observable counter-example. Things demonstrably orbited Jupiter. Once one center of revolution existed, the claim of Earth's unique centrality couldn't stand. It was a single empirical refutation of the key premise.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">It proved Copernicus right — the heliocentric model predicted additional moons around other planets, and Galileo found them, confirming the prediction.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What the moons actually proved</div>
+      <p><strong>On January 7, 1610, you notice four specks of light near Jupiter. Over five nights you track their movement and confirm they orbit Jupiter — not Earth. You name them the "Medicean Stars" after your hoped-for patron, Cosimo de' Medici, to help your career prospects.</strong> The Jupiter moons observation was devastating not because it proved heliocentrism directly (it didn't — moons orbiting Jupiter is compatible with a geocentric model where Jupiter still orbits Earth). It was devastating because it dismantled the <em>philosophical argument</em> for geocentrism: that the Earth must be the center because that's what celestial mechanics required. If four bodies orbit Jupiter, then the claim that everything must orbit one center is simply false. Galileo also observed the phases of Venus — which could only be explained if Venus orbited the Sun, not Earth — which was the more direct argument. But the moons of Jupiter made the first crack. Today those four moons are called the Galilean moons: Io, Europa, Ganymede, and Callisto.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Dialogue</span></div>
+<div class="year-banner">1632</div>
+<div class="timeline-dot">Florence · Age 68</div>
+<div class="narrative">
+  <p>After years of careful maneuvering, you have received permission from Church authorities to write about the Copernican theory — provided you present it as one hypothesis among several, not as proven truth. You write the <em>Dialogue Concerning the Two Chief World Systems</em>. It is written in Italian, not Latin — accessible to any educated person, not just scholars. It takes the form of a conversation between three men over four days.</p>
+  <p>The problem: the character who argues against heliocentrism — the defender of Aristotle and Ptolemy — you name him Simplicio. He is made to look like a fool. And some of his arguments are ones that Pope Urban VIII himself had used. The Pope is furious. You are summoned to Rome.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — Writing for the Public</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Galileo wrote the <em>Dialogue</em> in Italian vernacular rather than Latin. What was the significance of this choice?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">A</span><span class="dopt-body">It was a power move. Latin kept knowledge within the clerical and scholarly elite. Writing in Italian meant merchants, craftsmen, gentlemen — anyone literate — could read and form opinions about cosmology. He was building a constituency outside the Church's control.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">It was purely practical — Italian allowed him to reach a wider audience and sell more books, which mattered for his finances and reputation.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">It was a literary choice — the dialogue form and vernacular language suited the conversational, accessible style he wanted, which wouldn't have worked as well in formal Latin.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">Science and the public</div>
+      <p><strong>You name the character who defends Aristotle "Simplicio." Some of his best arguments are ones Pope Urban VIII personally gave you to use. The Pope reads the finished book and recognizes his own words in the fool's mouth.</strong> Galileo's decision to write in Italian was understood by Church authorities as exactly what it was: an attempt to spread Copernican ideas beyond the scholarly circle where they could be controlled and managed. Latin was the language of scholars, clergy, and universities — communities that had established procedures for dealing with heterodox ideas. Italian was the language of the public. The <em>Dialogue</em> was enormously popular immediately. It went through multiple printings before the Inquisition suppressed it. The combination of accessible language, witty dialogue, and the obvious stacking of the debate made it both a bestseller and a political provocation. Galileo understood what he was doing. His enemies understood it too.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Inquisition</span></div>
+<div class="year-banner">1633</div>
+<div class="timeline-dot">Rome · Age 69</div>
+<div class="narrative">
+  <p>You are 69 years old, ill, and standing before the Inquisition in Rome. The charges: teaching that the Earth moves, in violation of the Church's prohibition. The punishment, if you do not recant: imprisonment. Torture is possible. People have been burned for less.</p>
+  <p>You have been shown the instruments of torture. You are told to recant — to formally declare, on your knees, that you had been wrong, that the Earth does not move, that you abjure your errors. If you do, you will live. If you don't...</p>
+  <p>You recant. On June 22, 1633, kneeling, you abjure heliocentrism as "false and contrary to Holy Scripture."</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Recanting</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Galileo recanted his beliefs under pressure from the Inquisition. Was this cowardice or wisdom?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Cowardice. He had the evidence, he knew the truth, and he backed down when it cost him something. Giordano Bruno faced the same Church and died rather than recant. Galileo chose comfort over principle.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">Wisdom. He was 69 and ill. Death or permanent imprisonment would have ended his scientific work. By surviving under house arrest, he continued working, completed <em>Discorsi</em> (his most important physics text), and his ideas ultimately prevailed. Martyrdom would have helped no one.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">Neither — the question misframes it. Under threat of torture at 69, recanting was simply survival. The moral categories of "cowardice" and "wisdom" apply to free choices; Galileo had no real choice.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">After the recantation</div>
+      <p><strong>You kneel on June 22, 1633, and formally declare that the Earth does not move. The story that you immediately muttered "And yet it moves" under your breath is almost certainly false — saying it within earshot of the Inquisition would have been suicidal. The phrase first appears in print in 1757, 115 years after your death.</strong> The legend that Galileo muttered "Eppur si muove" ("And yet it moves") immediately after recanting is almost certainly false — no contemporary account records it, and it would have been suicidal to say it within earshot of Inquisitors. The phrase first appears in print in 1757, over a century later. But the legend reveals what people felt about the moment: the truth couldn't be unsaid by saying the opposite. Whatever words Galileo spoke publicly, the Earth's motion remained a fact. Under house arrest in Arcetri, he worked on his most important mechanics text — <em>Two New Sciences</em> (1638) — which laid the groundwork for Newton. Giordano Bruno, who did refuse to recant, was burned in 1600. Galileo's recantation allowed physics to continue.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · House Arrest</span></div>
+<div class="year-banner">1634</div>
+<div class="timeline-dot">Arcetri · Age 70</div>
+<div class="narrative">
+  <p>You are under house arrest at your villa in Arcetri, outside Florence. You cannot leave without Inquisition permission. Visitors are restricted. Your daughter Maria Celeste, a nun at the nearby convent of San Matteo, has been your closest companion and confidante. She dies this year, at 33, breaking your heart.</p>
+  <p>You are also going blind — cataracts, progressing slowly. By 1638, you will see nothing. And yet: you keep working. You dictate. You correspond. You have ideas that can't wait.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Working Under House Arrest</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Galileo's most important physics work — <em>Two New Sciences</em> — was written under house arrest after his trial. What does this say about the relationship between adversity and productivity?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Adversity drove him — the restrictions removed distractions, the injustice gave him motivation, and the proximity to death gave his work urgency. Without the trial, he might not have written it.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">He worked <em>despite</em> adversity, not because of it. The house arrest was a genuine constraint; <em>Two New Sciences</em> had to be smuggled to a Dutch publisher because Italy was closed to him. He succeeded despite the obstacles, not with their help.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">The adversity is irrelevant to the physics. He had been developing these ideas for 40 years — the inclined plane experiments from Padua, the kinematics of falling bodies. House arrest gave him time to synthesize work he'd already done. The ideas preceded the circumstances.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">Two New Sciences (1638)</div>
+      <p><strong>Your daughter Maria Celeste — the nun you cannot freely visit — dies this same year at 33. Your most important physics book has to be smuggled to a publisher in the Dutch Republic because no Italian will touch a condemned man's work.</strong> <em>Discorsi e Dimostrazioni Matematiche Intorno a Due Nuove Scienze</em> is now considered Galileo's most important scientific work — more important than the astronomical discoveries for which he was tried. It established the foundations of mechanics: the laws of motion for falling bodies, the mathematics of projectile motion, the principle that in a vacuum all objects fall at the same rate. It was smuggled to Leiden in the Dutch Republic for publication, because no Italian publisher would touch anything by a condemned man. The book was dedicated to the Count of Noailles in France. Newton, born the year Galileo died, read and built upon it. The physics trial actually freed Galileo from astronomy — he could no longer publish astronomy safely, so he returned to physics, where his most lasting contributions lay.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · Going Blind</span></div>
+<div class="year-banner">1638</div>
+<div class="timeline-dot">Arcetri · Age 74</div>
+<div class="narrative">
+  <p>By the end of 1637, you are completely blind. You write to a friend: "This universe, which I with my astonishing observations and clear demonstrations had enlarged a hundred thousand times beyond the limits previously seen by wise men of all past centuries — it is now for me so diminished and reduced, it has shrunk to no greater a space than is occupied by my own body."</p>
+  <p>But you do not stop. You dictate to your students — Vincenzo Viviani and Evangelista Torricelli. Your mind remains sharp. There are still problems unsolved, questions worth asking.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — Blindness and Continuation</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Galileo continued to do science after going blind at 74, dictating to students. He proposed a pendulum clock mechanism in his last year. What enabled this?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">His ideas were already fully formed — blindness merely prevented new observation, and he had accumulated enough observations to keep working theoretically for years.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">His kind of thinking didn't require sight. The core of Galileo's method was mathematical reasoning applied to physical principles — a mental activity. The telescope phase required eyes; the physics phase was mostly thought. His research evolved in a direction compatible with blindness.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">Stubbornness. He simply refused to stop, as a matter of personal character, regardless of the rational argument for continuing.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">Galileo and the pendulum clock</div>
+      <p><strong>You first notice that pendulums of the same length swing at the same speed in 1602 — supposedly watching a chandelier in the Pisa cathedral. In 1641, your last year, blind and under house arrest, you dictate a clock design to your son. He starts building it and never finishes. Christiaan Huygens builds the same thing 14 years later and gets the credit.</strong> Galileo noticed the isochronous behavior of pendulums — that a pendulum's period is independent of its amplitude — as early as 1602, supposedly watching a chandelier in the Pisa cathedral. In his final year, 1641, he dictated a design for a pendulum escapement mechanism for a clock to his son Vincenzo. Vincenzo began building it but never completed it; Galileo died in January 1642. Christiaan Huygens invented the first working pendulum clock independently in 1656, and it became the world's most accurate timepiece for nearly three centuries. The parallel to Lovelace and Babbage is striking: both spent energy on devices that existed only as designs, and the devices were ultimately built by others who reached the same idea independently.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Year Newton Was Born</span></div>
+<div class="year-banner">1642</div>
+<div class="timeline-dot">Arcetri · Age 77</div>
+<div class="narrative">
+  <p>You have been blind for four years and under house arrest for nearly nine. You have continued to work, to correspond, to think. You have not given up or given in. The universe, you believe, is written in the language of mathematics, and you have read more of it than anyone before you.</p>
+  <p>On January 8, 1642, you die at Arcetri. You are 77 years old. The same year — on Christmas Day by the Julian calendar, though after your death — Isaac Newton is born in Woolsthorpe, England. He will complete what you started.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Legacy</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Galileo is called "the father of modern science." Is that title accurate?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Overstated — Francis Bacon wrote the philosophical foundations of empirical science, Copernicus started the astronomical revolution, and Kepler did the hard mathematical work. Galileo was one contributor among several.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Accurate — he specifically created the experimental method in physics, combined it with mathematical description, and demonstrated it worked. The combination is uniquely his.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The title is useful even if imprecise. Galileo did something that made Newton possible: he showed that physical phenomena follow exact mathematical laws discoverable through systematic experiment. Whether he was first or sole founder matters less than what he demonstrated. "Father" means he was generative, not that he was alone.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">Galileo and Newton</div>
+      <p><strong>Newton's first two laws of motion are direct developments of your work on falling bodies — he acknowledges this explicitly. The Church removes your Dialogue from the Index of Forbidden Books in 1835. In 1992, 350 years after your death, the Pontifical Academy of Sciences formally acknowledges that the theologians who condemned you were wrong.</strong> Newton's <em>Principia Mathematica</em> (1687) opens with three laws of motion. The first two — the law of inertia, and force = mass × acceleration — are direct developments of Galileo's work on falling bodies and projectile motion. Newton acknowledged this: "If I have seen further, it is by standing on the shoulders of Giants." The Church formally rehabilitated Galileo in stages: removed the <em>Dialogue</em> from the Index of Forbidden Books in 1835; John Paul II acknowledged in 1979 that the Church had erred; the Pontifical Academy of Sciences formally closed the case in 1992, 350 years after Galileo's death. The verdict was that the theologians who condemned him had been wrong. The Earth moved all along.</p>
+    </div>
+  </div>
+</div>
+
+<div class="ending" id="ending">
+  <div class="ending-score" id="final-score">0/8</div>
+  <div class="ending-label">Your Galileo Score</div>
+  <div class="ending-title" id="final-title"></div>
+  <div class="ending-body" id="final-body"></div>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue the Series</div>
+  <div class="next-grid">
+    <a class="next-card" href="newton-simulator.html">
+      <span class="next-name">Isaac Newton</span>
+      <span class="next-desc">Built on Galileo to write the laws of the universe. Also had a nervous breakdown.</span>
+    </a>
+    <a class="next-card" href="einstein-simulator.html">
+      <span class="next-name">Albert Einstein</span>
+      <span class="next-desc">Proved Newton was also incomplete. Spent the last 30 years looking for the next layer.</span>
+    </a>
+    <a class="next-card" href="darwin-simulator.html">
+      <span class="next-name">Charles Darwin</span>
+      <span class="next-desc">Also delayed publishing because he knew the Church — and his wife — would object.</span>
+    </a>
+    <a class="next-card" href="davinci-simulator.html">
+      <span class="next-name">Leonardo da Vinci</span>
+      <span class="next-desc">The previous generation: science + art before Galileo made them separate fields.</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <p>Galileo's story is one of 100 historical life simulators on this site. Each one asks: given the same constraints, pressures, and information — what would you have chosen?</p>
+  <p><a href="simulators.html">Browse all simulators →</a></p>
+</div>
+
+</div>
+</div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="The Stars Don't Lie";body="You think like Galileo — empirical, mathematical, willing to follow evidence wherever it leads, even when it leads to trouble. You understand that the conflict between observation and authority is never really about the specific facts; it's about who gets to decide what counts as true.";}else if(pct>=0.625){title="Fellow Traveler";body="You share Galileo's core instincts: experiment over authority, evidence over tradition. Where you diverge is in the details of how he navigated his world — the politics of the Church, the strategy of publication, the compromises of survival. Those were harder calls.";}else if(pct>=0.375){title="The Careful Observer";body="You're sympathetic to Galileo's project but more cautious about his methods. Publishing vernacular science, naming enemies Simplicio, provoking the Pope — these were choices, and they had costs. A more careful person might have advanced the same ideas with less personal destruction.";}else{title="You Would Have Believed Aristotle";body="You tend to trust established systems and institutional authority — the view from 1610, not 1642. That's not irrational: Aristotle had explained the world well for 2,000 years. The discomfort with Galileo's method is understandable. What changed isn't just the answer — it's the entire framework for finding answers."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

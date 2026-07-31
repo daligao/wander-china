@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Antoni Gaudí?</title>
+<meta name="description" content="He designed the Sagrada Família knowing it would take 200 years to build. He was hit by a tram at 74 and mistaken for a beggar. 8 decisions from architecture's strangest genius.">
+<meta property="og:title" content="What Would You Do If You Were Antoni Gaudí?">
+<meta property="og:description" content="The architect who designed buildings that looked alive. He started the Sagrada Família in 1883. It's still being built today. 8 decisions from Gaudí's life.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/gaudi-simulator.html">
+<style>
+:root{
+  --bg:#F5EEF0;--card:#FBF7F8;--ink:#180A10;--muted:#483040;--line:#C8B0B8;
+  --accent:#6B1A30;--accent-bg:#ECD8DE;
+  --right:#1A5A2E;--right-bg:#E0EEEA;--wrong:#5A1818;--wrong-bg:#EEE0E0;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,238,240,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#180A10;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B898A0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#200A12;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0E0E4;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.6);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0E0E4;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B898A0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#200A12;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#180A10;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F0E0E4;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B898A0;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#F0E0E4;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#DCA8B4;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Antoni Gaudí</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #35</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Antoni Gaudí?</h1>
+  <p class="cover-sub">He designed buildings that looked like they were alive — melting, growing, covered in mosaics. He refused straight lines because he didn't find them in nature. He took over the Sagrada Família in 1883, knowing he would never see it finished, knowing no one alive would. At 74, he was struck by a tram, so badly dressed that passersby assumed he was a beggar and almost didn't help him. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Antoni Gaudí</strong> (Antoni Plàcid Guillem Gaudí i Cornet; 1852–1926) · Born Reus, Catalonia, Spain · Suffered childhood arthritis — spent much of childhood observing nature rather than playing · Architecture degree, Barcelona School of Architecture, 1878 · Major works: Casa Vicens (1885), Palau Güell (1890), Park Güell (1914), Casa Batlló (1906), Casa Milà/La Pedrera (1912), Sagrada Família (in progress, 1883–present) · Patron: Eusebi Güell, Catalan industrialist, bankrolled Gaudí's experiments for decades · Became deeply devout in his 50s, gave up architecture's social world, lived as an ascetic · June 7, 1926: struck by tram on Gran Via de les Corts Catalanes · Because of his ragged clothing, three taxis refused to take him; passersby assumed he was a beggar · Died June 10, 1926, at Hospital de la Santa Creu · Buried in the crypt of the Sagrada Família · Beatification process initiated by the Catholic Church 2000.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1883, Barcelona</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Sagrada Família</span></div>
+<div class="year-banner">1883</div>
+<div class="timeline-dot">Barcelona · Age 31</div>
+<div class="narrative">
+  <p>A project has been abandoned by its original architect. The Sagrada Família — the "Expiatory Temple of the Holy Family" — was meant to be a neo-Gothic church, funded by voluntary donations from the faithful of Barcelona. The first architect, Francisco de Paula del Villar, has quit over a disagreement. You, at 31, are offered the commission.</p>
+  <p>You look at the plans and begin over almost completely. You understand, from the first year, that this will not be finished in your lifetime. The temple is being built from donation money, which means it can only go as fast as donations come in. You estimate 200 years. You design it anyway — designing spaces you will never see, for people not yet born.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — Designing for the Unborn</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Gaudí committed 43 years of his life to a project he knew he would never see finished. What drives someone to make this choice?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Religious faith. He genuinely believed the Sagrada Família was God's work, not his. The completion wasn't his responsibility — God's timeline would determine when it was done. Personal incompletion was irrelevant to the purpose.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Ego. The most ambitious project in Barcelona, funded by the faithful, structurally unprecedented — this was the kind of legacy that transcended any single lifetime. The incompletion was the point: his name would be attached to a work still growing.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and Gaudí didn't see them as contradictory. His faith and his architectural ambition reinforced each other. The cathedral IS the statement of faith; the architectural ambition IS the devotion. For him, they weren't competing motivations but aspects of the same project.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">Gaudí on the Sagrada Família</div>
+      <p><strong>You commit 43 years of your life to a building you will never see completed — and tell complaining donors that your client is not in a hurry.</strong> Gaudí said repeatedly: "My client is not in a hurry." By "client" he meant God. He became increasingly absorbed in the project as the decades passed, eventually moving his studio into the Sagrada Família's crypt so he could work on it full-time. In his final years he lived almost entirely on the site. When donors complained about the pace of construction, he told them: "This is the work of a century; it cannot be rushed. The temple must be built as a prayer, not as a project." The Sagrada Família was unfinished for 100+ years after his death, with different architects interpreting his models and drawings (many destroyed in the Spanish Civil War). The building is expected to be substantially complete around 2026 — his 100th death anniversary — funded partly by the 4+ million tourists who visit annually. His original estimate of 200 years was almost right.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · No Straight Lines</span></div>
+<div class="year-banner">1888</div>
+<div class="timeline-dot">Barcelona · Age 36</div>
+<div class="narrative">
+  <p>You are building structures that look nothing like anything else being built in Europe. You have almost no straight lines — your arches are parabolic, your columns branch like tree trunks, your surfaces are textured and alive. When critics and colleagues ask why, you have a simple answer: "There are no straight lines in nature."</p>
+  <p>You study bones, shells, trees, caves. You use hanging chain models to calculate the shape that gravity naturally produces — then invert them to find the perfect arch. You are doing structural engineering by observing the world rather than applying formulas. Your buildings carry loads efficiently exactly because they follow nature's geometry.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Learning from Nature</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Gaudí rejected straight lines because they don't exist in nature. Was this a philosophy or an engineering insight?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Philosophy. The aesthetic of organic forms is a design choice. His buildings could have been built with straight lines. The nature argument was a rationale for a style he preferred.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">Engineering insight. Catenary arches and parabolic curves distribute loads more efficiently than right angles. His buildings use less material to carry more weight precisely because they follow natural structural principles.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — the philosophy and the engineering were inseparable for Gaudí. He believed nature's forms were beautiful AND structurally optimal, and spent his career proving the two coincided. His key insight was that aesthetic principles derived from nature were ALSO engineering principles.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">Gaudí's structural engineering</div>
+      <p><strong>The most structurally advanced architecture in Barcelona is calculated with a chain and a camera, not a formula.</strong> Gaudí's hanging chain models (catenaries) were a genuine engineering innovation. A hanging chain finds its natural shape under gravity; invert it, and you have the ideal arch shape for bearing compressive loads. He built large-scale chain models of entire building structures, photographed them, and used the inverted photos as architectural drawings. This allowed him to design structurally sound forms that followed natural curves without using conventional engineering calculations. Computer analysis of his completed structures has confirmed their structural efficiency — the Sagrada Família's branching columns, for example, distribute loads in ways that would be difficult to improve on with modern engineering. His approach anticipated computational form-finding by nearly 100 years. The philosophy (nature is beautiful) and the engineering (nature is efficient) were the same observation from different angles.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Patron</span></div>
+<div class="year-banner">1900</div>
+<div class="timeline-dot">Barcelona · Age 48</div>
+<div class="narrative">
+  <p>Eusebi Güell — Catalan industrialist, intellectual, nationalist — has been your patron for 20 years. He gives you the freedom to experiment that no public commission would allow. Without him, none of your major works would have been built. Casa Batlló, Park Güell, Palau Güell — all funded or enabled by Güell's money and belief in your vision.</p>
+  <p>Güell dies in 1918. By that point, you have turned away from architecture's social world entirely. You eat almost nothing — an ascetic diet. You dress in rags. You sleep at the Sagrada Família. You are, to Barcelona's bourgeoisie who once celebrated you, invisible.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Patron Relationship</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Gaudí's most creative period depended entirely on Güell's patronage. What does this tell us about creative genius and institutional support?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Genius finds its patrons. Gaudí's extraordinary talent would have found expression regardless — Güell was just the vehicle. If not Güell, someone else would have recognized and supported him.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Patronage is the prerequisite, not the vehicle. Most of the greatest creative achievements in history required someone willing to fund experiments that markets wouldn't support. Without patronage structures, most of what we consider genius never gets built.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and the relationship was specific. Güell was not just money: he was a specific person who understood what Gaudí was doing and believed in it. The combination of Gaudí's vision and Güell's specific comprehension produced something neither could have produced alone. Patronage is a relationship, not just funding.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">The Gaudí-Güell relationship</div>
+      <p><strong>The most important relationship of your career begins with a glove display case at the 1878 Paris World's Fair.</strong> Eusebi Güell met Gaudí at the 1878 Paris World's Fair, where Gaudí had exhibited a display case for a glovemaker. Güell saw it and immediately sought him out. Their collaboration lasted 40 years, until Güell's death. Güell gave Gaudí essentially unlimited creative freedom — unusual even for wealthy patrons of the period. Park Güell was planned as a residential development that failed commercially; Güell kept funding it as a garden city experiment anyway. Palau Güell required Gaudí to design the patron's own residence, normally a constrained commission; Güell allowed Gaudí to produce one of the most unusual private palaces in Europe. The relationship worked because Güell genuinely understood and appreciated what Gaudí was doing — not as novelty or status, but as a meaningful architectural project. When historians ask what allowed Gaudí's genius to manifest, Güell is the answer: not just money, but comprehending money.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Casa Batlló</span></div>
+<div class="year-banner">1906</div>
+<div class="timeline-dot">Barcelona · Age 54</div>
+<div class="narrative">
+  <p>Casa Batlló on the Passeig de Gràcia is finished. Its facade is covered in broken ceramic tiles in blues, greens, purples — the effect is of scales, or water, or an organism's skin. The balconies look like bone masks. The roof ridge suggests a dragon's back. Locals call the building "Casa dels Ossos" — House of Bones — or "Casa del Drac" — House of the Dragon. They're not sure if they love it or fear it.</p>
+  <p>Barcelona's architects are divided. Some call it a masterpiece. Others call it grotesque. What's clear to everyone: no one in the history of architecture has done anything like this before.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — When No One Has Done It Before</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Gaudí's work was so original that there was no existing tradition to compare it to. How did he manage this without conventional validation?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">He didn't need validation. His deep faith provided a standard independent of human opinion. If the work was an act of devotion, human criticism was beside the point.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Nature provided the validation. He had a coherent theory — that natural forms were optimal and beautiful — which gave him criteria for judgment that didn't depend on existing conventions. The theory itself was his standard.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">Both provided his standard — faith and nature were the same thing for Gaudí. The natural world was God's creation; building according to natural principles was both aesthetically right and spiritually right. When human opinion diverged from his work, it simply meant human opinion was wrong about what God's creation required.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">Reception of Gaudí's work</div>
+      <p><strong>Barcelona fines you for exceeding height limits. Orwell calls your cathedral one of the most hideous buildings in the world. Your reputation will be almost entirely posthumous.</strong> Contemporary reception of Gaudí's buildings was genuinely mixed. Casa Milà (1912, known as La Pedrera) was controversial enough that Barcelona's municipal government fined Gaudí for exceeding height limits, and the building's undulating stone facade was ridiculed in the press as "the quarry" (La Pedrera). Gaudí refused to change anything and offered to destroy the building if the city preferred. The Sagrada Família was criticized as excessive, as too strange, as both too Catholic and not Catholic enough. Georges Orwell, visiting Barcelona in 1936 during the Civil War, wrote that the Sagrada Família was "one of the most hideous buildings in the world." Modern critical consensus has reversed almost entirely: Casa Batlló, Casa Milà, and the Sagrada Família are now considered among the most important works in Western architecture. Three of his buildings are UNESCO World Heritage Sites. His reputation is almost entirely posthumous.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Ascetic Turn</span></div>
+<div class="year-banner">1910</div>
+<div class="timeline-dot">Barcelona · Age 58</div>
+<div class="narrative">
+  <p>You have stopped attending Barcelona's social events. You eat almost nothing — a diet that would be diagnosed today as severely inadequate. You dress in clothes so worn and patched that strangers cannot tell you from a beggar. You have given away most of what you own. You sleep at the Sagrada Família. You fast regularly. You walk barefoot sometimes in the cold. Your body is suffering.</p>
+  <p>Your faith has intensified to the point where the life you built — with Güell, with commissions, with Barcelona's bourgeoisie — seems an obstacle to what you are trying to build at the Sagrada Família. The architecture and the asceticism have become, in your mind, the same thing.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Asceticism and Art</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Gaudí's asceticism in his last years — severe fasting, tattered clothing, no social life — coincided with his most intensive work on the Sagrada Família. Was the asceticism a prerequisite for the work, or a sign of mental distress?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Sign of distress. The pattern — social withdrawal, disordered eating, self-neglect, obsessive focus on a single project — describes someone who is not well. The work may have been extraordinary; the person was suffering.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">Prerequisite for the work. Some creative states require removing everything that doesn't serve the creation. Gaudí was simplifying his life to focus entirely on the Sagrada Família. The asceticism was a discipline, not a dysfunction.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">Both can be simultaneously true. The asceticism produced the focused, undistracted attention that the late Sagrada Família work required AND represented a person who was struggling with the world outside the building. These aren't mutually exclusive: you can be suffering AND productive. Gaudí may have been both.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">Gaudí's last years</div>
+      <p><strong>You spend your last 16 years on a single building, declining every other commission, invisible to the Barcelona that once celebrated you.</strong> By 1910, Gaudí had largely stopped taking new commissions. He spent his remaining 16 years almost entirely focused on the Sagrada Família. Contemporary accounts describe him as gaunt, poorly dressed, deeply absorbed in work. His niece Rosa Egea managed some practical affairs. He had no close relationships beyond the project and a small circle of associates at the temple. Whether this represents admirable single-mindedness or a person withdrawing from life has been debated by biographers since. What's clear: the models and drawings he produced in these final years represented the most detailed and ambitious planning of the building's eventual completion. The work was extraordinary. The life that produced it was narrow. Both facts are real.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Park Güell</span></div>
+<div class="year-banner">1914</div>
+<div class="timeline-dot">Gràcia, Barcelona · Age 62</div>
+<div class="narrative">
+  <p>Park Güell, conceived as a residential garden city of 60 houses, has failed commercially. Only two houses were ever built — one of which you bought and moved into. Now it opens as a public park. The mosaic terraces, the gingerbread gatehouse, the column-supported market hall — all of it designed for a project that didn't work economically — now belong to the public. The terraces look over Barcelona. The broken tile mosaics catch the sun.</p>
+  <p>The failure of the residential development has produced something more beautiful and more lasting than the original project would have been.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Failure as Creation</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Park Güell failed as a residential development and succeeded as a public space. Does this mean the "failure" produced a better outcome?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Yes. What Barcelona has now — a free public park on a hilltop — is more valuable than what would have existed if the project had succeeded commercially. The failure was a better outcome than success would have been.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">No — or at least, we can't know. The question "what would have been better" requires knowing what a successful Park Güell development would have looked like. Different success might have produced more Gaudí architecture, not less public space.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">The interesting question is not "better or worse" but "what kind of thing is Park Güell." It's an artwork that survived its original purpose. The residential failure is irrelevant to what the park is now. Purpose and meaning don't have to be the same as original intent.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">Park Güell today</div>
+      <p><strong>The housing development no one wanted becomes one of the most visited sites in Spain.</strong> Park Güell received 9 million visitors in 2019, making it one of the most visited sites in Spain. UNESCO designated it a World Heritage Site in 1984 as part of the "Works of Antoni Gaudí" group. The monumental zone — including the dragon staircase, hypostyle room, and main terrace with its undulating mosaic bench — now requires ticketed entry to manage visitor numbers. The park is surrounded by a residential neighborhood where Gaudí's house (now a museum) still stands. The community that was supposed to fill the residential development never came; what came instead were 9 million tourists annually. Güell's commercial investment was a loss; the cultural investment was incalculable. Whether Güell would have considered this a satisfactory outcome is a different question — he died in 1918, when the park had only been open four years.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Tram</span></div>
+<div class="year-banner">1926</div>
+<div class="timeline-dot">Gran Via de les Corts Catalanes, Barcelona · Age 73</div>
+<div class="narrative">
+  <p>It is the afternoon of June 7, 1926. You are walking on the Gran Via de les Corts Catalanes toward the convent where you pray daily, as you do every afternoon. A tram car catches you on the left side. You fall. Three taxis refuse to take you to the hospital — you are so poorly dressed that drivers assume you cannot pay. Passersby do not recognize the most famous architect in Barcelona's history. Someone eventually gets you into a cab. You are taken to the Hospital de la Santa Creu, the charity hospital for the poor.</p>
+  <p>A friar identifies you. Your friends, informed, try to move you to a better hospital. You refuse. "My place is here," you say. You die three days later.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Death</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Gaudí died in a charity hospital for the poor, refusing to be moved to better facilities. Was this integrity or stubbornness?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Integrity. His asceticism wasn't theater — he had lived with the poor for years, dressed as they dressed, eaten as they ate. Dying in the hospital for the poor was consistent with the life he had chosen. It was the truest thing about him.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">Stubbornness. Better medical care might have saved his life, or at least extended it. The Sagrada Família, which still needed him, would have benefited from his survival. The ascetic gesture cost more than it was worth.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">The question is whether "integrity" and "stubbornness" are different things in this case. He chose the hospital because it was consistent with how he had lived. Whether that consistency is admirable or costly depends on whether you think the life he had built — devoted entirely to the Sagrada Família and to poverty — was the right life to build. He thought it was.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">The death and its aftermath</div>
+      <p><strong>The man three taxis refused because he looked too poor to pay gets a funeral procession through Barcelona that tens of thousands come out to witness.</strong> Gaudí's death produced an enormous public reaction in Barcelona. His funeral procession on June 12, 1926, drew tens of thousands of people through the city's streets to the Sagrada Família, where he was buried in the crypt. Newspapers across Europe carried the story. The man who had been invisible in his last years — dressed in rags, ignored in the street — was, in death, recognized as the most important architect Spain had produced. The construction of the Sagrada Família continued after his death, guided by his models, drawings, and photographs. A fire in 1936 during the Spanish Civil War destroyed many of his original documents; subsequent architects worked from photographs and remaining fragments. Whether the building that will be completed in 2026 represents Gaudí's vision or an interpretation of it is debated by architects and scholars. Gaudí anticipated this problem; he said: "The Sagrada Família is a work of generations."</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Unfinished Cathedral</span></div>
+<div class="year-banner">2026 (expected)</div>
+<div class="timeline-dot">Barcelona · 100 years after his death</div>
+<div class="narrative">
+  <p>In 2026 — 100 years after your death — the Sagrada Família is expected to be substantially complete. The tower of Jesus Christ, the tallest at 172 meters, will be finished. The final towers, the Glory facade. The building you started in 1883, which you spent 43 years designing and building, which you knew would not be finished in your lifetime, which has been under construction for 143 years, will finally be done.</p>
+  <p>You will have been dead for 100 years. The building outlasted not just you but entire generations. The person buried in the crypt below the nave is the reason it exists. The tourists who walk through it will not know your name. Your client, you always said, was not in a hurry.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The 200-Year Project</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Gaudí spent his life on a project he would not live to see completed. Is this a heroic sacrifice or a fundamental misallocation of creative energy?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Heroic. The Sagrada Família is one of the great works of human civilization precisely because someone was willing to commit a lifetime to its beginning. Only a single-minded dedication could have produced something this ambitious.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Misallocation. The same creative energy, spread across multiple completed projects, might have produced more total value than one cathedral that took 143 years. Great work doesn't require incompletion.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The question misunderstands what Gaudí was doing. He wasn't trying to maximize creative output. He was trying to build a specific thing that he believed mattered, in a way that would last. For that project, the 43-year commitment was not a sacrifice — it was the method. The question "was it worth it" only makes sense if you share the goal. He had a different goal than we might have chosen.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">The Sagrada Família's completion</div>
+      <p><strong>The cathedral you started in 1883 is substantially finished in 2026 — one hundred years after your death, 143 years after you inherited the plans.</strong> The Sagrada Família received UNESCO World Heritage designation in 2005. It generates approximately 25 million euros per year in ticket revenue, which funds construction. By 2024, all 12 apostle towers are complete; the four evangelist towers and the Virgin Mary tower are complete; the main tower of Jesus Christ is under construction. The expected completion date of 2026 marks the 100th anniversary of Gaudí's death. Whether the completed building represents his vision is debated: the 1936 fire destroyed much of his documentation, and different lead architects since his death have made interpretive choices he could not have anticipated. The completed Sagrada Família will be the world's tallest church at 172 meters and, very likely, the most visited building in Spain. Gaudí designed it to be built by people who would be born after his death, interpreted by architects who couldn't know him. That was always the plan.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Gaudí's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="next-sims">
+  <p class="next-label">Explore More Lives</p>
+  <div class="next-grid">
+    <a href="davinci-simulator.html" class="next-card">
+      <span class="next-name">Leonardo da Vinci</span>
+      <span class="next-desc">The ultimate Renaissance man. Left most of his projects unfinished. What kept him moving?</span>
+    </a>
+    <a href="vangogh-simulator.html" class="next-card">
+      <span class="next-name">Vincent van Gogh</span>
+      <span class="next-desc">Sold one painting in his lifetime. Painted 900 in 10 years. The price came after.</span>
+    </a>
+    <a href="frida-simulator.html" class="next-card">
+      <span class="next-name">Frida Kahlo</span>
+      <span class="next-desc">Survived a devastating bus crash and painted her pain into one of the 20th century's most recognizable bodies of work.</span>
+    </a>
+    <a href="hokusai-simulator.html" class="next-card">
+      <span class="next-name">Katsushika Hokusai</span>
+      <span class="next-desc">Died at 88 saying he needed just 10 more years. Changed his name 30 times.</span>
+    </a>
+  </div>
+</div>
+<div class="cta-box">
+  <p>Gaudí spent 43 years on a building he knew he'd never see finished. He was hit by a tram at 74, mistaken for a beggar. He refused to leave the charity hospital. The Sagrada Família will be done in 2026. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All Life Simulators — Da Vinci, Van Gogh, Frida Kahlo and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/davinci-simulator.html" style="color:var(--accent)">Da Vinci Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="God Is Not in a Hurry";body="You saw what Gaudí actually saw: faith and ambition were not competing drives but the same drive from different angles. The catenary chain and the prayer were the same gesture. Güell's comprehension mattered as much as his money. Asceticism and productivity can coexist in the same narrowing life. You understood why he refused to leave the charity hospital — and why the man three taxis wouldn't pick up is buried under the most visited church in Spain.";}else if(pct>=0.625){title="The Architect Stays With You";body="You grasped the essentials: catenary arches as both prayer and engineering, the Güell relationship as more than funding, the Park Güell failure as accidental perfection, the charity hospital as the logical end of the life he built. Where the full picture eludes you: Gaudí's faith wasn't separate from his architecture — it was the architecture. The 143-year construction timeline, the mosaic tile surfaces, the branching columns were all the same statement. He wasn't designing a church about God; he was building the act of reaching.";}else if(pct>=0.375){title="You Saw the Surface";body="You saw the legible parts clearly — the impossible buildings, the rags, the tram accident, the charity hospital death. These are real. What's harder from outside: his worldview had no seams. Nature's geometry and God's perfection weren't analogies for each other — they were the same thing. He wasn't being eccentric; he was being consistent. That's what makes him harder to understand than he looks, and easier to dismiss as merely strange.";}else{title="Practical Man in an Impractical City";body="You took the sensible view throughout, and the sensible view is not wrong. Forty-three years on one unfinishable building is an unusual allocation. Dressing in rags when you can afford to eat is a choice that cost him his life — three taxis refused the bleeding man on the street. The asceticism was real suffering, not just discipline. But the building is also real. The man who looked like a beggar is buried under a cathedral 4 million people visit every year, and no purely practical account has ever fully explained how it got there."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

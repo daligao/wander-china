@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Victor Hugo Life Simulator — Les Misérables, Exile & the Voice of a Century | Ordinary Man Trying</title>
+<meta name="description" content="Follow Victor Hugo across 8 pivotal decisions — from writing Notre-Dame de Paris in 6 months to 19 years of exile, finishing Les Misérables, and returning in triumph to a reborn France.">
+<style>
+:root{
+  --bg:#F5F0EA;--card:#FBF8F4;--ink:#100A06;--muted:#4A3828;--line:#D8C8B8;
+  --accent:#5A1A08;--accent-bg:#F0DDD0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,240,234,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#100A06;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C0A898;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#080604;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0E8E0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0E8E0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C0A898;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C0A898;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Victor Hugo</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #80 of 100</p>
+  <h1 class="cover-title">To Live Is to Fight.<br>To Write Is to Fight Louder.</h1>
+  <p class="cover-sub">Victor Hugo wrote <em>Notre-Dame de Paris</em> in six months because his publisher locked him in a house with an ink bottle. He was exiled from France for nineteen years after refusing to accept Louis-Napoleon's coup. He finished <em>Les Misérables</em> in Jersey while writing political broadsides with one hand and love letters with the other. When he came home in 1870, the entire railway platform in Paris was mobbed. He lived to eighty-three, wrote until the end, and his funeral procession drew two million people through the streets of Paris.</p>
+  <div class="cover-facts">
+    <p>📖 <em>Notre-Dame de Paris</em> written in 6 months, 1830–31 &nbsp;·&nbsp; 🏚️ 19 years in exile (Guernsey/Jersey), 1851–1870 &nbsp;·&nbsp; ✍️ <em>Les Misérables</em> published 1862 &nbsp;·&nbsp; 👥 2 million at his funeral, 1885 &nbsp;·&nbsp; 🕯️ Kept 2 mistresses simultaneously for decades &nbsp;·&nbsp; Died May 22, 1885 · Age 83</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Hugo's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1827</div>
+  <div class="timeline-dot">Paris, France · Age 25</div>
+  <div class="narrative">
+    <p>You are twenty-five years old and already famous — your poetry has won prizes, your first novel has been published, and the older literary establishment regards you as a prodigy worth either cultivating or crushing. The question of what French literature should be is being fought out in real time, and you have decided to fight on the side of the Romantics. Your manifesto is the preface to your new play, <em>Cromwell</em> — a work so long it is unperformable but whose introduction redefines the terms of French aesthetics. The preface insists that the grotesque and the sublime must be combined, that literature should encompass all of human experience rather than the noble and elevated alone. The classical unities — place, time, action — are prisons to be broken.</p>
+    <p>The premiere of your next play, <em>Hernani</em>, in 1830 will become a cultural battle: Romantics (your allies) against Classicists (your enemies), a theater riot that settles the question of which direction French literature will go. But for now, the preface to <em>Cromwell</em> has declared the war. The question is whether the coming battle will be fought on your terms.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1827</div>
+    <p class="decision-q">The preface to <em>Cromwell</em> declares war on classical French aesthetics. What is its central claim?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. French literature should import English models — Shakespeare above all — to replace the exhausted classical tradition.</button>
+      <button class="dopt" onclick="choose(this,1,false)">B. The unities of time and place must be observed, but the unity of action should be relaxed to allow more complex plots.</button>
+      <button class="dopt" onclick="choose(this,1,true)">C. Great literature requires the combination of the grotesque and the sublime — comedy and tragedy, beauty and ugliness cannot be separated without falsifying human experience. The classical unities are arbitrary prisons that must be destroyed.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Drama should return to its origins in medieval mystery plays rather than imitating Greek and Roman models.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You are twenty-five years old, and your preface to an unperformable play starts a decade-long war over what French literature is allowed to be.</strong> The "Battle of Hernani" in 1830 is not a metaphor — Romantics and Classicists actually fought in the theater while the play was running, Théophile Gautier's red waistcoat visible from across the house.</p>
+      <strong>The Romantic Manifesto:</strong> Hugo's preface to <em>Cromwell</em> is the founding document of French Romanticism. Its central argument — that the grotesque and the sublime must be combined — drew explicitly on Shakespeare, whom Hugo cited as the proof that great drama does not need to separate tragic nobility from comic ugliness. The "Battle of <em>Hernani</em>" in February 1830 confirmed the doctrine in practice: Hugo's supporters in the theater (led by the painter Théophile Gautier in a red waistcoat) shouted down the Classicists who tried to boo the play. The Romantics won that night and, in terms of the century that followed, the war.
+    </div>
+  </div>
+
+  <div class="year-banner">1830</div>
+  <div class="timeline-dot">Paris, France · Age 28</div>
+  <div class="narrative">
+    <p>Your publisher, Gosselin, is desperate. He has been advertising a Hugo novel for two years, and you have written almost nothing. The contract deadline has passed. He applies what pressure he can, and eventually arrives at an arrangement: he will lock you in your house with an ink bottle. You will not be permitted to go out socially until the book is delivered. You agree. You purchase a new wool coat — you cannot go out anyway, and you are cold — and in December 1830, you begin writing <em>Notre-Dame de Paris</em>.</p>
+    <p>You write in six months what other novelists would spend six years producing: a novel that is simultaneously a historical drama, an architectural argument (you want to save Gothic cathedrals from the "restoration" that is destroying them), and a meditation on fate, desire, and the indifference of stone to human suffering. Quasimodo, the hunchbacked bell-ringer. Frollo, the archdeacon consumed by forbidden desire. Esmeralda, the gypsy dancer who has no idea the forces converging on her. The cathedral itself, the truest character.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1831</div>
+    <p class="decision-q"><em>Notre-Dame de Paris</em> is published and becomes an enormous success. What is Hugo's larger architectural and political purpose in writing it?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. A purely aesthetic argument for Romantic principles — the novel demonstrates that historical settings and dark passions produce better literature than classical restraint.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. A campaign to save medieval Gothic architecture from "restoration" — the novel's detailed descriptions of Notre-Dame were designed to make readers understand what was being destroyed in the name of modernization, and to demand its preservation.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. A historical argument about the nature of fate in medieval life — the novel is primarily concerned with the theological determinism of 15th-century Paris and its contrast with modern freedom.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. A political allegory about the 1830 July Revolution — the characters of Frollo and Quasimodo represent the old clerical establishment and the suppressed popular classes respectively.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>You write a novel and it saves buildings.</strong> Notre-Dame de Paris makes readers feel what the restorers were destroying, and the French government actually responds. The cathedral's famous spire — the one in every photograph — was added by Viollet-le-Duc as part of the restoration your novel helped force.</p>
+      <strong>Hugo and Gothic architecture:</strong> Hugo's fury at the "restorers" who were stripping and rebuilding medieval French churches was explicit in the novel's opening chapters — he devoted long passages to describing the cathedral in such loving detail that readers who had never seen it understood exactly what was at risk. The campaign worked: public opinion shifted, and the subsequent restoration projects — including Viollet-le-Duc's famous work on Notre-Dame — were partly a response to the cultural pressure Hugo's novel created. Whether Viollet-le-Duc's restorations themselves were an improvement is another question; Hugo thought not.
+    </div>
+  </div>
+
+  <div class="year-banner">1843</div>
+  <div class="timeline-dot">Paris, France · Age 41</div>
+  <div class="narrative">
+    <p>Your daughter Léopoldine is nineteen. She married Charles Vacquerie in February. In September, while on holiday with her husband in Villequier, their boat capsizes on the Seine. Both drown. You learn the news by accident, reading a newspaper in a café while on a journey. Your wife, Adèle, is not with you; you are traveling with your mistress, Juliette Drouet, who has been your constant companion for nine years. You had not seen Léopoldine for months. You had been meaning to visit her in Villequier. You did not go in time.</p>
+    <p>The grief will reorganize the rest of your life. You enter politics, partly to fill the silence. You publish almost no new poetry for years. When the poetry does return, it will be collected in <em>Les Contemplations</em> (1856), and the centerpiece will be a sequence of poems about Léopoldine that have no equivalent in French literature for directness of grief. "Tomorrow, from the dawn, at the hour when the countryside whitens, I will set out. You see, I know you are waiting for me."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1843</div>
+    <p class="decision-q">Léopoldine's death is the central wound of Hugo's life. How does it transform his work and his sense of his own purpose?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. It turns him primarily toward politics — the private grief is converted entirely into public action for democratic causes.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. It deepens his writing's relationship to suffering in a way that no literary formula could have achieved — the later Hugo who writes Jean Valjean's transformation through grace is the Hugo who has personally experienced irrecoverable loss and continued to live.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. It produces a crisis of religious faith — the death of an innocent young woman forces him to abandon the providentialist Christianity he had held and move toward atheism.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. It ends his most productive creative period — the grief essentially broke his literary capacity and the subsequent works are demonstrably inferior to what came before.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>You learn your daughter has drowned by reading it in a newspaper in a café, while traveling with your mistress.</strong> That specific grief — irrecoverable, arrived at too late, discovered in the wrong company — is what Jean Valjean carries across a thousand pages. The question Hugo couldn't stop asking after Léopoldine is the question that became <em>Les Misérables</em>: what does a society owe to those it has broken?</p>
+      <strong>Loss and transformation:</strong> Hugo's grief for Léopoldine is one of the most documented in literary history, and the poems in <em>Les Contemplations</em> — particularly the sequence culminating in "Demain, dès l'aube" — are among the most direct expressions of parental grief ever written in any language. His faith did not collapse; it deepened into something more personal and less institutional. The loss also drove him toward the question that became <em>Les Misérables</em>: what does a society owe to those it has broken? The answer he eventually wrote included twenty years of notes, exile, and the memory of what it felt like to have something irreplaceable taken by a world that continued without pause.
+    </div>
+  </div>
+
+  <div class="year-banner">1851</div>
+  <div class="timeline-dot">Brussels, Belgium · Age 49</div>
+  <div class="narrative">
+    <p>Louis-Napoleon Bonaparte has seized power on December 2, 1851 — the anniversary of his uncle's coronation at Austerlitz, chosen for maximum symbolic force. He has dissolved the National Assembly and arrested opposition deputies. He will hold a plebiscite to ratify his coup and will call himself Napoleon III. You have been a member of the Assembly, and you have spoken against him repeatedly. You organized street resistance to the coup in Paris, which failed. You are now in Brussels, having escaped through a series of disguises and assumed names.</p>
+    <p>You can accept the new regime. Many of your colleagues will. You are offered quiet accommodation, safety, the ability to return to Paris and resume your literary career under the new order. Or you can refuse — choose exile — and use the years abroad to attack Napoleon III in every way available to you. The choice is final in a way that few choices are. Exile will mean missing your children grow up. It will mean poverty, at least initially. It will mean nineteen years.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1851</div>
+    <p class="decision-q">Louis-Napoleon has seized power. Hugo can accept the new order and return to Paris, or choose permanent exile. He chooses exile. Why?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. Strategic calculation — exile would be more useful to the opposition than staying, since it preserved his public credibility as a principled resister.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. Moral refusal — he had spent years arguing for the Republic and human dignity; accepting a dictatorship in exchange for personal comfort would have made every word he had written a lie. He famously said: "When liberty returns, I will return."</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. Fear — he correctly believed that Napoleon III would eventually arrest him if he stayed, making exile the safer personal choice.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. Literary ambition — exile would give him the distance from French daily life that his work required, and the suffering would enrich his writing in ways that comfortable Parisian success could not.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You live in a stone house on a British island for nineteen years, looking out at France from across the water.</strong> Napoleon III offers amnesty in 1859 and you refuse it in a public statement. The refusal is the point. Any writer can criticize power from safety; very few will actually pay nineteen years for the position.</p>
+      <strong>Hugo's exile:</strong> He spent the first years in Brussels and Jersey, then settled in Guernsey (British territory, beyond Napoleon III's reach) in 1855. He bought a house there — Hauteville House — and lived in it for fifteen years, writing at a glass-fronted room on the top floor while looking out at the sea toward France. He attacked Napoleon III in <em>Napoléon le Petit</em> (1852) and <em>Les Châtiments</em> (1853) with a ferocity that made him one of the most dangerous political opponents of the regime. He was offered amnesty in 1859. He refused it, writing: "I will share exile with freedom until freedom returns."
+    </div>
+  </div>
+
+  <div class="year-banner">1862</div>
+  <div class="timeline-dot">Guernsey, Channel Islands · Age 60</div>
+  <div class="narrative">
+    <p><em>Les Misérables</em> is published in April and May 1862 — the complete work, in five volumes, released simultaneously in ten European cities in nine languages. Nothing like this publishing event had ever been organized. The novel had been in progress for seventeen years. It began in the 1840s as a more limited study of poverty and was transformed by everything that happened: Léopoldine's death, exile, Napoleon III, the long view from the cliff window toward France that could not be reached.</p>
+    <p>Jean Valjean, a man destroyed by law for stealing bread, is transformed by a bishop's impossible act of grace — not punishment for stealing the bishop's silver but the gift of more silver — and spends the rest of his life attempting to earn what he was freely given. Inspector Javert pursues him not from malice but from a rigorous faith in law that cannot accommodate grace and eventually destroys itself when it cannot destroy Valjean. The novel's longest digression is forty pages on the Paris sewer system. You have no regrets about the digression.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1862</div>
+    <p class="decision-q">The central moral architecture of <em>Les Misérables</em> turns on the Bishop of Digne's response to Valjean's theft. What is Hugo's argument through that scene?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Charity is more effective than punishment in preventing recidivism — Hugo is making a utilitarian argument about criminal justice reform.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. Grace — unearned, unconditional mercy — is the only force capable of transforming a human being. Law can only punish; grace alone can redeem. And once received, genuine grace creates an obligation in the recipient that law cannot compel.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. The Church, when it practices what it preaches, is a force for social transformation — Hugo is arguing for the institutional Church as the answer to poverty and crime.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. The poor are not morally responsible for their actions — Valjean's thefts are justified by necessity, and the Bishop's response simply recognizes what justice actually requires.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>Inspector Javert is the most principled man in the novel — and he drowns himself because grace exists.</strong> He isn't a villain. He is what law looks like when there is no room for mercy, and when the universe turns out to contain mercy after all, he has no way to live in it.</p>
+      <strong>Grace vs. Law in Hugo:</strong> Javert is not a villain — he is law given human form, and law as he embodies it is not wrong, exactly: Valjean did steal. What Javert cannot process is that a man can become genuinely different from what he was — that identity is not fixed, that the past does not determine everything. When he encounters Valjean's mercy on the barricades and cannot arrest him, Javert's entire world collapses. He drowns himself rather than live in a universe where grace exists alongside law. Hugo's argument is that this rigidity is law's fundamental limitation — and that human dignity requires something law cannot provide.
+    </div>
+  </div>
+
+  <div class="year-banner">1870</div>
+  <div class="timeline-dot">Paris, France · Age 68</div>
+  <div class="narrative">
+    <p>Napoleon III has declared war on Prussia and lost. Catastrophically. He is captured at Sedan on September 1, 1870. The Second Empire falls. The Republic is proclaimed on September 4. You receive a telegraph at Hauteville House that day. You are on a train to Brussels within hours. You cross into France on September 5. When your train arrives at the Gare du Nord in Paris, the platform is completely mobbed. Thousands of people, in the middle of a war, in a city about to be besieged by the Prussian army, have come to see you return. You are sixty-eight years old. You have been gone for nineteen years.</p>
+    <p>Paris will be besieged from September 1870 to January 1871. You remain inside. The Commune will follow. Your son Charles will die of a stroke on March 13, 1871, in the middle of the chaos. You will return to exile briefly, in Brussels, and be expelled from Belgium for offering asylum to Commune refugees. The Republic will not be the Republic you wanted. Nothing is ever the Republic you wanted. You keep writing.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1870</div>
+    <p class="decision-q">Hugo returns to Paris after 19 years. What does the crowd at the Gare du Nord represent?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Celebrity — he was France's most famous living author and the crowd came to see him as they would come to see any famous person returning after long absence.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. Something more than celebrity: a moral symbol. By refusing amnesty and staying in exile the full nineteen years, Hugo had become living proof that resistance to tyranny was possible and sustainable. The crowd was welcoming back their conscience, not just their most famous novelist.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. Political partisanship — the crowd was specifically Republican Party supporters using the occasion for a political demonstration against the fallen Empire.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. French nationalism — the return coincided with the Prussian threat, and the crowd was expressing patriotic solidarity as much as literary appreciation.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>You come home after nineteen years and the platform at the Gare du Nord is mobbed — in the middle of a war, in a city about to be besieged.</strong> The crowd isn't there for a novelist. They're there for a conscience. You had said you would return when liberty returned, and you kept the promise exactly.</p>
+      <strong>Hugo as moral symbol:</strong> When Napoleon III offered amnesty in 1859, Hugo's refusal — issued as a public statement — became an argument that principled resistance was more than a pose: "When liberty returns, I will return. Not before." He kept the promise exactly. The nineteen years gave the commitment its weight. Writers who accommodate power can be useful. Writers who refuse power for two decades and then come home when the power falls are something rarer: they are evidence that integrity can be sustained. The crowd at the Gare du Nord understood this, even if they could not quite have articulated it.
+    </div>
+  </div>
+
+  <div class="year-banner">1877</div>
+  <div class="timeline-dot">Paris, France · Age 75</div>
+  <div class="narrative">
+    <p>You are seventy-five. You have published <em>L'Art d'être grand-père</em> this year, poems about your grandchildren Georges and Jeanne, who live with you because their father Charles is dead and their mother has entered an asylum. You write to them, for them, about them. The poems are among the most tender things you have ever written. They will also be, privately, your last sustained creative work — though you will not admit this for years and will insist on continued literary projects until very near the end.</p>
+    <p>Your mistress Juliette Drouet, who has been with you since 1833 — who followed you into exile, who typed your manuscripts, who organized your correspondence — is seventy-one. She is ill. She will die in 1883. Your wife Adèle died in 1868 after years of estrangement. You have outlived most of the people who knew you before you were famous. You remain the most famous person in France, arguably in Europe. When you write to the publisher of <em>Les Misérables</em> asking if the novel is selling, and the publisher replies with a wire that reads only "!," that seems about right.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1877</div>
+    <p class="decision-q">Hugo at 75 — decades of fame, loss, love affairs, exile, return, political disappointment. What is the key to understanding how he sustained creative and moral energy across such an extraordinarily long life?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Ego — his enormous self-regard protected him from doubt, and writers without self-doubt can sustain output indefinitely.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. Political purpose — having a cause larger than personal reputation gave his writing direction and protected it from the entropy that overtakes purely aesthetic projects.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. Both ego and purpose, operating together — his enormous belief in his own importance gave him the stamina to keep working through loss and exile and disappointment, and the moral purposes he attached to that work meant the ego never became mere vanity. Each sustained the other.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Productive routine — Hugo was famously disciplined, writing every morning regardless of emotional state, and the habit outlasted the inspiration.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>At eighty-one, after Juliette Drouet dies, you write in your journal: "The darkness deepens. I am completely alone now." You still have two years left and you keep writing.</strong> The ego that believed itself among the great men of the century was right — which is the only version of ego that can sustain a writer through nineteen years of exile and two decades of personal loss.</p>
+      <strong>Hugo's late years:</strong> He did have enormous ego — he sincerely believed he was one of the great men of the century, and he was largely right, which made the ego sustainable in ways it often isn't. But the belief was always attached to something beyond personal ambition: the Republic, the poor, the abolition of capital punishment, the progress of humanity. His speeches in the Senate advocating for the poor, his vigils over condemned criminals, his political broadsides — these were not career moves but genuine moral commitments that gave the ego its direction. When Juliette died in 1883, he wrote in his journal: "The darkness deepens. I am completely alone now." He was eighty-one. He still had two years left.
+    </div>
+  </div>
+
+  <div class="year-banner">1885</div>
+  <div class="timeline-dot">Paris, France · Age 83</div>
+  <div class="narrative">
+    <p>May 22, 1885. You die of pneumonia at 1 Avenue d'Eylau, Paris, aged eighty-three. Your last reported words are either "I see black light" or "This is the battle between the day and the night" — accounts differ. You are given a state funeral. The French government offers the Panthéon, and the Senate votes to receive your remains. The night before the funeral, your coffin lies in state at the Arc de Triomphe, the first time an individual has been so honored. Two million people walk in your funeral procession through Paris on June 1, 1885.</p>
+    <p>What you leave: five acts of drama that changed French theater; twenty thousand lines of poetry; seven major novels including two that will be read in every language on earth for as long as there are readers. A life in which the literary and the political were not in conflict but were the same activity. Exile chosen freely and held for nineteen years. A love affair with Juliette Drouet lasting fifty years, conducted while maintaining a marriage and numerous other liaisons, none of which Juliette — who knew about all of them — felt was a reason to leave. The definition of a complicated man.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 1885</div>
+    <p class="decision-q">Two million people walk in Victor Hugo's funeral procession. What quality of his life explains that scale of mourning?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. Literary greatness alone — <em>Les Misérables</em> had been read by nearly every literate person in France, and the mourning was primarily for the author of a beloved work.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. Political martyrdom — his exile had made him a symbol of Republican resistance, and the funeral was primarily a political demonstration.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. The inseparability of his writing from his lived commitments — the man who wrote about human dignity was the same man who refused exile terms and campaigned against capital punishment and stayed through the siege. The literature was credible because the life was consistent with it. Both together produced the mourning.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. National symbolism — Hugo had outlived everyone from his generation and become a monument to France itself, and the funeral was mourning for a passing era more than for the specific man.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>Two million people walk through Paris in June 1885 because the man who wrote about human dignity also refused the amnesty, stayed on the cold island, and came home only when freedom came home.</strong> The books were credible because the life matched them. Most writers argue for dignity; Hugo paid the price for it in real years of real exile.</p>
+      <strong>Hugo's legacy:</strong> The two million at the funeral were mourning something specific: a writer whose books about suffering corresponded to a life that had refused personal comfort when comfort conflicted with principle. This is rarer than it sounds. Hugo was vain, unfaithful, politically inconsistent, sometimes deluded about his own importance. But on the central question — whether the writer will accommodate power when accommodation is convenient — his answer was no, and he kept the answer for nineteen years in a cold house looking out at France from across the water. That answer is what the two million came to honor.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Victor Hugo · 1802–1885</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"Even the darkest night will end and the sun will rise."<br><em style="font-size:13px;color:var(--muted);">— Victor Hugo, Les Misérables</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="dickens-simulator.html" class="next-card">
+        <div class="next-card-name">Charles Dickens</div>
+        <div class="next-card-sub">Victorian poverty & the novelist as reformer</div>
+      </a>
+      <a href="dostoevsky-simulator.html" class="next-card">
+        <div class="next-card-name">Fyodor Dostoevsky</div>
+        <div class="next-card-sub">From execution to epilepsy to Crime & Punishment</div>
+      </a>
+      <a href="melville-simulator.html" class="next-card">
+        <div class="next-card-name">Herman Melville</div>
+        <div class="next-card-sub">The obsession that became Moby-Dick</div>
+      </a>
+      <a href="saint-exupery-simulator.html" class="next-card">
+        <div class="next-card-name">Antoine de Saint-Exupéry</div>
+        <div class="next-card-sub">The Little Prince & the pilot who never came back</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understand Hugo — not just the monuments but the man who built them. The exile was not literary posturing; it was nineteen years of cold island and real principle. The two million at his funeral came because the books and the life matched.';else if(pct>=0.625)t.textContent='You follow Hugo\'s logic most of the time — the belief that literature and moral commitment are the same work, that the grotesque and the sublime belong together. The gaps are where the decisions got expensive and he paid anyway.';else if(pct>=0.375)t.textContent='You grasp Hugo in outline but miss some of the interior logic — the way exile sharpened rather than embittered him, the way grace in Les Misérables comes from personal grief, the way the two million in 1885 were mourning a specific promise kept.';else t.textContent='Hugo is harder to understand than he looks. The biggest works — Les Misérables, Notre-Dame, the exile — are not separate chapters but one argument: that human dignity is worth the price, and he was willing to pay it.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

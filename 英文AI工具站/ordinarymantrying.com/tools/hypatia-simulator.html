@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hypatia of Alexandria Life Simulator — Mathematics, Philosophy &amp; the Mob | Ordinary Man Trying</title>
+<meta name="description" content="Live Hypatia of Alexandria's life across 8 pivotal decisions — from leading Neoplatonist philosophy in 4th-century Alexandria to the political crisis that ended with her murder by a Christian mob in 415 AD.">
+<style>
+:root{
+  --bg:#F5EEE8;--card:#FBF6F2;--ink:#180C06;--muted:#503820;--line:#D8C0A8;
+  --accent:#703010;--accent-bg:#F0D8C0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,238,232,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#180C06;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B89070;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#0C0604;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0E0D0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0E0D0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B89070;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B89070;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Hypatia of Alexandria</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #86 of 100</p>
+  <h1 class="cover-title">The Last Great Philosopher<br>of Alexandria.</h1>
+  <p class="cover-sub">Hypatia of Alexandria was the most prominent mathematician and philosopher in the late Roman world. She taught Neoplatonist philosophy to students who came from across the empire; she wrote commentaries on mathematics that were used for centuries; she was consulted by governors on civic affairs; and she was murdered by a mob in March 415 AD, dragged from her carriage, killed, and burned. She was approximately sixty years old. Her death is often taken as a symbol of the end of the classical world. The reality is more complicated, and more interesting.</p>
+  <div class="cover-facts">
+    <p>📐 Daughter of mathematician Theon of Alexandria · Wrote on Apollonius's Conics and Diophantus's Arithmetica &nbsp;·&nbsp; 🏛️ Head of Neoplatonist school in Alexandria, c. 400 AD &nbsp;·&nbsp; ✉️ Pupil Synesius of Cyrene: letters survive, describe her as teacher &nbsp;·&nbsp; ⚔️ Murdered by parabolani (Christian mob), March 415 AD &nbsp;·&nbsp; c. 360–415 AD · Alexandria, Egypt</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Hypatia's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">375</div>
+  <div class="timeline-dot">Alexandria, Egypt · Age ~15</div>
+  <div class="narrative">
+    <p>Alexandria in the late 4th century is still the intellectual capital of the Mediterranean world — the city of the great Library, of the Mouseion, of three hundred years of accumulated scholarship in mathematics, astronomy, philosophy, medicine, and literature. The Library itself has been partially damaged over the previous centuries, but the scholarly tradition continues: Alexandria remains the place where serious students come to study, and where the most serious scholars teach.</p>
+    <p>Your father is Theon of Alexandria, the mathematician who will produce the standard editions of Euclid's Elements and Ptolemy's Almagest that scholars will use for the next thousand years. He teaches you mathematics as a matter of course, treating you as his intellectual equal, which in the ancient world requires either an unusual father or an unusual daughter, and you are both. You are learning the mathematics that has accumulated from Euclid through Apollonius through Diophantus. You are learning astronomy. You are learning the Neoplatonist philosophy of Plotinus and Iamblichus, which is the dominant philosophical school of your era. You will eventually surpass your father's reputation. In Alexandria, that is a high bar.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · c. 375</div>
+    <p class="decision-q">Hypatia is educated as an intellectual equal by her mathematician father. In late 4th-century Alexandria, what makes this unusual?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Women were legally excluded from education in the Roman Empire — Theon was taking a significant legal risk by educating his daughter.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. While women were not legally barred from education, the social expectation was strongly domestic. A father who educated his daughter to the highest mathematical and philosophical level and who introduced her as a colleague to other scholars was acting against most of his contemporaries' understanding of appropriate roles for women — and Theon apparently did this deliberately and with conviction.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Nothing — Alexandria had a tradition of educating women that went back to the Library's founding, and Hypatia's education was typical for a scholar's daughter in the city.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. The mathematical content specifically — women were taught philosophy and literature in some circles, but mathematics was considered male territory and Theon's decision to teach it to Hypatia was the genuinely radical element.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>Your father is the man who produces the edition of Euclid that scholars use for a thousand years — and he treats you as his mathematical collaborator, not his student.</strong> His own writings later refer to you as "the philosopher, my daughter." He taught you to think; you became what he taught.</p>
+      <strong>Hypatia's education:</strong> We have limited sources for Hypatia's life — primarily the letters of her student Synesius of Cyrene and the historian Socrates Scholasticus. What they show is that Theon treated her as a mathematical collaborator: they worked together on his editions of Euclid and Ptolemy, and some historians believe Hypatia's contributions to these editions were substantial and later attributed to Theon. She eventually surpassed him — Theon's own writing mentions her with a phrase that has been translated as "the philosopher, my daughter." He taught her to think. She became what he taught her.
+    </div>
+  </div>
+
+  <div class="year-banner">400</div>
+  <div class="timeline-dot">Alexandria, Egypt · Age ~40</div>
+  <div class="narrative">
+    <p>You are now, at approximately forty, the head of the Neoplatonist school in Alexandria — a position of genuine intellectual authority in the most intellectually active city in the Mediterranean world. Students come from across the empire to study with you. Your most famous student is Synesius of Cyrene, who will become a Christian bishop while maintaining what his letters describe as a lifelong devotion to the philosophy you taught him. His letters to you are among the most important documents of intellectual life in late antiquity.</p>
+    <p>You teach mathematics — your commentaries on Apollonius's Conics and Diophantus's Arithmetica have made these difficult texts accessible to students. You teach astronomy. You teach Neoplatonist philosophy, which holds that ultimate reality is a transcendent One beyond being, and that the material world is a diminished emanation of this transcendence. Your students are a mixture of pagans and Christians — Neoplatonism is compatible with both, and you teach the philosophy, not the religious implication. You remain pagan yourself. This, in 400 AD in an increasingly Christian empire, is becoming complicated.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · c. 400</div>
+    <p class="decision-q">Hypatia teaches pagan and Christian students alike, holding to Neoplatonist philosophy rather than any religious institution. What does this approach represent?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Political calculation — by teaching students of all religious backgrounds, she maintains access to the widest possible range of patronage and influence.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. A genuine philosophical commitment to reason as something prior to and independent of religious affiliation — her Neoplatonism posits a transcendent One that is not identified with any particular god, and she teaches mathematics and philosophy as disciplines that do not depend on which cult you follow. This is the classical intellectual tradition's self-understanding.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. Strategic neutrality in an era of religious conflict — she understands the political volatility of Alexandria and deliberately avoids religious commitment as a survival strategy.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. Inconsistency — a genuine Neoplatonist should have recognized the incompatibility between Neoplatonism and Christian theology, and her willingness to teach Christians represents philosophical compromise.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>You teach pagan students and Christian students the same mathematics and the same Neoplatonism, and you consider this entirely consistent.</strong> In 400 AD in a Christianizing empire, a philosopher who refuses to sort her students by religion is making a claim about what knowledge is for — and that claim will eventually get you killed.</p>
+      <strong>Hypatia's philosophical position:</strong> Her letters (preserved through Synesius) show someone for whom intellectual honesty was the primary value — she writes of "speaking and writing in plain speech" without "poetic mythology" when addressing real philosophical questions. Neoplatonism had been adopted by some Christian thinkers (Augustine's early thought is deeply Neoplatonic) and some pagans saw it as incompatible with Christianity. Hypatia apparently occupied the position that the philosophical questions were prior to the religious ones, and that clarity about mathematics and metaphysics was valuable regardless of what deity you worshipped. Synesius, who became a bishop, maintained this position throughout his life.
+    </div>
+  </div>
+
+  <div class="year-banner">391</div>
+  <div class="timeline-dot">Alexandria, Egypt · Age ~31</div>
+  <div class="narrative">
+    <p>In 391 AD, the Emperor Theodosius I issues an edict closing all pagan temples throughout the empire. In Alexandria, the Patriarch Theophilus uses this authority to lead the destruction of the Serapeum — the great temple complex that housed what remained of the Library's collections after earlier damage. The Serapeum's library, the largest in Alexandria, is destroyed. Pagan temples throughout the city are converted to Christian use or demolished. The Alexandrian intellectual world is not destroyed — scholars still teach, books still exist — but the institutional landscape of late classical culture is being dismantled.</p>
+    <p>You continue teaching. You do not convert. You do not leave Alexandria. You are the most intellectually prominent figure in the city — students, civic officials, and people in distress come to you. The Prefect of Alexandria consults you. You are, within the existing power structure, a person of significant influence. This visibility, which protects you now, will eventually make you a target.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 391</div>
+    <p class="decision-q">The Serapeum is destroyed and pagan intellectual culture is under pressure. Hypatia continues teaching and remains in Alexandria. What does this choice reveal?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. Denial — she underestimated the danger and believed the intellectual culture she represented would be protected by its civic value.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. Genuine rootedness in place and calling — Alexandria was her city, her students were there, the mathematical and philosophical tradition she embodied was there. Leaving would be abandoning what she was. She stayed because staying was who she was, not because she calculated it was safe.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. Strategic confidence — her relationships with civic officials (including the Prefect Orestes) provided protection that made remaining a calculated risk worth taking.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. Philosophical obligation — a genuine philosopher cannot flee her students or her commitment to truth to preserve her own safety, and remaining was the philosophically consistent choice.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>The Serapeum is destroyed while you are in your early thirties — the great temple that housed what remained of the Library's collections, gone.</strong> You stay in Alexandria anyway. Your student Synesius writes to you from hundreds of miles away as though you are the fixed point of his entire intellectual life. She stays because leaving would be abandoning what she is.</p>
+      <strong>Alexandria in the 390s:</strong> Hypatia's decision to remain is consistent with everything we know of her character from the sources. Her student Synesius, writing to her from Cyrene, describes someone deeply committed to Alexandria and to her students — his letters treat her as the fixed point of his intellectual life, the teacher he returns to in thought even from a distance. She was not naive about the danger: the Alexandria of the 390s was a city with serious sectarian violence between pagans, Christians, and Jews, and the destruction of the Serapeum was a vivid demonstration of what organized religious authority could do. She stayed anyway.
+    </div>
+  </div>
+
+  <div class="year-banner">412</div>
+  <div class="timeline-dot">Alexandria, Egypt · Age ~52</div>
+  <div class="narrative">
+    <p>Cyril becomes Patriarch of Alexandria in 412 AD. He is a man of considerable organizational ability and theological ambition, and he is determined to extend the authority of the Church over Alexandria's civic life in ways his uncle and predecessor Theophilus had not fully achieved. He expels the Jewish community from Alexandria — tens of thousands of people — seizing their synagogues and property. He comes into conflict with Orestes, the Roman Prefect of Alexandria, who objects to the Patriarch overstepping civic authority.</p>
+    <p>You are a friend of Orestes. You advise him. He consults you on civic matters. The conflict between Orestes and Cyril becomes increasingly bitter — Orestes is a Christian, but he is a civic official who believes the Church should not control secular governance. Your friendship with Orestes and your continuing influence as the most prominent non-Christian intellectual in Alexandria are becoming, in Cyril's reading of the situation, part of the problem. You are not a party to a political dispute — you are a philosopher and mathematician giving honest counsel to a civic official you know well. But this is not how Cyril's allies see it.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 412</div>
+    <p class="decision-q">Hypatia advises Orestes in his conflict with Patriarch Cyril. What was the nature of this relationship and why did it make her a target?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. She was a political ally of Orestes against Cyril — she had chosen sides in a civic dispute and the consequences were predictable.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. She gave honest counsel to a civic official she respected on questions of governance and philosophy — the kind of advisory relationship she had with many people of influence. Cyril's faction interpreted this as political opposition because her very existence as an influential pagan intellectual contradicted his project of extending Church authority over all civic life. She was a target not for what she did but for what she represented.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. She had publicly spoken against Cyril's expulsion of the Jews — her advisory role included criticism of specific Patriarchal actions that she considered unjust, which is what made her personally dangerous.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. The relationship was misrepresented by Cyril's faction — they accused her of practicing magic to enchant Orestes, and this false accusation is what ultimately caused her murder.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You are not a politician — you are a philosopher giving honest counsel to a civic official you respect.</strong> But in Cyril's Alexandria, a pagan intellectual who advises the Prefect against Patriarchal authority is a political problem by definition. You didn't choose this conflict. The conflict chose you.</p>
+      <strong>Hypatia and Orestes:</strong> The historian Socrates Scholasticus, writing within a generation of Hypatia's death, is our best source. He says that Hypatia was a counselor to Orestes and that some people suspected she was an obstacle to reconciliation between Orestes and Cyril — implying she was advising Orestes to hold his ground rather than submit to Patriarchal authority. Socrates does not say she was practicing magic; the magic accusation appears in less reliable later sources. What she was doing was giving advice to the civic authority that had always consulted her. In a city where Cyril was systematically extending Church control over civic institutions, that made her a problem.
+    </div>
+  </div>
+
+  <div class="year-banner">415</div>
+  <div class="timeline-dot">Alexandria, Egypt · Age ~55-60</div>
+  <div class="narrative">
+    <p>March 415 AD. A mob — described by Socrates Scholasticus as parabolani, men employed by the Church as hospital workers but also used for enforcement — ambushes your carriage as you return home. They drag you out. They kill you. The sources differ on the exact method: Socrates describes them using roof tiles; later accounts add details that probably reflect later embellishment. What is not in dispute: they kill you in the street, carry your body to a church called Caesareum, and burn it. Nothing is buried. Nothing is preserved.</p>
+    <p>Cyril is not recorded as having ordered the murder. He is recorded as having done nothing in response to it. Socrates Scholasticus, writing as a Christian historian, says the murder "brought no small opprobrium, not only upon Cyril, but also upon the whole Alexandrian Church." Orestes, shorn of his ally, subsequently disappears from the historical record — he presumably left Alexandria or was removed from office. The Neoplatonist school continues in Alexandria for another century, led by your students and their successors. But it is not the same.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 415</div>
+    <p class="decision-q">Hypatia is murdered in March 415. What does Cyril's role in her death most accurately represent?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Direct ordering — Cyril organized the murder as a deliberate political act to remove a dangerous opponent.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. Responsibility without direct ordering — Cyril created an atmosphere in which Hypatia was publicly identified as an obstacle to his authority, his allies and employees were the perpetrators, and he expressed no condemnation afterward. This is culpability that stops short of direct command but is still meaningful responsibility for the outcome.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. No involvement — the murder was the action of a fanatical mob that Cyril could not have predicted or prevented, and attributing it to him is unfair.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. Symbolic — the murder represents the broader Christian-pagan conflict of the era rather than Cyril's personal decision, and focusing on him misplaces the historical cause.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>Cyril doesn't order the murder — at least not on any record that survives.</strong> What he does is publicly identify you as an obstacle to his authority, employ the men who carry it out, and say nothing afterward. A Christian historian writing within a generation calls the murder a shame on Cyril and the Church. He wasn't defending Hypatia. He was just being honest.</p>
+      <strong>Cyril and the murder:</strong> The historical record is careful here. Socrates Scholasticus, writing within a generation and as a sympathetic Christian historian, says the murder brought shame on Cyril and the Alexandrian Church — an implicit acknowledgment that responsibility attached to them without his directly claiming that Cyril ordered it. Later hagiographic sources that attempted to clear Cyril's reputation produced increasingly implausible exculpatory narratives. The most accurate reading: Cyril's open conflict with Orestes, his public identification of Hypatia as a malign influence, and his subsequent silence after the murder together constitute responsibility without proven direct command. He was declared a Doctor of the Church in 1882. His role in Hypatia's death has complicated his reputation ever since.
+    </div>
+  </div>
+
+  <div class="year-banner">415</div>
+  <div class="timeline-dot">Alexandria — the aftermath</div>
+  <div class="narrative">
+    <p>After Hypatia's death, the Neoplatonist philosophical school at Alexandria continues. Her students and their students teach. The mathematical tradition she carried is preserved in the commentaries she wrote, which were used by scholars for centuries — her edition of Diophantus's Arithmetica is believed to be the version through which this crucial mathematical text survived to the medieval and Renaissance periods. The synesius letters that describe her teaching are preserved in the Byzantine tradition. She is not entirely erased.</p>
+    <p>But Alexandria changes. The city's intellectual life never entirely recovers the character it had when the pagan tradition and the Christian tradition and the Jewish tradition were in uneasy coexistence. The last pagan philosopher at Alexandria, Olympiodorus, dies around 570 AD — one hundred and fifty years after Hypatia, the tradition continues, but it diminishes. The Arab conquest of Alexandria in 642 AD changes everything again. What survives of the classical intellectual tradition survives through Byzantine transmission, through Arabic translation, through the accident of which texts were copied and which were not.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · post-415</div>
+    <p class="decision-q">Hypatia's murder is often called a symbol of the end of the classical world. Is this accurate?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Yes — her death marks the decisive moment when the Christian Church achieved dominance over the classical intellectual tradition, and what follows is genuinely a different world.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. Partly — the classical philosophical tradition continues in Alexandria and elsewhere for another century and a half after her death. Her murder is a vivid and terrible event, but it is a data point in a longer process rather than a single turning point. The symbolism is accurate about the direction; it overstates the speed and decisiveness of the change.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. No — the Enlightenment use of Hypatia as a symbol of reason martyred by religion is a retrospective idealization that distorts her actual significance, which was local and professional rather than civilizational.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. The question is wrong — classifying history into "classical world" and "post-classical world" is a modern imposition on a continuous process of change, and Hypatia's death doesn't mark a genuine historical boundary.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>Her murder in 415 is called the end of the classical world — but the Neoplatonist school in Alexandria keeps teaching for a century and a half after her death.</strong> What changes is the social position of a pagan intellectual relative to organized Christian power. Hypatia's murder makes that new position visible. It doesn't create it.</p>
+      <strong>Hypatia and the end of antiquity:</strong> The philosopher Damascius, writing in the 520s — a hundred years after Hypatia — describes a living Neoplatonist tradition in Alexandria. Olympiodorus is teaching mathematics and philosophy in Alexandria around 570. The tradition does not end in 415. What changes is the social position of pagan intellectuals relative to Christian institutional power — Hypatia's murder demonstrates the new reality of that relationship, but it does not itself produce the change. Historians like Charles Freeman and Ramsay MacMullen have argued that the process of intellectual change was much slower and more complex than the symbol of Hypatia's death implies.
+    </div>
+  </div>
+
+  <div class="year-banner">1800s</div>
+  <div class="timeline-dot">Hypatia's later reputation</div>
+  <div class="narrative">
+    <p>Hypatia becomes, in the 19th century, one of the central figures in the Enlightenment narrative of reason versus religious fanaticism. Voltaire invoked her. Charles Kingsley wrote a romantic novel about her in 1853. John Toland in the 18th century had described her as a martyr to free thought. The narrative is clear: a great woman scientist-philosopher killed by a Christian mob represents everything the Enlightenment believed about the history of religion and reason.</p>
+    <p>The narrative has some truth in it and some significant distortion. The truth: she was a genuine intellectual of the first rank, she was killed by a religiously motivated mob, and her death was connected to the conflict between civic secular authority and ecclesiastical authority in a Christianizing empire. The distortion: she was not primarily a scientist in the modern sense but a philosopher and mathematician in the classical sense; the classical-world vs. Christian-world framing is too simple; and the Enlightenment narrative needs her to be more secular and more modern than she was. She was a Neoplatonist — she believed in the transcendent One, in the purification of the soul through philosophy, in things that secular modernity finds as uncomfortable as any religion.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · Enlightenment use</div>
+    <p class="decision-q">The Enlightenment made Hypatia a symbol of reason martyred by religion. Is this a fair use of her life?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Yes — her murder by a religious mob for her intellectual activities is precisely what the symbol claims, and the symbol is accurate.</button>
+      <button class="dopt" onclick="choose(this,7,true)">B. Partly but importantly distorted — she was killed in a religiously motivated attack, which the symbol captures. But she was not a secular rationalist: she was a Neoplatonist who believed in the transcendent One and the soul's purification through philosophy. The Enlightenment symbol needs her to be more like a modern scientist than she was, and this distortion flattens a more interesting reality.</button>
+      <button class="dopt" onclick="choose(this,7,false)">C. No — the primary motivation for her murder was political (the Orestes-Cyril conflict) rather than theological (opposition to her paganism), and reading it as religion vs. reason misidentifies the cause.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. The question is irrelevant — how later centuries use historical figures reflects their own needs, not the figure's reality, and the Enlightenment's use of Hypatia should simply be evaluated on its own terms.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>Voltaire makes you a martyr to secular reason.</strong> The problem: you were a Neoplatonist who believed in the transcendent One, in the purification of the soul through philosophy — not a secular rationalist. The Enlightenment needs you to be more like itself than you actually were. The real Hypatia is more interesting than the symbol.</p>
+      <strong>Hypatia and the Enlightenment:</strong> Hypatia's actual philosophy was Neoplatonism — a system in which the material world is a diminished emanation from a transcendent One that is beyond being, in which the goal of philosophy is purification of the soul to ascend toward this transcendence, and in which mathematical study is valuable partly because it trains the mind away from material concerns toward abstract truth. This is not secular rationalism. Voltaire and later admirers needed her to be more like themselves than she was. The genuine Hypatia — a serious philosopher with a specific metaphysical system, murdered in a political-religious conflict — is more complicated than the symbol, and more interesting.
+    </div>
+  </div>
+
+  <div class="year-banner">415</div>
+  <div class="timeline-dot">Alexandria — what endures</div>
+  <div class="narrative">
+    <p>What can be said with confidence about Hypatia: she was the most prominent Neoplatonist philosopher in Alexandria at the turn of the 5th century; she taught mathematics, astronomy, and philosophy to students from across the Mediterranean; her commentary work on Apollonius and Diophantus helped preserve these mathematical texts; she was a counselor to civic officials and a teacher to students who became bishops and pagans alike; she was murdered in March 415 AD in circumstances connected to the conflict between Patriarch Cyril and Prefect Orestes; and her death was recognized at the time as a significant event that reflected badly on the Church that produced the perpetrators.</p>
+    <p>What she thought, in her own words, is almost entirely lost. We have her through other people's accounts of her — through Synesius's love for her, through Socrates Scholasticus's careful historical sympathy, through later traditions that layered symbolic meaning onto a fragmentary historical record. She is, in this sense, exactly like most people of the ancient world: more significant than the record can capture, more specific than the symbol allows.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 415</div>
+    <p class="decision-q">Hypatia's own writings are almost entirely lost. What is the most important thing the fragmentary record tells us about her?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. Her mathematical contributions — the surviving evidence of her work on Apollonius and Diophantus confirms she was a mathematician of genuine significance beyond her fame as a symbol.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. Her social position — the fact that civic officials consulted her and students from across the empire sought her out tells us she was genuinely the most intellectually authoritative figure in late-antique Alexandria.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. The kind of person she was to be around — Synesius's letters, which are the most direct evidence we have, describe someone who taught with rigor and warmth, who took students seriously as individual minds, who maintained standards without condescension. The mathematics and the philosophy matter; the quality of attention she gave to specific human beings may matter more. That is what the surviving letters preserve.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. The nature of her death — how someone dies when the stakes are real tells us something essential about who they were, and Hypatia's death at her post, after years in a city where she could have left, reveals a commitment that her surviving texts cannot.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>All of your own writing is gone.</strong> We have you entirely through others — through a student who became a bishop and still wrote to you in his fifties asking for philosophical help, through a historian who called your murder a shame on the Church, through the letters of someone who loved you and kept that love clear for decades. The most durable thing about you is the quality of attention you gave to specific human beings.</p>
+      <strong>Synesius on Hypatia:</strong> Synesius's letters to Hypatia are the closest we get to her in her own time. He calls her "the blessed lady" and "the one truly philosophizing." He writes asking for her help on practical matters (he wants her to procure scientific instruments) and on philosophical ones (he is working through the problem of how a man who genuinely believes in the philosophical life can also honestly serve as a bishop). What the letters show is a teacher who made individual students feel their questions mattered, who combined technical mathematical knowledge with philosophical depth, and who remained the center of a man's intellectual life for decades. That quality of teaching is what the symbol misses and what the letters preserve.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Hypatia of Alexandria · c. 360–415 AD</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"Reserve your right to think, for even to think wrongly is better than not to think at all."<br><em style="font-size:13px;color:var(--muted);">— attributed to Hypatia of Alexandria</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="socrates-simulator.html" class="next-card">
+        <div class="next-card-name">Socrates</div>
+        <div class="next-card-sub">The hemlock and the examined life</div>
+      </a>
+      <a href="pascal-simulator.html" class="next-card">
+        <div class="next-card-name">Blaise Pascal</div>
+        <div class="next-card-sub">Mathematics, the wager, and the mystic fire</div>
+      </a>
+      <a href="franklin-simulator.html" class="next-card">
+        <div class="next-card-name">Rosalind Franklin</div>
+        <div class="next-card-sub">Photo 51 and the credit she never received</div>
+      </a>
+      <a href="babbage-simulator.html" class="next-card">
+        <div class="next-card-name">Charles Babbage</div>
+        <div class="next-card-sub">He designed the computer. In 1833.</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understand Hypatia — not the symbol but the person behind it. A philosopher who taught rigor and warmth equally, who stayed in a city she could have left, whose quality of attention made one student revere her for forty years. The mathematics was real; so was the teaching.';else if(pct>=0.625)t.textContent='You follow Hypatia\'s life with accuracy most of the time — the genuine philosopher who held the classical tradition across the religious fracture, the person caught between two powerful men neither of whom she had chosen. The gaps are in the nuances of what she was and was not.';else if(pct>=0.375)t.textContent='You grasp Hypatia\'s story but miss some of its complexity — the distinction between her as symbol and her as person, the difference between a secular rationalist and a Neoplatonist, the way her murder was political before it was theological.';else t.textContent='Hypatia is harder to see clearly than the symbol suggests. The Enlightenment needed a martyred scientist. What actually died in 415 AD was a Neoplatonist philosopher and mathematician whose own words are entirely lost — someone we know only through the love her students preserved in letters.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

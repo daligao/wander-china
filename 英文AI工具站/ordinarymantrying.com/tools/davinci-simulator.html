@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Leonardo da Vinci?</title>
+<meta name="description" content="Illegitimate son. Never finished his paintings. Filled 7,000 pages of notebooks with designs for flying machines, tanks, and helicopters — 500 years before they were built. 8 decisions.">
+<meta property="og:title" content="What Would You Do If You Were Leonardo da Vinci?">
+<meta property="og:description" content="8 decisions across the most restless mind in history — artist, engineer, anatomist, musician, botanist. Would you have finished anything?">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/davinci-simulator.html">
+<style>
+:root{
+  --bg:#F8F5EE;--card:#FDFCF8;--ink:#1A1408;--muted:#6A6040;--line:#D8D0B8;
+  --accent:#5C4A1A;--accent-bg:#F8F4E4;
+  --right:#2A6B4B;--right-bg:#E8F5EE;--wrong:#8B2020;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(248,245,238,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#2A2010;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C8B870;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#4A3800;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#FFF8E8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.35);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#2A2010;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.notebook{background:var(--accent-bg);border:1px solid #C8B870;border-radius:8px;padding:18px 20px;margin:20px 0;font-family:var(--serif);font-size:15px;font-style:italic;color:#2A2010;line-height:1.85;border-left:4px solid var(--accent);}
+.notebook-from{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;font-style:normal;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#FFF8E8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C8B870;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#2A2010;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.quote-block{background:var(--ink);color:#F8F4E4;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#907850;margin-top:12px;font-family:var(--mono);}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#2A2010;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#FFF8E8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C8B870;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.cta-box{background:var(--accent);color:#FFF8E8;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#FFE4A0;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Leonardo da Vinci</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #17</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Da Vinci?</h1>
+  <p class="cover-sub">Born illegitimate, he could not inherit, could not enter the professions, could not follow his father to the notary guild. He became the greatest painter, engineer, anatomist, botanist, musician, and inventor of his age — possibly of any age. He left 7,000 pages of notebooks and fewer than 20 finished paintings. He never stopped starting things. He almost never finished them. <strong>8 decisions. Would you have done the same?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Leonardo di ser Piero da Vinci</strong> (1452–1519) · Italian Renaissance polymath · Painter, sculptor, architect, engineer, scientist, botanist, musician · Apprenticed under Verrocchio at age 14 · Worked for the Sforza in Milan, then Borgia, then the Medici, then the King of France · 7,000+ notebook pages survive · Designed flying machines, tanks, solar power, and a robot · <em>The Last Supper, Mona Lisa, Vitruvian Man, Lady with an Ermine.</em></p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1466, Florence</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Workshop</span></div>
+<div class="year-banner">1466</div>
+<div class="timeline-dot">Florence, Verrocchio's Workshop · Age 14</div>
+<div class="narrative">
+  <p>You are the illegitimate son of a notary and a peasant woman. Your father never married your mother. You live with your grandparents and then your father, who has now married someone else. You cannot inherit. You cannot become a notary like your father. The legitimate professions are closed to you by the accident of your birth.</p>
+  <p>What you can do is draw. You have always been able to draw — since you could hold a stick. Your father, perhaps feeling some obligation, arranges an apprenticeship with Andrea del Verrocchio, one of Florence's leading artists. The workshop produces paintings, sculptures, bronze castings, goldsmithing, theatrical design, engineering work. It is the Renaissance equivalent of a technology company and a fine arts school combined.</p>
+  <p>Verrocchio works you hard. You learn to grind pigments, prepare canvases, assist with background details in the master's paintings. You are good — exceptionally good — almost immediately. Verrocchio notices. He gives you more responsibility.</p>
+  <p>You could focus on becoming the best painter in the workshop — specialize, develop mastery in one area, build a reputation. Or you could do what your curiosity pulls you toward: learn everything, investigate everything, follow every question wherever it leads.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — Specialize or Wander</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You are talented in painting but equally drawn to engineering, music, and science. Do you specialize, or follow every question that interests you?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Specialize in painting. Florence values painters. Mastery in one thing builds a career. You can always explore other interests after you have established yourself.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">B</span><span class="dopt-body">Follow everything. Painting, engineering, anatomy, music, botany — let the questions lead where they lead. Depth in one thing requires understanding everything connected to it.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">Focus on engineering and practical invention. Florence needs builders. Art is prestigious but engineering will outlast any individual painting.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Leonardo actually did</div>
+      <p><strong>You produce the greatest drawings in history and fewer than 20 finished paintings. The 7,000 pages of notes, written in mirror-script that discourages casual reading, will not be fully studied until 400 years after your death.</strong> Leonardo followed everything. His notebooks — 7,000 pages, written in mirror-script from right to left, possibly to prevent copying — contain designs for flying machines, studies of water flow, anatomical drawings from 30+ human dissections, botanical illustrations, optical experiments, musical instrument designs, military engineering, and thousands of observations about the natural world. He argued that painting required understanding all other disciplines — you could not paint water without understanding how water moved, could not paint a human figure without understanding how muscles worked under skin. This philosophy produced the greatest drawings in history and the fewest finished paintings of any major Renaissance master.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Letter</span></div>
+<div class="year-banner">1482</div>
+<div class="timeline-dot">Florence → Milan · Age 30</div>
+<div class="narrative">
+  <p>You are 30 and have been in Florence for sixteen years. You have established a reputation — you are considered one of the finest painters of your generation. But Florence already has Botticelli, Ghirlandaio, Perugino. The Medici court is full of artists.</p>
+  <p>You have decided to approach Ludovico Sforza, the Duke of Milan, for a position at his court. Milan is less saturated with artistic talent. More importantly: Ludovico needs engineers. He needs someone who can design weapons, fortifications, canals, and siege equipment for his ambitions in northern Italy.</p>
+  <p>You write him a letter. The letter lists ten skills. Nine of them are military engineering — bridges, siege weapons, armored vehicles, cannons, ships. The tenth, almost as an afterthought, is this: "In times of peace I believe I can give perfect satisfaction and to the equal of any other in architecture and the composition of buildings public and private; and in guiding water from one place to another. I can carry out sculpture in marble, bronze, or clay, and also I can do in painting whatever may be done, as well as any other, be he who he may."</p>
+  <p>You are offering yourself primarily as a military engineer. You are a painter hiding behind weapons.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Letter to Ludovico</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">To secure the Milan position, you are presenting yourself as a military engineer rather than as an artist. Is this the right approach?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Lead with the art. You are one of the finest painters in Italy. That is your clearest credential. The engineering follows from the same mind — let the art speak first.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">Lead with what Ludovico needs. He is a warlord, not an art collector. Offer him war machines first, and gain the position and resources to pursue everything else from inside the court.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Don't leave Florence. Milan is politically unstable and Ludovico is a mercurial patron. Florence is safer and you are building a real reputation here.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Leonardo actually did</div>
+      <p><strong>You sell yourself as a military engineer to a warlord. The bronze you promise to cast into a 24-foot horse statue will be melted into cannons when the French invade. You paint The Last Supper on his dining room wall instead.</strong> Leonardo sent the letter and moved to Milan. He spent 17 years at the Sforza court — the most productive period of his life. He painted The Virgin of the Rocks, Lady with an Ermine, and The Last Supper. He designed a massive equestrian statue of Francesco Sforza (the bronze was never cast — the metal was used for cannons when the French invaded). He filled notebooks with engineering designs, musical instruments, theatrical machinery. He dissected bodies in the hospital at night and painted by day. The military engineering he promised Ludovico was partly real, partly speculative — his designs were imaginative but often impractical for actual 15th-century production. Ludovico got his court entertainment. Leonardo got seventeen years of resources and freedom.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>Learning never exhausts the mind.</q>
+  <div class="q-attr">— Leonardo da Vinci, Notebooks</div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Unfinished Altarpiece</span></div>
+<div class="year-banner">1481</div>
+<div class="timeline-dot">Florence · Age 29</div>
+<div class="narrative">
+  <p>Before you left for Milan, the monks of San Donato a Scopeto commissioned you to paint an Adoration of the Magi — a large altarpiece showing the three wise men presenting gifts to the infant Jesus. They have paid you in advance, including land rights, and they need the painting within 24 months.</p>
+  <p>You began the work. The underdrawing is extraordinary — dozens of figures in complex perspectival arrangement, horses rearing, old men leaning forward, young men gazing upward. The composition is the most sophisticated anyone in Florence has attempted. You made a beautiful, intricate architectural setting in perspective. You have been working on the preparation for months.</p>
+  <p>You have not added a single layer of paint to the final surface.</p>
+  <p>Now you are leaving for Milan. The monks will never receive their altarpiece. Filippino Lippi will be commissioned to paint a different version 15 years later. Your unfinished panel will sit in a storeroom, unpainted, for the rest of your life — one of the most studied "unfinished" works in art history.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — Finish It or Leave</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have an outstanding commissioned painting, paid for, that you have not finished. You are about to leave for Milan. What do you do?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Stay and finish the Adoration. You took the commission and the payment. Leaving without finishing it is a breach of your word, whatever Milan is offering.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Finish the drawing and transfer the commission to another artist. Give the monks something completed, even if not by your hand.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Leave. The problem has moved past what interests you. The Adoration as drawn is already more advanced than anything you could satisfactorily paint on it — completing it would mean making it worse. Milan waits.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Leonardo actually did</div>
+      <p><strong>You have taken their payment. You leave for Milan without applying a single layer of paint to the final surface. The monks wait fifteen years before commissioning a replacement from Filippino Lippi. Your underdrawing sits in a storeroom, unpainted, for the rest of your life.</strong> Leonardo left for Milan and never finished the Adoration of the Magi. He left behind at least six other unfinished commissions during his career, including the Sforza horse statue, the Battle of Anghiari (which he painted with an experimental technique that failed and began to deteriorate while he was still working on it), and Saint Jerome in the Wilderness. The pattern — begin brilliantly, lose interest before completion, move to the next question — is the defining feature of his career. Scholars still debate whether this was a flaw or a method: the sketches and underpaintings often contain more innovation than the finished works of his contemporaries.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Flying Machine</span></div>
+<div class="year-banner">1505</div>
+<div class="timeline-dot">Florence · Age 53</div>
+<div class="narrative">
+  <p>Your notebooks contain designs for a flying machine — an ornithopter, a device with wings that beat like a bird's, powered by a person lying face-down and working pedals with their legs. You have studied birds obsessively. You have written a book, the Codex on the Flight of Birds, analyzing how wings generate lift, how a bird adjusts its weight to bank and turn, how feathers respond to wind.</p>
+  <p>You believe the machine can work. You have been refining the design for twenty years. The Fiesole hill near Florence, you have written in a note, "will give fame to the nest in which it was born." Someone will test it there.</p>
+  <p>But the machine has never been built. You do not have the resources to build it yourself. The patrons who fund your painting do not fund mechanical experiments. You would need wood, fabric, rope, metalwork, and a test pilot willing to potentially fall from a height.</p>
+  <p>You could divert income from painting commissions to fund the construction. You could find a patron specifically for the project. Or you could leave the design in the notebooks and keep developing it in theory.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — Build It or Draw It</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have designed a flying machine. You believe it could work. Do you try to build it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Build it. The design is complete enough. Commit your painting income to the construction. A theoretical machine that is never tested teaches nothing.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">B</span><span class="dopt-body">Keep it in the notebooks. The design is still evolving. Building the current version would freeze the thinking prematurely. There are still things to understand about how birds fly.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">Find a patron for the specific project. Approach Ludovico, or the Florentine republic, with a formal proposal. Funding the experiment is a separate task from designing it.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What Leonardo actually did</div>
+      <p><strong>Your ornithopter would not have flown. Modern engineers who finally analyzed the design in the 20th century found the human body cannot generate enough power for wing-driven flight. You spend 20 years perfecting a machine that cannot work, while your glider designs — which might have flown — stay in the notebooks.</strong> Leonardo never built a working flying machine. His ornithopter designs, modern engineers have analyzed, would not have flown — the human body cannot generate enough power to sustain wing-driven flight. His glider designs, however, are more plausible, and his understanding of aerodynamics anticipated principles that wouldn't be formally described until the 19th century. A reconstruction of his designs was test-flown in 2002 and achieved brief, limited flight. The notebooks preserve 500 years of ideas that were ahead of their time — but they are drawings, not machines. Whether Leonardo knew the ornithopter wouldn't work and kept developing it anyway, or genuinely believed it would fly, is one of the unresolved questions of his biography.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Mona Lisa</span></div>
+<div class="year-banner">1503</div>
+<div class="timeline-dot">Florence · Age 51</div>
+<div class="narrative">
+  <p>Francesco del Giocondo, a Florentine merchant, has commissioned you to paint a portrait of his wife, Lisa. It is a routine commission — portrait of a merchant's wife, payment on delivery. You begin the work.</p>
+  <p>But something about this portrait is different from the beginning. You are experimenting with sfumato — a technique of layering glazes so thin that edges dissolve rather than being drawn — and the effect on the face is unlike anything you have achieved before. The smile is ambiguous. The landscape behind her is not a real landscape but a composite of everything you have observed about geology, water, atmosphere, and light. You keep working on it.</p>
+  <p>Four years pass. Francesco del Giocondo has not received his painting. You are in Milan. You are in Rome. You still have the painting. You are still working on it.</p>
+  <p>You will never deliver it. You will carry it with you for the rest of your life, still touching it in the final years. King Francis I of France will buy it from your estate after your death.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Portrait You Never Deliver</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have been painting the Mona Lisa for four years and it is still in your studio. Francesco del Giocondo wants his portrait. Do you deliver it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Deliver it. It is finished enough. A portrait commissioned for a merchant's wall does not need to be a philosophical statement. Francesco paid for a painting of his wife, not a meditation on perception.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">Deliver it but make a private copy to keep working on. Fulfill the commission professionally, then continue the experiment for yourself.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">Keep it. This painting has become something beyond a commissioned portrait. You are learning things from it that you could not learn any other way. It will be finished when it is finished — which may be never.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Leonardo actually did</div>
+      <p><strong>You take Francesco del Giocondo's commissioned portrait of his wife and carry it for 16 years — to Milan, to Rome, to France — still adjusting it when you are dying. King Francis I buys it from your estate for 4,000 gold écus. Francesco del Giocondo's wife never sees the finished version.</strong> Leonardo kept the Mona Lisa. He carried it with him from Florence to Milan to Rome to France, where he lived the last three years of his life under the patronage of King Francis I. He was still making tiny adjustments to it, according to some accounts, in the final months before his death. Francis I bought it from his estate for 4,000 gold écus. It hung in the palace at Fontainebleau, then Versailles, then was moved to the Louvre during the Revolution. Napoleon Bonaparte briefly took it to hang in his bedroom. The Louvre acquired it permanently and has held it since 1797. It is currently the most visited artwork in the world. Francesco del Giocondo's wife never saw the finished version.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Anatomy</span></div>
+<div class="year-banner">1510</div>
+<div class="timeline-dot">Milan · Age 58</div>
+<div class="narrative">
+  <p>You have now dissected more than thirty human bodies. You have done this in hospital morgues, working at night by candlelight, in the cold, in conditions that made most people unable to function. The purpose was initially practical: to understand the human figure well enough to paint it accurately. But it has become something else.</p>
+  <p>Your anatomical notebooks contain the most accurate drawings of human internal anatomy produced before the age of printing. You have drawn the heart, the lungs, the brain, the skeleton, the muscles in layers, cross-sections of the embryo in the womb. You have identified the four chambers of the heart. You have described the function of the aortic valve in terms that would not be formally recognized by medicine for another 400 years.</p>
+  <p>A colleague suggests you should publish this work — compile it into a book of anatomy. It would be the most accurate medical reference in existence. You have all the illustrations. You have the knowledge. You need only to write the text and organize the plates.</p>
+  <p>You begin. You make notes toward a prefatory text. You keep making more dissections, which produce more drawings, which require more organization. The book grows. It is never finished.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Publish the Anatomy</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have the most accurate anatomical knowledge in the world. Do you stop adding to it and publish what you have?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Publish now. An imperfect book that exists is infinitely more valuable to medicine than a perfect book that never ships. Stop adding, organize what you have, release it.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">B</span><span class="dopt-body">Keep investigating. There are things you still don't understand — the function of the heart valves, the mechanism of blood flow. Publishing prematurely would require stating things you're not yet certain of. Certainty first.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">Hand the project to a younger colleague with medical training. You have produced the illustrations. Someone with the institutional standing to publish should take it from here.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What Leonardo actually did</div>
+      <p><strong>Your anatomical drawings — from 30+ dissections, accurate enough to anticipate discoveries not formally recognized for 400 years — stay in the drawer. Andreas Vesalius publishes his anatomy book in 1543, 24 years after your death, without access to your work. Medical history might have been different.</strong> Leonardo never published the anatomical notebooks. He kept adding to them. When he died, they passed to his assistant Francesco Melzi, who preserved them but also never published them. After Melzi died, the notebooks were dispersed, lost, sold in pieces, scattered across Europe. They were not reassembled and studied as a unified body of work until the 19th century. Andreas Vesalius published his landmark anatomy book De Humani Corporis Fabrica in 1543 — 24 years after Leonardo's death — without access to Leonardo's work. If Leonardo had published his anatomical drawings in 1510, Vesalius's book might not have been necessary. Medical history might have been different. The notebooks stayed in the drawer.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · Cesare Borgia</span></div>
+<div class="year-banner">1502</div>
+<div class="timeline-dot">Central Italy · Age 50</div>
+<div class="narrative">
+  <p>Cesare Borgia — illegitimate son of Pope Alexander VI, the most feared man in Italy, a man who poisoned rivals and murdered political opponents as a matter of routine — has hired you as his military engineer and architect. You will travel with his army as he conquers central Italy.</p>
+  <p>You have taken the position. You are mapping towns, designing fortifications, inspecting drainage systems. You are producing the most accurate maps of central Italy that have ever been made. You are also working for a man who is committing atrocities in the towns you are mapping.</p>
+  <p>In your notebooks from this period, you record everything you see — military fortifications, water channels, town layouts — without comment on the violence happening around you. Borgia's soldiers are massacring populations in some of the towns you visit. You make engineering notes.</p>
+  <p>Your closest friend from this period is Niccolò Machiavelli, who is also traveling with Borgia's court as a Florentine diplomatic observer. Machiavelli is studying Borgia for the book he will eventually call <em>The Prince</em>. You are drawing maps.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — Working for Borgia</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You are employed by a man committing atrocities. The work — maps, engineering, observation — is extraordinary. Do you stay?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Leave. No map or fortress is worth being complicit in murder. A mind like yours should not serve a tyrant regardless of what the work produces.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">Stay. Separate the work from the patron. The maps are real. The observations are real. What Borgia does with his army is not your work — your work is understanding the land and how to build on it.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">Stay but work slowly. Delay the most militarily useful deliverables. Give Borgia enough to keep you employed but sabotage the most dangerous applications.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Leonardo actually did</div>
+      <p><strong>You spend a year mapping towns for a man who is massacring their populations. Your notebooks from this period contain no moral commentary. Your closest companion is Niccolò Machiavelli, who is also traveling with Borgia — taking notes on him for a book he will eventually call The Prince.</strong> Leonardo stayed with Borgia for nearly a year — until Borgia's political position collapsed in 1503. His notebooks from this period contain no recorded moral commentary on what he witnessed. Historians have debated this silence ever since. Some argue that Leonardo, as an artist dependent on powerful patrons, had no realistic alternative. Others argue his silence is simply consistent with his general practice of observing the world without moral judgment in the notebooks, which were private working documents rather than moral diaries. What the period produced: the most detailed maps of central Italy of the era, and friendship with Machiavelli, who may have used Leonardo as a partial model for the rational, amoral advisor described in The Prince.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · Amboise</span></div>
+<div class="year-banner">1519</div>
+<div class="timeline-dot">Château du Clos Lucé, France · Age 67</div>
+<div class="narrative">
+  <p>King Francis I of France has given you a house — the Château du Clos Lucé, a short walk from his palace at Amboise. He visits you often. He calls you his "dear friend." He pays you a substantial annual salary with no specific deliverables. You are, for the first time in your life, free to do exactly what you want with no obligations to complete anything.</p>
+  <p>You are 67. Your right hand has been partially paralyzed — some historians believe by a stroke — and you can no longer paint with it. You have taken to drawing with your left hand. You fill notebooks with water studies — turbulent water, water flowing past obstacles, water from above and below. You write that you have understood something about how water moves that no one has understood before.</p>
+  <p>You have 7,000 pages of notebooks. Thousands of drawings. Fewer than 20 finished paintings. Dozens of unfinished projects. The anatomical book never published. The flying machines never built. The great bronze horse never cast. The Battle of Anghiari that started and failed.</p>
+  <p>Francis asks what you regret.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Question Francis Asked</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Looking at 7,000 pages of notebooks and fewer than 20 finished paintings — what is the honest answer to what you regret?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Not finishing more. The anatomical book should have been published. The flying machine should have been built. The unfinished works are a failure of discipline.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Not being understood sooner. The ideas were right but arrived before anyone could use them. The timing, not the thinking, was the failure.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">Nothing. A finished thing is a dead thing. Every unfinished work is still asking a question. The notebooks are not failures — they are 7,000 pages of questions, and the questions are not wrong.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What Leonardo actually said</div>
+      <p><strong>Vasari records that on your deathbed you say you offended God and humanity by not working at your art as you should have. Your notebooks — which no one reads carefully for 400 years — say something different: a man who believed the question was the product. Both things may be true.</strong> According to Vasari, who interviewed people who knew Leonardo, he said on his deathbed that he had offended God and humanity by not working at his art as he should have. This is often read as an expression of regret about the unfinished work. But Leonardo's notebooks tell a different story: a man who believed that understanding something was more valuable than producing an object, that the process of investigation was itself the product. He wrote: "As a well-spent day brings happy sleep, so a life well spent brings happy death." He died on May 2, 1519, reportedly in the arms of Francis I. His notebooks passed to Melzi, were eventually dispersed, and most were not fully studied until the 20th century — 400 years after his death. When engineers finally read them carefully, they found machines that wouldn't be independently invented for centuries. The questions in the notebooks were not wrong. They were simply early.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Leonardo's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="cta-box">
+  <p>Leonardo left 7,000 pages of questions and fewer than 20 finished answers. The questions turned out to be more valuable. What does a life of relentless curiosity look like from the inside? These 8 decisions give you 8 chances to find out. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/index.html#simulators">→ All Life Simulators — Van Gogh, Tesla, Mozart, Beethoven, Einstein and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/beethoven-simulator.html" style="color:var(--accent)">Beethoven Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Leonardo";body="You followed every question past the point of completion — sold your skills to a warlord, left the monks without their painting, kept the Mona Lisa for 16 years, left the anatomy in the drawer. 7,000 pages, 20 paintings. On his deathbed Leonardo said he had offended God by not finishing enough. His notebooks suggest he never quite believed it.";}else if(pct>=0.625){title="You Understood the Wandering";body="You matched Leonardo on the moves requiring curiosity over completion — the notebooks, the Milan letter, the Borgia year. Where you broke from him is where a practical case for finishing existed. Publishing the anatomy in 1510 might have helped patients Vesalius reached only in 1543. Leonardo understood this trade. He made it anyway.";}else if(pct>=0.375){title="You'd Have Finished More";body="You deliver the Adoration, publish the anatomy, build the flying machine, and discover it doesn't fly. You finish more and probably understand less. Whether that trade is worth making is the question Leonardo's 7,000 pages keep asking without resolving.";}else{title="The Practical Renaissance";body="You specialize, finish your commissions, deliver the Mona Lisa to Francesco del Giocondo. You are a successful Renaissance painter — solvent, respected, better known in your own lifetime than Leonardo was. He died in a château given to him by the King of France. The notebooks he left behind took 400 years to fully read."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

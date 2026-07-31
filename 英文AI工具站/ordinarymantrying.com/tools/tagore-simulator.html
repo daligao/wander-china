@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Rabindranath Tagore?</title>
+<meta name="description" content="He won the Nobel Prize in Literature in 1913 — the first non-European to do so. He founded a school to replace rote learning with joy. He returned his knighthood to protest a massacre. 8 decisions.">
+<meta property="og:title" content="What Would You Do If You Were Rabindranath Tagore?">
+<meta property="og:description" content="Poet, musician, painter, educator, nationalist who opposed nationalism. The first Asian Nobel laureate in Literature. 8 decisions from Tagore's life.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/tagore-simulator.html">
+<style>
+:root{
+  --bg:#F5F0E8;--card:#FBF8F2;--ink:#18100A;--muted:#483820;--line:#C8B898;
+  --accent:#7B4810;--accent-bg:#EDE0C8;
+  --right:#186030;--right-bg:#E0EEE8;--wrong:#601818;--wrong-bg:#EEE0DF;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,240,232,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#18100A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B8A080;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#201408;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0E8D8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#18100A;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0E8D8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B8A080;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#201408;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#18100A;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F0E8D8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B8A080;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#F0E8D8;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#D4B888;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Rabindranath Tagore</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #37</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Rabindranath Tagore?</h1>
+  <p class="cover-sub">He wrote poetry, novels, plays, music, and painted — all at world-class level. In 1913, he became the first non-European to win the Nobel Prize in Literature. When British soldiers massacred 379 unarmed civilians at Amritsar in 1919, he returned his knighthood to the King of England. He founded a school where children learned under the trees. He said the measure of education is joy. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Rabindranath Tagore</strong> (1861–1941) · Born Jorasanko Thakur Bari, Calcutta, Bengal · Family: aristocratic Bengali Brahmo family; father Debendranath Tagore was a religious reformer · Self-educated, mostly at home · Began writing poetry at 8; first published at 16 · Married Mrinalini Devi 1883; she died 1902, along with two of their five children · Managed family estates in rural Bengal starting 1891 — direct contact with rural poverty · Founded Visva-Bharati University at Shantiniketan, West Bengal, 1921 (school started 1901) · 1913: Nobel Prize in Literature (for Gitanjali — "Song Offerings") — first non-European Nobel laureate in Literature · Knighted 1915; returned the knighthood 1919 in protest of the Jallianwala Bagh massacre (379 killed) · Traveled to 30+ countries, corresponding with Einstein, Shaw, Gandhi, Yeats · Final years composing poetry and painting · Died August 7, 1941, age 80, in Calcutta. Wrote the national anthems of both India (Jana Gana Mana) and Bangladesh (Amar Shonar Bangla).</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1891, Rural Bengal</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · Managing the Estates</span></div>
+<div class="year-banner">1891</div>
+<div class="timeline-dot">Shelaidaha, Bengal · Age 30</div>
+<div class="narrative">
+  <p>Your father has asked you to manage the family estates — vast landholdings in rural Bengal, where the family collects rent from thousands of tenant farmers. You are a poet, educated in England, 30 years old. You had expected to live in Calcutta's literary world. Instead you are on a houseboat on the Padma River, dealing with floods, rent disputes, harvest failures, and the grinding poverty of people who work land they don't own.</p>
+  <p>What happens is unexpected: the river, the monsoon, the rural poor — these things enter your poetry and change it. The abstract spiritual poetry of your early career gives way to something more grounded, more human. The estates you resented are teaching you what you needed to know.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Reluctant Estate Manager</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tagore spent 10 years managing rural estates, which he initially didn't want. How did this constraint shape his work?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">By giving him subject matter. Rural Bengal — the rivers, the peasants, the monsoon — entered his poetry because he lived in it. Without the estates, his work would have remained abstract and Calcutta-bound.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">By giving him a sense of social responsibility. Seeing poverty directly made him a reformer, not just a poet. The estates turned him outward, toward the world's actual conditions rather than spiritual abstraction.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and they're connected. The subject matter (the river, the villagers) and the social responsibility (the awareness of poverty and inequality) arrived together. He couldn't have one without the other. The constraint of the estates gave him both simultaneously, in a way that choosing either a purely literary or purely social career would not have.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">The Bengal years</div>
+      <p><strong>You spend ten years managing land you never asked for, collecting rent from farmers who can barely eat — and it turns out this is the decade that transforms you from a Calcutta poet into a writer worth reading.</strong> Tagore managed the Tagore family estates in the Rajshahi district (now Bangladesh) from roughly 1891-1901. He lived on a houseboat on the Padma River for extended periods. The short stories he wrote during this period — collected in Galpaguchchha — are considered his finest prose fiction. They're set in rural Bengal and deal with subjects absent from his earlier poetry: poverty, gender inequality, the relationship between landlord and tenant, the lives of ordinary villagers. He initiated cooperative banks and small agricultural reform efforts on the estates. The work was practical management during the day and writing at night. When he later founded Shantiniketan, the combination of learning and doing that he'd experienced in Bengal was built into the school's structure.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The School</span></div>
+<div class="year-banner">1901</div>
+<div class="timeline-dot">Shantiniketan, West Bengal · Age 40</div>
+<div class="narrative">
+  <p>You have started a school. Not the kind of school you were forced to attend — buildings, rote learning, children sitting in rows absorbing information. This school has classes under trees. Students learn Bengali, Sanskrit, English, nature study, music, art — through engagement with the world around them, not through memorization and examination. You hire the best teachers you know. You enroll five boys initially, including your own son.</p>
+  <p>The school is deeply unusual for colonial India, where British education has imposed a system of rote learning designed to produce English-speaking clerks. You want something different: educated people who are curious about the world and can think for themselves. "The highest education," you believe, "is that which does not merely give us information but makes our life in harmony with all existence."</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Education as Harmony</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tagore founded a school based on joy and harmony rather than rote learning. Was this a romantic ideal or a better theory of education?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Romantic ideal. Children in open-air classes sound appealing, but the real world requires systematic knowledge acquisition. Rote learning has proven effective for building foundational competence. Tagore's model was too poetic to be practical.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">Better theory. Modern educational research consistently shows that intrinsic motivation (wanting to learn) produces better long-term outcomes than extrinsic motivation (fear of failure, rote repetition). Tagore was ahead of the research.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and the tension is real. The research on intrinsic motivation supports Tagore's intuition. But implementing it requires enough structure to build foundational competence, and enough freedom to build curiosity. Finding this balance is the real challenge. Tagore knew he was describing an ideal and trying to approximate it, not claiming he'd solved education.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">Visva-Bharati and its influence</div>
+      <p><strong>You start a school with five boys, including your own son, held under the trees of a village in Bengal — and sixty years later that same school is a Central University of India, and progressive educators on three continents are citing your methods.</strong> Tagore's school at Shantiniketan (founded 1901) grew into Visva-Bharati University (chartered 1921), which he described as "where the world makes its home in a single nest." He brought international scholars, artists, musicians, and thinkers to the school — including scholars from China, Indonesia, and Japan, reflecting his pan-Asian vision. Graduates included future Indian Prime Ministers and cultural leaders. The pedagogical approach — outdoor learning, arts integration, holistic development — was later cited by Maria Montessori and John Dewey as aligned with progressive education principles they were developing independently. Visva-Bharati is now a Central University of India, though critics note it has become more institutionalized than Tagore intended. The outdoor classroom principle — that learning should be connected to natural and social environments — continues to influence progressive education worldwide.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Nobel Prize</span></div>
+<div class="year-banner">1913</div>
+<div class="timeline-dot">London · Age 52</div>
+<div class="narrative">
+  <p>The Nobel Committee in Stockholm announces the 1913 Nobel Prize in Literature. The winner is Rabindranath Tagore, for Gitanjali — "Song Offerings," a collection of devotional poetry that the Irish poet W.B. Yeats had introduced to the English-speaking world through an English translation Tagore made himself. You are in London when the announcement comes. You are 52. You are the first non-European — the first Asian — to receive the Nobel Prize in Literature.</p>
+  <p>Bengal celebrates. India celebrates. The Nobel Prize is, for a colonized people, a particular kind of vindication: the colonizer's highest cultural authority has acknowledged the literature of the colonized as equal. This is complicated and real simultaneously.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Nobel's Meaning</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tagore's Nobel Prize was celebrated as validation by the West of Indian literature. Was this a genuine recognition or a complicated form of colonial approval-seeking?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Genuine recognition. The Swedish Academy recognized literary quality that was genuinely present. That the recognition came from Europe doesn't make it less valid. Great work is great work.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Complicated colonial approval-seeking. The fact that India celebrated a European prize as validation reveals how deeply colonial structures had shaped what counted as legitimate cultural achievement. Bengali literature had existed for centuries without needing Swedish validation.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both simultaneously — and Tagore himself recognized this tension. He accepted the prize. He also spent his life arguing that Asia had its own civilizational values that didn't require Western validation. The Nobel was real recognition AND it operated within a colonial hierarchy of cultural prestige that he simultaneously benefited from and critiqued.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">Tagore on East and West</div>
+      <p><strong>You translate your own Bengali poetry into English, hand the manuscript to an Irish poet named Yeats, and the Swedish Academy makes you the first non-European writer in history to win the Nobel Prize in Literature.</strong> Tagore spent much of his career navigating the relationship between Indian and Western cultural traditions. He was deeply influenced by both — his family had been reformers bridging Hindu tradition and Western modernity. He lectured extensively in the West (US, UK, Europe, Japan, China, Latin America) on Indian philosophy and arts. He also consistently critiqued Western materialism, nationalism, and colonialism. His lectures on "The Religion of Man" and "Nationalism" (1917) argued that Europe's nation-state model was destructive — he predicted it would lead to wars of enormous scale. He was giving these lectures in 1916-17, exactly when WWI was killing millions. The Nobel gave him the platform to make these arguments to Western audiences; the prize's prestige was one of the tools he used to critique the civilization that gave it to him.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Returning the Knighthood</span></div>
+<div class="year-banner">1919</div>
+<div class="timeline-dot">Bengal · Age 58</div>
+<div class="narrative">
+  <p>On April 13, 1919, British General Reginald Dyer orders troops to open fire on a peaceful gathering at Jallianwala Bagh, Amritsar, Punjab. 379 people are killed (British count; Indian estimates are higher). The crowd was attending a festival and was trapped — there was only one exit. The troops blocked it. They fired for ten minutes until they ran out of ammunition.</p>
+  <p>You were knighted in 1915. You write to the Viceroy of India: "The time has come when badges of honour make our shame glaring in the incongruous context of humiliation, and I for my part wish to stand, shorn of all special distinctions, by the side of those of my countrymen who for their so-called insignificance are liable to suffer degradation not fit for human beings." You return the knighthood.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Returned Knighthood</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tagore returned his British knighthood to protest the Amritsar massacre. Was this a meaningful gesture or an empty symbol?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Empty symbol. Returning a title costs nothing material and changes nothing on the ground. 379 people were dead; a returned knighthood didn't help them or prevent future massacres.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Meaningful gesture. When one of the most famous people in the world, already honored by the British Crown, publicly rejects that honor and explains why, the statement reaches audiences that political arguments cannot. Symbols move people when arguments don't.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, and the distinction matters. The gesture was symbolically powerful and practically useless against the immediate injustice. Symbols are not nothing — they name what has happened and refuse to pretend otherwise. But Tagore knew they don't substitute for political change, which is why he continued supporting the independence movement through organizing, writing, and education.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">The Jallianwala Bagh massacre and its aftermath</div>
+      <p><strong>The British Army kills 379 unarmed civilians at a festival in Amritsar — and your response is to mail your knighthood back to the King of England.</strong> The Jallianwala Bagh massacre (April 13, 1919) is considered one of the most significant events in the history of Indian independence. British General Reginald Dyer ordered his troops to fire on an unarmed crowd of approximately 10,000-20,000 people at a festival gathering, without warning. 379 deaths were acknowledged officially; Indian estimates suggest 1,000+. Dyer was reprimanded but not prosecuted; he was celebrated as a hero by some in Britain. Tagore's letter to the Viceroy, renouncing his knighthood, was one of the most powerful contemporary responses. It was read across India and widely reported internationally. Gandhi, who had initially supported the British war effort, shifted toward more confrontational non-cooperation after Amritsar. The massacre and responses to it are considered a turning point in the independence movement. Tagore's gesture was remembered at Indian independence in 1947 as an example of moral clarity in the face of colonial violence.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · Nationalism</span></div>
+<div class="year-banner">1917</div>
+<div class="timeline-dot">United States · Age 56</div>
+<div class="narrative">
+  <p>You are in the United States giving lectures that will be published as "Nationalism." Europe is in the middle of World War I. Your argument: nationalism — the organization of a people primarily around national identity and loyalty to the state — is a disease. It has made Europeans efficient in industry and killing but has strangled the human impulse toward universal connection. You are Indian, living under British colonialism, and you are arguing against nationalism — including Indian nationalism.</p>
+  <p>Gandhi and others who seek Indian independence are puzzled and sometimes frustrated. You support independence; you do not support replacing British colonialism with Indian nationalism. You want something harder to name: freedom that doesn't reproduce the structures it's freeing people from.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Against Nationalism</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tagore opposed nationalism — including Indian nationalism — while living under colonial rule. Was this principled or naive?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Naive. Nationalism was the available tool for achieving Indian independence. Abstractly preferring "universal human community" while the British occupied India was a luxury of someone who didn't have to live in the grinding reality of colonial subject life.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">Principled. WWI showed exactly what nationalism produced. Tagore's warning — that the nation-state model would lead to competitive warfare — was accurate. Opposing it before Indian independence required genuine courage, not comfort.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and the tension is real and unresolved. Independence required nationalist organization. The nationalist state that achieved it has had exactly the problems Tagore predicted. He was right about the diagnosis and practically impossible about the alternative. Being right about what not to do doesn't provide the tools to do something better.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">Tagore on nationalism — what happened next</div>
+      <p><strong>You are an Indian man living under British colonial rule, giving lectures in America arguing that nationalism — including Indian nationalism — is a disease. It is 1917. World War One is killing 20,000 men per week, proving your point in real time.</strong> Tagore's 1917 "Nationalism" lectures argued that the European nation-state model — organized around ethnic, linguistic, or political solidarity and competitive with other states — was a "political organization" that suppressed individual and cultural flourishing in service of state power. He predicted it would produce "national selfishness assuming the garb of patriotism." He made these arguments while WWI killed 20 million people — a confirmation in real time of his analysis. In 1947, India achieved independence through a nationalist movement. In 1947-48, partition between India and Pakistan produced one of the largest forced migrations in human history, with hundreds of thousands killed in communal violence. Tagore died in 1941, so he didn't see partition. But the communal violence that accompanied Indian independence was exactly what his anti-nationalism was designed to prevent. He was right about the danger and unable to provide a viable alternative path.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Einstein</span></div>
+<div class="year-banner">1930</div>
+<div class="timeline-dot">Berlin · Age 69</div>
+<div class="narrative">
+  <p>You meet Albert Einstein in Berlin. It is the second of several conversations you will have over the following years. You discuss the nature of reality — whether it exists independently of human observation and consciousness. Einstein believes in objective reality: the moon exists when no one is looking at it. You argue, from the Hindu philosophical tradition of Brahman, that reality and consciousness are not separate — that the truth of existence is always related to a human mind apprehending it.</p>
+  <p>Einstein is not convinced. Neither are you. You have a genuine philosophical disagreement and a genuine mutual respect. You will continue to correspond. Two men from different traditions, thinking about the same questions.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Reality and Consciousness</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tagore argued that reality and human consciousness are inseparable. Einstein disagreed. Who was closer to right?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Einstein. Physics depends on an objective reality that exists independently of observation. Scientific progress requires the moon to exist when no one is looking. Tagore's position, however philosophically interesting, undermines science's foundations.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Tagore. Quantum mechanics — which Einstein was resistant to — shows that observation affects measured reality. The Copenhagen interpretation essentially supports Tagore's position: there is no "objective" reality independent of measurement. Physics came around to Tagore.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">The question is genuinely unresolved. Quantum mechanics created philosophical problems Einstein never accepted. The debate between objective reality (Einstein's position) and observer-dependent reality (Copenhagen interpretation, closer to Tagore's position) is still active in the philosophy of physics. The conversation between them maps onto a live scientific dispute.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">The Tagore-Einstein conversations</div>
+      <p><strong>You sit across from Albert Einstein in Berlin and argue that objective reality independent of human consciousness does not exist. Einstein disagrees. The argument is still open in the philosophy of physics today.</strong> The published transcripts of the Tagore-Einstein conversations (1930) are one of the more remarkable documents of 20th-century intellectual history. Tagore drew on Vedantic philosophy to argue that "truth" and "beauty" are always human categories — they don't exist independent of a mind to apprehend them. Einstein insisted on objective reality: "I cannot prove that my conception is right, but that is my religion." The quantum mechanics context is important: by 1930, the Copenhagen interpretation of quantum mechanics (endorsed by Bohr and Heisenberg) suggested that quantum systems don't have definite properties until measured — which Einstein rejected with his famous "God does not play dice." Whether the Copenhagen interpretation supports Tagore's philosophical position is debated; some physicists say yes (measurement affects reality), others say the parallel is superficial. The debate between objective realism and observer-dependent reality in quantum foundations is still active in physics today. Neither man was simply right.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The National Anthems</span></div>
+<div class="year-banner">Legacy</div>
+<div class="timeline-dot">Calcutta and Dhaka · Two nations</div>
+<div class="narrative">
+  <p>You have written the national anthems of two countries: India and Bangladesh. "Jana Gana Mana" (Mind of the Masses) became India's national anthem in 1950. "Amar Shonar Bangla" (My Golden Bengal) became Bangladesh's national anthem when it was adopted after independence in 1971. You have been dead for 30 years. No other poet in history has written the national anthems of two different nations.</p>
+  <p>Both anthems sing of the land's beauty — rivers, fields, sky, seasons — rather than military victory or political power. Both reflect the specific relationship between Bengali culture and its landscape that you spent your career developing. Two nations that went to war with each other in 1971 both sing songs you wrote.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — Anthems for Two Nations</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tagore wrote the national anthems of both India and Bangladesh — countries that went to war with each other. What does this reveal about his vision?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Irony — a man who opposed nationalism wrote the most powerful nationalist symbols for two nations. The anthems are instruments of the nationalism he warned against. The contradiction undermines his position.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">Consistency. The anthems celebrate the land, the rivers, the people — not the state or military power. Tagore wasn't against love of place or people; he was against the nation-state as a political organization that puts collective power above individual human connection.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and the distinction he would draw is between love of place (which both anthems express) and nationalism (which organizes a people as a competitive collective against other peoples). He loved Bengal; he was skeptical of India and Pakistan as nation-states. Both anthems sing of rivers and seasons, not of armies and borders.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">The two anthems</div>
+      <p><strong>You write a song about rivers in 1906 and another about seasons in 1911. In 1950, one becomes India's national anthem. In 1971, the other becomes Bangladesh's national anthem — thirty years after you died. No other poet in history has written the national anthems of two separate nations.</strong> Jana Gana Mana (written 1911) was adopted as India's national anthem in 1950, over Gandhi's preference for Vande Mataram (the other major Indian patriotic song). Amar Shonar Bangla (written 1906, during the anti-partition movement against the British division of Bengal) was adopted as Bangladesh's national anthem at independence in 1971. The extraordinary circumstance: in 1971, the Pakistan Army's suppression of Bangladesh's independence movement killed between 300,000 and 3 million people (estimates vary widely). The Indian Army intervened in support of Bangladeshi independence. When Bangladesh won and needed a national anthem, it chose a song by the same poet who wrote India's national anthem. Tagore had imagined a Bengali culture that transcended political boundaries — his poetry about the river and the seasons belonged to both the future India and the future Bangladesh before either state existed. Two states sang the same poet's words after going to war with each other. His vision of Bengal outlasted the political boundaries that divided it.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Final Poems</span></div>
+<div class="year-banner">1941</div>
+<div class="timeline-dot">Calcutta · Age 80</div>
+<div class="narrative">
+  <p>You are 80 and dying. You have been ill since 1937. In your last two years, you wrote some of your most significant poetry — the "Crisis poems" (Rogshajya) — meditations on death, time, creation, and what remains. You have written over 2,000 poems, 1,000+ songs (Rabindra Sangeet), eight volumes of short stories, 12 novels, countless essays, plays, and paintings. You started painting at 68.</p>
+  <p>You die on August 7, 1941, at the ancestral home in Calcutta where you were born 80 years earlier. India is still under British rule. Independence is six years away. You don't see it. You die still writing.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Scale of the Work</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tagore worked in poetry, fiction, drama, music, education, philosophy, painting, and political action — all at world level. Is this possible without spreading too thin?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">No. The breadth came at the cost of depth. Tagore is remembered as a poet in the West; in Bengal he is remembered for everything. A specialized focus on poetry might have produced work as significant as Keats or Rilke, but more concentrated.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Yes, in exceptional cases. Tagore's breadth was not dilution — his poetry informed his music, his fiction informed his philosophy, his education informed his politics. The different domains spoke to each other. He is the rare case where breadth was additive rather than subtractive.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The question assumes specialization is the norm and breadth requires justification. For Tagore, the divisions between poetry, music, education, and political action weren't meaningful — they were all expressions of the same project: understanding what makes human life worth living and how to protect it. The breadth wasn't a choice against depth; it was what one project looked like across multiple domains.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">The scope of Tagore's work</div>
+      <p><strong>You begin painting at age 68 and produce over 2,000 works. You also have 2,000 poems, 2,230 songs, 12 novels, a Nobel Prize, a university, and a returned British knighthood on your record. You die still writing at 80.</strong> Tagore's output is staggering by any measure: over 2,000 poems, 2,230 songs (collected as Rabindra Sangeet, which is an entire genre of Bengali music still sung daily across India and Bangladesh), 12 novels, eight short story collections, plays, essays, and paintings (he started at 68 and produced over 2,000 works). He won the Nobel Prize in Literature. He founded a university. He traveled to 30+ countries. He wrote national anthems for two nations. He returned a British knighthood. He debated Einstein on the nature of reality. He did all of this in a language (Bengali) that was, when he began, dismissed by the colonizers as provincial. The "spread thin" critique is sometimes made, but his Bengali critics consistently argue that his poetry — in the original — is as concentrated and precise as any poet's work. The English translations, which are what the Nobel Committee read, flatten some of this. To understand the scope without losing the depth, you need the Bengali.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Tagore's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="next-sims">
+  <p class="next-label">Explore More Lives</p>
+  <div class="next-grid">
+    <a href="confucius-simulator.html" class="next-card">
+      <span class="next-name">Confucius</span>
+      <span class="next-desc">Spent 13 years looking for a ruler who would implement his ideas. None would. Built a philosophy anyway.</span>
+    </a>
+    <a href="socrates-simulator.html" class="next-card">
+      <span class="next-name">Socrates</span>
+      <span class="next-desc">Chose hemlock over exile. Never wrote anything down. Changed philosophy with questions, not answers.</span>
+    </a>
+    <a href="tolstoy-simulator.html" class="next-card">
+      <span class="next-name">Leo Tolstoy</span>
+      <span class="next-desc">Wrote War and Peace, then rejected it as immoral. Fled his estate at 82 and died at a train station.</span>
+    </a>
+    <a href="gandhi-simulator.html" class="next-card">
+      <span class="next-name">Mahatma Gandhi</span>
+      <span class="next-desc">Freed a nation without an army. The method was the message.</span>
+    </a>
+  </div>
+</div>
+<div class="cta-box">
+  <p>Tagore won the Nobel Prize, returned a knighthood, founded a university, debated Einstein, and wrote national anthems for two countries that went to war with each other. He died still writing. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All Life Simulators — Confucius, Socrates, Tolstoy and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/confucius-simulator.html" style="color:var(--accent)">Confucius Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Tagore";body="You held his tensions without simplifying: the estate constraint gave him both subject matter and social responsibility simultaneously; the Nobel Prize was both genuine recognition and colonial validation; returning the knighthood was both symbolic and practically limited; his anti-nationalism was both principled and lacking an alternative; his breadth wasn't dilution but the same project across domains. That's the full Tagore.";}else if(pct>=0.625){title="The Poet-Philosopher";body="You grasped the essentials: the Bengal years shaped the work, the school was both ideal and practical, the knighthood return was meaningful-and-symbolic, and the two national anthems express love of place rather than nationalism. Where you might go deeper: his opposition to nationalism was precisely grounded in his love of what nationalism destroys — particular people, places, and connections that the state's abstraction can't capture.";}else if(pct>=0.375){title="The Reader of History";body="You understood the historical context but sometimes chose simpler framings where Tagore's positions were deliberately complex. His anti-nationalism while supporting independence, his Nobel Prize as both validation and colonial approval — these tensions are the interesting parts of his thinking, not problems to resolve but genuine complexities he chose to inhabit.";}else{title="The Skeptic";body="You were skeptical of Tagore's positions — the romantic education model, the anti-nationalism from the comfort of a famous poet, the returned knighthood as gesture. These skeptical positions have merit. The counter: Tagore's test wasn't whether his vision was practically implementable in full, but whether it was genuinely aimed at the right things. The Shantiniketan university still runs. The two national anthems still sing."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

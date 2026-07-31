@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-DBR2PMLR61");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Nelson Mandela?</title>
+<meta name="description" content="An interactive story about Nelson Mandela — imprisoned for 27 years, offered freedom if he renounced his principles, and chose reconciliation over revenge. At every turning point, you make the call.">
+<style>
+:root {
+  --bg: #F5F0E8;
+  --card: #FDFAF4;
+  --ink: #1A1208;
+  --muted: #7A6840;
+  --line: #DDD0B0;
+  --accent: #145A32;
+  --accent-bg: #EBF5EE;
+  --earth: #8B4513;
+  --earth-bg: #F9F0E8;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Consolas, monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;-webkit-tap-highlight-color:transparent;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,240,232,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#4a3820;line-height:1.8;margin-bottom:28px;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.12);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#4a3820;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--earth);background:var(--earth-bg);}
+.dopt.right .dopt-id{background:var(--earth);border-color:var(--earth);color:#fff;}
+.dopt.wrong{border-color:#C0392B;background:#FDF3F2;opacity:.7;}
+.dopt.wrong .dopt-id{background:#C0392B;border-color:#C0392B;color:#fff;}
+.dopt.correct{border-color:var(--earth);background:var(--earth-bg);border-width:2px;}
+.dopt.correct .dopt-id{background:var(--earth);border-color:var(--earth);color:#fff;}
+.reveal{display:none;border-top:1.5px solid var(--line);padding:20px 18px;animation:slideIn .35s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.reveal-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:4px 11px;border-radius:20px;margin-bottom:14px;}
+.badge-y{background:var(--earth-bg);color:var(--earth);border:1px solid #C49070;}
+.badge-n{background:#FDF3F2;color:#C0392B;border:1px solid #F0A898;}
+.reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--earth);font-weight:700;margin-bottom:6px;}
+.reveal-text{font-family:var(--serif);font-size:17px;line-height:1.5;margin-bottom:14px;}
+.reveal-explain{font-size:14px;line-height:1.85;color:#4a3820;}
+.seg{display:none;}
+.seg.shown{display:block;animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.results{padding:40px 0 20px;}
+.results-hero{text-align:center;padding:20px 0 28px;}
+.results-trophy{font-size:56px;display:block;margin-bottom:10px;}
+.results-score-big{font-family:var(--serif);font-size:64px;font-weight:700;line-height:1;letter-spacing:-.03em;}
+.results-score-big span{font-size:24px;color:var(--muted);}
+.results-sub{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+.results-title{font-family:var(--serif);font-size:22px;font-weight:700;margin:18px 0 10px;line-height:1.3;}
+.results-desc{font-size:14px;color:#4a3820;line-height:1.85;margin-bottom:24px;}
+.divider{height:1px;background:var(--line);margin:24px 0;}
+.dim-rows{display:flex;flex-direction:column;gap:14px;margin:16px 0 24px;}
+.dim-row-head{display:flex;justify-content:space-between;margin-bottom:5px;}
+.dim-row-name{font-size:13px;font-weight:700;}
+.dim-row-num{font-family:var(--mono);font-size:12px;color:var(--muted);}
+.bar-bg{height:7px;background:var(--line);border-radius:6px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:6px;width:0;transition:width 1.1s ease;}
+.bar-pr{background:var(--accent);}
+.bar-co{background:var(--earth);}
+.bar-wi{background:#6B4A9A;}
+.res-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.res-card .rc-title{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.share-pre{font-family:var(--mono);font-size:12px;background:#EDE5D8;border:1px solid var(--line);border-radius:8px;padding:14px;line-height:1.8;white-space:pre-wrap;margin-bottom:12px;}
+.copy-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:15px;padding:14px 20px;border-radius:10px;width:100%;transition:filter .15s;}
+.copy-btn:hover{filter:brightness(1.12);}
+.sim-links{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.sim-links p{font-size:14px;color:#4a3820;line-height:1.7;margin-bottom:10px;}
+.sim-links a{color:var(--accent);font-weight:700;text-decoration:none;font-size:13px;margin-right:10px;display:inline-block;margin-bottom:6px;}
+.sim-links a:hover{text-decoration:underline;}
+.replay-btn{appearance:none;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:var(--sans);font-weight:600;font-size:14px;padding:13px 20px;border-radius:10px;width:100%;}
+@media(max-width:480px){.cover-title{font-size:28px;}.narrative p{font-size:16px;}}
+
+.tweet-btn{display:inline-block;margin-left:10px;padding:9px 18px;background:#000;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .2s;}
+.tweet-btn:hover{opacity:0.8;}
+
+.next-sims{margin:32px 0 8px;text-align:center;}
+.next-sims h3{font-size:14px;color:#888;margin-bottom:14px;font-weight:400;letter-spacing:.05em;text-transform:uppercase;}
+.next-sims-grid{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.next-sim-btn{display:inline-block;padding:10px 18px;border:1px solid rgba(0,0,0,.15);border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;color:var(--ink,#2d2d2d);background:#fff;transition:all .2s;}
+.next-sim-btn:hover{border-color:var(--accent,#8B6914);color:var(--accent,#8B6914);transform:translateY(-1px);}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/mandela-simulator.html">
+<meta property="og:title" content="Nelson Mandela Life Simulator — Would You Have His Patience?">
+<meta property="og:description" content="An interactive story about Nelson Mandela — imprisoned for 27 years, offered freedom if he renounced violence, who emerged without bitterness to lead a nation. 7 real decisions.">
+<meta property="og:site_name" content="Ordinary Man Trying">
+<meta property="og:locale" content="en_US">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Game",
+  "name": "Nelson Mandela Life Simulator",
+  "description": "Face Nelson Mandela's real choices, including whether to accept early release from prison \u2014 and what he actually said.",
+  "url": "https://ordinarymantrying.com/tools/mandela-simulator.html",
+  "genre": [
+    "Educational",
+    "Simulation"
+  ],
+  "gamePlatform": "Web Browser",
+  "applicationCategory": "Game",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Ordinary Man Trying",
+    "url": "https://ordinarymantrying.com"
+  }
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Nelson Mandela</span>
+  <span class="topbar-score" id="topbar-score"></span>
+</div>
+<div class="cover" id="cover">
+  <div class="cover-eyebrow">True Story · Interactive</div>
+  <h1 class="cover-title">He was imprisoned for 27 years. When the government offered him freedom, he refused to renounce his principles. When he was finally released, he chose reconciliation over revenge — and became the first democratically elected president of a free South Africa. At every turning point, you make the call.</h1>
+  <p class="cover-sub">This is a life simulation. At each critical moment in Nelson Mandela's real story, you face the same choice he did — before you're told what he actually did.</p>
+  <button class="start-btn" onclick="startStory()">Start the Simulation →</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+  <div class="narrative">
+    <p>Nelson Rolihlahla Mandela was born on July 18, 1918, in Mvezo, a small village in the Eastern Cape of South Africa. His father was a local chief. His given name, Rolihlahla, meant "pulling the branch of a tree" — colloquially translated as "troublemaker." The name would prove accurate.</p>
+    <p>He was the first in his family to attend a Western school. A Methodist schoolteacher gave him the name Nelson on his first day — it was common practice to assign English names to Black children. He excelled academically. He was sent to Healdtown, one of the finest schools available to Black students in South Africa. He went on to the University of Fort Hare. He was expelled for organizing a student boycott. He went to Johannesburg instead, worked in a law office, finished his degree by correspondence, and earned a law degree.</p>
+    <p>South Africa was under formal apartheid — a system of racial segregation enacted by the National Party in 1948 that classified citizens by race and denied Black South Africans basic rights: to vote, to live where they chose, to move freely.</p>
+    <p>Mandela joined the African National Congress in 1944. The ANC had been founded in 1912. It had been petitioning peacefully for three decades. The petitions had achieved almost nothing.</p>
+  </div>
+
+  <div class="decision-block" id="d1">
+    <div class="decision-header"><span>Decision 1 · 1944 · Age 26 · Joining the ANC Youth League</span><span class="d-num">1 / 7</span></div>
+    <div class="decision-body">
+      <p class="decision-q">Mandela has joined the ANC. The mainstream ANC has been petitioning peacefully for 32 years with almost no results. He believes the organization needs to become more confrontational — mass campaigns, civil disobedience, pressure that can't be ignored. The older ANC leadership prefers caution. What does he do?</p>
+      <div class="dopts" id="opts-1">
+        <button class="dopt" onclick="answer(1,'A')"><div class="dopt-id">A</div><div class="dopt-body">Respect the existing leadership. The ANC has been building for decades — don't fracture it by pushing too hard too fast.</div></button>
+        <button class="dopt" onclick="answer(1,'B')"><div class="dopt-id">B</div><div class="dopt-body">Work within the existing ANC structure and try to gradually shift its position through persuasion over years.</div></button>
+        <button class="dopt" onclick="answer(1,'C')"><div class="dopt-id">C</div><div class="dopt-body">Leave the ANC and form a separate, more militant organization rather than fighting internal battles.</div></button>
+        <button class="dopt" onclick="answer(1,'D')"><div class="dopt-id">D</div><div class="dopt-body">Form and lead the ANC Youth League — a faction inside the ANC that pushes for mass action, civil disobedience, and a more confrontational strategy. Change the organization from within.</div></button>
+      </div>
+      <div class="reveal" id="rev-1">
+        <div class="reveal-badge" id="badge-1"></div>
+        <div class="reveal-label">What Nelson Mandela Did</div>
+        <div class="reveal-text"><strong>You join an organization that has spent 30 years writing polite letters to a government that ignores them — and immediately start organizing a faction to replace that strategy with something that can't be ignored.</strong> He co-founded the ANC Youth League in 1944 and became its president in 1950. The Youth League pushed the ANC toward a Programme of Action — mass campaigns, strikes, civil disobedience — that replaced 30 years of petition politics with direct pressure.</div>
+        <div class="reveal-explain">Mandela's approach was strategic: the ANC was the legitimate vehicle for Black South African political aspirations — it had history, structure, and credibility. Leaving it would have meant starting over. Capturing its direction from within was harder but more powerful. By 1952, the ANC under Youth League influence had launched the Defiance Campaign — deliberate, organized breaking of apartheid laws to demonstrate their injustice and fill the jails with protesters. It was the largest organized political resistance in South African history to that point.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-1">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1952 · Age 34 · The Defiance Campaign</div></div>
+    <div class="narrative">
+      <p>The Defiance Campaign was organized: Black South Africans would deliberately break apartheid laws in public — using whites-only entrances, sitting in whites-only areas, ignoring curfews — to demonstrate the injustice of the laws and fill the jails with protesters.</p>
+      <p>This was not spontaneous protest. It was planned civil disobedience, explicitly modeled on Gandhi's campaigns in India. It was also illegal. Participants expected arrest. Mandela was one of the organizers and one of the first to deliberately break the law.</p>
+    </div>
+    <div class="decision-block" id="d2">
+      <div class="decision-header"><span>Decision 2 · 1952 · Age 34 · Defiance Campaign</span><span class="d-num">2 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">The ANC is organizing the Defiance Campaign — deliberate, public breaking of apartheid laws. Participants expect arrest. Mandela is an organizer and lawyer. His arrest would cost him his law practice. Should he participate personally?</p>
+        <div class="dopts" id="opts-2">
+          <button class="dopt" onclick="answer(2,'A')"><div class="dopt-id">A</div><div class="dopt-body">Stay as an organizer only. His value is in coordinating others and providing legal defense — he's more useful out of jail.</div></button>
+          <button class="dopt" onclick="answer(2,'B')"><div class="dopt-id">B</div><div class="dopt-body">Participate selectively — in situations where arrest is unlikely — to show solidarity without sacrificing his practice.</div></button>
+          <button class="dopt" onclick="answer(2,'C')"><div class="dopt-id">C</div><div class="dopt-body">Participate only in the final wave — after others have established the campaign's momentum and legal coverage is secured.</div></button>
+          <button class="dopt" onclick="answer(2,'D')"><div class="dopt-id">D</div><div class="dopt-body">Participate fully and publicly. A leader who asks others to risk arrest while protecting himself is no leader at all. Break the laws. Face arrest alongside the volunteers.</div></button>
+        </div>
+        <div class="reveal" id="rev-2">
+          <div class="reveal-badge" id="badge-2"></div>
+          <div class="reveal-label">What Nelson Mandela Did</div>
+          <div class="reveal-text"><strong>You are a lawyer with a license that took years to build, and you are about to deliberately get yourself arrested in public for breaking a law you could argue against in court — because you have said that a leader cannot ask others to risk what he will not risk himself.</strong> He participated fully. He was arrested, convicted, and given a suspended sentence. He lost his law practice license temporarily. He said the Campaign was "a test of my own commitment — you cannot lead people into danger and stand back from the danger yourself."</div>
+          <div class="reveal-explain">The Defiance Campaign brought over 8,000 people to deliberately break apartheid laws and face arrest. It increased ANC membership from 7,000 to 100,000 in one year. It also drew international attention to apartheid for the first time. Mandela's personal participation — at real cost to his career — was part of what gave the campaign moral weight. He was, throughout his life, consistent on this point: leadership in resistance requires the leader to be the first to accept the consequences of what they're asking others to do.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-2">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1961 · Age 43 · After Sharpeville</div></div>
+    <div class="narrative">
+      <p>On March 21, 1960, South African police opened fire on a crowd of unarmed Black protesters in Sharpeville, killing 69 people and wounding 180. The massacre shocked the world. The South African government declared a state of emergency and banned the ANC.</p>
+      <p>The ANC was now illegal. Its headquarters were raided. Its leaders were arrested. Peaceful protest had been met with massacre and the banning of the organization conducting it.</p>
+      <p>Mandela went underground — operating in disguise, moving between safe houses, growing a beard, earning the nickname "the Black Pimpernel" from the press. He faced a fundamental question: the ANC had been committed to nonviolent resistance. But the government had responded to nonviolence with massacre and imprisonment. What was the right path now?</p>
+    </div>
+    <div class="decision-block" id="d3">
+      <div class="decision-header"><span>Decision 3 · 1961 · Age 43 · The Turn</span><span class="d-num">3 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">The ANC has been banned. The Sharpeville massacre has killed 69 people. Peaceful protest has been met with bullets and illegalization. Mandela must decide: maintain the commitment to nonviolence in a movement that has been violently suppressed, or move toward armed resistance?</p>
+        <div class="dopts" id="opts-3">
+          <button class="dopt" onclick="answer(3,'A')"><div class="dopt-id">A</div><div class="dopt-body">Maintain nonviolence absolutely. Armed resistance will justify the government's framing of the ANC as terrorists and lose international support.</div></button>
+          <button class="dopt" onclick="answer(3,'B')"><div class="dopt-id">B</div><div class="dopt-body">Threaten armed resistance without carrying it out — use the threat as political leverage while staying nonviolent in practice.</div></button>
+          <button class="dopt" onclick="answer(3,'C')"><div class="dopt-id">C</div><div class="dopt-body">Seek exile and continue organizing internationally — leave South Africa, build global pressure, and let others take the risk inside the country.</div></button>
+          <button class="dopt" onclick="answer(3,'D')"><div class="dopt-id">D</div><div class="dopt-body">Form Umkhonto we Sizwe — the armed wing of the ANC — with a specific strategy: sabotage of infrastructure, not attacks on people. Avoid civilian casualties while demonstrating that the cost of apartheid will rise.</div></button>
+        </div>
+        <div class="reveal" id="rev-3">
+          <div class="reveal-badge" id="badge-3"></div>
+          <div class="reveal-label">What Nelson Mandela Did</div>
+          <div class="reveal-text"><strong>After 50 years of petitions and 8,000 arrests during the Defiance Campaign, the government responds to your unarmed protesters in Sharpeville on March 21, 1960, with 69 dead and 180 wounded, then bans your organization entirely. You are 43 years old and you have reached the end of one theory.</strong> He co-founded Umkhonto we Sizwe ("Spear of the Nation") in June 1961. Its strategy was sabotage of infrastructure — power lines, government buildings, rail lines — explicitly avoiding attacks on people. He traveled to Algeria for military training. He was arrested on his return in 1962.</div>
+          <div class="reveal-explain">Mandela's argument for armed resistance was not abandonment of the moral struggle — it was an extension of it. He later wrote: "The hard reality was that fifty years of nonviolence had brought the African people nothing but more repressive legislation, and fewer and fewer rights." The MK sabotage campaign caused damage to government infrastructure but killed no civilians in its initial phase. Mandela was arrested in August 1962 — before most of the MK operations were conducted. He was 44 years old. He would not be free again for 27 years.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-3">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1964 · Age 46 · Rivonia Trial</div></div>
+    <div class="narrative">
+      <p>The Rivonia Trial began in October 1963. Mandela and seven others were charged with sabotage and violent conspiracy. The prosecution sought the death penalty.</p>
+      <p>On April 20, 1964, Mandela stood in the dock and delivered a statement from the accused. He had written it himself. He read it for three hours. He did not beg for his life. He did not moderate his position. He ended with one of the most famous sentences in the history of political speech.</p>
+    </div>
+    <div class="decision-block" id="d4">
+      <div class="decision-header"><span>Decision 4 · 1964 · Age 46 · The Rivonia Statement</span><span class="d-num">4 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Mandela faces the death penalty at the Rivonia Trial. His lawyers advise mitigation — express remorse, moderate the language, give the judge a path to a lighter sentence. Or he can give the statement he has written: an uncompromising defense of armed resistance and a declaration that he is prepared to die for his principles. What does he do?</p>
+        <div class="dopts" id="opts-4">
+          <button class="dopt" onclick="answer(4,'A')"><div class="dopt-id">A</div><div class="dopt-body">Follow the lawyers' advice. Mitigation is not surrender — it's survival. Dead, he cannot continue the struggle.</div></button>
+          <button class="dopt" onclick="answer(4,'B')"><div class="dopt-id">B</div><div class="dopt-body">Give a modified version — defend the cause without the final sentence about dying for it. Principle without provocation.</div></button>
+          <button class="dopt" onclick="answer(4,'C')"><div class="dopt-id">C</div><div class="dopt-body">Refuse to testify at all. Silence denies the court legitimacy and prevents any statement from being used against him.</div></button>
+          <button class="dopt" onclick="answer(4,'D')"><div class="dopt-id">D</div><div class="dopt-body">Give the statement exactly as written. An ideal for which I am prepared to die. If they want to execute him for saying that, they will execute him — but he will have said it.</div></button>
+        </div>
+        <div class="reveal" id="rev-4">
+          <div class="reveal-badge" id="badge-4"></div>
+          <div class="reveal-label">What Nelson Mandela Did</div>
+          <div class="reveal-text"><strong>Your lawyers are standing in the Rivonia courtroom on April 20, 1964, asking you to soften the language that ends with "an ideal for which I am prepared to die" — because the prosecution is seeking the death penalty and a more moderate statement might give the judge a path to mercy.</strong> He gave the statement as written. The final sentence: "It is an ideal for which I am prepared to die." The judge sentenced him to life imprisonment rather than death. He was sent to Robben Island.</div>
+          <div class="reveal-explain">The Rivonia statement was not strategic — it was a declaration of moral position that happened to produce a strategic outcome. International pressure on the South African government, generated in part by the statement's power, may have been a factor in the judge choosing life rather than death. Mandela has said he genuinely did not know which way the verdict would go when he sat down after reading the statement. He had made his peace with dying. That peace — the same kind Musk made with losing everything — is what allowed the statement to be what it was: completely unmodified by fear.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-4">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1985 · Age 67 · Robben Island · An Offer</div></div>
+    <div class="narrative">
+      <p>Mandela had been imprisoned for 21 years. His health had deteriorated. He had tuberculosis. He had been forced to work in the limestone quarry, the glare of which permanently damaged his eyes.</p>
+      <p>President P.W. Botha made a public offer: Mandela would be released unconditionally — if he renounced violence as a political instrument.</p>
+      <p>Mandela's daughter Zindzi read his response at a mass rally in Soweto on February 10, 1985.</p>
+    </div>
+    <div class="decision-block" id="d5">
+      <div class="decision-header"><span>Decision 5 · 1985 · Age 67 · The Offer of Freedom</span><span class="d-num">5 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Mandela has been imprisoned for 21 years. The government offers release — if he renounces violence. He is 67, in poor health, in prison. Freedom is real and immediate. What does he do?</p>
+        <div class="dopts" id="opts-5">
+          <button class="dopt" onclick="answer(5,'A')"><div class="dopt-id">A</div><div class="dopt-body">Accept. 21 years is enough. Free, he can negotiate and organize. In prison he has no leverage.</div></button>
+          <button class="dopt" onclick="answer(5,'B')"><div class="dopt-id">B</div><div class="dopt-body">Conditionally accept — renounce violence if the government also renounces violence against Black South Africans. Counter-condition.</div></button>
+          <button class="dopt" onclick="answer(5,'C')"><div class="dopt-id">C</div><div class="dopt-body">Delay — say he'll consider it, buy time, see if conditions change before committing either way.</div></button>
+          <button class="dopt" onclick="answer(5,'D')"><div class="dopt-id">D</div><div class="dopt-body">Refuse. Only free men can negotiate. He will not negotiate the terms of his own freedom while others are not free. The decision about violence belongs to the ANC — he will not renounce it alone from a cell while the struggle continues.</div></button>
+        </div>
+        <div class="reveal" id="rev-5">
+          <div class="reveal-badge" id="badge-5"></div>
+          <div class="reveal-label">What Nelson Mandela Did</div>
+          <div class="reveal-text"><strong>You have been in prison for 21 years, your eyes permanently damaged by the limestone quarry at Robben Island, and the president of South Africa is offering you your freedom right now — contingent on one sentence you will not say.</strong> He refused. His statement, read by his daughter at the Soweto rally: "I am not a violent man... Let Botha renounce violence. Let him say he will dismantle apartheid... I cannot and will not give any undertaking at a time when I, and you, the people, are not free."</div>
+          <div class="reveal-explain">The refusal was a political act, not a personal one. Mandela understood that accepting the conditional release would have fractured the ANC's position — it would have implied that the armed struggle was wrong and that the South African government could negotiate with individuals to dissolve collective resistance. His refusal, and particularly the phrase "only free men can negotiate," became one of the defining moments of the anti-apartheid movement. He remained in prison for another five years. His refusal did not weaken the movement. It strengthened it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-5">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1990 · Age 71 · The Day of Release</div></div>
+    <div class="narrative">
+      <p>On February 11, 1990, after 27 years in prison, Nelson Mandela walked free.</p>
+      <p>The crowd that met him — and the world watching on television — expected something primal. Rage. Accusation. A recounting of what had been done to him and his people. He had every reason. He had been imprisoned more than a quarter century for trying to free his country. He had been separated from his wife, his children, his grandchildren. His health had been damaged. His eyes had been hurt by the quarry.</p>
+      <p>He had been given, in prison, a great deal of time to think about what he would say and do when the gates opened.</p>
+    </div>
+    <div class="decision-block" id="d6">
+      <div class="decision-header"><span>Decision 6 · 1990 · Age 71 · Walking Out</span><span class="d-num">6 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Mandela walks out of Victor Verster Prison after 27 years. The world is watching. His supporters expect fire and fury — a reckoning for what has been done. What is the first thing he communicates?</p>
+        <div class="dopts" id="opts-6">
+          <button class="dopt" onclick="answer(6,'A')"><div class="dopt-id">A</div><div class="dopt-body">Document the injustice. Name what was done, name who did it, demand accountability before any talk of moving forward.</div></button>
+          <button class="dopt" onclick="answer(6,'B')"><div class="dopt-id">B</div><div class="dopt-body">Express gratitude to the international community whose pressure made this moment possible — build coalition before making demands.</div></button>
+          <button class="dopt" onclick="answer(6,'C')"><div class="dopt-id">C</div><div class="dopt-body">Celebrate with his people and stay silent on policy for a week — let the moment be a moment before turning it into strategy.</div></button>
+          <button class="dopt" onclick="answer(6,'D')"><div class="dopt-id">D</div><div class="dopt-body">Call immediately for peace and reconciliation — for all South Africans, including white South Africans. The fight was never against a people; it was against a system. End the system; invite everyone into what comes next.</div></button>
+        </div>
+        <div class="reveal" id="rev-6">
+          <div class="reveal-badge" id="badge-6"></div>
+          <div class="reveal-label">What Nelson Mandela Did</div>
+          <div class="reveal-text"><strong>You walk through the gates of Victor Verster Prison on February 11, 1990, after 27 years, and 27 years of compressed rage is what the entire world watching on live television has come to see you express.</strong> Standing outside Victor Verster Prison, Mandela called for peace and reconciliation. He called on all South Africans — including white South Africans — to be part of building a new country. He shook the hand of his jailer. He kept his fist raised — but in salute, not threat.</div>
+          <div class="reveal-explain">Mandela later described the walk from the prison as a moment in which he made a deliberate decision: if he stepped through those gates with hatred, the hatred would imprison him as surely as the bars had. He had spent 27 years thinking about this. He had concluded that the only way to build something new was to refuse to let the old thing define you — even when it had done real, documented, irreversible damage. This was not forgetting. He never said apartheid was acceptable. He chose not to make revenge the foundation of freedom. That choice, made on February 11, 1990, is the moment most historians identify as the one that made a peaceful transition possible.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-6">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1993 · Age 75 · Chris Hani</div></div>
+    <div class="narrative">
+      <p>On April 10, 1993, Chris Hani — the leader of the South African Communist Party and one of the most popular figures in the anti-apartheid movement — was assassinated outside his home in Boksburg by a right-wing white extremist named Janusz Walus.</p>
+      <p>The murder threatened to collapse the fragile negotiations between the ANC and the South African government. Black communities erupted in rage. Violence was spreading. The country was on the edge of civil war.</p>
+      <p>President F.W. de Klerk asked Mandela — not a sitting president, not yet an elected leader — to speak to the nation on national television. It was the first time a Black South African had been given that platform.</p>
+    </div>
+    <div class="decision-block" id="d7">
+      <div class="decision-header"><span>Decision 7 · 1993 · Age 75 · The Address</span><span class="d-num">7 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Chris Hani has been assassinated. South Africa is on the brink of civil war. Mandela has been given national television time. The rage across the country is legitimate and enormous. What does he say?</p>
+        <div class="dopts" id="opts-7">
+          <button class="dopt" onclick="answer(7,'A')"><div class="dopt-id">A</div><div class="dopt-body">Express the rage legitimately — give voice to the grief and anger, demand accountability from the government, and let people know their feeling is valid before asking them to stand down.</div></button>
+          <button class="dopt" onclick="answer(7,'B')"><div class="dopt-id">B</div><div class="dopt-body">Use the moment to extract political concessions — de Klerk wants calm; use that leverage to advance the negotiation.</div></button>
+          <button class="dopt" onclick="answer(1,'C')"><div class="dopt-id">C</div><div class="dopt-body">Speak only to the ANC community — not to all South Africans, which risks appearing to normalize the white community's role in the assassination.</div></button>
+          <button class="dopt" onclick="answer(7,'D')"><div class="dopt-id">D</div><div class="dopt-body">Acknowledge the grief and rage fully — and then call the nation back from the brink. This is the moment everything can end. Don't let it. The killer was white; a white woman neighbor reported him. South Africa belongs to all who live in it.</div></button>
+        </div>
+        <div class="reveal" id="rev-7">
+          <div class="reveal-badge" id="badge-7"></div>
+          <div class="reveal-label">What Nelson Mandela Did</div>
+          <div class="reveal-text"><strong>Chris Hani has been shot dead outside his home in Boksburg on April 10, 1993, by a white right-wing extremist, South Africa is days from civil war, and the president — a white man — has asked you, not yet elected to anything, to speak to the nation on national television.</strong> He acknowledged the grief and then called for calm — noting that it was a white Afrikaner woman who had called the police with the killer's license plate number. He addressed all South Africans. He said: "Now is the time for all South Africans to stand together against those who wish to destroy what Chris Hani gave his life for — the freedom of all of us." The violence slowed.</div>
+          <div class="reveal-explain">Historians consider Mandela's address after the Hani assassination the moment that kept South Africa from civil war. His deliberate choice to speak of a white woman's act of decency — within the address mourning a Black man's death — was not accidental. He was demonstrating, in real time, the argument he had been making for years: the enemy is not a race; the enemy is a system; and building what comes after the system requires finding the human beings who exist on both sides of the line the system drew. The first democratic elections in South Africa were held on April 27, 1994 — one year and 17 days after the Hani assassination. Mandela won. He was 75 years old.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-epilogue">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">May 10, 1994 · Pretoria · Inauguration</div></div>
+    <div class="narrative">
+      <p>Nelson Mandela was inaugurated as the first democratically elected President of South Africa on May 10, 1994. He was 75 years old. He had spent 27 of them in prison.</p>
+      <p>Among the guests invited to the inauguration were three of his former prison guards.</p>
+      <p>He served one term, as he had said he would. He stepped down in 1999 and was succeeded by Thabo Mbeki. He spent his final years working on AIDS awareness, child welfare, and conflict resolution through The Elders — a group of global leaders he co-founded with Graça Machel, his third wife.</p>
+      <p>Nelson Mandela died on December 5, 2013, at the age of 95.</p>
+      <p>The South Africa he left was not perfect. It struggled — with corruption, with inequality, with the unfinished business of a history that doesn't disappear because a system is dismantled. But it was free. And it was free because of the decisions he made — not the ones that maximized his safety, not the ones that protected his comfort, but the ones that were true to the principle he had stated in the dock in 1964: that freedom is an ideal for which it is worth dying.</p>
+      <p>He never had to die for it. But he was genuinely prepared to. That preparation is what made every decision after it possible.</p>
+    </div>
+    <div class="results" id="seg-results">
+      <div class="results-hero">
+        <span class="results-trophy" id="res-trophy">✊</span>
+        <div class="results-score-big" id="res-score">0<span>/7</span></div>
+        <div class="results-sub">decisions matched Nelson Mandela</div>
+      </div>
+      <h2 class="results-title" id="res-title"></h2>
+      <p class="results-desc" id="res-desc"></p>
+      <div class="divider"></div>
+      <div class="dim-rows">
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Principle</span><span class="dim-row-num" id="d-pr-num">0/3</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-pr" id="d-pr-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Courage</span><span class="dim-row-num" id="d-co-num">0/2</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-co" id="d-co-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Wisdom</span><span class="dim-row-num" id="d-wi-num">0/2</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-wi" id="d-wi-bar"></div></div>
+        </div>
+      </div>
+      <div class="res-card">
+        <div class="rc-title">Share your result</div>
+        
+<div class="next-sims"><h3>Try another simulator</h3><div class="next-sims-grid"><a class="next-sim-btn" href="buffett-simulator.html">Warren Buffett</a><a class="next-sim-btn" href="curie-simulator.html">Marie Curie</a><a class="next-sim-btn" href="rowling-simulator.html">J.K. Rowling</a></div></div>
+<div class="share-pre" id="share-pre"></div>
+        <button class="copy-btn" onclick="copyShare(event)">Copy to clipboard</button>
+<a class="tweet-btn" id="tweet-btn" href="#" onclick="return shareTweet()" rel="noopener">𝕏 Share Result</a>
+      </div>
+
+      <div class="res-card" style="text-align:center;">
+        <div class="rc-title">📚 Go Deeper — Read the Book</div>
+        <p style="font-size:14px;line-height:1.7;margin-bottom:14px;">27 years in prison. A country on the brink of civil war. One man who chose reconciliation over revenge. Mandela's autobiography is one of the most powerful books ever written.</p>
+        <a href="https://amzn.to/3QBohjb" target="_blank" rel="noopener" style="display:inline-block;background:#FF9900;color:#111;font-weight:700;padding:10px 22px;border-radius:6px;text-decoration:none;font-size:14px;">📖 View on Amazon →</a>
+        <p style="font-size:11px;color:#999;margin-top:10px;">As an Amazon Associate I earn from qualifying purchases.</p>
+      </div>
+
+      <div class="sim-links" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-left:4px solid var(--accent,#60a5fa);border-radius:12px;padding:18px 20px;margin-bottom:14px;">
+  
+  <p style="font-size:13px;font-weight:700;color:inherit;margin-bottom:10px;">🎮 Try another legendary life:</p>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;">
+    <a href="zhangxue-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🏍️ Zhang Xue</a>
+    <a href="disney-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🏰 Walt Disney</a>
+    <a href="honda-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🔧 Soichiro Honda</a>
+    <a href="curie-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">⚗️ Marie Curie</a>
+    <a href="jobs-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">📱 Steve Jobs</a>
+    <a href="rowling-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">📚 J.K. Rowling</a>
+    <a href="oprah-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🌟 Oprah Winfrey</a>
+    <a href="musk-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🛸 Elon Musk</a>
+    <a href="buffett-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">💰 Warren Buffett</a>
+    <a href="hawking-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🔭 Stephen Hawking</a>
+  </div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);">
+    <a href="https://ordinarymantrying.com/tools/" style="font-size:13px;color:var(--accent,#60a5fa);font-weight:700;text-decoration:none;">→ See all 11 simulators + free tools</a>
+  </div>
+</div>
+      <div class="res-card">
+        <div class="rc-title">About this simulator</div>
+        <p style="font-size:14px;color:#4a3820;line-height:1.85;">This simulator is part of <a href="https://ordinarymantrying.com" style="color:var(--accent);font-weight:700;text-decoration:none;">ordinarymantrying.com</a> — a blog about one ordinary person using AI to navigate investing, side hustles, and building things in public. All events are based on documented historical accounts of Nelson Mandela's life.</p>
+      </div>
+      <button class="replay-btn" onclick="location.reload()">↺ Play again</button>
+      <div style="height:48px;"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+<script>
+var TOTAL=7;
+var DECISIONS={1:{zx:'D',dim:'principle'},2:{zx:'D',dim:'courage'},3:{zx:'D',dim:'principle'},4:{zx:'D',dim:'courage'},5:{zx:'D',dim:'principle'},6:{zx:'D',dim:'wisdom'},7:{zx:'D',dim:'wisdom'}};
+var NEXT_SEG={1:'seg-1',2:'seg-2',3:'seg-3',4:'seg-4',5:'seg-5',6:'seg-6',7:'seg-epilogue'};
+var DIM_MAX={principle:3,courage:2,wisdom:2};
+var scores={principle:0,courage:0,wisdom:0};
+var totalCorrect=0,answered={};
+function startStory(){document.getElementById('cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('topbar-score').style.display='block';document.getElementById('topbar-score').textContent='0 / '+TOTAL;window.scrollTo({top:0,behavior:'smooth'});}
+function answer(num,chosen){if(answered[num])return;answered[num]=chosen;var d=DECISIONS[num];var correct=(chosen===d.zx);if(correct){totalCorrect++;scores[d.dim]++;}var opts=document.querySelectorAll('#opts-'+num+' .dopt');opts.forEach(function(btn){btn.classList.add('disabled');var id=btn.querySelector('.dopt-id').textContent.trim();if(id===chosen&&correct)btn.classList.add('right');if(id===chosen&&!correct)btn.classList.add('wrong');if(id===d.zx&&!correct)btn.classList.add('correct');});var badge=document.getElementById('badge-'+num);if(correct){badge.className='reveal-badge badge-y';badge.textContent='✓ Same as Nelson Mandela';}else{badge.className='reveal-badge badge-n';badge.textContent='✗ You chose '+chosen+' — Mandela chose '+d.zx;}document.getElementById('rev-'+num).style.display='block';document.getElementById('topbar-score').textContent=totalCorrect+' / '+TOTAL;setTimeout(function(){var next=document.getElementById(NEXT_SEG[num]);next.classList.add('shown');setTimeout(function(){next.scrollIntoView({behavior:'smooth',block:'start'});},80);if(num===TOTAL)showResults();},950);}
+function showResults(){setTimeout(function(){var s=totalCorrect;var trophies=['🌱','🌱','✊','✊','🏅','🏅','🥇','✊'];document.getElementById('res-trophy').textContent=trophies[s]||'✊';document.getElementById('res-score').innerHTML=s+'<span>/'+TOTAL+'</span>';var title,desc;if(s===TOTAL){title='You think like Mandela.';desc='Perfect score. Every decision matched his. The pattern in his choices is always the same: the decision that costs him personally but is true to the principle. You found that 7 times out of 7. Most people find it zero.';}else if(s>=5){title='You have his principle.';desc=s+' out of 7. Most of your decisions held the line. The gaps are exactly where Mandela refused to compromise for his own safety — and those refusals are what history remembers.';}else if(s>=3){title='You have his instinct.';desc=s+' out of 7. More than half the time, you found the harder, more principled path. Mandela spent 27 years in prison partly for making these choices consistently. You had seconds. That\'s harder than it looks.';}else{title='You protected yourself. He didn\'t.';desc=s+' out of 7. Your choices were reasonable. Mandela\'s were not reasonable by any normal standard — they were principled to the point of recklessness. He would have been the first to say that\'s what the situation required. Whether that applies to your life is a different question.';}document.getElementById('res-title').textContent=title;document.getElementById('res-desc').textContent=desc;setTimeout(function(){var prMax=DIM_MAX.principle,coMax=DIM_MAX.courage,wiMax=DIM_MAX.wisdom;document.getElementById('d-pr-num').textContent=scores.principle+'/'+prMax;document.getElementById('d-co-num').textContent=scores.courage+'/'+coMax;document.getElementById('d-wi-num').textContent=scores.wisdom+'/'+wiMax;document.getElementById('d-pr-bar').style.width=((scores.principle/prMax)*100)+'%';document.getElementById('d-co-bar').style.width=((scores.courage/coMax)*100)+'%';document.getElementById('d-wi-bar').style.width=((scores.wisdom/wiMax)*100)+'%';},300);document.getElementById('share-pre').textContent='I just played the Nelson Mandela Life Simulator and matched '+totalCorrect+'/'+TOTAL+' of his real decisions.\n\nMandela was imprisoned for 27 years. When offered freedom, he refused to renounce his principles.\nWhen finally released, he chose reconciliation over revenge — and freed a nation.\n\nPrinciple '+scores.principle+'/'+DIM_MAX.principle+'  ·  Courage '+scores.courage+'/'+DIM_MAX.courage+'  ·  Wisdom '+scores.wisdom+'/'+DIM_MAX.wisdom+'\n\nWould you have made the same choices? ordinarymantrying.com/tools/mandela-simulator.html';document.getElementById('seg-epilogue').scrollIntoView({behavior:'smooth',block:'start'});},600);}
+function shareTweet(){var text=document.getElementById('share-pre').textContent;if(!text||text.trim()===''){alert('Finish the simulator first to share your result!');return false;}var url='https://x.com/intent/tweet?text='+encodeURIComponent(text.substring(0,240));window.open(url,'_blank','width=550,height=450');return false;}
+function copyShare(evt){var text=document.getElementById('share-pre').textContent;var btn=evt.target;function restore(){btn.textContent='Copy to clipboard';}if(navigator.clipboard){navigator.clipboard.writeText(text).then(function(){btn.textContent='✓ Copied!';setTimeout(restore,2000);});}else{var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='✓ Copied!';setTimeout(restore,2000);}}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

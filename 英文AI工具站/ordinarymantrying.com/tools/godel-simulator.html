@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kurt Gödel Life Simulator — He Proved Mathematics Cannot Prove Itself</title>
+<meta name="description" content="Make the same decisions as Kurt Gödel — who proved that any mathematical system powerful enough to describe arithmetic will contain true statements it cannot prove, and who starved to death in Princeton because he trusted no one to prepare his food.">
+<style>
+:root{
+  --bg:#EEF0F5;--card:#F5F6FA;--ink:#080C18;--muted:#283858;--line:#C8D0E8;
+  --accent:#080C48;--accent-bg:#E0E4F8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Austria / USA · 1906–1978</div>
+  <h1>Could You Have Been<br>Kurt Gödel?</h1>
+  <div class="cover-sub">At 25, he published the Incompleteness Theorems — proving that any mathematical system powerful enough to describe basic arithmetic will always contain true statements that it cannot prove. It was the most devastating result in the history of logic. At Princeton, where he spent his last 25 years, his closest friend was Albert Einstein. He was afraid someone was trying to poison him. When his wife Adele was hospitalized and could no longer taste his food first, he stopped eating. He weighed 65 pounds when he died.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">25</div><div class="stat-l">Years old when he destroyed the foundations of mathematics</div></div>
+    <div class="stat"><div class="stat-n">1931</div><div class="stat-l">Year of the Incompleteness Theorems — changed logic forever</div></div>
+    <div class="stat"><div class="stat-n">65 lbs</div><div class="stat-l">His weight at death — he had stopped eating from paranoia</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Vienna, 1930 · The Problem with Hilbert's Program</div>
+<p class="narrative">You are 24 and working on your doctoral dissertation at the University of Vienna. David Hilbert — the greatest mathematician of the age — has proposed a program: prove that mathematics is complete (every true statement is provable), consistent (no statement is both true and false), and decidable (there is an algorithm to determine whether any statement is true). This is the dream of mathematical foundations: a closed, certain system. You have been working on this problem and have found something Hilbert did not expect. You can prove that the dream is impossible.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Proof</div>
+  <div class="d-situation">You have a proof that Hilbert's program cannot succeed — that mathematics is inherently incomplete. Hilbert is 68, still alive, still influential, and has spent decades on this program. Do you publish?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Publish immediately — the proof is correct; the consequences are what the proof says they are; mathematics follows the proof</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. Wait — Hilbert is still alive and enormously influential; present it to him privately first before announcing it to the world</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Publish cautiously — present it as a question or conjecture rather than a proven theorem until the community has had time to verify it</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Gödel announced the result in September 1930 at a conference in Königsberg — the same conference where Hilbert gave his famous speech "We must know, we shall know." Gödel announced at a side session that some things cannot be known within a formal system. He published in 1931. The proof was verified quickly by the mathematical community. Hilbert was reportedly furious. The Incompleteness Theorems were accepted as correct within months and have remained unchallenged for nearly a century. Gödel was 25 years old.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Vienna, 1933–1938 · The Political Situation</div>
+<p class="narrative">Vienna in the 1930s is changing. The Vienna Circle — the logical positivists you have been loosely associated with — begins to dissolve as its Jewish members leave for England and America. Moritz Schlick, the Circle's leader, is murdered by a former student on the steps of the University in 1936. The murderer is subsequently described as a hero in the Nazi press. You are not Jewish but your wife Adele is working class and was formerly a dancer, which your family considers beneath you. You have visited Princeton's Institute for Advanced Study. The United States is beginning to seem like where the work should happen.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · Leaving Vienna</div>
+  <div class="d-situation">The situation in Vienna is deteriorating. Your colleagues are leaving. Do you go to Princeton?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Yes — the Institute for Advanced Study is the right intellectual environment and the situation in Austria is clearly worsening</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. No — Vienna is your home; your work doesn't depend on political circumstances; wait and see</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Go temporarily — take a visiting position but plan to return; the political situation may stabilize</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Gödel made several visits to Princeton before the Anschluss. After the Anschluss in 1938, he was called up for military service — which he would have failed, but the process was alarming. He and Adele eventually left Austria in January 1940 by crossing the Trans-Siberian Railway to Japan, then sailing to California and arriving at Princeton. The route was necessary because the Atlantic crossing was too dangerous. They left everything. Gödel became a permanent member of the Institute for Advanced Study in 1953 and never returned to Europe. The mathematical work continued immediately on arrival.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Princeton, 1940s · Einstein</div>
+<p class="narrative">At Princeton you become, improbably, close friends with Albert Einstein. The two of you walk together from your houses to the Institute every day — a walk that becomes famous, witnessed by other Institute members who describe it with awe. You are 34; Einstein is 61. You are the logician who proved mathematics cannot prove itself; he is the physicist who proved that time is not absolute. You talk for hours. Einstein later says that in his later years the main reason he still came to the Institute was for the walk with Gödel. The friendship is one of the great intellectual partnerships of the century.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Einstein Friendship</div>
+  <div class="d-situation">Einstein is the most famous scientist in the world and 27 years your senior. He seeks you out. How do you engage with him?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. As an equal — your mathematics and his physics are different domains, but the philosophical questions intersect; engage directly and without deference</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. As a student — take the opportunity to absorb everything from the greatest living physicist; learn more than you teach</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. With caution — Einstein's fame makes him a target of requests and time-wasters; protect his attention and yours</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Gödel engaged with Einstein as an intellectual equal. Their conversations ranged across physics, logic, philosophy, and the nature of time. Gödel produced his "Gödel metric" — a mathematical model of the universe where time travel to the past is theoretically possible — in part as a philosophical challenge to Einstein's views on time. Einstein took the challenge seriously. The friendship was one of mutual intellectual stimulation that neither found elsewhere at Princeton. Einstein was often amused by Gödel's extreme logical precision: Gödel once found a logical contradiction in the US Constitution during his citizenship exam preparation.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Princeton, 1947 · The Citizenship Exam</div>
+<p class="narrative">Einstein and Oskar Morgenstern drive you to your US citizenship hearing. On the way, you tell them you have found a logical contradiction in the US Constitution that would allow a dictatorship to be legally established. Einstein and Morgenstern beg you not to bring this up with the judge. The judge at the hearing knows who Gödel is and engages him in conversation. The judge asks if you think a dictatorship like the one in Germany could happen in America. You begin to explain the contradiction you have found.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Citizenship Hearing</div>
+  <div class="d-situation">The judge is asking politely about American government. You have found a logical flaw in the Constitution that would allow a dictatorship. Do you explain it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,false)">A. Yes — the logical question is important and the judge asked; intellectual honesty requires explaining what you found</button>
+    <button class="dopt" onclick="choose(this,4,true)">B. Let Einstein redirect the conversation — your friends are right that this is not the time or place; get citizenship first</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Explain it briefly and then offer reassurance — acknowledge the theoretical possibility but emphasize the practical safeguards</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Einstein and Morgenstern successfully redirected the conversation before Gödel could fully explain the constitutional contradiction. Gödel received his citizenship. The incident is famous as a story about Gödel's extreme literalism — his inability to treat a polite social interaction as anything other than an occasion for rigorous logical analysis. What the constitutional contradiction actually was has been debated by legal scholars ever since. Gödel never published his analysis. He told friends it involved the amendment process but the details were lost. Some legal scholars have proposed candidates for what it might have been.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Princeton, 1950s · The Paranoia</div>
+<p class="narrative">The mental illness that has appeared periodically throughout your life is becoming more systematic. You believe people are trying to poison you. You will only eat food that your wife Adele has tasted first. You refuse to see certain doctors. You believe the furnace in your house is producing carbon monoxide. You check the heating system repeatedly. The paranoia is specific and consistent: you are being targeted, the environment is contaminated, the people around you want you dead. The Institute for Advanced Study is otherwise a pleasant place. Einstein has died (1955). You miss him badly. Adele is your primary human connection now.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · The Paranoia</div>
+  <div class="d-situation">You are experiencing consistent paranoid thoughts. Your wife manages the worst effects. Do you seek treatment?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Yes — the thoughts are interfering with work and life; psychiatric treatment has improved; the paranoia can be addressed</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. No — the concerns are reasonable precautions, not paranoia; the fact that most people don't share them doesn't make them wrong</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Trust Adele to manage it — she has been managing your mental health throughout the marriage; this is her domain</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Gödel did not successfully pursue treatment for the paranoia. He had been hospitalized for periods of psychiatric crisis earlier in his life (1934, 1936) and the Institute years were relatively stable — the paranoia was present but managed, partly through Adele's system of food-tasting and partly through the structured routine of the Institute. What was not anticipated was what would happen if Adele became unavailable. She was hospitalized in 1977 with serious health problems. Without her to taste his food, Gödel essentially stopped eating. By January 1978 he weighed 65 pounds.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Princeton, 1970 · The Ontological Proof</div>
+<p class="narrative">You have been working for years on a mathematical proof of the existence of God — a formalization of Anselm's ontological argument using modal logic. You believe the proof is valid. You also believe that if you publish it, people will think you are seriously asserting that God exists based on it, which is not quite what you mean — you mean that the argument is valid given certain axioms, and the question of whether the axioms are true is separate. You have shown the proof to a few colleagues but have not published it.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · The God Proof</div>
+  <div class="d-situation">You have a formal logical proof that you believe is valid. You are afraid people will misunderstand it as a personal religious statement. Do you publish it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Circulate it privately among logicians — let the logical validity be established before the theological controversy begins</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Publish it with extensive caveats about what you are and are not claiming</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Never publish — the misunderstanding is inevitable and the cost to your scientific reputation is not worth it</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Gödel circulated the proof privately and did not publish it during his lifetime. It was published posthumously in 1987 and has since been analyzed extensively by logicians and philosophers. Computer scientists have formally verified it is logically valid — in 2013, two computer scientists formalized it in automated theorem-proving software and confirmed the proof is technically correct, given the axioms. Whether the axioms are true is, as Gödel said, a separate question. The proof demonstrates that if you accept certain modal logical axioms about necessary existence, then God necessarily exists. Most philosophers reject the axioms. The logic is impeccable.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · Princeton, 1977–1978 · The End</div>
+<p class="narrative">Adele is hospitalized for several months. Without her, Gödel eats almost nothing. Friends try to bring him food; he will not eat it. He is admitted to Princeton Hospital in December 1977. He weighs 65 pounds. His death certificate gives the cause as "malnutrition and inanition due to personality disturbance." He was 71 years old. The personality disturbance in question was a belief that had been with him for decades — that someone wanted to poison him — and when the person who managed that belief was not present, the belief had its logical conclusion.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The Logic of It</div>
+  <div class="d-situation">He starved to death because his paranoia would not allow him to eat food he did not trust. His logic was internally consistent. How do we understand this?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. As a reminder that logical consistency and reality are not the same thing — his reasoning was valid but the premise was wrong</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. As a tragic extension of his mathematical insight — he was a man who took every logical implication seriously, including the wrong ones</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. As a medical failure — appropriate psychiatric intervention earlier could have prevented the terminal paranoia; this was treatable</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> All three readings are supportable. The paranoia was internally consistent — given the premise that someone wanted to poison him, refusing to eat untested food was the logical response. The premise was wrong, but the logic was valid. This is not so different from what the Incompleteness Theorems show: a system can be internally consistent while containing statements that cannot be determined true or false within the system. Gödel's paranoia was consistent. It was also deadly. The boundary between logic and truth is exactly what his theorems are about.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · The Legacy</div>
+<p class="narrative">The Incompleteness Theorems are permanent. They are used in mathematics, computer science, philosophy of mind, artificial intelligence theory, and epistemology. They tell us something fundamental about the relationship between formal systems and truth: no sufficiently powerful formal system can be both complete and consistent. There are always true statements that cannot be proven within the system. Gödel proved this in 1931 when he was 25 years old. It has not been refuted.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · What the Theorems Mean</div>
+  <div class="d-situation">The Incompleteness Theorems have been interpreted as meaning everything from "human consciousness transcends mechanism" to "AI can never be fully intelligent." What do they actually mean?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. Exactly what they say: no sufficiently powerful consistent formal system can prove all truths about arithmetic — nothing more, nothing less</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. That the human mind must transcend formal systems — if we can see truth that no formal system can prove, we must be doing something beyond formal reasoning</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. That all knowledge has fundamental limits — the theorems extend beyond mathematics to show that no field of inquiry can be complete and consistent simultaneously</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> Gödel himself believed the theorems supported Platonism about mathematics — the view that mathematical objects and truths exist independently of human minds and formal systems. He thought the human mathematical mind grasped truths that no formal system could capture. Most logicians and mathematicians accept option A: the theorems say exactly what they say about formal systems, and extrapolating them to consciousness or epistemology generally requires additional premises that Gödel does not provide. The theorems are stunning exactly as stated. They do not need to be more than they are.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2 id="final-title"></h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="cantor-simulator.html">
+      <span class="next-name">Georg Cantor</span>
+      <span class="next-desc">The mathematician who proved different sizes of infinity — and also paid with his mind for it</span>
+    </a>
+    <a class="next-card" href="turing-simulator.html">
+      <span class="next-name">Alan Turing</span>
+      <span class="next-desc">Turing used Gödel's technique to prove that some computational problems are undecidable</span>
+    </a>
+    <a class="next-card" href="einstein-simulator.html">
+      <span class="next-name">Albert Einstein</span>
+      <span class="next-desc">Gödel's closest friend at Princeton — the physicist who proved time is not absolute</span>
+    </a>
+    <a class="next-card" href="ramanujan-simulator.html">
+      <span class="next-name">Srinivasa Ramanujan</span>
+      <span class="next-desc">Another mathematician who worked at the boundaries of what formal systems could express</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const pct=score/TOTAL;let title,body;if(pct>=0.875){title="The Logic Follows the Proof";body="You made the same moves Gödel made — publish at 25 without waiting for Hilbert's approval, walk with Einstein as an equal, stay quiet at the citizenship hearing by letting others redirect, circulate the God proof without pushing to publish it. What you understood: his most important attribute wasn't mathematical genius, it was the willingness to publish a result that destroyed the program the greatest living mathematician had spent decades building. The logic followed the proof. He just had to be willing to follow it.";}else if(pct>=0.625){title="Valid Reasoning, Missing Premises";body="You got the core logic right — publish the Incompleteness Theorems, engage with Einstein without deference, separate the God proof's logical validity from its theological implications. Where you hesitated: Gödel had a quality that's easy to underestimate. He treated logical conclusions as actually requiring action. If the proof is correct, publish it. The hesitations that tripped you up were about social accommodation — what Hilbert would think, what the judge would think. Gödel didn't have this hesitation. The Incompleteness Theorems are why we know his name.";}else if(pct>=0.375){title="Consistent but Wrong Premises";body="You deferred to authority and social context in ways Gödel refused. The cautious approaches — wait for Hilbert, present the result as a conjecture, publish the God proof with caveats — would have produced a different history. Perhaps another logician finds the Incompleteness Theorems first. Perhaps Gödel is remembered as a competent contributor rather than the person who ended Hilbert's program at age 25. His courage was as specific as his mathematics, and it was not a default choice.";}else{title="Externally Valid, Internally Wrong";body="You chose social accommodation at each point — and Gödel's life is a study in what happens when social accommodation and logical necessity diverge. His theorems are correct because he published them against the grain of the entire mathematical establishment. His death at 65 pounds is the consequence of logic applied to a wrong premise: refuse poisoned food, because someone is poisoning you. The same trait produced the greatest result in 20th-century logic and killed him in Princeton. You would have avoided the death. You would also have avoided the proof."}document.getElementById('final-title').textContent=title;document.getElementById('ending-text').textContent=body;el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

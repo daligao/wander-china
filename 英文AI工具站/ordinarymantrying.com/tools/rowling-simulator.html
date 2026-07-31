@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-DBR2PMLR61");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were J.K. Rowling?</title>
+<meta name="description" content="An interactive story about J.K. Rowling — the single mother on welfare who was rejected by 12 publishers and built the best-selling book series in history. At every turning point, you make the call.">
+<style>
+:root {
+  --bg: #F4F1EB;
+  --card: #FDFBF7;
+  --ink: #1C1A14;
+  --muted: #7A7060;
+  --line: #DDD5C0;
+  --accent: #1B5E35;
+  --accent-bg: #EBF5EE;
+  --gold: #8B6914;
+  --gold-bg: #FBF5E0;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Consolas, monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--bg); color: var(--ink); line-height: 1.7; -webkit-tap-highlight-color: transparent; }
+.topbar { position: sticky; top: 0; z-index: 100; background: rgba(244,241,235,.93); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; }
+.topbar-title { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.topbar-score { font-family: var(--mono); font-size: 12px; color: var(--ink); font-weight: 700; display: none; }
+.cover { max-width: 680px; margin: 0 auto; padding: 48px 20px 0; }
+.cover-eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 16px; }
+.cover-title { font-family: var(--serif); font-size: 36px; font-weight: 700; line-height: 1.2; letter-spacing: -.02em; margin-bottom: 20px; }
+.cover-sub { font-size: 16px; color: #4a4030; line-height: 1.8; margin-bottom: 28px; }
+.start-btn { appearance: none; cursor: pointer; border: none; background: var(--accent); color: #fff; font-family: var(--sans); font-weight: 700; font-size: 16px; padding: 16px 24px; border-radius: 12px; width: 100%; transition: filter .15s, transform .08s; margin-bottom: 48px; display: block; }
+.start-btn:hover { filter: brightness(1.12); }
+.start-btn:active { transform: scale(.99); }
+#story { display: none; }
+.story-wrap { max-width: 680px; margin: 0 auto; padding: 0 20px; }
+.narrative { padding: 36px 0 8px; }
+.narrative p { font-family: var(--serif); font-size: 17px; line-height: 1.9; color: var(--ink); margin-bottom: 18px; }
+.narrative p:last-child { margin-bottom: 0; }
+.dialogue { border-left: 3px solid var(--accent); padding-left: 16px; margin: 20px 0; font-style: italic; color: #4a4030; font-family: var(--serif); font-size: 17px; line-height: 1.8; }
+.chapter-divider { padding: 32px 0 20px; text-align: center; }
+.chapter-divider .cline { height: 1px; background: var(--line); margin-bottom: 16px; }
+.chapter-label { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.decision-block { background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; margin: 28px 0; overflow: hidden; }
+.decision-header { background: var(--accent); color: #fff; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; padding: 9px 18px; display: flex; align-items: center; justify-content: space-between; }
+.d-num { opacity: .45; }
+.decision-body { padding: 20px 18px 18px; }
+.decision-q { font-family: var(--serif); font-size: 18px; line-height: 1.45; margin-bottom: 18px; }
+.dopts { display: flex; flex-direction: column; gap: 10px; }
+.dopt { appearance: none; cursor: pointer; text-align: left; width: 100%; background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 13px 15px; font-family: var(--sans); font-size: 14px; color: var(--ink); display: flex; gap: 12px; align-items: flex-start; transition: border-color .15s, background .15s; line-height: 1.45; }
+.dopt:hover { border-color: var(--accent); background: #fff; }
+.dopt.disabled { cursor: default; pointer-events: none; }
+.dopt-id { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--muted); margin-top: 1px; transition: all .15s; }
+.dopt:hover .dopt-id { border-color: var(--accent); color: var(--accent); }
+.dopt-body { flex: 1; }
+.dopt.right { border-color: var(--gold); background: var(--gold-bg); }
+.dopt.right .dopt-id { background: var(--gold); border-color: var(--gold); color: #fff; }
+.dopt.wrong { border-color: #C0392B; background: #FDF3F2; opacity: .7; }
+.dopt.wrong .dopt-id { background: #C0392B; border-color: #C0392B; color: #fff; }
+.dopt.correct { border-color: var(--gold); background: var(--gold-bg); border-width: 2px; }
+.dopt.correct .dopt-id { background: var(--gold); border-color: var(--gold); color: #fff; }
+.reveal { display: none; border-top: 1.5px solid var(--line); padding: 20px 18px; animation: slideIn .35s ease; }
+@keyframes slideIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+.reveal-badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; padding: 4px 11px; border-radius: 20px; margin-bottom: 14px; }
+.badge-y { background: var(--gold-bg); color: var(--gold); border: 1px solid #D4B060; }
+.badge-n { background: #FDF3F2; color: #C0392B; border: 1px solid #F0A898; }
+.reveal-label { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
+.reveal-text { font-family: var(--serif); font-size: 17px; line-height: 1.5; margin-bottom: 14px; }
+.reveal-explain { font-size: 14px; line-height: 1.85; color: #4a4030; }
+.seg { display: none; }
+.seg.shown { display: block; animation: fadeIn .4s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.results { padding: 40px 0 20px; }
+.results-hero { text-align: center; padding: 20px 0 28px; }
+.results-trophy { font-size: 56px; display: block; margin-bottom: 10px; }
+.results-score-big { font-family: var(--serif); font-size: 64px; font-weight: 700; line-height: 1; letter-spacing: -.03em; }
+.results-score-big span { font-size: 24px; color: var(--muted); }
+.results-sub { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+.results-title { font-family: var(--serif); font-size: 22px; font-weight: 700; margin: 18px 0 10px; line-height: 1.3; }
+.results-desc { font-size: 14px; color: #4a4030; line-height: 1.85; margin-bottom: 24px; }
+.divider { height: 1px; background: var(--line); margin: 24px 0; }
+.dim-rows { display: flex; flex-direction: column; gap: 14px; margin: 16px 0 24px; }
+.dim-row-head { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.dim-row-name { font-size: 13px; font-weight: 700; }
+.dim-row-num { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.bar-bg { height: 7px; background: var(--line); border-radius: 6px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 6px; width: 0; transition: width 1.1s ease; }
+.bar-p { background: var(--accent); }
+.bar-c { background: var(--gold); }
+.bar-i { background: #8B2A2A; }
+.res-card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+.res-card .rc-title { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.share-pre { font-family: var(--mono); font-size: 12px; background: #ECE8DF; border: 1px solid var(--line); border-radius: 8px; padding: 14px; line-height: 1.8; white-space: pre-wrap; margin-bottom: 12px; }
+.copy-btn { appearance: none; cursor: pointer; border: none; background: var(--accent); color: #fff; font-family: var(--sans); font-weight: 700; font-size: 15px; padding: 14px 20px; border-radius: 10px; width: 100%; transition: filter .15s; }
+.copy-btn:hover { filter: brightness(1.12); }
+.sim-links { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+.sim-links p { font-size: 14px; color: #4a4030; line-height: 1.7; margin-bottom: 10px; }
+.sim-links a { color: var(--accent); font-weight: 700; text-decoration: none; font-size: 13px; margin-right: 10px; display: inline-block; margin-bottom: 6px; }
+.sim-links a:hover { text-decoration: underline; }
+.replay-btn { appearance: none; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--muted); font-family: var(--sans); font-weight: 600; font-size: 14px; padding: 13px 20px; border-radius: 10px; width: 100%; }
+@media (max-width: 480px) { .cover-title { font-size: 28px; } .narrative p { font-size: 16px; } }
+
+.tweet-btn{display:inline-block;margin-left:10px;padding:9px 18px;background:#000;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .2s;}
+.tweet-btn:hover{opacity:0.8;}
+
+.next-sims{margin:32px 0 8px;text-align:center;}
+.next-sims h3{font-size:14px;color:#888;margin-bottom:14px;font-weight:400;letter-spacing:.05em;text-transform:uppercase;}
+.next-sims-grid{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.next-sim-btn{display:inline-block;padding:10px 18px;border:1px solid rgba(0,0,0,.15);border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;color:var(--ink,#2d2d2d);background:#fff;transition:all .2s;}
+.next-sim-btn:hover{border-color:var(--accent,#8B6914);color:var(--accent,#8B6914);transform:translateY(-1px);}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/rowling-simulator.html">
+<meta property="og:title" content="J.K. Rowling Life Simulator — Would You Have Kept Writing?">
+<meta property="og:description" content="An interactive story about J.K. Rowling — the single mother on welfare who was rejected by 12 publishers, who kept writing Harry Potter because she believed in the story.">
+<meta property="og:site_name" content="Ordinary Man Trying">
+<meta property="og:locale" content="en_US">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Game",
+  "name": "J.K. Rowling Life Simulator",
+  "description": "Make the real decisions J.K. Rowling faced on her path from welfare to publishing Harry Potter despite 12 rejection letters.",
+  "url": "https://ordinarymantrying.com/tools/rowling-simulator.html",
+  "genre": [
+    "Educational",
+    "Simulation"
+  ],
+  "gamePlatform": "Web Browser",
+  "applicationCategory": "Game",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Ordinary Man Trying",
+    "url": "https://ordinarymantrying.com"
+  }
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · J.K. Rowling</span>
+  <span class="topbar-score" id="topbar-score"></span>
+</div>
+<div class="cover" id="cover">
+  <div class="cover-eyebrow">True Story · Interactive</div>
+  <h1 class="cover-title">She was a single mother on welfare, rejected by 12 publishers, writing in cafés during her baby's naps. She went on to build the best-selling book series in history. At every turning point, you make the call.</h1>
+  <p class="cover-sub">This is a life simulation. At each critical moment in J.K. Rowling's real story, you face the same choice she did — before you're told what she actually did.</p>
+  <button class="start-btn" onclick="startStory()">Start the Simulation →</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+  <div class="narrative">
+    <p>Joanne Rowling was born on July 31, 1965, in Yate, England. Her father was a Rolls-Royce aircraft engineer. Her mother had multiple sclerosis — diagnosed when Joanne was 15. From an early age, she wrote. She told her younger sister, Di, stories constantly. She said she knew from childhood that she wanted to be a writer, and that she also knew that this was not considered a sensible life goal.</p>
+    <p>She studied French and Classics at the University of Exeter, worked as a researcher for Amnesty International in London, and moved to Manchester with a boyfriend. She was unhappy in Manchester. In June 1990, she got on a train.</p>
+  </div>
+
+  <div class="decision-block" id="d1">
+    <div class="decision-header"><span>Decision 1 · June 1990 · Age 24 · A Delayed Train</span><span class="d-num">1 / 7</span></div>
+    <div class="decision-body">
+      <p class="decision-q">Rowling is on a delayed Manchester-to-London train. The train sits motionless in a field for four hours. During the wait, an idea arrives — complete and sudden — for a boy who doesn't know he's a wizard. She has no pen. What does she do?</p>
+      <div class="dopts" id="opts-1">
+        <button class="dopt" onclick="answer(1,'A')"><div class="dopt-id">A</div><div class="dopt-body">Wait until she gets home and has proper writing materials. The idea will still be there.</div></button>
+        <button class="dopt" onclick="answer(1,'B')"><div class="dopt-id">B</div><div class="dopt-body">Note the headline idea only — a boy wizard — and develop the details later when she's at her desk.</div></button>
+        <button class="dopt" onclick="answer(1,'C')"><div class="dopt-id">C</div><div class="dopt-body">Ask another passenger for a pen and write down just the core concept so she doesn't forget.</div></button>
+        <button class="dopt" onclick="answer(1,'D')"><div class="dopt-id">D</div><div class="dopt-body">Sit in her seat and work out the entire world in her head — every detail she can imagine — committing it to memory. Find paper the moment the train arrives.</div></button>
+      </div>
+      <div class="reveal" id="rev-1">
+        <div class="reveal-badge" id="badge-1"></div>
+        <div class="reveal-label">What J.K. Rowling Did</div>
+        <div class="reveal-text">She had no pen and didn't ask for one. She sat for four hours constructing the world in her mind. Harry, Ron, Hermione, the Weasley family, Hogwarts, the houses, Quidditch, the ghosts — the whole structure arrived in those hours on a stalled train.</div>
+        <div class="reveal-explain"><strong>In June 1990, your Manchester-to-London train stalled in a field for four hours, and you sat without a pen while the entire world of Harry Potter — characters, houses, rules — arrived fully formed in your mind and committed to nothing but memory.</strong> Rowling later said the absence of a pen was almost a gift: "I think if I'd had to slow down to write it, I might have lost some of it. I was very grateful for the delay." She described the experience as the idea arriving "fully formed" — a rare creative event she has never been able to fully explain. She went home and began writing immediately. She was still living in Manchester. Her mother was dying. She wrote.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-1">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1993 · Age 27 · Edinburgh</div></div>
+    <div class="narrative">
+      <p>In 1990, her mother died. In 1992, she moved to Porto, Portugal, to teach English. She married a Portuguese journalist. They had a daughter, Jessica. The marriage was a disaster — she described her husband as abusive. She fled in December 1993 with baby Jessica and the first three chapters of Harry Potter in her bag.</p>
+      <p>She moved to Edinburgh, near her sister Di. She had no job. She was on government welfare — about £70 a week. Her flat was unheated. She was clinically depressed. She described this period later as "rock bottom."</p>
+      <p>Rock bottom, she also said, was the foundation on which she built the rest of her life.</p>
+    </div>
+    <div class="decision-block" id="d2">
+      <div class="decision-header"><span>Decision 2 · 1993 · Age 28 · Edinburgh, On Welfare</span><span class="d-num">2 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Rowling is a single mother in an unheated flat in Edinburgh, on £70-a-week welfare, clinically depressed. She has 3 chapters of Harry Potter. Her priority should logically be stability — get a job, get secure. Does she keep writing?</p>
+        <div class="dopts" id="opts-2">
+          <button class="dopt" onclick="answer(2,'A')"><div class="dopt-id">A</div><div class="dopt-body">Pause the writing until she has income. Being responsible to her daughter comes first.</div></button>
+          <button class="dopt" onclick="answer(2,'B')"><div class="dopt-id">B</div><div class="dopt-body">Write on weekends only. A part-time job plus part-time writing is the sustainable middle path.</div></button>
+          <button class="dopt" onclick="answer(2,'C')"><div class="dopt-id">C</div><div class="dopt-body">Apply for teaching certification — a skill she already has — and write during school holidays.</div></button>
+          <button class="dopt" onclick="answer(2,'D')"><div class="dopt-id">D</div><div class="dopt-body">Write every day. When Jessica naps, go to the nearest café with heat, order one coffee, and write for as long as possible. Job training can come later.</div></button>
+        </div>
+        <div class="reveal" id="rev-2">
+          <div class="reveal-badge" id="badge-2"></div>
+          <div class="reveal-label">What J.K. Rowling Did</div>
+          <div class="reveal-text">She wrote every day. She pushed Jessica in a pram until the baby fell asleep, then went to the nearest café — often Nicolson's, her brother-in-law's place — and wrote for as long as Jessica slept. She ordered single coffees to justify sitting.</div>
+          <div class="reveal-explain"><strong>In 1993, you were a single mother in an unheated Edinburgh flat on £70 a week from the British government, clinically depressed, pushing your daughter's pram through the city until she fell asleep so you could sit in a café with one coffee and write the next chapter.</strong> Rowling has said that writing was the one thing that held her together during this period. The depression was real and severe — she later channeled it into the Dementors. She sought psychiatric help. She applied for welfare support (which she has been publicly grateful for and has defended in her advocacy). She also applied to complete a teaching certification — but she finished Harry Potter and the Philosopher's Stone first. The book was done in 1995. She had been writing it, in cafés, on her lap, for five years.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-2">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1995 · Age 30 · The Manuscript</div></div>
+    <div class="narrative">
+      <p>The manuscript was finished. She typed it on a second-hand typewriter. She didn't have a computer. She made two copies — she couldn't afford a photocopier, so she typed it twice.</p>
+      <p>She had written a 90,000-word children's novel about a boy wizard, in cafés, on welfare. Now she needed to find someone who would publish it.</p>
+      <p>The conventional path was a literary agent. You write a query letter, send sample chapters, and wait. Most manuscripts are rejected within a week. Many authors submit for years without success. The odds for a first novel — especially a long, unusual children's novel — were not good.</p>
+    </div>
+    <div class="decision-block" id="d3">
+      <div class="decision-header"><span>Decision 3 · 1995 · Age 30 · Finding an Agent</span><span class="d-num">3 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">The manuscript is done. Rowling needs a literary agent. Query letters to top agents almost always go unanswered. What's the strategy?</p>
+        <div class="dopts" id="opts-3">
+          <button class="dopt" onclick="answer(3,'A')"><div class="dopt-id">A</div><div class="dopt-body">Target one ideal agent carefully. One perfect match is better than scattershot submissions.</div></button>
+          <button class="dopt" onclick="answer(3,'B')"><div class="dopt-id">B</div><div class="dopt-body">Submit to publishers directly — cut out the middleman since agents are a bottleneck.</div></button>
+          <button class="dopt" onclick="answer(3,'C')"><div class="dopt-id">C</div><div class="dopt-body">Enter writing competitions first. Win some credibility, then approach agents from a stronger position.</div></button>
+          <button class="dopt" onclick="answer(3,'D')"><div class="dopt-id">D</div><div class="dopt-body">Work through the Writers' & Artists' Yearbook alphabetically. Send query letters to agent after agent. Keep going until someone says yes.</div></button>
+        </div>
+        <div class="reveal" id="rev-3">
+          <div class="reveal-badge" id="badge-3"></div>
+          <div class="reveal-label">What J.K. Rowling Did</div>
+          <div class="reveal-text">She went through the Yearbook systematically. The first agent sent the chapters back in the envelope she'd included — without reading them. The second agent sent a polite rejection. She kept going. Agent number eight was Christopher Little.</div>
+          <div class="reveal-explain"><strong>In 1995, the first agent you queried returned your manuscript in the self-addressed return envelope without reading it — so you moved to the next name in the Writers' & Artists' Yearbook.</strong> Christopher Little almost didn't read the manuscript either — his assistant pulled it from the rejection pile because the brightly colored cover caught her eye. Little read the first chapter, then asked for the full manuscript. He took Rowling on as a client. He then submitted the book to twelve publishers. Every single one rejected it. Bloomsbury — which would eventually publish it — initially rejected it too. Then their chairman's eight-year-old daughter read the first chapter and wouldn't stop asking for the rest. Barry Cunningham made an offer. He told Rowling she should probably get a day job because "there's no money in children's books."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-3">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1997 · Age 31 · The Deal</div></div>
+    <div class="narrative">
+      <p>Bloomsbury offered a £1,500 advance — roughly $2,300 at the time. Not life-changing money by any measure. The print run would be 500 copies, mostly for libraries.</p>
+      <p>Christopher Little had also submitted to American publishers. In April 1998, he organized an auction. It was unusual to hold an auction for a first-time children's author. Most American publishers passed. Scholastic — the largest children's book publisher in the United States — stayed in the room.</p>
+    </div>
+    <div class="decision-block" id="d4">
+      <div class="decision-header"><span>Decision 4 · 1998 · Age 32 · The American Auction</span><span class="d-num">4 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Christopher Little wants to hold a U.S. rights auction for Harry Potter — unusual and risky for an unknown first-time children's author. Most publishers will likely pass and the auction could embarrass them. Should he proceed?</p>
+        <div class="dopts" id="opts-4">
+          <button class="dopt" onclick="answer(4,'A')"><div class="dopt-id">A</div><div class="dopt-body">Accept the best offer directly — don't risk an embarrassing auction with few bidders.</div></button>
+          <button class="dopt" onclick="answer(4,'B')"><div class="dopt-id">B</div><div class="dopt-body">Wait for the UK book to launch and generate buzz before approaching American publishers.</div></button>
+          <button class="dopt" onclick="answer(4,'C')"><div class="dopt-id">C</div><div class="dopt-body">Target only two or three publishers who specialize in children's fantasy — a narrow but high-quality approach.</div></button>
+          <button class="dopt" onclick="answer(4,'D')"><div class="dopt-id">D</div><div class="dopt-body">Hold the auction. Create competitive pressure. If the book is good enough for Bloomsbury, it's good enough to fight for.</div></button>
+        </div>
+        <div class="reveal" id="rev-4">
+          <div class="reveal-badge" id="badge-4"></div>
+          <div class="reveal-label">What J.K. Rowling Did</div>
+          <div class="reveal-text">The auction was held. Scholastic's Arthur Levine bid $105,000 — an extraordinary sum for a children's debut novel. The industry was stunned. Rowling wept when she heard.</div>
+          <div class="reveal-explain"><strong>In April 1998, Scholastic's Arthur Levine read your manuscript on a plane to the Bologna Book Fair, became so absorbed he missed his stop, then bid $105,000 — one of the highest advances ever paid for a debut children's novel — for a book twelve publishers had already rejected.</strong> The $105,000 advance from Scholastic was, at the time, one of the highest ever paid for a children's first novel. Levine had read the manuscript on a plane to the Bologna Book Fair and become so absorbed he missed his stop. The U.S. publication of Harry Potter and the Sorcerer's Stone in September 1998 launched with a first printing of 50,000 — virtually unprecedented for a debut children's novel. Within months it was on the New York Times bestseller list. The rest is the most documented publishing story of the 20th century.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-4">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">2000 · Age 34 · The Pressure of Book 4</div></div>
+    <div class="narrative">
+      <p>By the time she was writing Goblet of Fire — Book 4 — Harry Potter was a global phenomenon. Millions of children were waiting. Bookstores were coordinating midnight release events. Scholastic had already printed millions of copies. Publishers were pressuring for a delivery date.</p>
+      <p>Rowling discovered a plot problem. A significant structural error in the manuscript that would require substantial rewriting. The book was already months overdue.</p>
+    </div>
+    <div class="decision-block" id="d5">
+      <div class="decision-header"><span>Decision 5 · 2000 · Age 34 · The Plot Problem</span><span class="d-num">5 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Rowling has found a significant plot error in Goblet of Fire — already late, millions of fans waiting, publishers pushing hard. She can patch it — fix the surface, deliver on time — or rewrite substantially and delay further. What does she do?</p>
+        <div class="dopts" id="opts-5">
+          <button class="dopt" onclick="answer(5,'A')"><div class="dopt-id">A</div><div class="dopt-body">Patch it. Readers won't notice. Deliver on time — the pressure is real and the expectation is set.</div></button>
+          <button class="dopt" onclick="answer(5,'B')"><div class="dopt-id">B</div><div class="dopt-body">Flag the issue to editors and jointly decide whether to fix or patch — share the burden.</div></button>
+          <button class="dopt" onclick="answer(5,'C')"><div class="dopt-id">C</div><div class="dopt-body">Fix it, but don't announce the delay — just submit late and let the publishers manage expectations.</div></button>
+          <button class="dopt" onclick="answer(5,'D')"><div class="dopt-id">D</div><div class="dopt-body">Tell publishers the book needs more time. Rewrite what needs rewriting. Deliver it right, not fast. The readers waited this long — they'll wait a bit more.</div></button>
+        </div>
+        <div class="reveal" id="rev-5">
+          <div class="reveal-badge" id="badge-5"></div>
+          <div class="reveal-label">What J.K. Rowling Did</div>
+          <div class="reveal-text">She told publishers the book needed more time and rewrote the problematic section. Goblet of Fire was delivered late. When it was released in July 2000, it broke records — one million copies sold in the first day in the UK alone.</div>
+          <div class="reveal-explain"><strong>In 2000, with millions of children waiting for Book 4 and publishers already printing, you stopped, told them the manuscript needed more time, and rewrote what needed rewriting — because you would not publish a book you weren't satisfied with.</strong> Rowling has always been consistent about this: she will not publish a book she isn't satisfied with. The same principle led to significant delays on later books. Fans were frustrated by wait times. She said she would rather be criticized for being slow than for being careless. Each of the seven books was delivered on its own timeline, not on the publisher's schedule. Harry Potter remained internally consistent across 4,224 pages of text — a feat of structural discipline that professional editors and readers still marvel at.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-5">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">2007 · Age 41 · The Last Chapter</div></div>
+    <div class="narrative">
+      <p>Harry Potter and the Deathly Hallows — Book 7 — was the final volume. It had to end the story Rowling had been carrying in her head since 1990, on a stalled train in a field outside Manchester.</p>
+      <p>She had planned certain deaths since the beginning. She knew who would not survive. She also knew that publishers, studios, and commercial forces would have preferred a different ending — one with more survivors, more room for continuation, more commercial longevity.</p>
+      <p>She finished the manuscript in the Balmoral Hotel in Edinburgh in January 2007, and wrote on the plaster of the suite: "J.K. Rowling finished writing Harry Potter and the Deathly Hallows in this room on 11 January 2007."</p>
+    </div>
+    <div class="decision-block" id="d6">
+      <div class="decision-header"><span>Decision 6 · 2007 · Age 41 · The Deaths</span><span class="d-num">6 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Rowling has planned deaths for certain beloved characters from the very beginning. Publishers and studios have signaled they'd prefer a softer ending — more characters surviving, more possibility for continuation. The commercial pressure is real. Does she write it as she always planned?</p>
+        <div class="dopts" id="opts-6">
+          <button class="dopt" onclick="answer(6,'A')"><div class="dopt-id">A</div><div class="dopt-body">Save one character she'd planned to kill. The series has earned goodwill — use some of it to give readers a small mercy.</div></button>
+          <button class="dopt" onclick="answer(6,'B')"><div class="dopt-id">B</div><div class="dopt-body">Leave the ending ambiguous — suggest loss without confirming death, giving studios flexibility.</div></button>
+          <button class="dopt" onclick="answer(6,'C')"><div class="dopt-id">C</div><div class="dopt-body">Consult with her editor and the studio before finalizing — the story belongs to all of them at this scale.</div></button>
+          <button class="dopt" onclick="answer(6,'D')"><div class="dopt-id">D</div><div class="dopt-body">Write it exactly as planned from the beginning. Every death, every sacrifice. The story is the story — she decided the ending in 1990 and she's writing it.</div></button>
+        </div>
+        <div class="reveal" id="rev-6">
+          <div class="reveal-badge" id="badge-6"></div>
+          <div class="reveal-label">What J.K. Rowling Did</div>
+          <div class="reveal-text">She wrote it exactly as planned. Characters died as she had always intended. She also added one death she hadn't originally planned — feeling, she said, as though she needed to apologize to the character for what the story required of him.</div>
+          <div class="reveal-explain"><strong>On January 11, 2007, in Room 552 of the Balmoral Hotel in Edinburgh, you wrote the deaths you had planned since that stalled train in 1990 — and did not soften them, despite what studios preferred and what the franchise's commercial logic required.</strong> Rowling wept while writing certain deaths. She has described finding it physically difficult to write the chapter in which Hedwig dies — the owl representing Harry's last connection to his childhood. Deathly Hallows sold 11 million copies in the first 24 hours in the UK and US combined — still a record. Rowling had delivered the end she designed on a stalled train in 1990, with no pen, and carried in her head for 17 years.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-6">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">2008 · Age 42 · Harvard Commencement</div></div>
+    <div class="narrative">
+      <p>In 2008, J.K. Rowling was invited to give the commencement address at Harvard University. The Harry Potter series had sold over 400 million copies by this point. She was one of the wealthiest people in Britain.</p>
+      <p>She chose to speak about two things: the value of failure, and the importance of imagination as a moral faculty — specifically the capacity to imagine the suffering of people whose lives are completely unlike your own.</p>
+      <p>She had been on welfare. She had been depressed. She had failed, and she had survived it, and she believed that surviving failure was a more important skill than avoiding it.</p>
+    </div>
+    <div class="decision-block" id="d7">
+      <div class="decision-header"><span>Decision 7 · Harvard 2008 · Age 42 · What to Say</span><span class="d-num">7 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Rowling has been asked to speak at Harvard. The conventional commencement address celebrates success and encourages ambition. She has a different speech in mind — one about failure and about the moral responsibility of imagination. Should she give the safer speech or the honest one?</p>
+        <div class="dopts" id="opts-7">
+          <button class="dopt" onclick="answer(7,'A')"><div class="dopt-id">A</div><div class="dopt-body">Give the expected speech — inspire graduates about their potential. Harvard expects inspiration, not confession.</div></button>
+          <button class="dopt" onclick="answer(7,'B')"><div class="dopt-id">B</div><div class="dopt-body">Tell the success story only — from welfare to billionaire. Leave out the darkness; focus on the arc.</div></button>
+          <button class="dopt" onclick="answer(7,'C')"><div class="dopt-id">C</div><div class="dopt-body">Tell the failure story, but frame it gently — failure as a detour, not a destination. Keep it optimistic.</div></button>
+          <button class="dopt" onclick="answer(7,'D')"><div class="dopt-id">D</div><div class="dopt-body">Give the honest speech: failure is not something to avoid — it strips away the inessential and reveals who you actually are. And imagination is not decoration — it is the faculty that makes you human and morally responsible.</div></button>
+        </div>
+        <div class="reveal" id="rev-7">
+          <div class="reveal-badge" id="badge-7"></div>
+          <div class="reveal-label">What J.K. Rowling Did</div>
+          <div class="reveal-text">She gave the honest speech. "The benefits of failure" and "the fringe benefits of failure and the importance of imagination" — she described her depression, her poverty, her rock bottom, and called failure the best thing that ever happened to her. She also warned graduates that choosing not to use their imagination to understand others' suffering is a choice with moral consequences.</div>
+          <div class="reveal-explain"><strong>In June 2008, standing before Harvard's graduating class, you told the children of America's most privileged institution that the best thing that ever happened to you was hitting rock bottom — on welfare, in an unheated Edinburgh flat — and you meant it.</strong> The speech has been watched tens of millions of times. It's considered one of the great commencement addresses of the modern era — not because it was uplifting, but because it was true. Rowling could have arrived at Harvard as a triumph. She arrived as a witness. The graduates, she said, were at an institution of privilege — and that privilege came with an obligation to see beyond it. "We do not need magic to transform our world. We carry all the power we need inside ourselves already: we have the power to imagine better."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-epilogue">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">Epilogue · The Numbers Don't Tell It</div></div>
+    <div class="narrative">
+      <p>Harry Potter has sold over 600 million copies in 84 languages. It is the best-selling book series in recorded history. The films grossed $7.7 billion. The theme parks have been visited by hundreds of millions of people. The franchise is worth over $25 billion.</p>
+      <p>None of that is the story.</p>
+      <p>The story is a woman on a stalled train with no pen, building a world in her mind. A woman in an unheated flat pushing a pram through Edinburgh so her baby would fall asleep, then sitting in a café she could barely afford and writing the next chapter. A manuscript typed twice because she couldn't afford a photocopier. Twelve rejections. Fifteen rejections. A £1,500 advance and a print run of 500 copies, mostly for libraries.</p>
+      <p>She finished what she started on that train. Every word of it. That is the story.</p>
+    </div>
+    <div class="results" id="seg-results">
+      <div class="results-hero">
+        <span class="results-trophy" id="res-trophy">📚</span>
+        <div class="results-score-big" id="res-score">0<span>/7</span></div>
+        <div class="results-sub">decisions matched J.K. Rowling</div>
+      </div>
+      <h2 class="results-title" id="res-title"></h2>
+      <p class="results-desc" id="res-desc"></p>
+      <div class="divider"></div>
+      <div class="dim-rows">
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Persistence</span><span class="dim-row-num" id="d-p-num">0/3</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-p" id="d-p-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Courage</span><span class="dim-row-num" id="d-c-num">0/2</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-c" id="d-c-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Integrity</span><span class="dim-row-num" id="d-i-num">0/2</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-i" id="d-i-bar"></div></div>
+        </div>
+      </div>
+      <div class="res-card">
+        <div class="rc-title">Share your result</div>
+        
+<div class="next-sims"><h3>Try another simulator</h3><div class="next-sims-grid"><a class="next-sim-btn" href="curie-simulator.html">Marie Curie</a><a class="next-sim-btn" href="oprah-simulator.html">Oprah Winfrey</a><a class="next-sim-btn" href="mandela-simulator.html">Nelson Mandela</a></div></div>
+<div class="share-pre" id="share-pre"></div>
+        <button class="copy-btn" onclick="copyShare(event)">Copy to clipboard</button>
+<a class="tweet-btn" id="tweet-btn" href="#" onclick="return shareTweet()" rel="noopener">𝕏 Share Result</a>
+      </div>
+
+      <div class="res-card" style="text-align:center;">
+        <div class="rc-title">📚 Go Deeper — Read the Book</div>
+        <p style="font-size:14px;line-height:1.7;margin-bottom:14px;">The book that started it all — rejected by 12 publishers, written by a single mother on welfare. Harry Potter and the Sorcerer's Stone is the ultimate proof that one story can change everything.</p>
+        <a href="https://amzn.to/4gxbE3a" target="_blank" rel="noopener" style="display:inline-block;background:#FF9900;color:#111;font-weight:700;padding:10px 22px;border-radius:6px;text-decoration:none;font-size:14px;">📖 View on Amazon →</a>
+        <p style="font-size:11px;color:#999;margin-top:10px;">As an Amazon Associate I earn from qualifying purchases.</p>
+      </div>
+
+      <div class="sim-links" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-left:4px solid var(--accent,#60a5fa);border-radius:12px;padding:18px 20px;margin-bottom:14px;">
+  
+  <p style="font-size:13px;font-weight:700;color:inherit;margin-bottom:10px;">🎮 Try another legendary life:</p>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;">
+    <a href="zhangxue-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🏍️ Zhang Xue</a>
+    <a href="disney-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🏰 Walt Disney</a>
+    <a href="honda-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🔧 Soichiro Honda</a>
+    <a href="curie-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">⚗️ Marie Curie</a>
+    <a href="jobs-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">📱 Steve Jobs</a>
+    <a href="oprah-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🌟 Oprah Winfrey</a>
+    <a href="musk-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🛸 Elon Musk</a>
+    <a href="mandela-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">✊ Nelson Mandela</a>
+    <a href="buffett-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">💰 Warren Buffett</a>
+    <a href="hawking-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🔭 Stephen Hawking</a>
+  </div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);">
+    <a href="https://ordinarymantrying.com/tools/" style="font-size:13px;color:var(--accent,#60a5fa);font-weight:700;text-decoration:none;">→ See all 11 simulators + free tools</a>
+  </div>
+</div>
+      <div class="res-card">
+        <div class="rc-title">About this simulator</div>
+        <p style="font-size:14px;color:#4a4030;line-height:1.85;">This simulator is part of <a href="https://ordinarymantrying.com" style="color:var(--accent);font-weight:700;text-decoration:none;">ordinarymantrying.com</a> — a blog about one ordinary person using AI to navigate investing, side hustles, and building things in public. All events are based on documented historical accounts of J.K. Rowling's life.</p>
+      </div>
+      <button class="replay-btn" onclick="location.reload()">↺ Play again</button>
+      <div style="height:48px;"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+<script>
+var TOTAL = 7;
+var DECISIONS = {
+  1:{zx:'D',dim:'persistence'},2:{zx:'D',dim:'courage'},3:{zx:'D',dim:'persistence'},
+  4:{zx:'D',dim:'courage'},5:{zx:'D',dim:'integrity'},6:{zx:'D',dim:'integrity'},7:{zx:'D',dim:'persistence'}
+};
+var NEXT_SEG={1:'seg-1',2:'seg-2',3:'seg-3',4:'seg-4',5:'seg-5',6:'seg-6',7:'seg-epilogue'};
+var DIM_MAX={persistence:3,courage:2,integrity:2};
+var scores={persistence:0,courage:0,integrity:0};
+var totalCorrect=0,answered={};
+function startStory(){document.getElementById('cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('topbar-score').style.display='block';document.getElementById('topbar-score').textContent='0 / '+TOTAL;window.scrollTo({top:0,behavior:'smooth'});}
+function answer(num,chosen){if(answered[num])return;answered[num]=chosen;var d=DECISIONS[num];var correct=(chosen===d.zx);if(correct){totalCorrect++;scores[d.dim]++;}var opts=document.querySelectorAll('#opts-'+num+' .dopt');opts.forEach(function(btn){btn.classList.add('disabled');var id=btn.querySelector('.dopt-id').textContent.trim();if(id===chosen&&correct)btn.classList.add('right');if(id===chosen&&!correct)btn.classList.add('wrong');if(id===d.zx&&!correct)btn.classList.add('correct');});var badge=document.getElementById('badge-'+num);if(correct){badge.className='reveal-badge badge-y';badge.textContent='✓ Same as J.K. Rowling';}else{badge.className='reveal-badge badge-n';badge.textContent='✗ You chose '+chosen+' — Rowling chose '+d.zx;}document.getElementById('rev-'+num).style.display='block';document.getElementById('topbar-score').textContent=totalCorrect+' / '+TOTAL;setTimeout(function(){var next=document.getElementById(NEXT_SEG[num]);next.classList.add('shown');setTimeout(function(){next.scrollIntoView({behavior:'smooth',block:'start'});},80);if(num===TOTAL)showResults();},950);}
+function showResults(){setTimeout(function(){var s=totalCorrect;var trophies=['🌱','🌱','✍️','✍️','🏅','🏅','🥇','📚'];document.getElementById('res-trophy').textContent=trophies[s]||'📚';document.getElementById('res-score').innerHTML=s+'<span>/'+TOTAL+'</span>';var title,desc;if(s===TOTAL){title='You think like J.K. Rowling.';desc='Perfect score. Every decision matched hers. You have the same instinct — not to protect yourself from failure, but to keep going through it, long enough for the world to catch up with what you already knew you were making.';}else if(s>=5){title='You have her stubbornness.';desc=s+' out of 7. You made the persistent call most of the time. The gaps are exactly where Rowling refused to hedge — and that refusal is what turned a handwritten manuscript into 600 million copies.';}else if(s>=3){title='You have her instinct.';desc=s+' out of 7. More than half matching her choices. Rowling\'s logic was always the same: the story is the story. If you found that even half the time, you\'re closer than you think.';}else{title='You\'d have given up earlier. So would most people.';desc=s+' out of 7. The sensible choices protect you. Rowling\'s choices didn\'t protect her at all — they just happened to build something that will outlast everyone in this room. Including her.';}document.getElementById('res-title').textContent=title;document.getElementById('res-desc').textContent=desc;setTimeout(function(){var pMax=DIM_MAX.persistence,cMax=DIM_MAX.courage,iMax=DIM_MAX.integrity;document.getElementById('d-p-num').textContent=scores.persistence+'/'+pMax;document.getElementById('d-c-num').textContent=scores.courage+'/'+cMax;document.getElementById('d-i-num').textContent=scores.integrity+'/'+iMax;document.getElementById('d-p-bar').style.width=((scores.persistence/pMax)*100)+'%';document.getElementById('d-c-bar').style.width=((scores.courage/cMax)*100)+'%';document.getElementById('d-i-bar').style.width=((scores.integrity/iMax)*100)+'%';},300);document.getElementById('share-pre').textContent='I just played the J.K. Rowling Life Simulator and matched '+totalCorrect+'/'+TOTAL+' of her real decisions.\n\nRowling was a single mother on welfare, rejected by 12 publishers,\nwriting in cafés during her baby\'s naps. She built the best-selling book series in history.\n\nPersistence '+scores.persistence+'/'+DIM_MAX.persistence+'  ·  Courage '+scores.courage+'/'+DIM_MAX.courage+'  ·  Integrity '+scores.integrity+'/'+DIM_MAX.integrity+'\n\nWould you have made the same choices? ordinarymantrying.com/tools/rowling-simulator.html';document.getElementById('seg-epilogue').scrollIntoView({behavior:'smooth',block:'start'});},600);}
+function shareTweet(){var text=document.getElementById('share-pre').textContent;if(!text||text.trim()===''){alert('Finish the simulator first to share your result!');return false;}var url='https://x.com/intent/tweet?text='+encodeURIComponent(text.substring(0,240));window.open(url,'_blank','width=550,height=450');return false;}
+function copyShare(evt){var text=document.getElementById('share-pre').textContent;var btn=evt.target;function restore(){btn.textContent='Copy to clipboard';}if(navigator.clipboard){navigator.clipboard.writeText(text).then(function(){btn.textContent='✓ Copied!';setTimeout(restore,2000);});}else{var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='✓ Copied!';setTimeout(restore,2000);}}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

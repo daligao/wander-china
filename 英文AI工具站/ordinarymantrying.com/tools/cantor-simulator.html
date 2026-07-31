@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Georg Cantor Life Simulator — He Proved Infinity Has Sizes</title>
+<meta name="description" content="Make the same decisions as Georg Cantor — the mathematician who proved some infinities are larger than others, was denounced as a corrupter of youth by his peers, and died alone in a sanatorium.">
+<style>
+:root{
+  --bg:#F2EEF5;--card:#F7F4FA;--ink:#120810;--muted:#584868;--line:#DDD0EC;
+  --accent:#280848;--accent-bg:#EAE4F5;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Germany · 1845–1918</div>
+  <h1>Could You Have Been<br>Georg Cantor?</h1>
+  <div class="cover-sub">He proved that some infinities are larger than others — a discovery so radical that the greatest mathematician of the age called him a "corrupter of youth" and blocked his every career move for 30 years. Cantor died alone in a sanatorium, institutionalized by the mental breakdown that his own ideas had helped cause. Mathematics vindicated him 20 years later.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">ℵ₀</div><div class="stat-l">Aleph-null — his symbol for the first infinity</div></div>
+    <div class="stat"><div class="stat-n">72</div><div class="stat-l">Years of life — last decade in sanatorium</div></div>
+    <div class="stat"><div class="stat-n">1918</div><div class="stat-l">Died in sanatorium; vindicated by 1904</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Halle, 1874 · The Discovery</div>
+<p class="narrative">You are 29 and teaching mathematics at the University of Halle. You have been working on a problem that starts innocent: are there the same number of points on a line segment as on a whole number line? Your mentor Karl Weierstrass would expect the answer yes. You write a proof. It says no — and then something worse: there are multiple different sizes of infinity, some incomparably larger than others. The rational numbers and the integers are the same size of infinity. The real numbers are a larger infinity that cannot even be put in correspondence with the integers. Infinity is not one thing.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Proof</div>
+  <div class="d-situation">You have a proof that overturns two thousand years of mathematical assumption about infinity. Do you publish?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Publish — the proof is rigorous; mathematics follows the proof, not the assumption</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. Wait — the result is too radical; get more endorsements before risking your reputation</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Submit it privately to Weierstrass first — if your mentor is convinced, others will follow</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Cantor published in 1874. He had already confided to his friend and colleague Dedekind: "I see it, but I don't believe it." The diagonal argument he used to prove that real numbers are uncountable is one of the most elegant proofs in mathematics — a proof so simple it fits on one page, yet so devastating in its implications that mathematicians spent decades trying to find an error. There wasn't one. The opposition wasn't rational — it was visceral. People felt that Cantor had touched something that shouldn't be touched.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Berlin, 1877 · Kronecker</div>
+<p class="narrative">Leopold Kronecker is the most powerful mathematician in Germany — the gatekeeper to prestigious positions, to publication in the best journals. He is also your fiercest opponent. He has called your work "a mathematical disease," called you a "corrupter of youth," and personally intervened to block your papers from publication in Crelle's Journal. He believes, with deep conviction, that infinity is not a legitimate mathematical object — that only finite, constructible numbers are real. He thinks you are doing theology, not mathematics. And he has the power to make your professional life very difficult.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Enemy</div>
+  <div class="d-situation">The most powerful mathematician in Germany is systematically blocking your work and career. How do you respond?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Continue publishing — find other journals, build other allies; the mathematics is correct and will eventually prevail</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Confront Kronecker directly — demand he engage with the mathematics rather than attacking the mathematician</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Moderate your claims — soften the set theory to make it more acceptable and gain allies before going further</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Cantor continued publishing and eventually found other venues and allies — Mittag-Leffler allowed him to publish in Acta Mathematica; Dedekind remained a staunch supporter. But the Kronecker opposition left permanent marks. Cantor never received the Berlin professorship he wanted. He spent his entire career at the provincial University of Halle. The bitterness of being blocked by someone with Kronecker's certainty — in the face of a proof Kronecker couldn't actually refute — contributed to Cantor's first mental breakdown in 1884.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Halle, 1880 · The Continuum Hypothesis</div>
+<p class="narrative">You have proved that there are different sizes of infinity. Now you are working on what seems like the next obvious question: is there an infinity that sits between the countable infinity (of whole numbers) and the uncountable infinity (of real numbers)? You have spent years trying to prove there is not — that there is no intermediate size. You cannot prove it either way. You begin to suspect the question might be unanswerable within ordinary mathematics. This possibility terrifies and fascinates you in equal measure.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Unanswerable Question</div>
+  <div class="d-situation">You have a question you cannot answer and may not be able to answer. Do you keep working on it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Keep working — the inability to prove it either way is itself mathematically significant</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Abandon it — spending years on an unprovable question destroys your other work</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Claim it's proven even if the proof is incomplete — you believe it's true, and belief is enough to proceed</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Cantor spent the rest of his life trying to prove the Continuum Hypothesis. He never could. In 1900 Hilbert listed it as the first of his 23 greatest open problems in mathematics. In 1940 Gödel proved it was consistent with standard set theory. In 1963 Paul Cohen proved it was independent of standard set theory — it can neither be proved nor disproved. Cantor had been right to sense the question was fundamentally different. He was working at the edge of what mathematics could say, and the madness he eventually experienced may have been the result of genuinely touching that boundary.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Halle, 1884 · The First Breakdown</div>
+<p class="narrative">You are 39. For the first time you spend weeks unable to work — not from lack of ideas but from a darkness that settles over you and removes the ability to think. You are hospitalized. The doctors call it "depression of a nervous nature." Your friends call it overwork. Kronecker has just launched a particularly vicious attack at a Berlin conference. The two are not unrelated. You recover. You go back to work. But the breakdown has left a mark — and it will return.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · After the Breakdown</div>
+  <div class="d-situation">You have experienced a severe mental breakdown. Your opponents will use it to discredit your work. Do you return to the most controversial mathematics?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Return fully — the mathematics is either correct or it isn't; your mental health is separate from its validity</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Retreat to safer topics — protect your health and let others develop the set theory</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Respond to Kronecker's attacks directly in a published letter — clear the air before continuing</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Cantor returned to mathematics — and to set theory specifically. The period 1885–1895 was actually among his most productive, producing the foundations of what became modern set theory. He invented the concept of cardinal numbers, ordinal numbers, and the transfinite arithmetic that now underlies much of modern mathematics. He also spent significant time on theological interpretations of infinity — he believed the transfinite was relevant to God's nature — which gave Kronecker more ammunition to attack him as mixing religion with science. Cantor did not care. He believed both were true.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Halle, 1895–1897 · The Paradox</div>
+<p class="narrative">You have been developing set theory into a comprehensive system when you discover something troubling: the set of all sets. If you consider the set containing all sets, it must contain itself — but then it contains a set (itself) that contains itself, which creates an infinite regress. You write to Dedekind about what you're calling a "paradox" — a self-contradiction inside your own theory. Your own system may be inconsistent.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · The Paradox in Your Own Work</div>
+  <div class="d-situation">You have found what appears to be a contradiction inside your own mathematical system. Do you publish it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Report it honestly — a paradox in the foundations is important information even if it undermines your own work</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. Hide it — your opponents will use it to destroy everything you've built</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Resolve it before publishing — fix the paradox before anyone knows it exists</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Cantor reported the paradox to Dedekind in 1899 in a letter. He did not try to hide it. Bertrand Russell independently discovered the same paradox a few years later ("Russell's Paradox") and published it famously, which triggered a foundational crisis in mathematics that lasted decades. The resolution — axiomatic set theory, which carefully restricts what counts as a valid set — became the foundation of modern mathematics. Cantor's honesty about his own theory's limits was mathematically essential. It also drove him deeper into depression.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Halle, 1899 · Kronecker Dies</div>
+<p class="narrative">Leopold Kronecker died in 1891, years before you found the paradox. With him gone, the institutional opposition weakens. Hilbert, the most influential mathematician of the new century, champions your work publicly — he calls Cantor's set theory "a paradise from which no one shall expel us." Young mathematicians adopt your framework as the foundation for all of mathematics. The vindication you have waited 25 years for is arriving. But you are increasingly ill.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · Vindication Too Late</div>
+  <div class="d-situation">The mathematics world is finally accepting your work — but you are too ill to fully enjoy the recognition. How do you receive this?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. With quiet satisfaction — the work is what mattered; recognition was always secondary to correctness</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. With bitterness — 25 years of obstruction cost you your health; the victory is hollow</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. With disbelief — you are too far into the mental illness to fully process what is happening</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Cantor received Hilbert's endorsement and various honors in his last years, but he was spending increasingly long periods in the Halle sanatorium. His mental breakdowns became more frequent and more severe after 1900. He continued to write and think during lucid periods — including pursuing the theory that Francis Bacon had written Shakespeare's plays, which he took seriously and which his colleagues found alarming. Whether the vindication brought him peace is uncertain. He wrote to a friend near the end that the mathematical work was "God's work" — and that God had always known it was correct.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · Halle, 1918 · The Last Year</div>
+<p class="narrative">You are 72. The First World War has devastated Germany. Food is scarce. You are in the sanatorium again — you have spent a large fraction of the last 18 years here. You have asked repeatedly to be allowed to retire — you have not taught since 1913. Your wife died in 1916. You have outlived many of your children. You die in the sanatorium on January 6, 1918, of heart failure. You died institutionalized, impoverished, and in a country at war. The system you created is the foundation of all modern mathematics.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The Weight of It All</div>
+  <div class="d-situation">You created the foundations of modern mathematics and spent the last decades of your life in a sanatorium. What is the right way to understand this life?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. The work and the suffering were inseparable — you could not have had one without the other</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. The suffering was unnecessary — a more supportive mathematical community would have protected his sanity</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. The mental illness was independent of the mathematics — he would have broken down regardless of Kronecker</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> Historians and psychiatrists still debate this. Some believe Cantor had a bipolar disorder that would have manifested regardless of external pressure. Others note that his breakdowns correlated strongly with periods of mathematical crisis or attack — particularly from Kronecker. What is certain is that Cantor himself believed his work and his suffering were connected — that he was being made to carry something difficult, perhaps divine, and that the mental illness was the cost of touching the infinite.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · The Legacy</div>
+<p class="narrative">Today, Georg Cantor's set theory is the foundation of all modern mathematics. Every mathematics student learns about countable and uncountable infinity in their first year. The notation he invented — aleph (ℵ), cardinality, ordinals — is standard across the world. Hilbert was right: it is a paradise. Cantor died never fully knowing that the paradise would bear his name forever.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · What This Cost</div>
+  <div class="d-situation">He gave mathematics one of its most important foundations. It cost him his sanity. Was it worth it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. Yes — not because suffering has value, but because the mathematics has value and he was the one who could produce it</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. No — no intellectual contribution is worth a human life spent in a sanatorium</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. The question is wrong — "worth it" implies choice; he didn't choose the madness any more than he chose the mathematics</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> Mathematics doesn't ask whether the price was right. Set theory is the foundation of modern mathematics, mathematical logic, computer science, and much of physics. The concept of countable versus uncountable infinity is one of the most profound things human reasoning has ever produced. Cantor produced it alone, against sustained institutional opposition, while his mind was breaking under the strain of the very ideas he was developing. The mathematics is beautiful. The life was terrible. Both are true.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Cantor Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="ramanujan-simulator.html">
+      <span class="next-name">Srinivasa Ramanujan</span>
+      <span class="next-desc">Another mathematician who worked at the edge of what mathematics could say — and paid a terrible price</span>
+    </a>
+    <a class="next-card" href="newton-simulator.html">
+      <span class="next-name">Isaac Newton</span>
+      <span class="next-desc">The mathematician who built the calculus that Cantor's set theory would later put on firmer ground</span>
+    </a>
+    <a class="next-card" href="turing-simulator.html">
+      <span class="next-name">Alan Turing</span>
+      <span class="next-desc">The man who proved some mathematical questions are undecidable — building on Cantor's foundations</span>
+    </a>
+    <a class="next-card" href="nietzsche-simulator.html">
+      <span class="next-name">Friedrich Nietzsche</span>
+      <span class="next-desc">Another thinker whose ideas outran their time — and who also ended his days institutionalized</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators →</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=Math.round(score/TOTAL*100);document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You think like Cantor — publishing despite opposition, reporting your own theory\'s paradoxes honestly, and understanding that the mathematics is either correct or it isn\'t, regardless of what powerful people say about it. You have the intellectual courage that mathematics demands at its frontier.';else if(score>=5)t.textContent='Strong mathematical instincts. You understood the core choices — publish, persist, be honest about the limits of your own work. A few moments of deference to authority or caution about reputation crept in, but you\'d have advanced the mathematics significantly.';else if(score>=3)t.textContent='You would have had the ideas but sought more institutional support before risking the publication. That caution would have cost years — years that Cantor spent building while Kronecker attacked. The mathematics doesn\'t wait for the institution to catch up.';else t.textContent='You deferred to authority, avoided the most radical implications, and sought consensus before publishing what you knew was true. Cantor\'s mathematics required the opposite of all of this. The proof was correct. The proof was enough.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

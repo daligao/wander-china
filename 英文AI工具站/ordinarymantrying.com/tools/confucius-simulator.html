@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Confucius?</title>
+<meta name="description" content="He traveled for 14 years trying to find a ruler who would adopt his ideas. Not one did. He returned home and taught. 2,500 years later, his ideas still shape a billion lives. 8 decisions.">
+<meta property="og:title" content="What Would You Do If You Were Confucius?">
+<meta property="og:description" content="The teacher who failed to change the world in his lifetime — and changed it anyway. 8 decisions from the life of Confucius.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/confucius-simulator.html">
+<style>
+:root{
+  --bg:#F0EDE5;--card:#FAF8F2;--ink:#1A1508;--muted:#5A4A28;--line:#D0C8A8;
+  --accent:#5C3A00;--accent-bg:#EEE4C8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(240,237,229,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#1A1508;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C8B880;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#2A1800;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F8F0DC;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#1A1000;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F8F0DC;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C8B880;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#2A1800;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#1A1508;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F8F0DC;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C8B880;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#F8F0DC;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#D4A850;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Confucius</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #29</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Confucius?</h1>
+  <p class="cover-sub">He was born in poverty, rose to become a minister of justice, lost his position, and spent 14 years wandering from state to state trying to find a ruler who would adopt his ideas about good government. Not one ruler listened. He returned home at 68 and spent his final years teaching students. Two and a half thousand years later, his ideas still shape the lives of over a billion people. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Confucius</strong> (孔子, Kǒng Zǐ; 551–479 BC) · Chinese teacher and philosopher · Born in the state of Lu (modern Shandong province) · Father died when he was 3; raised in poverty by his mother · Rose through civil service to become Minister of Justice in Lu at approximately 50 · Resigned or was dismissed around 497 BC · Wandered 14 years through the states of Wei, Chen, Song, Cai, and Chu seeking a ruler who would implement his ideas · Returned to Lu at 68; taught until his death at 72 · Primary text: *The Analects* (Lunyu), compiled by his disciples after his death · Founded Confucianism, which shaped Chinese civilization and influenced Korea, Japan, Vietnam, and the Chinese diaspora worldwide.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 501 BC, State of Lu</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Minister</span></div>
+<div class="year-banner">501 BC</div>
+<div class="timeline-dot">State of Lu · Age ~50</div>
+<div class="narrative">
+  <p>After decades of study and teaching, you have risen to become a significant official in the state of Lu. Some accounts say you became Minister of Justice; others, a district governor. Whatever the exact title, you hold real authority and the opportunity to put your ideas about good governance into practice.</p>
+  <p>Your ideas are clear: rulers must govern through moral example, not force. Officials must be chosen on merit, not birth. Relationships — between ruler and minister, parent and child, elder and younger — should be governed by ren (仁, humaneness) and li (礼, ritual propriety). A state governed this way will be stable, prosperous, and just.</p>
+  <p>But three powerful aristocratic clans — the Three Huan families — effectively control the state of Lu. The Duke of Lu is a figurehead. Your ideas about moral governance threaten the clans' power. Around 497 BC, something goes wrong — possibly a political trap, possibly a genuine falling-out — and you leave Lu, beginning what will become 14 years of wandering.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — Leaving Lu</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have achieved real political power in Lu. Something goes wrong and you leave rather than compromise. What made leaving the right choice?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">A</span><span class="dopt-body">You couldn't implement your ideas in a state controlled by corrupt aristocrats. Staying and compromising would have made you an instrument of what you opposed. The ideas could only survive by leaving.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Staying would have been braver. The inside of a corrupt system is where change happens. Leaving was idealistic but ineffective — he accomplished nothing politically in 14 years of wandering.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">It wasn't a choice — he was forced out. The framing of "leaving" rather than "being expelled" is a retrospective construction that makes the failure look like a principled decision.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">The circumstances of departure — disputed</div>
+      <p><strong>You leave your government post at roughly 50 and spend the next 14 years wandering from state to state. Not one ruler adopts your ideas. You die believing you have failed. Two centuries later, your philosophy becomes the official ideology of the Han Dynasty — and remains state doctrine for over 2,000 years.</strong> Scholars disagree about exactly why Confucius left Lu. One account in the Analects suggests he was deliberately marginalized: the Duke of Qi sent 80 beautiful horses and female musicians as a diplomatic gift to weaken Lu's governance, and when the Duke of Lu became absorbed in the entertainments and neglected ritual duties, Confucius left in protest. Another reading: the Three Huan clans made his position untenable. A third: a political incident involving the dismantling of three cities' fortifications went wrong and forced his departure. What's clear is that he left with a group of disciples and did not return for 14 years. Whether he jumped or was pushed, the result was the same: the wandering years that he would later describe as his most important learning period.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · Fourteen Years</span></div>
+<div class="year-banner">497 BC</div>
+<div class="timeline-dot">States of Wei, Chen, Cai · Age 54–68</div>
+<div class="narrative">
+  <p>For 14 years, you travel from state to state with a group of disciples. You meet rulers and ministers across the Zhou realm. You explain your ideas about government: benevolent rulers, merit-based officials, ritual propriety, education. You demonstrate your knowledge of ritual, music, history, and statecraft.</p>
+  <p>None of them adopt your ideas in any meaningful way. Some give you comfortable hospitality and ignore you. Some drive you out. At one point, you are surrounded and trapped in the state of Chen without food for seven days. Your disciples grow discouraged. One of them, Zilu, asks: "Does a junzi (gentleman, superior person) also experience such distress?" You answer: "A junzi stays firm in adversity. A petty person, when he meets adversity, is overwhelmed by it."</p>
+  <p>You keep going.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Continuing After Failure</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">After years of rejection, trapped without food in Chen, your disciples losing faith — why did you keep going?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">He had no alternative. Returning to Lu meant admitting defeat. Pride kept him going as much as conviction.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">He genuinely believed his ideas were right and that the right circumstances would appear eventually. The continued searching was itself part of the teaching — modeling persistence in adversity for his disciples.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">The disciples needed him. The movement he had created required his continued presence. He continued for the sake of the people who had committed their lives to following him.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What the Analects records about adversity</div>
+      <p><strong>You are trapped without food for seven days in the state of Chen. Your disciples grow desperate. You continue playing music.</strong> The Analects records multiple moments from the wandering years where Confucius responds to hardship with composure. When near-starving in Chen, he continued playing music. When surrounded by hostile forces in the state of Kuang (mistaken for the renegade Yang Hu, who looked like him), he said: "Heaven has produced the virtue that is in me; what can Huan Tui do to me?" His confidence was not in political success but in the correctness of his moral path. He distinguished between external circumstances (which he couldn't control) and internal cultivation (which he could). The wandering years, despite being a political failure, produced some of the most searching discussions recorded in the Analects — because adversity created the conditions for genuine reflection.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · Returning</span></div>
+<div class="year-banner">484 BC</div>
+<div class="timeline-dot">State of Lu · Age 68</div>
+<div class="narrative">
+  <p>You return to Lu at 68, invited back by a new government that respects your learning. You will never hold significant political office again. The rulers consult you occasionally on ritual matters but not on governance. You have four years left to live.</p>
+  <p>You spend those four years doing what you had always done alongside politics: teaching. You organize and edit classical texts — the Book of Songs, the Book of Documents, the Book of Rites. According to tradition, you also complete or compile the Spring and Autumn Annals, the historical record of Lu. You continue teaching the several hundred students who have gathered around you.</p>
+  <p>You have not changed the political world. Your students will change everything else.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — Teaching Instead of Governing</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Confucius spent his final years teaching rather than seeking political power. Was this acceptance of defeat or a strategic shift?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Acceptance of defeat. He had tried to change the political world and failed. Teaching was what remained when everything else was exhausted.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">B</span><span class="dopt-body">Teaching was always the deeper strategy. Political reform requires the right ruler at the right moment — contingent and rare. Educating hundreds of students who would carry the ideas forward is a longer and more reliable path to transforming a civilization.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">It was simply what he was best at. The political ambitions may have always been secondary to the teacher's vocation — the 14 years of wandering were as much seminars as they were job applications.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">The disciples and what happened next</div>
+      <p><strong>You return at 68 and spend four years teaching rather than governing. You die having changed no government. The students you train train students who eventually bring your ideas to the Han Dynasty — 200 years after your death — where they become state doctrine for the next two millennia.</strong> Confucius reportedly had 3,000 students over his lifetime, 72 of whom mastered his teachings. Among the most important: Zilu (loyal and impetuous, died defending his lord), Yan Hui (Confucius's favorite, died young), Zigong (became a wealthy diplomat and statesman), and Zisi (his grandson, who is credited with transmitting the *Doctrine of the Mean*). Mencius, who extended Confucian thought most powerfully, was a student of Zisi's students — second generation after Confucius. The transmission went: Confucius → disciples → disciples' disciples → Mencius → systematization. By the Han Dynasty (206 BC), Confucianism was the official state ideology. Confucius' political failure created a teaching tradition that outlasted every state that rejected him.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Humaneness</span></div>
+<div class="year-banner">490 BC</div>
+<div class="timeline-dot">On the road · Age ~61</div>
+<div class="narrative">
+  <p>At the center of your teaching is the concept of <em>ren</em> — 仁, usually translated as humaneness, benevolence, or goodness. It is the highest virtue. When students ask you what ren is, you give different answers to different students — because the question "what is goodness?" requires a different answer for different people at different stages of development.</p>
+  <p>To one student you say: ren is to love others. To another: do not impose on others what you yourself do not want. To another: the person of ren, wishing to be established, helps others establish themselves; wishing to succeed, helps others succeed.</p>
+  <p>This is the Golden Rule, stated as an active principle. And underneath all the answers is a single idea: the cultivation of self and the care of others are the same project.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Golden Rule</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Confucius stated the Golden Rule ("do not impose on others what you do not want") roughly 500 years before it appeared in Western ethics. What made this idea powerful enough to be rediscovered independently across civilizations?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">It appeals to self-interest — treating others well because you want to be treated well. It doesn't require altruism, just rational calculation applied to social behavior.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">It's a minimal common ground. Almost every moral system, regardless of culture or religion, can accept "don't do to others what you don't want done to you." It's the smallest possible shared foundation.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — it works through self-interest AND provides minimal common ground AND it captures something genuinely true about moral experience: the ability to imagine yourself in another's position is the root of ethics. The idea is rediscovered because it's correct.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">The Golden Rule across civilizations</div>
+      <p><strong>You state the Golden Rule — "do not impose on others what you yourself do not want" — roughly 500 years before it appears in Western ethics. Some version of it independently emerges in at least seven major world traditions, on multiple continents, with no contact between them.</strong> Some form of the Golden Rule appears in Confucianism (~500 BC), Hinduism (~800 BC in the Mahabharata), Buddhism (~500 BC), Judaism (~100 BC, Hillel the Elder), Christianity (Sermon on the Mount, ~30 AD), Islam (~610 AD), and dozens of other traditions. Its near-universal appearance suggests either that human moral intuition converges on this insight independently, or that it represents a genuine truth about social life that any reflective person eventually reaches. Confucius stated it in the negative ("do not impose") while Jesus stated it in the positive ("do unto others"). Whether the negative formulation (a constraint) or the positive formulation (an aspiration) is more demanding is itself a philosophical question with no agreed answer.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · Students</span></div>
+<div class="year-banner">485 BC</div>
+<div class="timeline-dot">State of Lu · Age ~66</div>
+<div class="narrative">
+  <p>You teach students from every social class — farmers' sons as well as aristocrats. You charge a minimal fee (a bundle of dried meat) that no one need go without. You say: "From the one who has brought even the smallest present to seek my instructions, I have never refused to teach him."</p>
+  <p>Your most beloved student, Yan Hui, dies young — before you. You weep without restraint. Your disciples say you are mourning excessively. You say: "If not for him, for whom should I be moved to excessive grief?"</p>
+  <p>Your most difficult student, Zilu, is brave to the point of rashness. He will die defending his lord in a coup — refusing to flee because his hat-strings came untied in battle and he stopped to retie them, saying a junzi cannot die with his hat-strings undone. He was killed while retying them. You would have recognized his death: excessive, principled, exactly what he would have done.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Teaching Everyone</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Confucius taught students of all social classes at a time when education was almost exclusively for the aristocracy. Why was this radical?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">In Zhou China, social position was inherited. Educating commoners implied their social position could change — which threatened the aristocratic order.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">Knowledge itself was power. Giving commoners access to classical learning — ritual, history, music, statecraft — meant giving them tools that had previously belonged only to the elite.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and the combination produced the meritocratic ideal that eventually became the Chinese civil service examination system. Confucius' teaching practice was the seed of an entirely different theory of social organization: position should be based on virtue and learning, not birth.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">From teaching to the civil service examination</div>
+      <p><strong>You charge students a bundle of dried meat so no one goes without. The meritocratic principle you introduce — position based on virtue and learning, not birth — takes 1,100 years to fully institutionalize. It then runs as the Chinese civil service examination for 1,300 more years.</strong> The Chinese civil service examination system — keju (科举) — began in the Sui Dynasty (605 AD) and continued until 1905, over 1,300 years. At its height, it was the most meritocratic selection system in the premodern world: any male could theoretically rise to the highest offices through examination. The examinations were based almost entirely on the Confucian classics. The pathway from Confucius' "I teach everyone" to an empire-wide meritocracy took roughly 1,100 years to institutionalize, but the logic was already present in his teaching practice. He had decided that virtue and learning, not birth, should determine a person's social position. The examination system was that decision implemented at scale.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Self-Cultivation</span></div>
+<div class="year-banner">480 BC</div>
+<div class="timeline-dot">State of Lu · Age ~71</div>
+<div class="narrative">
+  <p>Near the end of your life, you make a statement about your own development that students will quote for millennia: "At fifteen, I had my mind bent on learning. At thirty, I stood firm. At forty, I had no doubts. At fifty, I knew the decrees of Heaven. At sixty, my ear was an obedient organ for the reception of truth. At seventy, I could follow what my heart desired, without transgressing what was right."</p>
+  <p>This is a description of moral development across a lifetime — from study to stability to freedom. The final state is not rule-following but the alignment of desire and virtue: you want what is right, so doing what you want and doing what is right are the same thing. You are 71. You have one year left.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Development Statement</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">"At seventy, I could follow what my heart desired, without transgressing what was right." What does it mean to reach a state where desire and virtue align?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">It means the habits of virtue have become automatic — through decades of practice, right action no longer requires effort. It's the same as athletic mastery: the expert doesn't think about the technique, they just perform.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">It means the desires themselves have changed — not that right action became easier, but that he genuinely came to want right things rather than wrong ones. The goal of moral education is to reshape what you want.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">Both simultaneously — habits make right action automatic AND the practice of right action reshapes desire. These are two descriptions of the same process. Confucius didn't distinguish between them because from the inside, they feel the same.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">The developmental arc and Aristotle</div>
+      <p><strong>You describe your own moral development across seven decades in four sentences. Aristotle, writing roughly a century later in Greece with no knowledge of you, describes the development of virtue in almost identical terms.</strong> Aristotle, writing roughly a century after Confucius, described virtue (arete) in almost identical terms: virtue is developed through habituation, and the virtuous person comes to take pleasure in virtuous action. The Greek word for habit (ethos) is the root of "ethics." Confucius' developmental arc and Aristotle's theory of virtue ethics are structurally identical — developed independently, in China and Greece, within roughly the same century. Both argue that moral education is not primarily about knowing rules but about forming character: changing what you are so that good action becomes natural rather than forced. The convergence is one of the more remarkable parallels in intellectual history.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Analects</span></div>
+<div class="year-banner">479 BC</div>
+<div class="timeline-dot">State of Lu · Age 72</div>
+<div class="narrative">
+  <p>You die in 479 BC, at 72, in Lu. You die without having changed the political world in any direct way. The states you visited are still governed by the same mix of ambition, compromise, and force that characterized them before you arrived.</p>
+  <p>Your disciples compile your conversations and sayings into the text that will be called the <em>Analects</em> (Lunyu — "Selected Sayings"). It is not organized thematically or chronologically. It preserves the texture of conversation: brief exchanges, compressed statements, the same question asked by different students and answered differently. It reads the way wisdom actually sounds — not as a system, but as a practice.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — Why the Analects Survived</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Analects have been read continuously for 2,500 years. What made them survive when thousands of other ancient texts did not?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">State adoption. Once Han Dynasty emperors made Confucianism the official ideology, the Analects were preserved and copied by state resources. Survival was political, not inherent.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">The content is genuinely applicable. The Analects addresses perennial questions — how to live, how to govern, how to treat others — that don't become obsolete. Its survival reflects utility.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — state support preserved the physical text through disruptions, AND the content's applicability meant each new generation found something useful in it. A text needs both institutional protection and genuine relevance to survive 2,500 years.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">The Analects and the Qin burning of books</div>
+      <p><strong>In 213 BC, the Qin Emperor orders your writings burned as part of a systematic destruction of philosophical texts. Confucian scholars hide copies in walls and memorize them. When the dynasty collapses seven years later, they reconstruct the texts from memory.</strong> In 213 BC, the Qin Emperor ordered the burning of most philosophical texts — including Confucian writings — as part of centralization of thought. Confucian scholars reportedly hid texts in walls and memorized them. When the Qin Dynasty collapsed (206 BC), scholars recovered and reconstructed the texts from memory and hidden copies. The Han Dynasty (206 BC–220 AD) then institutionalized Confucianism as state ideology. The Analects survived one of history's most aggressive attempts at literary destruction, then was given institutional protection for the next two millennia. It is one of the few ancient texts to have survived both active suppression and institutional support — which suggests the content mattered as much as the politics.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Legacy</span></div>
+<div class="year-banner">Today</div>
+<div class="timeline-dot">2,500 years later</div>
+<div class="narrative">
+  <p>Confucius failed to convince a single ruler to adopt his ideas during his lifetime. Two and a half millennia later, his ideas have shaped the governance, education, family structure, and moral philosophy of China, Korea, Japan, Vietnam, and the Chinese diaspora worldwide — well over a billion people.</p>
+  <p>The examination system that formalized his meritocratic ideal ran for 1,300 years. The concept of filial piety he taught structures family relationships across East Asia. The emphasis on education as the path to virtue and social mobility remains foundational in Confucian-influenced societies.</p>
+  <p>He considered himself a failure. History considered him otherwise.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — Failure and Legacy</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Confucius died believing he had failed. His ideas went on to shape civilization for 2,500 years. What does this gap tell us about how to evaluate a life?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">You can't evaluate a life from inside it. The consequences are too delayed. Confucius couldn't know what would happen; we shouldn't evaluate our own lives as if we could.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">The right evaluation is the one Confucius himself used: did I act correctly, cultivate virtue, and teach well? External success is not the measure of a good life.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — external evaluation is delayed and unreliable, AND internal evaluation by virtue and right action is what Confucius actually used. The gap between his self-assessment (failure) and history's assessment (transformative) suggests both evaluations are incomplete on their own.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What Confucius said about himself near the end</div>
+      <p><strong>Near the end of your life, you say: "No intelligent monarch arises. My time is come to die." You consider yourself a failure. Two and a half thousand years later, your ideas shape the lives of over a billion people.</strong> Late in life, Confucius reportedly said: "No intelligent monarch arises; there is not one in the empire that will make me his master. My time is come to die." He saw the failure of his political mission clearly. The *Analects* records him weeping when Yan Hui died, when his horse's stable burned, and at key moments of loss — he was not stoic about what he had lost or failed to achieve. What he maintained was not optimism about results but consistency of purpose: he kept teaching because teaching was right, not because he expected success. The results came two centuries after his death, through channels he couldn't have predicted. The lesson he himself drew: the junzi acts rightly regardless of outcome. History's lesson: sometimes acting rightly is the most consequential thing you can do, even if you never see the consequence.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Confucius' decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="next-sims">
+  <p class="next-label">Explore More Lives</p>
+  <div class="next-grid">
+    <a href="socrates-simulator.html" class="next-card">
+      <span class="next-name">Socrates</span>
+      <span class="next-desc">Wrote nothing. Changed Western thought forever. Died for it.</span>
+    </a>
+    <a href="nietzsche-simulator.html" class="next-card">
+      <span class="next-name">Friedrich Nietzsche</span>
+      <span class="next-desc">The philosopher who declared God dead — and went mad at 44</span>
+    </a>
+    <a href="darwin-simulator.html" class="next-card">
+      <span class="next-name">Charles Darwin</span>
+      <span class="next-desc">Waited 20 years to publish the theory that changed biology forever</span>
+    </a>
+    <a href="kafka-simulator.html" class="next-card">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">Wrote in secret. Asked his friend to burn it all. The friend didn't.</span>
+    </a>
+  </div>
+</div>
+<div class="cta-box">
+  <p>Confucius wandered for 14 years and was rejected by every ruler he met. He died believing he had failed. Two and a half millennia later, his ideas shape over a billion lives. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All Life Simulators — Darwin, Kafka, Einstein and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/socrates-simulator.html" style="color:var(--accent)">Socrates Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Confucius";body="You understood why leaving Lu was necessary, why continuing through failure was both genuine conviction and teaching by example, why the meritocratic ideal was radical, and why the 2,500-year gap between his self-assessment and history's assessment requires both external and internal evaluation frames. That's the complete Confucius.";}else if(pct>=0.625){title="The Teacher";body="You grasped the essentials: that teaching was a deeper strategy than politics, that the Golden Rule works through multiple mechanisms simultaneously, that the Analects survived through both institutional support and genuine content. Where you may have simplified: Confucius' key moves almost always have multiple causes running at once.";}else if(pct>=0.375){title="The Pragmatist";body="You tended toward single, clean explanations. Confucius is famous for giving different answers to the same question to different students — he believed the right teaching depends on who is being taught. His ideas are similarly multi-layered. The meritocratic ideal, the Golden Rule, the developmental arc all work on more than one level.";}else{title="The Skeptic";body="You questioned whether Confucius' choices were principled or forced, whether the Analects' survival was content or politics, whether his self-assessment of failure was accurate. These are serious questions. The most honest answer to all of them is: both. Every major question in Confucius' life has a 'both' answer."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

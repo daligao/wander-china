@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ramanujan Life Simulator — The Man Who Knew Infinity</title>
+<meta name="description" content="Make the same decisions as Srinivasa Ramanujan — a self-taught Indian clerk who said a goddess wrote his equations in dreams, then rewrote mathematics at Cambridge. He died at 32.">
+<style>
+:root{
+  --bg:#F5EEE8;--card:#FAF5F0;--ink:#180808;--muted:#705040;--line:#E0CABB;
+  --accent:#7B2000;--accent-bg:#F5E8E0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">India → Cambridge · 1887–1920</div>
+  <h1>Could You Have Been<br>Srinivasa Ramanujan?</h1>
+  <div class="cover-sub">He had no formal training in advanced mathematics. He claimed a Hindu goddess wrote his equations in his dreams. When he wrote to Cambridge mathematicians from a clerk's desk in Madras, they first assumed he was a crank. He was 32 when he died. The equations he left in his notebooks are still being verified — and applied — 100 years later.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">3,900+</div><div class="stat-l">Theorems and identities</div></div>
+    <div class="stat"><div class="stat-n">32</div><div class="stat-l">Years of life</div></div>
+    <div class="stat"><div class="stat-n">100+</div><div class="stat-l">Years still verifying his notebooks</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Kumbakonam, India, 1903 · Age 15</div>
+<p class="narrative">You have found a borrowed library book — "A Synopsis of Elementary Results in Pure Mathematics" by G.S. Carr — containing 5,000 theorems with no proofs. Just results. You spend the next two years working out the proofs yourself, filling notebooks. No teacher. No university. Just a teenage boy in a small South Indian town, in a borrowed house, without money for lamp oil, working by firelight. When you finish Carr's book, you start going beyond it. Way beyond it.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · Working Alone</div>
+  <div class="d-situation">You have found mathematics on your own. You have no teachers, no university, no peers who can follow what you're doing. Do you keep going?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Keep going — the mathematics itself is company enough; you follow it wherever it leads</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. Stop until you can find formal training — unverified self-teaching produces errors</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Focus on passing exams first — without credentials, no one will listen to you anyway</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Ramanujan kept going — and the isolation shaped his entire mathematical style. Because he derived everything himself, his methods were wildly unconventional. He skipped steps that seemed obvious to him but required pages of careful proof to verify. When Cambridge mathematicians later examined his work, they couldn't always tell how he had arrived at his results. Some theorems he claimed were true turned out to be false. But the true ones — the vast majority — were extraordinary. The isolation that seemed like a weakness was what made him entirely unlike any other mathematician alive.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Madras, 1913 · The Letter</div>
+<p class="narrative">You are 25 years old, working as a clerk in the Madras Port Trust for £20 a year, filling in ledgers eight hours a day. At night you do mathematics. You have been writing to English mathematicians — two have already dismissed you without reading your work carefully. You now write to G.H. Hardy, a Cambridge professor considered the greatest English mathematician of his generation. You include 120 theorems in the letter. You have no formal qualifications. You are a nobody from a colony.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Letter to Hardy</div>
+  <div class="d-situation">You are about to send a letter containing 120 theorems to one of the most eminent mathematicians in the world. You have no university degree. What do you say?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Send the mathematics without excessive apology — let the theorems speak; if they're right, they'll be enough</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Lead with apology and humility — make clear you know your position and aren't claiming more than you are</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Don't send it to Hardy — find someone more accessible; a famous professor will ignore you</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Ramanujan sent the letter and included an extraordinary line: "I have had no university education but I have undergone the ordinary school course. After leaving school I have been employing the spare time at my disposal to work at mathematics... I am striking out a new path for myself." Hardy showed the theorems to his colleague Littlewood. They spent an evening examining them. Hardy later wrote that several of the theorems "defeated me completely; I had never seen anything in the slightest degree like them before." He wrote back to Madras immediately. He wanted Ramanujan to come to Cambridge.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Madras, 1914 · The Voyage</div>
+<p class="narrative">Hardy has invited you to Cambridge. But you are a Brahmin Hindu. Crossing the ocean — "crossing the black water" — is forbidden in your caste. Your mother refuses to give her blessing. Hardy is waiting. The opportunity will not stay open forever. And you have a private revelation: the family goddess, Namagiri, has appeared to your mother in a dream and given her blessing herself.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · Cross the Water</div>
+  <div class="d-situation">Your religion forbids the voyage. Your mother has received a divine sign permitting it. Do you go?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Go — the divine permission your mother received is the answer; Cambridge is where your work must go</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Refuse — caste law is clear; if this mathematics is meant for the world, Hardy must come to India</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Go secretly — your mother will understand when you return famous</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Ramanujan sailed for England in March 1914. Whether the dream was literal divine revelation or his mother finding a way to give her blessing, the outcome was the same: he crossed. At Cambridge, Hardy found him a room, arranged his research, and began the most unlikely collaboration in mathematical history. Hardy was precise, formal, and proved everything with rigorous logical steps. Ramanujan produced results by intuition and verified them numerically, often without knowing why they were true. Together they produced papers that changed number theory.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Cambridge, 1914–1917 · Hardy and Intuition</div>
+<p class="narrative">Hardy is trying to teach you rigorous proof. You can follow the theorems, but the way you arrive at your results — suddenly, often overnight, sometimes after dreaming — resists the formal methods he wants you to use. Hardy is worried. Without proofs, the mathematical community will not accept your results even if they are correct. You say, quietly, that you sometimes see an equation written on your tongue by the goddess Namagiri when you wake. Hardy, an atheist, does not know what to do with this information.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · Intuition vs Proof</div>
+  <div class="d-situation">Hardy wants you to learn formal proof methods. You produce correct results by a process you can't fully explain. Which approach do you commit to?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Learn enough formal proof to make your results publishable while keeping your intuitive process — don't abandon what works</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Fully adopt Hardy's methods — intuition is unreliable and you want the results to be unimpeachable</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Publish the results raw — let other mathematicians supply the formal proofs if they want them</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Ramanujan learned some formal proof techniques but never abandoned his intuitive approach — and Hardy eventually accepted this. Their collaboration resulted in joint papers and several of Ramanujan's landmark individual contributions: the Hardy-Ramanujan number (1729), the circle method in number theory, and his groundbreaking work on the partition function. Hardy later said that on a scale of mathematical ability, most mathematicians score 25–35. He rated himself 25, Hilbert 80, and Ramanujan 100. "In the discovery of functional equations and in the manipulation of continued fractions, I have never met his equal."</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Cambridge, 1917 · Illness</div>
+<p class="narrative">You are ill. The English climate, the wartime food shortages, and perhaps the difficulty of maintaining your Brahmin vegetarian diet in Cambridge have caught up with you. You are coughing blood. The doctor suspects tuberculosis. You are 29. Cambridge in wartime is cold and grey and nothing like Madras. You are terribly homesick. You are also, in the hospital bed, still doing mathematics — filling notebooks with identities and series that no one will fully understand for decades.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · Work Through Illness</div>
+  <div class="d-situation">You are seriously ill, possibly dying. You are also in the middle of mathematical work that no one else can do. Do you keep working?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Keep working — the mathematics is what you are; resting would be a kind of dying before death</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. Rest — you cannot do good mathematics while your body is fighting tuberculosis</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Return to India immediately — your health requires your home climate</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Ramanujan kept working from his hospital bed. Hardy visited regularly and later recalled that on one occasion, arriving by taxi numbered 1729, he mentioned that 1729 seemed like a rather dull number. Ramanujan replied immediately: "No, it is a very interesting number — it is the smallest number expressible as the sum of two cubes in two different ways." The story illustrates that even gravely ill, lying in a sanatorium bed, his mind was constantly playing with numbers in ways no other mathematician could match.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · London, 1918 · Fellow of the Royal Society</div>
+<p class="narrative">At 30, you become the first Indian to be elected a Fellow of the Royal Society — one of the most prestigious honors in science. Hardy campaigned vigorously for it. You are also elected a Fellow of Trinity College, Cambridge. These are extraordinary recognitions for someone who had no university degree five years ago. But you are still ill. The question is whether to stay in England for the recognition, or return to India where you might recover.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · Stay or Return</div>
+  <div class="d-situation">You are a Fellow of the Royal Society. You are also sick. England might be killing you. India might save you — or the tuberculosis might have gone too far. Do you go home?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Return to India — your body needs warm air, familiar food, your family; the recognition will travel with you</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Stay in England — your work is here, Hardy is here, the mathematical community is here</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Move to somewhere with a warmer climate in Europe — compromise between India and Cambridge</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Ramanujan returned to India in 1919, deeply ill. The warmer climate helped initially but wasn't enough. He spent his final months in Madras and Kumbakonam, continuing to fill notebooks with mathematics. In January 1920, three months before he died, he wrote to Hardy about a new class of functions he called "mock theta functions" — work so far ahead of its time that mathematicians only began to fully understand it in the 1980s. His last letters are full of equations. He died in April 1920 at 32.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · The Lost Notebook · 1976</div>
+<p class="narrative">In 1976, 56 years after Ramanujan's death, an American mathematician named George Andrews visits the Trinity College library and finds a collection of papers among J.E. Littlewood's effects. They are in Ramanujan's handwriting — over 100 pages of mathematics that no one knew existed. The "Lost Notebook" contains 600 formulas he wrote in the final year of his life, many of which are only now being proven correct. Some of the formulas have direct applications in string theory and quantum physics — fields that didn't exist when he wrote them.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The Posthumous Mathematics</div>
+  <div class="d-situation">Ramanujan wrote mathematics that could only be understood decades after his death. What does this tell us about the nature of mathematical genius?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. Genius sometimes operates in a different time frame — he was solving problems the world hadn't yet asked</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. He was extraordinarily lucky — many of his intuitions could have been wrong and we'd never know</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. The real credit goes to Hardy for providing the framework that let Ramanujan's work survive</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> The Lost Notebook has been described as one of the greatest mathematical discoveries of the 20th century. Bruce Berndt, who has spent decades verifying Ramanujan's formulas, estimates that roughly 99% of them are correct — extraordinary for work done without formal proof. Formulas from the Lost Notebook are now used in string theory, black hole physics, and computer science cryptography. Ramanujan was not lucky. He had a type of mathematical perception that, as Hardy put it, "had never been seen before and may never be seen again."</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · The Question Hardy Couldn't Answer</div>
+<p class="narrative">Hardy asked Ramanujan once, near the end: "What do you think the source of your mathematics is?" Ramanujan said the goddess Namagiri wrote the equations on his tongue. Hardy — a committed atheist who believed all knowledge came from reason and evidence — never knew how to respond to this. He later said that Ramanujan was the only person who had ever made him feel that religious experience might be explaining something real, even if not in the way Ramanujan meant it.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · The Source of Genius</div>
+  <div class="d-situation">Where did Ramanujan's mathematics come from — divine inspiration, unconscious computation, or something else entirely?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. It doesn't matter — the mathematics is true regardless of its source; the question of origin is separate from the question of validity</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. It was unconscious mathematical processing — the "divine" language was his way of describing something his conscious mind couldn't access</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. It was genuine divine revelation — and mathematics may be a form of contact with something beyond human understanding</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> No one knows. Hardy spent the rest of his long life thinking about it. He wrote in his memoir: "I have never done anything 'useful.' No discovery of mine has made, or is likely to make, directly or indirectly, for good or ill, the least difference to the amenity of the world." He then adds that Ramanujan's work, by contrast, might matter — and that this kept him awake at night. Ramanujan died at 32, having produced more original mathematics than most mathematicians produce in a century. He died believing the goddess had not finished with him. Perhaps she hadn't.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Ramanujan Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="einstein-simulator.html">
+      <span class="next-name">Albert Einstein</span>
+      <span class="next-desc">Another outsider who rewrote the laws of the universe through pure thought — working as a patent clerk</span>
+    </a>
+    <a class="next-card" href="newton-simulator.html">
+      <span class="next-name">Isaac Newton</span>
+      <span class="next-desc">The other mathematician who could seemingly see mathematical truths that others could only verify later</span>
+    </a>
+    <a class="next-card" href="turing-simulator.html">
+      <span class="next-name">Alan Turing</span>
+      <span class="next-desc">Another Cambridge mathematician whose genius was repaid with injustice</span>
+    </a>
+    <a class="next-card" href="archimedes-simulator.html">
+      <span class="next-name">Archimedes</span>
+      <span class="next-desc">The ancient mathematician whose intuitive leaps also ran centuries ahead of formal proof</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators →</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=Math.round(score/TOTAL*100);document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You think like Ramanujan — following the mathematics wherever it leads, trusting intuition over convention, and understanding that the source of a true result is less important than the truth itself. You would have sent the letter. You would have crossed the water. You would have kept writing from the hospital bed.';else if(score>=5)t.textContent='Strong instincts — you understood the core courage required to send 120 theorems to a Cambridge professor from a clerk\'s desk in Madras. A few moments of conventional thinking crept in, but your mathematical sensibility would have produced real work.';else if(score>=3)t.textContent='You chose the more cautious path at key moments — waiting for credentials, learning formal methods first, resting when ill. Those are reasonable choices. They would have produced a competent mathematician. They would not have produced Ramanujan.';else t.textContent='You would have remained a clerk. Not because you lacked the mathematics — but because you would have waited for permission that was never going to come. Ramanujan\'s genius was inseparable from his certainty that the mathematics was true whether or not anyone had yet acknowledged it.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

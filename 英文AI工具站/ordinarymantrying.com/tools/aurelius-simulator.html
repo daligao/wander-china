@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Marcus Aurelius?</title>
+<meta name="description" content="Emperor of Rome. Stoic philosopher. He spent 14 years on campaign and wrote his private journal on the front lines. He had everything — and wrote that none of it mattered. 8 decisions.">
+<meta property="og:title" content="What Would You Do If You Were Marcus Aurelius?">
+<meta property="og:description" content="The philosopher-king who ruled Rome at its peak and spent every night writing that power was an illusion. 8 decisions from the life of Marcus Aurelius.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/aurelius-simulator.html">
+<style>
+:root{
+  --bg:#F0EDE8;--card:#FAF8F4;--ink:#18140A;--muted:#5A5040;--line:#D0C8B0;
+  --accent:#2C2410;--accent-bg:#EDE8D8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(240,237,232,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#18140A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C0B890;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#281C08;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F8F4E8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#18100A;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F8F4E8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C0B890;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#281C08;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#18140A;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F8F4E8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C0B890;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#F8F4E8;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#C8B870;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Marcus Aurelius</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #100</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Marcus Aurelius?</h1>
+  <p class="cover-sub">He was the most powerful man in the world. He ruled an empire of 75 million people from Britain to Mesopotamia. Every night, in a military tent on the Danube frontier, he wrote notes to himself reminding himself that power is nothing, that he would be forgotten, that the correct response to suffering is to continue anyway. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Marcus Aurelius</strong> (121–180 AD) · Roman Emperor 161–180 AD · Born into the Roman elite · Adopted at 17 by Emperor Hadrian's chosen successor, Antoninus Pius · Studied Stoic philosophy under Epictetus's pupil, Junius Rusticus · Co-emperor with adoptive brother Lucius Verus 161–169 · Spent 14 of 19 years of reign on military campaign along the Danube · Wrote <em>Meditations</em> as a private journal never intended for publication · Named son Commodus co-emperor in 177 · Died of illness on campaign near Vienna, 180 AD · <em>Meditations</em> was first published 1,400 years after his death and remains in print today.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 138 AD, Rome</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Adoption</span></div>
+<div class="year-banner">138 AD</div>
+<div class="timeline-dot">Rome · Age 17</div>
+<div class="narrative">
+  <p>You are seventeen years old. You have been studying philosophy since you were a child — Stoicism in particular. You want a quiet life of reading and thought. You are good at it. Your tutor Diognetus has taught you to sleep on a hard bed and wear a coarse cloak and eat simple food and be suspicious of easy pleasures.</p>
+  <p>Then the emperor Hadrian, dying, adopts Antoninus Pius as his successor — on the condition that Antoninus in turn adopts you and your friend Lucius Verus as his heirs. You will be Emperor of Rome. You have no say in this.</p>
+  <p>You spend the next twenty-three years as heir apparent, studying Stoic philosophy while learning to govern. When Antoninus dies in 161, you become emperor. Your first act is to insist that Lucius Verus, your adoptive brother, become co-emperor with equal power — despite having no legal obligation to do so.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — Power Shared</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have sole legal claim to the throne. You voluntarily share power with Lucius Verus, who is younger and less experienced. Why?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Practical: an empire too large for one man to manage, and Lucius can command the eastern armies while you handle the west. Pure division of labor.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Sentimental: Lucius was your childhood companion and adoptive brother. Loyalty to a person overrides political calculation.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">Philosophical principle made concrete: power belongs to no individual and should not be hoarded. Sharing it, when you don't have to, is the act of a man who doesn't believe the throne makes him special.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">The only co-emperorship in Roman history</div>
+      <p><strong>You become the first Roman emperor to voluntarily create a co-emperor from a position of strength. Historians call it one of the most remarkable acts of deliberate power-sharing in antiquity. Lucius Verus commands the Parthian War successfully, returns a hero, and dies of plague in 169 — eight years into the experiment. You rule alone from then until your death. But you shared when you didn't have to.</strong> Marcus's elevation of Lucius Verus to co-emperor in 161 AD was unprecedented. Every previous emperor had been sole ruler; a co-emperor was either a forced compromise or a preparation for succession, not a voluntary split at the moment of accession. The Stoic reading is persuasive: Marcus had spent decades studying texts that argued power was morally neutral, that the wise man does not cling to externals, that rank is an accident of birth and adoption. Sharing the throne immediately was an act consistent with these beliefs — not a performance, but a test of whether he actually held them. He apparently did.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Meditations</span></div>
+<div class="year-banner">170 AD</div>
+<div class="timeline-dot">Danube frontier · Age 49</div>
+<div class="narrative">
+  <p>You are on campaign. It is cold. The Germanic tribes — Quadi, Marcomanni, Sarmatians — have crossed the Danube and invaded Roman territory in numbers not seen for generations. You have been here for three years. You will be here for eleven more.</p>
+  <p>Every night, after the dispatches are read and the decisions are made and the empire is administered from a tent, you write. Not for anyone. Not to be published. Not to instruct. You write to yourself, in Greek, using the Stoic framework you have practiced since childhood, trying to remind yourself of what you claim to believe.</p>
+  <p>The notes are unglamorous. "You have power over your mind, not outside events. Realize this and you will find strength." "The impediment to action advances action. What stands in the way becomes the way." "Begin the morning by saying to thyself, I shall meet with the busy-body, the ungrateful, the arrogant, the deceitful, the envious, the unsocial." Reminders, not revelations. Notes for a man who keeps forgetting.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Writing to Yourself</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Marcus wrote the Meditations entirely for himself, with no intention of publication. What does this tell us about the book?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">It makes it more authentic but less reliable — a private journal records the man's actual thinking, but also his doubts, his bad days, his incomplete thoughts. It's raw material, not finished philosophy.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">It makes it the most honest philosophical document that survives from antiquity. Most ancient philosophy was written to persuade audiences. The Meditations was written to persuade the author. Every line was tested against actual experience, not imagined objection.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">The private audience is irrelevant — what matters is whether the ideas hold up. Stoicism works or it doesn't. Marcus's sincerity doesn't validate the framework.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">The title he never gave it</div>
+      <p><strong>The work we call Meditations has no title Marcus gave it. The Greek manuscripts call it "To Himself." It was never circulated in his lifetime, may have been nearly lost, and was first printed in 1559 — 1,379 years after his death. It is now one of the most widely read books in the world, taught at West Point, assigned at Goldman Sachs, cited by presidents. Marcus wrote it to avoid forgetting things he already knew.</strong> The Meditations survives in a single manuscript tradition and was almost certainly never published or distributed by Marcus. The earliest reference to the work is from the 10th century. We don't know how it survived, who preserved it, or what title Marcus might have given it — the Greek heading "To Himself" appears to be a later editorial addition. The book's extraordinary intimacy — the author instructing himself, not performing for an audience — may be precisely why it endures. Every other ancient philosophy text was written with readers in mind. The Meditations was written to combat the author's own forgetting, on campaign, between battles. That situation — a man in power reminding himself of what he believes — is recognizable to anyone who has ever held any responsibility.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Plague</span></div>
+<div class="year-banner">165 AD</div>
+<div class="timeline-dot">Rome · Age 44</div>
+<div class="narrative">
+  <p>Lucius Verus's army has returned from Parthia victorious. They have also brought back something from the east that kills faster than any Germanic tribe: a disease later called the Antonine Plague. Over the next fifteen years, it will kill between five and ten million people across the empire — possibly more. It kills indiscriminately: senators, soldiers, slaves, children.</p>
+  <p>The physician Galen, working in Rome, records the symptoms: fever, diarrhea, vomiting, inflamed throat, a skin rash on the ninth day. In some cities, two thousand people die per day. Roman roads carry goods; they also carry the disease to every corner of the empire.</p>
+  <p>You are emperor. The administrative machine of Rome can do relatively little against an invisible enemy — there are no germ theory, no quarantine protocols, no vaccines. What you control is the response: resources, communication, the symbolic weight of imperial attention.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Invisible Enemy</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Five to ten million people are dying of a disease you cannot understand or stop. As emperor, what is your primary obligation?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Maintain public order and prevent panic — reassure the population, suppress alarming reports, ensure the administrative machine keeps running.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">B</span><span class="dopt-body">Direct resources toward the suffering and maintain the integrity of the system — pay for burials, fund physicians, keep the grain supply moving, show up. Do what you can without pretending you can do more.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">Focus on the military: the plague is weakening the legions precisely when the Danube frontier is under threat. Prioritize the army or the empire collapses regardless of the plague response.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Marcus actually did</div>
+      <p><strong>Marcus sold imperial jewels and artwork to fund relief efforts rather than raise taxes on an already-suffering population. He paid for physicians, organized burial of plague victims in cities where normal burial couldn't keep up, and continued administering the empire throughout. He did not abandon Rome or leave the sick. He also, simultaneously, fought the Marcomannic Wars on the Danube — managing plague and invasion at the same time for fifteen years.</strong> The Antonine Plague is one of the most catastrophic events in Roman history, and Marcus ruled through all of it. His response was characteristic: practical, direct, and without self-dramatization. The Meditations barely mention the plague directly — it is not the subject of prolonged lamentation. The Stoic framework he had built told him that external events were not his to control; his response to them was. He organized what could be organized, funded what could be funded, and continued working. Whether this constitutes "doing the right thing" depends on whether you think the right response to mass death is visible grief or continued function. Marcus, characteristically, chose continued function.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The War</span></div>
+<div class="year-banner">167 AD</div>
+<div class="timeline-dot">Danube frontier · Age 46</div>
+<div class="narrative">
+  <p>The Marcomanni and Quadi have crossed the Danube and reached northern Italy — the first time a foreign army had penetrated that deep since the Gauls sacked Rome in 387 BC. The frontier is collapsing. The plague has devastated the legions. You need soldiers and you need them immediately.</p>
+  <p>You take measures that Rome has never taken before: you conscript gladiators into the legions. You arm slaves. You hire Germanic tribesmen — Quadi and Marcomanni themselves — to fight other Germanic tribesmen. You spend the next thirteen years on the frontier, commanding in person. Rome barely sees you. You govern an empire of 75 million people from a military tent in what is now Austria.</p>
+  <p>The Meditations are written here, during these years. Book after book of notes to himself, in a tent, after dark, while managing a two-front crisis — war and plague — that no Roman emperor had previously faced simultaneously.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Philosopher at War</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Marcus was a philosopher who spent most of his reign commanding armies. Was this a contradiction or a completion of Stoic philosophy?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">A contradiction. Stoicism teaches that the good life requires withdrawal from meaningless external struggle. A wise man would have negotiated, conceded territory, chosen peace over the perpetual violence of frontier defense.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">B</span><span class="dopt-body">A completion. Stoicism never counseled withdrawal — it counseled doing your duty without attachment to outcome. His duty was the empire. He did it, fully, without apparently enjoying the power it represented. The war did not corrupt him because he held it lightly.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">Irrelevant — he had no choice. Emperors don't get to be philosophers in practice. The war was real; the philosophy was what he told himself at night to keep going.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">Plato's philosopher-king — and what Marcus actually was</div>
+      <p><strong>Plato, in the Republic, described the ideal ruler as a philosopher-king — someone forced to govern against their preference, who rules without the corruption of wanting power. Marcus Aurelius is the closest thing history produced to that ideal. He did not want to be emperor. He was placed there by adoption. He governed for 19 years, spent 14 of them on campaign, and his private notes reveal someone fighting the same internal battles every night that he was fighting externally every day. His complaint in the Meditations is never about the war. It is always about his own character.</strong> Marcus's Meditations never portray him as a man at peace. They portray a man in constant struggle with his own irritability, his desire for approval, his failures of patience, his tendency to be distracted by things that don't matter. The war is the background condition; the actual battlefield in the Meditations is always internal. This may be why the book resonates with people who have nothing to do with Roman history: it is a document of someone with enormous external responsibilities trying, imperfectly, to remain internally free. That struggle is recognizable regardless of century.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Revolt</span></div>
+<div class="year-banner">175 AD</div>
+<div class="timeline-dot">Egypt · Age 54</div>
+<div class="narrative">
+  <p>A false rumor has reached the eastern provinces: Marcus Aurelius is dead. The governor of Syria, Avidius Cassius — one of Rome's most capable generals, a man Marcus trusted, a man who had saved the eastern frontier in the Parthian War — has declared himself emperor.</p>
+  <p>The revolt lasts three months and fifteen days. Then Cassius is killed by a junior officer loyal to Marcus, who cuts off his head and sends it to the emperor. Marcus refuses to look at it. He orders it buried. He refuses to execute any of Cassius's family. He refuses to read the letters found in Cassius's papers that would have told him which senators had encouraged the revolt. He burns them unread.</p>
+  <p>He then travels to the eastern provinces to reassure them — not to punish, but to show himself. He tells the Senate that he wanted to take Cassius alive, to prove that emperors could show mercy.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Mercy Problem</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Marcus burned letters that would have exposed senators who supported the revolt against him. Was this wisdom or naive?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Naive. An emperor who doesn't know his enemies cannot protect himself or the empire. Burning the letters was a noble gesture that left real threats unpunished and unidentified.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">Wisdom of a specific kind: the letters would have produced prosecutions, which would have produced fear, which would have corrupted the Senate's relationship with the emperor for years. The unknown guilt of a few senators was less damaging than the known terror of all of them.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">A performance of mercy that served his reputation — the "philosopher emperor" who shows clemency is a more powerful image than the vindictive one. Burning the letters was political theater, not philosophy.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">The Cassius revolt and what followed</div>
+      <p><strong>Marcus's response to the Cassius revolt became one of the most analyzed acts of imperial clemency in Roman history. He spared the family, burned the letters, refused to read the accusations, and told the Senate he regretted that Cassius had been killed before he could be pardoned — robbing him of the chance to demonstrate mercy in person. Whether this was genuine Stoic equanimity or political calculation, it worked: the eastern provinces were pacified, no purge followed, and Marcus's reputation for fairness was enhanced rather than damaged by the revolt that tried to unseat him.</strong> The Historia Augusta records that Marcus refused to look at Cassius's severed head, had it buried with honor, and spared Cassius's son and daughter — giving the daughter in marriage and the son a pardon. He told the Senate: "I pray that no emperor will ever again need to make such a decision." The burning of the accusatory letters was particularly striking: most emperors in similar situations used such documents to purge the Senate. Marcus chose calculated ignorance. This is either the most Stoic act of his reign — genuinely indifferent to the threat — or the most politically sophisticated. It is probably both.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Stoic in Practice</span></div>
+<div class="year-banner">177 AD</div>
+<div class="timeline-dot">Rome · Age 56</div>
+<div class="narrative">
+  <p>There are Christians in Lyon. They have been denounced to the governor, accused of atheism and incest and cannibalism — the standard accusations. The governor writes to you asking what to do with them.</p>
+  <p>Your response is procedurally correct and morally limited: Roman citizens among them should be sent to Rome for trial; non-citizens who recant should be freed; non-citizens who persist should be executed. Forty-eight Christians are killed, including the elderly bishop Pothinus and a slave woman named Blandina, who reportedly endured torture without recanting and became a martyr celebrated for centuries afterward.</p>
+  <p>Your Meditations say almost nothing about religion. They say a great deal about duty, endurance, and the irrelevance of what others think of you. The Christians you permitted to be executed held, in a different language, some of the same beliefs.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Contradiction</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Marcus Aurelius's philosophy valued endurance, indifference to death, and integrity under pressure — the same qualities displayed by the martyrs he permitted to be killed. How do we hold this?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Dismissively: all great men are products of their time. The persecutions are a historical footnote; the philosophy stands independently. Judge the ideas, not the man.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Harshly: the contradiction invalidates the philosophy. A man whose system of ethics cannot protect the vulnerable from his own administrative machinery has a broken system.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">Honestly: great philosophy and human failure coexist in the same person. Marcus's limits are part of the record. The Meditations does not claim its author was without error; it claims the work of self-examination is never finished. He was unfinished, and so is everyone who reads him.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">The persecutions — what we know and don't know</div>
+      <p><strong>Marcus was not a systematic persecutor of Christians in the way later emperors would be. The Lyon martyrdoms of 177 AD occurred under his reign but may have been locally initiated. His rescripts on the subject were procedural rather than motivated by theological hostility — he appears to have seen Christian "stubbornness" in refusing to recant as politically disruptive rather than religiously offensive. This is, if anything, more troubling than ideological hatred: the martyrs died for administrative tidiness.</strong> Historians debate how much responsibility Marcus bears for the Lyon martyrdoms specifically. His general instructions were that Christians should not be sought out but, if brought before authorities and convicted, should face standard penalties. The local governor may have exceeded his remit. Marcus appears not to have been particularly interested in Christianity — his single mention of Christians in the Meditations is a dismissive reference to theatrical exhibitionism in dying. He may never have understood what he was permitting. This is a different kind of failure than malice — and in some ways harder to think about. The Meditations is a book about self-examination. Its author apparently never examined this.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Succession</span></div>
+<div class="year-banner">177 AD</div>
+<div class="timeline-dot">Rome · Age 56</div>
+<div class="narrative">
+  <p>For nearly a century, the Roman Empire had been ruled by the Five Good Emperors — each chosen by adoption, each selecting the most capable available successor rather than a biological heir. Nerva adopted Trajan. Trajan adopted Hadrian. Hadrian adopted Antoninus Pius. Antoninus Pius adopted Marcus. The system worked. Rome had flourished.</p>
+  <p>You have a biological son: Commodus. He is seventeen. He is not notably capable, not interested in philosophy, not temperamentally suited for governance. Everyone in Rome knows this. The precedent of a century says you should adopt a more capable successor.</p>
+  <p>You make Commodus co-emperor in 177. When you die in 180, he inherits the throne. His reign is chaotic, narcissistic, and ends in his assassination. He is remembered as one of Rome's worst emperors. The Pax Romana — the two centuries of relative peace — ends with him.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The One Failure</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Marcus Aurelius broke a century of meritocratic succession to install his own son. How do we explain this from a man whose philosophy was about transcending personal attachment?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">He was simply a parent. Philosophy doesn't override biology when your own child is involved. The rational case for adoption was clear; parental attachment overruled it.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">He genuinely believed Commodus could be trained — that the office would shape the man. This was wrong, but it was a considered bet, not pure nepotism.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">It reveals the limit of philosophy as preparation for power: you can know the right answer in principle and still not do it in practice when the cost is personal. Marcus was not a saint. His philosophy was a practice, not an achievement. He fell short of it here, as he probably fell short elsewhere. The Meditations is a record of that struggle, not its resolution.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">The end of the Good Emperors</div>
+      <p><strong>Edward Gibbon, in The Decline and Fall of the Roman Empire, identified the reign of Marcus Aurelius as the peak of Roman civilization and the moment of Commodus's succession as the beginning of the end. "If a man were called to fix the period in the history of the world during which the condition of the human race was most happy and prosperous, he would, without hesitation, name that which elapsed from the death of Domitian to the accession of Commodus." The philosopher who wrote most eloquently about non-attachment to what is not yours handed the most powerful office in the world to his son.</strong> Commodus's reign (180–192 AD) featured the emperor renaming Rome "Colonia Commodiana" after himself, calling himself Hercules reincarnated, fighting in the Colosseum as a gladiator, and progressively delegating governance to corrupt favorites. He was strangled in his bath by a wrestler hired by conspirators. The contrast with his father is so stark that scholars have debated whether Marcus genuinely didn't see what Commodus was, or saw it and chose family anyway. The Meditations offers no clue. Marcus mentions his son rarely and neutrally. The book that contains his most searching self-examination is silent on the decision that most contradicted what he claimed to believe.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Last Campaign</span></div>
+<div class="year-banner">180 AD</div>
+<div class="timeline-dot">Vindobona (Vienna) · Age 58</div>
+<div class="narrative">
+  <p>You are on campaign again. The Danube frontier. You have spent most of your life here, on and off, since the Germanic invasions began. You were close to finishing it — close to a settlement that would have established permanent Roman provinces north of the river, something no emperor had achieved.</p>
+  <p>You fall ill. The disease moves quickly. You are dying in a military camp near what is now Vienna. You have been emperor for nineteen years. You have governed an empire of 75 million people, fought two major wars, survived a plague, survived a revolt, and written a private philosophical journal that will be read for two thousand years. Your son Commodus is with you.</p>
+  <p>Your last recorded words, to the officer who asked what final orders you had, are reported as: "Go to the rising sun. I am already setting."</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — What the Meditations Is For</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Meditations is a book of reminders — a man telling himself things he keeps forgetting. Does this make it more or less valuable as philosophy?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Less valuable — philosophy should be a system of ideas that holds up to scrutiny, not a self-help practice for one individual. The Meditations is personal psychology, not philosophy.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">More valuable as literature but less valuable as philosophy — it reads beautifully and feels true, but it doesn't argue for anything. You can't engage with it the way you can engage with Aristotle's Ethics.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">More valuable precisely because it is a practice, not a system. Philosophy as a set of propositions to believe is of limited use. Philosophy as a daily practice of noticing your own failures and returning to what you think matters — that is what Marcus was actually doing. The Meditations is evidence that it can be done under the worst possible conditions.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What the book is actually doing</div>
+      <p><strong>Marcus Aurelius died on campaign in 180 AD. The Meditations, never intended for anyone else, survived. It was first published in 1559 in Zurich. It has never been out of print since. It is taught at West Point Military Academy, assigned to new analysts at Goldman Sachs, cited by Bill Clinton, read by Nelson Mandela in prison, and kept on the nightstand by Tim Ferriss. It is also, on any given page, a man reminding himself to stop being irritable and get back to work. That combination — the eternal and the mundane, the philosophical and the practical, the emperor and the human being struggling — may be why it lasts.</strong> The Meditations contains no arguments, no proofs, no system. It contains a set of observations and reminders that Marcus apparently needed to read repeatedly to act on. This is philosophically unusual but experientially recognizable: most people who try to be better at anything know the gap between knowing what to do and actually doing it. The Meditations is a document of that gap, written by someone with every reason to have closed it — all the power, all the resources, all the education — who apparently never fully did. That's why it works. It is not written by someone who succeeded. It is written by someone who kept trying.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Marcus Aurelius's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="next-sims">
+  <p class="next-label">Explore More Lives</p>
+  <div class="next-grid">
+    <a href="socrates-simulator.html" class="next-card">
+      <span class="next-name">Socrates</span>
+      <span class="next-desc">He wrote nothing. He questioned everything. At 70, Athens put him on trial.</span>
+    </a>
+    <a href="nietzsche-simulator.html" class="next-card">
+      <span class="next-name">Friedrich Nietzsche</span>
+      <span class="next-desc">The philosopher who declared God dead — and went mad at 44.</span>
+    </a>
+    <a href="confucius-simulator.html" class="next-card">
+      <span class="next-name">Confucius</span>
+      <span class="next-desc">Traveled 14 years. Not one state adopted his ideas in his lifetime.</span>
+    </a>
+    <a href="plato-simulator.html" class="next-card">
+      <span class="next-name">Plato</span>
+      <span class="next-desc">Student of Socrates, went to Syracuse to turn a tyrant into a philosopher-king. It didn't go well.</span>
+    </a>
+  </div>
+</div>
+<div class="cta-box">
+  <p>Marcus Aurelius ruled Rome at its peak, spent 14 years on campaign, and wrote every night that power was an illusion. The notes he never meant to publish are read by more people today than any emperor's decrees. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All 100 Life Simulators — Darwin, Kafka, Einstein and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/socrates-simulator.html" style="color:var(--accent)">Socrates Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like a Stoic";body="You understood that power-sharing was philosophical principle made concrete, that the Meditations' private audience is precisely what makes it honest, that duty without attachment is the Stoic completion not the Stoic contradiction, and that great philosophy and human failure coexist in the same person. That's the full Marcus — the ideals and the limits.";}else if(pct>=0.625){title="The Practitioner";body="You grasped the core: that the Meditations is valuable as practice rather than system, that mercy can be strategic without being cynical, and that Marcus's successes and failures are both part of what he was. Where you may have simplified: Stoicism rarely has single causes — the Meditations is honest AND rare AND useful, simultaneously.";}else if(pct>=0.375){title="The Pragmatist";body="You tended toward the practical or skeptical reading. Marcus was practical — he thought doing your duty was a serious matter, not merely a philosophical exercise. But his practice was also philosophical. The line between his Meditations and his decisions was thinner than you may have allowed.";}else{title="The Skeptic";body="You questioned whether the philosophy was genuine, whether the mercy was performance, whether the book is philosophy or self-help. These are legitimate questions. But the historical Marcus, as best as we can reconstruct him, seems to have been genuinely trying — and the fact that the trying was never finished, never perfected, is the most convincing evidence that it was real."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

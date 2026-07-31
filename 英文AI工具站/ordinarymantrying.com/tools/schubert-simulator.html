@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Franz Schubert Life Simulator — 600 Songs, Winterreise &amp; 31 Years | Ordinary Man Trying</title>
+<meta name="description" content="Live Franz Schubert's life across 8 pivotal decisions — from writing Erlkönig at 17, to the tragic Winterreise song cycle, to dying at 31 having composed more masterworks than most composers produce in a lifetime.">
+<style>
+:root{
+  --bg:#F0F0F5;--card:#F7F7FB;--ink:#0A0A12;--muted:#303050;--line:#C0C0D8;
+  --accent:#283068;--accent-bg:#D8D8F0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(240,240,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#0A0A12;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #9898C8;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#080810;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#D8D8F0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#D8D8F0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #9898C8;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #9898C8;border-radius:999px;margin-bottom:12px;gap:8px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Franz Schubert</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #94 of 100</p>
+  <h1 class="cover-title">He Wrote 600 Songs, 9 Symphonies, and 20 Sonatas.<br>He Died at 31.</h1>
+  <p class="cover-sub">Franz Schubert lived thirty-one years and composed approximately one thousand works, including over six hundred songs (Lieder), nine symphonies, twenty-one piano sonatas, and fifteen string quartets. He never held a steady job. He never owned a piano. He wrote <em>Erlkönig</em> at seventeen and had to be told about it by his friends because it had been published without him knowing. He wrote the <em>Winterreise</em> song cycle in 1827 while dying. His friends, hearing the first twelve songs, said they were too gloomy. He said: "You will soon understand." He was right. He died the following year.</p>
+  <div class="cover-facts">
+    <p>🎵 600+ Lieder (art songs) — more than any other major composer &nbsp;·&nbsp; 🌨️ Winterreise (1827): 24 songs on solitude, loss, and wandering in winter — a summit of Western music &nbsp;·&nbsp; 🦁 Erlkönig (1815): written at 17, recognized by Beethoven as a masterpiece before publication &nbsp;·&nbsp; 🎹 Never owned a piano — borrowed time on friends' instruments &nbsp;·&nbsp; 🎼 "Unfinished Symphony" left at two movements — now one of the most performed works in the repertoire &nbsp;·&nbsp; 1797–1828 · Vienna, Austria</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Schubert's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1815</div>
+  <div class="timeline-dot">Vienna · Age 17–18</div>
+  <div class="narrative">
+    <p>You are seventeen. You are working as an assistant teacher in your father's school — a job you hate — and composing at every available moment. In 1815 you compose 144 songs. One hundred and forty-four. Including "Erlkönig" — Goethe's poem about a father riding through the night with his sick son, pursued by the supernatural Elf King. The poem shifts between the father's reassuring voice, the child's terrified cries, and the seductive whispers of the Erlking. Your setting, for voice and piano, captures all three voices simultaneously in a piano part that gallops without stopping for four minutes. Your friends hear it in your rooms on Saulengasse and are immediately overwhelmed. A professional performance is organized. Beethoven hears it — possibly, accounts differ — and calls it a masterpiece. You are seventeen. You have no idea this will happen to a poem you set in the morning.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1815</div>
+    <p class="decision-q">Schubert wrote 144 songs in 1815 alone. What does this rate of composition reveal about his method?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. That quantity and quality are inversely related — a composer who produces 144 works in a year cannot be giving careful attention to each one, and the volume of output is evidence of facility rather than depth.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. That for some composers, the compositional act is closer to transcription than creation — Schubert's speed suggests music arrived in something approaching complete form, and the writing was capturing rather than constructing. This does not mean the music required no skill; it means the skill was so integrated that the gap between conception and notation was minimal. Multiple witnesses describe Schubert composing directly onto manuscript paper without apparent struggle, often in a single sitting. The 144 songs in a year are not evidence of carelessness but of a musical intelligence that operated at unusually close to the speed of inspiration.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. That the Lied (art song) is a smaller form that permits faster composition than orchestral or chamber music — the apparent volume of 1815 is partly a consequence of the brevity of individual songs rather than an exceptional rate of musical thought.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. That he was working through a period of particular creative fertility that would not characterize his whole career — the 1815 production rate reflects his specific circumstances (teaching job freeing evenings, proximity to friends who performed his songs immediately) rather than his general method.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <strong>In 1815, at seventeen, you composed 144 songs in a single year — including Erlkönig, which you wrote in one sitting while your friends watched, the three voices and the galloping piano arriving simultaneously — and at the time you were working as a schoolteacher you hated.</strong> <strong>Schubert's compositional speed:</strong> The Schubert scholar John Reed has documented the production figures year by year: 1815 (144 songs, 2 symphonies, 2 masses, 4 stage works); 1816 (100+ songs); 1817 (60 songs plus chamber works). The pattern is consistent: very high output maintained across years, not a single unusual year. Multiple accounts from Schubert's circle describe him composing in the morning, showing the manuscript to friends in the afternoon. Josef von Spaun, his closest friend, describes him reading a Goethe poem, going silent for a moment, and then writing "Erlkönig" without pausing — the gallopping piano figure, the three voices, the tragic conclusion — in a single sitting, the notation keeping pace with the music in his head. This is not universal; but it is documented for Schubert specifically.
+    </div>
+  </div>
+
+  <div class="year-banner">1818</div>
+  <div class="timeline-dot">Vienna · Age 21</div>
+  <div class="narrative">
+    <p>You have left the teaching job and are trying to make a living as a music teacher, composer, and accompanist in Vienna. Vienna is Beethoven's city. Everyone in the musical world knows it. You admire Beethoven enormously — you have seen him from a distance but never dared approach him. Beethoven is deaf, inaccessible, famous beyond any other living composer. You are a nobody with a growing circle of devoted friends who organize evenings of your music ("Schubertiaden") in private homes. These evenings — piano music, songs, dancing — are the primary way your work reaches audiences. Almost nothing you write is published commercially during your lifetime. You live in friends' rooms, borrowed pianos, shared meals. You write constantly.</p>
+    <p>Your friends include some of the most interesting young men in Vienna: the baritone Johann Michael Vogl who performs your songs; the poet Franz von Schober who provides you a room and whose bad influence you enjoy; the painter Moritz von Schwind who later paints the Schubertiad evenings. The Schubertiad — a private concert centered entirely on one composer's work — is your invention, accidentally. The form still exists: concerts bearing this name are held in concert halls across the world.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1818</div>
+    <p class="decision-q">Schubert's music reached audiences primarily through private Schubertiad evenings rather than public concerts or publications. What does this model of distribution reveal?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. That his music was too personal for public concert halls — the intimate character of the Lied (voice and single piano) is ill-suited to large performance spaces, and the private Schubertiaden were the appropriate venue regardless of commercial constraints.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. That communities of devoted engagement can sustain and transmit important work even without commercial infrastructure — the Schubertiad circle (friends, performers, listeners who knew and loved the music intimately) preserved and performed Schubert's work more faithfully than any publishing house would have. The paradox is that this limited geographic distribution but ensured quality of transmission: the people who knew the music knew it deeply, not casually. When professional musicians finally encountered the manuscripts after his death, the tradition of performance was already established among those who had been at the Schubertiad evenings.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. That the Viennese commercial music market was too dominated by Beethoven and Italian opera for a young composer to gain access, and the Schubertiad model was a forced adaptation to exclusion rather than a chosen distribution strategy.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. That commercial publication was available to Schubert and he simply didn't pursue it aggressively enough — some songs were published in his lifetime, and a more commercially focused Schubert could have achieved wider distribution while alive.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <strong>By 1818, your music reached audiences through private evenings in borrowed apartments — the two dozen friends who gathered to hear your songs over borrowed piano keys knew your work more intimately than any audience would know it in your lifetime, or for a decade after your death.</strong> <strong>The Schubertiaden:</strong> The Schubertiaden typically involved twenty to forty people — poets, painters, musicians, civil servants — gathering in private homes to hear Schubert's music performed by Vogl (baritone) and Schubert himself at the piano. The evenings sometimes lasted past midnight. Moritz von Schwind's painting "A Schubert Evening at Josef von Spaun's" (1868, forty years after Schubert's death) reconstructs one such evening from memory. The form proved remarkably durable as a transmission mechanism: the performers who had played and heard these works were the ones who championed them after Schubert's death. Robert Schumann discovered the "Great" C Major Symphony in Schubert's manuscripts in 1838 and arranged for Mendelssohn to conduct its premiere — ten years after the composer's death.
+    </div>
+  </div>
+
+  <div class="year-banner">1822</div>
+  <div class="timeline-dot">Vienna · Age 25</div>
+  <div class="narrative">
+    <p>In late 1822 you contract syphilis. The diagnosis is not recorded with certainty — what is recorded are the symptoms (severe rash, hair loss, the mercury treatment that was the standard cure and that had its own devastating effects) and the letters in which you describe yourself as "the most unhappy and miserable person in the world." You spend time in hospital. You lose much of your hair. You recover partially. The disease will recur and worsen. You continue composing. The "Wanderer" Fantasy and the "Unfinished" Symphony (two movements, never completed) are written around this time. The incompleteness of the symphony has never been definitively explained — many theories, no answer. You simply stopped at two movements and sent them to a music society in Graz that had commissioned you. They accepted them without complaint. They were either satisfied with two movements or did not notice the work was unfinished. The symphony was not performed until 1865, thirty-seven years after your death.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1822</div>
+    <p class="decision-q">The "Unfinished Symphony" is arguably Schubert's most famous orchestral work — yet it's only two movements. Does incompleteness diminish a masterwork?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. Yes — a symphony is defined by its four-movement structure, and two movements is a fragment, however beautiful. The "Unfinished" is a magnificent fragment, not a complete work, and should be heard as such.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. No — completeness is a formal expectation, not an intrinsic musical property. The two movements of the "Unfinished" constitute a complete emotional and musical experience that resolves in the second movement's quiet ending. The fact that a third and fourth movement were expected by the sonata-symphony convention does not mean the experience of the two existing movements is incomplete. A work is complete when it arrives somewhere; this one does.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. The question is unanswerable because we don't know whether Schubert intended it to be two movements or whether he simply stopped — if he intended it as a two-movement work, it is complete by his own definition; if he intended four movements and stopped, it is a fragment. Without certainty about his intention, we cannot determine whether it is complete or incomplete.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. The incompleteness is itself meaningful — a symphony from a composer dying at 31 that stops at two movements reflects something true about a life cut short, and the absence of the missing movements is part of what gives the work its particular emotional quality.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <strong>In 1822, you sent two movements of an unfinished symphony to a music society in Graz that had commissioned you — they accepted them without complaint, performed nothing, and the work sat unknown for forty-three years before becoming one of the most performed symphonies in the world.</strong> <strong>The "Unfinished" Symphony:</strong> The musicologist Brian Newbould has analyzed all existing theories for why Schubert stopped at two movements — including the discovery of eight bars of a scherzo that might have been a third movement. The most plausible explanation is simply that the B-minor slow movement resolved everything the symphony needed to say, and a conventional third and fourth movement would have been redundant. What is notable is that the two movements are among the most structurally complete in the symphonic repertoire: the first movement's development section and recapitulation are perfectly proportioned, and the second movement ends with a genuine sense of arrival. The formal incompleteness and the experiential completeness are both real.
+    </div>
+  </div>
+
+  <div class="year-banner">1824</div>
+  <div class="timeline-dot">Vienna · Age 27</div>
+  <div class="narrative">
+    <p>You write a letter to your friend Leopold Kupelwieser: "I feel myself to be the most unhappy and miserable creature in the world. Imagine a man whose health will never be right again, and who in sheer despair over this, ever makes things worse and worse, instead of better. Imagine a man whose most brilliant hopes have perished, to whom the felicity of love and friendship have nothing to offer but pain; whose enthusiasm for all things beautiful threatens to forsake him; and ask yourself if he is not a miserable, unhappy man?" You are twenty-seven. The syphilis has returned. You are depressed. But in 1824 you also compose the Death and the Maiden string quartet, the Octet in F major, and begin work on the "Great" C Major Symphony. The productivity does not stop; the darkness and the work coexist.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1824</div>
+    <p class="decision-q">Schubert wrote of despair in letters while producing masterpieces simultaneously. What is the relationship between suffering and creative output?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. Causal — the depth of Schubert's suffering is what produced the emotional depth of works like "Death and the Maiden." Without the suffering, the music would have been less profound.</button>
+      <button class="dopt" onclick="choose(this,4,false)">B. Inverse — the creative work was how he managed the suffering, and the productivity was a consequence of coping rather than of the suffering itself. Artists who suffer heavily and produce little are common; artists who suffer and produce are those who have found the work as a management mechanism.</button>
+      <button class="dopt" onclick="choose(this,4,true)">C. Parallel rather than causal — the suffering and the work were concurrent but not necessarily in a simple causal relationship in either direction. Schubert had the suffering; he also had the compositional facility that he had had before the suffering. The works from 1824 are darker than earlier works — this much is audible — but the darkness may be the coloring of existing craft by existing suffering rather than the suffering generating new artistic capacity. The suffering didn't make him a better composer; it was present when his mature compositional voice was already formed.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. Irrelevant — great art requires craft and imagination, neither of which is produced by suffering. Biographical suffering is the context, not the cause, of artistic achievement, and drawing causal connections between biographical misery and artistic greatness is a sentimental fallacy.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <strong>In 1824, the same year you wrote to a friend that you were "the most unhappy and miserable creature in the world," you completed the Death and the Maiden quartet, the Octet in F major, and began the Great C Major Symphony — the despair and the masterpieces occupying the same weeks.</strong> <strong>Suffering and productivity:</strong> The musicologist Susan McClary has written about the way Schubert's mature works handle tonal instability — moves to foreign keys that don't easily resolve, harmonic wandering — in ways that parallel the imagery of wandering, displacement, and unresolvable longing in the poems he set. Whether this is biographical causation or aesthetic choice is genuinely uncertain. What is documentable is that the works from 1822 onward show a consistent increase in harmonic ambiguity and structural risk-taking that was not present in the early songs. Whether this was the effect of syphilis, depression, artistic development, or some combination cannot be definitively established. The correlation is real; the causation is presumed.
+    </div>
+  </div>
+
+  <div class="year-banner">1827</div>
+  <div class="timeline-dot">Vienna · Age 30</div>
+  <div class="narrative">
+    <p>You compose <em>Winterreise</em>. Twenty-four songs based on poems by Wilhelm Müller, about a wanderer in winter who has lost his love and walks alone through the frozen landscape toward an uncertain end. The final song, "Der Leiermann" (The Hurdy-Gurdy Man), is only sixteen bars — the wanderer encounters a ragged old man playing a hurdy-gurdy with frozen fingers in the road; dogs bark; no one gives him money; he plays on. The wanderer asks: "Shall I go with you? Will you play your music for my songs?" The music stops. The two of them — the wanderer and the hurdy-gurdy man — stand there together in the winter. That is the end. When you play the cycle for your friends, they are disturbed. "They had become sad," you tell your friend Spaun. "I'm not surprised. What I wrote is very different from what I've done before. You will soon understand."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1827</div>
+    <p class="decision-q">Winterreise ends with the hurdy-gurdy man — no resolution, no comfort, just two wanderers together in the cold. Why is this one of the most affecting endings in Western music?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. The ambiguity — it is unclear whether the wanderer follows the hurdy-gurdy man or stays alone; the unresolved question generates the emotional resonance by leaving interpretation to the listener.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. The refusal of consolation combined with the offer of company — the cycle has passed through all the stages of grief (memory, hope, anger, despair) without finding resolution, and the final image offers not comfort but the presence of another person who is also suffering, also neglected, also continuing to play despite everything. The ending says: grief doesn't resolve; but you are not the only one standing in the cold. This is honest rather than consoling, and honesty about suffering without resolution or redemption is rarer and more valuable in art than consolation.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. The musical setting — the bare, static piano accompaniment of "Der Leiermann" (repeating drones, no harmonic movement) creates an emptiness that is more affecting than any conventionally beautiful ending could achieve. The musical bareness is the emotional bareness, and the two reinforce each other.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. The biographical resonance — knowing that Schubert was dying when he wrote this makes the wanderer's situation inseparable from the composer's, and the ending's power comes partly from the listener's awareness that Schubert is writing about his own approaching death.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <strong>In 1827, you played the completed Winterreise for your friends and they sat in disturbed silence — twenty-four songs ending not with resolution but with a ragged hurdy-gurdy man in a winter road, the wanderer asking to go with him, the music stopping, nothing answered.</strong> <strong>Winterreise's ending:</strong> The baritone Hans Hotter, who became the definitive interpreter of Winterreise in the mid-20th century, described "Der Leiermann" as "the most terrifying song ever written" — not because of what happens but because of what doesn't happen: the hurdy-gurdy man and the wanderer simply stand there, and the music stops. The philosopher Susan Stewart has written about the cycle's refusal of narrative closure: the songs don't lead anywhere; they circle; the wanderer ends where he began, in winter, alone, except now he has found another person who is also simply there. The companion offered at the end is not comfort but recognition: you are not alone in your loneliness. This is the specifically Schubertian form of consolation.
+    </div>
+  </div>
+
+  <div class="year-banner">1828</div>
+  <div class="timeline-dot">Vienna · Age 31</div>
+  <div class="narrative">
+    <p>In March 1828 you organize and perform in your only public concert — the first public concert of your own music in your lifetime. Every seat is sold. The program includes chamber music and songs. The audience loves it. The Viennese newspapers praise you. You earn about 800 florins. The reviews say you are a great talent who will have a great career. Two days before the concert, in the same city, Niccolò Paganini arrives and begins his celebrated Vienna concerts. The newspapers are full of Paganini for the rest of the month. You are the second topic. It is fine; you are used to it. You spend the spring and summer composing at an extraordinary rate: the last three piano sonatas, the String Quintet in C major, more songs. In October you fall ill with typhoid fever, possibly contracted from contaminated water. On November 19, 1828, you die. You are thirty-one years old. On your deathbed you ask to hear Beethoven's C-sharp minor quartet. Your request is granted. Then you die.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1828</div>
+    <p class="decision-q">Schubert's only public concert was in March 1828; he died in November 1828. What does this near-miss between recognition and death tell us?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. That timing is unjust — Schubert was eight months away from the public success that his friends had always believed was coming, and his death is a straightforward tragedy of timing without deeper meaning.</button>
+      <button class="dopt" onclick="choose(this,6,false)">B. That the public concert mattered less than it appears — Schubert's friends, the Schubertiad circle, had known the work for years. The March 1828 concert was a confirmation to the wider public of what the inner circle already knew. He didn't die unknown; he died not-yet-widely-known.</button>
+      <button class="dopt" onclick="choose(this,6,true)">C. That recognition during a life and significance after it are different things — Schubert was beginning to receive public recognition in 1828, but the full recognition of his significance (his place alongside Beethoven as a summit of Viennese Classicism, his invention of the German Lied as a major art form) required the full body of work to be published, discovered, and evaluated over decades after his death. What he would have built on the March 1828 concert is unknowable. What his already-completed work built for him is visible. The tragedy of 31 is real; the size of what was already done by 31 is also real.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. That he might not have produced the late works at all if success had come earlier — the specific conditions of his working life (poverty, borrowed pianos, the intimate Schubertiaden) may have produced a quality of concentrated work that public success would have disrupted. The near-miss may be explained partly by the same conditions that explain the output.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <strong>In March 1828, your only public concert sold every seat and the Viennese press called you a great talent with a great career ahead — and eight months later, in November 1828, you were dead at thirty-one, never knowing whether the reviews were right.</strong> <strong>The March 1828 concert:</strong> The concert program included the Piano Trio in E-flat major, vocal works, and the first movement of the String Quartet in G major. Contemporary reviews describe an audience that was genuinely moved and a composer who seemed at the beginning of a public career. Robert Schumann discovered the "Great" C Major Symphony manuscript at Ferdinand Schubert's house in Vienna in December 1838 — ten years after Schubert's death — and wrote that "there is the symphony which Brahms always said he wanted to write, but which turned out to be Schubert's." The full scope of what Schubert had completed by his death took decades to establish because the manuscripts were scattered, unpublished, and in some cases unknown even to his friends.
+    </div>
+  </div>
+
+  <div class="year-banner">Legacy</div>
+  <div class="timeline-dot">1828 and beyond</div>
+  <div class="narrative">
+    <p>Schubert was buried in the Währing cemetery, his body placed near Beethoven, who had died the previous year. (Both were later moved to the Zentralfriedhof.) The inscription on his tombstone, written by the poet Franz Grillparzer, reads: "Here Music has buried a rich treasure but still fairer hopes." It is one of the great understatements in the history of art. The "rich treasure" included a body of work that took decades to fully discover: the "Great" C Major Symphony (1838, premiere conducted by Mendelssohn); the Winterreise (performed only gradually to wider audiences across the century); the last three piano sonatas (performed regularly only from the late 19th century onward). What was "richer" than anyone imagined, and "fairer hopes" than music actually needed.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · Legacy</div>
+    <p class="decision-q">Schubert wrote over 1,000 works in 31 years. What is the essential quality of his music that has kept it central to the repertoire for two centuries?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Accessibility — his melodies are among the most immediately beautiful in Western music, and his harmonic language is complex enough to reward study without being inaccessible to the untrained ear.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. The Lied — by elevating the art song to the level of a major genre (previously a minor, domestic form), he created a new framework for the expression of emotional interiority that influenced every German-speaking composer who came after him.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. The honest expression of longing that doesn't resolve — Schubert's music consistently inhabits a state of yearning without arrival: the harmonic wandering, the turns to unexpected keys, the melodies that circle back without quite completing themselves. This is the emotional condition of a large part of human experience — wanting, grieving, remembering, not arriving — expressed in music with a precision and beauty that no other composer has quite matched. People return to Schubert because he describes something true about what it feels like to be alive and wanting.</p>
+      <button class="dopt" onclick="choose(this,7,false)">D. His productivity — the sheer volume of the output means that the repertoire of Schubert's music is large enough to sustain centuries of discovery and rediscovery, and new performances of less-known works continue to expand the picture of who he was.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <strong>In 1827 and 1828, writing your final songs and the late sonatas, you gave Western music its most precise vocabulary for longing that doesn't resolve — the harmonic turn to the wrong key, the melody that circles back displaced, the Sehnsucht that is the subject, not the prelude to something else.</strong> <strong>Schubert's emotional language:</strong> The music critic Alex Ross, in "The Rest Is Noise," describes Schubert's harmonic language as "the music of nowhere in particular" — the wandering from key to key without settling, the returns that are slightly displaced from where they began. The philosopher Roger Scruton wrote that Schubert's music was the first to make "yearning" — Sehnsucht — a complete emotional subject rather than a transitional state. In German Romantic aesthetics, Sehnsucht (longing for something that cannot quite be named) was theorized as a fundamental emotional condition, and Schubert gave it its most complete musical expression. The Winterreise wanderer, the harmonic stranger, the melody that goes somewhere unexpected and comes back changed — these are all versions of the same emotional truth.
+    </div>
+  </div>
+
+  <div class="decision-block">
+    <div class="decision-header">Final Question · The Legacy of 31 Years</div>
+    <p class="decision-q">Schubert died at 31, having written more significant music than most composers produce in eighty years. What does his life suggest about the relationship between longevity and achievement?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. That intensity compensates for brevity — Schubert's extraordinary output rate meant that he achieved in thirty-one years what a slower composer would have required eighty years to produce.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. That early death preserves a reputation against the risk of creative decline — had Schubert lived to seventy, his late works might have disappointed (as sometimes happens with prolific composers in their final decades), and the thirty-one-year arc is permanently and completely brilliant.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. That the relevant measure is neither longevity nor output but the completeness of a body of work — Schubert's body of work is aesthetically complete: it has a beginning, a development, and a late period (the last three sonatas, Winterreise, the String Quintet) that represents a genuine artistic maturity. This completeness was not planned; it happened to coincide with his death. But the result is a body of work that is complete rather than merely truncated. The thirty-one years were enough. Not every creative life needs more time to be complete.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. That premature death is always a loss without compensation — Schubert might have written a body of work even larger and more diverse had he lived to sixty, and there is no way to regard the loss of those potential works as anything but a loss. The existing work is extraordinary; it does not mitigate what didn't exist.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <strong>On your deathbed in November 1828, you asked to hear Beethoven's C-sharp minor quartet — and in the weeks just before, at thirty-one, you had written three piano sonatas and the String Quintet in C major that constitute a complete late period, not a truncated one.</strong> <strong>Completeness at 31:</strong> The three late piano sonatas (B-flat, A major, C minor), composed in the weeks before his death, represent a conclusive statement that was not available in the earlier sonatas. The String Quintet in C major, completed in the last months, has been consistently ranked by chamber musicians as one of the two or three greatest pieces in the string repertoire. These works do not read as the beginning of a late period; they read as a late period, complete. Whether Schubert knew he was dying when he wrote them is disputed; whether the works have the character of a valediction is not. They are final without being premature. The life ended before the work did; but the work, by some remarkable fortune, was already done.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Franz Schubert · 1797–1828</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"I have come into the world for no purpose but to compose."<br><em style="font-size:13px;color:var(--muted);">— Franz Schubert</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="satie-simulator.html" class="next-card">
+        <div class="next-card-name">Erik Satie</div>
+        <div class="next-card-sub">12 umbrellas, 12 suits, furniture music</div>
+      </a>
+      <a href="pascal-simulator.html" class="next-card">
+        <div class="next-card-name">Blaise Pascal</div>
+        <div class="next-card-sub">Probability, the wager, and a mystic fire</div>
+      </a>
+      <a href="keats-simulator.html" class="next-card">
+        <div class="next-card-name">John Keats</div>
+        <div class="next-card-sub">Wrote his masterpieces in one year, then died</div>
+      </a>
+      <a href="mozart-simulator.html" class="next-card">
+        <div class="next-card-name">Wolfgang Amadeus Mozart</div>
+        <div class="next-card-sub">The prodigy who could never stop working</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understand Schubert at the level his friends at the Schubertiaden understood him — that the speed was transcription, not production; that the private circle preserved what the market couldn\'t; that Winterreise offers company in suffering rather than resolution. You would have stayed past midnight.';else if(pct>=0.625)t.textContent='You followed Schubert through the major turns — the compositional velocity, the darkness of the late works, the refusal of easy consolation — but lost the thread at some of the harder edges, where the logic of his choices cuts most precisely.';else if(pct>=0.375)t.textContent='You felt the weight of what Schubert was carrying — 144 songs at seventeen, syphilis at twenty-five, Winterreise written while dying — but couldn\'t quite follow him into the specific truth of how the suffering and the work coexisted without one explaining the other.';else t.textContent='You encountered Schubert\'s story the way Vienna encountered his music — aware that something significant was happening in those borrowed rooms, but unable to say what it was or why it would outlast the city he lived and died in without once owning a piano.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

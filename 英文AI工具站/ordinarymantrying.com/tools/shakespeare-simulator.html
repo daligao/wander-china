@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Shakespeare?</title>
+<meta name="description" content="He left Stratford at 20 with almost nothing. He wrote 37 plays and 154 sonnets. He retired at 48 and never published. 8 decisions from the world's most studied writer.">
+<meta property="og:title" content="What Would You Do If You Were Shakespeare?">
+<meta property="og:description" content="The glove-maker's son who conquered London's theater. 8 decisions from the life of William Shakespeare.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/shakespeare-simulator.html">
+<style>
+:root{
+  --bg:#F5F0E8;--card:#FDFBF5;--ink:#1A1208;--muted:#5C4A28;--line:#D4C8A8;
+  --accent:#3D2B00;--accent-bg:#F0E8D0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,240,232,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#1A1208;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C8B888;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#2A1A00;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F8F0D8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#1A1000;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F8F0D8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C8B888;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#2A1A00;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.quote-block{background:var(--ink);color:#F8F0D8;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#9A8A60;margin-top:12px;font-family:var(--mono);}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#1A1208;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F8F0D8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C8B888;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr;}}
+.cta-box{background:var(--accent);color:#F8F0D8;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#D4B870;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · William Shakespeare</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #26</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Shakespeare?</h1>
+  <p class="cover-sub">He was the son of a glove-maker who couldn't sign his own name. He left his wife and two daughters in Stratford and walked to London. He wrote <em>Hamlet</em>, <em>King Lear</em>, and <em>A Midsummer Night's Dream</em>. At 48, he went home, retired, and never wrote again. He never published a single play himself. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>William Shakespeare</strong> (1564–1616) · English playwright and poet · Born in Stratford-upon-Avon · Son of John Shakespeare, glove-maker and local official · Married Anne Hathaway at 18 (she was 26) · Left for London circa 1585–1592, the "Lost Years" — no records · By 1592 was established enough that a rival playwright attacked him in print · Co-owner of the Globe Theatre from 1599 · Wrote 37 plays, 154 sonnets, and several longer poems · Never published his plays during his lifetime · Retired to Stratford around 1613 · Died 1616, age 52.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1585, Stratford-upon-Avon</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Lost Years</span></div>
+<div class="year-banner">1585</div>
+<div class="timeline-dot">Stratford-upon-Avon · Age 21</div>
+<div class="narrative">
+  <p>You are 21. You have a wife, Anne, who is 26. You have a daughter, Susanna, age 2, and twins — Hamnet and Judith — who are less than a year old. Your father's glove-making business has been in financial trouble for years. There are no opportunities in Stratford that match what you feel inside you.</p>
+  <p>You leave for London. You leave your family behind. The records of exactly how and why you got there don't survive — historians call this period the "Lost Years." What survives is what you became on the other side of it.</p>
+  <p>By 1592, you are established enough in the London theater world that Robert Greene, a rival playwright, attacks you in print: calling you an "upstart crow" who thinks himself "the only Shake-scene in a country." It is the first written evidence of your career — and it is an insult from someone who sees you as a threat.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — Leaving Stratford</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You are 21, with a wife, three small children, and no money. You leave for London anyway. What made this the right decision?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">It wasn't right — it was desperate. The family finances were bad enough that any income from London was better than staying in Stratford doing nothing.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">B</span><span class="dopt-body">The work he needed to do required London's theaters. No London meant no plays. The family sacrifice was real, but it was the only path to the work — and he knew it.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">He couldn't have known it was right. It was a bet with terrible odds — most young men who went to London for the theater failed completely.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What historians know about the Lost Years</div>
+      <p><strong>You leave Anne and three children under age 2 in Stratford sometime around 1585. The next seven years are a blank. When the record resumes in 1592, a rival playwright calls you an "upstart crow" — which means you're already established enough to be worth attacking.</strong> The period between 1585 (birth of the twins) and 1592 (Greene's attack) is a genuine historical blank. Dozens of theories exist: Shakespeare worked as a schoolteacher, as a lawyer's clerk, as a soldier, as a traveling actor. None are proven. What's clear is that by 1592 he was established enough to be worth attacking. The most likely explanation: he joined a traveling theater company and learned the craft from the inside, which was how most Elizabethan playwrights developed. The decision to leave Stratford, whatever drove it, produced the plays. Anne Shakespeare stayed in Stratford. Shakespeare sent money home regularly from London. He visited occasionally. She outlived him by seven years.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Plague Years</span></div>
+<div class="year-banner">1593</div>
+<div class="timeline-dot">London · Age 29</div>
+<div class="narrative">
+  <p>The bubonic plague closes the London theaters for two years. Without performances, there is no income from plays. You turn to poetry. You write <em>Venus and Adonis</em> — a long narrative poem — and dedicate it to Henry Wriothesley, the Earl of Southampton, a wealthy young nobleman. It becomes the most popular thing you've published in your lifetime. You follow it with <em>The Rape of Lucrece</em>.</p>
+  <p>The sonnets you're writing during this period — 154 of them, eventually — will not be published for another 16 years. You write them privately. Some are addressed to a young man of high social rank. Some to a "dark lady." Some express emotions that no Elizabethan playwright would express publicly.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Sonnets</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You write 154 private sonnets over many years — some expressing intense love for a young man. You don't publish them. Why?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">They were too personal — love poems of that intensity were not meant for public consumption, regardless of the gender of the subject.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">The homoerotic content made publication dangerous. Sodomy was a capital offense in Elizabethan England. Publishing would have been self-destruction.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">C</span><span class="dopt-body">Both. The poems were private by nature and dangerous by content. The 1609 publication — which happened without clear evidence of Shakespeare's cooperation — may have been unauthorized.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">The Sonnets controversy</div>
+      <p><strong>You write 154 private sonnets over years — some expressing intense desire for a young man, some for a "dark lady." You don't publish them. In 1609, a printer named Thomas Thorpe publishes them anyway, with a cryptic dedication to "Mr. W.H." You say nothing publicly. There is no evidence you authorized it.</strong> The sonnets were published in 1609 by a printer named Thomas Thorpe, with a mysterious dedication to "Mr. W.H." — whose identity has been debated for 400 years (candidates include Henry Wriothesley, William Herbert, and others). There is no evidence Shakespeare authorized the publication or had any involvement in it. The sonnets' addresses — a beautiful young man and a "dark lady" — have generated enormous scholarly debate about Shakespeare's sexuality and personal life. What's historically clear: he didn't publish them, they appeared anyway, and their language of desire for both men and women would have been professionally and legally dangerous to claim publicly in 1609 England.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Globe</span></div>
+<div class="year-banner">1599</div>
+<div class="timeline-dot">Southwark, London · Age 35</div>
+<div class="narrative">
+  <p>You become a co-owner and shareholder of the Globe Theatre, built on the south bank of the Thames. This is a business decision as much as an artistic one — as a shareholder, you receive a percentage of box office income rather than a fixed payment per play. It will make you wealthy.</p>
+  <p>This is the year you write <em>Julius Caesar</em>, <em>As You Like It</em>, and begin <em>Hamlet</em>. By any measure, it is the most productive period of your life. Over the next decade you will write <em>Othello</em>, <em>King Lear</em>, <em>Macbeth</em>, <em>The Tempest</em>.</p>
+  <p>Your son Hamnet died in 1596, age 11. You were in London. You may not have returned to Stratford for the funeral. The plays you write after Hamnet's death — particularly <em>Hamlet</em> (1600-01) — contain a grief that scholars cannot stop writing about. The names are too close to ignore.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — Hamlet</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You wrote Hamlet four years after your son Hamnet died. The names differ by one letter. Is Hamlet about Hamnet?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">No — Hamlet is based on an existing Scandinavian legend (Amleth) that was already being performed in London theaters. The name similarity is coincidence.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">B</span><span class="dopt-body">The source material was pre-existing, but Shakespeare transformed it into something obsessed with a father's grief, a son's death, and the question of what it means to continue living after loss. The grief is not coincidence.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">We can't know — Shakespeare left no personal writings that connect Hamnet's death to the play. Reading biographical meaning into literature this old is a projection.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What scholars say about Hamlet and Hamnet</div>
+      <p><strong>Your son Hamnet dies in August 1596, age 11. You are in London. You may not have returned to Stratford for the funeral. Four years later, you write a play about a man paralyzed by grief and a father's death, whose name differs from your son's by one letter.</strong> The connection was largely ignored until the 20th century and is now one of the most discussed questions in Shakespeare studies. The Amleth legend is real — a Danish prince who feigns madness to avenge his father — and Shakespeare definitely adapted it from existing sources. But Shakespeare's Hamlet is not primarily about revenge or madness. It is about grief, paralysis, the impossibility of acting after loss, and a son's relationship to a dead father. Maggie O'Farrell's novel *Hamnet* (2020) explored the connection fictionally and became a major bestseller, suggesting the emotional link resonates strongly. The scholarly consensus is: the source material is pre-existing, but the transformation is personal. Both things are true.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Not Publishing</span></div>
+<div class="year-banner">1603</div>
+<div class="timeline-dot">London · Age 39</div>
+<div class="narrative">
+  <p>You have written over twenty plays. None of them have been published by you. Some have appeared in unauthorized "quarto" editions — pirated versions, often badly transcribed from memory by actors who performed in them. You have not authorized any of these. You have not complained publicly about any of them either.</p>
+  <p>Ben Jonson, your friend and rival, publishes his collected plays in a prestigious folio edition in 1616 — treating them as literature worthy of permanence. You do not do this. You don't seem to think your plays need to survive in written form. They exist to be performed.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — Never Publishing the Plays</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You never published your plays. Ben Jonson did. Why didn't you?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Business reasons: published plays could be performed by rival companies without paying. Keeping them unpublished protected the Globe's commercial advantage.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">He didn't consider them permanent literature — they were scripts for performance, not texts for reading. Jonson's literary ambitions were different from his.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">Both are probably true simultaneously. The commercial reason was real. So was the attitude toward theater as performance rather than text. Shakespeare's relationship to his plays was fundamentally different from how posterity has related to them.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">The First Folio — seven years after his death</div>
+      <p><strong>You die in 1616 without mentioning the plays in your will. Seven years later, two actors named Heminges and Condell spend years assembling 36 of them into a book. Without them: no Macbeth, no Tempest, no As You Like It, no Twelfth Night, no Julius Caesar. You left no instructions. They did it because they loved the work.</strong> Shakespeare died in 1616 without publishing his plays. In 1623, seven years later, two of his fellow actors — John Heminges and Henry Condell — collected 36 of his plays into the First Folio. Without this effort, at least 18 of the plays would have been lost, including *Macbeth*, *The Tempest*, *As You Like It*, *Twelfth Night*, and *Julius Caesar*. We owe the survival of half of Shakespeare's canon to two actors acting entirely on their own initiative. Shakespeare didn't ask them to do it. He left no instructions. The First Folio is dedicated to his memory by men who loved his work, not by him.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The King's Men</span></div>
+<div class="year-banner">1603</div>
+<div class="timeline-dot">London · Age 39</div>
+<div class="narrative">
+  <p>Queen Elizabeth dies. James I takes the throne and immediately takes your theater company under royal patronage — you become the King's Men, the most prestigious theater company in England. You perform at court regularly. You are now, by any measure, the leading playwright in England.</p>
+  <p>You are also, quietly, buying property in Stratford. New Place, the second-largest house in town. Land. Tithes. You are building the financial security that your father never had.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Buying Property in Stratford</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">At the height of your London success, you invest heavily in property in Stratford — the town you left 18 years ago. What does this tell us about what you actually wanted?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">It was straightforward financial planning. Property in Stratford was stable and safe. The London theater world was volatile — theaters could be closed by plague or royal decree at any time.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">He always planned to go home. The London career was a means to an end — the end being the life of a prosperous Stratford gentleman that his father had tried and failed to build.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">He was sending a signal to Stratford society — proving that the glove-maker's son who left could return wealthy and respected. Social vindication as much as financial security.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">Shakespeare the businessman</div>
+      <p><strong>In 1598, the same year you're writing the plays that will make your name for the next four centuries, you hoard grain during a local shortage in Stratford and sue a neighbor over a small debt. You've been pursuing a coat of arms for your father's name since 1596. You are becoming, very deliberately, a Stratford gentleman.</strong> Shakespeare was a careful and sometimes aggressive businessman. He sued neighbors for small debts in Stratford courts. He hoarded grain during a shortage in 1598 — a practice that was technically legal but ethically frowned upon. He pursued a coat of arms for his family (his father had applied for one and failed). The coat of arms was granted in 1596 — the year Hamnet died — making Shakespeare technically a gentleman. His Stratford investments were substantial. He retired to Stratford around 1613, three years before his death, and appears to have stopped writing completely. The plays stopped. The property portfolio continued to grow.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Late Plays</span></div>
+<div class="year-banner">1611</div>
+<div class="timeline-dot">London · Age 47</div>
+<div class="narrative">
+  <p>You write <em>The Tempest</em>. Prospero, the magician-duke, lives on an island where he controls everything through his art. At the end, he gives up his magic: "I'll break my staff, bury it certain fathoms in the earth, and deeper than did ever plummet sound, I'll drown my book." Then he goes home.</p>
+  <p>Many scholars read this as Shakespeare's farewell to his art. You write two more plays after this — both collaborations, both now considered minor — and then you stop entirely. You are 47.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Retiring at 47</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You retire from writing at 47 and return to Stratford. You have perhaps five years left to live. You never write again. Why did you stop?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Health. His final years show signs of physical decline. The writing stopped because the body stopped cooperating.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">B</span><span class="dopt-body">He chose to stop. The Tempest reads as a farewell — Prospero drowning his books is too deliberate to be accidental. He finished and went home. This was the plan.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">The Globe Theatre fire in 1613 disrupted the company and changed the business context. The retirement may have been partly circumstantial.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What the retirement actually looked like</div>
+      <p><strong>You make your will at 52 and leave your wife of 34 years your second-best bed. This one clause has generated more scholarly argument than almost any speech in 37 plays. The best bed was reserved for guests.</strong> In 1613, the Globe Theatre burned down during a performance of *Henry VIII* (a collaboration with John Fletcher). Shakespeare had already been spending more time in Stratford. He made his will in 1616, a few months before his death, which was businesslike and detailed — property to his daughter Susanna, New Place and most of the estate. His wife Anne received "my second-best bed" — a phrase that has puzzled and irritated scholars for centuries (the second-best bed was typically the marital bed; the best bed was reserved for guests). He died on April 23, 1616, his 52nd birthday according to tradition. The cause is unknown.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Education Question</span></div>
+<div class="year-banner">1564</div>
+<div class="timeline-dot">Stratford · Background</div>
+<div class="narrative">
+  <p>You attended the King's New School in Stratford, which provided a rigorous classical education — Latin, rhetoric, classical literature. You did not attend university. Your father's declining finances probably ended your schooling in your early teens.</p>
+  <p>For centuries — and continuing today — some people have argued that a glove-maker's son without a university degree could not have written plays that demonstrate knowledge of law, medicine, Italian geography, classical literature, and court behavior. These people have proposed that someone else wrote the plays: Francis Bacon, Christopher Marlowe, Edward de Vere (the Earl of Oxford).</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Authorship Question</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Did Shakespeare write Shakespeare? The authorship debate has continued for 200 years. What's the strongest argument that he did?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Contemporary documents name him as the author — Greene's 1592 attack, records of performances, payments — and no contemporary seems to have doubted he was the playwright.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">The Stratford grammar school provided sufficient classical education, and theater experience provided the rest. The "he wasn't educated enough" argument is snobbery dressed as evidence.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">Both arguments together. Contemporary documentation is strong, and the educational-snobbery argument against him reveals more about the doubters than the evidence. No serious Shakespeare scholar accepts any of the alternative candidates.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">The authorship question — scholarly consensus</div>
+      <p><strong>Nobody doubted you wrote your plays for 240 years after your death. Then in the 1850s, a theory emerged that a glove-maker's son without a university degree couldn't possibly have done it. The plays were unchanged. The argument tells you more about the 1850s.</strong> The mainstream scholarly consensus is overwhelming: William Shakespeare of Stratford wrote the plays. The authorship doubts began in the 1850s, nearly 250 years after his death, and have been driven by a combination of snobbery (a glove-maker's son couldn't be a genius), romantic attachment to conspiracy theories, and genuine gaps in documentation from a period when most people left few records. The specific alternative candidates — Bacon, Marlowe, Oxford — all have fatal problems: Marlowe died in 1593 before most of the plays were written; Oxford died in 1604 before *The Tempest*, *King Lear*, and *Macbeth*; Bacon's writing style is completely different. The documentary evidence for Shakespeare is comparable to or stronger than evidence for any other Elizabethan playwright.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Legacy</span></div>
+<div class="year-banner">1616</div>
+<div class="timeline-dot">Stratford · Age 52</div>
+<div class="narrative">
+  <p>You die in April 1616. You leave detailed property instructions and almost nothing about the plays. You do not mention your manuscripts. You do not ask anyone to preserve or publish them. Seven years later, Heminges and Condell produce the First Folio from memory, from prompt books, from whatever they could assemble.</p>
+  <p>By the 19th century, you are considered the greatest writer in the English language. By the 20th century, scholars have calculated that you have been performed more than any other playwright in history, in more languages, in more countries. Your works have never been out of print since the First Folio.</p>
+  <p>You had no idea this would happen. You went home to Stratford and became a prosperous country gentleman.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Meaning of the Work</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Shakespeare never tried to establish a literary legacy. He didn't publish his plays, didn't preserve his manuscripts, went home and managed property. The legacy happened without him. What does this tell us about great work?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Great work survives on its own merit. Shakespeare didn't need to manage his legacy because the plays were good enough to be preserved by others who loved them.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Shakespeare was fortunate — many works equally good have been lost. He happened to have devoted friends who preserved his plays. Luck and friendship, not merit alone.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">Both: the quality made the plays worth preserving, and luck and friendship did the preserving. The lesson is that great work and deliberate legacy-building are separate activities. Shakespeare was only interested in one of them.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What survived and what didn't</div>
+      <p><strong>Without two actors named John Heminges and Henry Condell deciding, on their own, to spend years collecting your plays after you died, half of them would be gone: no Macbeth, no Tempest, no As You Like It, no Julius Caesar. You left no instructions. They did it because they loved the work.</strong> Of the 37 plays in the First Folio, 18 exist only because Heminges and Condell preserved them. The other 19 appeared earlier in quarto editions (some authorized, most not). Shakespeare is also believed to have written additional plays that are now lost — including *Cardenio* (written with Fletcher, now lost), *Love's Labour's Won* (mentioned in a 1598 book list, never found), and others. The survival of the plays was genuinely contingent on two loyal actors deciding to spend years assembling a collection. Shakespeare's own indifference to literary posterity makes the survival of his work feel almost accidental — which makes the plays themselves feel more miraculous, not less.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Shakespeare's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="next-sims">
+  <p class="next-label">Explore More Lives</p>
+  <div class="next-grid">
+    <a href="twain-simulator.html" class="next-card">
+      <span class="next-name">Mark Twain</span>
+      <span class="next-desc">Made millions. Lost millions. Went broke at 60 and wrote his way back to solvency.</span>
+    </a>
+    <a href="kafka-simulator.html" class="next-card">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">Asked his friend to burn all his manuscripts. The friend didn't. The world is grateful.</span>
+    </a>
+    <a href="dostoevsky-simulator.html" class="next-card">
+      <span class="next-name">Fyodor Dostoevsky</span>
+      <span class="next-desc">Faced a firing squad, was pardoned at the last second. Wrote Crime and Punishment at the gambling table.</span>
+    </a>
+    <a href="tolstoy-simulator.html" class="next-card">
+      <span class="next-name">Leo Tolstoy</span>
+      <span class="next-desc">Wrote War and Peace, then rejected it as immoral. Died at a train station at 82.</span>
+    </a>
+  </div>
+</div>
+<div class="cta-box">
+  <p>Shakespeare left for London at 21, wrote 37 plays, never published them, went home at 48, and died without knowing what his name would mean. His legacy was built by two actors who loved his work after he was gone. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All Life Simulators — Darwin, Kafka, Einstein, Frida Kahlo and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/kafka-simulator.html" style="color:var(--accent)">Kafka Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Shakespeare";body="You understood the Lost Years as a necessary bet, the sonnets as both personal and dangerous, Hamlet as grief transformed, the non-publication as a combination of business and attitude, and the legacy as something that happened to the plays rather than something he built. That's the full picture.";}else if(pct>=0.625){title="The Theater Mind";body="You grasped the fundamentals: the work was for performance, not posterity; the departure from Stratford was a creative necessity; the Hamlet-Hamnet connection is real if unprovable. Where you may have simplified: the authorship question and the publishing decision both have multiple causes running simultaneously.";}else if(pct>=0.375){title="The Practical Reader";body="You tended to choose single, clean explanations for decisions that Shakespeare left deliberately ambiguous. The sonnets were personal AND dangerous. The non-publication was commercial AND attitudinal. The legacy was merit AND luck. Shakespeare's complexity is in the simultaneous truths.";}else{title="The Skeptic";body="You questioned the connections — Hamlet and Hamnet, the deliberate retirement, the planned legacy-indifference. These are all scholarly debates with legitimate positions on multiple sides. But the weight of evidence points toward the connections being real: the grief, the plan to go home, and the indifference to literary posterity all hold up."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>
