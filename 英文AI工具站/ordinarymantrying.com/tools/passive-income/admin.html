@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Passive Income — Admin Review</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:24px 16px}
+h1{font-size:1.3rem;margin-bottom:6px;color:#f59e0b}
+.sub{font-size:.85rem;color:#64748b;margin-bottom:24px}
+.login{background:#1e293b;border-radius:12px;padding:24px;max-width:400px;margin:60px auto}
+.login h2{margin-bottom:16px;font-size:1rem}
+input{width:100%;padding:10px 12px;border:1px solid #334155;border-radius:8px;background:#0f172a;color:#e2e8f0;font-size:.95rem;margin-bottom:12px}
+.btn{padding:9px 20px;border:none;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer}
+.btn-ok{background:#f59e0b;color:#000}
+.btn-approve{background:#10b981;color:#fff;padding:6px 14px;font-size:.8rem}
+.btn-reject{background:#ef4444;color:#fff;padding:6px 14px;font-size:.8rem}
+.card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:16px;margin-bottom:14px}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+.stream-title{font-size:.8rem;color:#f59e0b;font-weight:700}
+.type-badge{font-size:.75rem;padding:2px 8px;border-radius:4px;font-weight:700}
+.tried{background:#10b98120;color:#10b981}
+.researching{background:#3b82f620;color:#3b82f6}
+.didnt_work{background:#ef444420;color:#ef4444}
+.reason{font-size:.9rem;color:#cbd5e1;margin:8px 0}
+.meta{font-size:.75rem;color:#64748b}
+.actions{display:flex;gap:8px;margin-top:12px}
+.empty{text-align:center;color:#64748b;padding:40px;font-size:.9rem}
+#status{font-size:.85rem;color:#10b981;margin-bottom:16px;min-height:20px}
+</style>
+</head>
+<body>
+<h1>Passive Income — Admin Review</h1>
+<p class="sub">Review and approve user-submitted experiences before they appear on the public page.</p>
+
+<div id="loginBox" class="login">
+  <h2>Enter Admin Key</h2>
+  <input type="password" id="keyInput" placeholder="Admin key..." onkeydown="if(event.key==='Enter')login()">
+  <button class="btn btn-ok" onclick="login()">Load Pending →</button>
+</div>
+
+<div id="app" style="display:none;max-width:700px;margin:0 auto">
+  <div id="status"></div>
+  <div id="pendingList"></div>
+</div>
+
+<script>
+let KEY = '';
+const API = '/tools/passive-income/vote.php';
+const TYPE_LABELS = {tried:'✅ Tried It', researching:'🔬 Researching', didnt_work:'❌ Didn\'t Work'};
+
+function login() {
+  KEY = document.getElementById('keyInput').value.trim();
+  if (!KEY) return;
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadPending();
+}
+
+async function loadPending() {
+  document.getElementById('status').textContent = 'Loading...';
+  const res = await fetch(`${API}?action=pending&key=${KEY}&_=${Date.now()}`);
+  const data = await res.json();
+  if (!data.ok) { document.getElementById('status').textContent = '❌ Wrong key or error.'; return; }
+  const votes = data.votes;
+  document.getElementById('status').textContent = `${votes.length} pending submission${votes.length!==1?'s':''}`;
+  if (!votes.length) {
+    document.getElementById('pendingList').innerHTML = '<div class="empty">No pending submissions 🎉</div>';
+    return;
+  }
+  document.getElementById('pendingList').innerHTML = votes.map(v => `
+    <div class="card" id="card-${v.id}">
+      <div class="card-head">
+        <div>
+          <div class="stream-title">#${v.stream_id} — ${v.stream_title}</div>
+          <span class="type-badge ${v.type}">${TYPE_LABELS[v.type]||v.type}</span>
+        </div>
+        <div class="meta">${new Date(v.timestamp).toLocaleString()}</div>
+      </div>
+      <div class="reason">"${v.reason}"</div>
+      <div class="actions">
+        <button class="btn btn-approve" onclick="moderate('${v.id}','approve')">✓ Approve</button>
+        <button class="btn btn-reject" onclick="moderate('${v.id}','reject')">✗ Reject</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function moderate(id, act) {
+  const res = await fetch(`${API}?action=moderate&key=${KEY}`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({id, act})
+  });
+  const data = await res.json();
+  if (data.ok) {
+    const card = document.getElementById('card-'+id);
+    card.style.opacity = '.4';
+    card.style.pointerEvents = 'none';
+    card.querySelector('.actions').innerHTML = `<span style="font-size:.8rem;color:#64748b">${act==='approve'?'✓ Approved':'✗ Rejected'}</span>`;
+  }
+}
+</script>
+</body>
+</html>

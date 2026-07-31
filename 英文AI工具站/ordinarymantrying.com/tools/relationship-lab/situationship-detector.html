@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Situationship Detector — Are You in One? (Honest 15-Question Test) | OrdinaryManTrying</title>
+<meta name="description" content="Stop guessing. 15 brutally real scenarios reveal exactly where you stand — from Almost Official to Full Situationship. No sugarcoating.">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(160deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-height:100vh;color:#e8eaf0}
+.wrap{max-width:500px;margin:0 auto;padding:28px 16px 64px}
+
+/* Cover */
+#cover{text-align:center;padding:52px 0 36px}
+.cover-emoji{font-size:64px;margin-bottom:18px}
+h1{font-size:1.8rem;font-weight:800;line-height:1.2;margin-bottom:12px;color:#fff}
+.cover-sub{font-size:.97rem;color:#94a3b8;margin-bottom:14px;line-height:1.65}
+.cover-note{font-size:.8rem;color:#64748b;margin-bottom:36px}
+.btn-start{display:inline-block;background:linear-gradient(135deg,#e11d48,#be123c);color:#fff;font-size:1.05rem;font-weight:700;padding:15px 44px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 4px 22px rgba(225,29,72,.4);transition:transform .15s,box-shadow .15s}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(225,29,72,.5)}
+
+/* Quiz */
+#quiz{display:none}
+.prog-bar-wrap{margin-bottom:22px}
+.prog-meta{display:flex;justify-content:space-between;font-size:.78rem;color:#64748b;margin-bottom:7px}
+.prog-track{height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#e11d48,#f43f5e);border-radius:3px;transition:width .4s ease}
+.q-card{background:rgba(255,255,255,.07);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:28px 22px 24px}
+.q-label{font-size:.7rem;font-weight:700;letter-spacing:.14em;color:#f43f5e;text-transform:uppercase;margin-bottom:14px}
+.q-text{font-size:1.18rem;font-weight:700;line-height:1.45;margin-bottom:22px;color:#f1f5f9}
+.options{display:flex;flex-direction:column;gap:11px}
+.opt{display:flex;align-items:flex-start;gap:13px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 18px;cursor:pointer;transition:border-color .15s,background .15s;text-align:left;width:100%}
+.opt:active{transform:scale(.99)}
+.opt.selected{background:rgba(225,29,72,.15);border-color:#e11d48}
+.opt-letter{min-width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#94a3b8;flex-shrink:0;margin-top:1px;transition:background .15s,color .15s}
+.opt.selected .opt-letter{background:#e11d48;color:#fff}
+.opt-text{font-size:.94rem;line-height:1.48;color:#cbd5e1}
+.nav{display:flex;justify-content:flex-end;margin-top:18px}
+.btn-next{background:linear-gradient(135deg,#e11d48,#be123c);color:#fff;font-size:.92rem;font-weight:700;padding:13px 34px;border-radius:50px;border:none;cursor:pointer;opacity:.35;pointer-events:none;transition:opacity .2s}
+.btn-next.active{opacity:1;pointer-events:auto}
+
+/* Result */
+#result{display:none;text-align:center}
+.ring-wrap{position:relative;width:170px;height:170px;margin:0 auto 18px}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(255,255,255,.1);stroke-width:14}
+.ring-fill{fill:none;stroke:url(#rg);stroke-width:14;stroke-linecap:round;stroke-dasharray:439.8;stroke-dashoffset:439.8;transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1)}
+.ring-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct{font-size:2.1rem;font-weight:800;color:#f43f5e}
+.ring-lbl{font-size:.68rem;color:#64748b;letter-spacing:.08em;margin-top:2px}
+
+.tier-badge{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:50px;padding:9px 22px;font-size:.95rem;font-weight:700;margin-bottom:10px;color:#f1f5f9}
+.keyword-pill{display:inline-block;background:rgba(225,29,72,.2);color:#f43f5e;font-size:.8rem;font-weight:700;letter-spacing:.08em;padding:5px 16px;border-radius:20px;margin-bottom:18px;border:1px solid rgba(225,29,72,.3)}
+
+.result-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:22px;margin-bottom:14px;text-align:left}
+.card-section-title{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.card-section-title.green{color:#34d399}
+.card-section-title.yellow{color:#fbbf24}
+.card-section-title.blue{color:#60a5fa}
+.card-section-title.red{color:#f43f5e}
+.summary-text{font-size:.93rem;line-height:1.68;color:#cbd5e1;margin-bottom:0}
+.bullet-list{list-style:none;padding:0}
+.bullet-list li{font-size:.88rem;color:#cbd5e1;padding:4px 0;display:flex;align-items:flex-start;gap:8px;line-height:1.45}
+.bullet-list li::before{flex-shrink:0;margin-top:2px}
+.bullet-list.good li::before{content:'✔';color:#34d399}
+.bullet-list.bad li::before{content:'⚠';color:#fbbf24}
+
+.viral-text{font-size:.85rem;color:#94a3b8;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 18px;margin-bottom:20px;line-height:1.5}
+.viral-text strong{color:#f1f5f9}
+
+.tiers-list{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px 20px;margin-bottom:24px;text-align:left}
+.tiers-title{font-size:.7rem;font-weight:700;letter-spacing:.14em;color:#475569;text-transform:uppercase;margin-bottom:12px}
+.tier-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.87rem;color:#64748b}
+.tier-row:last-child{border-bottom:none}
+.tier-row.current{color:#f43f5e;font-weight:700}
+.tier-row .t-icon{font-size:1.1rem;width:26px;text-align:center;flex-shrink:0}
+.tier-row .t-kw{font-size:.72rem;color:#475569;margin-left:4px}
+.tier-row.current .t-kw{color:#be123c}
+.t-you{margin-left:auto;font-size:.72rem;background:rgba(225,29,72,.2);color:#f43f5e;padding:2px 9px;border-radius:20px;font-weight:700;flex-shrink:0;border:1px solid rgba(225,29,72,.3)}
+
+/* Share */
+.share-section{margin-bottom:24px}
+.share-title{font-size:.75rem;font-weight:700;letter-spacing:.12em;color:#475569;text-transform:uppercase;margin-bottom:12px}
+.share-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.btn-share{display:flex;align-items:center;justify-content:center;gap:7px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:50px;padding:12px 16px;font-size:.85rem;font-weight:700;color:#94a3b8;cursor:pointer;transition:border-color .15s,color .15s;width:100%}
+.btn-share:hover{border-color:#e11d48;color:#f43f5e}
+.btn-share-img{grid-column:1/-1;background:linear-gradient(135deg,#e11d48,#be123c);color:#fff;border:none;border-radius:50px;padding:13px 24px;font-size:.9rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s}
+.btn-share-img:hover{opacity:.88}
+.btn-retry{display:inline-block;background:transparent;border:1px solid rgba(255,255,255,.15);color:#64748b;font-size:.9rem;font-weight:700;padding:12px 36px;border-radius:50px;cursor:pointer;margin-bottom:28px;transition:border-color .15s}
+.btn-retry:hover{border-color:#e11d48;color:#f43f5e}
+
+/* Next Test CTA */
+.next-test{background:rgba(79,110,247,.12);border:1px solid rgba(79,110,247,.25);border-radius:18px;padding:18px 20px;margin-bottom:28px;text-align:left}
+.next-test-label{font-size:.68rem;font-weight:700;letter-spacing:.12em;color:#818cf8;text-transform:uppercase;margin-bottom:8px}
+.next-test a{display:flex;align-items:center;justify-content:space-between;color:#a5b4fc;font-size:.92rem;font-weight:700;text-decoration:none}
+.next-test a:hover{color:#818cf8}
+.next-tests{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:16px 20px;margin-bottom:28px;text-align:left}
+.next-tests-label{font-size:.68rem;font-weight:700;letter-spacing:.12em;color:#9f1239;text-transform:uppercase;margin-bottom:12px}
+.next-tests a{display:flex;align-items:center;justify-content:space-between;color:#fda4af;font-size:.88rem;font-weight:600;text-decoration:none;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.next-tests a:last-child{border-bottom:none}
+.next-tests a:hover{color:#f43f5e}
+
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e293b;border:1px solid rgba(255,255,255,.12);color:#f1f5f9;font-size:.85rem;font-weight:600;padding:11px 24px;border-radius:50px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- Cover -->
+<div id="cover">
+  <div class="cover-emoji">💔</div>
+  <h1>Situationship Detector</h1>
+  <div class="cover-sub">Stop telling yourself it's complicated.<br>15 real scenarios. One honest answer.</div>
+  <div class="cover-note">Takes ~2 minutes · Shareable result card</div>
+  <button class="btn-start" onclick="startQuiz()">Find Out Now →</button>
+</div>
+
+<!-- Quiz -->
+<div id="quiz">
+  <div class="prog-bar-wrap">
+    <div class="prog-meta">
+      <span id="q-num">Question 1 of 15</span>
+      <span id="q-pct">7%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:7%"></div></div>
+  </div>
+  <div class="q-card">
+    <div class="q-label">Reality Check <span id="q-idx">1</span></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+  </div>
+  <div class="nav"><button class="btn-next" id="btn-next" onclick="nextQ()">Next →</button></div>
+</div>
+
+<!-- Result -->
+<div id="result">
+  <div class="ring-wrap">
+    <svg width="170" height="170" viewBox="0 0 150 150">
+      <defs>
+        <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#e11d48"/>
+          <stop offset="100%" style="stop-color:#f43f5e"/>
+        </linearGradient>
+      </defs>
+      <circle class="ring-bg" cx="75" cy="75" r="70"/>
+      <circle class="ring-fill" id="ring-fill" cx="75" cy="75" r="70"/>
+    </svg>
+    <div class="ring-text"><span class="ring-pct" id="res-pct">0%</span><span class="ring-lbl">CLARITY SCORE</span></div>
+  </div>
+  <div class="tier-badge"><span id="res-icon"></span>&nbsp;<span id="res-tier"></span></div><br>
+  <div class="keyword-pill" id="res-keyword"></div>
+
+  <div class="result-card">
+    <div class="card-section-title red">The Honest Truth</div>
+    <div class="summary-text" id="res-desc"></div>
+  </div>
+  <div class="result-card" id="strengths-card">
+    <div class="card-section-title green">Signs of Something Real</div>
+    <ul class="bullet-list good" id="res-strengths"></ul>
+  </div>
+  <div class="result-card" id="blindspots-card">
+    <div class="card-section-title yellow">Watch Out For</div>
+    <ul class="bullet-list bad" id="res-blindspots"></ul>
+  </div>
+  <div class="result-card">
+    <div class="card-section-title blue">What You Actually Need</div>
+    <div class="summary-text" id="res-need"></div>
+  </div>
+
+  <div class="viral-text">👀 <strong>Send this to them.</strong> If they refuse to take it, that's already an answer.</div>
+
+  <div class="tiers-list">
+    <div class="tiers-title">All Levels</div>
+    <div id="tiers-rows"></div>
+  </div>
+
+  <div class="share-section">
+    <div class="share-title">Share Your Result</div>
+    <div class="share-grid">
+      <button class="btn-share" onclick="copyText()">📋 Copy Result</button>
+      <button class="btn-share" onclick="nativeShare()">🔗 Share Link</button>
+      <button class="btn-share-img" onclick="downloadCard()">⬇ Download Result Card (PNG)</button>
+    </div>
+  </div>
+
+  <button class="btn-retry" onclick="retry()">↺ Retake the Test</button>
+
+  <div class="next-tests">
+    <div class="next-tests-label">More in the Relationship Lab</div>
+    <a href="love-intensity-test.html">❤️ Love Intensity Test <span>→</span></a>
+    <a href="attachment-style-test.html">🧠 Attachment Style Test <span>→</span></a>
+    <a href="red-flag-detector.html">🚩 Red Flag Detector <span>→</span></a>
+    <a href="emotional-availability-test.html">🫀 Emotional Availability Test <span>→</span></a>
+    <a href="index.html">🧪 All 8 Tests → <span></span></a>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+// s = clarity score: 4=clearest relationship, 1=deepest situationship
+const Qs=[
+  {q:"You stop texting first for 3 days. They...", opts:[
+    {t:"Text within hours — 'everything okay?'", s:4},
+    {t:"Text after a day or two", s:3},
+    {t:"Take 3+ days but eventually reach out", s:2},
+    {t:"Never notice", s:1}
+  ]},
+  {q:"Their friend asks 'So who is this?' when they see you together. They say...", opts:[
+    {t:"'This is my partner'", s:4},
+    {t:"Your name and smile — no label needed", s:3},
+    {t:"'A friend' — something vague", s:2},
+    {t:"Change the subject fast", s:1}
+  ]},
+  {q:"You ask 'What are we?' They respond...", opts:[
+    {t:"A clear, honest answer about where this is going", s:4},
+    {t:"'I really like you, I just don't like labels'", s:3},
+    {t:"'Let's not overthink it' — and switch topics", s:2},
+    {t:"Get defensive or distant for days after", s:1}
+  ]},
+  {q:"You're having the worst day of your life. They...", opts:[
+    {t:"Show up or call without you asking", s:4},
+    {t:"Text supportive messages all day", s:3},
+    {t:"Reply when you reach out, but don't check in", s:2},
+    {t:"Are somehow unavailable on that day", s:1}
+  ]},
+  {q:"On their Instagram, you appear as...", opts:[
+    {t:"A recurring presence in stories and posts", s:4},
+    {t:"Occasional stories but no posts", s:3},
+    {t:"A blurred background in group photos maybe", s:2},
+    {t:"Literally nowhere", s:1}
+  ]},
+  {q:"You disappear for a whole week — no texts, no response. They...", opts:[
+    {t:"Are genuinely worried and make real effort to reach you", s:4},
+    {t:"Send a few messages then wait", s:3},
+    {t:"Send one 'hey' after 4-5 days", s:2},
+    {t:"Post a good-vibes story on day 3 and move on", s:1}
+  ]},
+  {q:"They have a rough week. You...", opts:[
+    {t:"Are the first person they call", s:4},
+    {t:"Hear about it eventually when you check in", s:3},
+    {t:"Find out from their story, not from them", s:2},
+    {t:"Don't know anything is wrong until weeks later", s:1}
+  ]},
+  {q:"Your communication pattern is...", opts:[
+    {t:"Consistent — you talk most days", s:4},
+    {t:"Active but with unpredictable gaps", s:3},
+    {t:"Hot and cold — feast or famine", s:2},
+    {t:"Entirely driven by who's bored or lonely", s:1}
+  ]},
+  {q:"Plans with them are...", opts:[
+    {t:"Made in advance and rarely cancelled", s:4},
+    {t:"Usually solid but sometimes last minute", s:3},
+    {t:"Mostly last-minute and sometimes cancelled", s:2},
+    {t:"Decided same-day, when it's convenient for them", s:1}
+  ]},
+  {q:"Their close friends know about you. They...", opts:[
+    {t:"Have heard your name many times", s:4},
+    {t:"Know you exist but probably not much else", s:3},
+    {t:"Seem surprised when they meet you", s:2},
+    {t:"Don't seem to know you exist at all", s:1}
+  ]},
+  {q:"When you pull back emotionally, they...", opts:[
+    {t:"Notice immediately and ask what's wrong", s:4},
+    {t:"Notice after a while and bring it up", s:3},
+    {t:"Seem more comfortable, actually", s:2},
+    {t:"Come back warmer — like it turns them on", s:1}
+  ]},
+  {q:"The idea of you dating someone else would make them...", opts:[
+    {t:"Clearly upset — they'd say something", s:4},
+    {t:"Bothered but they wouldn't admit it", s:3},
+    {t:"Play it cool but ghost you for a week", s:2},
+    {t:"'Like' the new person's photos within 24 hours", s:1}
+  ]},
+  {q:"You've met their family...", opts:[
+    {t:"Yes — introduced properly", s:4},
+    {t:"Yes — but casually, not as anyone special", s:3},
+    {t:"No — but it's come up", s:2},
+    {t:"No — and the topic has never come up", s:1}
+  ]},
+  {q:"Deep down, when you're honest with yourself, this feels like...", opts:[
+    {t:"Something real that's moving forward", s:4},
+    {t:"Something real but stuck in place", s:3},
+    {t:"Something confusing I keep hoping will get clearer", s:2},
+    {t:"A situationship I'm not ready to admit", s:1}
+  ]},
+  {q:"If you gave this 'relationship' a label right now, you'd call it...", opts:[
+    {t:"My partner / We're together", s:4},
+    {t:"Someone I'm seriously seeing", s:3},
+    {t:"'It's complicated'", s:2},
+    {t:"I genuinely don't know", s:1}
+  ]}
+];
+
+const TIERS=[
+  {min:81,max:100,icon:"💚",name:"This Is Real",kw:"Clear Connection",
+   desc:"The signals are consistent, mutual, and honest. This isn't a situationship — this is a relationship, whether or not you've put a name on it yet.",
+   strengths:["They show up without being asked","You exist in their life publicly","Communication is consistent and genuine"],
+   blindspots:["Don't take the clarity for granted — keep communicating","Make sure the label matches the reality"],
+   need:"Keep nurturing what you have. The groundwork is solid."},
+  {min:61,max:80,icon:"🟡",name:"Almost Official",kw:"Slow Burn",
+   desc:"Most signs point to something real, but there's a gap between where you are and where you want to be. The connection is genuine — it just needs a direct conversation to move forward.",
+   strengths:["There's real care and consistency here","They do show up — maybe just slowly","You've made it past the surface level"],
+   blindspots:["The undefined part is starting to cost you emotionally","Waiting for 'the right moment' to talk is making it worse"],
+   need:"One honest conversation about where this is going. You deserve a clear answer."},
+  {min:41,max:60,icon:"🔶",name:"Functional Situationship",kw:"Hot & Cold",
+   desc:"You have real moments together — but then things go quiet, and the inconsistency is exhausting. You're not imagining it. The pattern is there. The question is whether you're okay with it.",
+   strengths:["There are real sparks — this isn't nothing","When they're present, they're really present"],
+   blindspots:["The inconsistency is a feature, not a bug — it's how they operate","You may be doing more emotional labor than they are"],
+   need:"Decide what minimum consistency looks like for you — and communicate it."},
+  {min:21,max:40,icon:"🔴",name:"Deep Situationship",kw:"Emotional Limbo",
+   desc:"The connection is real to you. The ambiguity is real to them. You're putting in more than you're getting back, and some part of you already knows it.",
+   strengths:["You're self-aware enough to take this test","The fact that you care this much means you're capable of real love"],
+   blindspots:["Hoping they'll 'come around' is a full-time job with no guaranteed pay","Their hot-and-cold behavior is a pattern, not an accident"],
+   need:"Clarity — even if the answer isn't what you want. Ambiguity is its own kind of answer."},
+  {min:0,max:20,icon:"⚫",name:"This Is a Situationship",kw:"Danger Zone",
+   desc:"This isn't complicated. It just feels that way because you want it to be more. The evidence is pretty consistent: you're available, they're comfortable, and the label question makes things weird. That's not love. That's convenience.",
+   strengths:["You're here, reading this — that takes courage","Knowing the truth is the first step to doing something about it"],
+   blindspots:["'But they're different when we're alone' is the oldest story","You've been rationalizing signals that deserve a straight response"],
+   need:"A decision — stay with clear eyes, or leave with your dignity. Both are valid. Only one is honest."}
+];
+
+const minP=Qs.reduce((s,q)=>s+Math.min(...q.opts.map(o=>o.s)),0);
+const maxP=Qs.reduce((s,q)=>s+Math.max(...q.opts.map(o=>o.s)),0);
+
+let cur=0,scores=[],selectedScore=-1;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5)}
+
+function startQuiz(){
+  const sv=localStorage.getItem('sd_state');
+  if(sv){try{const st=JSON.parse(sv);if(st.scores&&st.scores.length>0&&st.scores.length<Qs.length){cur=st.scores.length;scores=st.scores;}}catch(e){}}
+  document.getElementById('cover').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  renderQ();
+}
+
+function renderQ(){
+  const q=Qs[cur];
+  const shuffled=shuffle(q.opts);
+  const pct=Math.round((cur+1)/Qs.length*100);
+  document.getElementById('q-idx').textContent=cur+1;
+  document.getElementById('q-num').textContent=`Question ${cur+1} of ${Qs.length}`;
+  document.getElementById('q-pct').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('q-text').textContent=q.q;
+  const L=['A','B','C','D'];
+  document.getElementById('options').innerHTML=shuffled.map((o,i)=>`
+    <button class="opt" id="opt-${i}" onclick="pick(${o.s},this)">
+      <div class="opt-letter">${L[i]}</div>
+      <div class="opt-text">${o.t}</div>
+    </button>`).join('');
+  selectedScore=-1;
+  document.getElementById('btn-next').classList.remove('active');
+}
+
+function pick(s,el){
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedScore=s;
+  document.getElementById('btn-next').classList.add('active');
+}
+
+function nextQ(){
+  if(selectedScore<0)return;
+  scores.push(selectedScore);
+  localStorage.setItem('sd_state',JSON.stringify({scores}));
+  if(cur<Qs.length-1){cur++;renderQ();}else showResult();
+}
+
+function getTier(pct){return TIERS.find(t=>pct>=t.min&&pct<=t.max)||TIERS[4];}
+
+function showResult(){
+  localStorage.removeItem('sd_state');
+  document.getElementById('quiz').style.display='none';
+  const total=scores.reduce((a,b)=>a+b,0);
+  const pct=Math.round((total-minP)/(maxP-minP)*100);
+  const tier=getTier(pct);
+
+  document.getElementById('result').style.display='block';
+  document.getElementById('res-pct').textContent=pct+'%';
+  document.getElementById('res-icon').textContent=tier.icon;
+  document.getElementById('res-tier').textContent=tier.name;
+  document.getElementById('res-keyword').textContent=tier.kw;
+  document.getElementById('res-desc').textContent=tier.desc;
+  document.getElementById('res-strengths').innerHTML=tier.strengths.map(s=>`<li>${s}</li>`).join('');
+  document.getElementById('res-blindspots').innerHTML=tier.blindspots.map(s=>`<li>${s}</li>`).join('');
+  document.getElementById('res-need').textContent=tier.need;
+
+  const C=2*Math.PI*70;
+  setTimeout(()=>{document.getElementById('ring-fill').style.strokeDashoffset=C*(1-pct/100);},120);
+
+  document.getElementById('tiers-rows').innerHTML=TIERS.slice().reverse().map(t=>`
+    <div class="tier-row${t.name===tier.name?' current':''}">
+      <span class="t-icon">${t.icon}</span>
+      <span>${t.name}</span><span class="t-kw">· ${t.kw}</span>
+      ${t.name===tier.name?'<span class="t-you">You</span>':''}
+    </div>`).join('');
+
+  gtag('event','quiz_complete',{clarity_score:pct,tier:tier.name});
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+function getResultText(){
+  const pct=document.getElementById('res-pct').textContent;
+  const tier=document.getElementById('res-tier').textContent;
+  return `My Situationship Detector result: ${tier} (Clarity Score: ${pct})\nFind out yours → ${location.href}`;
+}
+function copyText(){navigator.clipboard.writeText(getResultText()).then(()=>showToast('Copied!')).catch(()=>showToast('Select & copy manually'));}
+function nativeShare(){
+  const pct=document.getElementById('res-pct').textContent;
+  const tier=document.getElementById('res-tier').textContent;
+  if(navigator.share){navigator.share({title:'Situationship Detector',text:`My result: ${tier} (${pct}). Is yours worse?`,url:location.href});}
+  else copyText();
+}
+
+function downloadCard(){
+  const pct=parseInt(document.getElementById('res-pct').textContent);
+  const tier=document.getElementById('res-tier').textContent;
+  const kw=document.getElementById('res-keyword').textContent;
+  const tierObj=getTier(pct);
+
+  const cv=document.createElement('canvas');
+  cv.width=1080;cv.height=1080;
+  const ctx=cv.getContext('2d');
+
+  // Dark background
+  const bg=ctx.createLinearGradient(0,0,1080,1080);
+  bg.addColorStop(0,'#1a1a2e');bg.addColorStop(.5,'#16213e');bg.addColorStop(1,'#0f3460');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,1080,1080);
+
+  // Card
+  ctx.fillStyle='rgba(255,255,255,.07)';
+  rrect(ctx,60,60,960,960,48);ctx.fill();
+
+  // Header
+  ctx.fillStyle='#475569';ctx.font='600 28px Arial,sans-serif';ctx.textAlign='center';
+  ctx.fillText('SITUATIONSHIP DETECTOR · ordinarymantrying.com',540,128);
+
+  // Ring track
+  ctx.beginPath();ctx.arc(540,420,200,0,Math.PI*2);
+  ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=24;ctx.stroke();
+
+  // Ring fill
+  const rg=ctx.createLinearGradient(340,420,740,420);
+  rg.addColorStop(0,'#e11d48');rg.addColorStop(1,'#f43f5e');
+  ctx.beginPath();ctx.arc(540,420,200,-Math.PI/2,-Math.PI/2+(pct/100)*Math.PI*2,false);
+  ctx.strokeStyle=rg;ctx.lineWidth=24;ctx.lineCap='round';ctx.stroke();
+
+  // Pct
+  ctx.fillStyle='#f43f5e';ctx.font='bold 130px Arial,sans-serif';ctx.textAlign='center';
+  ctx.fillText(pct+'%',540,465);
+  ctx.fillStyle='#64748b';ctx.font='400 34px Arial,sans-serif';
+  ctx.fillText('Clarity Score',540,515);
+
+  // Divider
+  ctx.fillStyle='rgba(255,255,255,.1)';ctx.fillRect(300,580,480,1);
+
+  // Tier
+  ctx.fillStyle='#f1f5f9';ctx.font='bold 56px Arial,sans-serif';
+  ctx.fillText(tierObj.icon+' '+tier,540,670);
+
+  // Keyword
+  const kw2=ctx.measureText(kw).width+80;
+  ctx.fillStyle='rgba(225,29,72,.25)';
+  rrect(ctx,540-kw2/2,694,kw2,56,28);ctx.fill();
+  ctx.fillStyle='#f43f5e';ctx.font='bold 34px Arial,sans-serif';
+  ctx.fillText(kw,540,733);
+
+  // Viral
+  ctx.fillStyle='#64748b';ctx.font='30px Arial,sans-serif';
+  ctx.fillText('Send this to them. Their reaction is the answer. 👀',540,840);
+
+  ctx.fillStyle='#475569';ctx.font='26px Arial,sans-serif';
+  ctx.fillText('ordinarymantrying.com/tools/relationship-lab/situationship-detector.html',540,950);
+
+  const a=document.createElement('a');
+  a.download=`situationship-${pct}pct.png`;
+  a.href=cv.toDataURL('image/png');
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  showToast('Card saved!');
+}
+
+function rrect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+
+function retry(){
+  cur=0;scores=[];selectedScore=-1;
+  document.getElementById('result').style.display='none';
+  document.getElementById('ring-fill').style.strokeDashoffset=439.8;
+  document.getElementById('quiz').style.display='block';
+  renderQ();
+}
+</script>
+</body>
+</html>
