@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Copernicus?</title>
+<meta name="description" content="He spent 30 years developing the heliocentric theory. He only published it on his deathbed. He may have died before seeing the printed book. 8 decisions from the man who moved the Earth.">
+<meta property="og:title" content="What Would You Do If You Were Copernicus?">
+<meta property="og:description" content="Moved the Earth. Kept it secret for 30 years. Published on his deathbed. 8 decisions from Copernicus.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/copernicus-simulator.html">
+<style>
+:root{
+  --bg:#EEF0F5;--card:#F6F8FC;--ink:#060810;--muted:#283050;--line:#B0B8D8;
+  --accent:#0A1840;--accent-bg:#D8DCF0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,240,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#060810;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #909CC8;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#04060E;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#D8DCF0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#04060E;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#D8DCF0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #909CC8;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#04060E;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#060810;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#D8DCF0;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #909CC8;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#D8DCF0;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#909CC8;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Nicolaus Copernicus</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #44</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Copernicus?</h1>
+  <p class="cover-sub">He spent 30 years developing the idea that the Earth moves around the Sun — overturning 1,400 years of accepted truth. Then he kept it private for most of those 30 years. He finally published it in 1543, dedicated it to the Pope, and died that same year — possibly holding the first printed copy. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Nicolaus Copernicus</strong> (1473–1543) · Polish astronomer, mathematician, canon law administrator · Born Thorn (Toruń), Royal Prussia · Studied at Kraków, Bologna, Padua, Ferrara · Canon (church administrator) at Frombork Cathedral; never an academic astronomer · Developed heliocentric theory c.1510; circulated small summary (<em>Commentariolus</em>) privately · Full work <em>De revolutionibus orbium coelestium</em> published 1543, the year of his death · Received first copy reportedly on his deathbed · Preface added by printer Andreas Osiander framed the theory as a mathematical hypothesis only, not as physical truth — without Copernicus's knowledge.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1510, Frombork</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Problem with Ptolemy</span></div>
+<div class="year-banner">1510</div>
+<div class="timeline-dot">Frombork, Poland · Age 37</div>
+<div class="narrative">
+  <p>The Ptolemaic system — Earth at the center of the universe, everything else revolving around it — has been the accepted astronomical model for 1,400 years. It works. It predicts where planets will be. But it works through increasingly complex mechanisms: epicycles (circles on circles), equants, deferents, each added to make the predictions fit the observations. The more accurate astronomers want to be, the more wheels within wheels they have to add.</p>
+  <p>You have been staring at this for years. Something bothers you — not just the complexity, but an aesthetic objection. Nature, you believe, should be more elegant than this. There should be a simpler way. You start rearranging the furniture.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — Simplicity as a Guide</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Copernicus's initial motivation for the heliocentric model was aesthetic — Ptolemy's system was too complicated. Is "this is too complicated" a valid scientific argument?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">No — nature doesn't care about elegance. If Ptolemy's epicycles correctly predicted planetary positions, the complexity is justified. "Ugly" doesn't mean wrong.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">B</span><span class="dopt-body">Yes — complexity that can't be justified by the underlying physics is a symptom of the wrong framework. When a model requires ever-more patches to remain accurate, it usually means the underlying assumptions are wrong, not just incomplete. Copernicus's aesthetic intuition pointed at a real structural flaw.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">Partially — simplicity is a useful heuristic but not a principle. The heliocentric model was ultimately right, but it wasn't actually simpler than Ptolemy's in 1543 — Copernicus still needed epicycles. The elegance came later, with Kepler's ellipses.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">Occam's Razor and the Copernican revolution</div>
+      <p><strong>You replace 80 Ptolemaic epicycles with 48 of your own. Your theory is simpler — not simple. The real simplification, ellipses replacing all epicycles, will arrive 66 years after your death, from a mathematician who has better data and no commitment to circles.</strong> The principle that simpler explanations should be preferred — Occam's Razor — is one of the most productive heuristics in science. But C is historically correct in a specific way: Copernicus's system still used 48 epicycles, compared to Ptolemy's 80. It was simpler, but not radically so. The real simplification came with Johannes Kepler (1609–1619), who replaced circles with ellipses — which eliminated the need for epicycles entirely. Copernicus pointed at the right structure; Kepler and then Newton completed it. The history of the Copernican revolution shows science working as it should: an aesthetic dissatisfaction with existing theory motivates a reorganization, which in turn reveals a deeper structure (ellipses) that the original reformer hadn't grasped. The intuition was right; the details took another century to work out.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Commentariolus</span></div>
+<div class="year-banner">1514</div>
+<div class="timeline-dot">Frombork · Age 41</div>
+<div class="narrative">
+  <p>You have worked out the basic framework: the Sun is at the center. Earth and the other planets orbit the Sun. Earth rotates on its axis daily, which explains why the stars appear to move. The apparent motion of the planets is partly because we observe them from a moving Earth.</p>
+  <p>You write a brief sketch of this system — the <em>Commentariolus</em> — and circulate it privately to a few trusted colleagues. You do not publish it. You are not ready, you say. The mathematics needs more work. The observations need to be verified. You need to be certain.</p>
+  <p>You will spend the next 29 years "not being ready."</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Keeping It Private</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Copernicus had the heliocentric theory essentially worked out by 1514 but didn't publish until 1543. Was 29 years of delay wisdom or cowardice?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Wisdom — the theory had real weaknesses (the use of epicycles, no explanation for why Earth moves), and publishing prematurely would have exposed it to valid criticisms he couldn't answer. He needed the time to strengthen it.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">Cowardice — he was afraid of ridicule and Church reaction. His preface to <em>De revolutionibus</em> explicitly mentions fear of being "hissed off the stage." He delayed because he lacked the courage to face the response.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — the scientific caution was genuine (the theory had gaps he knew about) AND the fear was real. He explicitly wrote about both. The delay is not simply timidity or simply scientific rigor; it's the combination that most scientists working on heterodox ideas experience, and Copernicus experienced it for three decades.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">Why he waited</div>
+      <p><strong>You write the Commentariolus in 1514. The heliocentric idea is essentially complete. You then spend 29 years not publishing — and you write, explicitly, about being afraid of being "hissed off the stage."</strong> In the preface of <em>De revolutionibus</em>, Copernicus writes directly about his hesitation: "I can easily imagine, Holy Father, that as soon as some people learn that in this book which I have written about the revolutions of the spheres of the universe I attribute certain motions to the terrestrial globe, they will immediately shout to have me and my opinion hooted off the stage." He also says he was persuaded by friends — including Cardinal Schönberg, who wrote him a letter asking him to publish — to finally do it. The Copernicus case shows a common pattern in scientific history: the person who has the idea is often not the person who publishes it most effectively. Darwin also delayed publishing for 20 years; he was pushed by Wallace's competing work. In both cases, the delay allowed the ideas to mature but also reduced the impact they might have had earlier.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · Earth Moves</span></div>
+<div class="year-banner">1530</div>
+<div class="timeline-dot">Frombork · Age 57</div>
+<div class="narrative">
+  <p>The central claim of your theory: the Earth moves. Not just rotates daily on its axis, but moves — orbits the Sun once a year, covering an enormous distance through space. This is not just a mathematical rearrangement. It means that everything humans have believed about their place in the universe is wrong. We are not at the center. We are on a moving rock in an orbit around a star.</p>
+  <p>The philosophical, theological, and psychological implications are enormous. Common sense says the Earth doesn't move — we don't feel it. Physics (Aristotelian physics) says it can't move — if it moved, we'd fly off. And scripture, interpreted literally, puts the Earth in the center.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — Earth Is Not the Center</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The heliocentric model displaced humanity from the center of the universe. Why was this psychologically and culturally significant beyond the astronomy?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">It threatened religious authority — if scripture was wrong about Earth's position, it might be wrong about other things. The cosmological claim undermined the institutional Church's claim to reliable interpretation of the universe.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">It changed human self-conception — if we are not at the center, we are not special. The physical location mapped onto a moral and spiritual significance. Displacing Earth displaced human meaning.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, and the two were inseparable in 16th-century European thinking. Physical cosmology, religious cosmology, and human meaning were integrated. Changing one changed all. That's why the response to Copernicus, Galileo, and Darwin was so intense — each was not merely a scientific claim but a reorganization of the human relationship to the universe.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">The Copernican revolution in thought</div>
+      <p><strong>You are writing about planetary mathematics. Two centuries later, a philosopher named Kant and a psychologist named Freud will each invoke your name as shorthand for the most destabilizing move a civilization can make — shifting what stands at the center.</strong> Philosopher Immanuel Kant used the term "Copernican Revolution" to describe his own philosophical move — not because it was astronomical but because Copernicus had recentered the system of reference. Where Ptolemy put Earth at the center of the cosmos, Copernicus put the Sun. Kant, analogously, put the human mind at the center of epistemology rather than external reality — we know the world as our mind structures it. The term "Copernican Revolution" has since been applied to any fundamental restructuring of a framework's center of reference. Sigmund Freud called his work (along with Darwin's and Copernicus's) one of the three great "narcissistic wounds" to human self-importance: Copernicus took away our cosmological centrality; Darwin took away our biological uniqueness; Freud took away our rational self-control. All three moves are structurally similar: what we thought was the center turned out not to be.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Still Using Circles</span></div>
+<div class="year-banner">1535</div>
+<div class="timeline-dot">Frombork · Age 62</div>
+<div class="narrative">
+  <p>Your heliocentric system has a flaw you're aware of: you use circular orbits. The planets don't actually move in perfect circles. The Ptolemaic system compensated for this with epicycles — and you need to do the same. Your theory, for all its conceptual elegance, is not actually more accurate than Ptolemy's for predicting planetary positions.</p>
+  <p>You know this. But you believe in circles. Since Plato, the circle has been understood as the perfect geometric form — the celestial bodies, being perfect, must move in circles. Abandoning circles feels like abandoning something deeper than astronomy.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Circle Problem</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Copernicus retained circular orbits even though this forced him to use epicycles. Kepler later showed the orbits are ellipses. What does Copernicus's commitment to circles reveal?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">A</span><span class="dopt-body">That even radical reformers carry assumptions from the framework they're reforming. Copernicus moved the center but kept the circles — because circles were a Platonic assumption so deep it didn't register as an assumption. Every revolution is partial; the next generation finishes what the first started.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">That he was simply wrong about circles. He should have let the observational data guide him rather than Platonic aesthetics. Science beats philosophy.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">That the circle commitment was pragmatic — Kepler's ellipses required calculus to prove, and calculus didn't exist yet. Given 16th-century mathematics, circles were the best available tool.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">Kepler and the ellipse</div>
+      <p><strong>You keep the circles. You know you need 48 epicycles to make them work, and you keep them anyway. Kepler will spend years trying to fit Mars to a circle before he gives up in 1605 and tries an ellipse. He only needs one. You needed forty-eight.</strong> Johannes Kepler (1571–1630) was a committed Copernican who spent years trying to fit the orbit of Mars to a perfect circle, using Tycho Brahe's extraordinarily precise observational data. The orbit simply would not fit any circle. After years of calculation, he tried an ellipse — and it worked perfectly. His three laws of planetary motion (1609, 1619) replaced all of Copernicus's epicycles with a single elegant rule: the planets travel in ellipses with the Sun at one focus. The area swept by the radius in equal times is equal. The period squared is proportional to the orbital radius cubed. These laws are exact and require no epicycles. Copernicus would have needed to abandon his deepest assumption — the perfection of circles — to reach this. He couldn't do it. Kepler, one generation later, had better data and no commitment to circles.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · Rheticus Arrives</span></div>
+<div class="year-banner">1539</div>
+<div class="timeline-dot">Frombork · Age 66</div>
+<div class="narrative">
+  <p>A young German mathematician, Georg Joachim Rheticus, has traveled to Frombork specifically to study with you. He has read the Commentariolus. He is electrified. He spends two years studying your full manuscript and then writes a summary — the <em>Narratio Prima</em> — which he publishes in 1540. It is the first public account of the heliocentric theory in print.</p>
+  <p>Rheticus then persuades you, finally, to let him take the manuscript to Nuremberg for printing. He oversees the printing process. When he has to leave before it is complete, he passes the task to Andreas Osiander, a Lutheran minister.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Osiander's Preface</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Without telling Copernicus, Osiander added a preface claiming the heliocentric model was just a mathematical tool — not a claim about physical reality. Copernicus never knew. Was Osiander's preface wrong?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Yes, completely — Copernicus believed the Earth physically moves. Framing his life's work as "just a calculating device" was a betrayal of his intent and a misrepresentation of the work's nature.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">No — Osiander was being practically wise. A preface saying "this is just math, not physical truth" gave the book protection from Church censorship. Without it, the book might not have survived. The truth was preserved by the protective lie.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — Osiander was right that the preface probably provided protection (the book wasn't banned until 1616, 73 years after publication). But the "just a mathematical tool" framing also delayed serious engagement with whether the theory was physically true. The protection came at the cost of conceptual clarity. The deception served pragmatic ends while muddying a foundational question.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">The preface controversy</div>
+      <p><strong>You never see the preface Osiander adds to your book. You die in May 1543 not knowing that the opening page of your life's work — the page every reader sees first — carries a disclaimer you did not write, framing your physical claim as mere mathematics.</strong> Osiander's anonymous preface to <em>De revolutionibus</em> reads: "these hypotheses need not be true nor even probable; if they provide a calculus consistent with the observations, that alone is sufficient." The preface was unsigned and readers initially assumed it was by Copernicus. Rheticus was furious and crossed out the preface in his own copy. Kepler discovered the truth and published it in 1609. The preface raises a profound philosophical question: what does it mean to say a scientific model is "true" versus "merely useful"? Modern philosophy of science — the debate between scientific realism and instrumentalism — descends partly from this question. The "instrumentalist" position (science just provides useful models, not truth) is essentially Osiander's view. The "realist" position (successful scientific theories are approximately true descriptions of reality) is what Copernicus meant and what most working scientists believe. The 1543 preface launched a debate that is still going.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Dedicated to the Pope</span></div>
+<div class="year-banner">1543</div>
+<div class="timeline-dot">Frombork · Age 70</div>
+<div class="narrative">
+  <p>You have dedicated <em>De revolutionibus</em> to Pope Paul III. This is not simply flattery. It is a strategic choice: by placing the work under the Pope's protection, you make it harder for lower Church officials to condemn it. The dedication includes a passage explaining why you are publishing now, after decades of delay, and explicitly addresses the fear of ridicule from "mathematicians" and critics.</p>
+  <p>The dedication worked, in the short term. The book was not condemned by the Catholic Church for 73 years. When it was placed on the Index of Forbidden Books in 1616, it was partly because Galileo had been too aggressive in defending it.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Protecting Dangerous Ideas</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Copernicus protected his work with a dedication to the Pope. Galileo was too aggressive in defending it and provoked condemnation. What does this suggest about how to advance controversial ideas?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Caution works — Copernicus's careful positioning meant the theory survived long enough to be taken seriously. Galileo's aggression triggered backlash that slowed adoption. Strategic patience advances ideas better than confrontation.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Galileo was necessary — without aggressive advocacy, the idea would have stayed in academic circles. The confrontation with the Church forced a public debate that eventually resolved in favor of heliocentrism. Progress requires someone willing to escalate.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">Both approaches were appropriate to their historical moment. In 1543, cautious positioning preserved the work. By 1633, the idea had enough supporters that open advocacy was viable — Galileo's mistake was pushing beyond what the institutional structure could absorb at that speed. The strategy needed for a new idea is different from the strategy for a maturing one.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">The book's reception</div>
+      <p><strong>Your dedication to Pope Paul III buys you 73 years. The book is not banned until 1616 — and only then because Galileo forces the Church's hand. By that point, every serious astronomer in Europe already knows the Earth moves.</strong> <em>De revolutionibus</em> was published in an edition of about 400 copies. Its initial reception was not the dramatic controversy often imagined. Most readers treated it as Osiander's preface suggested — a sophisticated mathematical tool for calculating planetary positions. Professional astronomers adopted the calculation methods without necessarily accepting the physical claim. The University of Wittenberg (Luther's university) used Copernicus's tables while rejecting the heliocentric physics. Martin Luther reportedly said Copernicus was a fool, but scholars debate whether this is a later attribution. The book was only placed on the Index of Forbidden Books in 1616, after Galileo had become publicly associated with defending the physical reality of heliocentrism. It was removed from the Index in 1758. By then, the Earth had been known to move for over a century.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Deathbed Copy</span></div>
+<div class="year-banner">1543</div>
+<div class="timeline-dot">Frombork · Age 70</div>
+<div class="narrative">
+  <p>On May 24, 1543, Nicolaus Copernicus dies of a stroke. He has been ill for months. The date of death is the same year as publication — the book and the man barely outlasted each other.</p>
+  <p>The legend says that a copy of <em>De revolutionibus</em> was placed in his hands on the day he died, and that he was able to touch it before losing consciousness. Whether this is exactly true or legend-building around a death is hard to know. It is certain that he spent his last years too ill to see the publication process through, and that the book was already in print when he died.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Deathbed Publication</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Copernicus published his life's work the year he died. Darwin, similarly, only published under competitive pressure after 20 years of delay. What does the pattern of major scientists delaying high-stakes publications reveal?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Fear of being wrong — major thinkers delay because they know the stakes of a public error are high. Better to wait until certain than publish prematurely and be refuted.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">Fear of reaction — the delay is social, not scientific. Both Copernicus and Darwin knew their ideas were correct long before publishing; what they feared was the response from authorities (Church, scientific establishment) and public opinion.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">Both fears operating simultaneously — and they are harder to separate than they appear. Scientific confidence and social courage interact: as you become more certain of your idea, you become both more willing to defend it and more aware of how much is at stake if you're wrong. The delay reflects an iterative process of checking certainty against courage, and neither is ever fully complete.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">The Darwin parallel</div>
+      <p><strong>You and Darwin share the same pattern, separated by 320 years: the idea is complete, the fear is real, the delay stretches to decades, and the trigger for finally publishing is external. Darwin's trigger is a letter from Alfred Russel Wallace, arriving in 1858. Yours is a stroke you can feel coming.</strong> Charles Darwin developed the theory of natural selection by 1838 and wrote a preliminary sketch in 1844 with instructions to publish it if he died before completing the full work. He continued refining it for 20 years while working on barnacle taxonomy, geology, and plant biology. In 1858, Alfred Russel Wallace sent Darwin a letter outlining essentially the same theory. Darwin's response — a joint presentation with Wallace at the Linnean Society in July 1858 — was arranged by his friends Joseph Hooker and Charles Lyell to establish Darwin's priority. He then rushed to complete <em>On the Origin of Species</em>, published in November 1859. The parallel to Copernicus is striking: in both cases, the idea was mature long before publication; in both cases, an external stimulus (approaching death / competing publication) finally forced it out. Scientists who die before publishing are lost to history. Being pushed to publish, even reluctantly, serves posterity.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Revolution</span></div>
+<div class="year-banner">1610</div>
+<div class="timeline-dot">Across Europe · 67 years after Copernicus's death</div>
+<div class="narrative">
+  <p>You have been dead for 67 years. But your book has been circulating, quietly read by the mathematicians and astronomers who needed it. Tycho Brahe gathered the best observational data in astronomical history. Johannes Kepler used that data to prove that orbits are ellipses, not circles — correcting you. Galileo built a telescope and saw Jupiter's moons.</p>
+  <p>The piece you started has become a movement. The Earth is moving. Everyone who matters now knows it. The world has been reorganized.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — Starting a Revolution You Don't Finish</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Copernicus started the scientific revolution but died before Kepler, Galileo, and Newton completed it. Is there credit in starting something you don't finish?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Limited — Copernicus got the big picture right (Sun at center) but the details wrong (circles, no physical mechanism). The revolution was completed by others who corrected his errors. He pointed the direction, but pointing is the smallest contribution.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">B</span><span class="dopt-body">Essential — the conceptual revolution was Copernicus's. Kepler, Galileo, and Newton worked within the framework he established. Moving the center from Earth to Sun was the foundational move; everything else followed from it. Starting the right revolution, even imperfectly, is the hardest and most necessary contribution.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">C</span><span class="dopt-body">Credit should be distributed across the whole chain — Copernicus, Tycho, Kepler, Galileo, Newton. Singling out any one person as starting or completing the revolution misrepresents how scientific knowledge actually develops: collaboratively, incrementally, across generations.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">The Copernican revolution's timeline</div>
+      <p><strong>You move the center in 1543. The revolution you start will not close until 1687 — 144 years after your death — when Newton's Principia provides the gravitational physics explaining why the planets move as they do. You ask the right question. Four more scientists answer it.</strong> The "Copernican Revolution" took roughly 150 years to complete: Copernicus (1543) → Tycho Brahe's observations (1576–1601) → Kepler's laws (1609–1619) → Galileo's telescope observations (1609–1632) → Newton's <em>Principia</em> (1687), which gave the physical theory (gravity) explaining why the planets move as they do. Each step corrected the previous one while building on it. Newton's law of universal gravitation proved that a single force — gravity — explains both planetary orbits and falling objects on Earth, unifying terrestrial and celestial physics for the first time. Copernicus started a question; Newton closed it. What Copernicus contributed — and what no one else could contribute in 1543 — was the willingness to say, based on mathematical intuition and aesthetic dissatisfaction with Ptolemy, that the Earth moves. That sentence, once said, changed everything that followed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="ending" id="ending">
+  <div class="ending-score" id="final-score">0/8</div>
+  <div class="ending-label">Your Copernicus Score</div>
+  <div class="ending-title" id="final-title"></div>
+  <div class="ending-body" id="final-body"></div>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue the Series</div>
+  <div class="next-grid">
+    <a class="next-card" href="galileo-simulator.html">
+      <span class="next-name">Galileo Galilei</span>
+      <span class="next-desc">The next generation who proved Copernicus right with a telescope — and was put on trial for it.</span>
+    </a>
+    <a class="next-card" href="newton-simulator.html">
+      <span class="next-name">Isaac Newton</span>
+      <span class="next-desc">The one who explained WHY the planets move as they do — completing the revolution Copernicus started.</span>
+    </a>
+    <a class="next-card" href="darwin-simulator.html">
+      <span class="next-name">Charles Darwin</span>
+      <span class="next-desc">Also delayed publishing a life-changing theory for 20 years. Also moved humanity away from the center.</span>
+    </a>
+    <a class="next-card" href="lovelace-simulator.html">
+      <span class="next-name">Ada Lovelace</span>
+      <span class="next-desc">Also wrote for a machine that didn't yet exist — also published work that was realized a century later.</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <p>Copernicus's story is one of 100 historical life simulators on this site. Each one asks: given the same constraints, pressures, and information — what would you have chosen?</p>
+  <p><a href="simulators.html">Browse all simulators →</a></p>
+</div>
+
+</div>
+</div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Moved the Earth";body="You matched the hardest calls Copernicus made: aesthetic dissatisfaction as real scientific evidence, 29 years of delay as both cowardice and rigor at once, circular orbits as a blind spot he couldn't see past, and starting an imperfect revolution as the most essential contribution. He never got to see Kepler's ellipses. He published anyway.";}else if(pct>=0.625){title="You'd Have Published — Eventually";body="You grasp the core: the strategic dedication to Pope Paul III, the mixed motives behind 29 years of silence, the 73-year gap before the ban. But on the hardest questions — whether aesthetic dissatisfaction is valid evidence, whether incomplete revolutions count — you hesitate. Copernicus hesitated too. He just did it for 29 years.";}else if(pct>=0.375){title="You'd Have Been a Good Ptolemaic Astronomer";body="You want the data better before you move the center. You're skeptical without a physical mechanism for why Earth moves. These are fair objections. Tycho Brahe held almost the same position and built a hybrid system — Earth at center, everything else orbiting the Sun. Careful. Wrong.";}else{title="You'd Have Kept the Epicycles";body="Ptolemy's system was 1,400 years old and it worked. Eighty epicycles is a lot, but they fit the data. You need more than aesthetic dissatisfaction to move the Earth. Copernicus understood that objection — it's why he waited 29 years. He published anyway. You might still be waiting."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

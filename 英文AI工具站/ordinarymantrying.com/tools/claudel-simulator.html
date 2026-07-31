@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camille Claudel Life Simulator — Sculptor, Rodin & 30 Years Lost | Ordinary Man Trying</title>
+<meta name="description" content="Step into Camille Claudel's shoes across 8 pivotal decisions — from Rodin's studio to the asylum door. One of the greatest sculptors of the 19th century. Almost erased.">
+<style>
+:root{
+  --bg:#F5EDE8;--card:#FAF5F2;--ink:#180A06;--muted:#502818;--line:#DCC8C0;
+  --accent:#5A2010;--accent-bg:#F0D8D0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,237,232,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#180A06;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C8A898;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#140806;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F5E8E4;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.3);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F5E8E4;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C8A898;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C8A898;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Camille Claudel</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #73 of 100</p>
+  <h1 class="cover-title">The Sculptor<br>They Locked Away</h1>
+  <p class="cover-sub">Camille Claudel entered Auguste Rodin's studio at eighteen, became his equal as a sculptor, his lover for fifteen years, and then his most devastating artistic rival. In 1913 — weeks after her father died — her family had her committed to a psychiatric asylum. Doctors wrote repeatedly that she was not dangerous and could be released. Her family refused, year after year, for thirty years. She died in the asylum in 1943. No family came.</p>
+  <div class="cover-facts">
+    <p>🗿 Major works include <strong>The Age of Maturity</strong>, The Waltz, The Gossipers &nbsp;·&nbsp; 15-year relationship with Rodin &nbsp;·&nbsp; Committed 1913 &nbsp;·&nbsp; Released: never &nbsp;·&nbsp; Died Montdevergues asylum, October 19, 1943 &nbsp;·&nbsp; Age 78 &nbsp;·&nbsp; Buried in a common grave</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Camille Claudel's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1882</div>
+  <div class="timeline-dot">Paris, France · Age 18</div>
+  <div class="narrative">
+    <p>You arrive in Paris from Villeneuve-sur-Fère with your family, and immediately begin studying sculpture at the Académie Colarossi — one of the few ateliers that accepts women. You are eighteen, obsessed with stone and clay, and already more talented than most of the men around you. Your sculptor Alfred Boucher, before emigrating to Italy, introduces you to Auguste Rodin to supervise your progress.</p>
+    <p>Rodin is 42. He is the most famous sculptor in France, currently working on <em>The Gates of Hell</em> — a commission that will take him twenty years. He needs assistants who can do the meticulous work of carving hands and feet from his models. He looks at your work and immediately offers you a place in his studio.</p>
+    <p>The choice seems obvious. But you have seen what happens to women who attach themselves to famous men: their work is attributed to their patron, their ideas become his innovations, their name disappears into his shadow. You know who you are. The question is whether you can enter that studio and remain yourself.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1882</div>
+    <p class="decision-q">Rodin offers you a place in his famous studio. How do you approach this extraordinary and potentially dangerous opportunity?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Commit fully to Rodin's methods and vision — learning from a master means subordinating your instincts to his for now.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. Join the studio, absorb everything, but insist on developing your own sculptural voice simultaneously — never let his aesthetic become yours.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Decline — working as an assistant to a famous man will permanently mark your work as derivative of his.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Accept the position but make no close personal connection — keep it purely professional from the start.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You joined the most famous sculptor in France's studio knowing exactly what happened to women who attached themselves to famous men. You went anyway.</strong> Claudel joined Rodin's studio and quickly became more than an assistant — she carved the hands and feet of his major works, but simultaneously developed her own distinctive style. Her work is technically allied to Rodin's but emotionally quite different: more psychologically concentrated, with a quality of stillness and interior tension that is unmistakably hers. Rodin himself later said she was more talented than he was. The tragedy is that the world needed decades to accept that this was true.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1886</div>
+  <div class="timeline-dot">Paris, France · Age 22</div>
+  <div class="narrative">
+    <p>The relationship with Rodin has deepened into something consuming. He is brilliant, physically magnetic, entirely absorbed in his work — and already committed to Rose Beurert, his companion of twenty years, who lives with him and keeps his household. He has promised, in a formal written agreement signed in October 1886, to stop taking other pupils, to cease exhibiting at the Salon de Mars, and to marry you as soon as his commission work settles. He will not keep any of these promises.</p>
+    <p>You are creating extraordinary work — <em>Sakountala</em>, <em>Clotho</em>, studies that exceed what anyone else in Paris is doing. But you are also spending enormous creative energy on the relationship: waiting, hoping, watching Rodin return to Rose each night. Your family disapproves. Your mother has always found your choices incomprehensible. Your brother Paul — who will become a celebrated writer — watches with a mixture of admiration and growing alarm.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1886</div>
+    <p class="decision-q">Rodin has signed a promise to marry you but shows no sign of acting on it. How do you protect both yourself and your artistic work?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Accept the situation as it is — a secret relationship with a great artist is still a more artistically rich life than the alternative.</button>
+      <button class="dopt" onclick="choose(this,2,false)">B. Give Rodin a public ultimatum: announce your relationship officially or you leave Paris entirely.</button>
+      <button class="dopt" onclick="choose(this,2,true)">C. Redirect your energy into building an independent body of work that could stand entirely on its own — artwork that requires no endorsement from Rodin to be recognized.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. Confront Rose Beurert directly and demand she step aside — the arrangement is unsustainable.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>He signed a promise to marry you and broke every clause of it. You turned the time waiting into some of the most powerful sculpture in France.</strong> She continued the relationship while producing some of the most extraordinary sculpture of her career. Works from this period — <em>La Valse</em>, <em>La Petite Châtelaine</em>, the preliminary studies for <em>The Age of Maturity</em> — are fully hers, unmistakably independent of Rodin's influence. The tragedy is that the art world of the 1880s and 1890s could not easily separate a woman's work from her famous lover's, and her genius was systematically attributed to him. She knew this. It destroyed something in her.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1893</div>
+  <div class="timeline-dot">Paris, France · Age 29</div>
+  <div class="narrative">
+    <p>After more than ten years in Rodin's orbit — as student, assistant, collaborator, model, lover, and rival — you end it. The relationship has been consuming your work, your health, and your ability to see yourself clearly. Rodin remains with Rose. He has never introduced you publicly as his partner. He has taken credit, in the view of several critics, for sculptural ideas that originated in your conversations and experiments. You have also had at least one pregnancy that ended badly.</p>
+    <p>The question of how to end it is practical as well as emotional. Rodin's influence over government arts commissions, exhibition opportunities, and critical opinion in Paris is enormous. A clean break means losing those connections. A partial break — maintaining professional contact — means never fully escaping his gravitational pull. You are 29. You have twenty years of serious work ahead of you. What kind of separation can you actually sustain?</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1893</div>
+    <p class="decision-q">After more than a decade, you are ending your relationship with Rodin. How completely do you break?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. Maintain a professional relationship — you need his connections and the institutional endorsements he can provide.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. Break completely — artistic and personal, no correspondence. Total separation is the only way to establish your own independent identity as a sculptor.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. Take a sabbatical in London but leave the door open to reconciliation once the emotional distance has helped.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. Stay through one more major exhibition season to protect your current state commissions before breaking entirely.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>You walked away from the most powerful set of connections in French art, isolated yourself entirely, and spent the next decade proving you didn't need them.</strong> She broke with Rodin around 1892–1893 and increasingly isolated herself in her studio on the Île Saint-Louis. The break was essentially total. She stopped showing work at official Salons, retreated from the art world's social circuits, and turned inward. The isolation proved both creatively productive — she produced some of her most powerful work in the mid-1890s — and psychologically damaging. Without the social scaffolding, her paranoia had nothing to check against.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1899</div>
+  <div class="timeline-dot">Paris, France · Age 34</div>
+  <div class="narrative">
+    <p>You have been working on a large bronze for six years: a group of three figures that anyone who knows you will immediately recognize. An old man — face aged and slightly hunched — is being led away by a winged older woman who pulls him forward and upward. Kneeling on the ground behind them, arms outstretched toward the retreating figure, is a young woman. The title is <em>The Age of Maturity</em>, or sometimes <em>The Destiny</em>. The young woman is you. The old man is Rodin. The winged figure is Rose Beurert.</p>
+    <p>You have submitted it for a state commission. The French state has provisionally agreed to cast it in bronze. But Rodin still has powerful friends in the Ministry of Fine Arts. There are rumors that he has quietly moved to block the commission. The work is the truest thing you have ever made. It is also the most personally exposing. Publishing it means confirming, permanently and publicly, the story you have been living.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1899</div>
+    <p class="decision-q">Your masterwork <em>The Age of Maturity</em> is ready for the state commission. It tells your story unmistakably. Do you submit it?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. Rename and reframe it to obscure the autobiographical reading — protect both the work and yourself from the personal exposure.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. Submit it exactly as made and let the work be what it is — the truth of a specific human experience rendered in bronze.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. Hold it back and show it only in private settings — the state commission isn't worth the risk of Rodin's interference.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. Destroy the plaster mold — the personal exposure is too great and the work too easily weaponized against you.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You made a bronze of the moment he left you and submitted it for a state commission. Rodin's friends in the Ministry quietly killed the funding.</strong> She submitted it. The state commission was approved and then mysteriously withdrawn in 1899 — almost certainly due to Rodin's influence. A smaller version was eventually cast in 1902, but the full bronze was never made in her lifetime. <em>The Age of Maturity</em> is now considered one of the greatest French sculptures of the 19th century and is displayed at the Musée d'Orsay. It was recognized as her masterwork only after her death.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1905</div>
+  <div class="timeline-dot">Paris, France · Age 41</div>
+  <div class="narrative">
+    <p>The paranoia has been building for years. You are convinced that Rodin has organized a gang — his students, his admirers, compliant critics — to steal your ideas and attribute them to him. You begin destroying your own sculptures before exhibitions, smashing plaster models you have spent months creating. You board up the windows of your studio on the Île Saint-Louis. You stop eating regularly. Neighbors report that you spend days without leaving the building.</p>
+    <p>Some of your grievances about Rodin have a basis in reality — there are documented cases of your ideas appearing in his work with no credit. But the conspiracy you now describe has expanded far beyond what evidence can support. Your brother Paul visits and finds a woman he barely recognizes. Your father, who has always been your fiercest protector, is aging and ill in the provincial town where you grew up.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1905</div>
+    <p class="decision-q">You are destroying your own work and isolating yourself, convinced of a conspiracy. What is the most accurate understanding of what is happening to you?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. The conspiracy is entirely real — Rodin's network is genuinely stealing your work, and your isolation is a rational protective response.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. Real grievances about attribution and professional treatment have been amplified by an untreated mental illness into delusions that are now destroying your ability to create.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. This is a strategic withdrawal — by refusing to exhibit, you are protecting your ideas from further appropriation.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. The isolation is temporary — once you move to a new city and establish distance from Rodin's sphere, your symptoms will resolve.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>You were destroying your own masterworks before anyone could see them — and some of what you believed about Rodin was accurate enough to make the line between grievance and delusion genuinely hard to find.</strong> Modern scholars and psychiatrists who have examined the historical record conclude that Claudel almost certainly developed a paranoid disorder — possibly triggered or worsened by the isolation, grief, and genuine professional injustices she experienced. The tragedy is that her real complaints about Rodin had enough validity that it was impossible, even for those who loved her, to draw a clear line between justified accusation and pathological delusion. By the time that line was clear, it was too late.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1913</div>
+  <div class="timeline-dot">Paris, France · Age 48</div>
+  <div class="narrative">
+    <p>Your father dies on March 2nd, 1913. He was the one member of your family who believed in your work and protected you from your mother's constant disapproval. Within weeks of his death — before his estate has been settled, before the grief has even begun to form — your mother and brother Paul arrange your commitment. A doctor signs the papers. Police come to your studio on March 10th.</p>
+    <p>You are taken to the psychiatric asylum of Ville-Evrard. Later you will be transferred to the asylum of Montdevergues in Provence. You write letters from the asylum — lucid, articulate, desperate — asking to be released. You describe the food. The cold. The noise. You ask for your sculpting tools. You ask Paul to come and see you. He will visit four times in thirty years.</p>
+    <p>The doctors, from the earliest years, write in their assessments that you are not dangerous to yourself or others, and that continued institutionalization is not medically necessary.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1913</div>
+    <p class="decision-q">Why were you committed, and what does the evidence actually show about the justification?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. The commitment was fully justified by medical necessity — your symptoms were severe enough that institutional care was genuinely required for your own protection.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. The commitment was driven primarily by a family that found your unconventional life an embarrassment, and by a brother who controlled your finances — the medical grounds were a legal pretext.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. It was a temporary measure, expected to last a year or two until your symptoms stabilized, after which you would be returned to normal life.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. Rodin arranged the commitment as retaliation for <em>The Age of Maturity</em> and your public accusations against him.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>Your father died on March 2nd. You were committed on March 10th. The one person who might have stopped it had just been buried.</strong> The commitment happened within weeks of her father's death — the one person who might have stopped it. Her mother had always disapproved of Camille's life. Paul Claudel, a devout Catholic who found his sister's bohemian existence morally troubling, signed papers authorizing her commitment and subsequently refused all requests for her release, citing his family's inability to provide care. Doctors who examined her throughout her institutionalization consistently wrote that she was "calm" and "not dangerous" — but under French law at the time, a patient could only be released with family authorization.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1929</div>
+  <div class="timeline-dot">Montdevergues Asylum, Provence · Age 65</div>
+  <div class="narrative">
+    <p>You have been in the asylum for sixteen years. You write to Paul regularly. The letters are increasingly stripped of hope, but they remain precise and clear: you describe the asylum's routines, the other patients, the food, the absence of clay, the absence of tools. You ask him to come. You ask to be released to a supervised private residence. The doctors have written, again, that you are not dangerous and could be released.</p>
+    <p>Paul's replies, when they come, speak of his faith, his work, his travels as a diplomat. He has been posted to various countries. He is in Japan. He is in America. He is successful, celebrated, the most prominent Catholic writer in France. His sister is a sculptor in an asylum in Provence. He sends money for better food and extra blankets. He does not come. He does not authorize her release.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1929</div>
+    <p class="decision-q">Doctors have repeatedly confirmed you are not dangerous and could be discharged. What is the actual barrier to your release?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Your mental illness remains genuinely severe — the doctors' positive assessments are incomplete and the family's caution is warranted.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. The asylum benefits financially from keeping paying patients and has discouraged release through bureaucratic obstruction.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. Under French law, your release requires the family's authorization — and Paul Claudel, the only family member with legal standing, consistently refuses to grant it, citing his inability to provide supervision and care.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. You yourself, when offered release, have refused to leave because the outside world has become too frightening after so many years of institutionalization.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>Doctors wrote for thirty years that you were calm, lucid, and not dangerous. Your brother held the legal key and kept it in his pocket.</strong> French law in the early 20th century required family authorization for the release of committed patients. Paul Claudel, as the family's legal head, repeatedly denied requests for discharge. In one letter he wrote that releasing Camille would be a "catastrophe" — though he never specified what catastrophe he feared. The asylum doctors' notes from the 1920s and 1930s consistently describe a patient who is "quiet," "lucid," and "capable of normal social interaction." The barriers to her release were legal and familial, not medical.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1943</div>
+  <div class="timeline-dot">Montdevergues Asylum, Provence · Age 78</div>
+  <div class="narrative">
+    <p>October 19th, 1943. You have been in the asylum for thirty years. The world outside has changed beyond recognition — two world wars, the fall of empires, the rise of cinema and jazz and aviation. Your studio on the Île Saint-Louis has been cleared and rented to strangers. The sculptures that survived are scattered across collections in Paris. <em>The Age of Maturity</em> is in a storage room at the Musée Rodin — filed under the section for Rodin's associates.</p>
+    <p>You die of malnutrition, aged 78. The war has disrupted food supplies to rural institutions. No family comes. You are buried in the common grave of the asylum, the same earth as the other patients who had no one. The grave has no marker. Paul Claudel, when informed, writes in his journal that he hopes she has found peace.</p>
+    <p>Three years later, in the reorganization of the Musée Rodin's collection, someone looks more carefully at the attribution on <em>The Age of Maturity</em>. The label is corrected. Camille Claudel — sculptor, 1864–1943. Not Rodin's student. Not Rodin's companion. Herself.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 1943</div>
+    <p class="decision-q">What does Camille Claudel's life and death most clearly reveal about the world she lived in?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. A cautionary tale about the dangers of romantic entanglement — artists must protect their solitude above all.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. That mental illness is always destructive to creative genius, regardless of external circumstances.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. That institutions of medicine, family, and art worked together to erase a major artist — and that the erasure was enabled precisely because she was a woman whose genius was always seen as secondary to a famous man's.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. That bohemian artistic life is inherently self-destructive and incompatible with long-term mental health.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>You died in a common grave with no family present, and forty years later they built you a museum.</strong> Camille Claudel was essentially unknown for decades after her death. The 1984 retrospective at the Musée Rodin — which gave her work equal billing with his for the first time — and the 1988 film starring Isabelle Adjani brought her back to public consciousness. <em>The Age of Maturity</em> is now a centerpiece of the Musée d'Orsay. The Musée Camille Claudel opened in Nogent-sur-Seine in 2017. What she might have created between 1913 and 1943 — thirty years of locked silence — remains the largest theft in the history of French sculpture.</p>
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Camille Claudel · 1864–1943</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"I live in a world so curious, so strange."<br><em style="font-size:13px;color:var(--muted);">— Camille Claudel, letter from Montdevergues, 1920</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="frida-simulator.html" class="next-card">
+        <div class="next-card-name">Frida Kahlo</div>
+        <div class="next-card-sub">Pain, passion & the art that outlived the accident</div>
+      </a>
+      <a href="okeeffe-simulator.html" class="next-card">
+        <div class="next-card-name">Georgia O'Keeffe</div>
+        <div class="next-card-sub">The desert, the flower & the uncompromising eye</div>
+      </a>
+      <a href="michelangelo-simulator.html" class="next-card">
+        <div class="next-card-name">Michelangelo</div>
+        <div class="next-card-sub">The Sistine ceiling & the impossible standard</div>
+      </a>
+      <a href="munch-simulator.html" class="next-card">
+        <div class="next-card-name">Edvard Munch</div>
+        <div class="next-card-sub">The Scream, madness & a life in color</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You held both things at once: what she chose and what was done to her. Her story requires that. Most people can only hold one.';else if(pct>=0.625)t.textContent='You understood most of what shaped her. The gaps are the moments where the injustice and the choice are hardest to separate — because they never fully were.';else if(pct>=0.375)t.textContent='You grasped part of what happened. Her story doesn\'t divide neatly: the genius, the injustice, and the illness were always tangled together. That\'s what makes it hard.';else t.textContent='Her life is among the most contested accounts in art history. To understand it requires holding contradictions that don\'t resolve cleanly. Keep looking.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

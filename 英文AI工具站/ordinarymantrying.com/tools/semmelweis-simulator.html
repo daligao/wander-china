@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ignaz Semmelweis Life Simulator — He Discovered Handwashing. They Locked Him Away.</title>
+<meta name="description" content="Make the same decisions as Ignaz Semmelweis — who discovered that doctors were killing patients by not washing their hands, proved it with data, was rejected by the medical establishment, and died in a mental asylum 14 days after admission.">
+<style>
+:root{
+  --bg:#EEF5F2;--card:#F5FAF8;--ink:#081510;--muted:#284038;--line:#C0D8D0;
+  --accent:#082818;--accent-bg:#D0EDE0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Hungary / Austria · 1818–1865</div>
+  <h1>Could You Have Been<br>Ignaz Semmelweis?</h1>
+  <div class="cover-sub">In 1847 he proved that doctors in Vienna were killing their own patients by not washing their hands between autopsies and deliveries. He reduced maternal mortality from 18% to 2% with chlorinated lime solution. The Vienna medical establishment rejected him, refused his data, and eventually drove him from the city. He died in a mental asylum 14 days after admission, in 1865. Germ theory was confirmed by Pasteur and Lister shortly afterward. Every surgery performed in a sterile environment today exists because of what Semmelweis proved and they refused to believe.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">18% → 2%</div><div class="stat-l">Maternal mortality after handwashing was introduced</div></div>
+    <div class="stat"><div class="stat-n">0</div><div class="stat-l">Colleagues who publicly supported him in Vienna</div></div>
+    <div class="stat"><div class="stat-n">14</div><div class="stat-l">Days alive after committal to mental asylum</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Vienna, 1847 · The Two Clinics</div>
+<p class="narrative">You are an assistant physician in the First Obstetrical Clinic of the Vienna General Hospital. You have been troubled for months by a terrible pattern: in your clinic, where medical students and doctors deliver babies, the maternal mortality rate from childbed fever (puerperal fever) is between 10% and 18%. In the Second Obstetrical Clinic next door, where midwives deliver babies, the mortality rate is 2-4%. The women admitted to your clinic know this. They beg to be admitted to the midwives' clinic instead. Women who deliver in the streets before reaching the hospital have a lower mortality rate than those who deliver in the First Clinic. You cannot explain this. But you cannot look away from it either.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Discrepancy</div>
+  <div class="d-situation">There is an unexplained and deadly difference between the two clinics. Do you investigate?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Yes — investigate immediately and systematically; something in the First Clinic is killing patients and you must find what</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. Report it to senior physicians and let them investigate — this is above your rank</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Accept that some difference between clinics is inevitable — different patient populations, different outcomes; this may not be investigable</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Semmelweis investigated obsessively. He compared every variable he could think of between the two clinics — ventilation, diet, patient handling, position during labor. Nothing explained it. Then in 1847 his friend Jakob Kolletschka died of a wound infection after being accidentally cut during an autopsy. Semmelweis read the autopsy report on Kolletschka and noticed the lesions were identical to those found in women who died of childbed fever. The connection hit him like a physical blow: doctors were going from autopsies to deliveries without washing their hands. They were carrying what he called "cadaverous particles" from the dead bodies to the living women.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Vienna, May 1847 · The Handwashing Protocol</div>
+<p class="narrative">You know what is killing the women. The doctors who do morning autopsies and then deliver babies in the afternoon, without washing the smell of death from their hands, are transmitting the disease. You have a clear hypothesis and a clear intervention: wash hands in chlorinated lime solution before every delivery. You implement it immediately in your ward without waiting for approval. The mortality rate drops from 18% to 2% within weeks. You have proof. You have data. Women who would have died are alive. The intervention works.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Evidence</div>
+  <div class="d-situation">You have clear before-and-after data showing handwashing works. How do you present this to your colleagues?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Present the data plainly and let the numbers speak — you have a mortality rate that dropped from 18% to 2%; that is the argument</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Present it carefully with deference to senior colleagues — acknowledge what is not yet understood; avoid implying they are responsible for deaths</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Wait for more data before presenting — two months of results may not be sufficient; gather another year before claiming the intervention is proven</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Semmelweis presented the data plainly to the Vienna medical establishment, and this was, in retrospect, one of his critical tactical errors — not because the data was wrong, but because the implication of the data was that doctors were killing their patients. In 1847 this was an unacceptable claim. Medical authority rested partly on the belief that doctors healed and did not harm. Telling the most eminent obstetricians in Europe that their unwashed hands were killing women was not merely a scientific disagreement — it was an assault on professional identity and social status. The data was correct. The reception was catastrophic.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Vienna, 1848–1849 · The Rejection</div>
+<p class="narrative">Professor Johann Klein, your superior at the First Clinic, does not implement handwashing. He considers your hypothesis implausible and your manner of presenting it offensive — you have effectively accused the entire medical profession of killing patients. The Vienna Medical Society debates your theory at length and rejects it. Professor Charles Meigs in Philadelphia writes that doctors are gentlemen and gentlemen's hands are clean. You are not reappointed to your position at the First Clinic. You are 31 years old, have proved one of the most important things in the history of medicine, and no one in European medicine will defend you publicly. You return to Hungary.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · After the Rejection</div>
+  <div class="d-situation">Vienna has rejected your theory entirely. You are dismissed from your post. What do you do?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Implement handwashing in Budapest and build more data — prove the theory works consistently across different institutions</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Write a comprehensive book immediately — document everything while you still have access to the Vienna records</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Change the framing — avoid implying doctors are responsible; present it as an environmental or atmospheric problem to make it easier to accept</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Semmelweis returned to Budapest in 1850 and became Head of Obstetrics at St. Rochus Hospital. He implemented the handwashing protocol immediately. Mortality rates fell from 10-12% to under 1%. He had now proved his theory in two separate institutions in two countries with consistent results across seven years of data. The Budapest results were as clear as the Vienna results had been. The medical establishment in Vienna still did not change its practice. Women continued to die in the First Clinic.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Budapest, 1850–1860 · The Ten Years</div>
+<p class="narrative">For a decade you practice obstetrics in Budapest with extraordinarily low mortality rates — consistently below 1%. You know that in Vienna, in Paris, in London, in Boston, women are still dying of childbed fever at rates of 10-15% because doctors refuse to wash their hands. You have the data. You have consistent results across years. You know with absolute certainty that you are right and that the refusal to implement your protocol is killing thousands of women every year. The knowledge is a torture. You write increasingly urgent letters to obstetricians across Europe. You are not polite about it.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Letters</div>
+  <div class="d-situation">You write to senior obstetricians urging them to implement handwashing. Your letters become increasingly angry, accusing them of murder. Is this the right strategy?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,false)">A. Yes — they are killing patients; the moral clarity of that justifies the directness; diplomatic language has failed for a decade</button>
+    <button class="dopt" onclick="choose(this,4,true)">B. No — find a more effective communication strategy; anger may be justified but it is not persuasive; work with the converts, not against the resisters</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Stop the letters — focus entirely on the data; publish the Budapest results in international journals and let the numbers do the persuading</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> The letters became increasingly intemperate. Semmelweis wrote to Professor Scanzoni calling him a murderer. He wrote to the heads of obstetric departments across Europe in similar terms. The letters were not persuasive — they were, understandably, received as the communications of a disturbed man rather than a scientist with a proven theory. The anger was entirely justified by the facts: thousands of women were dying unnecessarily. But justified anger is not the same as effective argument, and Semmelweis's letters accelerated the perception that he was unstable rather than correct.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Budapest, 1861 · The Book</div>
+<p class="narrative">You finally write the comprehensive account of your work: "The Etiology, Concept and Prophylaxis of Childbed Fever." It is 543 pages long. It contains 14 years of data from Vienna and Budapest. It is exhaustive, repetitive, and furious. It restates the same arguments many times. It attacks your critics by name. It is impossible to read without understanding your theory. It is also very difficult to read without becoming exhausted. You are 43 years old. The book is published in 1861. It is largely ignored.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · The Book</div>
+  <div class="d-situation">Your definitive statement is 543 pages long, repetitive, and angry. Could it have been written differently?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Yes — shorter, calmer, focused on the data and the protocol; the anger and repetition were counterproductive</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. No — the length was necessary to document everything; the critics would have found gaps in a shorter version</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. A shorter version first, then the comprehensive one — establish the basic argument before the full documentation</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> The book was indeed too long, too angry, and too repetitive to be persuasive. Several friendly reviewers noted that the essential argument could have been made in fifty pages. The fury that runs through the 543 pages — understandable given what Semmelweis had witnessed and how long he had been ignored — worked against the book's effectiveness. A shorter, calmer presentation of the data from Vienna and Budapest might have been more persuasive. It is also possible that no presentation of the data would have persuaded the medical establishment of the time. The germ theory required Pasteur and Lister's laboratory work before doctors could accept it.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Budapest, 1865 · The Breakdown</div>
+<p class="narrative">By 1865 you are 47 and visibly deteriorating — forgetful, disorganized, making speeches at obstetric conferences that become rambling and incoherent. The years of being proved right and ignored have taken everything. Your wife and colleagues arrange for you to be admitted to Döbling Private Mental Institution in Vienna, telling you it is for a medical consultation. You realize what is happening when you arrive. You resist. You are restrained. Fourteen days later you are dead — of a wound infection, of the same kind that Kolletschka died of 18 years earlier when you first understood what was killing the women. The irony is too precise to be accidental, and too terrible to be bearable.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · The Committal</div>
+  <div class="d-situation">He was committed to a mental institution against his will. His resistance was treated as evidence of mental illness. Was there a way out of this?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Only if he had accepted help earlier — voluntary psychiatric treatment might have helped him manage the mental deterioration before the crisis</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. No — the committal was part of the medical establishment's response to a correct theory that embarrassed them; his mental state was secondary</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Yes — if he had built better alliances within medicine, colleagues who supported him might have protected him from his family's decision</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> The circumstances of Semmelweis's committal and death are still debated. Some historians believe he genuinely had dementia in his final years, possibly from early-onset Alzheimer's. Others believe his mental deterioration was a direct result of the sustained stress and rejection he experienced. The wound infection that killed him after his admission — the same kind of infection he had spent 18 years proving was preventable by handwashing — is either a terrible irony or, as some have suggested, the result of beatings by asylum guards. His autopsy showed injuries consistent with physical abuse. He was 47 years old.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · What Followed</div>
+<p class="narrative">In 1865, the same year Semmelweis died, Joseph Lister published his first paper on antiseptic surgery, based on Pasteur's germ theory. Within a decade, the medical establishment had accepted what Semmelweis had proved with data alone 18 years earlier. Germ theory provided the theoretical framework that the medical establishment had demanded before accepting the empirical evidence. Handwashing became standard. Women stopped dying of childbed fever in hospital obstetric wards. Semmelweis had been right about everything and wrong about nothing. He had simply been right before the theory existed to explain why he was right.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · Was This Inevitable?</div>
+  <div class="d-situation">He had the data but not the theory. The medical establishment required the theory before accepting the data. Could he have succeeded earlier?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. Possibly — better communication and strategic alliances might have won earlier acceptance even without germ theory</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. No — pre-germ-theory medicine could not have accepted the argument; the paradigm had to change first</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. Yes, definitely — the data was clear enough; the failure was entirely communication and institutional politics</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> This is the hardest historical question in the Semmelweis case. The philosopher of science Thomas Kuhn would say the data could not be accepted without the paradigm shift that germ theory provided. Others note that John Snow had persuaded the city of London to remove the Broad Street pump handle in 1854 — stopping a cholera outbreak — without a microbial explanation. Snow had worked with local authorities rather than attacking the medical establishment. Some combination of better strategy, better allies, and the eventual arrival of germ theory might have saved more lives. But the question is how many women died in the gap.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · The Legacy</div>
+<p class="narrative">Every hospital handwashing protocol in the world traces to Semmelweis's 1847 observation. Every surgical scrub, every antiseptic procedure, every gloved examination began with a Hungarian obstetrician who noticed that doctors in one clinic were killing patients and doctors in another clinic were not. He was vindicated by Pasteur and Lister. He was honored by a memorial in Budapest. His name is given to Semmelweis University in Hungary. He died of the infection he proved was preventable, in a mental institution, 14 days after admission, at 47 years old.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · What This Life Means</div>
+  <div class="d-situation">He was proved completely right and died in a mental institution before the proof arrived. How do we understand this?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. As a lesson in institutional inertia — the medical establishment resisted because accepting the data meant accepting responsibility for mass death; that resistance was structural, not personal</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. As a personal tragedy — a different communicator with the same data might have succeeded where Semmelweis failed</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. As evidence that correct ideas win eventually — the delay was terrible but the theory prevailed; this is how paradigm shifts work</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> All three interpretations are present in the historical literature. The structural explanation (Kuhn, paradigm shift) explains why intelligent people rejected good evidence. The personal tragedy explanation (Nuland, Shermer) explains why the rejection was particularly brutal and why better strategy might have helped. The "ideas win eventually" explanation (Whig history) is true in the long run but brutal in the short run — thousands of women died between 1847 and 1880 in the gap between the proof and the acceptance. Semmelweis knew this was happening. That knowledge killed him as surely as the infection.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Semmelweis Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="darwin-simulator.html">
+      <span class="next-name">Charles Darwin</span>
+      <span class="next-desc">Another scientist who faced institutional resistance to a correct and destabilizing theory</span>
+    </a>
+    <a class="next-card" href="nightingale-simulator.html">
+      <span class="next-name">Florence Nightingale</span>
+      <span class="next-desc">Semmelweis's contemporary who used statistics to prove that hospital conditions were killing patients</span>
+    </a>
+    <a class="next-card" href="cantor-simulator.html">
+      <span class="next-name">Georg Cantor</span>
+      <span class="next-desc">Another scientist whose correct ideas were attacked as wrong by powerful establishment figures</span>
+    </a>
+    <a class="next-card" href="franklin-simulator.html">
+      <span class="next-name">Rosalind Franklin</span>
+      <span class="next-desc">Another scientist whose work was taken without credit by the institutions she worked within</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You understand the Semmelweis dilemma completely — investigate immediately, present the data plainly, implement in Budapest to build more evidence, and recognize that the anger, however justified, was not strategically effective. You would have known what he knew and handled the politics better than he did. That might have saved more lives.';else if(score>=5)t.textContent='Strong instincts. You saw that the data needed to be built and that the letters were counterproductive. A few choices drifted toward confrontation rather than coalition-building, but you would have presented a stronger case than Semmelweis managed in his deteriorating state.';else if(score>=3)t.textContent='You chose confrontation and comprehensive documentation over strategy. Those choices are understandable when you know that women are dying from preventable infections. But justified fury is not effective persuasion. The book was too long. The letters were too angry. The correct data deserved better communication.';else t.textContent='You deferred to seniority, waited for more data, changed the framing to avoid offending colleagues, and stopped writing angry letters. Those choices might have produced professional survival and institutional acceptance. They would also have allowed more women to die in the gap between the proof and the protocol.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

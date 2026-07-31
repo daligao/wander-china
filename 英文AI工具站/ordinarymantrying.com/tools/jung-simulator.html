@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carl Jung Life Simulator — Shadow, Archetypes & the Red Book | Ordinary Man Trying</title>
+<meta name="description" content="Step into Carl Jung's shoes across 8 pivotal decisions — from breaking with Freud to descending into his own unconscious. The psychologist who mapped the territory between science and myth.">
+<style>
+:root{
+  --bg:#F5EEEA;--card:#FAF6F4;--ink:#140A08;--muted:#502820;--line:#DCC8C0;
+  --accent:#3A1818;--accent-bg:#F0D8D0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,238,234,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#140A08;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C8A8A0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#100808;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F5E8E8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.3);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F5E8E8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C8A8A0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C8A8A0;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Carl Jung</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #78 of 100</p>
+  <h1 class="cover-title">Into the Darkness<br>Below the Self</h1>
+  <p class="cover-sub">Carl Jung was Sigmund Freud's chosen heir — his "Crown Prince," the man who was supposed to carry psychoanalysis into the future. Then he wrote a book that disagreed with Freud's central theory, and Freud never spoke to him again. Jung spent the next four years deliberately inducing visions and recording them in an illuminated manuscript he called the Red Book. It wasn't published until 2009, forty-eight years after his death. Everything he ever theorized about the unconscious came from what he saw in those visions.</p>
+  <div class="cover-facts">
+    <p>🧠 Founded analytical psychology &nbsp;·&nbsp; 📖 <em>The Red Book</em> written 1913–1930, published 2009 &nbsp;·&nbsp; 🏰 Built stone tower at Bollingen by hand, 1923 &nbsp;·&nbsp; 💭 Coined: introvert/extrovert, archetype, collective unconscious, synchronicity &nbsp;·&nbsp; Died June 6, 1961 &nbsp;·&nbsp; Age 85</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Jung's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1907</div>
+  <div class="timeline-dot">Vienna, Austria · Age 31</div>
+  <div class="narrative">
+    <p>You arrive at Berggasse 19 on February 27th, 1907, and Sigmund Freud opens the door. He is fifty-one. You are thirty-one. You have been a young psychiatrist at the Burghölzli psychiatric hospital in Zürich, applying Freud's methods to psychotic patients — the kinds of cases Freud himself had largely avoided. Your word-association experiments have produced results that support the concept of the unconscious. You have already published enough to be taken seriously.</p>
+    <p>You talk for thirteen hours without stopping. At the end of the conversation, Freud tells a colleague that he has found his "successor and crown prince." You are moved by his intellect, his courage, the sheer originality of what psychoanalysis has accomplished. You are also, already, aware of a significant intellectual disagreement: Freud insists that the libido — the driving force of the unconscious — is primarily sexual in nature. You think it is something broader, something more like life-energy in general. You say nothing about this yet. You are not sure, yet, that the disagreement is as fundamental as it feels.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1907</div>
+    <p class="decision-q">Meeting Freud for the first time, you already sense a fundamental theoretical disagreement about the nature of libido. How do you approach this extraordinary new relationship?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Suppress the disagreement entirely — Freud is the master and you are the student; defer to him on theory until you have established yourself independently.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. Engage fully and honestly — share your clinical observations and your theoretical doubts as they develop, even if they challenge Freud's framework. Intellectual honesty is more valuable than the relationship's stability.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Position yourself as an empiricist rather than a theorist — focus on clinical results and avoid the theoretical debates where the disagreement lies.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Accept the "crown prince" role fully — Freud has built something extraordinary and the most useful thing you can do is extend and defend it rather than compete with it.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You talk for thirteen hours on the first meeting, become Freud's "crown prince" and chosen successor — and say nothing about the theoretical disagreement you already feel in the room.</strong> What Jung actually did: He engaged — at first in letters that were among the most intellectually intense correspondence in the history of psychology, and later in person at conferences and congresses. The correspondence (published as <em>The Freud/Jung Letters</em>) shows two extraordinary minds genuinely testing each other. Jung raised his theoretical doubts gradually, carefully. Freud interpreted every divergence as a threat to the movement. The tension built over five years before it broke. The thirteen-hour first conversation was the best day of a relationship that ended badly but produced extraordinary work on both sides.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1910</div>
+  <div class="timeline-dot">Zürich, Switzerland · Age 34</div>
+  <div class="narrative">
+    <p>Freud has made it official: he designates you President of the International Psychoanalytic Association and declares you publicly his heir and successor. He writes to colleagues that Jung is the "Joshua" who will lead psychoanalysis into the promised land — the implication being that Freud himself is the Moses who will not live to see it. The letter is touching and the gesture is generous. It is also, you sense, a trap.</p>
+    <p>If you are the official heir of psychoanalysis, your intellectual work is subordinated to defending and extending Freud's framework. You become an administrator of someone else's theory. Any deviation you take will be read not as scientific progress but as betrayal — of Freud personally, of the movement, of the patients who have been helped by the methods. The "crown prince" designation is an honor that simultaneously constrains what you can think.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1910</div>
+    <p class="decision-q">Freud names you his official successor. What is the hidden danger in this designation?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. The administrative burden — leading the International Association will consume time that should go to clinical work and writing.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. The intellectual constraint — the "crown prince" role means your thinking must remain within Freud's framework, and any original divergence will be experienced as betrayal rather than development.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. The jealousy of Freud's inner circle — Adler, Ferenczi, and others will see the designation as political maneuvering and will undermine your position.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. The public expectations — patients and referring physicians will now evaluate the entire field of psychoanalysis through your performance, which raises the stakes of every clinical decision.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>Freud called you his "Joshua" in letters to colleagues — publicly designating you the man who would carry psychoanalysis into the promised land. He had decided what you were for before you had finished deciding what you thought.</strong></p>
+      <strong>The succession problem:</strong> Jung later wrote that accepting the "crown prince" role was the beginning of the end of his relationship with Freud. Being named an heir in an intellectual movement means your thoughts are no longer entirely your own — they belong to the tradition you have been asked to perpetuate. When Jung finally published his theoretical divergences in 1912, Freud experienced it as a son killing a father. But from Jung's perspective, any truly independent mind must eventually produce truly independent thoughts. The designation had made that impossible to do without rupture.
+    </div>
+  </div>
+
+  <div class="year-banner">1912</div>
+  <div class="timeline-dot">Zürich, Switzerland · Age 36</div>
+  <div class="narrative">
+    <p>You have written <em>Wandlungen und Symbole der Libido</em> — <em>Psychology of the Unconscious</em>. The book's central argument is that the libido is not primarily sexual but is a broader psychic energy that can flow in many directions: toward sexuality, but also toward creativity, spirituality, and the symbols that appear across all human cultures. You have drawn on mythology, anthropology, and comparative religion in ways that Freud finds dilettantish and that the psychoanalytic community reads as a direct challenge to the core theory.</p>
+    <p>Freud has read the manuscript. He knows what is coming. You know he knows. In letters before publication, there is a kind of controlled grief on both sides — two men who genuinely respect each other, circling a rupture that both can see is inevitable. When the book appears, the correspondence that follows is brief and final. Freud writes: "I propose that we abandon our personal relations entirely." You agree.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1912</div>
+    <p class="decision-q">You know this book will end your relationship with Freud and possibly your standing in the psychoanalytic movement. Do you publish it as written?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. Soften the theoretical divergences — frame them as extensions of Freud's theory rather than departures, preserve the relationship, and develop the ideas more gradually over time.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. Publish it exactly as written — the intellectual honesty of stating what you actually believe is more important than any professional relationship, and the ideas are too important to compromise.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. Publish but dedicate the book to Freud — a gesture of respect that might soften the blow of the theoretical rupture.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. Wait until Freud has retired from active work before publishing — the field can absorb the divergence more easily without Freud himself in the position of having to respond.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>You published it. The break with Freud cost you the presidency of the International Psychoanalytic Association, your closest professional friendships, and the institutional identity you had spent seven years building alongside the most important figure in your field.</strong></p>
+      <strong>What Jung actually did:</strong> He published it. The break with Freud in 1913 cost Jung his position in the psychoanalytic movement and several important friendships. He spent the next two years in increasing psychological isolation. What he gained was the freedom to think — and what he did with that freedom produced analytical psychology, the concept of the collective unconscious, archetypes, the shadow, individuation, and everything that made his work distinct from and ultimately equal to Freud's. The price of the break was enormous. So was what it purchased.
+    </div>
+  </div>
+
+  <div class="year-banner">1913</div>
+  <div class="timeline-dot">Küsnacht, Switzerland · Age 37–41</div>
+  <div class="narrative">
+    <p>After the break with Freud, you enter what you will later call your "confrontation with the unconscious." For approximately three years, from late 1913 through 1916, you deliberately induce visions and waking hallucinations — sitting in a chair and letting the images come, then writing and drawing them in a large leather-bound volume that becomes the Red Book. The figures who appear include Philemon, a winged old man with kingfisher feathers and a lame foot who becomes your inner guide; Salome, who is blind; Elijah, who is wise.</p>
+    <p>Your wife Emma watches this process with considerable alarm. Your clinical colleagues, if they knew, would question your sanity. You know the risk. You are, in your own understanding, choosing to make yourself psychologically permeable to the unconscious and then to hold onto the thread of consciousness that leads back out. You are betting that you can do this and that the information you bring back will be worth the risk.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1913–1916</div>
+    <p class="decision-q">You are deliberately inducing visions and recording them in the Red Book. How should this period be understood?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. A psychotic break — the stress of the Freud rupture destabilized Jung's mental health, and the visions were symptoms of illness he was fortunate to survive.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. A deliberate self-experiment in the psychology of the unconscious — he used himself as the primary research subject, developing the theoretical concepts of archetype, shadow, and individuation directly from what he observed in his own psyche.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. A spiritual experience — the visions were genuine encounters with suprapersonal realities, not material for a psychology experiment.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. A creative outlet — the Red Book is primarily an artistic achievement, and the psychological theory that came from it was retrospectively constructed to give the images intellectual justification.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You were a trained psychiatrist who deliberately induced hallucinations, recorded them in an illuminated manuscript modeled on medieval codices, and kept the entire project locked in a bank vault for the rest of your life. You later said those were the most important years of your career.</strong></p>
+      <strong>The Red Book's significance:</strong> Jung worked on the Red Book from 1913 to approximately 1930, filling 205 pages with illuminated text and mandalas in the style of medieval manuscripts. He later wrote that everything he produced after 1913 — his theories of archetypes, the collective unconscious, individuation, the shadow — grew directly from what he recorded there. He kept it private throughout his life, circulating copies only to a few trusted colleagues. When it was finally published in 2009, it was immediately recognized as one of the most extraordinary psychological documents of the 20th century, and as the origin point of a major intellectual tradition.
+    </div>
+  </div>
+
+  <div class="year-banner">1921</div>
+  <div class="timeline-dot">Küsnacht, Switzerland · Age 45</div>
+  <div class="narrative">
+    <p><em>Psychological Types</em>, published in 1921, introduces concepts that will eventually enter everyday language: introversion and extroversion as fundamental psychological orientations. In the popular understanding that follows, these are treated as fixed personality types — you are either one or the other. But this is not quite what you wrote. The distinction is more nuanced, more dynamic, and more useful than the simplified version that enters the culture.</p>
+    <p>The book also introduces the four functions — thinking, feeling, sensation, intuition — and how they combine with the two orientations to produce the eight psychological types. This typology will eventually be formalized into the Myers-Briggs Type Indicator by Isabel Myers and Katharine Briggs, who apply it without Jung's endorsement to a personality test used by millions of people in organizational settings worldwide. Jung himself has mixed feelings about the popularization.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1921</div>
+    <p class="decision-q">Introversion and extroversion are quickly simplified into fixed personality labels. What did Jung actually intend by these concepts?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Fixed types — every person is constitutionally either introverted or extroverted, and this orientation is largely biological and unchangeable.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. Dynamic attitudes — a person's habitual orientation tends toward one pole, but the opposite attitude exists in the unconscious and can develop through individuation. The goal is not to be a perfect introvert or extrovert but to integrate both.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. Cultural constructions — extroversion dominates Western societies, introversion Eastern ones, and individuals adapt to these cultural pressures rather than expressing innate tendencies.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. Diagnostic categories — introversion and extroversion are clinically useful labels for describing the general orientation of a patient's libido, not descriptions of personality.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>You introduced introversion and extroversion to the world, then spent decades explaining that no one is purely either one and that the whole point was to develop the other half. The world kept the labels and discarded the development.</strong></p>
+      <strong>What Jung actually argued:</strong> Jung was explicit that no one is purely introverted or extroverted — these are tendencies, not fixed categories. More importantly, the "inferior function" (the opposite orientation or the undeveloped psychological function) lives in the unconscious and tends to erupt in moments of stress or in the second half of life. Individuation — the psychological growth process Jung considered the goal of adult development — involves consciously developing and integrating the inferior function. The Myers-Briggs popularization, which Jung never endorsed, strips out this developmental dimension and turns fluid orientations into permanent labels. Jung himself, when asked if he was an introvert or an extrovert, reportedly said: "I am both at different times."
+    </div>
+  </div>
+
+  <div class="year-banner">1923</div>
+  <div class="timeline-dot">Bollingen, Lake Zürich · Age 47</div>
+  <div class="narrative">
+    <p>You begin building a stone tower on the shore of Lake Zürich at Bollingen. You build it with your own hands, refusing modern machinery or power tools. The initial round tower takes two years. You add a central section in 1927, a tower room in 1931, and a courtyard with loggia in 1935. Over the following decades, you expand it five more times, each expansion coinciding with a significant life event. When Emma dies in 1955, you add an upper story. The tower as it stands when you finish it in 1956 is essentially an unconscious autobiography in stone.</p>
+    <p>There is no electricity in the tower. No running water. You cook over an open fire, carry water from the well, and chop your own wood. In this place — which you call your <em>Seele</em>, your soul — you feel that you are living closer to the ground of your own being than anywhere else. "I am in the tower what I am in the fullest sense," you write. "A part of the self, of my life, which has its own character and speaks for itself."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1923</div>
+    <p class="decision-q">You build a medieval stone tower by hand, without electricity or running water, and spend significant time there throughout your life. What does this tower represent?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Eccentricity — a wealthy professional's hobby project that has been retrospectively over-interpreted by admirers.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. A deliberate practice of slowness and materiality — by living without modernity's mediations, he could access layers of human experience (ancestral, bodily, elemental) that his theoretical work required and that modern comfort makes inaccessible.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. A retreat from the emotional demands of his family life — the tower was primarily an escape from wife, children, and the complex domestic situation of his relationship with Toni Wolff.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. A symbol of the psyche's architecture — the tower was a three-dimensional mandala, built as an external representation of the inner structure his psychology described.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>You were one of Europe's most prominent psychiatrists. You chose to spend significant portions of the rest of your life without electricity, carrying water from a well, cooking over an open fire — because you believed that certain kinds of thinking require a certain kind of friction with the physical world.</strong></p>
+      <strong>The Bollingen Tower:</strong> Jung wrote extensively about what the tower meant to him. He described it as a place where time moved differently — where he could access the "timeless" stratum of human experience. He studied stone carving, carved inscriptions in Latin, Greek, and other languages into its walls, and spent weeks there in solitary work. The tower was not anti-modern in a reactionary sense; Jung embraced technology in his Küsnacht life. But he believed that certain kinds of thinking require a certain kind of environment — that the human psyche's deepest levels respond to direct material engagement with stone, fire, water, and wood in ways that no study in a modern office can replicate.
+    </div>
+  </div>
+
+  <div class="year-banner">1944</div>
+  <div class="timeline-dot">Küsnacht, Switzerland · Age 68</div>
+  <div class="narrative">
+    <p>You suffer a severe heart attack in February 1944 and nearly die. While unconscious, you experience what you will later describe as visions: you float above the earth at a great height, see the planet in its entirety, and enter a rock floating in space where a Hindu figure sits in meditation. You see Freud — or a figure you take to be Freud — approaching to tell you something important, and then you are pulled back into the body by your doctor's appearance in a luminous vision.</p>
+    <p>You recover slowly. The experience has confirmed something you have been working on for years: that the psyche has dimensions that cannot be fully explained by personal biography or collective cultural history — that there is something that functions like a soul, a dimension of the human person that exceeds biological limits. Your remaining years will be spent on synchronicity, alchemy, and what you call the "objective psyche" — ideas that many of your colleagues find mystical to the point of abandoning scientific respectability.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · Late Career</div>
+    <p class="decision-q">Your late work on synchronicity, alchemy, and near-death experience pushes past the limits of scientific psychology. Are these serious intellectual contributions or mystical detours?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Mystical detours — an old man's loss of intellectual rigor, drifting toward spirituality because he can no longer sustain the discipline of his earlier scientific work.</button>
+      <button class="dopt" onclick="choose(this,7,true)">B. The logical extension of his psychology — if the collective unconscious contains archetypes shared across all human cultures, then the boundary between psyche and matter, inner and outer, must eventually be examined. Synchronicity and alchemy are attempts to map that boundary.</button>
+      <button class="dopt" onclick="choose(this,7,false)">C. Strategic positioning — by engaging with mystical traditions, he protected himself from the laboratory-science critiques that had challenged his work since the 1920s.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Personal therapy — the near-death experience and his advanced age produced natural preoccupations with mortality and transcendence that he should have kept private rather than publishing.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>Your late work on synchronicity was developed with Wolfgang Pauli — winner of the 1945 Nobel Prize in Physics. The physicist who best understood quantum mechanics thought the boundary between mind and matter was worth serious investigation alongside the psychologist who mapped the unconscious.</strong></p>
+      <strong>The late work:</strong> Jung's concept of synchronicity — meaningful coincidence that cannot be explained by causality — was developed with physicist Wolfgang Pauli, who was both a Nobel laureate and a patient. Their collaboration produced <em>The Interpretation of Nature and the Psyche</em> (1952), a serious attempt to bridge physics and psychology. The alchemical studies occupied him for decades because he saw in alchemical symbolism a pre-scientific vocabulary for the same transformations he observed in analysis. Whether these late works succeed as science is genuinely disputed. That they represent a coherent and sophisticated extension of a single intellectual project is not.
+    </div>
+  </div>
+
+  <div class="year-banner">1961</div>
+  <div class="timeline-dot">Küsnacht, Switzerland · Age 85</div>
+  <div class="narrative">
+    <p>June 6th, 1961. You die at home in Küsnacht, three weeks after suffering a stroke. You have lived long enough to see analytical psychology become a global movement, to see the word "archetype" enter common usage, to see introversion and extroversion become concepts that ordinary people apply to themselves. You have also lived long enough to see your ideas simplified, popularized, and misrepresented in ways that occasionally cause you anguish.</p>
+    <p>The Red Book remains in the custody of your family, in a safe at a bank in Zürich. It will stay there for nearly fifty years. When it is finally published in 2009, with full-color reproductions of your illuminated pages, it will become an immediate bestseller and will be recognized as the matrix from which everything else grew — the original experience that all the theoretical work was trying to describe. You always suspected this. "The years when I was pursuing my inner images were the most important in my life," you wrote at the end. "Everything else is to be derived from this."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 1961</div>
+    <p class="decision-q">Jung kept the Red Book private for nearly fifty years. What does this choice reveal about his understanding of his own work?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. Shame — the visions were too irrational to share with colleagues without destroying his scientific reputation.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. Protectiveness — the Red Book was so important to him personally that he couldn't risk it being misunderstood or trivialized.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. Integrity — the Red Book was the experience, and the theoretical works were the translations of that experience into communicable language. He kept the original private because he wanted the theory to stand or fall on its own merits, not on the authority of a personal vision.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. Incompleteness — he always felt the Red Book was unfinished, and kept revising and reconsidering it throughout his life without ever reaching a satisfactory conclusion.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>You kept the source of all your theoretical work locked in a bank vault for nearly fifty years, sharing it with almost no one. You wanted the theory to stand or fall on its own merits — without the authority of a personal vision propping it up.</strong></p>
+      <strong>Jung's legacy:</strong> The concepts that came from the Red Book — shadow, archetype, collective unconscious, individuation, anima/animus, the Self — are now part of the global psychological vocabulary. They appear in film criticism, organizational development, storytelling theory, narrative therapy, and popular psychology. The Myers-Briggs Type Indicator, however imperfectly, brings Jung's typology to millions annually. His insistence that the irrational and symbolic dimensions of human experience are scientifically serious, not merely poetic, changed what psychology considers itself able to study. The Red Book, finally published at the century's turn, confirmed that the source of all this was a single remarkable man's decision to look directly into the darkness inside himself and report accurately what he saw.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Carl Gustav Jung · 1875–1961</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"Your visions will become clear only when you can look into your own heart."<br><em style="font-size:13px;color:var(--muted);">— Carl Jung</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="freud-simulator.html" class="next-card">
+        <div class="next-card-name">Sigmund Freud</div>
+        <div class="next-card-sub">The unconscious, the couch & the century he rewired</div>
+      </a>
+      <a href="nietzsche-simulator.html" class="next-card">
+        <div class="next-card-name">Friedrich Nietzsche</div>
+        <div class="next-card-sub">God is dead — and the abyss looks back</div>
+      </a>
+      <a href="kierkegaard-simulator.html" class="next-card">
+        <div class="next-card-name">Søren Kierkegaard</div>
+        <div class="next-card-sub">The leap of faith taken entirely alone</div>
+      </a>
+      <a href="wittgenstein-simulator.html" class="next-card">
+        <div class="next-card-name">Ludwig Wittgenstein</div>
+        <div class="next-card-sub">The limits of language & the silence beyond</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understood Jung the way Jung understood his patients: beneath the surface to the structure underneath. You saw the intellectual honesty, the deliberate self-experiment, the dynamic rather than fixed typology, and the coherent late work. The Red Book approves.';else if(pct>=0.625)t.textContent='You grasped the narrative but flattened some of the complexity. Jung spent his career arguing against the simplified version of his own ideas — fixed types, mystical detours, creative eccentricity. Several of your answers chose the simplified version.';else if(pct>=0.375)t.textContent='You have the surface — the break with Freud, the Red Book, the tower, the archetypes — but missed what was underneath. Jung would call this the persona rather than the Self: the recognizable outline without the depth.';else t.textContent='You would have called the Red Book period a psychotic break. The colleagues who did call it that are now footnotes. Jung is not.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

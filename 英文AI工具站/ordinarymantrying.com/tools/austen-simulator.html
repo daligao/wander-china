@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Jane Austen?</title>
+<meta name="description" content="She published all her novels anonymously. She turned down the only marriage proposal she ever received. She died at 41. Her six novels are still among the most-read books in the world. 8 decisions from Jane Austen's life.">
+<meta property="og:title" content="What Would You Do If You Were Jane Austen?">
+<meta property="og:description" content="Published anonymously. Rejected her one marriage proposal. Died at 41. Left six perfect novels. 8 decisions from Jane Austen.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/austen-simulator.html">
+<style>
+:root{
+  --bg:#F0EEF5;--card:#F8F7FC;--ink:#08060E;--muted:#40306A;--line:#C0B0D8;
+  --accent:#3A1860;--accent-bg:#E8E0F5;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(240,238,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#08060E;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #A090C8;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#06040C;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#E8E0F5;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#06040C;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#E8E0F5;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #A090C8;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#06040C;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#08060E;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#E8E0F5;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #A090C8;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#E8E0F5;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#B0A0E0;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Jane Austen</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #46</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Jane Austen?</h1>
+  <p class="cover-sub">She wrote about marriage as the central fact of women's lives — while never marrying. She published all six novels anonymously, credited only to "A Lady." She turned down the only proposal she ever received, from a man who would have given her financial security. She died at 41, having spent years hiding her writing from visitors. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Jane Austen</strong> (1775–1817) · English novelist · Born Steventon, Hampshire; seventh child of Reverend George Austen · Received only formal education at Oxford and Southampton age 7–8; otherwise educated at home · Wrote <em>Sense and Sensibility</em> (1811), <em>Pride and Prejudice</em> (1813), <em>Mansfield Park</em> (1814), <em>Emma</em> (1815), <em>Northanger Abbey</em> and <em>Persuasion</em> (published posthumously 1817) · All published as "By a Lady" or "By the Author of..." · Received proposal from Harris Bigg-Wither (1802): accepted, then retracted the following morning · Died July 18, 1817, Winchester, at 41 · Six novels remain continuously in print; adapted into film and television more than perhaps any other English novelist.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1795, Steventon</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Creaking Door</span></div>
+<div class="year-banner">1798</div>
+<div class="timeline-dot">Steventon, Hampshire · Age 23</div>
+<div class="narrative">
+  <p>You have been writing since you were a child. First the juvenilia — comic parodies and burlesques that you performed aloud to family for laughter. Now serious novels: you have a manuscript called <em>First Impressions</em> (which will eventually become <em>Pride and Prejudice</em>) that the family has read aloud together, and a nearly complete draft of something called <em>Elinor and Marianne</em> (which will become <em>Sense and Sensibility</em>).</p>
+  <p>You write on small sheets of paper at a writing desk in the family sitting room, and you have a habit: when you hear someone approaching, you slip the sheets under a blotter. The sitting room door has a squeaky hinge that you have asked not to be oiled. The sound of the door is your warning system. Your writing is not secret exactly — the family knows — but it is private. Visitors should not know.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Hidden Writing</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Austen hid her writing from visitors for years. Was this strategic modesty or genuine shame?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Strategic modesty — in Regency England, a woman who wrote for publication was crossing a social boundary. Keeping the writing private until it was successful enough to matter was a practical calculation about social risk.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Genuine privacy — she valued the writing as her own, not something for general consumption. The hiding was less about social calculation than about protecting a private activity from public judgment before she was ready.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">Both operated together, and the squeaky door is the key detail. She didn't ask to have the hinge fixed — she used the sound as a warning. This is adaptation, not shame. She found a way to write in the conditions she had, using the constraints of her domestic situation as a structural feature of her creative life. The hiding was practical and purposeful, not fearful.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">The conditions of Austen's writing</div>
+      <p><strong>You keep the sitting-room door hinge un-oiled on purpose — the squeak is your alarm system. You are not ashamed of the writing. You simply need a warning before visitors see it.</strong> Jane Austen wrote in the common sitting room of the family home, not a private study. Her nephew James Edward Austen-Leigh, who wrote the first biography of her in 1869, recorded the squeaky door story. She used small sheets of paper that could be concealed quickly. The conditions were not ideal — she was always subject to interruption, never alone in the way that later writers (Virginia Woolf's "room of one's own") would advocate as necessary. What she had instead was a high tolerance for writing in the middle of domestic life, and a domestic situation that, while not ideal, was supportive: her family knew she wrote, enjoyed reading her work aloud, and her father tried (unsuccessfully) to get <em>First Impressions</em> published in 1797. The hiding was from visitors and the outer world, not from the family.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Proposal</span></div>
+<div class="year-banner">1802</div>
+<div class="timeline-dot">Hampshire · Age 27</div>
+<div class="narrative">
+  <p>Harris Bigg-Wither is 21, you are 27. He is the son of a wealthy Hampshire family — the Bigg-Withers of Manydown Park. He is awkward and not especially attractive, but he is kind. And he has Manydown Park: a large estate that would give you financial security for life, your own household, and your mother and sister Cassandra a comfortable home. The alternative is continuing as you are: financially dependent on your father and brothers, with no income and no guarantee of security after your father's death.</p>
+  <p>On the evening of December 2, 1802, Harris proposes. You accept. In the morning, you retract the acceptance and ask to leave immediately. You never explain why, publicly.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Retracted Acceptance</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Austen accepted Harris Bigg-Wither's proposal in the evening and retracted it the next morning. What was the right call?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">The retraction was wrong — she should have accepted. The financial security was real and important; her mother and Cassandra would have benefited. Marrying without love but with mutual respect was a reasonable bargain in 1802, and she knew it.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">The retraction was right — she knew that marriage to someone she didn't love would close the imaginative and emotional space that her writing required. Her novels are studies in what happens when women marry for the wrong reasons. She had to choose between the life her novels described as wrong and the life her novels described as right. She chose correctly.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">There's no right answer — it was a genuine dilemma with real costs on both sides. The retraction preserved her freedom and produced six novels. The acceptance would have given her family security. We can't know what the other path produced.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What happened after</div>
+      <p><strong>You say yes to Harris Bigg-Wither on the evening of December 2, 1802. By the following morning, you have changed your mind and asked to leave immediately — canceling what everyone around you expects to be a celebration.</strong> After retracting the acceptance, Austen left Manydown Park with Cassandra the following morning — a social disruption of some force, since the family had been expecting a celebration. Harris Bigg-Wither later married someone else and had ten children. Jane Austen's father died in 1805, leaving the family in exactly the financial difficulty she might have prevented by the marriage. She, her mother, and Cassandra were dependent on the charity of her brothers for the rest of her life. She had an annual income of about £25–30 from her novels — not enough to live on independently. She never proposed another marriage or received another proposal. She wrote four of her six novels in the eight years between the Bigg-Wither episode and her death, in conditions of financial dependency and domestic limitation. Whether she regretted the decision, her letters — most of which were destroyed by Cassandra — don't reveal.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · Publishing Anonymously</span></div>
+<div class="year-banner">1811</div>
+<div class="timeline-dot">Chawton, Hampshire · Age 36</div>
+<div class="narrative">
+  <p><em>Sense and Sensibility</em> is published. The title page reads: "By a Lady." <em>Pride and Prejudice</em> follows in 1813: "By the Author of 'Sense and Sensibility.'" You will never publish under your own name during your lifetime. The Prince Regent admires your work and invites you to dedicate a novel to him — you do, grudgingly, and you don't tell him your name.</p>
+  <p>The secret is not entirely kept: your brother Henry tells people, and the London literary world begins to know. But officially, publicly, you are "A Lady" or "the Author of." Your identity is an open secret, not a public fact.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — Anonymous Publication</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Austen published anonymously throughout her career. Was this necessity or choice?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Necessity — the literary world of 1811 would have taken a female novelist less seriously, and anonymous publication was standard practice for women writers. She had no choice.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Choice — other women published under their names (Frances Burney, Maria Edgeworth). Austen chose anonymity specifically to protect her privacy and social position in Hampshire. It was preference, not constraint.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">The choice was shaped by the necessity without being determined by it. She could have published under her name — some women did — but doing so would have changed her social situation in ways she preferred to avoid. The anonymity was a decision made in a context that made it the safest option, not a forced imposition.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">Women writers in Regency England</div>
+      <p><strong>Frances Burney and Maria Edgeworth put their names on novels in the same era and were respected for it. Austen chose "A Lady" — not because women couldn't publish under their own names, but because her subject matter required distance from her address.</strong> Women publishing novels in the early 19th century was not unusual. Frances Burney (<em>Evelina</em>, 1778), Maria Edgeworth (<em>Castle Rackrent</em>, 1800), and Ann Radcliffe (<em>The Mysteries of Udolpho</em>, 1794) all published under their names and were successful. Austen's contemporaries in the Gothic tradition published freely. What Austen's anonymity protected was specifically local: her neighbors in Hampshire, the people her novels depicted in thinly veiled form, should not easily connect the books to the rector's daughter. Her novels were social satire at close range. "A Lady" could be anyone; "Miss Jane Austen of Steventon/Chawton" could not be. Her brother Henry's disclosure of her authorship after the success of <em>Emma</em> was something she didn't prevent and may have accepted as inevitable once she had an established readership. Her name appeared on the title pages of <em>Northanger Abbey</em> and <em>Persuasion</em>, published after her death.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Free Indirect Discourse</span></div>
+<div class="year-banner">1813</div>
+<div class="timeline-dot">Chawton · Age 38</div>
+<div class="narrative">
+  <p><em>Pride and Prejudice</em> begins: "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife."</p>
+  <p>Who says this? Not Elizabeth Bennet. Not Jane Austen directly. It is the voice of the neighborhood talking — the social reality of the world the novel inhabits, presented as if it were obvious truth, with the reader immediately invited to notice that it isn't. You have invented (or perfected) a technique that the next two centuries of literary critics will call free indirect discourse: the ability to inhabit a character's (or a society's) point of view and voice while remaining subtly apart from it.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Ironic Voice</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Austen's signature technique — irony that shows the gap between what characters say and what is true — allowed her to criticize a social system while appearing to work within it. Was this a limitation or a strategy?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Limitation — she couldn't criticize society directly (as a woman, as an "anonymous" novelist) and so was forced into irony and indirection. Direct satire would have been more powerful.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">B</span><span class="dopt-body">Strategy — irony is more powerful than direct criticism because it requires the reader to do the work. When Austen presents Mrs. Bennet's obsession with marrying off her daughters without editorial comment, the reader's laugh is a form of understanding that a pamphlet about women's economic vulnerability couldn't produce. The indirection is the technique, not the limitation.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">Neither — the irony is simply Austen's natural mode of apprehending experience. She didn't choose to be ironic because direct criticism was unavailable; irony is how she saw. The social constraints she worked within shaped her subject matter but not her fundamental sensibility.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">Free indirect discourse</div>
+      <p><strong>"It is a truth universally acknowledged" — the opening sentence presents a neighborhood's assumption as if it were objective fact, with the word "universally" already doing ironic work before the reader reaches the end of the sentence. Austen is standing outside the social reality she is describing before she has finished describing it.</strong> Free indirect discourse — presenting a character's thoughts or social attitudes in the third person without explicit framing ("she thought" / "the community believed") — was not invented by Austen but was developed to an unprecedented level of sophistication by her. The technique allows the narrator to simultaneously inhabit and judge a perspective. "It is a truth universally acknowledged" presents the neighborhood's opinion as if it were objective fact, but the word "universally" is doing ironic work — it's immediately obvious that this is not universal truth but local assumption. This double vision — inside and outside a perspective at the same time — is what makes Austen's social criticism so precise and so funny. Henry Austen, in his memoir of his sister, noted that "irony was her element." Subsequent novelists — Flaubert, James, Woolf — developed free indirect discourse further; it remains the dominant mode of third-person literary fiction.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · Writing About Marriage Without Marrying</span></div>
+<div class="year-banner">1814</div>
+<div class="timeline-dot">Chawton · Age 39</div>
+<div class="narrative">
+  <p>You have written four novels in which the central plot turns on women seeking or finding (or failing to find) appropriate marriages. Every novel ends with at least one marriage. The marriages your heroines make are not just romantic conclusions — they are economic and social arrangements that determine the rest of these women's lives.</p>
+  <p>You understand this in precise, non-romantic terms. In your letters you describe financial arrangements of marriages with the same clarity you show in the novels. You know that Charlotte Lucas's marriage to Mr. Collins is not a failure of character but a rational economic calculation by someone without Elizabeth's options. You never marry. You write about marriage from outside it, with perfect comprehension of its necessity.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Outsider's View</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Austen's novels are the definitive literary treatment of marriage, written by someone who never married. Does the outsider position give a clearer view or a blind spot?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Blind spot — she could observe marriage from outside but never know it from within. Her depictions of marriage are brilliant as social observation but thin on the reality of the long term.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">Clearer view — the person inside a system often can't see it as clearly as someone looking at it from adjacent. She lived in a society where marriage was the central female experience, saw it closely through her siblings and neighbors, and was free from the distortions of personal investment in any particular marriage. The outsider position was her analytical advantage.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">The question is misframed — she wrote about the approach to marriage (courtship, choice, the assessment of character) rather than marriage itself. Her novels almost always end at the wedding; what comes after is not her subject. For that subject, the outsider position is essentially complete.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">Marriage in Austen's world</div>
+      <p><strong>Charlotte Lucas marries Mr. Collins. Austen presents this not as a failure of character but as a rational economic decision by someone who understood the mathematics of her situation precisely. Austen understood those same mathematics. She never made Charlotte's calculation.</strong> In Regency England, an unmarried woman of the gentry class had no independent economic existence. She could not own property (beyond small personal possessions), could not sign contracts, had no income except what her father or brothers provided, and had no respectable occupation except governess or companion. Marriage was the only available mechanism for economic independence. Austen understood this with complete clarity. Her letters discuss the financial terms of marriages around her with the same precision she applies to character analysis: "a good income," "a very good match." Charlotte Lucas's calculation in <em>Pride and Prejudice</em> — marrying Mr. Collins for security without love — is presented not as moral failure but as a rational response to a constrained situation. What Austen added was the argument that within those constraints, character still matters enormously: whom you choose, and why, shapes the quality of life you can have inside the marriage.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Lost Letters</span></div>
+<div class="year-banner">1817</div>
+<div class="timeline-dot">Winchester · Age 41</div>
+<div class="narrative">
+  <p>You are dying. You know it; you write to a niece about not expecting to recover. Your sister Cassandra, who has been your closest reader and confidante since childhood — who read all the manuscripts, who knows everything — will survive you.</p>
+  <p>After your death, Cassandra will burn most of your letters. Hundreds of letters, perhaps thousands. She will keep what she judges appropriate for a public reputation. What she burns, we will never know: romances, doubts, sharp observations about real people she judged too revealing, the private Jane Austen that existed behind "A Lady."</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Burned Letters</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Cassandra Austen burned most of Jane's letters. Was this betrayal or protection?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Betrayal — she destroyed irreplaceable primary documents that would have given us deeper understanding of one of the greatest writers in English. Her judgment of what was "appropriate" was not hers to make after Jane's death.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Protection — the letters contained material (about real people, about Cassandra herself, about private matters) that would have caused pain to living people and damaged the reputation Cassandra wanted to protect. She acted as Jane's executor, within the norms of her time.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, and the loss is irreversible. What we know from the surviving letters is that Austen was funnier, sharper, and less gentle than the Victorian reputation for "dear Aunt Jane" suggested. What was burned was presumably more of the same, amplified. Cassandra was protecting both of them. She succeeded — and we are left with the novels, which are complete, and the letters, which are fragments.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">The surviving letters</div>
+      <p><strong>Cassandra burned roughly 2,840 of the estimated 3,000 letters. What survived is still sharp enough to shock — she wrote that a neighbor's baby was "hideously ugly," that she was glad someone died because it clarified an inheritance. The burned letters were presumably sharper still.</strong> About 160 of Jane Austen's letters survive, out of an estimated 3,000 she wrote during her lifetime. Cassandra burned the majority in the years after Jane's death, keeping what she considered suitable for public display. The surviving letters reveal a very different person from the gentle spinster of Victorian mythology: sharp, occasionally cruel about neighbors and relatives, frank about money, funny in ways that are often at others' expense. She writes that a new neighbor's baby is "hideously ugly," that she finds a dance boring because there were "hardly any men," that she is glad someone died because it clarified an inheritance question. The letters don't make her less admirable; they make her more interesting. The Romantic and Victorian cult of Austen as a gentle domestic saint was partly built on the gaps Cassandra created. Modern Austen scholarship has had to work around the deliberate silence.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · Persuasion</span></div>
+<div class="year-banner">1816</div>
+<div class="timeline-dot">Winchester · Age 41</div>
+<div class="narrative">
+  <p>You are writing your last completed novel: <em>Persuasion</em>. It is different from the others in register. The heroine, Anne Elliot, is 27 — older than any previous Austen heroine — and she has already made her central mistake: eight years ago, she was persuaded by her family and mentor to break off an engagement to Frederick Wentworth, because he had no fortune. Now Wentworth is back, successful and wealthy. Anne must live with the knowledge that she made the wrong choice.</p>
+  <p>The novel is about regret and the possibility of second chances. You are 41, in failing health, and you know it. The novel is your last gift to yourself: the story of a woman who made the prudent choice and spent years understanding what it cost.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — Persuasion's Key Letter</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q"><em>Persuasion</em> contains a famous love letter — "You pierce my soul. I am half agony, half hope." It is considered by many the most direct, passionate declaration in all of Austen. Why is this moment so different from the rest of her work?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">She was dying and ran out of time for irony — the directness is a result of illness and approaching death removing the distance that her usual technique maintained.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">She always had this register available but rarely used it — the famous wit and irony was a choice, not a limitation. The letter shows what she could do when she decided to drop the ironic distance.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">The letter is the payoff of the ironic distance maintained throughout. We feel Wentworth's letter so acutely because we have spent the whole novel watching Anne navigate oblique social situations with controlled feeling. The directness lands because it has been withheld. The irony and the passion are not alternatives; the irony makes the passion possible.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">Wentworth's letter</div>
+      <p><strong>Wentworth writes this letter while sitting in the same room as Anne and slips it to her without her seeing him write it. Twenty-two chapters of controlled obliquity have been preparation for the directness of twelve words: "You pierce my soul. I am half agony, half hope."</strong> In Chapter 23 of <em>Persuasion</em>, Captain Wentworth writes a letter to Anne Elliot while she is in the same room with him, and has it delivered without her noticing him write it. The letter reads: "I can listen no longer in silence. I must speak to you by such means as are within my reach. You pierce my soul. I am half agony, half hope. Tell me not that I am too late, that such precious feelings are gone for ever. I offer myself to you again with a heart even more your own than when you almost broke it, eight years and a half ago." This letter is quoted more often than any other passage in Austen's work, as evidence that the woman famous for ironic understatement was also capable of exactly this. The letter is written in haste, by a man who can't stop listening to what he's hearing, unable to remain in the same social space without declaring himself. It is the most direct piece of writing Austen ever published.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · Forty-One Years</span></div>
+<div class="year-banner">1817</div>
+<div class="timeline-dot">Winchester · July 18</div>
+<div class="narrative">
+  <p>You die on July 18, 1817, at age 41. The cause of death has been speculated on for 200 years: Addison's disease, Hodgkin's lymphoma, arsenic poisoning from a medical treatment, bovine tuberculosis. Cassandra is with you. You die, she writes, "without pain."</p>
+  <p>You have published six novels. The Romantics are in full swing around you; Byron is famous; Keats and Shelley are writing. You are "A Lady." You are not famous yet. Your novels will be reissued in collected editions in the 1830s, 1860s, 1870s, steadily building to the enormous readership they have today.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — Six Novels</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Austen wrote six complete novels in a life of 41 years, under significant constraints. How should we understand the relationship between her constraints and her achievement?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">The constraints limited her — a woman with a private study, financial independence, and 60 years of life might have written twelve novels with wider scope. What we have is what the constraints allowed.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">The constraints shaped her uniquely — the narrow domestic world she observed so precisely was her subject, and the subject required exactly the observation she was positioned to make. A freer life might have produced a different writer but not necessarily a better one.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">Both are probably true, and the question is unanswerable. What is answerable: the six novels she did write contain observations about human character, social performance, and the relationship between intelligence and happiness that have not been bettered. Whether that's despite or because of the constraints, the constraints are now inseparable from the work. You read what was written in those conditions, not what might have been written in better ones.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">The Austen phenomenon</div>
+      <p><strong>She published every novel under "A Lady" to protect her social position in Hampshire. She appears on the British £10 note. Scholars estimate that more people are reading Pride and Prejudice at any given moment than any other novel in English. The irony would not have escaped her.</strong> Jane Austen's posthumous reputation is one of the strangest in literary history. She was mildly popular in the 1810s–1820s, then largely forgotten, then revived in collected editions from the 1830s onward, then turned into a Victorian icon of domestic propriety (which her actual letters complicate considerably), then made into the subject of academic scholarship from the mid-20th century, then into a global cultural franchise from the 1990s film adaptations onward. The word "Janeite" — a devoted Austen fan — was coined by Rudyard Kipling in 1924. She appears on the British £10 note. Her novels have never gone out of print. Scholars estimate that at any given moment, more people are reading Pride and Prejudice than any other novel in English. The woman who published as "A Lady" to preserve her social position in Hampshire has a face recognizable worldwide. The irony would not have escaped her.</p>
+    </div>
+  </div>
+</div>
+
+<div class="ending" id="ending">
+  <div class="ending-score" id="final-score">0/8</div>
+  <div class="ending-label">Your Jane Austen Score</div>
+  <div class="ending-title" id="final-title"></div>
+  <div class="ending-body" id="final-body"></div>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue the Series</div>
+  <div class="next-grid">
+    <a class="next-card" href="dickens-simulator.html">
+      <span class="next-name">Charles Dickens</span>
+      <span class="next-desc">Her exact contemporary who took the opposite approach: loudly public, serialized, socially confrontational, always named.</span>
+    </a>
+    <a class="next-card" href="shakespeare-simulator.html">
+      <span class="next-name">William Shakespeare</span>
+      <span class="next-desc">Also wrote about the full range of human social life in constrained institutional forms. Also the question of what he personally believed stays open.</span>
+    </a>
+    <a class="next-card" href="kafka-simulator.html">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">Also asked to have his unpublished work destroyed. His friend didn't comply; Cassandra did — different outcomes entirely.</span>
+    </a>
+    <a class="next-card" href="curie-simulator.html">
+      <span class="next-name">Marie Curie</span>
+      <span class="next-desc">Another woman who worked within severe social constraints to achieve something that transcended them — in a completely different field.</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <p>Jane Austen's story is one of 100 historical life simulators on this site. Each one asks: given the same constraints, pressures, and information — what would you have chosen?</p>
+  <p><a href="simulators.html">Browse all simulators →</a></p>
+</div>
+
+</div>
+</div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="The Woman Who Kept Writing";body="You understand Austen the way she understood her characters: inside their perspective and outside it simultaneously. The squeaky door was a feature, not a problem. The anonymity was strategic, not shameful. The retraction in 1802 was the right call. The irony was not a limitation — it was the technique. She wrote in whatever conditions she had. That is the whole answer.";}else if(pct>=0.625){title="A Discerning Reader";body="You grasp the core of what made Austen's achievement possible: the outsider position on marriage, the technique of free indirect discourse, the strategic anonymity, the hard choice on December 2, 1802. Where you diverge is in the fine-grained reading of how constraint and creation interact — specifically, how the hiding was purposeful, not fearful.";}else if(pct>=0.375){title="The Sympathetic Observer";body="You respond to Austen as her primary audience — emotionally, through the social situations and characters she creates. The technical and biographical layers that critics emphasize are interesting but secondary. That's a valid reading position. She wrote for readers like you, not only for critics.";}else{title="You Would Have Accepted Harris Bigg-Wither";body="The financial security, the household, the stability — those matter, and the argument for taking them is not ridiculous. Austen knew it; she said yes the evening of December 2, 1802. She changed her mind by morning. What she did with the freedom she chose is what you're reading."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

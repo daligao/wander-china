@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diogenes of Sinope Life Simulator — He Lived in a Barrel and Told Alexander the Great to Stand Out of His Sunlight</title>
+<meta name="description" content="Make the same decisions as Diogenes of Sinope — founder of Cynicism, who lived in a barrel in the marketplace, walked through Athens at midday with a lit lantern searching for an honest man, and told the most powerful man in the world to stop blocking his sun.">
+<style>
+:root{
+  --bg:#F2EDE8;--card:#FAF7F4;--ink:#1A0E04;--muted:#5A3C1A;--line:#E0D4C8;
+  --accent:#5A3000;--accent-bg:#F5DDD0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98;display:none}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.year-banner{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.timeline-dot{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Sinope &amp; Athens · c.412–323 BC</div>
+  <h1>Could You Have Been<br>Diogenes of Sinope?</h1>
+  <div class="cover-sub">He lived in a barrel in the marketplace. He asked Alexander the Great — conqueror of the known world — to stand out of his sunlight. He walked through Athens in broad daylight carrying a lit lantern, searching for an honest man. He owned a bowl; when he saw a child drinking from cupped hands, he threw the bowl away. He was the founder of Cynicism — the philosophy that virtue is the only good, and that civilization mostly gets in the way of it.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">~89</div><div class="stat-l">Years old at death — longer than almost any ancient philosopher</div></div>
+    <div class="stat"><div class="stat-n">1</div><div class="stat-l">Possession remaining: a cloak (after throwing away his bowl)</div></div>
+    <div class="stat"><div class="stat-n">323 BC</div><div class="stat-l">Died reportedly the same day as Alexander the Great</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="year-banner">~398 BC</div>
+<div class="timeline-dot">Sinope, Black Sea · Age ~24</div>
+<p class="narrative">Your father was a banker in Sinope on the Black Sea. He has been caught debasing coins — adulterating silver with cheaper metals — and has died in prison. You are exiled. Before you left, you consulted the oracle at Delphi. The oracle said: "Parachattein to nomisma." Deface the currency. You have been turning the phrase over for weeks. Your father defaced it literally, and that is why he is dead. But you think the oracle meant something else. The currency of convention — of what people agree to call valuable, of the social money that buys status and respect — you can deface that too. You are standing at the gates of Sinope with nothing. Athens is three weeks' walk to the west.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Oracle's Command</div>
+  <div class="d-situation">The oracle said "deface the currency." What does it mean?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,false)">A. Literal obedience — your father's crime was the oracle's command; continue it in another city</button>
+    <button class="dopt" onclick="choose(this,1,true)">B. Metaphorical obedience — deface the social currency, the conventions people mistake for values; go to Athens and begin</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Reject the oracle — it is ambiguous and your father obeyed it literally and died; use your own judgment</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Diogenes went to Athens and presented himself to Antisthenes — the philosopher who had studied under Socrates and was developing what would become Cynicism. Antisthenes threatened to beat him with a stick if he didn't leave. Diogenes said: "Strike — you won't find a stick hard enough to drive me away while you're saying something worth hearing." He became Antisthenes's student. The oracle's command became his life's work: exposing the counterfeit in everything people called valuable.</div>
+</div>
+
+<div class="chapter">
+<div class="year-banner">~390 BC</div>
+<div class="timeline-dot">Athens, the Agora · Age ~32</div>
+<p class="narrative">You have been in Athens seven years. Antisthenes is dead. You have nowhere to sleep. Someone has offered you a room in their house — comfortable, dry, quiet. You look at it for a long moment. Then you walk to the marketplace and find a large ceramic pithos — a storage jar used for grain — that has been discarded. You drag it to the edge of the Agora. This is where you will live. People come to stare. Children throw things at you. You engage with the children more warmly than with the philosophers.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Barrel</div>
+  <div class="d-situation">Someone offers you a proper room. Do you take it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,false)">A. Yes — bodily comfort doesn't compromise philosophy; you can think just as clearly indoors</button>
+    <button class="dopt" onclick="choose(this,2,true)">B. No — the barrel is enough; needing more creates a master, and you will not have masters</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Accept it temporarily — use the security to build your reputation before you can afford to be eccentric</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Diogenes lived in the barrel. When asked once what was the most beautiful thing in the world, he said "frankness." When asked where he was from, he said "I am a citizen of the world" — the first recorded use of the word "cosmopolitan." The barrel was not performance. It was the argument. A man who needs nothing from you is free of you. A man who can be comfortable in a barrel cannot be threatened with the withdrawal of comfort. This was the foundation of everything else he did.</div>
+</div>
+
+<div class="chapter">
+<div class="year-banner">~380 BC</div>
+<div class="timeline-dot">Plato's Academy, Athens · Age ~42</div>
+<p class="narrative">Plato has defined man as "a featherless biped." The Academy is celebrating the definition. It is elegant, memorable, and testable. You go to the market, buy a chicken, pluck every feather from it, and walk into the Academy holding it up over your head. "Here is Plato's man." The students look at you. Plato looks at you. The chicken drips. You set it down on the floor and walk out.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Plucked Chicken</div>
+  <div class="d-situation">Plato has defined man as "a featherless biped." Do you confront him with the chicken?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Yes — philosophy that cannot survive a plucked chicken deserves a plucked chicken</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. No — engage Plato in formal argument; this kind of theater is mockery, not philosophy</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Do it privately — bring the chicken after hours; the public humiliation is about your ego, not the argument</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Diogenes brought the chicken. Plato revised his definition to "a featherless biped with flat broad nails." Diogenes accepted this as an improvement. The exchange is instructive: Plato moved toward greater specificity; Diogenes had forced philosophy into contact with the concrete. The chicken was an argument. It said: a definition must survive the world it is supposed to describe. Most of Plato's definitions, Diogenes felt, did not.</div>
+</div>
+
+<div class="chapter">
+<div class="year-banner">~360 BC</div>
+<div class="timeline-dot">The Aegean Sea · Age ~52</div>
+<p class="narrative">You are on a ship — why you are sailing, the ancient sources do not agree — when pirates intercept it. Everyone on board is taken to be sold as slaves in the market at Corinth. At the auction, the auctioneer asks what you know how to do. You say: "Govern men." You survey the crowd of bidders. Your eye falls on a prosperous-looking Corinthian named Xeniades. You point at him: "Sell me to that man. He needs a master."</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Slave Auction</div>
+  <div class="d-situation">You are being sold into slavery. Who should buy you?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,false)">A. The highest bidder — economic logic applies regardless of philosophy</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Someone who will grant you freedom quickly — negotiate your release in exchange for teaching</button>
+    <button class="dopt" onclick="choose(this,4,true)">C. Xeniades — he needs someone who knows how to govern, and you can do that while technically being owned</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Diogenes was sold to Xeniades, who said afterward that "a good genius had entered his house." Diogenes ran the household, educated the children, and never sought or received his freedom. He had found a situation in which his slavery was a form of governance. The Cynics were not interested in legal freedom — only in actual freedom, which is different. A man who needs nothing cannot be enslaved by the withdrawal of anything. Diogenes was freer in Xeniades's house than most free men in Athens.</div>
+</div>
+
+<div class="chapter">
+<div class="year-banner">~350 BC</div>
+<div class="timeline-dot">Corinth, Xeniades's House · Age ~62</div>
+<p class="narrative">You teach Xeniades's children. You teach them to wrestle, to memorize Homer, to argue. You also teach them to need little — to eat simply, to sleep on hard surfaces, to distinguish between what they want and what they need. Xeniades's children grow up lean, unsentimental, and capable. You are, by any measure, the most effective teacher in Corinth. You charge nothing. You are a slave. The professional teachers charging fees in Athens are less effective than you.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · What to Teach</div>
+  <div class="d-situation">What should a Cynic philosopher teach children?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,false)">A. Cynicism only — reject the conventional curriculum entirely; teach only living according to nature</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. The traditional curriculum — give them what the world values; Cynicism is for adults</button>
+    <button class="dopt" onclick="choose(this,5,true)">C. Both — the traditional curriculum trains the mind; Cynicism teaches what the mind is for</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Diogenes taught both. The ancient sources describe his students as physically strong, intellectually capable, and notably without anxiety — which is the Cynic goal. He reportedly said: "The foundation of a proper education is physical training, then memory, then understanding, then moral excellence." Convention was only a problem when it substituted for virtue. Training in conventional skills, for Diogenes, was fine — as long as the student understood what the training was actually for.</div>
+</div>
+
+<div class="chapter">
+<div class="year-banner">~336 BC</div>
+<div class="timeline-dot">Corinth, the Gymnasium · Age ~76</div>
+<p class="narrative">Alexander the Great is in Corinth to receive the recognition of the Greek city-states after his father's assassination. Every notable person in Greece has come to pay their respects. You are lying in the sun outside your barrel — you have acquired one in Corinth — sunbathing. Alexander comes to you. He has heard about you. He is twenty years old. He stands between you and the sun, casting a shadow across your body, and says: "I am Alexander. Ask me for anything." You look up at him from the ground.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · Alexander the Great</div>
+  <div class="d-situation">Alexander the Great is standing over you offering anything. What do you ask for?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,false)">A. Freedom from slavery — the practical use of this encounter</button>
+    <button class="dopt" onclick="choose(this,6,true)">B. "Stand out of my sunlight" — you have everything you need except he is blocking it</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Nothing — wave him away; acknowledging the offer legitimizes the power behind it</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> "Stand out of my sunlight." Alexander reportedly turned to his companions and said: "If I were not Alexander, I would wish to be Diogenes." The exchange is one of the most analyzed moments in ancient philosophy. Its logic is in the asymmetry: Alexander has the largest army in the world and can offer anything. Diogenes needs warmth. Alexander is standing between a man and what he needs. Diogenes already has everything. It is Alexander who is in want — wanting to give, wanting to be recognized as powerful enough to give it. Diogenes did not want what Alexander had to offer. That was the whole point.</div>
+</div>
+
+<div class="chapter">
+<div class="year-banner">~330 BC</div>
+<div class="timeline-dot">Athens, the Agora · Age ~82</div>
+<p class="narrative">You walk through the market at midday carrying a lit lamp. Not a small lamp — a proper torch, burning in full sunlight. People stop and stare. "What are you doing, Diogenes?" You do not break stride. "I am looking for an honest man." You have been doing this for years. The search continues.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The Lantern in Daylight</div>
+  <div class="d-situation">What is the lantern for?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,false)">A. Practical necessity — poor eyesight; you need it even in daylight</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. Monument to failure — you have given up finding an honest man and the lantern is your despair made visible</button>
+    <button class="dopt" onclick="choose(this,7,true)">C. Performance-philosophy — the search itself is the argument; a lamp in daylight says more about Athens than any lecture</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> The lamp is a complete philosophical act. In a crowded marketplace, in full sun, you need artificial light to find honesty. The lamp is not about finding — it is about the fact that searching is necessary. Diogenes understood that Socrates had died for asking direct questions. He found a way to ask the same questions without dying: by making people laugh first. The lamp is a joke. It is also a serious argument about what is missing from civilized life. Both things at once — which is why it lasted 2,400 years.</div>
+</div>
+
+<div class="chapter">
+<div class="year-banner">~323 BC</div>
+<div class="timeline-dot">Corinth · Age ~89</div>
+<p class="narrative">You are dying in Corinth. The exact cause is disputed: a dog bite, a voluntary held breath, eating a raw octopus to prove that cooking is unnecessary. Your followers ask what to do with your body. You tell them to throw it over the city wall for the animals. When they protest — "But the birds and beasts will get at it" — you ask them to leave a stick near you so you can drive them away. When they point out that you will be dead and cannot use a stick, you say: "Then what does it matter?" Alternatively, you ask to be buried face-down. "Because," you say, "in a little while everything will be turned upside down, and then I will be right-side up."</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · The Burial Instructions</div>
+  <div class="d-situation">What instructions do you leave for your body?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,false)">A. Leave it for the animals — even in death, be useful; the Cynic does not need a monument</button>
+    <button class="dopt" onclick="choose(this,8,true)">B. Bury me face-down — "because in a little while everything will be turned upside down, and I will be right-side up"</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. Whatever the usual custom is — death ends philosophy; the conventions no longer apply to me</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> Both deathbed stories appear in Diogenes Laertius — both may be later invention, but both are philosophically perfect. The face-down burial is a complete summary of Cynicism: the world is inverted. What is called valuable is worthless. What is called worthless is valuable. A man who spent his life defacing the social currency dies asking to be positioned for the reversal. The Corinthians erected a pillar with a marble dog on top — the Cynic symbol — in his honor. He had been proud to live like one. The dogs don't pretend. That was the whole philosophy.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2 id="final-title">Your Cynic Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="nietzsche-simulator.html">
+      <span class="next-name">Friedrich Nietzsche</span>
+      <span class="next-desc">Another philosopher who said civilization was mostly wrong about what it valued</span>
+    </a>
+    <a class="next-card" href="wittgenstein-simulator.html">
+      <span class="next-name">Ludwig Wittgenstein</span>
+      <span class="next-desc">Another philosopher who gave away his inheritance and lived in radical simplicity</span>
+    </a>
+    <a class="next-card" href="socrates-simulator.html">
+      <span class="next-name">Socrates</span>
+      <span class="next-desc">The teacher who asked the questions that shaped Diogenes's whole project</span>
+    </a>
+    <a class="next-card" href="kafka-simulator.html">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">Another writer who instructed his executor to destroy his work — and was disobeyed</span>
+    </a>
+  </div>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');const h=document.getElementById('final-title');if(score>=7){h.textContent='Stand Out of My Sunlight';t.textContent='You matched Diogenes at every turn — the oracle read as metaphor not crime, the barrel chosen over the room because needing nothing is the only true freedom, the chicken brought to Plato because a definition must survive the world it describes, the sunlight requested from Alexander because you already had everything else. This is what Cynicism actually requires: not discomfort for its own sake, but the elimination of every hold the world has on you. A man who can be comfortable in a barrel cannot be threatened. A man who wants nothing from Alexander has already won. You would have been buried face-down, waiting for the world to turn right-side up.';}else if(score>=5){h.textContent='A Good Genius in the House';t.textContent='Strong Cynic instincts. You understood that need creates masters, that the barrel is freedom not poverty, that the chicken is an argument not a stunt. A few decisions drifted — toward comfort, toward the practical use of Alexander, toward engaging Plato in formal terms. But you grasped what Xeniades grasped when he bought Diogenes at the slave auction and said a good genius had entered his house: the man who needs nothing governs the man who does, regardless of legal titles.';}else if(score>=3){h.textContent='You Sought the Room';t.textContent='You took the room, engaged Plato formally, asked Alexander for something useful. These are reasonable choices — the kind that every other person in Athens made. They are also the choices that keep a person inside the system Diogenes was defacing. The barrel is not about suffering. It is about having nothing that can be taken away. When you accept the room, you acquire a landlord. When you ask Alexander for freedom, you acknowledge that he has it to give. Diogenes refused both dependencies. That refusal was the whole philosophy.';}else{h.textContent='You Would Have Kept the Bowl';t.textContent='You took the room, asked Alexander for your freedom, kept the bowl until a better solution presented itself. Practical. Reasonable. Exactly what every other Athenian did. But when Diogenes saw a child drinking from cupped hands, he threw the bowl away immediately — the last thing he owned that the child did not need. The lantern stays unlit, the chicken stays in the market, and the marble dog they erect over his grave after he dies on the same day as Alexander marks someone else entirely.';};}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

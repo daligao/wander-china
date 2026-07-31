@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Friedrich Nietzsche?</title>
+<meta name="description" content="He declared God is dead, broke with Wagner, resigned his professorship at 34, and collapsed in Turin hugging a horse. His sister then rewrote his legacy. 8 decisions.">
+<meta property="og:title" content="What Would You Do If You Were Nietzsche?">
+<meta property="og:description" content="God is dead, the will to power, the eternal return — written alone and sick in rented rooms. Then a collapse in Turin, and his sister took control. 8 decisions.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/nietzsche-simulator.html">
+<style>
+:root{
+  --bg:#F2F2F8;--card:#FAFAFA;--ink:#0A0A18;--muted:#404068;--line:#C8C8DC;
+  --accent:#1A1A5A;--accent-bg:#EEEEF8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(242,242,248,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#0A0820;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B0B0D0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#1A1A40;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0F0FF;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#0A0830;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0F0FF;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B0B0D0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#1A1A40;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.quote-block{background:var(--ink);color:#F0F0FF;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#8080A8;margin-top:12px;font-family:var(--mono);}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#0A0A20;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F0F0FF;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B0B0D0;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.cta-box{background:var(--accent);color:#F0F0FF;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#A0A0FF;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Friedrich Nietzsche</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #22</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Nietzsche?</h1>
+  <p class="cover-sub">He became a full professor at 24 without finishing his PhD. He broke with his hero Richard Wagner. He resigned his professorship at 34, sick and nearly blind, to wander through rented rooms writing books almost nobody read. On January 3, 1889, in Turin, he saw a man beating a horse, threw his arms around the animal's neck, and collapsed. He was 44. He never recovered. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Friedrich Nietzsche</strong> (1844–1900) · German philosopher · Professor of classical philology at Basel at 24 · Key works: <em>The Birth of Tragedy</em> (1872), <em>Thus Spoke Zarathustra</em> (1883–85), <em>Beyond Good and Evil</em> (1886), <em>On the Genealogy of Morality</em> (1887), <em>Ecce Homo</em> (1888) · Collapsed in Turin in 1889 · Spent his final 11 years in mental incapacity, cared for by his mother and then his sister Elisabeth · Elisabeth Förster-Nietzsche later edited his unpublished notes to make him appear sympathetic to nationalism and anti-Semitism — ideas he had explicitly condemned.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1868, Leipzig</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Professorship</span></div>
+<div class="year-banner">1868</div>
+<div class="timeline-dot">Leipzig · Age 24</div>
+<div class="narrative">
+  <p>You are a doctoral student in classical philology at Leipzig, and you have not finished your dissertation. You have met Richard Wagner — composer, artist, the most famous German cultural figure of the age — and the encounter has been electric. Wagner quoted Schopenhauer in the first conversation. You share the same enthusiasm for Schopenhauer. You feel you have found a father figure, a mentor, a kindred spirit.</p>
+  <p>Then an extraordinary offer arrives: the University of Basel has a vacant professorship in classical philology. Your professor Friedrich Ritschl has recommended you. You are 24. You have published some articles but have no doctorate. Basel is so confident in Ritschl's recommendation that they are prepared to offer you the chair without the PhD — the University of Leipzig will grant you the doctorate on the basis of your published work if you accept.</p>
+  <p>You accept immediately. You are the youngest professor of classical philology in the history of the German-speaking world.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — Taking the Chair</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">At 24, without a completed doctorate, you are offered a full professorship. The secure institutional path. But you are already beginning to feel that philosophy — not philology — is your real vocation. Do you take it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">A</span><span class="dopt-body">Take it. The professorship gives you financial security, academic credibility, and access to students. Philosophy can happen inside the institution as well as outside it. Security enables risk.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Decline and finish the doctorate first. Accepting a chair you haven't earned feels like a compromise of intellectual integrity. Do the work properly, then take the position.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">Decline entirely. The academic career in philology is not what you want to do. Use this moment — when you have a visible name — to announce the pivot to philosophy and seek a different kind of position.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Nietzsche actually did</div>
+      <p><strong>You are 24 with no completed doctorate. Basel waives the requirement; Leipzig grants you the degree by special arrangement so you can legally hold the chair. You are the youngest professor of classical philology in the German-speaking world. Ten years later, you resign after publishing a book your philological colleagues consider so unscholarly they will not review it.</strong> Nietzsche took the professorship and was at Basel for a decade. He was, by most accounts, a gifted teacher — his lecture courses were popular, his seminars demanding. But the institutional life increasingly chafed. He found the required philological work narrow compared to the philosophical questions that consumed him. His first major book, The Birth of Tragedy (1872), was a philosophical interpretation of Greek culture that his philological colleagues considered unscholarly — and which effectively ended his career as a professional philologist while establishing him as a thinker. The professorship gave him the platform for that book. Without it, he would have had much less.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Break with Wagner</span></div>
+<div class="year-banner">1876</div>
+<div class="timeline-dot">Bayreuth · Age 32</div>
+<div class="narrative">
+  <p>Richard Wagner has built his dream festival theater at Bayreuth, and the first festival has opened. You have been Wagner's disciple for eight years. You published The Birth of Tragedy partly as a philosophical defense of his music. You have visited him at Tribschen, his house on Lake Lucerne, where he and Cosima received you as one of their inner circle.</p>
+  <p>But you arrived at Bayreuth ill, with severe headaches and failing eyesight. And what you see at the festival disturbs you. The crowds — the German nationalism, the anti-Semitism in the air, the celebrity culture around Wagner — feel wrong. Wagner himself seems more interested in fame than in art. The music, when you can bear to hear it through the pain, still moves you. But something about the whole spectacle repels you.</p>
+  <p>You leave Bayreuth early, before the festival ends, and go to a small village in the Black Forest to recover. You write in your notebook: "I am looking for people who are my relatives — who breathe with me, who take life as I do."</p>
+  <p>Wagner is not that person. Not anymore.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Leaving Wagner</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Wagner is the most powerful cultural figure in Germany. His patronage opened doors for you. Breaking with him will cost you professionally and personally. Do you break?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Stay. Disagreement within a relationship is more productive than rupture outside it. Continue publishing Wagnerian-adjacent work while privately developing the critique. The platform matters.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">Break — but slowly and with care. Publish work that diverges from Wagner's worldview without direct attack. Let the philosophical distance grow visible before making it explicit. You owe him that much.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Break publicly and immediately. A critique of Wagnerian nationalism is urgently needed in German culture. The philosophical case against what Bayreuth represents should be stated clearly and now.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Nietzsche actually did</div>
+      <p><strong>You spend eight years as Wagner's most devoted disciple. When you publish your first divergent book, Wagner responds by sending you a letter suggesting your chronic migraines are caused by excessive masturbation. You eventually publish two book-length philosophical attacks calling his music psychologically diseased and his nationalism ressentiment.</strong> Nietzsche broke gradually, then published the critique openly. His 1878 book Human, All Too Human was dedicated to Voltaire — a pointed signal — and contained a sharp attack on romantic nationalism and idealism without naming Wagner directly. Wagner understood immediately. The friendship ended. Years later, in 1888, Nietzsche published The Case of Wagner and Nietzsche Contra Wagner — sustained, savage philosophical attacks on Wagner's music as psychologically unhealthy, his nationalism as ressentiment, his anti-Semitism as contemptible. The break was total. What makes it philosophically interesting: Nietzsche's critique of Wagner is also a self-critique — he understood that he had once been seduced by exactly the things he was now attacking.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>God is dead. God remains dead. And we have killed him. How shall we comfort ourselves, the murderers of all murderers?</q>
+  <div class="q-attr">— Friedrich Nietzsche, The Gay Science, §125, 1882</div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · Resigning the Professorship</span></div>
+<div class="year-banner">1879</div>
+<div class="timeline-dot">Basel · Age 34</div>
+<div class="narrative">
+  <p>Your health has been deteriorating for years. Severe migraines, eye pain so acute you can barely read or write by artificial light, vomiting episodes that last days. The condition is never definitively diagnosed in his lifetime — modern scholars have proposed syphilis, a mitochondrial disorder, a hereditary condition, even an undetected tumor. Whatever the cause, you are spending 118 days a year bedridden.</p>
+  <p>Basel has been generous — you have been given sick leave, reduced duties, paid pension. But you can no longer perform the basic functions of the job: read student work, prepare lectures, maintain office hours. You formally resign your professorship. Basel awards you a pension of 3,000 francs per year — modest but enough to live on frugally.</p>
+  <p>You are 34. You have no institutional home, no income beyond the pension, no position, and increasingly no physical capacity to produce the sustained written work you are planning. You check into one cheap hotel after another — Nice, Turin, Sils-Maria in the Swiss Alps, Genoa. You write in short bursts when the headaches allow. The books that will make your name — Zarathustra, Beyond Good and Evil, the Genealogy of Morality — are still to come.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Wandering Years</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have resigned your professorship. You have a small pension, chronic illness, and complete freedom. How do you use the next ten years?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Seek a new institutional home — a less demanding academic position, a writer's residency, a patron. The pension is not enough for sustained intellectual work. Security first, then the big books.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">B</span><span class="dopt-body">Write. Move between cheap rooms in southern Europe, follow the climate that helps the headaches, and write whenever the pain allows. Publish whatever is finished. Trust that the work will find its readers eventually.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">Rest. The illness is the primary problem. Spend the pension on proper medical treatment, reduce intellectual ambition until health improves, then return to the major work from a stronger physical foundation.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Nietzsche actually did</div>
+      <p><strong>In ten years of rented rooms across southern Europe, you write the books that will define your reputation. Thus Spoke Zarathustra — all four parts — sells fewer than 500 copies during your lifetime. Beyond Good and Evil sells 114 copies in its first year. You pay for most of them yourself. You collapse before a single major critic understands what you wrote.</strong> Nietzsche wandered and wrote. Between 1879 and 1889, living in rented rooms in Nice, Turin, Sils-Maria, Venice, and Genoa, he produced the books that define his reputation: The Gay Science (1882), Thus Spoke Zarathustra (four parts, 1883–1885), Beyond Good and Evil (1886), On the Genealogy of Morality (1887), Twilight of the Idols and The Antichrist (both 1888), and the autobiographical Ecce Homo (1888). He self-published most of them at his own expense; some sold fewer than 100 copies. He had almost no readers. He was almost entirely unknown. He collapsed in Turin in January 1889 before he saw any serious recognition of his work.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Lou Salomé</span></div>
+<div class="year-banner">1882</div>
+<div class="timeline-dot">Rome · Age 37</div>
+<div class="narrative">
+  <p>You have met Lou Andreas-Salomé — a 21-year-old Russian woman of extraordinary intellectual energy who will go on to become a writer, psychoanalyst, and friend of Rilke and Freud. Your mutual friend Paul Rée introduced you in Rome. The meeting is immediate and electric. Within weeks you propose marriage. She declines. You propose again. She declines again.</p>
+  <p>She is willing, however, to form a platonic intellectual partnership — a shared household with Rée, devoted to philosophy and writing. You agree. You travel together to Lucerne, where you are photographed in a cart with Salomé holding a whip, Rée and Nietzsche in harness. Nietzsche apparently found the image funny. His sister Elisabeth did not.</p>
+  <p>Elisabeth Förster-Nietzsche actively despises Lou Salomé. She writes to your mother about her. She wages a campaign against the relationship. Eventually Lou and Paul Rée leave for Berlin together. You are devastated. You write some of your most bitter letters about women, and some of your most beautiful aphorisms about love and solitude.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — After Lou Salomé</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Lou Salomé has left with Paul Rée. You are 37, increasingly isolated, and in physical and emotional pain. Your sister's interference has driven away the one person who might have understood you. What do you do?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Reconcile with Elisabeth. Family is what remains when everything else is lost. The philosophical disagreements are real, but loneliness is worse. Accept the imperfect companionship that is available.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">B</span><span class="dopt-body">Transform the pain into the work. The loneliness, the rejection, the grief — write from inside it. Thus Spoke Zarathustra begins in exactly this period: the figure of the solitary man descending from the mountain is not abstract philosophy but autobiography.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">Pursue other relationships. Salomé was one person. The need for intellectual companionship doesn't disappear with one rejection. Write to other philosophers, seek a different kind of partner.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What Nietzsche actually did</div>
+      <p><strong>Lou Salomé and Paul Rée leave for Berlin in January 1883. You write Part One of Thus Spoke Zarathustra in ten days — in a state you later describe as near-ecstasy. Zarathustra, the solitary prophet who descends to share his wisdom and finds no one wants it, is you as you understood yourself. You never form another close relationship.</strong> Nietzsche transformed the pain into Zarathustra. Part One was written in January 1883, ten days after Lou Salomé and Paul Rée left for Berlin. He later described it as written in a condition of near-ecstasy — the ideas coming faster than he could write them. The figure of Zarathustra, the solitary prophet who descends from his mountain to share his wisdom with humanity only to find they don't want it, is Nietzsche as he saw himself: the person whose ideas are too early, too sharp, too alone. He never formed another close personal relationship. The loneliness became the subject of the philosophy.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · God Is Dead</span></div>
+<div class="year-banner">1886</div>
+<div class="timeline-dot">Sils-Maria, Switzerland · Age 41</div>
+<div class="narrative">
+  <p>The books are written. They are not being read. Beyond Good and Evil — published in 1886 at your own expense — sells 114 copies in its first year. The Genealogy of Morality sells marginally better but is still largely ignored. Zarathustra, in four parts, has found perhaps a few hundred readers across Europe.</p>
+  <p>Your central claim — that Western civilization's moral framework is built on a fiction (the Christian God) that has now been intellectually undermined, and that humanity must create new values rather than discovering them — is either not being understood or is being actively ignored. You are increasingly convinced that you are writing for a future that does not yet exist.</p>
+  <div class="dialogue">"Some are born posthumously," you write in the preface to The Antichrist. You mean yourself.</div>
+  <p>The physical symptoms are worsening. The headaches are more frequent. You are taking increasing doses of chloral hydrate and potassium bromide — the sedatives of the day — to sleep. You are aware that something may be happening to your mind, and you cannot tell how much is illness and how much is breakthrough.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Writing for a Future Audience</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Your books are not being read. You are ill, alone, and increasingly aware that you are writing for an audience that doesn't exist yet. Do you continue?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">A</span><span class="dopt-body">Continue. The present audience is not the right measure of a philosophy that is aimed at the future. Write more. Write faster. The work is not finished.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">Find ways to reach readers. Write simpler, more accessible versions of the core ideas. The Genealogy of Morality is already more readable than Zarathustra — continue in that direction.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">Stop. A philosopher who is not being read is not doing philosophy. The communication failure is also a failure of the ideas. If the ideas were as important as you believe, someone would be reading them.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Nietzsche actually did</div>
+      <p><strong>In 1888, your last productive year, you write five books. Your autobiography includes chapters titled "Why I Am So Wise" and "Why I Write Such Good Books." Eight weeks after finishing it, you collapse in Turin and never write again. The recognition you spent a decade predicting begins arriving the following year — when you can no longer understand it.</strong> Nietzsche accelerated. In 1888, his final productive year, he wrote five books: The Case of Wagner, Twilight of the Idols, The Antichrist, Ecce Homo (his autobiography, with chapters titled "Why I Am So Wise," "Why I Am So Clever," "Why I Write Such Good Books"), and Nietzsche Contra Wagner. The writing in this year is faster, sharper, more extravagant, and — in retrospect — increasingly showing signs of the collapse to come. Whether the 1888 acceleration was creative peak or early symptom of the breakdown is a question scholars still argue about. He collapsed in January 1889. He never wrote again.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Turin</span></div>
+<div class="year-banner">1889</div>
+<div class="timeline-dot">Turin · Age 44</div>
+<div class="narrative">
+  <p>You are in Turin. It is the city that suits you most — you have written ecstatically about its arcades, its light, its public squares. You are more productive here than anywhere. In the weeks before the collapse, you are writing extraordinary letters: to the composer Peter Gast, to the philosopher Franz Overbeck, to the Danish critic Georg Brandes (who has just given the first university lecture course on Nietzsche's philosophy), to Jacob Burckhardt.</p>
+  <p>On January 3, 1889, you leave your lodgings at 6 Via Carlo Alberto and walk into the Piazza Carlo Alberto. A coachman is beating his horse. You run to the horse, throw your arms around its neck, and collapse, weeping. You are carried back to your room.</p>
+  <p>In the days that follow, you write letters signed "Dionysus" and "The Crucified." You write to Burckhardt that you are being buried alive. You write to Cosima Wagner that you are the successor to the dead god. Franz Overbeck travels to Turin to bring you home. You laugh when you see him, improvise at the piano, and seem not to understand what has happened.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Turin Collapse</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Before the collapse — in the weeks of extraordinary productivity in late 1888 — there were signs. Grandiosity, accelerating output, decreasing sleep. Did you see them?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Yes — and tried to slow down. The headaches were a warning system. More rest, fewer books, less acceleration might have extended the productive period.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">B</span><span class="dopt-body">You could not have distinguished the signs from the philosophy itself. The grandiosity of Ecce Homo, the sense of historic mission — these were the philosophy as much as symptoms. There was no separating them.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">No. The collapse was sudden and could not have been predicted from the inside. A physician might have seen it, but you were too isolated for anyone to monitor you closely enough.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What historians and psychiatrists conclude</div>
+      <p><strong>On January 3, 1889, you see a man beating a horse in a Turin piazza, run to it, throw your arms around its neck, and collapse weeping. In the days that follow, you write letters signed "Dionysus" and "The Crucified." You have eleven years of life remaining and will not write another coherent sentence.</strong> The Turin collapse has been analyzed extensively. The most likely medical diagnosis is either late-stage syphilis (if he was infected, possibly in a Leipzig brothel in the 1860s) or a CADASIL (a hereditary vascular condition), though neither can be confirmed posthumously. What most scholars note: the final productive months and the collapse are continuous. Ecce Homo — with its chapters on why Nietzsche is so wise and so important — reads differently if you know it was written eight weeks before the breakdown. Some read it as self-parody. Some read it as clinical symptom. Some read it as both, inseparably. Nietzsche himself, in the last paragraph of the book, asks: "Have I been understood? Dionysus versus the Crucified."</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · Elisabeth's Control</span></div>
+<div class="year-banner">1890</div>
+<div class="timeline-dot">Naumburg · Age 45</div>
+<div class="narrative">
+  <p>You are incapacitated. You cannot write. You sometimes recognize people; mostly you do not. Your mother Franziska cares for you in Naumburg. After her death in 1897, your sister Elisabeth takes over.</p>
+  <p>Elisabeth Förster-Nietzsche — who shares none of your philosophical views, who has a nationalist and anti-Semitic husband, who you explicitly criticized in letters and notebooks — has become the gatekeeper of your archive. She controls access to your unpublished papers. She edits your correspondence. She compiles and publishes The Will to Power — a collection of your notes that she has organized to suggest your philosophy supports authoritarian nationalism, which it explicitly did not.</p>
+  <p>She establishes the Nietzsche Archive in Weimar in 1894 and runs it as a kind of personality cult, receiving admirers including, eventually, Adolf Hitler — who was photographed gazing reverently at your bust in the Archive, the image used as propaganda. Your philosophy of the will to power and the Übermensch becomes associated with Nazism in the public mind.</p>
+  <p>You are alive for all of this. You cannot speak.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Archive</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Before the collapse, you had not arranged for control of your unpublished papers. You had not appointed a literary executor. Why not?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">You assumed Overbeck or Gast would handle it. The social network of close friends seemed sufficient — you had not considered that Elisabeth would assert control over them all.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">You did not believe the unpublished notes mattered. What was finished and published was the philosophy. The notes were working material, not doctrine — the idea that they would be compiled and published as a "major work" would have horrified you.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">You assumed the collapse would not come when it did. The practical arrangements — literary executors, archive control — were things for later. There was always more time.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Nietzsche wrote about Elisabeth — and about anti-Semitism</div>
+      <p><strong>Adolf Hitler visits the Nietzsche Archive in Weimar — run by your sister Elisabeth — and is photographed gazing reverently at your bust, the image used as Nazi propaganda. You are alive for all of this. You cannot speak. You wrote explicitly, in published books, that anti-Semitism is a "mendacious racial swindle."</strong> Nietzsche was explicit. He wrote in letters: "I will have nothing to do with my sister." He wrote that anti-Semitism was a "mendacious racial swindle." He wrote about his sister's husband Bernhard Förster, a prominent anti-Semite who had founded a German colony in Paraguay, with contempt. The Will to Power, which Elisabeth compiled and which became the most widely read "Nietzsche" text of the early 20th century, is not a book Nietzsche wrote — it is a collection of notes organized by Elisabeth according to her own agenda. The actual Nietzsche — the one who wrote "One does not kill by anger but by laughter" and who said the Germans were heavy, humorless, and incapable of philosophy — would have found the Nazi appropriation of his work as funny as it was revolting.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Posthumous Life</span></div>
+<div class="year-banner">1900</div>
+<div class="timeline-dot">Weimar · Age 55</div>
+<div class="narrative">
+  <p>You die on August 25, 1900. You have been mentally absent for eleven years. You are buried with a Lutheran ceremony that you would have found absurd. By the time of your death, your books are finally selling. The recognition you wrote for, the future audience you addressed, is arriving — too late.</p>
+  <p>Your philosophy will go on to influence Heidegger, Camus, Sartre, Foucault, Derrida, Freud, Mann, Rilke, Yeats, D.H. Lawrence, and virtually every significant European thinker of the 20th century. It will also be appropriated by Nazis, misread by nationalists, misquoted by people who have never opened your books. The Übermensch will be confused with racial superiority rather than the individual's self-overcoming. The will to power will be read as literal domination rather than creative self-expression.</p>
+  <p>This was the thing you feared most: not that you would be wrong, but that you would be misunderstood.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Price of Difficulty</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Your philosophy was deliberately difficult, deliberately provocative, deliberately unsystematic. Did that invite the misreadings that followed?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Yes. A more systematic, clearly argued philosophy would have been harder to misappropriate. The aphoristic style and the deliberate ambiguity were a failure of responsibility.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">B</span><span class="dopt-body">The style was the philosophy. A systematic presentation of Nietzsche's ideas would not be Nietzsche's ideas. The misreadings are the price of a philosophy that requires active, intelligent engagement — not a flaw in the presentation.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">C</span><span class="dopt-body">Elisabeth is responsible, not the writing. The texts themselves are clear enough to any careful reader. The problem was the archive manipulation, not the difficulty of the philosophy.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What philosophers conclude</div>
+      <p><strong>You die on August 25, 1900, eleven years mentally absent. Your books are finally selling. Heidegger, Sartre, Camus, and Foucault will cite you as foundational. So will the ideologues who helped shape Nazi ideology — reading the archive your sister arranged. The philosopher who feared misreading more than obscurity becomes the most systematically misread thinker of the 20th century.</strong> Walter Kaufmann's 1950 book Nietzsche: Philosopher, Psychologist, Antichrist — the work that rehabilitated Nietzsche's reputation after the Nazi association — argued that careful reading makes the anti-nationalist, anti-anti-Semitic Nietzsche unmistakable. The misreadings required selective quotation and deliberate distortion. But philosophers like Derrida argued that the openness of Nietzsche's texts — their resistance to systematic closure — genuinely invites multiple interpretations, and that claiming one reading is definitively correct betrays the spirit of the philosophy. Who is right may depend on whether you think a text's meaning is fixed by its author's intentions or constructed by its readers. Nietzsche, who said that every philosophy is a kind of unconscious autobiography, would probably have found the debate about his own meaning the most Nietzschean thing possible.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Nietzsche's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="cta-box">
+  <p>Nietzsche wrote for a future that didn't exist yet, in rented rooms, in pain, almost entirely alone. He was right that it would come. He didn't live to see it. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All 25 Life Simulators — Freud, Kafka, Darwin, Einstein and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/kafka-simulator.html" style="color:var(--accent)">Kafka Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Nietzsche";body="You matched Nietzsche at nearly every fork — taking the professorship, breaking from Wagner gradually, transforming the Salomé loss into Zarathustra, continuing to write for a future that didn't exist yet. The hardest one: recognizing that the style was the philosophy, not a failure of communication.";}else if(pct>=0.625){title="The Philosopher's Instinct";body="You shared Nietzsche's fundamental moves — the break from institutions, the solitary work, the refusal to stop. Where you may have diverged: the grandiosity of 1888, or the decision not to arrange the archive. Both understandable.";}else if(pct>=0.375){title="The Systematic Thinker";body="You consistently chose the clearer, more structured, more communicative path. These are reasonable preferences. Nietzsche would probably have said you were choosing safety over truth — that the difficulty of his philosophy was inseparable from its content.";}else{title="The Practical Path";body="You chose security, clarity, and accommodation at almost every turn. Nietzsche's path — the opposite — produced one of the most influential philosophies of the modern era and also produced a man who died isolated and mentally absent at 55. Whether the trade was worth it is, characteristically, not a question Nietzsche's philosophy can answer."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>John Keats Life Simulator — Odes, Tuberculosis & Beauty Is Truth | Ordinary Man Trying</title>
+<meta name="description" content="Live John Keats's life across 8 pivotal decisions — from training as a surgeon to abandoning medicine for poetry, writing the great odes at 23, falling in love with Fanny Brawne, and dying in Rome at 25.">
+<style>
+:root{
+  --bg:#F2EEF5;--card:#F8F6FB;--ink:#0C0812;--muted:#3A2848;--line:#CCC0D8;
+  --accent:#3A1858;--accent-bg:#E4D8F0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(242,238,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#0C0812;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B0A0C8;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#06040A;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#EAE0F5;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#EAE0F5;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B0A0C8;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B0A0C8;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · John Keats</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #83 of 100</p>
+  <h1 class="cover-title">He Wrote the Great Odes<br>at Twenty-Three.</h1>
+  <p class="cover-sub">John Keats trained as a surgeon, abandoned the profession for poetry at twenty-one, and in a single miraculous year — 1819 — wrote "Ode to a Nightingale," "Ode on a Grecian Urn," "To Autumn," and four other odes that constitute the highest concentration of lyric achievement in the English language. He was nursing his brother Tom through tuberculosis while writing them. He was in love with Fanny Brawne, next door, and could not afford to marry her. He coughed blood in 1820 and recognized it as his own death sentence. He died in Rome in February 1821, aged twenty-five, convinced he was a failure. His gravestone reads: "Here lies One Whose Name was writ in Water."</p>
+  <div class="cover-facts">
+    <p>⚕️ Trained as surgeon/apothecary — licensed 1816, age 20 &nbsp;·&nbsp; ✍️ All major odes written 1819, age 23 &nbsp;·&nbsp; 💔 Engaged to Fanny Brawne, never married &nbsp;·&nbsp; 🫁 Brother Tom died of TB 1818; Keats himself diagnosed 1820 &nbsp;·&nbsp; 🕊️ Died February 23, 1821 · Age 25 · Rome, Italy</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Keats's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1816</div>
+  <div class="timeline-dot">London, England · Age 20</div>
+  <div class="narrative">
+    <p>You have passed your Licentiate of the Society of Apothecaries exam. You are now qualified to practice as an apothecary-surgeon — a respectable working-class medical profession. Your guardian, Richard Abbey, has invested in your training and expects you to practice. Your family has very little money: your parents died young, your brother George is working, your brother Tom is unwell, your sister Fanny is a minor under Abbey's guardianship. The sensible thing is to become a surgeon.</p>
+    <p>The problem is the sensible thing and poetry. You have been writing since you were eighteen, reading Chapman's Homer and Spenser and Shakespeare with the intensity of someone who has found his element. You know the difference between what you write and what the magazines publish; you also know the difference between what you write now and what you believe you will eventually write. You have a surgeon's license in your pocket and a notebook full of poems. The choice has been building for two years. You cannot do both.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1816</div>
+    <p class="decision-q">At 20, with a medical license, Keats chooses poetry over surgery. From a practical standpoint, what is he giving up?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Wealth — surgeons in 1816 could earn substantial incomes, and Keats would have been comfortable within five years of practice.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. Security and the ability to marry — without income, he cannot afford a household, which means he cannot marry Fanny Brawne or anyone else. The choice of poetry over surgery is also, he knows, a choice against a conventional life. He makes it knowing this.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Social respectability — a surgeon was a professional; a poet was a gentleman's hobby or a bohemian poverty. The choice reduced his social standing permanently.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. His guardian's support — Richard Abbey withdrew financial assistance when Keats chose poetry, removing the only source of family income.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You qualify as a surgeon at twenty, put the license in your pocket, and walk away from medicine forever.</strong> You know exactly what you are giving up — income, the ability to marry, the conventional life. Your letters make this trade clear-eyed. You will be a poet and you will be poor and you will be dead at twenty-five. You make the choice knowing all three.</p>
+      <strong>Keats's choice:</strong> He made the decision fully clear-eyed. His letters — some of the greatest letters in English literature, alongside his poetry — show a young man who understood exactly what he was trading. He wrote to his brothers that he had decided to "live by poetry" because not doing so would be a kind of death. The medical training was not wasted: his poems are full of precise physical observation, and his nursing of Tom through tuberculosis was done with professional knowledge. But the license went unused. He was a poet first and entirely.
+    </div>
+  </div>
+
+  <div class="year-banner">1817</div>
+  <div class="timeline-dot">Margate, England · Age 21</div>
+  <div class="narrative">
+    <p>Your first collection, <em>Poems</em> (1817), is published by Charles and James Ollier. It sells very few copies and receives almost no attention. You are undeterred. You are writing <em>Endymion</em> — a long narrative poem of four thousand lines based on the Greek myth of the shepherd boy loved by the moon goddess. You know it is not yet what you are capable of. You write in a letter to your brothers: "I think I shall be among the English Poets after my death." It is not arrogance; it is a reading of yourself that you believe is accurate. You are writing toward something you can feel but not yet reach.</p>
+    <p>The Leigh Hunt circle — the group of radical Romantic writers around the critic Leigh Hunt — has adopted you. You meet William Hazlitt, whose lectures on Shakespeare you will attend repeatedly and whose ideas about negative capability and the poet's loss of self in the subject will fertilize your own thinking. You are reading everything. You are also spending money you don't have, and your brothers need help, and Tom is coughing.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1817</div>
+    <p class="decision-q">Keats writes to his brothers: "I think I shall be among the English Poets after my death." What does this self-assessment reveal about his understanding of his own work?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Youthful arrogance — a twenty-one-year-old who has published one unsuccessful book has no basis for such claims, and this is wishful thinking rather than self-knowledge.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. Accurate self-knowledge combined with clear-eyed acknowledgment of his current limitations — he knows he is not yet what he will be, but he also knows his capacities, and "after my death" shows he understands that recognition requires time he may not have.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. The influence of the Leigh Hunt circle, who had convinced him of his genius as part of their broader Romantic project of creating new literary heroes.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. A coping mechanism for commercial failure — claiming posthumous fame is a way of processing the fact that living audiences are not responding.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>You tell your brothers you think you will be among the English poets after your death — and you are twenty-one with one unsuccessful book to your name.</strong> You are also completely right. This makes the statement either youthful arrogance or the most accurate piece of self-knowledge in English literary history. The answer depends on which you read first: the claim, or the odes.</p>
+      <strong>Keats's self-assessment:</strong> The letters — written to his brothers and friends and never intended for publication — show consistent self-awareness: he knows what is bad in his early work, he names it, and he describes what he is reaching for. He was right. By 1820, he was writing what he had been reaching for, and he knew it. Whether he was right that it would outlast him was a question he couldn't have answered with certainty — but the readiness to stake his life on the possibility, and to work toward posthumous recognition rather than current approval, is one of the marks of the specific kind of artistic integrity that produces the odes.
+    </div>
+  </div>
+
+  <div class="year-banner">1818</div>
+  <div class="timeline-dot">Hampstead, London · Age 22</div>
+  <div class="narrative">
+    <p><em>Endymion</em> is published and attacked viciously by the <em>Blackwood's Magazine</em> review, which mocks Keats as a "Cockney poet" — a working-class intruder into the gentlemen's world of English poetry — and recommends he return to his "plasters, pills, and ointment boxes." The <em>Quarterly Review</em> is similarly dismissive. Shelley will later claim that this critical savagery killed Keats. Keats himself dismisses the claim; he knows the reviews are wrong and he knows why. He writes: "I was never afraid of failure; for I would sooner fail than not be among the greatest."</p>
+    <p>More importantly: your brother Tom is dying. He has tuberculosis, the same disease that killed your mother. You nurse him through the summer and autumn of 1818, watching the disease he has, the disease you also carry without yet knowing it. On December 1, 1818, Tom dies. You have been present through the entire dying. You will cough blood for the first time in February 1820.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1818</div>
+    <p class="decision-q">Hostile critics attack Endymion as the work of a lower-class intruder. How does Keats respond?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. He is devastated and the attacks delay his development — Shelley was right that the reviews damaged his confidence and productivity.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. He reads the attacks, acknowledges that <em>Endymion</em> has real weaknesses (which he already knew), dismisses the class snobbery as irrelevant, and gets to work on what will become the odes. The attacks give him clarity about what he is not yet writing rather than doubt about whether he should write.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. He mounts a public defense through friends and supporters, turning the controversy into a public debate about class and literature.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. He becomes more experimental in response — the attacks prompt him to abandon the narrative poetry of <em>Endymion</em> for the lyric forms that will become the odes.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>Blackwood's Magazine tells you to go back to your "plasters, pills, and ointment boxes" — a class slur dressed as a literary judgment.</strong> You read it, acknowledge that <em>Endymion</em> has real weaknesses (which you already knew), dismiss the snobbery as irrelevant, and get to work on the odes. The critics who attacked you never corrected themselves. Their names are remembered mainly as the people who were wrong about Keats.</p>
+      <strong>Keats on criticism:</strong> He wrote to his publisher George Reynolds: "I was never afraid of failure; for I would sooner fail than not be among the greatest." The class attacks he dismissed as irrelevant — he knew his lower-class origin was being used as a literary argument and knew the argument was bad. What he did take from the <em>Endymion</em> period was a precise understanding of what the long Spenserian narrative had not been: concentrated, intense, exact. The odes are the opposite of <em>Endymion</em> in every formal sense. He knew what he needed to change.
+    </div>
+  </div>
+
+  <div class="year-banner">1819</div>
+  <div class="timeline-dot">Hampstead, London · Age 23</div>
+  <div class="narrative">
+    <p>Fanny Brawne has moved next door with her family in late 1818. She is eighteen. You are twenty-three. The relationship develops through the winter and spring of 1819 — you are engaged by December 1819, though with no money and no date. She is described by contemporaries as lively, fashion-conscious, perhaps a little shallow. Your love letters to her are among the most intense ever written in English. You also write jealously, obsessively, in ways that suggest you understand the love is consuming you in ways that are not entirely healthy. None of this stops the year from being the most productive single year in the history of English poetry.</p>
+    <p>Between January and September 1819: <em>The Eve of St Agnes</em>. <em>La Belle Dame sans Merci</em>. <em>Ode to Psyche</em>. <em>Ode to a Nightingale</em>. <em>Ode on a Grecian Urn</em>. <em>Ode on Melancholy</em>. <em>Ode on Indolence</em>. <em>Lamia</em>. <em>To Autumn</em>. Nine months. You are nursing grief for Tom, in love with Fanny, broke, and writing faster and better than you will ever write again, because you can feel, without quite naming it, that time is closing.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1819</div>
+    <p class="decision-q">Keats writes all the great odes in a single year. What concept, introduced in his letters, best explains how he was able to achieve this?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. "Beauty is truth" — the equation of aesthetic and moral value that allows the poet to trust beauty as a guide to what is real and good.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. "Negative Capability" — the capacity to remain in uncertainty, mystery, and doubt without any irritable reaching after fact and reason. The poet does not impose meaning on experience but inhabits it, holding contradictions without resolving them. This is what allows the odes to hold joy and grief simultaneously without making either simple.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. "The vale of soul-making" — the idea that suffering is the process by which a generic soul becomes a unique individual self, which gives the odes their relationship to death and grief.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. "Sensations rather than thoughts" — the preference for direct sensory experience over abstract reasoning, which produces the odes' extraordinary density of physical imagery.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You coin "Negative Capability" in a letter to your brothers, not in a lecture or a treatise — you describe it while thinking out loud about Shakespeare.</strong> The capacity to remain in uncertainty without reaching irritably after resolution becomes the structural principle of the odes: "Ode on a Grecian Urn" asks whether the urn's consolation is true, then refuses to decide. "Ode to a Nightingale" holds transcendence and its impossibility simultaneously. Both are doing the same thing.</p>
+      <strong>Negative Capability:</strong> Keats coined the phrase in a letter of December 1817, describing what he saw in Shakespeare: the ability to write Hamlet and Iago and Desdemona and Shylock without projecting the author's own personality onto any of them, remaining in the uncertainty of each character's experience rather than reducing it to the poet's point of view. In the odes, Negative Capability becomes a structural principle: "Ode on a Grecian Urn" holds "beauty is truth" as something the urn says, not as Keats's assertion — the poem refuses to resolve whether the urn is right. "Ode to a Nightingale" holds the desire for transcendence and the impossibility of transcendence simultaneously without choosing between them.
+    </div>
+  </div>
+
+  <div class="year-banner">1819</div>
+  <div class="timeline-dot">Winchester, England · Age 23</div>
+  <div class="narrative">
+    <p>September 19, 1819. Walking in Winchester, watching the season change, you write "To Autumn" — the last and, many argue, the greatest of the odes. It is a poem about ripeness, fullness, the moment before decline: "Season of mists and mellow fruitfulness, / Close bosom-friend of the maturing sun." The poem never mentions spring, never mentions death, never mentions loss directly. It is entirely present in the autumnal moment, finding abundance in what is almost over. There is no complaint in it. There is no fear. The wasps are drowning in the "last oozings hours by hours." The redbreast whistles from a garden-croft.</p>
+    <p>You are twenty-three years old. You have five months of productive writing left. You will cough blood for the first time in February 1820. The poem knows something you have not yet admitted you know.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1819</div>
+    <p class="decision-q">"To Autumn" is written in September 1819. What makes it arguably Keats's greatest achievement?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. The technical perfection of the rhyme scheme and meter — it is Keats's most formally accomplished poem and the craft alone justifies its reputation.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. Its complete acceptance of transience without evasion or consolation — the poem finds the fullness and beauty of the moment of ripeness without reaching past it, without demanding that the beauty last or be justified by what it produces. It is the most difficult emotional achievement in English poetry: genuine acceptance of impermanence.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. The density of its sensory imagery — the poem engages all five senses and produces an experience of autumn that is more vivid than observation because it synthesizes everything essential.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. The way it encodes Keats's premonition of his own death — reading backward from his tuberculosis diagnosis, the poem becomes a coded farewell that gives it emotional depth beyond its surface meaning.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>You walk in Winchester in September 1819 and write "To Autumn" in a single sitting — a poem that never mentions death, never mentions spring, never asks for the harvest to last.</strong> You have five months of productive writing left. The poem inhabits the moment of maximum ripeness and finds it enough, which is the hardest thing a poem about autumn can do. It knows something you haven't quite admitted yet.</p>
+      <strong>"To Autumn":</strong> John Bayley called it "the greatest lyric in the English language." Helen Vendler spends forty pages on it. What all the readings converge on is what the poem does not do: it does not console, it does not promise continuance, it does not argue that beauty justifies mortality. It simply inhabits the moment of maximum ripeness — "Thou hast thy music too" — and finds it enough. This is the hardest thing a poem about autumn can do, and it requires everything Keats had learned about holding contradictions without resolving them. The harvest is full. The harvest will end. Both are completely true and neither diminishes the other.
+    </div>
+  </div>
+
+  <div class="year-banner">1820</div>
+  <div class="timeline-dot">Wentworth Place, Hampstead · Age 24</div>
+  <div class="narrative">
+    <p>February 3, 1820. You come home late on a cold night, take off your coat on the stairs, and cough. There is blood on your handkerchief. You look at it in the lamplight and say to your friend Charles Brown: "That is arterial blood. I cannot be deceived in that colour. That drop of blood is my death warrant — I must die." You are a trained medical professional. You know exactly what you are looking at.</p>
+    <p>The next months are a controlled demolition. You cannot see Fanny — the excitement is bad for the illness. You cannot write — the effort is bad. Your friends raise money for you to go to Italy, where the warmer climate might extend your life. Shelley invites you to come to Pisa; you decline. You and your friend Joseph Severn sail for Naples in September 1820. You know, leaving England, that you will not come back. You have asked that your name not be put on your gravestone. Just: "Here lies One Whose Name was writ in Water."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1820</div>
+    <p class="decision-q">Keats recognizes arterial blood and knows it is a death sentence. How does he respond in the months that follow?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. With despair — his letters from 1820 show a man broken by the diagnosis, unable to write, unable to love, simply waiting for death.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. With the same complexity his poetry holds — grief, rage at the life he will not have with Fanny, the struggle to work when he can, and an underlying acceptance that is not quite peace but is not collapse either. The letters from this period are both terrible and controlled.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. With professional detachment — his medical training allows him to observe his own decline with the objectivity of a physician, which is a form of protection from the emotional impact.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. With urgency — the diagnosis causes an explosion of final writing, a race to complete as much work as possible before the disease progresses.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>You cough blood on the stairs and recognize it immediately as arterial blood — you are a trained apothecary-surgeon and you know exactly what you are looking at.</strong> "That drop of blood is my death warrant — I must die." The letters from 1820 are both anguished and controlled: grief, rage at the life you won't have with Fanny, and the same capacity for holding contradictions that made the odes.</p>
+      <strong>The final year:</strong> The letters of 1820 are agonizing. He writes to Fanny: "I have left no immortal work behind me — nothing to make my friends proud of my memory — but I have lov'd the principle of beauty in all things, and if I had had time I would have made myself remember'd." He knew, correctly, that the work was not finished. He also writes letters that are clearly not the work of a broken man: precise, funny, loving, furious. He published his final collection (<em>Lamia, Isabella, The Eve of St Agnes, and Other Poems</em>) in July 1820 — the best reviews he ever received, too late to mean anything practically.
+    </div>
+  </div>
+
+  <div class="year-banner">1821</div>
+  <div class="timeline-dot">Rome, Italy · Age 25</div>
+  <div class="narrative">
+    <p>Rome. The apartment on the Piazza di Spagna, near the Spanish Steps. Joseph Severn paints you while you are still able to sit up. You ask him to read nothing aloud to you — you cannot bear literature. You cannot write. You cannot see Fanny's letters without the agitation harming you, so Severn keeps them from you and gives them to you slowly. Your chest is filling. The disease follows its course with the indifference of the October harvest, the wasps drowning in the oozings.</p>
+    <p>February 23, 1821: you die at 11 PM, in Severn's arms, having asked him to hold you. You are twenty-five years and four months old. Severn writes to Brown: "He is gone — he died with the most perfect ease — he seemed to go to sleep." They bury you in the Protestant Cemetery in Rome, near Shelley's heart. Your gravestone reads as you instructed: "Here lies One Whose Name was writ in Water." Above it, Severn and Brown add without your permission: "This Grave contains all that was Mortal of a Young English Poet who on his Death Bed in the Bitterness of his Heart at the Malicious Power of his Enemies desired these Words to be Engraven on his Tomb Stone."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1821</div>
+    <p class="decision-q">Keats requests "Here lies One Whose Name was writ in Water." What does this inscription mean?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Despair — he believed his work had failed and would be forgotten, and the inscription is the bitterest expression of that belief.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. Humility — he had learned not to attach his sense of worth to recognition, and the inscription is a Buddhist-inflected acceptance of impermanence.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. Complex — it is partly genuine despair at dying too young with unfinished work, partly a refusal of the consolation of immortal fame, and partly consistent with the "To Autumn" acceptance of transience. Water-writ names are not permanent; neither is anything. He had written about this better than he could say it in that moment.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Self-pity — the critics had broken him, and the inscription blames them for a premature death, which is why Severn and Brown felt they needed to add the explanatory text about "malicious enemies."</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>You ask to be buried with no name on the stone — just "Here lies One Whose Name was writ in Water." Your friends Severn and Brown add the explanation about your malicious enemies without asking you.</strong> The line about water is not self-pity and not surrender. It is the same acceptance of impermanence you wrote in "To Autumn" three years before — only this time you are applying it to yourself.</p>
+      <strong>The inscription:</strong> He told Severn he wanted no name, no date, only the water line. Whether this was bitterness, acceptance, or both depends on which letters you read and when. His letters from October and November 1820 include some of the most anguished prose in English — he writes that he is "leading a posthumous existence." But the man who wrote "To Autumn" two years earlier had already arrived, once, at something that was neither despair nor consolation: the thing itself, completely, with nothing added. The inscription is a rougher version of the same refusal to claim what cannot be guaranteed. Name writ in water. Maybe not. Maybe yes. He wrote the poems and left the rest to time.
+    </div>
+  </div>
+
+  <div class="year-banner">1821</div>
+  <div class="timeline-dot">Keats's legacy · Two centuries later</div>
+  <div class="narrative">
+    <p>Mathew Arnold called Keats, in 1880, the most gifted of the English Romantics. T.S. Eliot, who was not easily impressed, ranked the letters with the greatest prose in the language. W.H. Auden said that anyone who doubts the perfection of "To Autumn" should simply read it and then be quiet. The odes are taught in every English-speaking university that teaches poetry; they have been translated into more languages than any of Keats's contemporaries except Shakespeare. "Ode to a Nightingale" and "Ode on a Grecian Urn" appear in virtually every anthology of English poetry published in the twentieth century.</p>
+    <p>He was twenty-five. He had been writing seriously for seven years. "Beauty is truth, truth beauty" — that is all he knew on earth, and all he needed to know.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · Legacy</div>
+    <p class="decision-q">"Beauty is truth, truth beauty." The Grecian urn says this to man. Is it true?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. Yes — great art reveals truth precisely through its beauty; the aesthetic and the real are ultimately the same.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. No — it is a seductive but false equation; beauty can be deceptive, and truth is frequently ugly. The urn is wrong.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. The poem refuses to endorse it simply — the line is spoken by the urn, not by Keats, and the ode has spent fifty-eight lines asking whether the frozen beauty of art (figures that can never kiss, never fade, never die) is actually richer or poorer than the warm impermanent beauty of living experience. The urn's consolation may be false. The question is the achievement, not the answer.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. It is a Romantic doctrine with historical roots in Platonic idealism, and its truth depends on accepting the Platonic framework that equates the real with the perfect rather than the particular.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>T.S. Eliot, who was not easily moved, ranked Keats's letters among the greatest prose in the English language. Auden said anyone who doubts "To Autumn" should read it and be quiet.</strong> He was twenty-five. He had been writing seriously for seven years. The critics who attacked him are remembered mainly as the people who were wrong about Keats.</p>
+      <strong>"Beauty is truth":</strong> Keats's own punctuation and quotation marks in different versions of the poem are inconsistent — it is genuinely unclear how much of the final two lines are spoken by the urn versus by Keats. This ambiguity is not accidental: the whole poem has been asking whether the urn's permanent beauty (the lover who never reaches his beloved but also never loses her) is better or worse than the mortal beauty of actual experience. The ode does not decide. The reader is left in Negative Capability: uncertain, in the presence of something beautiful, unable to say definitively what it means. Which is exactly where Keats intended to leave us.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">John Keats · 1795–1821</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"A thing of beauty is a joy forever: / its loveliness increases; it will never / pass into nothingness."<br><em style="font-size:13px;color:var(--muted);">— John Keats, Endymion</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="dickinson-simulator.html" class="next-card">
+        <div class="next-card-name">Emily Dickinson</div>
+        <div class="next-card-sub">Dashes, slant rhyme & deliberate withdrawal</div>
+      </a>
+      <a href="plath-simulator.html" class="next-card">
+        <div class="next-card-name">Sylvia Plath</div>
+        <div class="next-card-sub">The Bell Jar & the last poems</div>
+      </a>
+      <a href="wilde-simulator.html" class="next-card">
+        <div class="next-card-name">Oscar Wilde</div>
+        <div class="next-card-sub">Art for art's sake — until the trial</div>
+      </a>
+      <a href="blake-simulator.html" class="next-card">
+        <div class="next-card-name">William Blake</div>
+        <div class="next-card-sub">Tyger, tyger — visions & the divine body</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understand Keats — the Negative Capability, the "To Autumn" acceptance, the clear-eyed inscription on a stone with no name. He knew exactly what he was doing at twenty-three and what he was dying of at twenty-five. Both required the same capacity: to hold the thing completely without needing to resolve it.';else if(pct>=0.625)t.textContent='You follow Keats\'s thinking most of the time — the way medicine sharpened his poetry, the way the attacks clarified rather than broke him, the way the odes hold joy and grief simultaneously without making either simple. The gaps are in the most difficult moves: the acceptance that is neither despair nor consolation.';else if(pct>=0.375)t.textContent='You grasp Keats in outline but miss some of the interior — the specific achievement of Negative Capability, the way "To Autumn" is harder than it looks, the precise complexity of "Here lies One Whose Name was writ in Water." He was not simply tragic. He was also accurate.';else t.textContent='Keats is easy to sentimentalize and hard to read clearly. The real achievement is not the beauty or the early death — it is the specific intellectual capacity to inhabit uncertainty without resolving it. Twenty-five years. Seven major poems. All of them asking questions the poems refuse to answer.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

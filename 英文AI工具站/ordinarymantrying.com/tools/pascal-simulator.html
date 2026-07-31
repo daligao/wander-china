@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blaise Pascal Life Simulator — The Wager, Probability Theory &amp; a Night of Fire | Ordinary Man Trying</title>
+<meta name="description" content="Live Blaise Pascal's life across 8 pivotal decisions — from calculating machine at 18 to inventing probability theory, from the Night of Fire mystical experience to his wager argument for belief in God.">
+<style>
+:root{
+  --bg:#F0EEF5;--card:#F7F6FB;--ink:#0C0A18;--muted:#38305A;--line:#C8C0D8;
+  --accent:#3A2870;--accent-bg:#E0DCF5;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(240,238,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#0C0A18;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #A090C8;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#080614;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#E0DCF5;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#E0DCF5;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #A090C8;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #A090C8;border-radius:999px;margin-bottom:12px;gap:8px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Blaise Pascal</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #95 of 100</p>
+  <h1 class="cover-title">He Invented Probability Theory at 21.<br>He Had a Mystical Revelation at 31. He Died at 39.</h1>
+  <p class="cover-sub">Blaise Pascal built the world's first mechanical calculator at 18 to help his father with tax work. At 21 he invented, with Fermat, the mathematical theory of probability. At 23 he proved the existence of the vacuum against the prevailing consensus. At 31, on the night of November 23, 1654, he had a two-hour mystical experience of overwhelming certainty — "FIRE. God of Abraham, God of Isaac, God of Jacob, not of philosophers and scholars" — and sewed the record of it into the lining of his coat, where it was found after his death. He spent his remaining years working on an unfinished defence of Christianity (the <em>Pensées</em>) and died at 39. He is one of the most important minds in the history of mathematics, physics, and philosophy.</p>
+  <div class="cover-facts">
+    <p>🔢 Co-invented probability theory with Fermat (1654) — foundation of statistics, insurance, finance &nbsp;·&nbsp; ⚖️ Built the Pascaline mechanical calculator at 18 (1642) &nbsp;·&nbsp; 🔥 "Night of Fire" mystical experience, November 23, 1654 — sewed record into coat lining &nbsp;·&nbsp; 🎲 Pascal's Wager: the rational argument for betting on God's existence &nbsp;·&nbsp; 🌡️ Proved the vacuum exists; invented the syringe and hydraulic press &nbsp;·&nbsp; 1623–1662 · Clermont-Ferrand to Paris</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Pascal's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1641</div>
+  <div class="timeline-dot">Rouen, France · Age 18</div>
+  <div class="narrative">
+    <p>Your father Étienne is a tax commissioner in Rouen, and his work requires extensive arithmetical calculation. You watch him work. You begin to build a mechanical calculator. Not a theoretical design — an actual machine, with gears and wheels, capable of performing addition and subtraction mechanically. You build fifty prototypes before you find a design that works reliably. You are eighteen. You call it the Pascaline. It is the first mechanical calculator in the world that works without human mathematical effort — the user turns the wheels and the machine carries the results. You demonstrate it to the Chancellor of France in 1644. It works. You sell about twenty of them, mostly to wealthy individuals as intellectual curiosities. The manufacturing cost exceeds what you can charge. You are disappointed that it doesn't become more widely used. You don't know that you have invented computing.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1641</div>
+    <p class="decision-q">The Pascaline was the first working mechanical calculator. Pascal built 50 prototypes before finding a design that worked. What does this engineering process reveal?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. That intuition is insufficient for engineering — even a mathematical genius needed fifty iterations because the gap between mathematical understanding and mechanical implementation requires physical testing that theory cannot shortcut.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. That the path from concept to working prototype is almost never straight — the concept (mechanical arithmetic) was clear from the beginning; the engineering problem (carrying from ones to tens to hundreds without jamming, in a reliable way, for general use) required empirical iteration that theory alone could not solve. This is consistently true across engineering history: the theoretical insight precedes the working device by many failed iterations. The fifty prototypes are not evidence of failure but of the normal engineering process of refining a concept against physical reality.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. That eighteen is too young for such complex engineering work — the quality of the final Pascaline reflected Pascal's extraordinary mathematical intelligence but would have been achieved faster by a more experienced engineer, and the fifty prototypes represent the cost of his inexperience rather than necessary iteration.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. That the specific engineering problem (the carry mechanism) was harder than the mathematical problem, and the Pascaline's significance is more in demonstrating this difficulty than in the solution achieved.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You are eighteen, and the machine you just built — after fifty failed prototypes — will give its name to a programming language, its carry mechanism to every mechanical calculator that follows, and its concept to the entire history of computing.</strong> <strong>The Pascaline:</strong> The carry mechanism — the gear that advances when a lower-order wheel completes a revolution — is the central engineering challenge of mechanical calculation. Pascal's solution (a ratchet mechanism that advances the tens wheel precisely once per full revolution of the ones wheel) is documented in his own description of the machine. The machine worked reliably for addition; subtraction required the use of complements, which was a known but cumbersome method. Leibniz built a more capable machine thirty years later (capable of multiplication and division) that still used a mechanism derived from Pascal's carry design. The fifty prototypes are documented in Pascal's correspondence and are taken by historians as evidence of an empirical approach to engineering that was unusual for its era.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1654</div>
+  <div class="timeline-dot">Paris · Age 30–31</div>
+  <div class="narrative">
+    <p>You have been corresponding with Pierre de Fermat about a problem: how should the stakes be divided when a game of chance is interrupted before it finishes? Neither player has won yet; each has some probability of winning. How much of the pot does each deserve? The problem is called the "problem of points" and has been considered unsolvable. In a series of letters in 1654, you and Fermat develop the mathematical framework for calculating these probabilities. You invent the concept of expected value. You formalize the arithmetic triangle that bears your name (though you did not invent it — it was known in China and to earlier European mathematicians). Together, you lay the foundation for probability theory, which is the mathematical basis for statistics, insurance, financial risk, quantum mechanics, and artificial intelligence. You are solving a gambling problem. You do not know what you have founded.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1654</div>
+    <p class="decision-q">Pascal and Fermat invented probability theory by solving a gambling problem. What does it mean that one of the most important mathematical foundations of modern civilization emerged from a card game dispute?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. That mathematical progress is often motivated by practical problems rather than pure theory — the gambling problem was concrete enough to generate specific questions, and the general framework (probability) emerged from making those specific questions precise.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. That the application domain of a mathematical discovery cannot be predicted from its origin — Pascal and Fermat were solving a card game problem; what they actually created is the mathematical language for reasoning under uncertainty, which underlies modern statistics, actuarial science, quantum physics, machine learning, and financial instruments worth trillions of dollars. The distance between the gambling problem origin and the actual domain of application is so vast that no one in 1654 could have predicted it. This is the characteristic pattern of foundational mathematics: it is applied far beyond its motivating context in ways its inventors did not foresee.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. That card games have driven more mathematical progress than formal theory — the specific numerical problems of games of chance (dice, cards, roulette) required precise calculation that generated mathematical development absent from purely abstract inquiry.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. That the gambling motivation reflects a limitation on the early development of probability — by grounding the theory in games of chance, Pascal and Fermat delayed its application to more serious domains (science, medicine, economics) that required several more generations of mathematical development before probability was applied to them.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>You and Fermat solve a gambling dispute in 1654. What you actually invent is the mathematical language for reasoning under uncertainty — the foundation of statistics, insurance, quantum mechanics, and every AI system that has ever assigned a probability to anything.</strong></p>
+      <strong>Probability theory's origins:</strong> The Pascal-Fermat correspondence of 1654 is preserved and has been analyzed extensively by historians of mathematics. The philosopher of mathematics Ian Hacking, in "The Emergence of Probability" (1975), traces how the conceptual framework developed in these letters became the basis for actuarial insurance (by the end of the 17th century), statistical mechanics (Boltzmann, late 19th century), quantum mechanics (early 20th century), and statistical learning (20th-21st century). The 1654 letters solve a problem about splitting gambling stakes; they inadvertently create the language in which we now reason about risk, uncertainty, and randomness in every domain of human activity.
+    </div>
+  </div>
+
+  <div class="year-banner">1654</div>
+  <div class="timeline-dot">Paris · November 23, 1654</div>
+  <div class="narrative">
+    <p>November 23, 1654. Between approximately 10:30 PM and 12:30 AM — two hours. You have a profound experience. What you later write of it (the "Memorial" found sewn into the lining of your coat after your death) is in fragments: "FIRE. God of Abraham, God of Isaac, God of Jacob, not of philosophers and scholars. Certainty. Certainty. Feeling. Joy. Peace. God of Jesus Christ. My God and your God. Your God will be my God. Forgetfulness of the world and of everything, except GOD. He is only found by the ways taught in the Gospel. Greatness of the human soul. Righteous Father, the world has not known you, but I have known you. Joy, joy, joy, tears of joy." You sew this paper — the "Memorial" — into the lining of your coat. Every time you change coats, you sew it into the new one. You never discuss it with anyone. It is found after your death in 1662.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · November 23, 1654</div>
+    <p class="decision-q">Pascal — mathematician, physicist, inventor — had a two-hour mystical experience and sewed its record into his coat. How should we understand this?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. As evidence that religious experience and rational inquiry are incompatible in the same person — the "Night of Fire" represents a breakdown of Pascal's rationality under the pressure of illness and anxiety, not a genuine religious experience alongside his scientific work.</button>
+      <button class="dopt" onclick="choose(this,3,false)">B. As a neurological event — a sudden overwhelming experience of certainty and joy, lasting two hours and centered on a personal encounter with God, is more parsimoniously explained as a seizure, migraine aura, or dissociative episode than as supernatural experience.</button>
+      <button class="dopt" onclick="choose(this,3,true)">C. As a genuine experience of its kind that changed his priorities, whatever its ultimate explanation — Pascal describes something that felt like direct encounter with God, different in kind from abstract philosophical knowledge of God ("not of philosophers and scholars"). Whether the experience was supernatural, neurological, or psychological, it was real in the sense that it permanently altered his sense of what mattered. He spent his remaining eight years on the Pensées rather than mathematics. The experience worked, in the practical sense that it redirected the most important mathematician of the age toward what he considered more important questions. His subsequent intellectual quality did not diminish.</p>
+      <button class="dopt" onclick="choose(this,3,false)">D. As a religious conversion that should be evaluated theologically rather than philosophically — the "Night of Fire" is significant as a moment in Pascal's spiritual biography but has no bearing on the evaluation of his mathematical or philosophical work, which stands independently.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>On November 23, 1654, you have a two-hour experience you can only describe as: FIRE. Certainty. Joy. You write it down on a piece of paper. You sew it into the lining of your coat. Every time you change coats, you sew it into the new one. You never mention it to anyone. It is found after you die.</strong></p>
+      <strong>The Memorial:</strong> The Memorial was discovered sewn into Pascal's coat after his death by a servant who noticed an unusual thickness in the lining. The paper (in Pascal's handwriting) and a parchment copy were both found. It has been analyzed by theologians, neurologists, and literary scholars. The neurologist James Kroll has suggested temporal lobe involvement based on the phenomenology (the sudden onset, the certainty, the emotional flooding, the duration). Pascal scholar Philippe Sellier notes that the Memorial is explicitly distinguished from philosophical knowledge: "not of philosophers" is a direct rejection of the God of the Ontological Argument (Descartes, Anselm) in favor of the God of direct experience. Whatever its explanation, it produced eight years of brilliant philosophical and apologetic writing.
+    </div>
+  </div>
+
+  <div class="year-banner">1656</div>
+  <div class="timeline-dot">Port-Royal, Paris · Age 33</div>
+  <div class="narrative">
+    <p>You have been writing in defense of the Jansenist community at Port-Royal, which is under attack from the Jesuits and eventually from the Pope. The <em>Lettres provinciales</em> — eighteen letters written under a pseudonym, satirizing Jesuit moral casuistry — are widely circulated and enormously influential. They establish French prose style for the next century. They also get you condemned: the Pope places them on the Index of Forbidden Books. You are unfazed. You have been working simultaneously on what you call an "apology for the Christian religion" — notes, fragments, thoughts written on scraps of paper. These fragments, never assembled into the work you intended, will be published after your death as the <em>Pensées</em>. They include the most famous argument of your life: Pascal's Wager.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1656</div>
+    <p class="decision-q">Pascal's Wager argues: if God exists and you believe, you gain eternal life (infinite gain); if God doesn't exist and you believe, you lose little (finite cost). Therefore, belief is rationally optimal. Is this a sound argument?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. Yes, completely — the expected value calculation is mathematically valid: infinite gain multiplied by any positive probability exceeds any finite cost, and the Wager is the first rigorous decision-theoretic argument for religious belief.</button>
+      <button class="dopt" onclick="choose(this,4,false)">B. No, completely — the Wager proves nothing about whether God exists, addresses only belief instrumentally rather than sincerely, and the "many gods" objection shows the calculation is underdetermined (which God should you wager on?).</button>
+      <button class="dopt" onclick="choose(this,4,true)">C. Valid as decision theory but limited as an argument for sincere religious belief — Pascal explicitly acknowledged that the Wager is addressed to someone inclined to be convinced but unable to make the final commitment; it is a rational argument for taking the habit of belief seriously, not a proof. He understood that intellectual assent to the Wager is not the same as genuine faith ("go and take holy water," he says — act as if you believe and belief may follow). As an argument structure introducing expected value reasoning to the question of religious commitment, it is genuinely original and philosophically important. As a complete case for Christianity, it is not enough on its own.</p>
+      <button class="dopt" onclick="choose(this,4,false)">D. Historically important but philosophically superseded — the Wager introduced expected value reasoning to philosophical discourse but has been effectively countered by the "many gods" objection, the problem of sincere versus merely performed belief, and William James's later more sophisticated treatment of the will to believe.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You write the first expected-value argument in the history of philosophy — a rational case for betting on God's existence — while dying of stomach cancer and intestinal tuberculosis at thirty-three. The argument outlives the pain by four centuries and counting.</strong></p>
+      <strong>Pascal's Wager:</strong> The Wager appears in the Pensées as fragment 680 (in the Lafuma numbering). Pascal is clear that it is addressed to a specific interlocutor: a person who is inclined toward belief but blocked by the inability to commit. He explicitly says the Wager is not for someone who already believes or who has found other reasons. The "many gods" objection (why bet on the Christian God rather than another?) was articulated by Diderot among others, and modern philosophers of religion have developed sophisticated responses. The Wager is considered by decision theorists as the first explicit use of expected value reasoning in philosophical argumentation, predating formal probability theory's application to decision-making by over a century. It is historically foundational regardless of its theological persuasiveness.
+    </div>
+  </div>
+
+  <div class="year-banner">1658</div>
+  <div class="timeline-dot">Paris · Age 35</div>
+  <div class="narrative">
+    <p>You have been ill for most of your adult life. You have headaches, toothaches, stomach ailments, and an unspecified neurological condition that periodically prevents you from working. In 1658, unable to sleep from a toothache, you find your mind turning to the mathematical problem of the cycloid — the curve traced by a point on the circumference of a rolling circle. You work on it for eight days. You solve several problems that had defeated Roberval, Wallis, and Huygens. You organize a mathematical competition around the cycloid, publishing the problems and announcing prizes. You judge the entries — none of them correct — and publish your own solutions. This final mathematical work demonstrates that the religious commitment of the last four years has not diminished your mathematical ability. You are merely giving it less of your time. You die in 1662, aged thirty-nine, of what may have been stomach cancer combined with tuberculosis.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1658</div>
+    <p class="decision-q">Pascal solved advanced mathematics during a sleepless night of toothache, while primarily focused on theology. What does this tell us about how exceptional capacity works?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. That mathematical ability doesn't atrophy with disuse — Pascal's eight days on the cycloid demonstrated that the mathematical capacity he had developed through years of intensive work remained available after years of primary focus on theology.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. That exceptional intellectual capacity, once developed to a sufficient level, remains structurally available even when not actively exercised — Pascal could turn to the cycloid and produce work that surpassed specialists who had spent years on the problem, because his mathematical capacity was not skill that required maintenance but a way of thinking that was integrated into how his mind worked. The toothache sleeplessness removed the intentional decision to work on theology, and the mathematics was simply there. This is the characteristic of deep expertise: it is not a tool you pick up; it becomes part of how you see.</p>
+      <button class="dopt" onclick="choose(this,5,false)">C. That the specific problem type (cycloid geometry) was within the same domain as Pascal's earlier work on conic sections and fluid mechanics, and the apparent ease of the eight-day solution reflects appropriate domain match rather than general maintained capacity.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. That Pascal's later mathematical output demonstrates that his religious conversion was not a genuine turning away from mathematics but a reordering of priorities that still permitted mathematical engagement — the "conversion" was less total than it appeared from the outside.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>You cannot sleep because of a toothache. Your mind, with nothing else to do, turns to a problem in mathematics. In eight days you solve problems that had defeated Roberval, Wallis, and Huygens. You judge all their entries as incorrect and publish your own solutions. The toothache was the trigger; the capacity was always there.</strong></p>
+      <strong>The cycloid work:</strong> The cycloid competition of 1658 is documented in Pascal's published writings. The problems he set — finding the area under a cycloid arch, the volume generated by revolving an arc around an axis, the center of gravity of the solid of revolution — were at the frontier of 17th-century mathematics. The methods Pascal used anticipate integral calculus, which Newton and Leibniz would formalize independently within the next twenty years. Pascal did not develop this into a general theory, but the specific solutions demonstrate that his mathematical thought was operating at the highest level. He judged all entries as incomplete, including Wallis's, and published his own solutions. The challenge was not contested.
+    </div>
+  </div>
+
+  <div class="year-banner">1662</div>
+  <div class="timeline-dot">Paris · Age 39</div>
+  <div class="narrative">
+    <p>You die on August 19, 1662, aged thirty-nine years, two months, and four days. You have given away most of your possessions to the poor. You asked to be moved from your comfortable lodgings to a hospital so you could die among the sick. The Jansenist community gives you the last sacraments. Your final words are reported as "May God never abandon me." The coat with the Memorial sewn into the lining is found by your family. The fragments of the <em>Pensées</em> — hundreds of scraps of paper, some of them carefully arranged on strings, some of them in disorder — are also found. Port-Royal publishes a version of the <em>Pensées</em> in 1670. Different editors have organized the fragments differently, producing different books. No consensus about the right order has ever been reached. The book you planned was never written. The book that exists is a masterpiece of philosophy despite being unfinished, or because of it.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1662</div>
+    <p class="decision-q">The Pensées exist only as fragments — scraps of paper never assembled by Pascal into the book he planned. Does this incompleteness diminish or enhance the work?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Diminish — we cannot know what Pascal intended, and every edition of the Pensées is an editorial construction that may or may not reflect his plan. The work we have is a ruin of what was meant to be built.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. Neither diminish nor enhance, but produce a different kind of work — the completed apology Pascal planned would have been an organized defense of Christianity, probably in the tradition of formal theological argument. What the fragments produce is something different: a philosophical meditation that moves between mathematics, psychology, theology, and the analysis of human nature in ways that a structured apology might not have permitted. The incompleteness gave the Pensées a freedom that completeness would have constrained. This is not an argument that incompleteness is better; it is an argument that what we have is what we have, and it is extraordinary on its own terms.</p>
+      <button class="dopt" onclick="choose(this,6,false)">C. Enhance — the fragment form gives the Pensées an aphoristic intensity that a complete work would have diluted. The incompleteness forced readers to supply the connections between thoughts, creating active rather than passive engagement with the text.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. The question cannot be answered — since we do not know what the completed work would have looked like, comparison with the existing fragments is impossible. We can only evaluate what exists, which is what the Pensées discussion should be confined to.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>You die at thirty-nine and leave hundreds of scraps of paper on strings. No editor has ever agreed on the right order. It has been published in at least four incompatible arrangements. It never stops being read. This is either a comfort or an irony, depending on how you take it.</strong></p>
+      <strong>The Pensées editions:</strong> Pascal left the fragments on strings (physically tied together in groups he considered related) and loose. Port-Royal's 1670 edition reorganized them for apologetic clarity, omitting the more personally revealing fragments. Brunschvicg's 1897 edition organized them thematically. Lafuma's 1951 edition attempted to follow Pascal's own string organization. Sellier's 1991 edition proposed a further revision. No edition has achieved consensus. The philosopher Peter Kreeft has called the Pensées "the most quoted, most studied, and most influential religious work since the Bible" — in which case the editorial chaos has not prevented its influence. The work functions regardless of its disorder, which is itself something Pascal might have found significant.
+    </div>
+  </div>
+
+  <div class="year-banner">Legacy</div>
+  <div class="timeline-dot">1662 and beyond</div>
+  <div class="narrative">
+    <p>The historian Will Durant described Pascal as "the chief luminary of 17th-century France." He invented the mechanical calculator, probability theory, the hydraulic press, the syringe, and parts of the intellectual framework for differential calculus. He proved the existence of the vacuum against the prevailing Aristotelian consensus. He wrote the Lettres provinciales, which established modern French prose style. He wrote the Pensées, which remains one of the most read philosophical texts in Western history. He did all of this while in more or less constant physical pain, from the age of eighteen until his death at thirty-nine. His "human being" observation — "All of humanity's problems stem from man's inability to sit quietly in a room alone" — has been quoted so many times it has become a meme. He would have found this appropriate.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · Legacy</div>
+    <p class="decision-q">What is the most important thing Pascal's life demonstrates?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. That illness and suffering, far from preventing intellectual achievement, can be compatible with the highest levels of creative and analytical work — Pascal's chronic pain did not stop him; it may have intensified his urgency.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. That rational and religious thinking are not in opposition — the greatest mathematician of 17th-century France was also a mystic and a Christian apologist, and his work in both domains was serious and rigorous.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. That the scale of intellectual achievement does not require a long life — Pascal built a calculator at 18, invented probability theory at 30, had a mystical experience at 31, and produced the Pensées in the remaining eight years before dying at 39. The productivity was compressed, intense, and apparently shaped by the sense that time was limited. He knew he was not well; he worked as if the work mattered more than the lifespan. The thirty-nine years were complete in a way that does not feel truncated: every period of his life produced something significant, and the final years produced his most significant single work. He appears to have found the time enough.</p>
+      <button class="dopt" onclick="choose(this,7,false)">D. That the Wager — the expected value argument for religious belief — is the most significant contribution because it introduced decision-theoretic reasoning to philosophy in a way that eventually influenced economics, artificial intelligence, and formal decision theory, making it the most practically consequential idea in his body of work.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>A unit of atmospheric pressure is named after you. A programming language is named after you. The triangle you organized but did not invent appears in every probability textbook. The quote everyone knows — all of humanity's problems stem from man's inability to sit quietly in a room alone — was written in a fragment that was never meant to be published.</strong></p>
+      <strong>Pascal's legacy:</strong> The unit of pressure is named the Pascal (Pa). The programming language Pascal (1970) is named for him. The Pascal triangle appears in every probability textbook. "Pascal's Wager" is the most widely discussed thought experiment in philosophy of religion. The Pensées is on syllabi in philosophy, theology, French literature, and intellectual history courses across the world. The Lettres provinciales established French prose's directness and wit as a standard. For a man who died at 39 and whose major philosophical work exists only as fragments, the total reach of his ideas across disciplines is extraordinary. The thirty-nine years were not many; what they contained was.
+    </div>
+  </div>
+
+  <div class="decision-block">
+    <div class="decision-header">Final Question</div>
+    <p class="decision-q">Pascal wrote: "The heart has its reasons, which reason does not know." What does he mean by this?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. That emotion overrides reason — in the domains that matter most (love, faith, meaning), emotional responses are more reliable guides than logical argument, and reason is a secondary faculty.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. That human motivation is irrational — people act from emotional and unconscious drives that cannot be explained by the rational-agent model, and philosophy must account for this irreducible irrationality.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. That there are different modes of knowing, and logical argumentation is not the only valid one — the "heart" for Pascal is not emotion but a faculty of immediate recognition that operates differently from discursive reason. When we see that kindness matters, or feel the pull of a specific person's love, we are not following an argument; we are recognizing something directly. Pascal's claim is that this direct recognition is a legitimate epistemic faculty, not an irrational override of reason. The "reasons the heart has" are real reasons — just not the kind you can put in a syllogism.</p>
+      <button class="dopt" onclick="choose(this,8,false)">D. That the Night of Fire convinced him that the rational approach to God (the Ontological Argument, natural theology) was insufficient, and genuine religious faith requires a different cognitive path — what he calls "the heart" — that bypasses philosophical argument.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>You write that the heart has its reasons, which reason does not know. You write this in a fragment on a scrap of paper, with four months left to live, in the eighth year of chronic pain that the autopsy will confirm was brain damage and intestinal tuberculosis combined. You appear to have known something about what the heart carries without being told.</strong></p>
+      <strong>"The heart has its reasons":</strong> Fragment 423 (Lafuma numbering) in the Pensées reads: "The heart has its reasons, which reason does not know. We feel it in a thousand things. I say that the heart naturally loves the Universal Being, and also itself naturally, according as it gives itself to them; and it hardens itself against one or the other at its will. You have rejected the one and kept the other. Is it by reason that you love yourself?" The passage is about the immediate, pre-argumentative knowledge that constitutes basic human orientation — the love of self, the love of God — that philosophy can examine but not produce. It is not a denigration of reason but a claim that reason is not the only cognitive faculty and not the foundational one. This distinction between modes of knowing influenced Pascal's successors from William James ("The Will to Believe") to Michael Polanyi ("Personal Knowledge") to contemporary epistemologists.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Blaise Pascal · 1623–1662</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"The heart has its reasons, which reason does not know."<br><em style="font-size:13px;color:var(--muted);">— Blaise Pascal, Pensées</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="descartes-simulator.html" class="next-card">
+        <div class="next-card-name">René Descartes</div>
+        <div class="next-card-sub">"I think therefore I am" — and the demon</div>
+      </a>
+      <a href="hypatia-simulator.html" class="next-card">
+        <div class="next-card-name">Hypatia of Alexandria</div>
+        <div class="next-card-sub">Mathematics and philosophy in the ancient world</div>
+      </a>
+      <a href="schopenhauer-simulator.html" class="next-card">
+        <div class="next-card-name">Arthur Schopenhauer</div>
+        <div class="next-card-sub">Will, pessimism, and the late fame</div>
+      </a>
+      <a href="schubert-simulator.html" class="next-card">
+        <div class="next-card-name">Franz Schubert</div>
+        <div class="next-card-sub">600 songs in 31 years — the winter journey</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You followed Pascal from the Pascaline to the Wager to the Memorial. Thirty-nine years, three fields of thought, one life sewn into a coat lining.';else if(pct>=0.625)t.textContent='You understood the mathematics and most of the philosophy. The Night of Fire still puzzles you — which is, perhaps, the right response.';else if(pct>=0.375)t.textContent='You got the surface: the calculator, the probability, the wager. What you missed is how these are the same mind operating in three different registers.';else t.textContent='Pascal would say: you do not know because you have not sat quietly in a room alone long enough to find out.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

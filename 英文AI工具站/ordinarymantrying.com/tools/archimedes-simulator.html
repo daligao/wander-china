@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Archimedes?</title>
+<meta name="description" content="He ran naked through Syracuse shouting Eureka. He designed war machines that held off Rome for 3 years. He calculated pi. He invented calculus 2,000 years before Newton. 8 decisions from the greatest mathematician of antiquity.">
+<meta property="og:title" content="What Would You Do If You Were Archimedes?">
+<meta property="og:description" content="Ran naked through the streets. Held off Rome single-handed with war machines. Invented calculus. Then a soldier killed him. 8 decisions from Archimedes.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/archimedes-simulator.html">
+<style>
+:root{
+  --bg:#F5EEEB;--card:#FCF8F6;--ink:#180800;--muted:#583020;--line:#D4A898;
+  --accent:#6A2010;--accent-bg:#F5DDD8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,238,235,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#180800;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C08878;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#160600;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F8EEE8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#160600;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F8EEE8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C08878;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#160600;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#180800;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F8EEE8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C08878;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#F8EEE8;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#F0A898;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Archimedes</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #43</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Archimedes?</h1>
+  <p class="cover-sub">He jumped out of his bath and ran naked through the streets of Syracuse shouting "Eureka!" He built war machines that held the Roman army at bay for three years. He calculated pi to four decimal places with just geometry. He invented integral calculus 2,000 years before Newton. His last words, to the soldier killing him: "Don't disturb my circles." <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Archimedes of Syracuse</strong> (c.287–212 BC) · Greek mathematician, physicist, engineer, astronomer · Born Syracuse, Sicily (Greek colony) · Studied at Alexandria under disciples of Euclid · Returned to Syracuse and spent his life there under King Hiero II · Major discoveries: principle of buoyancy (Archimedes' Principle), lever theory, the Archimedes Screw, calculation of π, method of exhaustion (precursor to integral calculus), the Archimedes Heat Ray · Killed by a Roman soldier during the Siege of Syracuse (212 BC) · Called by mathematicians "the greatest mathematician of antiquity" and by some "the greatest mathematician who ever lived."</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — c.245 BC, Syracuse</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · Eureka</span></div>
+<div class="year-banner">245</div>
+<div class="timeline-dot">Syracuse · Age ~42</div>
+<div class="narrative">
+  <p>King Hiero II has a problem. He gave a goldsmith a quantity of gold to make a crown. The crown came back the right weight. But Hiero suspects the goldsmith may have replaced some of the gold with cheaper silver, keeping the difference. He cannot melt the crown to check without destroying it. He asks you to find out without destroying the crown.</p>
+  <p>You are thinking about this problem while getting into your bath. As you step in, you notice the water level rise. You realize: your body has displaced a volume of water exactly equal to the volume of your body. If you put the crown in water, and measure how much water it displaces — and compare this to how much water a piece of pure gold of the same weight displaces — you will know whether the crown's volume is too large, meaning the goldsmith added silver.</p>
+  <p>You run naked through the streets of Syracuse to tell the king. <em>Eureka</em> — I have found it.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Eureka Moment</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">What is the insight Archimedes had in the bath — and what made it a discovery rather than just an observation?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">He noticed that water rises when you step in — which is something anyone can observe. The "discovery" was just paying attention to something obvious that others had ignored.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">He connected the observation to the problem — the real insight was seeing that water displacement could measure volume, and that volume could distinguish gold from silver-adulterated gold. It was the connection, not the observation.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">He generalized it into a principle — that any object submerged in a fluid displaces a volume of fluid equal to its own volume, and experiences an upward force equal to the weight of the displaced fluid. He didn't just solve the crown problem; he found a universal law of buoyancy. The bath gave him the occasion; his mathematical mind turned the occasion into physics.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">Archimedes' Principle</div>
+      <p><strong>You run naked through the streets of Syracuse shouting Eureka — and what burns into history is not the nakedness or the shout, but the proof: every submerged object experiences an upward force equal to the weight of the fluid it displaces, universally, without exception.</strong> Archimedes' Principle states: a body submerged in a fluid experiences a buoyant force equal to the weight of the fluid it displaces. This explains why ships float, why helium balloons rise, why submarines can submerge and surface, why anything floats or sinks. It is one of the fundamental principles of fluid mechanics and was not improved upon until the 19th century. The story of the bath is recorded by Vitruvius, writing about 200 years after Archimedes' death; the Eureka legend may be embellished. But the principle itself is in Archimedes' treatise <em>On Floating Bodies</em>, which survives. Whether or not he ran naked through the streets, he did derive the mathematics of floating and sinking with complete rigor — it was not matched until Archimedes' works were rediscovered and understood in the Renaissance.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Lever</span></div>
+<div class="year-banner">240</div>
+<div class="timeline-dot">Syracuse · Age ~47</div>
+<div class="narrative">
+  <p>You have developed a complete mathematical theory of the lever. You understand that a lever multiplies force: a small force applied at a long distance from the fulcrum can balance — or move — a large weight close to the fulcrum. The principle is elegant and powerful.</p>
+  <p>King Hiero challenges you to demonstrate it. You say: "Give me a place to stand, and I will move the earth." He asks for something more local. You rig a system of compound pulleys. Hiero pulls a single rope. A fully-laden ship — which normally requires hundreds of men and special equipment to move from harbor — slides across the ground as if weightless.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Pure Math vs. Engineering</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Archimedes is famous for both pure mathematics (calculating pi, method of exhaustion) and practical engineering (levers, war machines, the Archimedes Screw). How did he see the relationship between these two activities?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">He considered engineering primary — the mathematical theory was in service of practical applications. He built things because the city needed them, and derived the theory to understand why they worked.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">He considered pure mathematics primary. He wrote in his letters that he considered his mechanical inventions trivial diversions compared to his mathematical work. He built things when the city needed them; he did mathematics because it was the only thing he actually cared about. The engineering was proof of the math; the math was the point.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">He didn't distinguish — for Archimedes, understanding how levers work mathematically and building a lever that moves a ship were the same activity. The division between "pure" and "applied" is a later invention.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">Archimedes on his own work</div>
+      <p><strong>You spend years building machines that hold off Rome — and the man himself considered all of it beneath mention. His surviving writings contain no treatise on any machine he built.</strong> Plutarch, writing about Archimedes, records that Archimedes considered his mechanical inventions beneath him — the work of a craftsman, not a philosopher — and that he wrote no treatise about them, considering them diversions produced at the request of King Hiero. Archimedes' surviving letters emphasize the mathematical results: the calculation of pi, the relationship between sphere and cylinder volumes (his favorite discovery, which he asked to be carved on his tomb), the method of exhaustion. Whether Plutarch was accurately describing Archimedes' attitudes or projecting Greek philosophical snobbery about practical work is debated. But his surviving mathematical works are clearly the product of someone who cared most about pure mathematics — the engineering works survive mainly in historical descriptions, not in Archimedes' own treatises.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · Calculating Pi</span></div>
+<div class="year-banner">230</div>
+<div class="timeline-dot">Syracuse · Age ~57</div>
+<div class="narrative">
+  <p>You want to know the ratio of a circle's circumference to its diameter — what we call π. No one before you has calculated it rigorously. You use a method of exhaustion: draw a polygon inside the circle, and another outside. The circle's circumference is squeezed between the perimeters of these polygons. Increase the number of sides — more sides means a better approximation. You go up to 96-sided polygons.</p>
+  <p>You prove that π lies between 223/71 and 22/7. This is accurate to two decimal places. It is the most accurate calculation of π that will be achieved for roughly 500 years.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Method of Exhaustion</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Archimedes' method of exhaustion — squeezing a curved shape between polygons with increasing numbers of sides — is a precursor to integral calculus. What made this insight so significant?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">It gave an accurate value of π, which was needed for practical calculations involving circles. The significance was computational.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">It provided the first rigorous mathematical treatment of curved shapes — previous methods of measuring circles were approximate guesses. For the first time, a mathematician could prove bounds on π rather than estimating it.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, plus the method itself — the idea of approximating a curved quantity by taking a limit of simpler quantities is the key insight of calculus. Archimedes used it to calculate the area of a parabola, the volume of a sphere, and more. The specific results mattered less than the method: he had found a way to handle the infinite using finite steps, which Newton and Leibniz would formalize 1,900 years later.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">Archimedes and calculus</div>
+      <p><strong>Monks scraped off the greatest mathematics of antiquity to reuse the parchment for prayers — and for a thousand years, no one knew what they had erased. Modern X-ray imaging found it anyway, in a prayer book sold at auction for $2 million.</strong> In 1906, a medieval prayer book was discovered in a monastery. The monks had scraped off earlier text to reuse the parchment. Modern imaging technology (X-ray fluorescence, ultraviolet light) revealed the scraped-off text: a work by Archimedes, the <em>Method of Mechanical Theorems</em>, previously lost. The Method reveals something extraordinary: Archimedes used infinitesimal reasoning — thinking of areas as sums of infinitely many infinitely thin slices — to discover results, then proved them rigorously using the method of exhaustion. He essentially used integral calculus to find results, then translated the results into rigorous Euclidean proofs. The infinitesimal method is calculus. Newton and Leibniz rediscovered it 1,900 years later. The Archimedes Palimpsest (as the prayer book is now called) is at the Walters Art Museum in Baltimore and was sold at auction in 1998 for $2 million.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The War Machines</span></div>
+<div class="year-banner">214</div>
+<div class="timeline-dot">Syracuse · Age ~73</div>
+<div class="narrative">
+  <p>Rome has besieged Syracuse. The Roman general Marcellus arrives with a massive naval force and a state-of-the-art siege tower — the Sambuca — designed to breach the city walls from the sea. He also brings land forces. He expects to take the city quickly.</p>
+  <p>You have spent years designing the city's defenses. You have built catapults calibrated to different ranges. You have built cranes that can reach over the walls, grip Roman ships with iron claws, lift them partly out of the water, then drop them. You have built machines that drop heavy stones or lead balls on approaching soldiers.</p>
+  <p>The Roman army, which has taken on the greatest militaries in the Mediterranean, is held off by one city — because of you — for three years.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Defender of Syracuse</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Archimedes designed war machines to defend his city, despite personally preferring pure mathematics. Was this the right use of his talents?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">A</span><span class="dopt-body">Yes — his city was under siege and his King needed him. Defending Syracuse was a legitimate use of his knowledge, and his mathematics made the defense possible. The obligation to his city didn't conflict with his mathematics; it gave his mathematics a purpose that extended his life (and his mathematical work) by three years.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Complicated — the war machines killed people. Using mathematical knowledge for killing, even in defense, was a misuse of the unique capacity he had. A pure mathematician should refuse military applications.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">Irrelevant — he had no choice. The King commanded the defense; Archimedes built the machines because he was told to, not because he chose to apply his mathematics to warfare. The moral responsibility lies with the King and with Rome, not with the engineer.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">Three years against Rome</div>
+      <p><strong>Rome sends 60 warships and land forces to take a single city — and one man makes them flee from ropes and shadows. Roman soldiers who had conquered the Mediterranean turned and ran when they saw a rope thrown over the wall.</strong> The Siege of Syracuse lasted from 214 to 212 BC. Marcellus arrived with 60 quinqueremes (large warships, each rowed by 300 men) plus land forces. The standard assumption was that a naval assault on a coastal city walls would succeed quickly. Archimedes' machines disrupted every assault. Plutarch writes that Roman soldiers, seeing a rope thrown over the wall or a piece of timber appearing, would immediately flee — convinced that Archimedes was about to unleash something terrible. The Roman general Marcellus reportedly began making jokes about it to cover his frustration: "Archimedes uses our ships to ladle sea-water into his wine-cups" and called Archimedes "this geometrical Briareus." The city finally fell not to the Roman assault but to treachery — Syracusans who opened the gates. Marcellus had given orders that Archimedes was not to be harmed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Archimedes Screw</span></div>
+<div class="year-banner">250</div>
+<div class="timeline-dot">Egypt & Syracuse · Age ~37</div>
+<div class="narrative">
+  <p>A helical blade inside a cylinder: turn the cylinder, and water is lifted from one level to another. The Archimedes Screw — whether you invented it or imported the idea from Egypt — solved a problem that every civilization with irrigation had faced: moving water uphill cheaply, reliably, and continuously without complex machinery.</p>
+  <p>It is still used today. In modified form, it appears in grain augers on farms, in hydroelectric plants, in sewage treatment systems, in the mechanisms of combine harvesters. Two and a half millennia after Archimedes, the principle he either invented or formalized is embedded in the infrastructure of the modern world.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Practical Invention</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Archimedes Screw has been continuously used for 2,500 years. What does this longevity say about the difference between pure and applied invention?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">It shows that practical invention outlasts pure mathematics — the mathematical discoveries need to be re-discovered by modern mathematicians to be understood; the screw just keeps working without any reinterpretation.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">It shows that the best engineering is founded on deep physical principles — the screw works because it correctly implements the physics of helical motion and gravity. The applied invention lasts because it's grounded in something true.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">It shows that pure vs. applied is a false distinction in truly foundational work. The screw and the calculation of π are both applications of the same understanding of geometric principles — one makes water go uphill, one tells us the ratio of circumference to diameter, both follow from the same mathematical thinking. Archimedes' work is unified; the labels we put on it aren't.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">Where the Archimedes Screw is today</div>
+      <p><strong>You designed it 2,500 years ago, and it is still pumping water in sewage treatment plants today. Not as a museum piece — as working infrastructure on every inhabited continent.</strong> The Archimedes Screw remains in active use in the 21st century. It appears in: irrigation systems across the developing world, where it can be human-powered; sewage treatment plants, where it lifts wastewater from one stage to another; hydroelectric generation, where modern "Archimedean turbines" generate electricity from flowing water (the screw used in reverse); fish-friendly water pumping systems, since fish can pass through the screw undamaged (unlike conventional pumps); grain handling equipment on farms. The design has been refined over 2,500 years but the principle is unchanged. The Museum of the History of Science in Florence has a Roman example from around the 1st century BC. Models of the original are sold as educational toys. The most durable technology human civilization has produced is often its oldest, because the oldest technology has had the longest time to prove that it works.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Sphere and Cylinder</span></div>
+<div class="year-banner">225</div>
+<div class="timeline-dot">Syracuse · Age ~62</div>
+<div class="narrative">
+  <p>You have proved what you consider your most beautiful result: the relationship between a sphere and its circumscribed cylinder (the smallest cylinder that contains the sphere). The volume of the sphere is exactly two-thirds the volume of the cylinder. The surface area of the sphere is exactly two-thirds the total surface area of the cylinder.</p>
+  <p>You ask that this result be carved on your tomb — the sphere and cylinder, with no text. You believe it is the most elegant thing you have found.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Favorite Discovery</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Of all his discoveries, Archimedes considered the sphere-cylinder relationship his greatest. Why would a mathematician prefer this to the more practically famous Eureka principle or the lever theory?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">It was the hardest to prove — the mathematical rigor required was more demanding than the physical principles, so he valued it for the difficulty overcome.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">B</span><span class="dopt-body">It was the purest — the relationship between sphere and cylinder has no practical application he was aware of; it exists only in the realm of geometric truth. For a mathematician who secretly preferred pure to applied work, the beauty of a useless truth was the highest achievement.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">It was the most surprising — who would expect that these two shapes, one curved and the other straight-edged, would have such a neat ratio? The unexpectedness of a true relationship is what makes mathematics beautiful.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">The tomb of Archimedes</div>
+      <p><strong>The greatest mathematician of antiquity asks for one thing on his tombstone — a sphere inside a cylinder — and 137 years later a Roman politician has to rescue the tomb from weeds because the Greeks let it fall into ruin. The tomb has been lost again ever since.</strong> Cicero, visiting Sicily as quaestor in 75 BC, writes that he found Archimedes' tomb — neglected and overgrown — near one of the city gates of Syracuse. He identified it by the sphere and cylinder carved on the tombstone, as Archimedes had requested. This was 137 years after Archimedes' death. Cicero cleaned it up and had the inscription read aloud. He writes that it was evidence that Greeks were better at mathematics than Romans, since Romans had let the tomb fall into ruin while Cicero, a Roman, had to rescue it. The tomb's location was lost again after Cicero's time and has never been found. The sphere-cylinder ratio (2:3 for both volume and surface area) is now proved in any geometry textbook, typically in a paragraph. Archimedes required a sophisticated multi-step argument to derive it for the first time.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Heat Ray</span></div>
+<div class="year-banner">213</div>
+<div class="timeline-dot">Syracuse · Age ~74</div>
+<div class="narrative">
+  <p>Ancient sources record that Archimedes built a "burning mirror" — an array of polished shields or mirrors that focused sunlight onto Roman ships, setting them on fire. The story is controversial: ancient historians mention it, but it appears only in later sources, not in Plutarch's detailed account of the siege.</p>
+  <p>Modern experiments have been conducted. MIT students tried to set a ship on fire using 127 one-foot mirrors directed at a wooden ship 100 feet away. It worked — the wood smoldered and caught fire — but required 10 minutes of perfect alignment on a sunny day. The Navy tried it and concluded it was impractical in battle conditions.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Burning Mirror</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Archimedes Heat Ray — mirrors focusing sunlight to burn Roman ships — may or may not have existed. What is the right way to evaluate ancient technological claims like this?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Require contemporary documentation — if Plutarch, who wrote in detail about the siege, doesn't mention it, it probably didn't happen. Later sources that appeared 500 years after the event are unreliable.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">Test it empirically — if it's physically possible (as modern experiments showed), and if we have historical testimony that it happened, it's plausible. Physical feasibility is the key criterion.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">Both tests matter, and they give different answers, which is why the question is still open. The heat ray is physically possible but operationally difficult; the documentation is real but late. The answer is probably: Archimedes built mirrors that could concentrate sunlight, and the effectiveness may have been exaggerated in legend. The physical principle is his; the dramatic story is what legend does to remarkable people.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">Testing the heat ray</div>
+      <p><strong>MIT students, a Greek naval team, and the US Navy have all tried to burn a ship with mirrors. Two of them got the wood to smolder. The debate started in 250 BC and is still technically open.</strong> The Archimedes heat ray has been tested multiple times in modern settings. The 2009 MIT experiment used 127 polished bronze mirrors (approximately what ancient craftsmen could produce) focused on a ship at 100 feet distance on a sunny day; the wood caught fire after about 10 minutes. However, the MythBusters TV show attempted the same experiment under more realistic conditions (moving ship, cloudy sky, time pressure) and rated it "busted." A Greek team successfully burned a wooden boat using a similar array of mirrors in 1973. The consensus is: the physics works, but the tactical conditions required (stationary target, bright sun, enough time) would be unusual in an active naval battle. The most plausible version is that Archimedes used mirrors to blind and confuse Roman sailors — effective as a weapon even if fire was difficult to achieve. Plutarch mentions only the catapults and cranes, not fire.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · Don't Disturb My Circles</span></div>
+<div class="year-banner">212</div>
+<div class="timeline-dot">Syracuse · Age ~75</div>
+<div class="narrative">
+  <p>Syracuse has fallen. Roman soldiers are moving through the city. Marcellus has given orders that Archimedes is not to be harmed.</p>
+  <p>You are working. You are drawing circles in the sand, working on a geometric problem. A Roman soldier finds you and orders you to come with him to Marcellus. You tell him to wait — you need to finish the proof. The soldier kills you with his sword. Your last words are recorded as: "Do not disturb my circles."</p>
+  <p>Whether these were your exact words or a legend built around your death, they express something true: you died doing mathematics, in a city that had fallen because you defended it, killed by the army you had held off for three years.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Death</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">"Do not disturb my circles." If this is what Archimedes actually said, what does it reveal about the relationship between purpose and circumstance?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Arrogance — the city has fallen, people are dying, soldiers are everywhere, and he's more concerned with a geometric proof. He misjudged the situation fatally.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Appropriate priorities — he knew Marcellus had guaranteed his safety; the soldier was violating orders. Finishing the proof was a rational choice given what he expected would happen.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">Neither — the story (true or legend) reveals what mathematics meant to him. The proof was the thing. The circles were more real to him than the soldier. People who have found the thing that completely absorbs their attention — Michelangelo's marble, Galileo's telescope, Bach's fugue — often share this quality: the work becomes more real than the circumstances. "Don't disturb my circles" is the sentence of a man who had found his one true thing.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">After Archimedes</div>
+      <p><strong>He was so far ahead that no mathematician matched his work for 1,900 years — not because no one was trying, but because the level of his integration and approximation simply wasn't reached again until the 17th century. The circles he was drawing when the soldier found him are gone.</strong> Marcellus was reportedly devastated by Archimedes' death and had him given a proper burial. He later met Archimedes' relatives, according to Plutarch, and showed them respect. The mathematical achievements Archimedes made were so far ahead of his time that they sat largely unmatched for 1,900 years — not because no one was working on mathematics, but because the level of his work on integration, spherical geometry, and approximation wasn't reached again until the 17th century. Specifically: his method of exhaustion used limits and infinitesimals in the same way Newton's calculus would. His proof of the area of a parabola is essentially integration. His bounds on π (between 223/71 and 22/7) weren't improved until 500 AD by Chinese mathematician Zu Chongzhi, who reached 7 decimal places. The circles he drew in the sand — whatever problem he was working on when the soldier found him — will never be known. That's the part the legend can't recover.</p>
+    </div>
+  </div>
+</div>
+
+<div class="ending" id="ending">
+  <div class="ending-score" id="final-score">0/8</div>
+  <div class="ending-label">Your Archimedes Score</div>
+  <div class="ending-title" id="final-title"></div>
+  <div class="ending-body" id="final-body"></div>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue the Series</div>
+  <div class="next-grid">
+    <a class="next-card" href="newton-simulator.html">
+      <span class="next-name">Isaac Newton</span>
+      <span class="next-desc">Formalized the calculus that Archimedes had previewed 1,900 years earlier. Also obsessive. Also alone.</span>
+    </a>
+    <a class="next-card" href="davinci-simulator.html">
+      <span class="next-name">Leonardo da Vinci</span>
+      <span class="next-desc">Another engineer-artist-mathematician who lived 1,700 years later in a similar position: genius defending a patron's city.</span>
+    </a>
+    <a class="next-card" href="tesla-simulator.html">
+      <span class="next-name">Nikola Tesla</span>
+      <span class="next-desc">Another person who saw physical forces in mathematical terms and built things no one else could — also died without proper credit.</span>
+    </a>
+    <a class="next-card" href="galileo-simulator.html">
+      <span class="next-name">Galileo Galilei</span>
+      <span class="next-desc">The Italian who rediscovered Archimedes' physics 1,800 years later and used it to found modern mechanics.</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <p>Archimedes' story is one of 100 historical life simulators on this site. Each one asks: given the same constraints, pressures, and information — what would you have chosen?</p>
+  <p><a href="simulators.html">Browse all simulators →</a></p>
+</div>
+
+</div>
+</div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="Don't Disturb Your Circles";body="You think like Archimedes — you see that the method matters as much as the result, that pure and applied knowledge are unified at their foundations, and that the person who has found their true work will pursue it even when a soldier is in the room. You understand why he asked for the sphere and cylinder on his tombstone.";}else if(pct>=0.625){title="Eureka — Almost";body="You grasp the core of Archimedes' achievement: the way mathematical insight and physical invention were inseparable for him, the way he could hold off an army and calculate pi using the same fundamental understanding. The finer points — the pure math preference, the method of exhaustion's relationship to calculus — are where you diverge.";}else if(pct>=0.375){title="The Practical Geometer";body="You respond to Archimedes as most people do — through the practical achievements: the screw, the levers, the war machines. These are real and lasting. The pure mathematics underneath them is real too, and it's where Archimedes' own heart was. The practical tools are the surface; the geometry is the core.";}else{title="You Would Have Cooperated with Rome";body="When the city fell, you would have recognized the situation for what it was — closed the notebook, put down the chalk, complied with the soldier. That's practical and self-preserving. Archimedes died because he didn't. The circles he was drawing when the soldier arrived are lost. But he died in them, not despite them."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

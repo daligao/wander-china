@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Mark Twain?</title>
+<meta name="description" content="He went bankrupt at 55. He lost his daughter, his wife, and his fortune. He came back at 60 with a worldwide lecture tour. 8 decisions from America's most beloved writer.">
+<meta property="og:title" content="What Would You Do If You Were Mark Twain?">
+<meta property="og:description" content="The river pilot who became a satirist. The millionaire who went bankrupt. The grieving father who kept writing. 8 decisions from Mark Twain's extraordinary life.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/twain-simulator.html">
+<style>
+:root{
+  --bg:#F2EDE6;--card:#FAF7F2;--ink:#1A1008;--muted:#5C4A30;--line:#D4C4A0;
+  --accent:#4A2800;--accent-bg:#F0E4CC;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(242,237,230,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#1A1008;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C8B080;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#2A1800;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F8EDD8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#1A0800;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F8EDD8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C8B080;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#2A1800;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.quote-block{background:var(--ink);color:#F8EDD8;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#9A8060;margin-top:12px;font-family:var(--mono);}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#1A1008;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F8EDD8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C8B080;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr;}}
+.cta-box{background:var(--accent);color:#F8EDD8;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#D4A870;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Mark Twain</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #27</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Mark Twain?</h1>
+  <p class="cover-sub">He was a river pilot, a failed silver miner, a war correspondent, and the most famous American writer of his age. At 55 he went bankrupt through a disastrous investment. At 60, he embarked on a worldwide lecture tour to pay off every debt personally — even though he was not legally required to. His wife and daughter died before he could enjoy what he'd rebuilt. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Mark Twain</strong> (Samuel Langhorne Clemens, 1835–1910) · American writer and humorist · Born in Florida, Missouri · Grew up in Hannibal, Missouri, on the Mississippi · Became a licensed river pilot 1859 · Pen name "Mark Twain" adopted 1863 (river pilot term for two fathoms of water — safe depth) · Major works: <em>The Adventures of Tom Sawyer</em> (1876), <em>Adventures of Huckleberry Finn</em> (1884), <em>A Connecticut Yankee in King Arthur's Court</em> (1889) · Invested in the Paige typesetting machine; went bankrupt 1894 · Worldwide lecture tour 1895–96 to repay debts · Daughter Susy died 1896; wife Olivia died 1904; daughter Jean died 1909 · Twain died 1910.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1857, Mississippi River</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The River</span></div>
+<div class="year-banner">1857</div>
+<div class="timeline-dot">Mississippi River · Age 21</div>
+<div class="narrative">
+  <p>You are 21 and learning to pilot a steamboat on the Mississippi River. Your trainer is Horace Bixby, one of the finest pilots on the river. The training will take two years. You will need to memorize every bend, sandbar, snag, and depth change across 1,200 miles of river — in both directions, in daylight and dark, in low water and flood.</p>
+  <p>It is the hardest thing you have ever done. It is also, you will later say, the best education you ever received. The river teaches you to read the surface of things for what lies beneath. You will use this skill for the rest of your life.</p>
+  <p>By 1859, you are a licensed pilot — one of the most respected and well-paid professions in America. The Civil War begins in 1861 and closes the river to commercial traffic. Your career as a pilot is over after two years at the wheel.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The River Education</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Twain said his time on the river was the best education he ever received. He also said it ruined something — once you know how to read the river for danger, you can never see it as beautiful again. Was the education worth that loss?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">A</span><span class="dopt-body">Yes. The ability to read beneath the surface — to see what's actually there instead of what looks pretty — is exactly what made him a great writer. The loss of naive beauty was the price of insight.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">No. The best writing comes from wonder, not expertise. Twain the tourist would have written better than Twain the pilot — his later work, when he lost the wonder, became darker and less beloved.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">It doesn't matter — the Civil War ended the piloting career anyway. The real question is what he did with the river knowledge in his writing, not whether the knowledge was worth having.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Twain wrote about the river</div>
+      <p><strong>You trade the beautiful river forever — lose the sunset, lose the poetry — and discover that this is exactly the trade that makes you a writer.</strong> In *Life on the Mississippi* (1883), Twain wrote one of the most analyzed passages in American literature about exactly this trade-off: "Now when I had mastered the language of this water and had come to know every trifling feature that bordered the great river as familiarly as I knew the letters of the alphabet, I had made a valuable acquisition. But I had lost something, too. I had lost something which could never be restored to me while I lived. All the grace, the beauty, the poetry had gone out of the majestic river!" He argues that the doctor loses the sunset by knowing what it means medically — that expertise and wonder are genuinely in tension. The passage is both a lament and a defense of expertise. He chose the expertise.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Pen Name</span></div>
+<div class="year-banner">1863</div>
+<div class="timeline-dot">Nevada Territory · Age 27</div>
+<div class="narrative">
+  <p>After the river closes, you head west to Nevada with your brother Orion, who has a government appointment there. You try silver mining, unsuccessfully. You become a newspaper reporter for the <em>Territorial Enterprise</em> in Virginia City, Nevada. On February 3, 1863, you publish your first article under the name "Mark Twain."</p>
+  <p>The name is a Mississippi river pilot term: "mark twain" — two fathoms of water, twelve feet deep, the minimum safe depth for a steamboat. It means: you can proceed. It is safe to continue.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Pen Name</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Samuel Clemens chose the name "Mark Twain" — a river pilot's term for safe water. What does this tell us about his relationship to the river years?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Pure nostalgia — he missed the river and the pen name was a way of staying connected to the best years of his life.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">The term means "safe to proceed." Choosing it as his public name was a statement about his writing: he could read beneath the surface and tell you when it was safe — which is exactly what a satirist does.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Practical anonymity — pen names were common in newspaper writing of the era, and a memorable one helped readership. The river connection was secondary.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">The name's meaning and origin</div>
+      <p><strong>You publish your first article as "Mark Twain" on February 3, 1863 — a river pilot's call meaning two fathoms deep, safe to proceed. You spend the next fifty years showing your readers that almost nothing in American life is as safe as it looks.</strong> Twain himself gave different explanations at different times for why he chose the name — which was itself a very Twain move. The most consistent explanation: it was the leadsman's call on the river, meaning the water was two fathoms deep and the boat could proceed safely. He had used the name briefly before 1863 and chose it definitively for his newspaper work. Some scholars have noted that "safe to proceed" is an odd name for a satirist whose entire career was about showing that most of what looks safe and settled is actually dangerous — that the river of American life had shallows everywhere. Whether that irony was intentional, he never said clearly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Jumping Frog</span></div>
+<div class="year-banner">1865</div>
+<div class="timeline-dot">New York · Age 29</div>
+<div class="narrative">
+  <p>You publish "The Celebrated Jumping Frog of Calaveras County" in a New York magazine. It becomes famous immediately — reprinted across the country. You are, overnight, a nationally known humorist.</p>
+  <p>Two years later, you travel to Hawaii and write travel letters that become enormously popular. You go on a lecture tour. You discover you can hold an audience — that the same instinct for timing and observation that made you a great river pilot makes you a great public speaker. You write <em>The Innocents Abroad</em> (1869), a satirical account of a pleasure cruise to Europe and the Holy Land. It becomes the best-selling travel book in American history.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Voice</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Twain's great innovation was writing in vernacular American English — the way people actually talked, not the formal literary English of the era. Why was this controversial?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Literary gatekeepers believed real literature required formal, elevated English. Colloquial writing was seen as crude and beneath serious consideration.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Huckleberry Finn's narrator was a white boy who traveled with an enslaved man — and the book's treatment of race, using the language of the time, was deeply uncomfortable and remains so.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both. The formal-language gatekeepers objected to the literary style; the racial content of Huckleberry Finn generated controversy then and continues to generate it now. The two controversies are separate but both real.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">The Huckleberry Finn controversy</div>
+      <p><strong>Adventures of Huckleberry Finn is banned by the Concord Public Library in 1885 as "trash and suitable only for the slums." Ernest Hemingway writes in 1935 that all modern American literature comes from one book by Mark Twain called Huckleberry Finn. Both reactions are responses to the same book.</strong> *Adventures of Huckleberry Finn* (1884) was immediately called "the greatest American novel" by some and banned by the Concord Public Library ("trash and suitable only for the slums") almost immediately after publication. Ernest Hemingway wrote in 1935: "All modern American literature comes from one book by Mark Twain called Huckleberry Finn." The novel has been continuously controversial for different reasons across different eras: its vernacular style, its use of racial slurs in historical context, its portrayal of race relations. It was challenged in American schools throughout the 20th century and into the 21st. The controversy itself reflects Twain's actual subject matter: he was writing about American hypocrisy, and American hypocrisy kept finding new reasons to be offended by the book.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Paige Machine</span></div>
+<div class="year-banner">1880</div>
+<div class="timeline-dot">Hartford, Connecticut · Age 44</div>
+<div class="narrative">
+  <p>You are wealthy, famous, and living in a large house in Hartford, Connecticut, with your wife Olivia and your daughters. You invest in an invention: the Paige Compositor, a mechanical typesetting machine being developed by James Paige. If it works, it will revolutionize printing. You believe it will make you enormously rich.</p>
+  <p>You invest $300,000 over 14 years — roughly $10 million in today's money. The machine is a mechanical marvel: it has 18,000 moving parts. It almost works. It breaks down constantly. Paige keeps improving it. You keep believing. In 1894, a simpler machine — the Linotype — takes over the market. The Paige Compositor is abandoned. You are bankrupt.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Paige Investment</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Twain lost his entire fortune on a machine that almost worked. Looking back, what was the real mistake?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Choosing the wrong technology. The Linotype was simpler and more reliable. Twain bet on complexity when simplicity won.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Over-investment. He should have stopped after the first $100,000. The sunk-cost fallacy kept him pouring money into a failing machine.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and also the emotional trap of watching the machine "almost work" for 14 years. The machine's intermittent success was more dangerous than consistent failure would have been. It kept hope alive long enough to ruin him completely.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">The Paige disaster in Twain's own words</div>
+      <p><strong>You invest $300,000 over fourteen years in a typesetting machine with 18,000 moving parts that almost works. A simpler machine takes over the market. You go bankrupt. You later write: "There are two times in a man's life when he should not speculate: when he can't afford it, and when he can."</strong> Twain wrote obsessively about the Paige machine in his notebooks. "I have been the Paige machine's faithful and loyal slave for months and months, and now it is too late," he wrote after the bankruptcy. He described watching the machine run — when it ran — as one of the most beautiful things he had ever seen. He couldn't stop believing in it. The machine demonstrated a psychological trap that behavioral economists now call "intermittent reinforcement": the occasional success kept him invested far past the point where stopping was rational. Twain later wrote: "There are two times in a man's life when he should not speculate: when he can't afford it, and when he can." He wrote this after losing everything.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Lecture Tour</span></div>
+<div class="year-banner">1895</div>
+<div class="timeline-dot">World Tour · Age 59</div>
+<div class="narrative">
+  <p>You are bankrupt. Under American law, you could declare personal bankruptcy and pay creditors a fraction of what you owe. Your lawyer tells you to do this. Your creditors, legally, cannot force you to pay more.</p>
+  <p>You refuse. You announce that you will repay every dollar personally. You are 59 years old. You embark on a worldwide lecture tour — North America, Australia, India, South Africa — traveling for over a year, performing night after night, sending all the proceeds to your creditors.</p>
+  <p>Your daughter Susy, 24 years old, stays home. She dies of spinal meningitis while you are on tour. You get the news by telegram on a ship in the middle of the Atlantic. You cannot get back in time for the funeral.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Repaying the Debts</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Twain didn't have to repay his creditors in full. He did it anyway. Was this the right decision?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">A</span><span class="dopt-body">Yes — not for financial reasons, but for personal ones. Twain's identity was built on his integrity. Accepting bankruptcy while still able to pay would have been a form of self-destruction he couldn't survive.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">No — he left his family, including Susy, to go on tour. The tour cost him his daughter. The money was recoverable; she wasn't. He made the wrong trade.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">The decision was about public image as much as integrity. Twain the humorist depended on public goodwill. A bankruptcy proceeding would have damaged his earning power permanently. The full repayment was also good business.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">The tour and Susy's death</div>
+      <p><strong>You are fifty-nine, bankrupt, and not legally required to repay your creditors in full. You refuse bankruptcy and embark on a worldwide lecture tour — Australia, India, South Africa — sending all proceeds back to your creditors. Your daughter Susy dies of spinal meningitis while you are on a ship in the Atlantic. You cannot get back in time for the funeral.</strong> Twain completed the worldwide tour and repaid all creditors in full by 1898 — he was 62. His friend Henry Rogers, an oil executive, managed his finances during the tour. Twain wrote *Following the Equator* (1897) from the tour notes. After Susy died, Twain could not bring himself to return to the Hartford house — the family never lived there again. He wrote: "It is one of the mysteries of our nature that a man, all unprepared, can receive a thunderstroke like that and live." His subsequent writing grew darker. The famous cynicism of his late work — *The Mysterious Stranger*, the unfinished novels — dates from the period after Susy's death. He kept going. The tone changed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Dark Years</span></div>
+<div class="year-banner">1904</div>
+<div class="timeline-dot">Florence, Italy · Age 68</div>
+<div class="narrative">
+  <p>Your wife Olivia, who has been ill for years, dies in Florence, Italy, in June 1904. You have been married for 34 years. She was your first reader, your editor, your moral compass. Susy died in 1896. Now Olivia. You are 68, wealthy again, and completely alone in a way you have never been before.</p>
+  <p>You keep writing. You write dark, bitter satire. You write about the human race as a failed experiment. You write *The Mysterious Stranger*, about an angel who shows humanity as it really is, without the comforting fictions. You don't publish most of it.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Late Dark Work</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Twain's late work is much darker than his celebrated books. He didn't publish most of it in his lifetime. Was he protecting his audience — or himself?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">His audience — he understood that people loved "Mark Twain" the humorist, and publishing dark satire would have disappointed and alienated them.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Himself — the dark work was private grief, not finished literature. He knew the difference between processing on paper and work ready for publication.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and also the work itself was genuinely unfinished. *The Mysterious Stranger* exists in multiple incomplete drafts that his editor pieced together after his death. The darkness and the incompleteness are connected.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What happened to the late manuscripts</div>
+      <p><strong>After Olivia dies in Florence in 1904, you write The Mysterious Stranger in three different incomplete drafts that you never finish and never publish. Your literary executor pieces them together after your death, adds an ending you never wrote, and publishes the result in 1916. No one discovers the fabrication until 1963.</strong> Twain's literary executor Albert Bigelow Paine and editor Frederick Duneka published *The Mysterious Stranger* in 1916, six years after Twain's death — but they assembled it from three different manuscripts and added an ending Twain never wrote. This was not discovered until 1963, when scholar John Tuckey found the original manuscripts and realized the published text was partly fabricated. A scholarly edition of the manuscripts — showing what Twain actually wrote and where he stopped — was published in 1969. The late work is genuinely extraordinary and genuinely unfinished. Twain's own comment: "I can't write a book commensurate with Shakespeare's, but I can write a book by myself."</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The White Suit</span></div>
+<div class="year-banner">1906</div>
+<div class="timeline-dot">New York · Age 70</div>
+<div class="narrative">
+  <p>At 70, you begin wearing an all-white suit in public, in all seasons. You appear before Congress in a white suit. You attend dinners in white. You become as famous for the suit as for your books.</p>
+  <p>You dictate your autobiography — hundreds of thousands of words, speaking freely, requiring that it not be published until 100 years after your death. You say things in the autobiography that you couldn't say in your lifetime, about God, about humanity, about the people you hated and the things you believed.</p>
+  <p>You also begin a correspondence with young girls — the "Angel Fish," a group of girls ages 10-16 whom you adopt as honorary granddaughters. Your own granddaughter is distant. These friendships bring you comfort in your last years.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Autobiography</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Twain dictated his autobiography for years but required it not be published until 100 years after his death (2010). Why?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Legal safety — he said things about living people, including former business partners and political figures, that would have been actionable as libel if published while those people lived.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">He wanted to speak freely without worrying about consequences — the 100-year embargo was a way of having a completely honest voice without paying the social price of honesty.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and also the performance of posthumous honesty was itself a very Twain move. Announcing that the truth couldn't be published yet was a way of building anticipation for a book he knew he'd never see published. He was marketing the autobiography with the embargo.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">The autobiography — published in 2010</div>
+      <p><strong>You dictate hundreds of thousands of words into your autobiography and require it not be published until 100 years after your death. The University of California Press publishes the first volume in November 2010. It immediately becomes a bestseller. You knew it would. You also knew you'd be dead. You were fine with both.</strong> The University of California Press published the first volume of *Autobiography of Mark Twain* in November 2010, exactly 100 years after Twain's death. It immediately became a bestseller. The autobiography is unconventional — Twain deliberately dictated rather than wrote, and switched topics freely, arguing that memory doesn't move in chronological order so the autobiography shouldn't either. The content is rich with opinions on religion, politics, and the people he loved and despised. Some of it is genuinely startling. Most of it is recognizably Twain — funny, bitter, honest, self-aware. He knew it would sell. He also knew he'd be dead. He was fine with both.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Comet</span></div>
+<div class="year-banner">1910</div>
+<div class="timeline-dot">Redding, Connecticut · Age 74</div>
+<div class="narrative">
+  <p>You were born in 1835, when Halley's Comet passed. You have predicted for years that you will die when the comet returns. It returns in April 1910. You die on April 21, 1910, one day after the comet's closest approach to Earth.</p>
+  <p>Your daughter Jean died in December 1909 — the third of your four daughters to predeceive you. (Clara, your remaining daughter, outlives you.) You have outlived almost everyone you loved.</p>
+  <p>You are 74. Your last book is finished. Your debts are paid. The autobiography is sealed for 100 years. The white suit is in the closet.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Meaning of the Arc</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Twain outlived his wife and three of his four children. He rebuilt his fortune twice, lost his daughter during the effort, and ended his life alone. What made this a great life?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">The work. *Huckleberry Finn* and *The Adventures of Tom Sawyer* are among the greatest American novels. The personal losses are separate from the achievement.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">The character. He repaid debts he wasn't required to repay, kept writing through catastrophic loss, and maintained his voice even when the world it was satirizing had broken his heart.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The work and the character are inseparable. The losses produced the late work. The voice that wrote *Huckleberry Finn* came from the same person who went broke betting on a machine and then earned it all back performing for strangers. The biography and the books are one thing.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What Twain said near the end</div>
+      <p><strong>You were born in 1835 when Halley's Comet passed. You predict publicly for years that you will die when it returns. It returns in April 1910. You die on April 21, 1910 — one day after the comet's closest approach to the sun. Whether this was coincidence, will, or the universe cooperating with a good story, it fit the narrative exactly.</strong> In his final years, Twain wrote: "I came in with Halley's Comet in 1835. It is coming again next year, and I expect to go out with it. It will be the greatest disappointment of my life if I don't go out with Halley's Comet. The Almighty has said, no doubt: 'Now here are these two unaccountable freaks; they came in together, they must go out together.'" He died April 21, 1910. The comet had passed closest to Earth on April 20. His prediction was accurate to within one day. Whether this was coincidence, will, or the universe cooperating with a good story, it was entirely appropriate. Mark Twain got the ending that fit the narrative. He would have appreciated it.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Twain's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="next-sims">
+  <p class="next-label">Explore More Lives</p>
+  <div class="next-grid">
+    <a href="shakespeare-simulator.html" class="next-card">
+      <span class="next-name">William Shakespeare</span>
+      <span class="next-desc">Wrote 37 plays. Never published them. Died without knowing what his name would mean.</span>
+    </a>
+    <a href="dostoevsky-simulator.html" class="next-card">
+      <span class="next-name">Fyodor Dostoevsky</span>
+      <span class="next-desc">Survived a fake execution. Wrote Crime and Punishment at the gambling table. Lost everything repeatedly.</span>
+    </a>
+    <a href="tolstoy-simulator.html" class="next-card">
+      <span class="next-name">Leo Tolstoy</span>
+      <span class="next-desc">Wrote War and Peace, then rejected literature as immoral. Fled home at 82 and died at a train station.</span>
+    </a>
+    <a href="kafka-simulator.html" class="next-card">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">Asked his friend to burn all his manuscripts. The friend didn't. The world is grateful.</span>
+    </a>
+  </div>
+</div>
+<div class="cta-box">
+  <p>Mark Twain went bankrupt at 55, lost his daughter during the tour he took to pay back his debts, buried his wife and three children, and died exactly when a comet returned. He said he came in with the comet and would go out with it. He was right. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All Life Simulators — Shakespeare, Darwin, Einstein, Frida Kahlo and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/shakespeare-simulator.html" style="color:var(--accent)">Shakespeare Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Twain";body="You understood that the river education was worth its cost, that the pen name carried meaning, that Huckleberry Finn's controversies are multiple and distinct, that the Paige machine trapped him through intermittent success, and that the autobiography embargo was both honest and strategic. That's the complete Twain.";}else if(pct>=0.625){title="The River Voice";body="You grasped the essential Twain: the value of expertise over wonder, the need to repay his debts for integrity rather than just money, the inseparability of biography and work. Where you may have missed: the simultaneous explanations. Twain's life rarely has single causes.";}else if(pct>=0.375){title="The Humorist";body="You consistently chose the funnier or more optimistic reading. Twain's genius was that he was funny about dark things — the humor and the darkness weren't separate. The late work is important precisely because it shows what the earlier humor was covering.";}else{title="The Skeptic";body="You questioned the connections and the dramatics. Twain was a master of self-dramatization — the comet prediction, the white suit, the 100-year embargo. All of it was real and all of it was performance. The performance was part of who he was."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

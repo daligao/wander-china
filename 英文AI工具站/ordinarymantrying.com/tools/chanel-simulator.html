@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coco Chanel Life Simulator — The Orphan Who Reinvented Women's Fashion | Ordinary Man Trying</title>
+<meta name="description" content="Live Coco Chanel's life across 8 pivotal decisions — from an orphanage in Aubazine to inventing the little black dress, Chanel No. 5, and liberating women from corsets to define modern elegance.">
+<style>
+:root{
+  --bg:#F5F5F0;--card:#FAFAF8;--ink:#0C0C0A;--muted:#403830;--line:#D0C8C0;
+  --accent:#2A2820;--accent-bg:#E8E4DC;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,245,240,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#0C0C0A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B8B0A8;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#0C0C0A;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#E8E4DC;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#E8E4DC;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B8B0A8;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B8B0A8;border-radius:999px;margin-bottom:12px;gap:8px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Coco Chanel</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #90 of 100</p>
+  <h1 class="cover-title">She Was Raised in an Orphanage.<br>She Freed Women from Corsets.</h1>
+  <p class="cover-sub">Gabrielle "Coco" Chanel grew up in poverty, spent years in a Catholic orphanage, and invented herself from nothing — twice. She didn't inherit status; she created it. She replaced corsets with jersey fabric. She made black the color of elegance. She created Chanel No. 5, which is still the world's best-selling perfume a century later. She retired in 1939, came back at 71 to save her house, and put the little black dress on every woman in the Western world. What she did to fashion, she did to herself first: she edited ruthlessly until only what worked remained.</p>
+  <div class="cover-facts">
+    <p>✂️ Liberated women from corsets with jersey fabric and simple cuts &nbsp;·&nbsp; 🖤 Made the little black dress a wardrobe essential (1926) &nbsp;·&nbsp; 🌸 Chanel No. 5 (1921) — still world's best-selling perfume &nbsp;·&nbsp; 🎩 Borrowed menswear styles to create modern women's fashion &nbsp;·&nbsp; 👑 Comeback at age 71 (1954) — declared a triumph by American press &nbsp;·&nbsp; 1883–1971 · Aubazine orphanage to the Ritz Paris</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Chanel's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1895</div>
+  <div class="timeline-dot">Aubazine, France · Age 12</div>
+  <div class="narrative">
+    <p>Your mother dies when you are twelve. Your father, a traveling street vendor who has never been reliable, leaves you and your sisters at the orphanage of Aubazine, run by the nuns of the Congregation of the Sacred Heart of Mary. He tells you he will come back. He does not come back. You spend six years here, until you are eighteen. The nuns teach you to sew. The orphanage is built in the Cistercian style: severe, geometric, black and white, no unnecessary ornamentation. The aesthetic you will create decades later — simple, functional, nothing extraneous — has its visual grammar here, in the stone corridors where you grew up without parents.</p>
+    <p>You will lie about this. You will tell people you were raised by aunts in a more comfortable provincial setting. You will trim five years off your age (from 1883 to 1887, then 1893). The invented biography of Coco Chanel is itself a Chanel design: edited down to what works, stripped of what doesn't, reconstructed to convey a specific effect. You are practicing before you know you are practicing.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1895</div>
+    <p class="decision-q">Chanel grew up in an orphanage shaped by Cistercian austerity — black, white, geometric, unornamented. How does this background connect to the aesthetic she later created?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Pure coincidence — the Cistercian aesthetic influenced her subconsciously, but any correlation between her childhood visual environment and her fashion philosophy is retrospective interpretation rather than direct causation.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. The visual grammar of what we consider beautiful is established in childhood — the environments where we spend our formative years become the unexamined standard against which everything else is measured. Chanel spent six years in a space where black-and-white austerity was simply what serious, dignified life looked like. When she designed, she was not rebelling against ornament; she was returning to what she already knew as beautiful.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Deliberate aesthetic philosophy — Chanel consciously chose austerity as a reaction against the overwrought ornamentation of Edwardian fashion, and the orphanage background simply provided personal familiarity with minimalist design.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Class origins — the simple aesthetic was a practical consequence of poverty rather than an aesthetic preference. She could not afford ornamentation and made necessity a virtue by promoting simplicity as elegant.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You spent six years in Cistercian stone corridors, but you never told anyone you were there.</strong> Justine Picardie's biography of Chanel and several design historians have noted the correspondence between Aubazine's Cistercian geometry — stained glass in geometric patterns, black-and-white contrasts, unornamented stone — and Chanel's mature aesthetic. Chanel herself never discussed the orphanage, having fabricated a more respectable past. But the correspondence is not just visual: the Cistercian principle that beauty emerges from the elimination of unnecessary elements, not from their addition, is exactly the principle underlying Chanel's method of design. She called it "elegance is refusal." The Cistercians called it a different kind of prayer.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1909</div>
+  <div class="timeline-dot">Paris, France · Age 26</div>
+  <div class="narrative">
+    <p>You are keeping a millinery shop in Paris, financed by Étienne Balsan, a wealthy socialite who was your companion and patron. You have made hats — simple hats, without the towering ostrich feathers and elaborate decorations that Edwardian fashion demands. Your hats are different enough that Balsan's aristocratic friends notice them. They ask where they come from. They want them for themselves. You are not yet a fashion designer; you are a hat-maker with wealthy friends and no social standing of your own. You have learned, watching Balsan's world, that the very rich are also looking for simplicity — that excess is sometimes a kind of exhaustion, not a preference.</p>
+    <p>You meet Arthur "Boy" Capel, an English polo player and businessman, who understands what you are doing before you can articulate it yourself. He finances your first real establishment at 21 rue Cambon in 1910. He is the love of your life. He dies in 1919 in a car accident. You will keep his rooms at Cambon for the rest of your life, untouched.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1909</div>
+    <p class="decision-q">Chanel began as a hat-maker, not a couturière. What does this origin reveal about her method of transforming fashion?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. That she worked from the margins of fashion rather than its center — by starting with hats (considered a minor category), she was able to establish her aesthetic without direct competition with the major houses.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. That she observed what her wealthy clients actually wanted rather than what fashion convention said they should want — aristocratic women tired of elaborate display were already moving toward simplicity, and Chanel gave them what they were reaching for before the established houses recognized the shift. She did not invent the desire for simplicity; she served a demand that already existed and was being poorly served.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. That social access was her primary asset — the connections she gained through Balsan and Capel gave her entry to a client base that no millinery talent alone could have reached, and the talent was secondary to the network.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. That hat-making taught her construction principles she later applied to garments — the technical knowledge gained from millinery transferred directly to her later clothing designs.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>You started by watching women who had everything, and you saw that what they actually wanted was less.</strong> In her interviews with Paul Morand (published as "The Allure of Chanel"), she describes spending years watching Balsan's aristocratic world and noticing that the most elegant women were the ones who looked comfortable — not the ones who looked richest. The Edwardian ideal of maximum display was already exhausting the people who practiced it. Chanel's insight was not new values but better service to existing values that had no good designer yet. This is often how taste changes: not by revolutionary persuasion but by someone finally providing what people already wanted and couldn't find.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1914</div>
+  <div class="timeline-dot">Deauville, France · Age 31</div>
+  <div class="narrative">
+    <p>The First World War begins. You open a boutique in Deauville, the seaside resort where the French upper class spends summers. Because of the war, fabrics are restricted. You use jersey, a knit fabric previously used only for men's underwear, to make women's clothing. Jersey drapes easily. It is comfortable. It stretches with the body rather than constraining it. It requires no corset to support. The women you dress can move in your clothes in ways that the boned, structured, whalebone-reinforced dresses of Edwardian fashion did not permit. The war has temporarily freed women from domestic constraint. Your clothes reflect and extend this freedom.</p>
+    <p>You later say: "Fashion is not something that exists in dresses only. Fashion is in the sky, in the street. Fashion has to do with ideas, the way we live, what is happening." The war has changed what is happening. Women are driving ambulances, working in factories, managing households alone. They need clothes that permit this. You give them clothes that permit this and also look beautiful. The combination is new.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1914</div>
+    <p class="decision-q">Chanel's use of jersey was partly forced by wartime fabric restrictions. What does this tell us about the relationship between constraint and creative innovation?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. That necessity generates innovation only when it aligns with existing artistic vision — the wartime restrictions forced the use of jersey, but a designer without Chanel's aesthetic philosophy would have produced ugly jersey clothes rather than a fashion revolution.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. Both: the constraint (jersey only) forced engagement with a material that existing fashion convention had excluded, and the forced engagement revealed properties (drape, comfort, movement) that aligned perfectly with a direction she was already moving. Neither the constraint alone nor the vision alone would have produced the result — the breakthrough required the accidental collision of limitation with prepared intention.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. That material constraints are rarely the real barrier in fashion — a talented designer will find a way to express her vision in any material, and the jersey was simply the medium Chanel would have arrived at eventually anyway.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. That fashion revolutions typically require external disruption — individual designers rarely drive fundamental change; social disruptions (wars, economic collapses, cultural shifts) do the driving, and designers who succeed are the ones who adapt fastest to the new conditions.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>A war that restricted what you could use gave you the one material that changed what women could wear.</strong> The fashion historian Valerie Steele has described Chanel's jersey moment as the intersection of preparation and accident — she had already been moving toward simplicity and function, and the war's material constraints forced a material that perfectly expressed those values. The key fact is that Chanel had already done the aesthetic thinking: she knew she wanted movement, drape, comfort. When jersey appeared as the only available option, she recognized it as what she had been looking for rather than seeing it as a limitation. Preparation allowed her to see opportunity where others saw constraint.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1921</div>
+  <div class="timeline-dot">Grasse, France · Age 38</div>
+  <div class="narrative">
+    <p>You commission Ernest Beaux, a Russian-French perfumer, to create a fragrance for you. You have a specific idea: not a single-flower perfume, which was the convention, but something complex, abstract, and modern. Beaux presents you with a series of numbered samples. You choose the fifth: a blend of over eighty ingredients, including jasmine, rose, ylang-ylang, and synthetic aldehydes, which give it an unusual clean, fresh quality unlike any natural flower. You call it Chanel No. 5 — simply the number of the sample. The name is as stripped of ornament as the aesthetic. It is released on May 5, 1921 (the fifth month). The number becomes the brand.</p>
+    <p>Marilyn Monroe is asked in 1952 what she wears to bed. She says: "Chanel No. 5." This is the best advertisement in the history of fragrance. Chanel No. 5 is still the world's best-selling perfume over a century later. A bottle is sold every thirty seconds.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1921</div>
+    <p class="decision-q">Chanel No. 5 was named simply for the sample number. What does this naming choice reveal about her approach to branding?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. Practical arbitrariness — the numbering was a working method for tracking samples, not a branding strategy. The fact that "No. 5" became iconic was a fortunate accident rather than intentional design.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. Radical abstraction as brand identity — the prevailing convention was to name perfumes for flowers, romance, or femininity (Quelques Fleurs, L'Heure Bleue, Mon Péché). A number is emptied of conventional association, which means it can absorb whatever meaning the user projects into it. Chanel understood that the most powerful brands are containers, not descriptions. "No. 5" describes nothing and therefore means whatever Chanel, and then Marilyn Monroe, and then a century of culture, makes it mean.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. Modernist alignment — naming a perfume with a number signaled alignment with the modernist movement's interest in abstraction and mathematical elegance, positioning Chanel as sophisticated rather than sentimental.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. Class positioning — numbers suggested a scientific, technical pedigree rather than a romantic one, which helped position the perfume as a luxury product with serious craftsmanship credentials rather than merely pretty packaging.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You named the perfume after a sample number, and a century later no one could fully explain why that made it perfect.</strong> Chanel could have named the perfume anything. The industry convention she was violating was not labeling convention but the narrative convention: perfumes told a story (a garden, a romance, a mood). Naming by number refuses the story and creates a vacancy. The vacancy is the brand's most durable asset: "Chanel No. 5" has meant different things in different eras — modernist abstraction in 1921, glamour in 1952, heritage luxury since then — precisely because the name commits to none of these meanings. What Chanel's instinct anticipated is what brand theorists now call the "open signifier": the brand that holds value longest is often the one that commits to a style of presentation rather than a specific meaning.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1926</div>
+  <div class="timeline-dot">Paris, France · Age 43</div>
+  <div class="narrative">
+    <p>In October 1926, <em>Vogue</em> publishes an illustration of a simple black crepe de chine dress with long sleeves, fitted waist, and a length above the calf. <em>Vogue</em> calls it Chanel's "Ford" — a reference to the Model T, the mass-produced car that put the automobile within everyone's reach. The little black dress is versatile enough to be worn at any occasion, simple enough to be dressed up or down with accessories, and — this is the revolution — black, which had previously been the color of mourning in Western fashion. Not of elegance. Not of daily life. Of death. You have made black the color of sophistication, and you have made a simple dress the foundation of a woman's wardrobe. The fashion historian Anne Hollander later writes that the little black dress is "the most important garment in the history of twentieth-century fashion."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1926</div>
+    <p class="decision-q">Before Chanel, black was the color of mourning in Western fashion. She made it the color of elegance. What made this reversal possible?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,true)">A. The combination of her personal authority and social timing — by 1926 Chanel was sufficiently established that she could redefine a color rather than simply use it, and the post-WWI generation of women was already moving away from the elaborate mourning conventions of Victorian and Edwardian society. The reversal required both a person with enough credibility to make the claim and a cultural moment ready to receive it.</button>
+      <button class="dopt" onclick="choose(this,5,false)">B. The functional superiority of black — black is slimming, versatile, and works with any accessory. The "mourning" association was always a cultural convention rather than an intrinsic property, and Chanel simply pointed to what black actually does rather than what convention said it meant.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. The trauma of World War I — a generation that had seen genuine mass death was no longer concerned with performative mourning dress, and black's associations with death had been exhausted. Chanel's timing coincided with the cultural exhaustion of a convention rather than driving the change.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. The economic practicality — a black dress requires no pattern matching, no color coordination across seasons, and less visible fading. The "elegance" narrative was the cover story for a fundamentally practical democratization of clothing that made one dress usable in many contexts.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>You put the color of mourning on every woman in the Western world and called it elegance. They agreed.</strong> By 1926, Chanel had been the most influential designer in Paris for over a decade. She had already successfully introduced jersey, comfortable cuts, and costume jewelry into fashionable women's wardrobes — each of these previously considered beneath the dignity of a well-dressed woman. The LBD was the synthesis: a garment that could only work if the woman wearing it trusted herself, rather than trusting the dress, to convey status. It is the most democratic garment in fashion history: the same dress, worn by a duchess or a shop girl, conveys elegance in both cases, because the elegance is in the cut, not the cost. This was Chanel's most radical claim: that elegance could be separated from expense.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1939</div>
+  <div class="timeline-dot">Paris, France · Age 56</div>
+  <div class="narrative">
+    <p>In September 1939, the day after France declares war on Germany, you close the House of Chanel. You release your workers, close the boutiques, and retire. Your stated reason is that it is "not a time for fashion." You continue to live at the Ritz Paris, which becomes the headquarters of the German military command after France falls. You have a German officer companion, Hans Günther von Dincklage. This will cost you, after the Liberation in 1944, when you are arrested as a collaborator. You are released after a few hours — reportedly because Winston Churchill, who knew you, intervened. You go into exile in Switzerland for nine years. The French fashion world continues without you, and Christian Dior's "New Look" in 1947 restores the cinched waist and full skirt that you had spent thirty years eliminating.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1939</div>
+    <p class="decision-q">Chanel's wartime choices — closing the house, her German companion, living at the Ritz under occupation — represent one of fashion history's most contested legacies. How should these be weighed?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. They should disqualify her design legacy — the circumstances of the occupation required clear resistance or at minimum non-cooperation, and her choices represent a moral failure that should permanently overshadow her contributions to fashion.</button>
+      <button class="dopt" onclick="choose(this,6,false)">B. They should be treated separately from her design work — the aesthetic achievements (jersey, the LBD, No. 5, the Chanel suit) are objective contributions to design history that stand independently of her personal conduct during the war.</button>
+      <button class="dopt" onclick="choose(this,6,true)">C. They require honest acknowledgment as part of a complete picture — the wartime choices were significant and consequential, and the willingness to hold the complexity (great designer, morally compromised wartime behavior) is what honest historical judgment looks like. Neither erasure of the design legacy nor erasure of the wartime choices is adequate. A complete account requires both.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. They should be contextualized within the behavior of the broader French upper class — her choices were not unusual among wealthy Parisian women during the occupation, and holding her to a higher standard than her contemporaries introduces an anachronistic moral framework.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>The liberation that freed Paris in 1944 sent you into nine years of Swiss exile.</strong> The French novelist Edmonde Charles-Roux, who wrote one of the earliest serious biographies of Chanel and who had been in the French Resistance, was explicit that Chanel's wartime behavior was a serious failure of moral courage. The Hal Vaughan biography "Sleeping with the Enemy" (2011) drew on newly declassified documents suggesting deeper German intelligence connections. Chanel's release from arrest is still partly unexplained. What is clear is that her nine years of Swiss exile were not merely self-imposed but were a practical consequence of how her conduct in Paris was regarded. The house she returned to in 1954 was returning from something.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1954</div>
+  <div class="timeline-dot">Paris, France · Age 71</div>
+  <div class="narrative">
+    <p>You are seventy-one years old, exiled in Lausanne, and you have been absent from fashion for fifteen years. Christian Dior's 1947 "New Look" — nipped waists, padded hips, full skirts that fall below the knee — has reversed everything you spent three decades building. Women are back in structured, restrictive silhouettes. You announce you are returning to design. The French press is savage. Your February 1954 comeback show is near-universally panned in France as dated, irrelevant, old. The American press, by contrast — including <em>Life</em> magazine — calls it a triumph. Cary Grant sends you a telegram. American women begin ordering the Chanel suit in enormous quantities.</p>
+    <p>The Chanel suit — a collarless boxy jacket in braid-trimmed tweed with a straight skirt — becomes, over the next decade, the signature garment of American professional women and the most copied suit in fashion history. By 1959, American department stores report it is their best-selling category. The French press quietly changes its position. You continue working until six days before your death in January 1971, at eighty-seven, at the Ritz.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1954</div>
+    <p class="decision-q">The French press condemned Chanel's comeback; the American press celebrated it. Why were their responses so different?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. National pride — the French press supported Dior and Balenciaga as French achievements and resented the implicit competition from a returning rival, while American press had no domestic industry to protect.</button>
+      <button class="dopt" onclick="choose(this,7,true)">B. Different relationships to fashion's purpose — French haute couture in 1954 was about artistic spectacle; what you wore was art that demonstrated connoisseurship. American women were increasingly entering professional workplaces and needed clothes that worked in offices. The Chanel suit was functional, washable (jacket and skirt could be cleaned separately), comfortable, and authoritative. The American audience recognized immediately that it solved a problem the Dior New Look did not address. The French audience was evaluating fashion as art; the Americans were evaluating it as clothing.</button>
+      <button class="dopt" onclick="choose(this,7,false)">C. The influence of Chanel's wartime reputation — the French press was more aware of the occupation-era associations and could not fully separate the designer from her wartime behavior, while the American audience had less direct knowledge of and concern with this history.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Timing and market position — the American market was simply more willing to adopt a recognizable international brand name in the 1950s, and the specific aesthetic merits of the Chanel suit mattered less than the brand recognition she carried.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>At seventy-one, the French press called you finished and the American buyers called you indispensable. You went back to work.</strong> The <em>Life</em> magazine coverage in March 1954, which was far more positive than the French press, focused specifically on the comfort and practicality of the Chanel suit compared to the Dior New Look. The reporter noted that women who wore it could sit in a car, reach across a desk, walk quickly — movements that the full skirt and nipped waist of the Dior silhouette resisted. By 1954, American women had been working outside the home in significant numbers for over a decade (the wartime entry into the workforce had not fully reversed). The Chanel suit gave them what they actually needed. The French couture world was making a different object for a different purpose.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1971</div>
+  <div class="timeline-dot">The Ritz Paris · Age 87</div>
+  <div class="narrative">
+    <p>January 10, 1971. You are working. You have been fitting models for the spring collection. You return to your room at the Ritz — where you have lived since 1937 — and you die there on the afternoon of January 10, aged eighty-seven. Your last words are reported to be a complaint that this is what it is like to die. Your collection is finished and shown by your assistant after your death. The house continues. Karl Lagerfeld takes over as creative director in 1983 and keeps Chanel the most recognizable luxury brand in the world for the next thirty-six years.</p>
+    <p>You are buried at the Bois-de-Vaux cemetery in Lausanne, in the city of your Swiss exile. The grave is decorated with five stone lions — one for each letter of "Chanel," or for the sample number, or for the fifth of May, or for all of these. You spent your life inventing yourself. You would appreciate an ambiguous ending.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 1971</div>
+    <p class="decision-q">What is the most accurate summary of what Chanel changed in fashion?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. She changed the silhouette — from structured and corseted to relaxed and comfortable — which is a physical and stylistic revolution but not necessarily a deeper cultural one.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. She changed the economics — by making fashion accessible (mass-produced perfume, jersey fabric, suits that could be copied) she democratized dress, expanding fashion's audience from the very rich to the aspirational middle class.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. She changed what fashion said about women — before Chanel, fashion primarily signaled that a woman was well-cared-for (by her husband, her dressmaker, her corsetière). After Chanel, fashion could also signal that a woman was capable, independent, and in command of her own movement. The clothes she made permitted women to be active rather than decorative. This is not just a change in style but in the social meaning encoded in what women wore. Everything else — the jersey, the LBD, the suit, the perfume — is downstream of this fundamental shift.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. She changed the design process — by designing for herself first, as a wearer rather than a dressmaker, she introduced an entirely different approach to fashion that centered the experience of wearing over the experience of viewing, and this methodology was as influential as any specific garment she produced.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>What you changed wasn't the silhouette — it was the question a dress was allowed to ask about the woman wearing it.</strong> The feminist scholar Elizabeth Wilson writes that Chanel's contribution to fashion was not simply stylistic but ideological: she made the dressed female body a vehicle for the expression of competence rather than exclusively of attractiveness or status. This does not mean her designs were feminist in motivation — Chanel herself was skeptical of organized feminism — but that the social meaning of wearing Chanel was different from the social meaning of wearing her predecessors' designs. A woman in a jersey Chanel suit was signaling something different from a woman in a structured Dior New Look gown. The former said: I can move; I have somewhere to go. This encoding, once established, persisted through every version of the house's designs across the century.</p>
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Coco Chanel · 1883–1971</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"Elegance is refusal."<br><em style="font-size:13px;color:var(--muted);">— Gabrielle "Coco" Chanel</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="earhart-simulator.html" class="next-card">
+        <div class="next-card-name">Amelia Earhart</div>
+        <div class="next-card-sub">First woman to fly the Atlantic — alone</div>
+      </a>
+      <a href="duncan-simulator.html" class="next-card">
+        <div class="next-card-name">Isadora Duncan</div>
+        <div class="next-card-sub">Invented modern dance — lived it all</div>
+      </a>
+      <a href="gauguin-simulator.html" class="next-card">
+        <div class="next-card-name">Paul Gauguin</div>
+        <div class="next-card-sub">Left Paris for Tahiti — a desperate wager</div>
+      </a>
+      <a href="wilde-simulator.html" class="next-card">
+        <div class="next-card-name">Oscar Wilde</div>
+        <div class="next-card-sub">Art for art's sake — until the trial</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You see what she saw: that elegance is always a form of refusal. You refused the ornament, the explanation, the obvious — just as she did, in stone corridors and in every collection afterward.';else if(pct>=0.625)t.textContent='You found the pattern more often than not. The gaps are where Chanel was most ruthless — editing down to what actually works takes longer than adding more.';else if(pct>=0.375)t.textContent='You understood some of what she built. The rest she would call excess: the unnecessary explanation, the unnecessary caution, the unnecessary convention she spent a lifetime removing.';else t.textContent='She stripped everything down to what was essential. So did her life. The six years in the orphanage. The nickname no one could quite explain. The number instead of a name. You can add it back. She never did.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

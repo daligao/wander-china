@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Frida Kahlo?</title>
+<meta name="description" content="She survived a bus crash at 18 that shattered her spine. She painted 55 self-portraits. She married Diego Rivera twice. 8 decisions from the most personal painter of the 20th century.">
+<meta property="og:title" content="What Would You Do If You Were Frida Kahlo?">
+<meta property="og:description" content="The bus accident, the 35 surgeries, the Diego Rivera marriages, and the decision to paint what no one else would paint. 8 decisions from a life of radical honesty.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/frida-simulator.html">
+<style>
+:root{
+  --bg:#F7F2EC;--card:#FDFAF5;--ink:#1A0808;--muted:#5A2828;--line:#D4A8A0;
+  --accent:#8B1A1A;--accent-bg:#F5E8E4;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,242,236,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#1A0A0A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #D4A0A0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#2A1010;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#FDF5F0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#200808;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#FDF5F0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #D4A0A0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#2A1010;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.quote-block{background:var(--ink);color:#FDF5F0;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#A87878;margin-top:12px;font-family:var(--mono);}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#1A0A0A;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#FDF5F0;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #D4A0A0;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.cta-box{background:var(--accent);color:#FDF5F0;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#F0C0B0;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Frida Kahlo</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #25</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Frida Kahlo?</h1>
+  <p class="cover-sub">At 6, she had polio. At 18, a bus crashed into a tram and shattered her spine, pelvis, collarbone, and right leg. She had 35 surgeries over her lifetime. She painted 55 self-portraits. She married Diego Rivera, the most famous muralist in Mexico — and then married him again. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Frida Kahlo</strong> (1907–1954) · Mexican painter · Born in Coyoacán, Mexico City · Works: 143 paintings, 55 self-portraits · Major works: <em>The Two Fridas</em> (1939), <em>The Broken Column</em> (1944), <em>Without Hope</em> (1945), <em>Self-Portrait with Thorn Necklace and Hummingbird</em> (1940) · Medical history: polio at 6, bus accident at 18, 35 surgeries, three miscarriages, spinal fusion, right leg amputation (1953) · International recognition came largely posthumously and in the 1980s–90s revival · Became one of the most recognized visual artists of the 20th century.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1925, Coyoacán</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Accident</span></div>
+<div class="year-banner">1925</div>
+<div class="timeline-dot">Coyoacán / Mexico City · Age 18</div>
+<div class="narrative">
+  <p>You are 18. You are riding a wooden bus in Mexico City when it collides with a tram. The bus splits open. A steel handrail impales you through the hip and exits the other side. Your spine is fractured in three places. Your right leg is fractured in eleven places. Your collarbone is broken. Your right foot is crushed. Your pelvis is broken in three places.</p>
+  <p>You were going to study medicine. That is over now. You will spend three months in a full body cast, then months more in bed. Your mother commissions a special easel that attaches to the bed; a mirror is mounted in the canopy above you. You begin to paint. You had no formal training. You paint what you can see: yourself.</p>
+  <p>The accident did not end your life. It defined what your life would be about.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Accident's Meaning</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You are 18, immobile, in constant pain. You start painting. Is this a decision — or is it simply what you do because there is nothing else to do?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">It is a decision. You choose to make something rather than endure passively. The medium is painting because it is available. The choice is creative response rather than acceptance.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">It is not really a decision — it is what a person with your particular temperament does when immobilized. A different personality would have read, or slept, or sunk into depression. The painting is expression of character, not choice.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">The distinction doesn't hold. When situation and character align perfectly, action feels inevitable but is still freely taken. You painted because you could not not paint — which is also what it means to have found what you were for.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Frida said about the accident</div>
+      <p><strong>You are 18, pinned to a bed with a shattered spine and a mirror rigged above you. For three months the only thing you can reach is a brush. You paint yourself — not because it is meaningful, but because it is what you can see.</strong> Kahlo said later: "I never painted dreams. I painted my own reality." She also said: "I am not sick. I am broken. But I am happy to be alive as long as I can paint." The distinction she drew between dreams and reality is important — unlike Surrealism (which she was associated with but consistently rejected as a label), her paintings are not symbolic displacements of unconscious material. They are direct, almost medical depictions of her physical and emotional experience. The bus accident gave her the subject matter that no one else had in the same form: a body constantly present as both protagonist and antagonist. The self-portraits are not narcissism — they are anatomy. She was the most available and most interesting subject she had continuous access to.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Subject</span></div>
+<div class="year-banner">1926</div>
+<div class="timeline-dot">Coyoacán, Mexico · Age 19</div>
+<div class="narrative">
+  <p>You paint your first serious self-portrait in 1926, still recovering. You send it to a boy you had been interested in before the accident — a deliberate act of showing rather than concealing. You wear a velvet dress, your posture is formal, the pose is Renaissance. You look directly at the viewer. There is no sentimentality about the damage.</p>
+  <p>Over the next 28 years you will paint 55 self-portraits. You will also paint your miscarriages, your surgeries, your body in a medical corset, your body with its spine replaced by a shattered column. You will paint your cultural identity — the Tehuana dress, the pre-Columbian jewelry, the Mexican indigenous tradition — in opposition to the European modernism that dominated the international art world. You will paint Diego Rivera's face on your forehead in a self-portrait, as if he were a third eye. You will not explain the paintings.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Painting the Body</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You paint your miscarriages, your surgeries, your shattered spine. The art world of the 1930s–40s finds this strange — too personal, too literal, too female. What is the argument for painting this instead of something safer?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Strategic: these subjects are untouched. The market for conventional landscape and portraiture is saturated. A painter who depicts miscarriage and surgical corsets will have no competition. Originality has commercial value.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">These subjects are what you actually know and have access to with complete authority. No one can question the accuracy or authenticity of a painter depicting her own body. The intimacy of the subject is exactly the intimacy of the knowledge — and that is not available from the outside.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">The pain requires expression and the painting is the only available form of expression. This is not a strategic decision about subject matter — it is the only honest response to what is happening. Safety is not available as an option.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Kahlo said — and what Diego Rivera observed</div>
+      <p><strong>You paint a hospital sheet soaked in blood, a fetus on a red ribbon, your pelvis fractured in three places — and send it into an art world that has never seen a painting like this. The critics call it too personal. You are not doing therapy. You are doing anatomy.</strong> Diego Rivera, who knew more about painting than almost anyone alive in 1930s Mexico, wrote about Kahlo's work: "Her work is acid and tender, hard as steel and fine as a butterfly's wing, lovable as a smile and cruel as the bitterness of life." He was identifying something specific: the paintings are not confessional in the therapeutic sense — they are not seeking sympathy. They are precise. The medical accuracy of <em>The Broken Column</em> (1944) — painted after a spinal surgery, depicting her body split open with a shattered Ionic column replacing her spine, nails driven into her body, wearing a surgical corset — is the accuracy of someone reporting what happened. Kahlo said: "I tried to drown my sorrows, but the bastards learned how to swim." The paintings are not sorrows; they are documentation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>I paint myself because I am so often alone and because I am the subject I know best.</q>
+  <div class="q-attr">— Frida Kahlo</div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · Diego Rivera</span></div>
+<div class="year-banner">1929</div>
+<div class="timeline-dot">Mexico City · Age 22</div>
+<div class="narrative">
+  <p>Diego Rivera is 42 when you marry him. He is the most famous muralist in Mexico, possibly the world — his government commissions cover public buildings from Mexico City to San Francisco. He has been married twice before. He has a reputation for affairs with his models and collaborators that is not a secret. Your mother calls the marriage "a union between an elephant and a dove." Your father says: "Between the two of them there will be two accidents — first Diego, then Frida."</p>
+  <p>The marriage is real. Rivera recognizes your painting immediately as significant and promotes it aggressively. He is unfaithful constantly, including, eventually, with your sister Cristina. You are also unfaithful — with men and with women. The infidelities are known to both of you. The marriage continues.</p>
+  <p>In 1939, you divorce. In 1940, you remarry.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Rivera Marriage</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You marry a man known for serial infidelity, you are both unfaithful, he has an affair with your sister — and you divorce, then remarry. What is this marriage actually about?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Dependency — physical, financial, artistic. You need Rivera's connections, his recognition, his name. The marriage continues because leaving would cost more than staying, and remarrying restores access to what you need.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Mutual artistic recognition. Rivera sees your painting clearly and you see his. This form of seeing is rarer than physical fidelity and more sustaining. The infidelities damage the marriage but do not touch what matters most.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, inseparably, with the full contradictions intact. You loved him, needed him, were devastated by him, painted him on your forehead as a third eye, and chose him twice. There is no single clean account of this marriage because none was available to Frida either.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Kahlo's diary says</div>
+      <p><strong>Diego has an affair with your sister Cristina. You cut your hair short, stop wearing the Tehuana dress, extract yourself from who you were for him — then you grow it back, put the dress back on, and remarry him. The marriage produces more paintings than the divorce would have.</strong> Kahlo's illustrated diary — kept through the 1940s until her death in 1954 — contains passages about Rivera that alternate between devotion and fury, sometimes on the same page. She wrote: "Diego: Nothing is comparable to your hands and nothing is equal to the gold-green of your eyes. My body is filled with you for days and days. You are the mirror of the night. The violent flash of lightning. The dampness of the earth." And also documented his infidelities with clinical anger. After the affair with her sister: she cut her hair short, stopped wearing Tehuana dress. The hair, the dress, the jewelry had been part of who she was for Diego. Cutting them was a precise act of extraction. She grew her hair back. She wore the Tehuana dress again. She painted both — the cut hair in <em>Self-Portrait with Cropped Hair</em> (1940), the Tehuana identity throughout her career. The marriage produced more paintings than the divorce would have.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Miscarriages</span></div>
+<div class="year-banner">1932</div>
+<div class="timeline-dot">Henry Ford Hospital, Detroit · Age 25</div>
+<div class="narrative">
+  <p>You miscarry for the second time at Henry Ford Hospital in Detroit in July 1932. The bus accident had shattered your pelvis; doctors had told you that carrying a pregnancy to term would be extremely difficult or impossible. This is the second of three miscarriages. A pregnancy would have required a caesarean section that your damaged pelvis might not survive.</p>
+  <p>You paint <em>Henry Ford Hospital</em> while still in the hospital: yourself in the bed, naked, on a hospital sheet stained with blood, holding six objects floating on red ribbons attached to your body — including the fetus, a snail, a model of a female pelvis, a flower. The painting is 12 inches by 15 inches and extremely detailed. You had no formal medical training but you borrowed a medical textbook to get the anatomy right.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — Painting the Miscarriage</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You are 25, in a hospital bed after a miscarriage, and you paint it — the blood, the fetus, the medical equipment — with anatomical precision, using a textbook for accuracy. What makes this art and not just documentation?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">The composition and the symbolic elements — the six floating objects connected by ribbons — impose an artistic frame on documentary material. Remove the composition and it is documentation. The frame is what makes it art.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">B</span><span class="dopt-body">The decision to paint it at all, from inside the experience rather than after it, with complete honesty about what it looked like. The distinguishing act is not the composition but the refusal to wait until it was aesthetically manageable. The rawness is the artistic act.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">The choice of what to include — the snail, the orchid, the mechanical parts alongside the biological — transforms medical documentation into personal symbolic language. The non-realistic elements are what elevate it beyond record-keeping.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What art historians observe about the hospital paintings</div>
+      <p><strong>You are 25, in a Detroit hospital after your second miscarriage, and you borrow a medical textbook from the library to get the anatomy right. You paint the blood, the fetus, the fractured pelvis — from inside the experience, while it is still happening.</strong> Kahlo painted <em>Henry Ford Hospital</em> on metal sheet rather than canvas — a choice she made for much of her work because metal does not buckle when she has to work lying down. She borrowed a medical textbook from a hospital library to ensure the pelvis was anatomically accurate. She later described the floating objects: "I cried a lot, but now I am not going to cry anymore. I am going to paint it." The painting circulated for decades primarily in private collections and was considered too difficult to exhibit. André Breton, who visited Mexico in 1938 and was trying to claim Kahlo for the Surrealist movement, found the hospital paintings particularly striking because they had the logic of dream — symbolic juxtaposition, floating isolated objects — without being dreams at all. The floating objects were real: the fetus she had lost, the pelvis she carried damaged, the mechanical parts that felt like her own body's condition. The accuracy makes them more disturbing than fantasy would.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Surrealists</span></div>
+<div class="year-banner">1938</div>
+<div class="timeline-dot">Paris and New York · Age 31</div>
+<div class="narrative">
+  <p>André Breton arrives in Mexico in 1938 and sees your paintings. He tells you that you are a Surrealist — that your work is the automatic expression of unconscious symbolism that defines the Surrealist program. He organizes an exhibition of your work in Paris in 1939. The Louvre buys <em>The Frame</em> — the first work by a 20th-century Mexican artist to enter the Louvre's collection.</p>
+  <p>You say: "They thought I was a Surrealist, but I wasn't. I never painted dreams. I painted my own reality." This is not a small disagreement. Breton's claim is that the paintings express unconscious material through symbolic displacement — the objects floating above the hospital bed are dream-logic. Your claim is that the objects were real, the experience was real, and the painting is a record, not a displacement. The difference is the difference between two completely different theories of where art comes from.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Surrealism Question</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Breton says your paintings are Surrealist: unconscious symbolism expressed directly. You say you never painted dreams — you painted your reality. Who is right about where your paintings come from?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Breton. The floating objects, the impossible anatomies, the symbolic juxtapositions — these are the formal language of Surrealism regardless of what the painter intended. Art belongs to the viewer, not the maker. The label fits the work.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">Kahlo. She is the authority on her own experience and process. The objects in the hospital painting were not unconscious symbols — they were things she chose with full awareness. The painter's testimony about her own intention is not decisive but it is not negligible.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">Both, for different paintings. The <em>Henry Ford Hospital</em> paintings are documentary. Other paintings — <em>The Two Fridas</em>, for instance — have a dreamlike quality that exceeds any documentary account. Painting that spans this range cannot be located entirely in either category.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Kahlo said — and what the paintings do</div>
+      <p><strong>You've had a painting purchased by the Louvre — the first Mexican work they've ever acquired. André Breton, who organized the show, is telling the world your paintings are Surrealism: unconscious material expressed directly. You say: I never painted dreams. I painted my own reality.</strong> Kahlo's rejection of the Surrealist label was consistent and categorical. She also disliked Paris intensely on the 1939 trip — she wrote to a friend: "I'd rather sit on the floor in the market of Toluca and sell tortillas, than have anything to do with those 'artistic' bitches of Paris." The Surrealist adoption of her work as an example of their program is a real case of misappropriation: they needed her more than she needed them, and the classification served Breton's taxonomy more than it served her work. The argument for her position: she knew what she was doing, the process was deliberate, and the symbolic elements (the snail, the pelvis, the mechanical parts) were chosen with full consciousness based on what they meant to her personally, not extracted from unconscious material. The argument against: artists are not always the most reliable narrators of what their work does.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Identity</span></div>
+<div class="year-banner">1940</div>
+<div class="timeline-dot">Coyoacán, Mexico · Age 33</div>
+<div class="narrative">
+  <p>You dress in the traditional Tehuana clothing of the Tehuantepec region of Oaxaca — a matriarchal indigenous culture. You wear pre-Columbian jewelry, elaborate headdresses, embroidered blouses. You wear these clothes every day, in Mexico and in New York and in Paris. You are from Mexico City and have Spanish as well as indigenous heritage; the Tehuana dress is not your native regional costume.</p>
+  <p>The choice of dress is deliberate and consistent. It says: I am from here, not from Europe. My reference points are pre-Columbian, not French. My body belongs to Mexican cultural history, not to the international modernism that will classify and exhibit me. The clothing is an artistic statement made with the same intentionality as the paintings — and unlike the paintings, it is visible at all times.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Tehuana Identity</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You wear Tehuana clothing as a daily artistic and cultural statement, though you are not Tehuana by birth. Is this authentic self-expression or constructed identity?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Constructed identity — she adopted a regional costume that was not her own and performed it for an international audience. The authenticity of indigenous cultural expression requires belonging to the tradition, not selecting it.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">B</span><span class="dopt-body">All identity involves construction and choice, especially for someone positioned between cultures. The Tehuana dress was a precise act of cultural alignment with the part of her heritage and her country that the international art world was not positioning her within. The construction is the point.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">The question of authenticity is less important than the effect: the Tehuana dress made her visible as specifically Mexican at a moment when Mexican artists were being absorbed into the European avant-garde. Strategic or authentic, it worked.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What scholars of Mexican cultural history observe</div>
+      <p><strong>You are from Mexico City, of mixed German-Jewish and Spanish-indigenous descent, and you wear Tehuana clothing — from a matriarchal culture in Oaxaca you were not born into — every single day: in Paris, in New York, in your self-portraits. Diego promoted the dress. You kept wearing it after him.</strong> Kahlo did have mixed heritage — her father was of German-Jewish descent, her mother of indigenous Mexican and Spanish descent. The Tehuana dress was associated with a matriarchal indigenous culture in southern Mexico that had different gender dynamics than urban Mexican society — women had more commercial and social power. Wearing it was not straightforward ethnic authenticity but a deliberate affiliation with a specific set of values within Mexican culture: indigenous over European, female power over male power, local over international. Diego Rivera, who had political reasons for emphasizing Mexican indigeneity, also promoted the Tehuana dress on Kahlo — which complicates the authenticity question further. Kahlo eventually wore it regardless of Rivera's presence or absence. The dress appears in more than two dozen of her self-portraits. Whatever it started as, it became genuinely hers.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Amputation</span></div>
+<div class="year-banner">1953</div>
+<div class="timeline-dot">Mexico City · Age 46</div>
+<div class="narrative">
+  <p>The right leg, broken in eleven places in the 1925 accident, has never fully recovered. Infections have come and gone for decades. In 1953, gangrene forces the decision: amputation below the knee. You are 46. You have already had 35 surgeries.</p>
+  <p>The year before, in 1952, you have your first solo exhibition in Mexico. You arrive in an ambulance and are carried in on a stretcher. You give the exhibition in a four-poster bed. Three hundred people come. Your diary entry after: "I am not worried about my feet." You paint: two naked feet wearing Tehuana shoes, with a poem written beneath them: "Feet, what do I need you for / when I have wings to fly?"</p>
+  <p>After the amputation: "They amputated my leg six months ago, they have given me centuries of torture and at moments I almost lost my reason. I keep on wanting to commit suicide. Diego is what keeps me from it, because of my vanity in thinking that he would miss me. I love him more than my own skin, and even though he doesn't love me in the same way, he loves me as much as he can love anyone."</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Diary After the Amputation</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Frida writes: "I love him more than my own skin, and even though he doesn't love me in the same way, he loves me as much as he can love anyone." Is this resignation — or something else?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Resignation: she has accepted a lesser love than she wanted and rationalized the gap. The sentence is psychologically honest about the mismatch but ultimately a form of accommodation to what she cannot change.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">Clarity: she sees Rivera accurately, without illusion, after 24 years of marriage and divorce and remarriage. The sentence is not rationalization — it is the most accurate description possible of an asymmetric relationship she has chosen with full information.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, and neither is a failure. The capacity to hold "I love him more than my own skin" and "he doesn't love me in the same way" simultaneously, without resolving either, is not resignation or delusion — it is the particular kind of honesty that runs through all 143 paintings.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Kahlo's diary shows — and what the paintings do with contradiction</div>
+      <p><strong>Your right leg has just been amputated below the knee. You have had 35 surgeries. You are 46. The diary entry that follows is about how much you love Diego Rivera.</strong> Kahlo's illustrated diary is the most intimate of her documents — written in the last years of her life, addressed to Rivera, full of paint and drawings and poetry. The entry about the amputation is followed almost immediately by entries of extraordinary tenderness toward him. The simultaneity is the consistent formal feature of her work: <em>The Two Fridas</em> (1939) shows two versions of herself, one with a healthy connected heart and one with a cut-open bleeding heart, holding hands. The painting was made during the divorce — not before, when the hurt was building, and not after, when it might have resolved. It was made during. She did not wait for the feeling to become manageable before painting it. The unresolved state is not a failure of the painting; it is the painting's subject.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · Afterward</span></div>
+<div class="year-banner">July 13, 1954</div>
+<div class="timeline-dot">La Casa Azul, Coyoacán · Age 47</div>
+<div class="narrative">
+  <p>You die on July 13, 1954, at La Casa Azul — the Blue House in Coyoacán where you were born and where you have lived most of your life. The official cause of death is pulmonary embolism. You are 47. Your last diary entry reads: "I joyfully await the exit — and I hope never to return."</p>
+  <p>At the time of your death, you are known in Mexico and in certain international art circles. The major museums have not yet collected your work in depth. The mainstream recognition of your paintings — the reproductions on t-shirts and tote bags and greeting cards, the blockbuster exhibitions, the ranking among the most valuable paintings in Latin American art history — comes in the 1980s and 1990s, thirty years after your death.</p>
+  <p>La Casa Azul is now a museum. Three hundred thousand people visit it each year.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Kahlo Question</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Frida Kahlo's posthumous fame is larger than her fame in life. The t-shirts, the brand, the museum in Coyoacán — does this recognition match the work? Or has the image overtaken the paintings?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">The image has overtaken the paintings. The Frida Kahlo on the merchandise is a feminist icon, a suffering artist, a symbol of resilience — not a specific painter making specific decisions about composition and medical accuracy. The brand erases what made the work interesting.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">The recognition is accurate and overdue. She was producing major work in the 1930s and 1940s that was dismissed partly because of its subject matter and its context. The posthumous fame corrects a genuine historical undervaluation.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">Both are true at different levels. The merchandise and the icon have erased the specificity of the paintings for most people. But the paintings themselves — encountered directly, not through reproduction — are more disturbing and more technically accomplished than the icon suggests. The fame brought more people to the work; what they find in the work is different from what brought them there.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What the art market and the museums show</div>
+      <p><strong>The year you die, all 143 of your paintings together are worth roughly $1 million. In 2021, a single painting — <em>Diego and I</em> (1949) — sells for $34.9 million. The Frida on the tote bags is not quite the Frida in the hospital paintings.</strong> In 2021, <em>Diego and I</em> (1949) sold at Sotheby's for $34.9 million — the highest price ever paid for a Latin American work at auction. The Frida Kahlo Corporation actively licenses her image and has pursued trademark protection for her likeness. These are two different things: the auction price reflects art-market evaluation of the work; the licensing reflects the image's cultural value independent of the paintings. Critics like Hayden Herrera, who wrote the definitive 1983 biography that sparked the international revival, have noted that the celebrity can function as a barrier — visitors to <em>Henry Ford Hospital</em> or <em>The Broken Column</em> often experience the paintings as more extreme and less comfortable than the icon prepares them for. The paintings do not offer resilience — they offer precision. Precision about pain is not the same thing as triumph over it, and Kahlo never claimed it was.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Frida's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="cta-box">
+  <p>Frida Kahlo had 35 surgeries, three miscarriages, and married the same man twice. She painted all of it — not as therapy, not as symbolism, but as documentation of what it actually looked like from the inside. She said: "I never painted dreams. I painted my own reality." The paintings are harder than the icon. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All 25 Life Simulators — Dostoevsky, Kafka, Nietzsche, Darwin and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/dostoevsky-simulator.html" style="color:var(--accent)">Dostoevsky Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Frida";body="Seven or eight decisions matched. You understood that the accident and the painting were inseparable rather than sequential, that the self-portrait was documentation rather than narcissism, that the hospital paintings were precise rather than displaced, and that the Kahlo posthumous fame tells you something different from what encountering the actual paintings does.";}else if(pct>=0.625){title="The Direct Eye";body="You matched Kahlo's characteristic move: seeing the contradiction and holding it without resolution. The Rivera marriage question, the Surrealism rejection, the amputation diary entry — you recognized these as states of simultaneous truth rather than situations requiring a decisive reading. Where you may have diverged: the accident's meaning and the identity question.";}else if(pct>=0.375){title="The External Frame";body="You consistently applied analytical frameworks from outside the experience — Breton's Surrealism, questions of strategic identity, the amputation as straightforward resignation. These are defensible interpretive positions. Kahlo's move was consistently to insist on the interior account, the experience from inside, even when the inside was contradictory and resistant to clean framing.";}else{title="The Clean Read";body="You resolved the contradictions at every turn — the Surrealist classification holds, the Tehuana dress is either authentic or strategic, the Rivera marriage is either dependency or recognition. Kahlo's paintings are about the moment before that resolution: <em>The Two Fridas</em> was painted during the divorce, not before or after. She was interested in the state of holding both."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

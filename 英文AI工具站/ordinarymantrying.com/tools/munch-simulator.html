@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Edvard Munch Life Simulator — The Man Who Painted the Scream</title>
+<meta name="description" content="Make the same decisions as Edvard Munch — who painted anxiety, grief, and terror before the rest of the world knew those were paintable subjects, and survived a breakdown to produce 40 more years of work.">
+<style>
+:root{
+  --bg:#F0EDE8;--card:#F7F5F0;--ink:#15100A;--muted:#503820;--line:#DDD0BC;
+  --accent:#3A1800;--accent-bg:#F0E0C8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Norway · 1863–1944</div>
+  <h1>Could You Have Been<br>Edvard Munch?</h1>
+  <div class="cover-sub">He lost his mother to tuberculosis at five. His favorite sister Sophie died of the same disease when he was fourteen. He watched death take his family one by one and turned the watching into paint. His early work scandalized Oslo, his Berlin exhibitions were shut down by outraged audiences, and in 1908 he collapsed completely. He spent eight months in a Danish clinic. Then he went home, painted for 36 more years, and left everything — over 1,000 paintings — to the city of Oslo.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">1,000+</div><div class="stat-l">Works left to Oslo at his death</div></div>
+    <div class="stat"><div class="stat-n">1908</div><div class="stat-l">Complete breakdown — then 36 more years of painting</div></div>
+    <div class="stat"><div class="stat-n">80</div><div class="stat-l">Years of age at death, still painting in wartime Oslo</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Oslo, 1885 · The Sick Child</div>
+<p class="narrative">You are 22 and you have been working for a year on a painting of your dying sister Sophie. You remember the specific texture of that death — the reddish hair against the pillow, the way the light came through the window onto a face that was becoming transparent, the mother's bent head. The academic painters of Oslo paint mythology, landscapes, allegories — they do not paint grief from the inside. What you have on the canvas is grief from the inside: inexact, layered, the brushwork showing the effort of looking. When you exhibit it in 1886, a critic calls it "a half-finished sketch." Others are more cruel.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Sick Child</div>
+  <div class="d-situation">The critics attack The Sick Child as incompetent and unfinished. The academic style is available to you — you trained in it and are capable of it. Do you continue with the raw, emotional approach?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Yes — the "unfinished" quality is the point; academic smoothness would kill what you are trying to paint</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. No — return to academic technique; establish your reputation first, then experiment</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Yes, but explain yourself in writing — include a statement about your intentions so critics understand the deliberate roughness</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Munch continued with the raw approach, and The Sick Child became the painting he returned to throughout his life — he made six versions of it across four decades. The work he was doing in 1885-86 was not understood for years, but it was the foundation of all the major work that followed. The "unfinished" quality he was accused of was actually the discovery of Expressionism — the idea that paint marks can carry emotional states directly rather than depicting subjects realistically. He had found this before German Expressionism had a name for it.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Paris and Berlin, 1889–1892 · The Frieze of Life</div>
+<p class="narrative">You have spent time in Paris on a government scholarship, seeing the Impressionists and Post-Impressionists, particularly Van Gogh and Gauguin. You have developed a concept you call the Frieze of Life — a series of paintings organized around the great themes of human existence: The Awakening of Love, The Blossoming and Dissolution of Love, Fear and Anxiety, Death. You plan to paint a cycle of images that together constitute a comprehensive account of what it feels like to be alive. It is an extraordinarily ambitious program — more like a literary project than a conventional painting career.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Frieze Concept</div>
+  <div class="d-situation">The Frieze of Life is a concept that will take decades and may never be completed. Do you commit to it as your organizing principle?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Yes — an organizing concept that big gives every painting more meaning than it could have alone; commit fully</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. No — the concept is too theoretical; respond to each painting as it comes without imposing a system</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Yes, but keep it private — use the Frieze as a personal organizing principle without announcing it publicly</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Munch committed to the Frieze of Life concept and it shaped his work for the rest of his career. It meant that no painting stood alone — The Scream was part of a sequence about anxiety and fear; Madonna and the Vampire were part of a sequence about love and sexuality; The Sick Child was part of the death sequence. The cumulative effect, when the works are seen together, is extraordinarily powerful. The Munch Museum in Oslo presents the collection in roughly this order, and visitors consistently describe the experience as overwhelming in a way that individual great paintings rarely are.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Oslo Fjord, January 1892 · The Scream</div>
+<p class="narrative">You record it in your diary: "I was walking along the road with two friends — the sun was setting — suddenly the sky turned blood red — I paused, feeling exhausted, and leaned on the fence — there was blood and tongues of fire above the blue-black fjord and the city — my friends walked on, and I stood there trembling with anxiety — and I sensed an infinite scream passing through nature." You are 28. You paint what you sensed. The sky in the painting is orange and red, the fjord below it blue and green, and the figure in the foreground — which is you — has become the scream itself, the face a hollow of agony, the hands pressed against the cheeks. It is unlike anything that has ever been painted.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Scream</div>
+  <div class="d-situation">The experience you painted was a specific moment of overwhelming anxiety — what might now be called a panic attack. The painting makes your private terror public. Do you exhibit it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Yes — the terror is universal even if the experience was specific; paint the anxiety and let others recognize it</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. No — the painting is too personal; keep it as a private record and paint something more communicable for exhibition</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Yes, but contextualize it — explain the diary passage in the exhibition notes so viewers understand it as a subjective experience</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Munch exhibited The Scream in December 1893 in Berlin. The reception was predictably outraged and confused. Critics called it the product of a deranged mind. What they could not do was look away from it. The painting created a vocabulary for a specific kind of modern anxiety that no one had previously found images for — the alienation of the self from the natural world, the sensation of being overwhelmed by existence itself. Munch made four versions of The Scream. One sold at auction in 2012 for $119.9 million. The face has been reproduced on more merchandise than almost any other image in art history.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Berlin, 1892 · The Exhibition Scandal</div>
+<p class="narrative">The Union of Berlin Artists has invited you to exhibit. You bring 55 paintings — the Frieze of Life. The opening night audience is bewildered and then furious. Within a week, the Artists' Union votes to close the exhibition — the first time in its history that it has shut down a show it organized. The scandal makes international news. You are 29. You are suddenly one of the most famous artists in Germany, infamous for work that closed an exhibition. Young German artists are fascinated by what you are doing.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Berlin Scandal</div>
+  <div class="d-situation">The Berlin Artists' Union has shut down your exhibition and created an international controversy. Do you stay in Germany to work in the environment you've created, or return to Norway?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Stay in Germany — the scandal has made you a figure for the young German artists who are going somewhere interesting; be part of that</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Return to Norway — the German art world is hostile; better to work in an environment that isn't actively trying to destroy you</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Stay but respond to the controversy publicly — write about what you are doing and why; educate the German public</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Munch stayed in Germany. He spent most of the 1890s and 1900s moving between Germany, France, and Norway, exhibiting constantly, drinking heavily, and developing the Frieze of Life paintings. The Berlin scandal had the paradoxical effect of making him central to what became German Expressionism — the group of artists who took his emotional intensity and non-realistic approach and built it into the dominant aesthetic of the early 20th century. Without Munch's Berlin scandal, German Expressionism likely takes a different form. The rejection made him influential.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Warnemünde, 1907 · Before the Collapse</div>
+<p class="narrative">You are 44. For two decades you have been working at extraordinary intensity — the paintings, the printmaking, the travel, the drinking, the catastrophic love affairs. The relationship with Tulla Larsen ended in 1902 with a gun going off during an argument — you lost the tip of your left middle finger. You have been drinking heavily for years. You are hallucinating. You feel persecuted. The energy that produced The Scream and the Frieze of Life is now turning against you. You cannot sleep. You cannot stop working. You are in the middle of four commissions simultaneously. Something in you is about to break.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · The Warning Signs</div>
+  <div class="d-situation">You are showing clear signs of breakdown — hallucinations, paranoia, insomnia, excessive drinking. Do you seek help before it becomes a crisis?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Yes — voluntarily enter a clinic before the collapse becomes involuntary; you know something is wrong and acting early is acting wisely</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. No — the intensity is the source of the work; managing it will reduce the output</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Stop drinking but continue working — the alcohol is probably the main problem; address that first</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Munch waited until the collapse was complete. In October 1908 he checked himself into Dr. Daniel Jacobson's clinic in Copenhagen — voluntarily, which suggests he knew he was in serious trouble. He spent eight months there. The treatment included electromagnetic therapy (controversial then, still controversial now) and complete rest from work. He stopped drinking permanently. When he emerged in May 1909, he was fundamentally changed — calmer, less tormented, working in a more expansive outdoor style. The fiercest paintings came before the breakdown. The most peaceful work came after.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Norway, 1909–1944 · The Long Return</div>
+<p class="narrative">You return to Norway in 1909 and buy a property at Ekely, outside Oslo, where you live and work for the rest of your life. The paintings change — larger, more colorful, full of outdoor light and laborers. You paint the University of Oslo's aula murals, a massive commission. You paint your garden, the workers in the fields, the sea. The anxiety has not disappeared — the anxiety never disappears — but you have learned to live inside it rather than be consumed by it. You work every day. You accumulate thousands of works. You never marry. You live alone with the paintings.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · The Ekely Years</div>
+  <div class="d-situation">You have settled into a productive solitude — painting daily, rarely leaving the property, keeping people at a careful distance. Is this the right way to live?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Yes — after everything, solitude and work are the right arrangement; the clinic taught you that the intensity required protection</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. No — the solitude is overcorrection; human connection is as necessary as it is dangerous</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Yes for now, but consider what happens to the work when you are gone — begin planning for the collection's future</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Munch lived at Ekely for 35 years until his death. He maintained the solitude deliberately and carefully. During the Nazi occupation of Norway (1940-44) he refused to collaborate with the occupiers and was left largely alone — the Nazis considered him a "degenerate artist" officially, though they also wanted his work. He continued painting until weeks before his death in January 1944. He had prepared extensively for what would happen to the work — he had been accumulating and protecting the paintings for decades, refusing to sell his most important works, keeping them together. He left everything to the City of Oslo.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · Ekely, 1944 · The Gift</div>
+<p class="narrative">You are dying. You are 80. The German occupation is in its fourth year. You have refused every collaboration with the occupiers. You have kept the paintings — over a thousand of them, stacked in the rooms and hallways of Ekely, some in poor condition from his habit of leaving canvases outdoors in the weather. You have left your entire estate to the City of Oslo. You have no children, no wife. You have the paintings. On January 23, 1944, you die. The paintings go to Oslo.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The Gift to Oslo</div>
+  <div class="d-situation">He left everything — over 1,000 paintings, 15,000 prints, thousands of drawings — to the city he had spent his youth trying to escape. Why?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. Because he understood the collection's power required staying together — scattered in private hands or international museums, the Frieze of Life would lose its cumulative force</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. Because he had nowhere else to give it — no family, no institution with the resources to hold it, and Oslo was the only answer</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. Because he wanted recognition in the place that had first rejected him — Norway was where the work needed to be vindicated</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> The Munch Museum opened in Oslo in 1963. It now holds over 26,000 works — the largest collection of works by a single artist in the world, all from the one bequest. The cumulative effect of seeing the Frieze of Life assembled is what Munch always understood would justify the concept. Individual great paintings are impressive; the full Frieze is devastating. His decision to keep the collection intact rather than sell it gave future viewers the experience he had designed for them 70 years earlier.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · The Legacy</div>
+<p class="narrative">The Scream is one of the most recognized images on Earth. But the Scream is not the legacy — or it is only the most visible part of it. The legacy is the Frieze of Life: hundreds of paintings organized around the proposition that the inner life — anxiety, grief, desire, death, love — is the only subject that matters in art, and that painting can access it directly if the painter is willing to abandon the conventions that make painting comfortable for its audience.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · What Munch Proved</div>
+  <div class="d-situation">He painted inner states in an era that thought outer appearances were the subject of art, survived a complete breakdown, and produced 40 more years of work. What is the central lesson?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. That the inner life is a legitimate subject for art — he proved this by painting it for 60 years while the world tried to look away</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. That survival requires recognizing when you need help — the clinic saved his life and the second half of his career</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. That collections have more power than individual works — his decision to keep everything together is as important as any single painting</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> All three answers point to something true. The inner life as artistic subject — what became Expressionism — is now so pervasive that it is hard to remember it had to be invented. The clinic and the sobriety gave him 36 more years. The unified bequest gave the world the Frieze of Life as he conceived it. But the single choice that made all the others possible was the decision he made at 22 with The Sick Child: paint what you actually saw and felt, not what the academies said was worth painting. Everything else followed from that.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Edvard Munch Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="vangogh-simulator.html">
+      <span class="next-name">Vincent van Gogh</span>
+      <span class="next-desc">Munch's contemporary — who also painted inner states and also paid a severe personal price for it</span>
+    </a>
+    <a class="next-card" href="picasso-simulator.html">
+      <span class="next-name">Pablo Picasso</span>
+      <span class="next-desc">The painter who took the emotional intensity of Expressionism and built it into Cubism's new geometry</span>
+    </a>
+    <a class="next-card" href="kafka-simulator.html">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">The writer who did in prose what Munch did in paint — rendered anxiety and alienation as subject matter</span>
+    </a>
+    <a class="next-card" href="woolf-simulator.html">
+      <span class="next-name">Virginia Woolf</span>
+      <span class="next-desc">Another artist who made the inner life the only legitimate subject for art — in her case, fiction</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent="You made every call Munch made: the raw brushwork on The Sick Child over the critics' objections, the Frieze of Life as your organizing principle for 60 years, staying in Berlin after the scandal that made you famous for being shut down. You checked yourself in before the collapse went past the point of return, worked quietly at Ekely for 35 more years, and left everything to Oslo because you understood the Frieze only works whole.";else if(score>=5)t.textContent="You followed the most important logic: the emotional approach over academic technique, the Frieze as your framework, Germany over the safety of Norway after the scandal. Where you diverged tends to be the personal and practical — waiting too long to seek help, hesitating before exhibiting private terror publicly. Munch's career shows that the willingness to make inner anguish publicly visible was not incidental to the work. It was the work.";else if(score>=3)t.textContent="You took the safer exits at the decision points that mattered most — smoothed the technique when the critics attacked, went home after the Berlin scandal instead of staying in the environment it had created. These aren't obviously wrong choices. But the German Expressionist movement that Munch's Berlin scandal helped launch needed him to stay in the room, and the Frieze of Life needed sixty years of uninterrupted commitment to become what it became.";else t.textContent="You chose academic convention, familiar ground, and available security at almost every turn. This would have been a comfortable life and possibly a long one. The Sick Child, painted the way the Oslo academies expected it, would not have scandalized Berlin or helped invent Expressionism. Munch's first decision — to paint what he actually saw at Sophie's deathbed rather than what the conventions allowed — is the one that made all the others possible.";el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

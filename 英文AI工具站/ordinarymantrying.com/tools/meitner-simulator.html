@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lise Meitner Life Simulator — She Discovered Nuclear Fission and Won Nothing</title>
+<meta name="description" content="Make the same decisions as Lise Meitner — who discovered nuclear fission in exile, fled Nazi Germany with one suitcase, watched her colleague win the Nobel Prize for her work, and refused to build the bomb.">
+<style>
+:root{
+  --bg:#EEF2F5;--card:#F5F8FA;--ink:#08101A;--muted:#304858;--line:#C8D8E8;
+  --accent:#0A2840;--accent-bg:#E0EAF5;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Austria / Germany / Sweden · 1878–1968</div>
+  <h1>Could You Have Been<br>Lise Meitner?</h1>
+  <div class="cover-sub">She was the physicist who discovered nuclear fission — calculating the mathematics that explained how a uranium nucleus could split and release vast energy, while sitting on a log in the Swedish snow, in exile, having fled Nazi Germany with one suitcase. Her colleague Otto Hahn received the Nobel Prize for the discovery. She did not. She refused to work on the atomic bomb. She outlived almost everyone who had wronged her and died at 89, the element 109 eventually named in her honor.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">1938</div><div class="stat-l">Year she discovered fission — in exile, with no laboratory</div></div>
+    <div class="stat"><div class="stat-n">0</div><div class="stat-l">Nobel Prizes — despite 48 nominations over her lifetime</div></div>
+    <div class="stat"><div class="stat-n">109</div><div class="stat-l">Meitnerium — element named in her honor, 1997</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Vienna, 1901 · The University Opens</div>
+<p class="narrative">You are 23 years old and the University of Vienna has just — for the first time in its history — opened its doors to women as full students. You are the second woman in the world to receive a doctorate in physics from the University of Vienna. Your doctoral supervisor is Ludwig Boltzmann, the man who developed statistical mechanics and is currently in a bitter war with colleagues who deny the reality of atoms. You absorb from Boltzmann not just the physics but the lesson of a scientist whose correct ideas were attacked for decades by the scientific mainstream. You are going to need that lesson.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · After the Doctorate</div>
+  <div class="d-situation">You have a physics doctorate — one of the first women in the world to hold one. Vienna offers you nothing in physics. Berlin is where the action is. Do you go?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Yes — go to Berlin and attend Planck's lectures; accept whatever terms are available to get access to the work</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. No — the terms available to women in German physics are too degrading; wait for conditions to improve</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Stay in Vienna — Boltzmann is here; this is where the physics is</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Meitner went to Berlin in 1907. She attended Planck's lectures — the only woman permitted, initially as a visitor rather than a student. She eventually became Planck's assistant, the first woman to hold a scientific position in Prussia. She met Otto Hahn and they began a collaboration that would last 30 years. For the first years she was not permitted to use the main laboratory — she worked in a converted carpenter's shop. She entered the building through a side entrance. She accepted these conditions because the alternative was not doing physics at all, and not doing physics was not something she was willing to consider.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Berlin, 1917 · The Protactinium</div>
+<p class="narrative">The First World War is grinding through its worst years. Hahn is at the front doing gas warfare research. You are in Berlin, working alone in the Kaiser Wilhelm Institute, and you discover protactinium — element 91, the first long-lived isotope of the element preceding uranium in the periodic table. You make this discovery largely by yourself while Hahn is away. The credit is shared when he returns. In the scientific partnership between you and Hahn, the question of who gets credit for what has always been complicated — you are the physicist, he is the chemist, and the work requires both. But the world tends to see only the chemist.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Credit</div>
+  <div class="d-situation">You discovered protactinium largely alone. The paper shares credit with Hahn. Is this the right arrangement?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Yes — the long collaboration means shared credit makes sense; fighting over attribution is not productive and is not why you are here</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. No — solo work deserves solo credit; begin being more explicit about what you contribute independently</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Yes, but only for this discovery — establish clearer credit terms going forward before the next major finding</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Meitner shared credit with Hahn and the collaboration continued. The pattern of shared credit benefited Hahn more than it benefited her — in the scientific community, in the press, and eventually in the Nobel committee's reasoning. The problem wasn't that the collaboration was wrong — it was genuinely collaborative work for decades. The problem was that the cultural context meant the chemist was more visible than the physicist, the man more visible than the woman, and when the Nobel Prize came, the committee used both of these biases simultaneously.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Berlin, 1933–1938 · Staying Too Long</div>
+<p class="narrative">Hitler becomes Chancellor in January 1933. The Law for the Restoration of the Professional Civil Service removes Jews from government positions. You are Austrian, not German, so initially you are protected. Jewish colleagues lose their positions. Friends leave. The physics community in Germany slowly empties of its Jewish and Jewish-connected members. You stay — partly because the research is here, partly because you believe the political situation will pass, partly because Austria is different. By 1938, Austria is no longer different. The Anschluss makes you German — and German law now applies to you.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Decision to Stay</div>
+  <div class="d-situation">By 1936 it is becoming clear that the situation in Germany is not temporary. Many colleagues have already left. Do you go?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,false)">A. Stay — the research is here, the situation may still change, and leaving would mean abandoning 30 years of work</button>
+    <button class="dopt" onclick="choose(this,3,true)">B. Go now — the pattern of events is clear enough; waiting for certainty will mean waiting until it is too late</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Stay but begin preparing — keep Austrian citizenship active, cultivate contacts abroad, be ready to leave quickly if needed</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Meitner stayed until it was almost too late. After the Anschluss in March 1938, she was effectively stateless — her Austrian passport was invalid, German authorities had blocked her from leaving Germany, and she had no other citizenship. Friends in the Dutch and Swedish physics communities — including Dirk Coster and Niels Bohr — worked frantically to arrange her escape. She crossed into the Netherlands on July 13, 1938, carrying only what she could put in one bag and ten marks. She left behind 30 years of work, her apartment, her salary, her pension, and the experiment that was about to produce nuclear fission.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Sweden, December 1938 · The Walk in the Snow</div>
+<p class="narrative">You are in Sweden, at the Nobel Institute in Stockholm, starting over at 60 with no laboratory, no equipment, and no clear position. Hahn is still in Berlin, continuing the uranium bombardment experiments you were both working on. He writes to you in December 1938 with a result he cannot explain: when he bombards uranium with neutrons, he gets barium — an element with roughly half the atomic mass of uranium. The atoms seem to have been cut in half. He thinks his chemistry must be wrong. You know it isn't. You go for a walk in the woods near Kungälv with your nephew Otto Robert Frisch. You sit on a log. You work out the mathematics in your head.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Calculation</div>
+  <div class="d-situation">You understand what Hahn's result means — the uranium nucleus has literally split. The energy released would be enormous. How do you communicate this?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Publish immediately with Frisch — this is the most important result in nuclear physics and needs to be communicated to the world accurately</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Tell Hahn first — he produced the experimental result and deserves to be part of the announcement</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Verify the result experimentally before publishing — the implications are too large to announce without further confirmation</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Meitner and Frisch wrote the theoretical paper explaining nuclear fission — they coined the term "fission" from cell biology — and submitted it to Nature, where it was published in February 1939. Hahn had already published his chemical results separately in January. The two papers together constituted the discovery of fission: Hahn's chemistry showing what happened, Meitner and Frisch's physics explaining why. When the Nobel committee made its award in 1944, it gave the chemistry prize to Hahn alone for "his discovery of the fission of heavy atomic nuclei." Meitner's theoretical explanation was not credited.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Washington, 1943 · The Bomb</div>
+<p class="narrative">Word of your discovery has spread. The Americans are building what they call the Manhattan Project. American colleagues you respect — physicists who had to flee Europe — are working on it. You are invited to join. The work would use the fission you discovered to build a weapon. You would have a laboratory. Resources. You would matter again, instead of being marginalized in a small Stockholm institute. The invitation is substantial and serious.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · The Manhattan Project</div>
+  <div class="d-situation">The Americans invite you to work on the nuclear weapons program. It would give you resources and a real position. Do you accept?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. No — you will not work on a weapon designed to kill civilians; the physics is not worth the deaths</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. Yes — Hitler must be stopped; if the bomb ends the war faster, participating saves lives overall</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. No — but for practical rather than moral reasons; you have no security clearance and the bureaucratic obstacles would be impossible</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Meitner refused the Manhattan Project invitation, reportedly telling her contact: "I will have nothing to do with a bomb." Her ethical position was consistent throughout her life. When Hiroshima was bombed in August 1945, American newspapers called her "the Jewish mother of the atomic bomb" — a title she found deeply offensive. She had not wanted to build a bomb. She had wanted to understand how atomic nuclei behaved. That the fission she discovered was used to kill people was a fact she carried the rest of her life, despite having made the clearest decision she could against it.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Stockholm, 1944 · The Nobel Prize</div>
+<p class="narrative">The 1944 Nobel Prize in Chemistry is awarded to Otto Hahn "for his discovery of the fission of heavy atomic nuclei." You are in Stockholm. Hahn is in Germany, detained by British forces as part of Operation Epsilon (monitoring German nuclear scientists). The Nobel committee has credited the chemistry — the experimental result — and not the theoretical explanation. They have awarded the man and not the woman. Hahn accepted the award without mentioning your contribution in his Nobel lecture.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · The Nobel Exclusion</div>
+  <div class="d-situation">You have been excluded from the Nobel Prize for a discovery you made fundamental contributions to. How do you respond?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Maintain dignity — continue your research, speak the facts clearly when asked, and let the scientific record speak for itself over time</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Challenge it publicly — write to the Nobel committee, to the press, and to Hahn directly demanding acknowledgment</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Withdraw from the scientific community — if the community cannot recognize what you contributed, you are done engaging with its honors</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Meitner maintained her dignity publicly. She wrote privately to Hahn expressing her hurt and disappointment. He was not particularly responsive. In her later years she spoke more clearly about the injustice, but she never made it a crusade. She continued to work in Sweden until 1960, when she moved to Cambridge to be near her nephew Frisch. She received the Max Planck Medal, the Fermi Award (shared with Hahn and Strassmann in 1966, presented by President Johnson), and honorary degrees from universities around the world. None of them were the Nobel Prize. She received 48 nominations during her lifetime.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · Cambridge, 1966 · The Fermi Award</div>
+<p class="narrative">You are 87. You have spent the last years in Cambridge, frail but still working at a desk. President Lyndon Johnson presents you with the Fermi Award — shared with Otto Hahn and Fritz Strassmann. It is the most prestigious award in nuclear science. You are too ill to travel to Washington to receive it in person; it is presented to you in Vienna, where you have gone to visit family. You cannot walk without assistance. You are being honored, finally, clearly, explicitly for fission. You have three months left to live.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The Late Recognition</div>
+  <div class="d-situation">You receive the Fermi Award at 87, after decades of inadequate recognition. Is late recognition meaningful?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. Yes — recognition at any point is a correction of the record, and corrections matter even when they are late</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. No — the recognition that would have mattered came during the productive years; this is consolation, not justice</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. The question is wrong — what mattered was the work, not the recognition; the Fermi Award is nice but beside the point</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> Meitner died on October 27, 1968, in Cambridge — three months after receiving the Fermi Award. She died in her sleep. Her epitaph, which her nephew Robert Frisch wrote for her grave, reads: "A physicist who never lost her humanity." In 1997, element 109 was named Meitnerium in her honor. The periodic table now bears her name permanently — more permanently than any Nobel Prize, which is awarded to a person and then recedes into history. Meitnerium is on every periodic table printed since 1997 and will be for as long as chemistry exists.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · The Legacy</div>
+<p class="narrative">Lise Meitner discovered nuclear fission, refused to weaponize it, fled a regime that wanted to destroy her, and worked in physics for 60 years across four countries. The Nobel committee's exclusion of her from the 1944 prize is now widely cited as one of the most significant errors in Nobel Prize history. A 2018 paper in Physics Perspectives called it "unjust." Einstein called her "the German Marie Curie." She was better than that comparison suggested: Marie Curie won the Nobel. Meitner didn't.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · What This Life Means</div>
+  <div class="d-situation">She discovered the most consequential physical phenomenon of the 20th century, refused to use it to kill people, was excluded from its recognition, and outlived the exclusion. How do we understand this?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. As a lesson in institutional failure — the Nobel exclusion tells us more about the Nobel committee in 1944 than it does about Meitner's contribution</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. As a personal triumph — she maintained her ethics and her work despite everything; the outcome was not in her control</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. As an unresolved injustice — the element named after her is not adequate compensation for a Nobel withheld by gender and wartime bias</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> All three readings are valid and all three are true. The institutional failure is real and documented — the Nobel committee's files have been reviewed by historians who confirm that Meitner was considered and excluded. Her personal integrity is beyond question — the refusal of the Manhattan Project, the maintenance of dignity after the Nobel, the continued work into her 80s. The injustice is real and unresolved in the sense that it cannot be undone. What is permanent is the fission she discovered and the element that bears her name. Meitnerium will be on periodic tables for as long as chemistry is practiced anywhere in the universe.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Lise Meitner Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="curie-simulator.html">
+      <span class="next-name">Marie Curie</span>
+      <span class="next-desc">The woman physicist who won the Nobel — and what it cost her to do so in that era</span>
+    </a>
+    <a class="next-card" href="franklin-simulator.html">
+      <span class="next-name">Rosalind Franklin</span>
+      <span class="next-desc">Another woman scientist whose contribution to a major discovery was taken without credit</span>
+    </a>
+    <a class="next-card" href="einstein-simulator.html">
+      <span class="next-name">Albert Einstein</span>
+      <span class="next-desc">Meitner's contemporary — who also fled Nazi Germany and whose work intersected with hers</span>
+    </a>
+    <a class="next-card" href="turing-simulator.html">
+      <span class="next-name">Alan Turing</span>
+      <span class="next-desc">Another scientist persecuted by their own society despite making contributions that saved it</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You think exactly like Meitner — go to Berlin for the work, publish the fission discovery immediately, refuse the bomb without hesitation, and maintain dignity when the Nobel committee makes the wrong call. The periodic table now carries your name. The committee\'s decision is what is remembered as a mistake.';else if(score>=5)t.textContent='Strong instincts. You understood the core choices — access over dignity, publish immediately, refuse the weapons program, let the record speak. A few hesitations around staying too long in Germany or challenging the Nobel more aggressively crept in, but you would have made the major scientific contribution.';else if(score>=3)t.textContent='You sought more protection and more recognition than Meitner claimed. Staying in Berlin too long, challenging the Nobel aggressively, taking the Manhattan Project for the resources — these are understandable choices that would have changed the outcome significantly, and not necessarily for the better.';else t.textContent='You accepted the bomb invitation, demanded the Nobel recognition, and prioritized safety over access to the work. Meitner made opposite choices at every decision point. The element 109 on the periodic table is named Meitnerium. That is the judgment history made.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

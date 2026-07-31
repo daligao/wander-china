@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-DBR2PMLR61");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Elon Musk?</title>
+<meta name="description" content="An interactive story about Elon Musk — the man who quit his Stanford PhD after 2 days, put his last dollars into a rocket that kept exploding, and built the most valuable car company on earth. At every turning point, you make the call.">
+<style>
+:root {
+  --bg: #0D1B2A;
+  --card: #152236;
+  --ink: #E8F0F8;
+  --muted: #7090B0;
+  --line: #243750;
+  --accent: #00C8D7;
+  --accent-bg: #0A2535;
+  --fire: #FF6B35;
+  --fire-bg: #2A1A0D;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Consolas, monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;-webkit-tap-highlight-color:transparent;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(13,27,42,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;color:var(--ink);}
+.cover-sub{font-size:16px;color:#A8C0D8;line-height:1.8;margin-bottom:28px;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#0D1B2A;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.1);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:#C8D8E8;margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#A8C0D8;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#0D1B2A;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;font-weight:700;}
+.d-num{opacity:.55;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;color:var(--ink);}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:#A8C0D8;display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:var(--accent-bg);}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--fire);background:var(--fire-bg);}
+.dopt.right .dopt-id{background:var(--fire);border-color:var(--fire);color:#fff;}
+.dopt.wrong{border-color:#8B2020;background:#1A0A0A;opacity:.7;}
+.dopt.wrong .dopt-id{background:#8B2020;border-color:#8B2020;color:#fff;}
+.dopt.correct{border-color:var(--fire);background:var(--fire-bg);border-width:2px;}
+.dopt.correct .dopt-id{background:var(--fire);border-color:var(--fire);color:#fff;}
+.reveal{display:none;border-top:1.5px solid var(--line);padding:20px 18px;animation:slideIn .35s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.reveal-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:4px 11px;border-radius:20px;margin-bottom:14px;}
+.badge-y{background:var(--fire-bg);color:var(--fire);border:1px solid #884428;}
+.badge-n{background:#1A0A0A;color:#CC6655;border:1px solid #663333;}
+.reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--fire);font-weight:700;margin-bottom:6px;}
+.reveal-text{font-family:var(--serif);font-size:17px;line-height:1.5;margin-bottom:14px;color:var(--ink);}
+.reveal-explain{font-size:14px;line-height:1.85;color:#A8C0D8;}
+.seg{display:none;}
+.seg.shown{display:block;animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.results{padding:40px 0 20px;}
+.results-hero{text-align:center;padding:20px 0 28px;}
+.results-trophy{font-size:56px;display:block;margin-bottom:10px;}
+.results-score-big{font-family:var(--serif);font-size:64px;font-weight:700;line-height:1;letter-spacing:-.03em;color:var(--ink);}
+.results-score-big span{font-size:24px;color:var(--muted);}
+.results-sub{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+.results-title{font-family:var(--serif);font-size:22px;font-weight:700;margin:18px 0 10px;line-height:1.3;color:var(--ink);}
+.results-desc{font-size:14px;color:#A8C0D8;line-height:1.85;margin-bottom:24px;}
+.divider{height:1px;background:var(--line);margin:24px 0;}
+.dim-rows{display:flex;flex-direction:column;gap:14px;margin:16px 0 24px;}
+.dim-row-head{display:flex;justify-content:space-between;margin-bottom:5px;}
+.dim-row-name{font-size:13px;font-weight:700;color:var(--ink);}
+.dim-row-num{font-family:var(--mono);font-size:12px;color:var(--muted);}
+.bar-bg{height:7px;background:var(--line);border-radius:6px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:6px;width:0;transition:width 1.1s ease;}
+.bar-co{background:var(--accent);}
+.bar-ri{background:var(--fire);}
+.bar-re{background:#4A9A6A;}
+.res-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.res-card .rc-title{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.share-pre{font-family:var(--mono);font-size:12px;background:#0A1622;border:1px solid var(--line);border-radius:8px;padding:14px;line-height:1.8;white-space:pre-wrap;margin-bottom:12px;color:#A8C0D8;}
+.copy-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#0D1B2A;font-family:var(--sans);font-weight:700;font-size:15px;padding:14px 20px;border-radius:10px;width:100%;transition:filter .15s;}
+.copy-btn:hover{filter:brightness(1.1);}
+.sim-links{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.sim-links p{font-size:14px;color:#A8C0D8;line-height:1.7;margin-bottom:10px;}
+.sim-links a{color:var(--accent);font-weight:700;text-decoration:none;font-size:13px;margin-right:10px;display:inline-block;margin-bottom:6px;}
+.sim-links a:hover{text-decoration:underline;}
+.replay-btn{appearance:none;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:var(--sans);font-weight:600;font-size:14px;padding:13px 20px;border-radius:10px;width:100%;}
+@media(max-width:480px){.cover-title{font-size:28px;}.narrative p{font-size:16px;}}
+
+.tweet-btn{display:inline-block;margin-left:10px;padding:9px 18px;background:#000;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .2s;}
+.tweet-btn:hover{opacity:0.8;}
+
+.next-sims{margin:32px 0 8px;text-align:center;}
+.next-sims h3{font-size:14px;color:#888;margin-bottom:14px;font-weight:400;letter-spacing:.05em;text-transform:uppercase;}
+.next-sims-grid{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.next-sim-btn{display:inline-block;padding:10px 18px;border:1px solid rgba(0,0,0,.15);border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;color:var(--ink,#2d2d2d);background:#fff;transition:all .2s;}
+.next-sim-btn:hover{border-color:var(--accent,#8B6914);color:var(--accent,#8B6914);transform:translateY(-1px);}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/musk-simulator.html">
+<meta property="og:title" content="Elon Musk Life Simulator — Would You Have His Risk Tolerance?">
+<meta property="og:description" content="An interactive story about Elon Musk — who quit his Stanford PhD after 2 days, put his last $35M into Tesla and SpaceX in 2008 when both were failing. 7 real decisions.">
+<meta property="og:site_name" content="Ordinary Man Trying">
+<meta property="og:locale" content="en_US">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Game",
+  "name": "Elon Musk Life Simulator",
+  "description": "Make Elon Musk's real decisions, including the day he risked everything on both SpaceX and Tesla simultaneously.",
+  "url": "https://ordinarymantrying.com/tools/musk-simulator.html",
+  "genre": [
+    "Educational",
+    "Simulation"
+  ],
+  "gamePlatform": "Web Browser",
+  "applicationCategory": "Game",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Ordinary Man Trying",
+    "url": "https://ordinarymantrying.com"
+  }
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Elon Musk</span>
+  <span class="topbar-score" id="topbar-score"></span>
+</div>
+<div class="cover" id="cover">
+  <div class="cover-eyebrow">True Story · Interactive</div>
+  <h1 class="cover-title">He quit his Stanford PhD after 2 days. He put his last dollars into a rocket that kept exploding. He slept on the factory floor. He built the most valuable car company and the world's most successful private space program — simultaneously. At every turning point, you make the call.</h1>
+  <p class="cover-sub">This is a life simulation. At each critical moment in Elon Musk's real story, you face the same choice he did — before you're told what he actually did.</p>
+  <button class="start-btn" onclick="startStory()">Start the Simulation →</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+  <div class="narrative">
+    <p>Elon Reeve Musk was born on June 28, 1971, in Pretoria, South Africa. His father was an electromechanical engineer. His mother, Maye, was a model and dietitian. He was bullied severely as a child — once thrown down a flight of stairs by a group of boys, hospitalized. He read encyclopedias for comfort. By 12, he had taught himself to code and sold a video game he'd written to a computer magazine for $500.</p>
+    <p>He moved to Canada at 17 to avoid mandatory South African military service. Then to the United States, to study at the University of Pennsylvania, where he earned degrees in economics and physics. Then to Stanford, for a PhD in energy physics. He had been accepted. He had a stipend. He had a future in academia mapped out.</p>
+    <p>He lasted two days.</p>
+  </div>
+
+  <div class="decision-block" id="d1">
+    <div class="decision-header"><span>Decision 1 · 1995 · Age 24 · Stanford, Day 2</span><span class="d-num">1 / 7</span></div>
+    <div class="decision-body">
+      <p class="decision-q">Musk has been accepted into Stanford's PhD program in energy physics. He's been there two days. The internet is exploding — 1995 is the year Netscape goes public. He has an idea for a web-based business directory (Zip2). He can stay at Stanford, pursue the PhD, and build something on the side — or he can leave. What does he do?</p>
+      <div class="dopts" id="opts-1">
+        <button class="dopt" onclick="answer(1,'A')"><div class="dopt-id">A</div><div class="dopt-body">Stay at Stanford. The PhD is a credential that will matter. The internet will still be there in 4 years.</div></button>
+        <button class="dopt" onclick="answer(1,'B')"><div class="dopt-id">B</div><div class="dopt-body">Take a leave of absence — keep the option open while testing whether the business idea has legs.</div></button>
+        <button class="dopt" onclick="answer(1,'C')"><div class="dopt-id">C</div><div class="dopt-body">Stay and build Zip2 on the side. Part-time pursuit of both — the PhD is too valuable to abandon for an unproven idea.</div></button>
+        <button class="dopt" onclick="answer(1,'D')"><div class="dopt-id">D</div><div class="dopt-body">Withdraw from Stanford. Now. The window on the internet is open and it will not stay open. Build Zip2.</div></button>
+      </div>
+      <div class="reveal" id="rev-1">
+        <div class="reveal-badge" id="badge-1"></div>
+        <div class="reveal-label">What Elon Musk Did</div>
+        <div class="reveal-text"><strong>You walk out of Stanford after two days, sleep in the office for months, and sell the company four years later for $307 million.</strong> He withdrew from Stanford after two days and co-founded Zip2 with his brother Kimbal. They slept in the office. They showered at the YMCA. In 1999, Compaq acquired Zip2 for $307 million. Musk's personal share: $22 million.</div>
+        <div class="reveal-explain">Musk has described 1995 as a moment of clarity — the internet was not going to wait for anyone's academic schedule. Zip2 was a web-based city guide and business directory, essentially a primitive Google Maps plus Yelp before either existed. The exit gave Musk capital for everything that followed. He has said he doesn't think of Stanford as a door he closed — he thinks of it as a hallway he chose not to walk down. The interesting question, in retrospect, is whether energy physics would have been a more efficient path to what he actually wanted. He's never said he thinks so.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-1">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1999 · Age 28 · After Zip2</div></div>
+    <div class="narrative">
+      <p>$22 million in the bank. Musk was 28 years old. The rational move was diversification — put the money somewhere safe, keep some for living, invest the rest across assets.</p>
+      <p>Instead, he put $12 million — more than half — into a new company: X.com, an online financial services platform. X.com would later merge with Confinity to become PayPal.</p>
+      <p>He was betting more than half his net worth on a startup in a sector — online banking — that regulators, incumbents, and most VCs believed would be captured by existing financial institutions within five years.</p>
+    </div>
+    <div class="decision-block" id="d2">
+      <div class="decision-header"><span>Decision 2 · 1999 · Age 28 · $22 Million</span><span class="d-num">2 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Musk has $22 million from the Zip2 exit. He could diversify — invest across real estate, equities, and keep some for living. Or he can put $12 million into a new startup (X.com / PayPal). What does he do?</p>
+        <div class="dopts" id="opts-2">
+          <button class="dopt" onclick="answer(2,'A')"><div class="dopt-id">A</div><div class="dopt-body">Diversify. $22M is generational wealth — protect it and let compound interest do the work.</div></button>
+          <button class="dopt" onclick="answer(2,'B')"><div class="dopt-id">B</div><div class="dopt-body">Invest $2-3M into X.com — meaningful skin in the game without betting the whole exit.</div></button>
+          <button class="dopt" onclick="answer(2,'C')"><div class="dopt-id">C</div><div class="dopt-body">Join an established fintech company as an executive or large investor — lower risk than building from scratch.</div></button>
+          <button class="dopt" onclick="answer(2,'D')"><div class="dopt-id">D</div><div class="dopt-body">Put $12 million — more than half — into X.com. If online payments work, the upside is transformational. Build it.</div></button>
+        </div>
+        <div class="reveal" id="rev-2">
+          <div class="reveal-badge" id="badge-2"></div>
+          <div class="reveal-label">What Elon Musk Did</div>
+          <div class="reveal-text"><strong>You put more than half your net worth into a second startup while everyone around you talks about diversification — and turn $12 million into $165 million in three years.</strong> He invested $12 million into X.com. In 2002, eBay acquired PayPal for $1.5 billion. Musk's share: approximately $165 million. He had turned $12M into $165M in three years while building what became the infrastructure of online payments.</div>
+          <div class="reveal-explain">The X.com / Confinity / PayPal story is complicated — there was a boardroom coup while Musk was on his honeymoon in 2000 that removed him as CEO. He retained his shares. The dispute left permanent scars; he and Peter Thiel have maintained a tense relationship ever since. But the investment decision itself was straightforwardly correct. Musk's willingness to put the majority of a first exit into a second bet — rather than into safety — is the pattern that defines his career. He has done it repeatedly. His reasoning: if you believe in the thesis, protect it with everything you have.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-2">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">2002 · Age 31 · After PayPal</div></div>
+    <div class="narrative">
+      <p>$165 million from the PayPal exit. Musk was 31. He was already thinking about Mars.</p>
+      <p>His concern was that humanity was not on a path that guaranteed long-term survival. A single-planet species was a species with a single point of failure. He had begun researching what it would cost to send a plant to Mars — not as a government program, but as a private demonstration.</p>
+      <p>He discovered that the Russians would sell him refurbished ICBMs. They laughed at him in the meeting. He flew home and decided to build the rockets himself.</p>
+      <p>He was about to invest $100 million — two-thirds of his liquid net worth — into a rocket company. He had no aerospace engineering background. Every professional he consulted told him he was going to lose his money. He also, simultaneously, invested in Tesla Motors — a startup trying to build electric cars, which every automotive expert said was impossible for a startup to do profitably.</p>
+    </div>
+    <div class="decision-block" id="d3">
+      <div class="decision-header"><span>Decision 3 · 2002 · Age 31 · SpaceX + Tesla</span><span class="d-num">3 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Musk has $165M from the PayPal exit. He wants to found SpaceX (private rockets) AND invest in Tesla (electric cars) simultaneously — two industries where startups have an essentially zero historical success rate. Every expert says he will lose everything. What does he do?</p>
+        <div class="dopts" id="opts-3">
+          <button class="dopt" onclick="answer(3,'A')"><div class="dopt-id">A</div><div class="dopt-body">Choose one. SpaceX or Tesla — not both. Splitting focus and capital across two impossible bets maximizes the chance of losing everything.</div></button>
+          <button class="dopt" onclick="answer(3,'B')"><div class="dopt-id">B</div><div class="dopt-body">Take advisory and investor roles in both — small capital commitments, no operational control. Protect the principal.</div></button>
+          <button class="dopt" onclick="answer(3,'C')"><div class="dopt-id">C</div><div class="dopt-body">Invest in Tesla; skip SpaceX. Electric cars at least have a market. Private space has no customers except governments.</div></button>
+          <button class="dopt" onclick="answer(3,'D')"><div class="dopt-id">D</div><div class="dopt-body">Found SpaceX and invest in Tesla simultaneously. Both problems are important enough. If he runs out of money, he runs out of money. But splitting attention is not the same as splitting commitment.</div></button>
+        </div>
+        <div class="reveal" id="rev-3">
+          <div class="reveal-badge" id="badge-3"></div>
+          <div class="reveal-label">What Elon Musk Did</div>
+          <div class="reveal-text"><strong>You start a rocket company and invest in an electric car company at the same time, both in industries where startups have a near-zero historical success rate — and every expert you consult tells you you're going to lose everything.</strong> He founded SpaceX in May 2002 and led Tesla's Series A investment round in 2004, becoming chairman and later CEO. He invested roughly $100M into SpaceX and $6.35M into Tesla's first round.</div>
+          <div class="reveal-explain">Both companies nearly killed him financially within six years. Both are now among the most valuable companies in the world. SpaceX is the only private company to successfully launch, orbit, and recover a spacecraft. Tesla is worth more than Toyota, Volkswagen, and Ford combined. The experts who said it was impossible were right about the odds. They were wrong about this specific person. The combination of bets was only logical if you believed — as Musk evidently did — that both problems had to be solved, and that the person who believed that most completely was the one most likely to solve them.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-3">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">2008 · Age 37 · The Worst Year</div></div>
+    <div class="narrative">
+      <p>2008 was the year Elon Musk nearly lost everything.</p>
+      <p>SpaceX's first three rockets had failed. The fourth launch attempt was the last one he could afford. Tesla was hemorrhaging cash. The financial crisis was destroying investment markets. His first marriage had ended. He was sleeping at the SpaceX factory.</p>
+      <p>He was described by friends during this period as a man who genuinely did not know from week to week whether he would still have a company. He borrowed money from friends to pay his rent.</p>
+      <p>He had enough money for one more rocket launch.</p>
+    </div>
+    <div class="decision-block" id="d4">
+      <div class="decision-header"><span>Decision 4 · 2008 · Age 37 · One Launch Left</span><span class="d-num">4 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">SpaceX has failed three times. Musk has money for one more attempt. Tesla is also failing. He's been told by multiple people to cut his losses — save what's left, pay back the people he borrowed from, start over with something smaller. What does he do?</p>
+        <div class="dopts" id="opts-4">
+          <button class="dopt" onclick="answer(4,'A')"><div class="dopt-id">A</div><div class="dopt-body">Accept reality. Three failures is data. Fold SpaceX, focus remaining resources on Tesla, cut losses cleanly.</div></button>
+          <button class="dopt" onclick="answer(4,'B')"><div class="dopt-id">B</div><div class="dopt-body">Find a buyer for SpaceX. Sell the technology and team to NASA or a defense contractor who has the capital to continue.</div></button>
+          <button class="dopt" onclick="answer(4,'C')"><div class="dopt-id">C</div><div class="dopt-body">Seek emergency investment before launching again — don't use the last money without first trying to raise more.</div></button>
+          <button class="dopt" onclick="answer(4,'D')"><div class="dopt-id">D</div><div class="dopt-body">Launch the fourth rocket. With everything left. If it fails, it fails — but you don't stop before the last attempt when every attempt matters.</div></button>
+        </div>
+        <div class="reveal" id="rev-4">
+          <div class="reveal-badge" id="badge-4"></div>
+          <div class="reveal-label">What Elon Musk Did</div>
+          <div class="reveal-text"><strong>You launch the fourth rocket with everything you have left — and it reaches orbit, triggering a $1.6 billion NASA contract six weeks later.</strong> He launched Falcon 1 for the fourth time on September 28, 2008. It reached orbit. It was the first privately developed liquid-fueled rocket to reach orbit in history. Six weeks later, NASA awarded SpaceX a $1.6 billion contract.</div>
+          <div class="reveal-explain">Musk has described the September 2008 period as the lowest point of his life. He was borrowing money from friends for rent. He was in the process of divorcing his wife. He had personally invested all his liquid assets and was taking on debt. He was also, simultaneously, trying to save Tesla from bankruptcy. The fourth launch worked. The NASA contract saved SpaceX. Two months later, Tesla raised $40 million in a round that saved the car company. Both companies survived 2008 by a margin Musk has described as "the width of a razor blade." He was 37 years old.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-4">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">2018 · Age 47 · Tesla Production Hell</div></div>
+    <div class="narrative">
+      <p>Tesla was trying to produce the Model 3 — a mass-market electric car at $35,000. The target was 5,000 cars per week. They were producing 2,000. The production line was failing. Automation that should have sped things up was slowing them down.</p>
+      <p>Musk moved into the Fremont factory. He slept on the floor near the production line. He worked 120-hour weeks. He was simultaneously running SpaceX. He gave a late-night interview to a podcast host and made comments that resulted in an SEC investigation.</p>
+      <p>The board was under pressure to replace him. Analysts said Tesla would never hit its production targets. Short sellers were betting billions against the company.</p>
+    </div>
+    <div class="decision-block" id="d5">
+      <div class="decision-header"><span>Decision 5 · 2018 · Age 47 · Production Hell</span><span class="d-num">5 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Tesla's Model 3 production is failing. The board wants to bring in a professional manufacturing CEO. Musk can stay on as product visionary and chairman without the operational role. Every conventional corporate adviser says this is the right structure — let someone who knows manufacturing fix manufacturing. What does he do?</p>
+        <div class="dopts" id="opts-5">
+          <button class="dopt" onclick="answer(5,'A')"><div class="dopt-id">A</div><div class="dopt-body">Accept the restructuring. He's brilliant at vision and product; manufacturing operations is a different discipline. Let an expert fix it.</div></button>
+          <button class="dopt" onclick="answer(5,'B')"><div class="dopt-id">B</div><div class="dopt-body">Bring in a manufacturing expert as COO, retain CEO title but delegate operations heavily.</div></button>
+          <button class="dopt" onclick="answer(5,'C')"><div class="dopt-id">C</div><div class="dopt-body">Take a leave of absence, let the team stabilize, return when production is under control.</div></button>
+          <button class="dopt" onclick="answer(5,'D')"><div class="dopt-id">D</div><div class="dopt-body">Stay as CEO. Move into the factory. Sleep on the floor. Learn manufacturing by doing it, line by line, until the problem is solved.</div></button>
+        </div>
+        <div class="reveal" id="rev-5">
+          <div class="reveal-badge" id="badge-5"></div>
+          <div class="reveal-label">What Elon Musk Did</div>
+          <div class="reveal-text"><strong>You move a couch onto the factory floor, work 120-hour weeks personally debugging the production line, and hit 5,000 Model 3s in a single week.</strong> He stayed. He moved a couch into the Fremont factory and slept there for days at a time. He worked 120-hour weeks personally troubleshooting the production line. By July 2018, Tesla hit 5,000 Model 3s in a single week.</div>
+          <div class="reveal-explain">Musk's approach to the production crisis was characteristically direct: he physically embedded himself in the problem until he understood it better than anyone. He later said that the conventional wisdom — that a high-level CEO shouldn't be on the factory floor debugging machinery — was backwards. If the problem is existential, the person most responsible for the company should be closest to it. The Model 3 production ramp-up is now studied in business schools as both a case in manufacturing crisis and in unconventional leadership. By 2023, Tesla was producing over 400,000 cars per quarter.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-5">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">2021 · Age 50 · SpaceX Starship</div></div>
+    <div class="narrative">
+      <p>SpaceX's Falcon 9 was already the most successful orbital rocket in history, having landed and reused boosters hundreds of times. The company was profitable. The Starlink satellite internet service was generating revenue. NASA contracts were flowing.</p>
+      <p>Musk announced that SpaceX would redirect the majority of its engineering resources toward Starship — a fully reusable, stainless-steel rocket designed to carry 100 people to Mars. It was the largest rocket ever built. It was also a massive bet of money and engineering talent that was already proven and profitable.</p>
+      <p>He was betting the stable, successful company on its most audacious project yet.</p>
+    </div>
+    <div class="decision-block" id="d6">
+      <div class="decision-header"><span>Decision 6 · 2021 · Age 50 · Betting SpaceX on Starship</span><span class="d-num">6 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">SpaceX is profitable and successful with Falcon 9. Musk wants to redirect most of the company's engineering talent toward Starship — a fully reusable Mars rocket that is technically uncertain and commercially unproven. The rational move is incremental improvement of what's working. What does he do?</p>
+        <div class="dopts" id="opts-6">
+          <button class="dopt" onclick="answer(6,'A')"><div class="dopt-id">A</div><div class="dopt-body">Keep Starship as a long-term side project. Don't gamble proven profitability on something this uncertain.</div></button>
+          <button class="dopt" onclick="answer(6,'B')"><div class="dopt-id">B</div><div class="dopt-body">Spin Starship out as a separate project with dedicated but limited funding — protect Falcon's momentum.</div></button>
+          <button class="dopt" onclick="answer(6,'C')"><div class="dopt-id">C</div><div class="dopt-body">Prioritize Starship but keep a parallel Falcon improvement track so there's a fallback.</div></button>
+          <button class="dopt" onclick="answer(6,'D')"><div class="dopt-id">D</div><div class="dopt-body">Go all-in on Starship. Falcon 9 is solved. The point of SpaceX was never profit — it was making humanity multiplanetary. Build the vehicle that does that.</div></button>
+        </div>
+        <div class="reveal" id="rev-6">
+          <div class="reveal-badge" id="badge-6"></div>
+          <div class="reveal-label">What Elon Musk Did</div>
+          <div class="reveal-text"><strong>You redirect most of SpaceX's engineering resources to a rocket designed to carry 100 people to Mars — betting a profitable, proven company on its most audacious project yet.</strong> He went all-in. SpaceX moved the majority of its engineering resources to Starship. The rocket exploded multiple times during testing. In 2023, Starship successfully completed its first integrated flight. NASA selected Starship as the Human Landing System for the Artemis moon program.</div>
+          <div class="reveal-explain">Musk's reasoning is consistent across every major SpaceX decision: the mission is not rocket manufacturing — the mission is making life multiplanetary. Falcon 9 is a means to that end, not the end itself. He has said that if SpaceX only builds Falcon 9, SpaceX has failed at what it was created to do. The Starship program has cost billions and involved spectacular, public explosions that would have destroyed most companies' credibility. The explosions are, in his framing, the fastest path to the data needed to build something that works. It has always been this way for him: failure at speed is progress.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-6">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">2022 · Age 51 · Twitter</div></div>
+    <div class="narrative">
+      <p>In April 2022, Musk made an offer to acquire Twitter for $44 billion. In July 2022, he tried to back out, citing concerns about the number of bot accounts on the platform. Twitter sued to force the deal through. A Delaware court scheduled a trial.</p>
+      <p>Musk's lawyers believed they could win the trial and void the agreement. Twitter's lawyers believed they would win and force the sale. The outcome was genuinely uncertain.</p>
+      <p>Musk settled and completed the acquisition in October 2022 for the original $44 billion price.</p>
+    </div>
+    <div class="decision-block" id="d7">
+      <div class="decision-header"><span>Decision 7 · 2022 · Age 51 · Completing the Twitter Deal</span><span class="d-num">7 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Musk has a path to potentially void the Twitter deal through litigation. The legal outcome is uncertain. Completing the deal means paying $44 billion for a money-losing platform he now believes has more problems than he thought. What does he do?</p>
+        <div class="dopts" id="opts-7">
+          <button class="dopt" onclick="answer(7,'A')"><div class="dopt-id">A</div><div class="dopt-body">Fight the lawsuit. A $44B commitment made on flawed information should be voidable — take the legal risk.</div></button>
+          <button class="dopt" onclick="answer(7,'B')"><div class="dopt-id">B</div><div class="dopt-body">Negotiate a reduced price — use the legal pressure to get a better deal, not to exit.</div></button>
+          <button class="dopt" onclick="answer(7,'C')"><div class="dopt-id">C</div><div class="dopt-body">Complete the deal but immediately find a buyer — acquire and flip it, minimize operational exposure.</div></button>
+          <button class="dopt" onclick="answer(7,'D')"><div class="dopt-id">D</div><div class="dopt-body">Complete the acquisition at the original price. Own what you committed to. Buying something broken is not failure — fixing it is the task.</div></button>
+        </div>
+        <div class="reveal" id="rev-7">
+          <div class="reveal-badge" id="badge-7"></div>
+          <div class="reveal-label">What Elon Musk Did</div>
+          <div class="reveal-text"><strong>You complete the $44 billion acquisition, walk into Twitter HQ carrying a sink, and fire 75% of the staff within weeks — moving faster than any previous leadership had in the platform's history.</strong> He completed the acquisition. He walked into Twitter HQ carrying a sink. He fired approximately 75% of the staff within weeks. He renamed the platform X. He moved fast and controversially — exactly as he had with Tesla and SpaceX.</div>
+          <div class="reveal-explain">The Twitter acquisition remains the most disputed decision of Musk's career. He paid $44 billion for a platform that had been losing money for years. He alienated advertisers. He made product decisions that were publicly mocked. He also moved faster than any previous Twitter leadership — shipping features, changing monetization, and reshaping the platform's content policies — in ways that demonstrated what he meant when he said the old management was too slow. Whether the acquisition was right will be measured over years, not months. What is consistent: Musk completed a commitment he made, absorbed the consequences, and immediately went to work on what he'd bought. That pattern has been the same since 1995.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-epilogue">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">The Pattern</div></div>
+    <div class="narrative">
+      <p>Elon Musk quit Stanford after 2 days. He put most of his first exit into a second startup. He put two-thirds of his second exit into a rocket company and an electric car company, simultaneously. He nearly went bankrupt in 2008. He slept on factory floors. He launched a rocket with his last money and it worked.</p>
+      <p>Tesla, SpaceX, and their associated companies are worth over a trillion dollars combined. He is, as of this writing, the wealthiest person in the world by most measures.</p>
+      <p>The pattern is not complicated: bet on the most important problem you can see, put in everything you have, don't stop when it looks hopeless, and measure success by whether the problem gets solved — not by whether you stay comfortable while solving it.</p>
+      <p>Whether you agree with his politics, his methods, or his recent decisions — the pattern itself is undeniable. And the question this simulator was really asking, across seven decisions, was simpler than it looks: when you were faced with the same choice, did you protect yourself, or did you go all in?</p>
+    </div>
+    <div class="results" id="seg-results">
+      <div class="results-hero">
+        <span class="results-trophy" id="res-trophy">🚀</span>
+        <div class="results-score-big" id="res-score">0<span>/7</span></div>
+        <div class="results-sub">decisions matched Elon Musk</div>
+      </div>
+      <h2 class="results-title" id="res-title"></h2>
+      <p class="results-desc" id="res-desc"></p>
+      <div class="divider"></div>
+      <div class="dim-rows">
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Conviction</span><span class="dim-row-num" id="d-co-num">0/3</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-co" id="d-co-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Risk Tolerance</span><span class="dim-row-num" id="d-ri-num">0/2</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-ri" id="d-ri-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Resilience</span><span class="dim-row-num" id="d-re-num">0/2</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-re" id="d-re-bar"></div></div>
+        </div>
+      </div>
+      <div class="res-card">
+        <div class="rc-title">Share your result</div>
+        
+<div class="next-sims"><h3>Try another simulator</h3><div class="next-sims-grid"><a class="next-sim-btn" href="jobs-simulator.html">Steve Jobs</a><a class="next-sim-btn" href="buffett-simulator.html">Warren Buffett</a><a class="next-sim-btn" href="honda-simulator.html">Soichiro Honda</a></div></div>
+<div class="share-pre" id="share-pre"></div>
+        <button class="copy-btn" onclick="copyShare(event)">Copy to clipboard</button>
+<a class="tweet-btn" id="tweet-btn" href="#" onclick="return shareTweet()" rel="noopener">𝕏 Share Result</a>
+      </div>
+
+      <div class="res-card" style="text-align:center;">
+        <div class="rc-title">📚 Go Deeper — Read the Book</div>
+        <p style="font-size:14px;line-height:1.7;margin-bottom:14px;">Walter Isaacson's unfiltered biography of the most daring entrepreneur alive — from electric cars to Mars rockets, inside Musk's relentless, often chaotic mind.</p>
+        <a href="https://amzn.to/4eARlzk" target="_blank" rel="noopener" style="display:inline-block;background:#FF9900;color:#111;font-weight:700;padding:10px 22px;border-radius:6px;text-decoration:none;font-size:14px;">📖 View on Amazon →</a>
+        <p style="font-size:11px;color:#999;margin-top:10px;">As an Amazon Associate I earn from qualifying purchases.</p>
+      </div>
+
+      <div class="sim-links" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-left:4px solid var(--accent,#60a5fa);border-radius:12px;padding:18px 20px;margin-bottom:14px;">
+  
+  <p style="font-size:13px;font-weight:700;color:inherit;margin-bottom:10px;">🎮 Try another legendary life:</p>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;">
+    <a href="zhangxue-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🏍️ Zhang Xue</a>
+    <a href="disney-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🏰 Walt Disney</a>
+    <a href="honda-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🔧 Soichiro Honda</a>
+    <a href="curie-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">⚗️ Marie Curie</a>
+    <a href="jobs-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">📱 Steve Jobs</a>
+    <a href="rowling-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">📚 J.K. Rowling</a>
+    <a href="oprah-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🌟 Oprah Winfrey</a>
+    <a href="mandela-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">✊ Nelson Mandela</a>
+    <a href="buffett-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">💰 Warren Buffett</a>
+    <a href="hawking-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🔭 Stephen Hawking</a>
+  </div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);">
+    <a href="https://ordinarymantrying.com/tools/" style="font-size:13px;color:var(--accent,#60a5fa);font-weight:700;text-decoration:none;">→ See all 11 simulators + free tools</a>
+  </div>
+</div>
+      <div class="res-card">
+        <div class="rc-title">About this simulator</div>
+        <p style="font-size:14px;color:#A8C0D8;line-height:1.85;">This simulator is part of <a href="https://ordinarymantrying.com" style="color:var(--accent);font-weight:700;text-decoration:none;">ordinarymantrying.com</a> — a blog about one ordinary person using AI to navigate investing, side hustles, and building things in public. All events are based on documented historical accounts of Elon Musk's life.</p>
+      </div>
+      <button class="replay-btn" onclick="location.reload()">↺ Play again</button>
+      <div style="height:48px;"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+<script>
+var TOTAL=7;
+var DECISIONS={1:{zx:'D',dim:'conviction'},2:{zx:'D',dim:'risk'},3:{zx:'D',dim:'risk'},4:{zx:'D',dim:'resilience'},5:{zx:'D',dim:'resilience'},6:{zx:'D',dim:'conviction'},7:{zx:'D',dim:'conviction'}};
+var NEXT_SEG={1:'seg-1',2:'seg-2',3:'seg-3',4:'seg-4',5:'seg-5',6:'seg-6',7:'seg-epilogue'};
+var DIM_MAX={conviction:3,risk:2,resilience:2};
+var scores={conviction:0,risk:0,resilience:0};
+var totalCorrect=0,answered={};
+function startStory(){document.getElementById('cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('topbar-score').style.display='block';document.getElementById('topbar-score').textContent='0 / '+TOTAL;window.scrollTo({top:0,behavior:'smooth'});}
+function answer(num,chosen){if(answered[num])return;answered[num]=chosen;var d=DECISIONS[num];var correct=(chosen===d.zx);if(correct){totalCorrect++;scores[d.dim]++;}var opts=document.querySelectorAll('#opts-'+num+' .dopt');opts.forEach(function(btn){btn.classList.add('disabled');var id=btn.querySelector('.dopt-id').textContent.trim();if(id===chosen&&correct)btn.classList.add('right');if(id===chosen&&!correct)btn.classList.add('wrong');if(id===d.zx&&!correct)btn.classList.add('correct');});var badge=document.getElementById('badge-'+num);if(correct){badge.className='reveal-badge badge-y';badge.textContent='✓ Same as Elon Musk';}else{badge.className='reveal-badge badge-n';badge.textContent='✗ You chose '+chosen+' — Musk chose '+d.zx;}document.getElementById('rev-'+num).style.display='block';document.getElementById('topbar-score').textContent=totalCorrect+' / '+TOTAL;setTimeout(function(){var next=document.getElementById(NEXT_SEG[num]);next.classList.add('shown');setTimeout(function(){next.scrollIntoView({behavior:'smooth',block:'start'});},80);if(num===TOTAL)showResults();},950);}
+function showResults(){setTimeout(function(){var s=totalCorrect;var trophies=['🌱','🌱','⚡','⚡','🏅','🏅','🥇','🚀'];document.getElementById('res-trophy').textContent=trophies[s]||'🚀';document.getElementById('res-score').innerHTML=s+'<span>/'+TOTAL+'</span>';var title,desc;if(s===TOTAL){title='You Think Like Elon Musk — All the Way Down';desc='Seven out of seven. You quit Stanford after two days, put your last dollars into a rocket that exploded three times, slept on factory floors, and completed a $44 billion acquisition you once tried to void. Every call Musk made was the uncomfortable one. You made the same calls every time. The question worth sitting with is whether you understand, in your gut, why.';}else if(s>=5){title='You Have His Risk Tolerance, Mostly';desc=s+' out of 7. You went all-in at most of the critical moments. The one or two decisions where you protected yourself are exactly where Musk\'s results separate from everyone else in the room. Zip2 funded X.com. X.com funded SpaceX and Tesla. SpaceX\'s first orbital success saved everything in 2008. Protecting any link in that chain would have made the next one impossible.';}else if(s>=3){title='You Saw the Right Move — and Didn\'t Take It';desc=s+' out of 7. You matched Musk on the decisions where the risk felt manageable. Where you diverged is where the stakes were existential: one more launch with the last money, putting the majority of the first exit into a second startup, founding two impossible companies at the same time. Those are the decisions where most people stop. His willingness to not stop is the entire story.';}else{title='You Chose Survival. He Chose the Mission.';desc=s+' out of 7. Every choice you made was defensible — diversify the Zip2 exit, keep the Stanford option open, fold SpaceX after three failures. Musk said he calculated that he would probably lose everything and decided to do it anyway. That\'s not recklessness. It\'s a specific kind of peace with losing, which is different from wanting to lose. Most people don\'t have it. That\'s not a failure. It\'s just a different kind of life.';}document.getElementById('res-title').textContent=title;document.getElementById('res-desc').textContent=desc;setTimeout(function(){var coMax=DIM_MAX.conviction,riMax=DIM_MAX.risk,reMax=DIM_MAX.resilience;document.getElementById('d-co-num').textContent=scores.conviction+'/'+coMax;document.getElementById('d-ri-num').textContent=scores.risk+'/'+riMax;document.getElementById('d-re-num').textContent=scores.resilience+'/'+reMax;document.getElementById('d-co-bar').style.width=((scores.conviction/coMax)*100)+'%';document.getElementById('d-ri-bar').style.width=((scores.risk/riMax)*100)+'%';document.getElementById('d-re-bar').style.width=((scores.resilience/reMax)*100)+'%';},300);document.getElementById('share-pre').textContent='I just played the Elon Musk Life Simulator and matched '+totalCorrect+'/'+TOTAL+' of his real decisions.\n\nMusk quit his Stanford PhD after 2 days, put his last money into a rocket that kept exploding,\nand slept on factory floors. He built the most valuable car company on earth.\n\nConviction '+scores.conviction+'/'+DIM_MAX.conviction+'  ·  Risk Tolerance '+scores.risk+'/'+DIM_MAX.risk+'  ·  Resilience '+scores.resilience+'/'+DIM_MAX.resilience+'\n\nWould you have made the same choices? ordinarymantrying.com/tools/musk-simulator.html';document.getElementById('seg-epilogue').scrollIntoView({behavior:'smooth',block:'start'});},600);}
+function shareTweet(){var text=document.getElementById('share-pre').textContent;if(!text||text.trim()===''){alert('Finish the simulator first to share your result!');return false;}var url='https://x.com/intent/tweet?text='+encodeURIComponent(text.substring(0,240));window.open(url,'_blank','width=550,height=450');return false;}
+function copyShare(evt){var text=document.getElementById('share-pre').textContent;var btn=evt.target;function restore(){btn.textContent='Copy to clipboard';}if(navigator.clipboard){navigator.clipboard.writeText(text).then(function(){btn.textContent='✓ Copied!';setTimeout(restore,2000);});}else{var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='✓ Copied!';setTimeout(restore,2000);}}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sylvia Plath Life Simulator — She Wrote Her Best Work While Dying</title>
+<meta name="description" content="Make the same decisions as Sylvia Plath — who produced her greatest poetry in the final months of her life while caring for two infants through the coldest English winter in 300 years.">
+<style>
+:root{
+  --bg:#F5EEF0;--card:#FAF5F7;--ink:#180810;--muted:#582838;--line:#E0C8D0;
+  --accent:#480820;--accent-bg:#F5E0E8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">USA / England · 1932–1963</div>
+  <h1>Could You Have Been<br>Sylvia Plath?</h1>
+  <div class="cover-sub">She wrote her greatest poems — the Ariel poems — in the final four months of her life, waking at 4am before her babies stirred in the coldest English winter in 300 years. She was 30 years old, separated from her husband Ted Hughes, living in Yeats's old flat in Fitzroy Road. She wrote 40 poems in 40 days. She left milk and bread for her children. She sealed their room with towels. On February 11, 1963, she put her head in the oven.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">40</div><div class="stat-l">Ariel poems written in 40 days before her death</div></div>
+    <div class="stat"><div class="stat-n">30</div><div class="stat-l">Years of age — died at the age of peak creative power</div></div>
+    <div class="stat"><div class="stat-n">1982</div><div class="stat-l">Posthumous Pulitzer Prize — 19 years after death</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Massachusetts, 1953 · The First Breakdown</div>
+<p class="narrative">You are 20 years old and a junior at Smith College on a scholarship you cannot afford to lose. You have been awarded a guest editorship at Mademoiselle magazine in New York — a month in the city, a prize the most ambitious college women in America compete for. It should be the beginning. Instead it is the end of something. New York paralyzes you. The glitter turns cold. You come home and discover you have not been accepted to Frank O'Connor's Harvard writing seminar. Something in you breaks. You stop sleeping. You stop reading. Your mother finds you in the cellar, covered in blood from a self-inflicted wound, having taken sleeping pills. You survive with electroconvulsive therapy and months of psychiatric treatment.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · After the First Breakdown</div>
+  <div class="d-situation">You have survived a serious breakdown and treatment at McLean Hospital. You return to Smith on scholarship. Do you write about what happened?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Eventually yes — the experience is too important to waste; the novel it will become (The Bell Jar) will be the most honest book you write</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. Never — the stigma of mental illness in 1953 would destroy your career; keep it entirely private</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Immediately — write it out as therapy, now; don't wait until you have the distance to shape it</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Plath waited nine years, until 1962, to write The Bell Jar — and published it under the pseudonym Victoria Lucas because she feared the reaction in America, where her mother lived. The book is a precise, darkly comic account of the breakdown from the inside. It was published in England in January 1963, one month before her death, to moderate reviews. It was published in America in 1971 and became one of the defining texts of its decade. The pseudonym did not hold — her identity was known within months.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Cambridge, 1956 · Ted Hughes</div>
+<p class="narrative">You are 23, on a Fulbright scholarship to Newnham College, Cambridge. On February 25, 1956, you attend a party for the launch of a Cambridge literary journal. You read a poem by a young Yorkshireman called Ted Hughes in the magazine beforehand and know immediately that this is a real poet — larger than the Cambridge poets who write careful, modest verse. At the party you meet him. He is six feet tall, dark, physically overwhelming. You bite his cheek hard enough to draw blood at the end of your first conversation. He takes your headband and earrings. You are married four months later.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Marriage</div>
+  <div class="d-situation">You marry Ted Hughes quickly, passionately, and against the American custom of careful courtship. You know this is a gamble. Is the gamble right?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Yes — the intensity is the point; a cautious marriage would have been a smaller life and a smaller poetry</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. No — marry more slowly; the speed of the courtship is itself a warning sign about the stability of the relationship</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Yes, but with more self-protection — the relationship will consume you unless you establish clearer boundaries from the start</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Plath married Hughes in June 1956. The marriage was the most productive period of her life — she finished The Colossus, her first poetry collection, and drafted early work toward what became Ariel while they lived in England and America. She was also, by every account, managing the household, the children, and the secretarial work for Hughes's career while writing her own work. The intensity was generative for nearly seven years. It ended when Hughes left her for Assia Wevill in the summer of 1962. Plath wrote the Ariel poems in the months that followed. The catastrophe and the masterpiece were the same event.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Devon, 1962 · Discovery</div>
+<p class="narrative">You are living in a farmhouse in Devon with two children under two, a husband who has been increasingly absent, and the knowledge that has been forming slowly for months and is now certain: Ted Hughes is having an affair with Assia Wevill. The day you confirm it you disconnect the phone with a pair of scissors. You rip his manuscript pages. You burn his papers in the garden — letters, notebooks. Then you go inside and write. The poems you write in the following weeks are unlike anything you have written before. They are furious, exact, and absolute. You will call the collection Ariel.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Poems</div>
+  <div class="d-situation">The poems you are writing in the weeks after the marriage collapse are your best work — raw, angry, precise. Do you restrain them for publication?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. No — let them be exactly what they are; the anger is the poetry and softening it would destroy the work</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Yes — some restraint is necessary; the rawness will embarrass you when you are no longer in this crisis</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Yes — Ted Hughes is a public figure; poems this personal about a living person require more care</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Plath did not restrain the poems. They were exactly what they were — "Lady Lazarus," "Daddy," "Fever 103°," "Cut." The specific anger and precision of the imagery is what makes them permanent. When Ted Hughes edited and published Ariel in 1965, two years after her death, he reordered the manuscript and removed several poems. The version of Ariel he published is not the version she planned. Her original ordering was only restored in 2004 when Frieda Hughes, Plath's daughter, supervised a facsimile edition. For forty years, the world read Ted Hughes's version of Sylvia Plath's work.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · London, Winter 1962–1963 · Fitzroy Road</div>
+<p class="narrative">You have moved to London with your two children. You are living in W.B. Yeats's old flat at 23 Fitzroy Road — you felt the address was a sign. It is the coldest winter in England since 1740. The pipes freeze. The children have colds. Your au pair has quit. Your doctor has prescribed antidepressants but they haven't taken effect yet. You are waking at 4am each day and writing at the kitchen table in the dark, by the light of the single lamp, before the children wake. In these pre-dawn hours in January 1963 you write the poems that will change what poetry can do.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The 4am Hours</div>
+  <div class="d-situation">You are writing your best work in the only hours available — 4am to 8am, before two young children need you. Do you protect those hours at all costs?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Yes — the pre-dawn hours are the only ones that belong entirely to the work; nothing else can take them</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. No — the children's needs come first; write when they sleep in the afternoon instead</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Yes, but ask for more help — you need the writing hours AND the sleep; they are not mutually exclusive</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Plath protected those hours absolutely. The sequence of poems from January 1963 — written in approximately forty days — constitutes one of the most concentrated bursts of great poetry in the English language. "Ariel," "Lady Lazarus," "Edge," "Words." She was exhausted, she was depressed, the antidepressants weren't working yet, the winter was the coldest in three centuries. She wrote anyway. The poems are the record of that writing — you can feel the exhaustion and the absolute attention at the same time.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · London, February 1963 · The Last Week</div>
+<p class="narrative">The antidepressants have not taken hold. Your doctor has arranged a hospital bed for you but the bed is not available until Monday. You cannot sleep. You are calling friends at 3am. Your neighbor, the poet Gael Turnbull, is woken by your voice. You go to the doctor on Saturday and tell him you are afraid to be alone. He arranges for a nurse to come Monday morning. It is Saturday night. Monday morning is 36 hours away. You go home to Frieda and Nicholas.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · The Last Weekend</div>
+  <div class="d-situation">You are in a crisis and alone with two small children. The hospital bed is ready Monday. What do you do with Saturday night and Sunday?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Call someone — your friend Jillian Becker, anyone; 36 hours alone in this state is too long</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. Sleep as much as possible — the antidepressants may work by Monday; rest is the only thing you can do for yourself now</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Write — the poems have held you before; go to the table and work until the dark lifts</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> On February 11, 1963, Plath put out bread and milk for the children, sealed their bedroom door with tape, and left the gas on. She was found at 9am when the nurse arrived. She was 30 years old. The Ariel manuscript was on the table, completed and ordered. She had written "Edge" — the last poem — on February 5: "The woman is perfected. / Her dead / Body wears the smile of accomplishment." Six days later she was dead. The question of whether she expected to survive, whether the timing of the nurse's arrival was miscalculated, is still debated.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · The Manuscript</div>
+<p class="narrative">Plath left Ariel in order: 40 poems, arranged by her, beginning with the word "Love" and ending with the word "spring." Ted Hughes, as her literary executor, waited two years to publish it, reordered the manuscript, removed poems including "The Rabbit Catcher" and "Barren Woman," and added poems she had not included. He did not explain these changes for decades. The Ariel the world read from 1965 to 2004 was his version. The Ariel she intended was finally published in 2004.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · The Editorial Question</div>
+  <div class="d-situation">Ted Hughes changed the manuscript before publication. He was the literary executor. Was this his right?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,false)">A. Yes — the literary executor has both the right and the responsibility to shape posthumous publication; he knew the work intimately</button>
+    <button class="dopt" onclick="choose(this,6,true)">B. No — a completed manuscript arranged by the author is an artistic statement; changing it is a different kind of revision than the author would make</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. The question is unanswerable — we cannot know what she would have wanted, and he was the closest person to the work</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Hughes's editorial choices remain controversial. His version of Ariel opened with "Morning Song" and ended with the bee-keeping sequence — a more accessible, somewhat more hopeful arc. Her version opened with "Love set you going like a fat gold watch" and ended with "spring" — an arc she had clearly shaped. The critical consensus since 2004 is that her ordering was the right one and that his changes, whether well-intentioned or self-protective, altered the work's meaning. The controversy also produced an unexpected consequence: it made readers attend to Plath more carefully than they might have otherwise.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · The Legacy Dispute</div>
+<p class="narrative">For decades after her death, Ted Hughes controlled the Plath estate and refused to give scholars access to key documents, including her journals — the last of which he acknowledged destroying. He said he destroyed it to protect their children from its contents. Critics said he destroyed it to protect himself. He published Birthday Letters, his own account of the marriage and its end, in 1998, the year before his death — a book of poems that was immediately celebrated as a masterwork. He died before the critical response to it could fully form.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The Biographic Problem</div>
+  <div class="d-situation">The life and the work are entangled in ways that are impossible to separate. Does knowing the biography change the poetry?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. The poetry should be read on its own terms — the biographical circumstances explain the context but are not the source of the power</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. The biography is inseparable from the work — you cannot understand "Daddy" without knowing about Otto Plath; the poems require the life</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. The biography actually harms the work — it reduces the poems to personal confession when they are something more universal</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> The critical consensus has shifted over decades. Early Plath criticism was intensely biographical. Later criticism pushed back against this and tried to read the poems formally, on their own terms. More recent work has returned to the biography but more carefully — noting, for instance, that "Daddy" is not simply about Otto Plath but about a particular kind of cultural authority, that "Lady Lazarus" is not simply confessional but theatrical and archly self-aware. The poems reward both approaches. They are so precisely made that they survive every kind of reading.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · The Question</div>
+<p class="narrative">She died at 30. The poems written in the last four months of her life — written in a foreign country in a frozen winter while managing two children alone and waiting for antidepressants to take hold — are among the finest poems in the English language. "Lady Lazarus," "Daddy," "Ariel," "Edge." They teach themselves. They have been translated into every language in the world.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · What This Means</div>
+  <div class="d-situation">The greatest poems she wrote were written in the worst circumstances of her life. Is this a lesson, a coincidence, or a tragedy?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. It is a tragedy — not that the poems exist but that the conditions that produced them also killed her; the two things are not the same</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. It is a lesson about creative necessity — suffering is sometimes the cost of the work; this is just unusually visible</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. It is a coincidence — the poems are great because she was great, not because she was suffering; the circumstances are incidental</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> The most careful answer is that the 4am hours — the circumstance, not the suffering — produced the poems. She needed quiet, uninterrupted time to work at the deepest level, and the only way she had that in those final months was to wake before the children. The suffering gave the poems their material. The 4am quiet gave them their form. Both were necessary. Neither was sufficient alone. She would have produced great work in better circumstances. She might have produced more of it. We have only what she wrote.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Sylvia Plath Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="woolf-simulator.html">
+      <span class="next-name">Virginia Woolf</span>
+      <span class="next-desc">Another writer who produced extraordinary work while managing a mind that was trying to kill her</span>
+    </a>
+    <a class="next-card" href="kafka-simulator.html">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">Another writer whose estate and literary executor complicated the reception of the work after death</span>
+    </a>
+    <a class="next-card" href="maryshelly-simulator.html">
+      <span class="next-name">Mary Shelley</span>
+      <span class="next-desc">Another woman writer who produced her masterpiece under circumstances designed to prevent it</span>
+    </a>
+    <a class="next-card" href="austen-simulator.html">
+      <span class="next-name">Jane Austen</span>
+      <span class="next-desc">Another woman whose work was shaped by what society allowed women to do and be</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You understand exactly what Plath understood — write honestly, protect the work hours, let the anger be the poetry, and separate the biography from the artistic statement. The 40 Ariel poems were produced in exactly this way. You would have made the same choices.';else if(score>=5)t.textContent='Strong instincts about the work itself. You understood the need to protect the creative hours and to let the rawness stand. A few choices moved toward protection of reputation or relationship — instincts that are understandable but that Plath overrode to produce the best work.';else if(score>=3)t.textContent='You sought moderation — restrained poems, shared creative hours, managed the biography carefully. Plath did none of this in the final months. The poems that resulted from restraint would have been safer and forgotten. The poems that exist are not forgotten.';else t.textContent='You chose protection over exposure at every turn — hide the breakdown, restrain the anger, step back from the 4am hours. Plath\'s safety choices led to the work that survives. But her resistance to those choices, in the end, is what made the Ariel poems permanent.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

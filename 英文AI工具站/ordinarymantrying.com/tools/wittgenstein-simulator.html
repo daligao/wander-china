@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ludwig Wittgenstein Life Simulator — He Solved Philosophy. Then He Did It Again.</title>
+<meta name="description" content="Make the same decisions as Ludwig Wittgenstein — who wrote the Tractatus in WWI trenches, gave away a vast fortune, quit philosophy believing he'd solved it, then returned to show the Tractatus was wrong.">
+<style>
+:root{
+  --bg:#EEF0EE;--card:#F5F7F5;--ink:#0A100A;--muted:#304030;--line:#C8D8C8;
+  --accent:#0A280A;--accent-bg:#D8F0D8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Austria / England · 1889–1951</div>
+  <h1>Could You Have Been<br>Ludwig Wittgenstein?</h1>
+  <div class="cover-sub">Born into one of the wealthiest families in Europe, he gave his entire inheritance away to his siblings and various artists. He wrote the most important work in 20th century philosophy while serving as an artilleryman in World War I, had it published, then quit philosophy believing he had solved all its problems, and became a village schoolteacher. Years later he returned to Cambridge, decided the Tractatus was entirely wrong, and spent the rest of his life building a completely different philosophy. His last words were: "Tell them I've had a wonderful life."</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">1921</div><div class="stat-l">Tractatus published — written in WWI trenches</div></div>
+    <div class="stat"><div class="stat-n">2</div><div class="stat-l">Completely different philosophies — each revolutionary</div></div>
+    <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Of his fortune given away — to siblings and artists</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Manchester to Cambridge, 1911 · Finding Russell</div>
+<p class="narrative">You are 22. You have been studying engineering — aeronautics in Manchester, working on jet propulsion designs. But you have become obsessed with the foundations of mathematics. You read Frege. You read Russell's Principles of Mathematics. A question has formed in you that engineering cannot answer: what is the nature of logic itself? You take your engineering notebooks to Frege in Jena, show him your work. He tells you to go to Cambridge and find Bertrand Russell. You leave Manchester and go. You interrupt Russell's office hours. You argue with him for two hours. Russell writes in his diary that evening that he thinks you might be a genius.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Change</div>
+  <div class="d-situation">You are a capable engineer. The questions that are consuming you are philosophical, not engineering. Do you abandon engineering entirely?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Yes — follow the question wherever it leads; engineering is not where the problem is and staying in it is wasting time</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. No — finish the engineering degree first; logic and philosophy can wait</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Pursue both — the engineering background will enrich the philosophical work; there is no need to choose</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Wittgenstein abandoned engineering and went to Cambridge. Russell initially asked him, after his first term, whether he thought of himself as a genius or an idiot — because if he was an idiot he should continue in philosophy, but if he was a genius he should stop. Wittgenstein asked Russell to look at something he had written over the vacation. Russell read it and told him immediately: stop worrying, you are not an idiot. Wittgenstein spent two years at Cambridge before WWI broke out, during which he developed the core ideas that would become the Tractatus.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · The Eastern Front, 1914–1918 · Writing in the Trenches</div>
+<p class="narrative">You have volunteered for the Austrian army at the outbreak of war — you could have been exempted but you chose not to be. You believe the experience of danger will transform you morally. You are posted to the Eastern Front, then to Italy. You carry Tolstoy's Gospel in Brief in your pack. You are writing a philosophical manuscript in notebooks that you keep in your military kit. On the Italian Front in 1918, shortly before the armistice, you are taken prisoner by the Italians at Cassino. The manuscript is complete. It is the Tractatus Logico-Philosophicus. You have written it while doing your duty as a soldier. You don't know yet what you've made.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Tractatus</div>
+  <div class="d-situation">You believe you have solved the central problems of philosophy in the Tractatus. The book ends: "Whereof one cannot speak, thereof one must be silent." Do you send it to publishers from the prisoner of war camp?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Yes — send it immediately; if it is correct, it needs to be published; if it is not, publication will reveal the errors</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Wait — revise it thoroughly before publication; a work this ambitious requires more careful checking</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Show it to Russell first — his response will determine whether it is ready; get the best available criticism before publishing</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Wittgenstein sent the manuscript to Russell from the POW camp and then worked with him intensively on getting it published. Russell wrote an introduction that Wittgenstein considered inadequate and which he accepted with reservations. The book was eventually published in 1921 in German and 1922 in English translation with Russell's introduction. It was received as one of the most important philosophical works of the century. Wittgenstein read the reviews and concluded that no one understood what he had actually written. He was probably right.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Vienna, 1920 · The Fortune</div>
+<p class="narrative">Your father Karl Wittgenstein was one of the great industrialists of the Austro-Hungarian Empire — the Carnegie of Austria. He died in 1913. The family fortune is immense. Your inheritance alone would make you wealthy for the rest of your life. The Tractatus is published. You believe you have solved the problems of philosophy. You also believe that philosophy was a kind of therapy — now that it is finished, there is no need to keep doing it. You want to live more simply. You want to give the money away.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Fortune</div>
+  <div class="d-situation">You have inherited vast wealth. You want to give it away. Do you?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Yes, completely — keep nothing; give it to your siblings and to artists; money and philosophy are incompatible</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. No — keep enough to support the work; poverty is not philosophy and financial security enables intellectual freedom</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Give most away but keep a modest amount — complete renunciation is theater; a reasonable income allows you to focus</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Wittgenstein gave away his entire fortune — he had already given significant sums to artists and writers including Rilke, Georg Trakl, and Oskar Kokoschka during the war. The remainder went to his siblings. He kept nothing. He went on to train as an elementary school teacher and spent six years teaching village children in rural Austria. He lived in a single room. He was intensely demanding of his students — some of his methods of physical discipline led to a legal case — and eventually left teaching in 1926. He then worked as a gardener's assistant at a monastery. The money was gone and he did not miss it.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Vienna, 1927 · The Vienna Circle</div>
+<p class="narrative">You have been teaching children and building houses and working as a gardener. Philosophers in Vienna — the Vienna Circle, led by Moritz Schlick — have been reading your Tractatus and treating it as the foundational text of logical positivism: the view that meaningful statements are either analytic (true by definition) or empirically verifiable. They invite you to meet with them. You come reluctantly. They are intelligent but they have misread you almost completely — they think the Tractatus is an argument for their position when it is in many ways a critique of the very ambitions logical positivism represents. You sit with them and sometimes turn your back and read Rabindranath Tagore aloud instead of discussing their questions.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Vienna Circle</div>
+  <div class="d-situation">The most influential philosophical movement in Europe has adopted your work as their scripture, but they have misunderstood it. Do you correct them?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Yes, but gradually — engage with the Circle enough to understand what they got wrong, then build the corrections into new work</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Publicly and immediately — write a response clarifying what the Tractatus actually says and does not say</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. No — what people do with a published text is not the author's responsibility; let the Tractatus say what it says</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Wittgenstein engaged with the Vienna Circle on his own terms — attending selectively, correcting their readings directly in conversation, and gradually developing the thinking that would become the Philosophical Investigations. The process of seeing how intelligent philosophers had misread the Tractatus was itself philosophically useful: it showed him what the Tractatus had gotten wrong about language and meaning. The Vienna Circle's misreading was the problem that generated the solution. By the late 1920s he was back in philosophy full-time and returning to Cambridge.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Cambridge, 1929–1947 · The Second Philosophy</div>
+<p class="narrative">You return to Cambridge. You submit the Tractatus as your doctoral dissertation (Russell and G.E. Moore examine you; Russell later says it was the most unusual doctoral examination he had ever conducted). You become a Professor of Philosophy in 1939, succeeding Moore. But the work you are doing is completely different from the Tractatus — you are now arguing that the Tractatus was wrong in its fundamental approach. Language is not a logical picture of the world. Meaning comes from use in forms of life. "Whereof one cannot speak, thereof one must be silent" is replaced by a more patient attention to how language actually works in practice. The new philosophy is slower, less dramatic, and more difficult.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · Showing the Tractatus Was Wrong</div>
+  <div class="d-situation">Your early masterpiece has made your reputation. The new philosophy shows it was mistaken in fundamental ways. Do you say so clearly?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Yes — intellectual honesty requires acknowledging when you were wrong; the new work must engage with and correct the old</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. No — build the new philosophy without framing it as a criticism of the old; let readers draw the comparison</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Qualify it — the Tractatus was right about some things and wrong about others; be specific about where it failed rather than condemning it wholesale</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Wittgenstein was explicit that the new work corrected the old. The preface to the Philosophical Investigations directly addresses the Tractatus: he says he recognizes that what he wrote in that book is "full of mistakes" and that seeing those mistakes was only possible by being in contrast with new thinking. The Philosophical Investigations begins with a quotation from Augustine about language acquisition and proceeds to dismantle the picture theory of language that the Tractatus had assumed. It is one of the few examples in intellectual history of a thinker publishing a clear refutation of their own previous masterwork.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Newcastle, 1941 · The Hospital</div>
+<p class="narrative">During the Second World War you want to do something useful. You do not want to lecture philosophy while people are dying. You take a position as a dispensary porter at the Royal Victoria Infirmary in Newcastle — mixing drugs and delivering them to wards. You work there for several years. Nurses who worked with you during the war remembered you decades later as a gentle and careful colleague who gave excellent advice about which drugs to use for which symptoms. You have read extensively in medicine as in everything else. You do not mention that you are the most important philosopher in the world.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · The War Work</div>
+  <div class="d-situation">You choose to work as a hospital porter rather than lecture philosophy during the war. Is this the right choice?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Yes — practical work is what is needed; philosophy can wait; the hospital is where you can actually help</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. No — your most valuable contribution is philosophical; philosophy is not less useful in wartime</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Both — continue teaching at Cambridge while doing some practical war work; the two are not mutually exclusive</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Wittgenstein spent two years as a hospital dispenser in Newcastle and later as a laboratory assistant in London. His medical colleagues found him extraordinarily competent and kind. He reportedly discouraged patients from taking what he considered unnecessary medications and gave direct, useful advice about their symptoms. When the war ended he returned to Cambridge but increasingly found academic philosophy intolerable — the seminars, the papers, the professional machinery. He resigned his Chair in 1947 and moved to Ireland to work alone. He had been a professor for eight years. He did not miss it.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · Ireland and Cambridge, 1947–1951 · The Dying</div>
+<p class="narrative">You resign the Cambridge Chair in 1947 and move to Ireland to work in solitude near Galway. The Philosophical Investigations is essentially complete but you will not publish it. You are afraid it will be misunderstood as badly as the Tractatus. In 1949 you are diagnosed with prostate cancer. You return to England and continue working — on color, on certainty, on the limits of doubt. You work until very near the end. On April 28, 1951, told that friends will be coming to see you the next day, you say: "Tell them I've had a wonderful life." You die that night in Cambridge.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · Not Publishing the Investigations</div>
+  <div class="d-situation">The Philosophical Investigations is complete. You are afraid it will be misread. Do you publish it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,false)">A. No — the experience of the Tractatus's misreading is too fresh; wait until you are certain of the framing</button>
+    <button class="dopt" onclick="choose(this,7,true)">B. Leave it for posthumous publication — let your literary executors handle it; the work is finished even if the moment is not right</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. Publish it while alive — the risk of misreading is always present; withholding does not prevent misreading, it just delays it</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> Wittgenstein did not publish the Philosophical Investigations in his lifetime. His literary executors — G.E.M. Anscombe and Rush Rhees — published it in 1953, two years after his death, in a bilingual German-English edition with Anscombe's translation. It was recognized immediately as a major work. It changed the direction of analytic philosophy and influenced ordinary language philosophy, philosophy of mind, philosophy of psychology, and linguistics. It has been in continuous print ever since. Whether he would have published it himself, given more time, is unknown. He was still revising it in his final months.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · The Legacy</div>
+<p class="narrative">Ludwig Wittgenstein produced two distinct masterworks that point in completely opposite directions — the Tractatus and the Philosophical Investigations — and explicitly said the first was mistaken. Together they shaped analytic philosophy for the entire 20th century and continue to define what philosophical questions about language, meaning, and mind look like. He gave away a fortune. He quit philosophy and then came back to it. He told a hospital ward that he had had a wonderful life, on the last night of it.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · Two Philosophies</div>
+  <div class="d-situation">He produced the Tractatus and the Investigations — two completely different philosophical masterworks. Which matters more?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. Together they matter more than either alone — the fact that one philosopher could hold both, and that the second corrects the first, is itself the most important philosophical statement</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. The Tractatus — it is more beautiful, more ambitious, and its influence on logical positivism shaped the century even through misreading</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. The Investigations — it is the more mature, more carefully argued, and more practically useful work; it has aged better</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> Philosophers argue about this perpetually. The Tractatus is more famous outside philosophy; the Investigations is more influential within it. What both share is the quality of absolute seriousness — Wittgenstein did not write a sentence he did not believe with total conviction. The Tractatus ends "Whereof one cannot speak, thereof one must be silent." The Investigations begins, in effect, with the question: but what does speaking actually consist of? Twenty years separate the two questions. The life between them — the village schoolteacher, the hospital porter, the gardener, the man who gave everything away — is as much his philosophy as either book.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Wittgenstein Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="godel-simulator.html">
+      <span class="next-name">Kurt Gödel</span>
+      <span class="next-desc">The logician who proved mathematics cannot prove itself — Wittgenstein's contemporary in foundational logic</span>
+    </a>
+    <a class="next-card" href="nietzsche-simulator.html">
+      <span class="next-name">Friedrich Nietzsche</span>
+      <span class="next-desc">Another philosopher who wrote in aphorisms, changed the questions philosophy asked, and paid a personal price</span>
+    </a>
+    <a class="next-card" href="kafka-simulator.html">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">A writer whose work occupies the same territory as Wittgenstein — the limits of what language can say</span>
+    </a>
+    <a class="next-card" href="darwin-simulator.html">
+      <span class="next-name">Charles Darwin</span>
+      <span class="next-desc">Another thinker who spent decades developing a theory before he was willing to publish it</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You understand Wittgenstein completely — follow the question into philosophy, publish immediately, give everything away, correct the Tractatus honestly, work in the hospital, leave the Chair, let the Investigations wait. Every choice points toward the work and away from the machinery around the work. That is exactly what produced two revolutionary philosophies.';else if(score>=5)t.textContent='Strong instincts. You understood the core moves — abandon engineering, publish the Tractatus, acknowledge the error, do useful war work. A few choices drifted toward institutional comfort or financial security, but you would have produced significant philosophical work in both modes.';else if(score>=3)t.textContent='You kept the money, stayed in academia, defended the Tractatus, and published the Investigations while alive. Those choices would have produced a more conventional philosophical career. The Tractatus and Investigations are more powerful because they were written by someone who had also taught village children and mixed medicines in Newcastle.';else t.textContent='You chose financial security, institutional position, and conventional philosophical practice at every point. Wittgenstein made opposite choices. The village schoolteacher who mixed hospital drugs and then wrote the Investigations is not separable from the philosophy. The life was also the philosophy.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>
+
+<div class="chapter">
+<parameter name="chapter-title">Chapter 4 · Vienna, 1927 · The Vienna Circle

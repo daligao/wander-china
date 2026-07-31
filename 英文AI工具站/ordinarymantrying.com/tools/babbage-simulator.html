@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charles Babbage Life Simulator — He Designed the Computer in 1833 | Ordinary Man Trying</title>
+<meta name="description" content="Follow Charles Babbage across 8 pivotal decisions — from designing the Difference Engine to the unbuilt Analytical Engine, his war on street musicians, Ada Lovelace's collaboration, and dying with his work unfinished.">
+<style>
+:root{
+  --bg:#EEF2F0;--card:#F5F9F7;--ink:#060E0A;--muted:#283830;--line:#B0C8BC;
+  --accent:#183828;--accent-bg:#D0E8DC;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,242,240,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#060E0A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #88B898;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#030806;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#D0E8DC;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#D0E8DC;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #88B898;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #88B898;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Charles Babbage</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #87 of 100</p>
+  <h1 class="cover-title">He Designed the Computer.<br>In 1833. It Wasn't Built.</h1>
+  <p class="cover-sub">Charles Babbage designed two mechanical computers — the Difference Engine and the Analytical Engine — that contained every fundamental principle of modern computing: programmability, memory, conditional branching, punch-card input. He received government funding for the Difference Engine, spent twenty years on it, and never completed it. He moved to the Analytical Engine, which was more powerful but never funded. He spent the last decades of his life in a war against London's street musicians, writing furious letters to Parliament, and maintaining detailed notes on everything he despised. He died in 1871 with his machines unbuilt. The Science Museum built his Difference Engine in 1991. It worked perfectly.</p>
+  <div class="cover-facts">
+    <p>⚙️ Difference Engine design begun 1822 — government grant £17,000, never completed &nbsp;·&nbsp; 🧮 Analytical Engine designed 1837 — first general-purpose computer &nbsp;·&nbsp; 👩‍💻 Ada Lovelace wrote first computer program for Analytical Engine &nbsp;·&nbsp; 🎵 Waged 8-year campaign against London street musicians &nbsp;·&nbsp; 🏭 1991: Difference Engine No. 2 built — worked perfectly &nbsp;·&nbsp; 1791–1871 · London</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Babbage's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1812</div>
+  <div class="timeline-dot">Cambridge, England · Age 20</div>
+  <div class="narrative">
+    <p>You are at Cambridge studying mathematics, and you are, by your own account and others', far more talented than your professors. You have mastered Leibniz's calculus notation, which is not widely taught in England (where Newton's inferior notation still dominates), and you co-found the Analytical Society with John Herschel and George Peacock to modernize British mathematics by importing Continental methods. This is, in its small way, a genuine intellectual reform — British mathematics has fallen behind because of institutional loyalty to Newton's notation, and you are one of the people who fixes this.</p>
+    <p>You are also, already, the specific kind of mind that will define your career: brilliant at seeing systematic patterns and structural problems, inclined toward comprehensive solutions rather than incremental fixes, unable to stop designing something bigger when what you have is merely very good. You will apply these qualities to computation. You have noticed that mathematical tables — used by astronomers, navigators, and engineers — are riddled with errors that accumulate when humans copy them. You are thinking about a machine.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1812</div>
+    <p class="decision-q">Babbage's core insight that will drive his life's work is:</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. That mechanical systems are faster than human calculation — speed is the primary advantage of machine computation over human computation.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. That mechanical systems cannot make the kind of errors humans make — a machine that correctly implements a mathematical method will produce correct results every time, eliminating the accumulated copying errors that make mathematical tables unreliable. Reliability, not speed, is the primary value.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. That computation can be industrialized — the same principles that allow factories to produce consistent goods can be applied to mathematical production.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. That all mathematics can be reduced to mechanical operations — the philosophical implication that human reasoning is ultimately mechanical drives his interest in computing machines.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You are twenty and you have just understood the idea that will consume fifty years of your life: human hands make systematic copying errors that machines cannot. Every bad navigation table that kills a sailor, every miscalculated bridge — fixable. By you. With brass gears and a good enough machinist.</strong></p>
+      <strong>Babbage's motivating insight:</strong> The famous story — probably apocryphal but structurally accurate — is that Babbage, staring at a table of logarithms full of errors, said "I wish to God these calculations had been executed by steam." What he understood was that the errors in mathematical tables were not random: they were systematic errors introduced by human copying, transcription, and arithmetic. A machine that correctly implements a difference method for polynomial calculation cannot make these kinds of errors. The 1991 Science Museum Difference Engine, built from Babbage's original plans, computed correctly on its first operation. He had been right about this for 170 years.
+    </div>
+  </div>
+
+  <div class="year-banner">1822</div>
+  <div class="timeline-dot">London, England · Age 30</div>
+  <div class="narrative">
+    <p>You have built a small demonstration model of the Difference Engine — a mechanical calculator that uses the method of finite differences to compute polynomial values — and demonstrated it to the Royal Astronomical Society. The demonstration is successful. You receive a government grant of £1,500, later increased substantially, to build a full-scale Difference Engine capable of computing and printing mathematical tables automatically. You hire the engineer Joseph Clement to build the precision machinery. The machine requires parts made to tolerances that are at the edge of what Victorian precision engineering can achieve.</p>
+    <p>You will work on the Difference Engine for the next twenty years. The total government expenditure will reach £17,000 — a very large sum. The machine will never be completed. The reasons are multiple and contested: the engineering challenges are genuine; your relationship with Clement deteriorates after a dispute over who owns the specialized tools (Babbage insists they belong to him; Clement disagrees and stops work); you become distracted by designing an even more powerful machine; and the government eventually loses patience with a project that has consumed enormous resources without producing a working result.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1822</div>
+    <p class="decision-q">The Difference Engine is funded but never completed. What is the most accurate account of why it failed?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Engineering impossibility — the precision manufacturing required for the Difference Engine was simply beyond Victorian technology, and failure was inevitable regardless of management or focus.</button>
+      <button class="dopt" onclick="choose(this,2,false)">B. Government funding instability — political changes and bureaucratic hesitation withdrew support at critical moments, making completion impossible.</button>
+      <button class="dopt" onclick="choose(this,2,true)">C. Multiple overlapping causes: genuine engineering difficulty, a catastrophic breakdown in the relationship with the chief engineer Clement, Babbage's own perfectionism and tendency to redesign rather than complete, and his decision to move to the Analytical Engine before the Difference Engine was finished. No single cause explains the failure; their combination does.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. Babbage's personality — his inability to maintain working relationships and his insistence on complete control over the project made completion practically impossible regardless of technical factors.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>You spent twenty years and £17,000 of public money on a machine that worked correctly when someone else built it from your drawings, 120 years after your death. The engineering was never the problem.</strong></p>
+      <strong>Why the Difference Engine failed:</strong> The 1991 Science Museum build — which used only materials and techniques available in Babbage's era — proved that the machine was buildable. The engineering was not impossible. What was impossible was Babbage managing the engineering process: the dispute with Clement over tool ownership, the constant design revisions that made Clement's completed work obsolete, and the shift to the Analytical Engine before the Difference Engine was done. The government's eventual decision to stop funding was reasonable — they had spent £17,000 on a machine that showed no sign of being completed, and the project management was a visible disaster.
+    </div>
+  </div>
+
+  <div class="year-banner">1833</div>
+  <div class="timeline-dot">London, England · Age 42</div>
+  <div class="narrative">
+    <p>While the Difference Engine is stalled, you have conceived something far more ambitious: the Analytical Engine. The Difference Engine can only compute polynomial functions by the method of differences. The Analytical Engine can compute anything — it is general-purpose. It has a "store" (memory), a "mill" (processor), punch-card input (adapted from Jacquard loom cards), and conditional branching (the ability to choose different operations based on intermediate results). These four elements are the fundamental architecture of all modern computers. You have designed them in 1833.</p>
+    <p>The Analytical Engine will never be built in your lifetime. The government will not fund it — they have already spent enormously on the unfinished Difference Engine and have no appetite for a new, more ambitious project. You will spend the rest of your life working on it: designing, revising, writing up, explaining it to anyone who will listen. Almost no one understands what you are doing. Two exceptions: the young mathematician Ada King, Countess of Lovelace, who grasps it completely, and the Italian mathematician Luigi Menabrea, who writes a paper about it in French that Ada will translate and annotate.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1833</div>
+    <p class="decision-q">The Analytical Engine's design contains every fundamental principle of modern computing. What makes it genuinely revolutionary rather than merely clever?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. Its mechanical implementation — using steam power for computation was genuinely novel and represented a significant advance in thinking about what machines could do.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. Programmability via conditional branching — the ability to perform different operations depending on intermediate results means the machine is not fixed in what it can compute. A fixed calculator can only compute what it was designed to compute; a programmable machine can, in principle, compute anything. This is the conceptual leap that makes the Analytical Engine the ancestor of all modern computers.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. The separation of store (memory) from mill (processor) — this architectural decision is the direct ancestor of the von Neumann architecture used in all modern computers, and was genuinely novel in 1833.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. Punch-card input — adapting Jacquard loom cards for mathematical input was the practical innovation that made programming the machine conceivable.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>In 1833, in a mechanic's workshop in London, using brass and iron and punch-card paper adapted from a weaving loom, you designed a machine that contained every fundamental principle of the computer that would eventually run the world — with no electronics, no theory of computation, and no one willing to fund it.</strong></p>
+      <strong>The Analytical Engine's architecture:</strong> All four elements — store (memory), mill (processor), conditional branching, and punch-card input — are genuinely revolutionary, and arguing about which is most important misses that they constitute a system. A machine with memory but no conditional branching cannot be programmed; a machine with conditional branching but no memory cannot remember intermediate results. What makes the Analytical Engine the first computer design is that all four elements are present and work together. Alan Turing in the 1930s, designing the theoretical Turing machine, would arrive at an equivalent architecture independently. Babbage got there in 1833 with brass and iron.
+    </div>
+  </div>
+
+  <div class="year-banner">1843</div>
+  <div class="timeline-dot">London, England · Age 51</div>
+  <div class="narrative">
+    <p>Ada King, Countess of Lovelace — daughter of Lord Byron, and the only person in England who understands what the Analytical Engine can do as completely as you do — has translated Luigi Menabrea's French paper about the machine into English. You suggest she add notes. She adds notes that are longer than the paper. Her "Note G" describes a method for computing Bernoulli numbers using the Analytical Engine: the first algorithm ever designed for a general-purpose programmable computer. She is twenty-eight years old.</p>
+    <p>More importantly, her notes articulate something that you yourself have not quite said clearly: that the Analytical Engine can manipulate any symbol according to rules, not just numbers — that it is not a calculating machine but a machine for processing information of any kind. This is the insight that distinguishes computing from mere arithmetic. You and Ada correspond intensely during this period. She offers to be your project manager and help you secure funding. You are moved but decline — you believe the project needs you to lead it. This is probably a mistake. The Analytical Engine needs Ada more than it needs another twenty years of your management.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1843</div>
+    <p class="decision-q">Ada Lovelace's "Note G" is often called the first computer program. What does it actually demonstrate?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. That women could contribute to mathematics at the highest level — the historical significance is primarily about Ada's gender and what it represents about inclusion in Victorian science.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. That a general-purpose programmable machine requires someone to think carefully about what programming it means — Note G is not just an algorithm but a worked example of systematic thinking about how to instruct a machine, including the handling of a repeating "loop." Ada understood what programming a computer required before the computer existed to program.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. That the Analytical Engine design was correct — if the first designed program would have worked, it confirms that Babbage's machine was buildable and functional.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. The limits of Babbage's vision — Ada's notes go beyond what Babbage had conceived for his machine, suggesting she extended rather than merely explained his ideas.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You suggested she add some notes to her translation. She returned a document three times longer than the original, containing the first algorithm ever written for a programmable machine — for a machine that didn't yet exist.</strong></p>
+      <strong>Ada's Note G:</strong> The algorithm for Bernoulli numbers is usually cited as the first computer program, but what makes it historically significant is the systematic thinking it embodies: loops (operations repeated a variable number of times), variables that change over iterations, and the separation between the algorithm and the specific numbers being computed. These are not Babbage's contributions to the notes — they are Ada's. Whether she "invented" programming or "translated" Babbage's ideas is debated; what is not debated is that her notes articulate things about programmable computation that Babbage's own writings do not contain and that remained important to computer science a century later.
+    </div>
+  </div>
+
+  <div class="year-banner">1855</div>
+  <div class="timeline-dot">London, England · Age 64</div>
+  <div class="narrative">
+    <p>Ada Lovelace died in 1852 of uterine cancer, aged thirty-six. The Analytical Engine remains unbuilt. You are sixty-four, with considerable personal fortune (inherited from your father), enormous intellectual reputation, and an active campaign against the nuisances of London life. Chief among your enemies: street musicians. You have calculated, based on detailed record-keeping, that one-quarter of your working time has been lost to the noise of barrel organs, brass bands, and other street performers. You have presented this calculation to Parliament. You have organized a petition signed by scientists, artists, and writers. You have written letters to newspapers. You have had street performers prosecuted under the Street Music Act you successfully lobbied for. The musicians play outside your house in revenge. You shout at them from the window. The neighbors are exhausted.</p>
+    <p>You do not see any inconsistency between the Analytical Engine and the street musicians. Both are systematic problems requiring systematic solutions. The difference is that the Analytical Engine has not been built, whereas the Street Music Act of 1864 has been passed.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1855</div>
+    <p class="decision-q">Babbage's obsessive campaign against street musicians while the Analytical Engine remains unbuilt — what does this reveal?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Deteriorating mental health — the street musician fixation is a symptom of late-life cognitive decline that explains both the Analytical Engine's failure and the increasingly erratic behavior.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. The same cognitive pattern that produced the Analytical Engine: acute sensitivity to unnecessary inefficiency and systematic wrongness, combined with the conviction that systematic solutions are both possible and obligatory. The street musician campaign is not a distraction from his real work — it is the same work applied to a different domain. Both reflect a mind that cannot tolerate fixable wrongness without attempting to fix it.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. Class anxiety — the street musician campaign is primarily about maintaining the social character of upper-middle-class Marylebone rather than about productivity, and should be read as social policing rather than systematic thinking.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. Simple eccentricity — the street musician campaign is the famous Victorian eccentric at his most harmless and should not be over-interpreted as revealing anything deep about his intellectual character.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>You presented Parliament with a precise calculation of the exact fraction of your working life destroyed by barrel organs. You had the Street Music Act of 1864 passed. The Analytical Engine — designed to eliminate systematic error — sat unbuilt in your workshop for thirty more years. You saw no contradiction in any of this.</strong></p>
+      <strong>Babbage's unified personality:</strong> His book "Passages from the Life of a Philosopher" (1864) devotes a chapter to each of his major concerns: the Difference Engine, the Analytical Engine, the street musicians, his plan for lighthouse signals, his analysis of how the postal system worked, a proposed method for accurate measurement of the depth of the sea. The same analytical mind that designed the computer also calculated the number of working days he had lost to barrel organs and presented the calculation to Parliament. The eccentricity is real; so is the consistency. He was not a man who distinguished between worthy and unworthy applications of systematic thinking. Systematic wrongness was systematic wrongness.
+    </div>
+  </div>
+
+  <div class="year-banner">1864</div>
+  <div class="timeline-dot">London, England · Age 73</div>
+  <div class="narrative">
+    <p>You publish "Passages from the Life of a Philosopher" — an autobiography of extraordinary eccentricity and considerable insight, in which you describe the Analytical Engine, the Difference Engine, the street musicians, a proposed system of lighthouse signals, the history of the postal system, and much else. You are seventy-three. The Analytical Engine plans fill thousands of pages in your workshop. Ada has been dead for twelve years. No one, in England or anywhere else, has the resources or the engineering capacity to build it.</p>
+    <p>You continue working. You are in correspondence with some of the best mathematical minds in Europe. Your son Henry will eventually organize the drawings and attempt, after your death, to get them published and built. This will not happen for another hundred years. You write in your memoir about the Analytical Engine with no apparent bitterness, only the systematic clarity of a man who has understood something that the world has not yet caught up with. This requires a kind of patience that is unusual for someone who has spent fifteen years at war with barrel organ players.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1864</div>
+    <p class="decision-q">Babbage spends his final decade working on the Analytical Engine while knowing it will not be built in his lifetime. What sustains this?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Delusion — he genuinely believed that recognition and funding would eventually come, and this false hope kept him working.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. The intrinsic interest of the problem — he was not working for recognition or implementation but because the design problems themselves were interesting and because he believed, correctly, that what he was working on was important regardless of whether it was recognized. This is the same motivation that produces scientific work that is only validated decades later.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. Stubbornness — having invested so much of his life in the Analytical Engine, he could not admit the project's failure and continued from sheer psychological inability to stop.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. Financial motivation — his personal fortune meant he could continue working without needing institutional support, and financial independence sustained what institutional dependence would have ended.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>At seventy-three, with Ada dead for twelve years and the Analytical Engine still unbuilt, you published your autobiography. The chapters on the machine are technically precise and entirely calm. You were writing for readers who hadn't been born yet.</strong></p>
+      <strong>Babbage's late work:</strong> His writings about the Analytical Engine in his final years are not those of a bitter man or a deluded one. They are technically detailed, precise, and calm. He understood what the machine was and what it could do, and he continued to work on it because the problems were genuinely interesting and because — as he explicitly writes — he believed it would eventually be built and used. He was right. The 1991 Difference Engine No. 2 and the ongoing Analytical Engine project at Plan 28 (begun 2010) are the posthumous fulfillment of his confidence. His timeline was off by about 150 years. His design was correct.
+    </div>
+  </div>
+
+  <div class="year-banner">1871</div>
+  <div class="timeline-dot">London, England · Age 79</div>
+  <div class="narrative">
+    <p>October 18, 1871. You die at home in Marylebone, London, aged seventy-nine. The Analytical Engine plans — thousands of drawings covering thirty years of design work — are in your workshop. Your brain is preserved and donated to science (it is divided between the Hunterian Museum and the Science Museum; both halves are still there). The papers eventually go to the Science Museum. The plans are accurate enough that in 1991, engineer Doron Swade builds Difference Engine No. 2 from them, using only materials and techniques available in Babbage's era. It works correctly. It weighs 2.6 tons and has 8,000 parts.</p>
+    <p>The Analytical Engine has still not been physically built as of the early 21st century, though the international Plan 28 project, begun in 2010, is working from the original drawings toward a complete implementation. The design is correct. The manufacturing challenges are real but manageable with modern precision engineering. Babbage has been waiting 150 years. The machine will eventually be built. He was certain of this. He was right.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1871</div>
+    <p class="decision-q">Babbage dies with the Analytical Engine unbuilt. How should his life's work be assessed?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. As a failure — a man who spends fifty years on a project that is never completed and never used has failed, regardless of the eventual historical verdict.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. As a partial success — the Difference Engine design was vindicated by the 1991 build, which is a genuine achievement, but the Analytical Engine's incompletion means the main work was left undone.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. As a success measured on the right timescale — he correctly identified the fundamental architecture of computing 150 years before anyone else, worked out the principles in sufficient detail that they could be built from his drawings after his death, and was right about everything important. That the manufacturing technology of his era couldn't deliver what the design required is not a failure of the design.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. As irrelevant to the history of computing — modern computers were independently developed from different intellectual roots, and Babbage's designs had no direct influence on the development of electronic computing.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>The engineers who built ENIAC in 1945 had never read your plans. They solved the same four problems you solved in 1833 — memory, processor, programming, conditional branching — and arrived at the same architecture. The problems dictated the structure. You found it first.</strong></p>
+      <strong>Babbage's place in computing history:</strong> The "independently developed" claim has some truth: Alan Turing, John von Neumann, and the ENIAC engineers did not work from Babbage's designs. But the architectural parallels are too precise to be coincidental in a deep sense: the same problems that Babbage identified (memory, processing, programmability, input) were the problems that 20th-century computer scientists solved, and they solved them with the same general structure Babbage had proposed. Whether he influenced them directly or whether the problems themselves dictated the architecture, his designs are the first worked-out answer to the question "what does a general-purpose computing machine require?" That is not irrelevant.
+    </div>
+  </div>
+
+  <div class="year-banner">1991</div>
+  <div class="timeline-dot">Science Museum, London · 120 years later</div>
+  <div class="narrative">
+    <p>December 1991. The Science Museum in London completes Difference Engine No. 2, built from Babbage's original plans by engineer Doron Swade and his team. The machine uses only materials and manufacturing techniques available in Babbage's era — brass, cast iron, steel, no electronics, no modern precision CNC machining. It weighs 2.6 tons and has 8,000 parts. On its first operation, it computes correctly. The machine that Babbage spent twenty years failing to complete was buildable and functional from the beginning. His design was correct. The problem was never the design.</p>
+    <p>In 2000, a duplicate was built for the Computer History Museum in California. Both are on permanent display and both operate on demonstration days. The outputs are printed on paper by an integrated printer — another of Babbage's innovations, designed so that the computed results could be printed directly from the machine, eliminating the copying errors that had motivated the entire project in 1820. It eliminates the copying errors. The machine works. Babbage was right.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 1991</div>
+    <p class="decision-q">The 1991 Science Museum build proves the Difference Engine was buildable from Babbage's era. What is the most important lesson this teaches about innovation?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. That persistence pays off — Babbage's fifty years of work eventually produced a validated design, and the lesson is about maintaining long-term commitment to important problems.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. That management matters as much as ideas — the Difference Engine could have been built in Babbage's lifetime if the project had been better managed, and the lesson is about execution rather than conception.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. That correct ideas can be ahead of their implementation infrastructure, and that the time between conception and realization tells us about the infrastructure rather than the idea — Babbage was correct in 1833 about what a computing machine required. The precision manufacturing he needed wasn't fully available. One hundred and fifty years later it was. The gap was in the world, not in the design.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. That institutional support is decisive — without the Science Museum's organizational and financial backing, the 1991 build would not have happened, and the lesson is about the importance of institutional context for realizing bold ideas.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>They built your machine in 1991 using only the materials and techniques available in 1833. It worked on the first try. The 150-year delay was not about the design.</strong></p>
+      <strong>Babbage and implementation infrastructure:</strong> The historian of technology Simon Schaffer has written about Babbage's designs as revealing the specific gap between mathematical conception and industrial manufacture in the early Victorian period — Babbage needed precision that existed mathematically but not mechanically in 1833. The 1991 build closed this gap using the same design. This pattern — correct conception, insufficient implementation infrastructure, delayed realization — appears repeatedly in the history of technology: Babbage's Analytical Engine, Nikola Tesla's wireless power, various computing proposals of the 1940s. The idea waiting for its time is a real phenomenon. Babbage's machines are the clearest historical example.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Charles Babbage · 1791–1871</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"As soon as an Analytical Engine exists, it will necessarily guide the future course of the science."<br><em style="font-size:13px;color:var(--muted);">— Charles Babbage, 1864</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="turing-simulator.html" class="next-card">
+        <div class="next-card-name">Alan Turing</div>
+        <div class="next-card-sub">The machine that thinks — and the cost</div>
+      </a>
+      <a href="tesla-simulator.html" class="next-card">
+        <div class="next-card-name">Nikola Tesla</div>
+        <div class="next-card-sub">AC power, wireless dreams, and the end</div>
+      </a>
+      <a href="faraday-simulator.html" class="next-card">
+        <div class="next-card-name">Michael Faraday</div>
+        <div class="next-card-sub">Electricity, candles &amp; the humble genius</div>
+      </a>
+      <a href="pascal-simulator.html" class="next-card">
+        <div class="next-card-name">Blaise Pascal</div>
+        <div class="next-card-sub">The first calculator, the wager, the mystic fire</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='Babbage would have approved. You identified the reliability insight, the management failure, the architectural revolution, Ada\'s real contribution, the street musician consistency, the calm late work, and the posthumous vindication. The design was correct. So was your reasoning.';else if(pct>=0.625)t.textContent='You grasped the broad shape but missed some of the precision Babbage himself demanded. A machine is only as reliable as its least accurate component — and a few of your answers were imprecise where precision was exactly the point.';else if(pct>=0.375)t.textContent='You have the outline but not the architecture. Babbage spent his life insisting that the difference between a correct answer and an almost-correct answer is a systematic error. You made a few.';else t.textContent='You would have voted with the British government to defund the Difference Engine in 1842. Sometimes the evidence seems insufficient. Babbage was right anyway.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

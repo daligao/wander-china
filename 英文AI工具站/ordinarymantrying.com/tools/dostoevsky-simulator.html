@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Dostoevsky?</title>
+<meta name="description" content="He stood before a firing squad at 28. He spent 4 years in Siberia. He gambled away everything and wrote Crime and Punishment to pay his debts. 8 decisions.">
+<meta property="og:title" content="What Would You Do If You Were Dostoevsky?">
+<meta property="og:description" content="The mock execution, the Siberian exile, the gambling addiction, and the debt that produced the greatest novels in Russian literature. 8 decisions — what would you have done?">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/dostoevsky-simulator.html">
+<style>
+:root{
+  --bg:#F5F0EB;--card:#FDFAF7;--ink:#100A04;--muted:#4A3828;--line:#C8B8A8;
+  --accent:#4A1A08;--accent-bg:#F0E8E0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,240,235,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#180E06;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C8A888;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#2A1808;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F8F0E8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#1A0A04;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F8F0E8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C8A888;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#2A1808;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.quote-block{background:var(--ink);color:#F8F0E8;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#8A6848;margin-top:12px;font-family:var(--mono);}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#180E06;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F8F0E8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C8A888;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.cta-box{background:var(--accent);color:#F8F0E8;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#D4A888;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Fyodor Dostoevsky</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #24</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Dostoevsky?</h1>
+  <p class="cover-sub">He was led to a firing squad at 28 and pardoned at the last second. He spent four years in a Siberian labor camp. He lost everything at the roulette wheel — repeatedly. He wrote <em>Crime and Punishment</em> under such crushing debt that he dictated the entire novel in 26 days. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Fyodor Dostoevsky</strong> (1821–1881) · Russian novelist · Son of a Moscow doctor · Works: <em>Poor Folk</em> (1846), <em>Notes from Underground</em> (1864), <em>Crime and Punishment</em> (1866), <em>The Idiot</em> (1869), <em>Demons</em> (1872), <em>The Brothers Karamazov</em> (1880) · Diagnosis: epilepsy (from at least 1850) · Cause of death: pulmonary hemorrhage, at 59, in St. Petersburg · Considered alongside Tolstoy as one of the two greatest Russian novelists · Influenced Nietzsche, Freud, Kafka, Camus, and virtually every major 20th-century writer on psychological depth.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1849, St. Petersburg</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Firing Squad</span></div>
+<div class="year-banner">1849</div>
+<div class="timeline-dot">Semyonovsky Square, St. Petersburg · Age 28</div>
+<div class="narrative">
+  <p>You are 28. You have published one novel, <em>Poor Folk</em>, to enormous acclaim. You have been arrested for participating in the Petrashevsky Circle — a literary discussion group that read and distributed banned socialist texts. After eight months in the Peter and Paul Fortress, you are brought to Semyonovsky Square on a December morning.</p>
+  <p>The sentence is read aloud: death by firing squad. You are placed in the third group of three men. The first two groups are brought forward, blindfolded, tied to posts. The rifles are raised.</p>
+  <p>A courier gallops into the square. The Tsar has commuted the sentences to exile and hard labor in Siberia. The execution was staged — a psychological punishment designed to break you. Three prisoners in the first group went permanently insane at that moment. You do not.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Firing Squad</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have just watched a mock execution. You believed you were dying for the thirty seconds before the courier arrived. What does this experience do to a person?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">It destroys them. Three of the men around you lost their minds permanently. The experience of absolute terror at that scale cannot be processed; it leaves permanent psychological damage.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">B</span><span class="dopt-body">It clarifies everything. When you genuinely believe you are about to die and then do not, the remaining time takes on a quality nothing else can produce. The trauma and the clarity are inseparable.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">It does different things to different people, and predicting which depends entirely on what you believed about life and death before the moment. The experience is a revelation of what was already there.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Dostoevsky said about those thirty seconds</div>
+      <p><strong>You stand at the firing post for thirty seconds believing you are going to die — and emerge with a clarity about consciousness and time that fills five major novels written over the next thirty years.</strong> Dostoevsky wrote about the mock execution several times, most directly in <em>The Idiot</em> (1869), where Prince Myshkin describes a man condemned to death who is given a five-minute reprieve: "Those five minutes seemed to him an infinite time, a vast wealth; he felt that he had so many lives left in those five minutes that there was no need yet to think of the last moment." Dostoevsky's own account to his brother, written immediately after: "My brother, I am not depressed and have not lost spirit. Life is everywhere, life is in ourselves and not in the external." He would describe the clarity of those thirty seconds for the rest of his life. <em>The Brothers Karamazov</em>, <em>Crime and Punishment</em>, <em>The Idiot</em> — all of them are written by a man who had fully believed he was about to die and then discovered he wasn't.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · Siberia</span></div>
+<div class="year-banner">1850</div>
+<div class="timeline-dot">Omsk Prison, Western Siberia · Age 29</div>
+<div class="narrative">
+  <p>You arrive at the Omsk Prison in January 1850. The sentence is four years of hard labor. You will sleep in a barracks with 70 men, work in winter cold, be forbidden from writing, forbidden from reading most books. You are a member of the nobility; the other prisoners are peasants and criminals who resent your class. You are also an epileptic — you have had seizures since at least the 1840s, and the stress of prison will intensify them.</p>
+  <p>You are given one book: the New Testament. You read it repeatedly. The guards and other prisoners will not allow you to write, but you begin composing in your head — memorizing sentences, whole paragraphs, entire scenes that you will write down years later when you are free.</p>
+  <p>You emerge from Siberia in 1854, after four years of hard labor, transferred then to a military regiment for five more years before you are permitted to return to St. Petersburg.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Siberian Years</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Four years in a Siberian prison camp, forbidden from writing, one book permitted. What do you do with this time?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Survive physically. The intellectual life can come later. The priority is not breaking your health in conditions that will kill many of the men around you. Writing in your head is a luxury you cannot afford.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">Observe everything and compose in your head. The peasants and criminals around you are the society you have never had direct access to. This is involuntary research. The writing will come when you are free; what you need now is the material.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Focus entirely on the New Testament. The theological questions the firing squad raised are the only questions that matter now. The literary career can resume when you return; the spiritual crisis is immediate.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Dostoevsky took from Siberia</div>
+      <p><strong>You spend four years in Siberia forbidden from writing — and produce the observational material for every major novel you will ever write. The prohibition was the research.</strong> Dostoevsky did all three simultaneously, but the observation is what transformed his writing. His memoir of the years in the camp, <em>The House of the Dead</em> (1861), records the peasants, the criminals, their stories, their psychology — an unprecedented portrait of Russian society at its lowest levels, written by a nobleman who had been forced to live inside it. He also emerged with his epilepsy worsened, his health permanently damaged, and his faith reconstituted — not the naive faith of a young man but a faith that had survived the firing squad and four years of hard labor. The theological questions in <em>The Brothers Karamazov</em> — Ivan's rebellion against God based on the suffering of children, Alyosha's answer — are the questions of the man who came out of Siberia.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>Pain and suffering are always inevitable for a large intelligence and a deep heart.</q>
+  <div class="q-attr">— Fyodor Dostoevsky, Crime and Punishment (1866)</div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Underground Man</span></div>
+<div class="year-banner">1864</div>
+<div class="timeline-dot">St. Petersburg · Age 43</div>
+<div class="narrative">
+  <p>You are back in St. Petersburg. You are editing a literary journal, you are deeply in debt, your wife Marya is dying of tuberculosis, and your brother Mikhail — your closest companion and the journal's co-founder — dies suddenly in July 1864, four months after Marya. In the same year you write <em>Notes from Underground</em>.</p>
+  <p>The Underground Man is one of the most radical literary inventions of the 19th century: a narrator who is spiteful, self-contradicting, aware of his own irrationality, and completely unable to change. He does not want to be helped. He resists the rational utilitarianism of the 1860s intelligentsia — the idea that if you show a person clearly what is in their rational self-interest, they will act on it. The Underground Man acts against his self-interest deliberately, as a proof of freedom.</p>
+  <p>The novel is 130 pages and changes what fiction is capable of.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — Notes from Underground</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Underground Man argues that human beings act against their rational self-interest as proof that they are free. Is he right?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">No. The Underground Man is mentally ill, and Dostoevsky knows this. Irrational self-destruction is not proof of freedom — it is a symptom of damaged psychology. The argument is sophisticated rationalization of dysfunction.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">B</span><span class="dopt-body">He is partly right about something real — people do act against clear self-interest, and this is a genuine feature of human psychology, not merely pathology. But the Underground Man draws the wrong conclusion: self-destruction is not freedom, it is a trap that proves the same point.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">Completely right. The 19th-century utilitarian program — optimize for rational self-interest and you optimize humanity — fails at the first human being you actually examine closely. The Underground Man is the honest account of what a human being is when you remove the comfortable assumptions.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Dostoevsky actually believed — and what Nietzsche thought</div>
+      <p><strong>Nietzsche reads Dostoevsky in 1887 and immediately writes: "the only psychologist from whom I have anything to learn." He finds in these novels the psychology he had been naming theoretically for years — written by a man who disagreed with nearly everything Nietzsche believed.</strong> Dostoevsky did not wholly endorse the Underground Man — the second part of the novella shows the Underground Man's psychology destroying every human relationship he touches. The Underground Man is a critique of rationalism, not an endorsement of irrational self-destruction. Dostoevsky believed in free will, in moral responsibility, in the possibility of redemption through suffering — positions that require both the reality of irrational choices and the possibility of choosing better. Nietzsche read Dostoevsky in French translation in 1887 and wrote: "Dostoevsky is the only psychologist from whom I have anything to learn." What Nietzsche learned was precisely the psychology of resentment, self-contradiction, and self-undermining that the Underground Man embodies — which Nietzsche named <em>ressentiment</em> and made the center of his moral psychology.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Roulette Table</span></div>
+<div class="year-banner">1865</div>
+<div class="timeline-dot">Wiesbaden Casino, Germany · Age 44</div>
+<div class="narrative">
+  <p>You are at the roulette table in Wiesbaden. You have already lost money you do not have. You are in debt to publishers, to friends, to your dead brother's creditors — debts you assumed out of honor. You have a system: you believe that with sufficient discipline and will, you can walk away when you are ahead. You have done it before. You will do it again many times, in many casinos, in many cities — and every time, eventually, you lose everything.</p>
+  <p>You write a novel about a man who gambles, <em>The Gambler</em>, dictating it in 26 days to meet a contract deadline while simultaneously writing <em>Crime and Punishment</em>. The stenographer who takes down the dictation is Anna Snitkina, 20 years old. You marry her the following year. She will manage your finances, keep you away from casinos when she can, and outlive you by 37 years.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Gambling</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You understand rationally that you lose in the end. You have a theory that discipline and will can overcome the house edge. Every time, you eventually lose everything. Why do you keep going back?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">The theory is genuine — you believe in it each time. Memory of past losses fades; belief in the system reasserts itself. It is self-deception, but it is not knowingly self-destructive.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">The debt. Gambling is the only mechanism fast enough to resolve the impossible debt load. You know the expected value is negative but you need a long-shot positive outcome, and this is the only available instrument.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">The experience of the table itself. The intensity, the risk, the possibility of total reversal — it recreates something close to the sensation of the firing squad. The gambling is not irrational self-destruction; it is a search for the only feeling that makes you fully alive.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What Dostoevsky's letters show — and what Anna said</div>
+      <p><strong>He loses everything — including the money for train tickets home — writes to his wife "I am reborn, the hideous fantasy has left me entirely," and never gambles again. Ten years of addiction ends with one session in Wiesbaden and one letter.</strong> Dostoevsky's letters from the casino years are extraordinary. He writes to his family during losing streaks with the same tone: I have lost everything, I am in despair, I will go back tomorrow, I have a system, I am certain I will win it back. Anna's memoirs describe a pattern: Dostoevsky would beg to be allowed to go to the casino, she would give him a limited sum, he would lose it in hours, return, beg again, she would give him more — until there was nothing left. She eventually learned to pack the passports and valuables before giving him any money. He stopped gambling permanently in 1871, after a session in Wiesbaden where he lost everything including the money for train tickets home, and wrote to Anna: "Anya, I am reborn. The hideous fantasy which has tormented me for almost ten years has disappeared. Yesterday I was convinced that it had left me entirely." It had. He never gambled again.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · Crime and Punishment</span></div>
+<div class="year-banner">1866</div>
+<div class="timeline-dot">St. Petersburg · Age 45</div>
+<div class="narrative">
+  <p>You owe a publisher a novel by November 1 or you will forfeit the rights to all your past and future work for nine years. It is October. You have not begun. You hire a stenographer — Anna Snitkina — and dictate <em>Crime and Punishment</em> at a pace that has no equivalent in literary history: 26 days, full novel, delivered on time.</p>
+  <p>The novel had been developing in your head for years. Raskolnikov is a student who murders a pawnbroker and her sister based on a theory that superior people are permitted to transgress ordinary moral law. He is immediately destroyed by his own psychology — not by external punishment but by his inability to live in the ordinary world after what he has done. The novel is a demolition of the "extraordinary man" theory: the idea that certain people stand above conventional morality by virtue of their intelligence or purpose.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Extraordinary Man Theory</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Raskolnikov's theory: Napoleon could cross Europe with an army and kill hundreds of thousands; why should Raskolnikov be bound by the rule against killing one worthless pawnbroker? Is this argument wrong — and if so, where exactly does it go wrong?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">A</span><span class="dopt-body">The theory is wrong at the premise. The "extraordinary man" believes his own superiority authorizes transgression. But the belief in one's own superiority is itself a symptom of the disorder the theory enables. Raskolnikov kills the pawnbroker partly to test whether he can — and the inability to live with himself afterward is the test's result.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">The theory is wrong because Napoleon didn't personally execute anyone — he commanded at distance, within a military and legal structure. Raskolnikov's error is not the theory itself but the category error of applying mass-warfare logic to individual murder.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">The theory is not provably wrong — it's simply that Raskolnikov is not actually an extraordinary man. The failure is an empirical one: he misjudged his own category. A genuinely superior person might pull it off. The novel is about a man who discovers he is ordinary by attempting to prove he isn't.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Dostoevsky designed the novel to show</div>
+      <p><strong>Raskolnikov nearly gets away with the murder. The evidence is insufficient. What destroys him is not the law — it is the discovered impossibility of living inside his own theory after having acted on it.</strong> Dostoevsky's own notes for the novel are explicit: Raskolnikov's theory is destroyed not by external punishment — Raskolnikov nearly gets away with the murder in terms of evidence — but by his own inability to bear the psychological weight of what he has done. The punishment is not legal; it is ontological. He cannot exist in ordinary human society after crossing that line, because ordinary human society runs on assumptions about moral order that he has now disproved to himself. The epilogue — Raskolnikov's conversion in Siberia — was controversial: many readers felt it was tacked on, unconvincing. Dostoevsky believed it was the point. The interesting problem was not whether the theory was logically refutable but whether a human being could actually live inside the theory's conclusions.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Epilepsy</span></div>
+<div class="year-banner">1868</div>
+<div class="timeline-dot">Geneva · Age 47</div>
+<div class="narrative">
+  <p>You are in Geneva, writing <em>The Idiot</em>. You have had epileptic seizures since your twenties — the frequency varies, but in the years of maximum stress, you have them weekly. The seizures are preceded by what you describe as an aura: a moment of intense clarity and joy, a sensation of complete harmony with the world, immediately before consciousness departs.</p>
+  <p>Prince Myshkin, the protagonist of <em>The Idiot</em>, is an epileptic. The novel explores whether pure goodness — absolute Christian compassion without self-interest — can survive contact with a corrupt society. Myshkin's goodness destroys everyone around him. He destroys the two women who love him, the young man who becomes obsessed with him, and ultimately himself — he collapses into complete mental darkness at the novel's end.</p>
+  <p>Your daughter Sonya dies in Geneva at age three months. You write Anna a letter. Then you go back to <em>The Idiot</em>.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Epileptic Aura</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Before each seizure, you experience a moment of complete clarity and harmony — what you call a "higher synthesis." It is immediately followed by unconsciousness and physical collapse. How do you understand this experience?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">It is neurological noise — the brain's electrical system misfiring in a way that produces false sensations of meaning. The feeling of clarity is not clarity; it is a symptom. Treating it as meaningful is a category error.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">It is a genuine insight, immediately curtailed. The seizure interrupts something the brain was beginning to access. The limitation is physical, not cognitive — with better health, the insight might be sustainable.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">The inseparability of the aura and the collapse is the experience. The highest moment of consciousness is immediately followed by complete dissolution. This is not a neurological accident — it is what consciousness at its limit looks like. The two cannot be separated.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What Dostoevsky wrote about the aura</div>
+      <p><strong>Before every epileptic seizure, you experience five seconds of what feels like total clarity — and you write that you would give your entire life in exchange for those five seconds. Then consciousness departs. You cannot carry anything back.</strong> Dostoevsky described the epileptic aura in multiple letters and worked it into <em>The Idiot</em> directly: "There are moments, and it is only a matter of five or six seconds, when you feel the presence of eternal harmony. It is not earthly — I don't mean that it is heavenly — but in that state a man cannot endure it for three seconds. His physical nature must break and fall, for it cannot stand any more. In those five seconds I live a whole human existence, and for that I would give my whole life and not think that I was paying too dearly." He consistently treated the aura as genuinely revelatory rather than merely pathological. He also consistently noted that the insight was not communicable — the clarity could not be carried back through the seizure into ordinary consciousness. Myshkin is the attempt to write a character who lives permanently in the aura state, and the novel shows what that produces: beauty and wreckage simultaneously.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Brothers Karamazov</span></div>
+<div class="year-banner">1879</div>
+<div class="timeline-dot">St. Petersburg · Age 58</div>
+<div class="narrative">
+  <p>You are writing what you know is your final novel. <em>The Brothers Karamazov</em> contains Ivan's argument against God — the chapter "Rebellion" — which is the most powerful statement of the problem of evil in literary history: if God allows children to suffer, then even if God exists and even if heaven offers compensation afterward, Ivan refuses to accept the ticket. He hands it back. The compensation is not acceptable.</p>
+  <p>You write the counter-argument yourself: Alyosha's response to Ivan, Father Zosima's life and teaching, the novel's ending where Alyosha speaks at the children's graves. You believe the counter-argument. You also know that Ivan's argument is stronger, on the page, than Alyosha's. You have given the best of your rhetoric to the character making the argument you are trying to refute.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — Ivan's Argument</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Ivan's argument is, on the page, more powerful than Alyosha's response. Dostoevsky wrote both. Did he know this — and does it matter?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">A</span><span class="dopt-body">He knew it and was honest about it. The strength of the counter-argument in fiction must be tested against the strongest possible version of what it is countering. A weak Ivan would make a weak Alyosha. The artistic choice and the theological honesty are the same choice.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">He did not fully know it. Writers do not control the relative weight of arguments they are sincerely making on both sides. The imbalance is a failure of execution, not an intentional artistic move.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">It does not matter whether he knew. The text produces what it produces regardless of intention. Readers encountering Ivan's argument and Alyosha's response are not required to match Dostoevsky's beliefs; they are required only to encounter two arguments, of which one is stronger.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Dostoevsky wrote to his editor — and what readers have said since</div>
+      <p><strong>Dostoevsky writes to his editor trembling with anxiety: will Alyosha's answer be sufficient? He has spent his best rhetoric on Ivan's argument — the one he is trying to refute — and he knows it. Wittgenstein and Camus are still arguing about whether it worked.</strong> Dostoevsky wrote to his editor Lyubimov in May 1879, before publishing the "Rebellion" chapter: "This is the culminating point of the novel. After it comes Alyosha's answer. I tremble with anxiety: will it be sufficient as an answer? The more so since the answer is not direct, it is not answer to Ivan's propositions point by point (which is impossible in artistic terms), but only indirect, through a story, a legend." He knew Ivan was stronger and designed the novel accordingly. The scholarly consensus: Ivan wins the logical argument; Alyosha wins something else — the living argument, the concrete example, the presence. Whether that "something else" constitutes an answer to Ivan's logic is the question the novel leaves permanently open. Wittgenstein, Camus, and contemporary philosophers of religion still argue about it.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · Afterward</span></div>
+<div class="year-banner">January 28, 1881</div>
+<div class="timeline-dot">St. Petersburg · Age 59</div>
+<div class="narrative">
+  <p>You finish <em>The Brothers Karamazov</em> in November 1880. The reception is immediate and enormous — you are celebrated at the Pushkin ceremony in Moscow in June 1880, the only time in your life you receive the public recognition you have wanted. You plan a second volume of Karamazov — Alyosha's further story.</p>
+  <p>You die on January 28, 1881, of a pulmonary hemorrhage. You are 59. The second Karamazov is unwritten. Thirty thousand people attend your funeral.</p>
+  <p>In the decades after your death: Nietzsche calls you the only psychologist he has learned from. Freud calls <em>The Brothers Karamazov</em> one of the three greatest works of literature ever written. Kafka, Camus, Faulkner, García Márquez, and virtually every major 20th-century novelist cite you as foundational. You spent your adult life in debt, in exile, or at a roulette table. You wrote some of this century's most psychologically acute fiction under impossible conditions. The contrast is the biography.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Dostoevsky Question</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Dostoevsky's life contains: mock execution, Siberian exile, epilepsy, gambling addiction, crushing debt, two failed marriages, the death of children. His novels emerge from this material. Is the life a prerequisite for the work — or did he produce what he produced despite it, not because of it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">The life is incidental. He would have written psychologically profound fiction regardless — the capacity was inherent, and the suffering was simply the available material. A more comfortable Dostoevsky might have produced equally great but different work.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">The life is entirely formative. Without the firing squad, Siberia, the gambling — without the actual experience of what it means to be at the limit — there is no access to what the novels know. The suffering produced the knowledge.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The relationship is specific, not general. The firing squad specifically produced the clarity about time and consciousness that runs through all the novels. Siberia specifically produced the access to the peasant world unavailable to a nobleman any other way. The gambling specifically produced the ability to write compulsively under pressure. Each element connects to something specific in the work — which is different from saying suffering in general produces great art.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What Dostoevsky's own notebooks say</div>
+      <p><strong>The Brothers Karamazov draws on actual court records of a peasant patricide that Dostoevsky attended as a journalist. The Siberian peasants' speech patterns appear verbatim in his novels. The casino scenes come from the casino floor. He was not transforming suffering into art — he was taking notes.</strong> Dostoevsky's notebooks are full of direct entries from observation — the exact speech patterns of the peasants in Siberia, court records from the murder trials he attended (he used the actual records of a peasant patricide as a source for <em>The Brothers Karamazov</em>), observations from the casino floor. He was a systematic observer who then built psychological architecture on top of specific empirical detail. The Siberia material appears directly in <em>The House of the Dead</em> and indirectly in the treatment of punishment, exile, and redemption in every novel after 1861. The mock execution appears directly in <em>The Idiot</em>'s description of the condemned man's five minutes. The gambling appears in <em>The Gambler</em>. The connection between the experience and the writing is specific and traceable — not the vague romantic idea that suffering ennobles the artist but the concrete claim that these specific experiences gave him specific access to specific questions that he then worked on for the rest of his life.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Dostoevsky's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="cta-box">
+  <p>Dostoevsky stood before a firing squad, survived Siberia, lost everything at roulette, and wrote Crime and Punishment in 26 days. He gave the most powerful argument against God to a character he disagreed with. The contrast between the life and the work is the Dostoevsky question — and he never resolved it, just kept writing. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All 25 Life Simulators — Kafka, Nietzsche, Frida Kahlo, Darwin and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/kafka-simulator.html" style="color:var(--accent)">Kafka Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Dostoevsky";body="Seven or eight decisions matched and you saw what he saw: the firing squad as clarification rather than damage, the Siberian peasants as material rather than merely ordeal, the gambling's search for sensation rather than money, Ivan's argument as honest rather than strategic. You understood the specific connection between each experience and each novel.";}else if(pct>=0.625){title="The Psychological Realist";body="You matched Dostoevsky's core intellectual moves — the Underground Man as partial insight rather than complete pathology, the Karamazov honesty about the stronger argument — but may have diverged on the phenomenology of suffering. Dostoevsky's unusual move was to find the firing squad clarifying and the epileptic aura revelatory, not despite their darkness but through it.";}else if(pct>=0.375){title="The Rational Observer";body="You consistently chose the more analytical, externally verifiable framing: the aura is neurological, the theory is logically refutable, the suffering is incidental to the work. These are defensible positions. Dostoevsky would have put them in a novel and then demolished them — not with better logic but with a character who lives inside their consequences.";}else{title="The Enlightenment Path";body="You chose rationalism, utility, and external explanations at nearly every turn — positions Dostoevsky spent his career writing against. He did not think these positions were stupid; he thought they were incomplete. The Underground Man exists specifically to demonstrate what they miss. The question isn't whether the Underground Man is right — it's whether the man arguing against him has ever actually met one."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>René Descartes Life Simulator — I Think Therefore I Am &amp; the Evil Demon | Ordinary Man Trying</title>
+<meta name="description" content="Live René Descartes's life across 8 pivotal decisions — from his three vivid dreams that launched modern philosophy, to cogito ergo sum, to inventing coordinate geometry, to dying in Stockholm cold.">
+<style>
+:root{
+  --bg:#F0F2F0;--card:#F7F9F7;--ink:#080E08;--muted:#283028;--line:#B8C8B8;
+  --accent:#1A3820;--accent-bg:#D8ECD8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(240,242,240,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#080E08;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #88B088;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#060C06;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#D8ECD8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#D8ECD8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #88B088;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #88B088;border-radius:999px;margin-bottom:12px;gap:8px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · René Descartes</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #96 of 100</p>
+  <h1 class="cover-title">He Doubted Everything.<br>He Found One Thing He Could Not Doubt.</h1>
+  <p class="cover-sub">René Descartes invented the Cartesian coordinate system (the x-y grid every student learns). He founded modern philosophy by deciding to doubt everything that could be doubted, and discovered that the one thing he could not doubt was that he was doubting — therefore thinking, therefore existing. <em>Cogito ergo sum.</em> He had three vivid dreams in a heated room in 1619 that he believed revealed his mission. He hid his major scientific work after hearing that Galileo was condemned. He slept until noon every day. He died in Stockholm in 1650 because Queen Christina of Sweden insisted on philosophy lessons at 5 AM in winter.</p>
+  <div class="cover-facts">
+    <p>🔢 Invented the Cartesian coordinate system — unified algebra and geometry &nbsp;·&nbsp; 🤔 "Cogito ergo sum" — I think, therefore I am: the foundation of modern epistemology &nbsp;·&nbsp; 👁️ Evil demon thought experiment: how can we know anything isn't an illusion? &nbsp;·&nbsp; 🌙 Three vivid dreams in 1619 launched his philosophical mission &nbsp;·&nbsp; ❄️ Died 1650 in Stockholm — forced to teach at 5 AM in Swedish winter &nbsp;·&nbsp; 1596–1650 · La Haye, France to Stockholm</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Descartes's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1619</div>
+  <div class="timeline-dot">Ulm, Bavaria · Age 23</div>
+  <div class="narrative">
+    <p>November 10, 1619. You are a young French soldier in the service of the Duke of Bavaria, encamped for the winter in a heated room near Ulm. In this room, alone, with time to think, you have been meditating on the possibility of a new foundation for all human knowledge. You fall asleep. You have three vivid dreams in succession, which you interpret as a divine message. In the first, you are blown about by a whirlwind and sheltered in a church. In the second, there is thunder and lightning. In the third, you find two books: a dictionary and an anthology of poetry. The dreams point you, you believe, toward your life's work: to discover the unity of all the sciences through a single method. You later describe this day as the moment of your intellectual vocation. You spend the next decade working out what you believe the dreams required.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1619</div>
+    <p class="decision-q">Descartes traced modern philosophy to a night of three dreams. What is the right way to understand this origin?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. As irrelevant to the philosophy — the dreams provided a subjective impetus but the philosophical content of the Meditations and the Discourse stands independently of its biographical origin. The dreams are an anecdote, not a cause.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. As evidence that major intellectual breakthroughs often arrive through states of unusual consciousness — the heated room, the isolation, the semi-conscious dreaming state produced a clarity that his ordinary waking intellectual work had not. The dreams gave him the conviction that the project was possible and that he was the one to do it. That conviction — not the specific dream content — is what mattered. Many significant intellectual discoveries are preceded by moments of unusual clarity rather than by linear deduction from prior work.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. As evidence that Descartes had religious leanings that eventually led to the God-based argument structures of the Meditations — the divine interpretation of the dreams foreshadows his later reliance on God as a guarantor of knowledge, and the dreams illuminate a philosophical tendency that would otherwise seem oddly theological for a rationalist.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. As a convenient mythology — Descartes retrospectively attached the 1619 dream story to his philosophical project to give it a dramatic origin, and the actual genesis of his ideas was more gradual and less dramatic than the story suggests.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You spend a single night alone in a heated room near Ulm — a young French soldier with time to think — and emerge with three dreams you believe are divine instruction to unify all human knowledge through a single method. You spend the next decade working out what that instruction required.</strong> <strong>The three dreams:</strong> Descartes recorded the dreams in a journal that was lost but summarized by his early biographer Adrien Baillet in "Vie de Monsieur Descartes" (1691). The account is detailed enough to be considered reliable. The philosopher Geneviève Rodis-Lewis has analyzed the dreams as consistent with the psychological state of someone on the edge of a major intellectual synthesis: the anxiety of the first dream (the whirlwind), the external validation of the second (thunder, taken as divine confirmation), and the third (the books — a dictionary, representing knowledge, and an anthology of poetry, representing inspiration) as representing the synthesis of reason and imagination. Whether the interpretation is correct, the functional effect is well-documented: Descartes emerged from the winter room with a clear sense of mission and began working on what became the Discourse on Method.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1629</div>
+  <div class="timeline-dot">Netherlands · Age 33</div>
+  <div class="narrative">
+    <p>You have settled in the Netherlands, specifically to have the freedom to think and write without ecclesiastical interference. You move approximately thirteen times over the next twenty years, always giving your address only to a few friends, always maintaining the ability to disappear if necessary. You are writing "Le Monde" (The World), a comprehensive treatise on physics and cosmology, which includes a defense of Copernican heliocentrism — the claim that the Earth moves around the Sun. In November 1633, you hear that Galileo has been condemned by the Inquisition for defending the same claim. You immediately suppress "Le Monde." You do not publish it. You write later that you had been so astonished that you "almost resolved to burn all my papers." The book is published only after your death.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1629</div>
+    <p class="decision-q">Descartes suppressed "Le Monde" after Galileo's condemnation. Was this the right decision?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. No — the suppression was intellectual cowardice. Galileo had stood by his work; Descartes should have published and defended it. His willingness to hide his views made him complicit in the suppression of scientific truth.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. A reasonable decision given the specific risk — Descartes was not Galileo: he had not published, was not under papal investigation, and could avoid the conflict entirely at the cost of delaying publication. His calculation was that his other work (the Meditations, the Discourse, the coordinate geometry) could be published without Copernican heliocentrism and would advance knowledge more effectively than a martyrdom over "Le Monde." This was a strategic rather than cowardly calculation, and the subsequent publication of his major works supports it as correct. He changed what he was willing to publish, not what he believed.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. Yes, and the suppression reflected important epistemic humility — if the Church had condemned Copernicus, and Descartes was not certain enough of the evidence to die for it, the conditional suppression of "Le Monde" was epistemically appropriate. He published what he could stand behind absolutely.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. The decision is not evaluable as right or wrong because the concept of "scientific freedom" did not exist in 1633 in the form we now assume it — the relationship between intellectual inquiry and religious authority was not yet a settled domain where we can clearly identify what was owed to whom.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>In November 1633, you hear that Galileo has been condemned for defending the Earth's movement around the Sun — the same position your manuscript "Le Monde" argues. You are in the Netherlands, unpublished, unthreatened. You suppress the manuscript anyway. It is published fourteen years after your death.</strong> <strong>The suppression of Le Monde:</strong> Descartes' letters from November-December 1633 describe his reaction to the Galileo condemnation. He writes to Mersenne: "I have been so astonished by this that I have almost resolved to burn all my papers." He did not burn them; he suppressed them. "Le Monde" was finally published in 1664, fourteen years after his death. The physical cosmology it contains is largely superseded (he rejected the void and developed his own vortex theory of planetary motion, which Newton later displaced), while the mathematical and physiological work he published during his lifetime (the Discourse on Method and its appendices — including the Geometry, which invented coordinate geometry) proved more durable. The strategic calculation was not wrong.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1637</div>
+  <div class="timeline-dot">Netherlands · Age 41</div>
+  <div class="narrative">
+    <p>You publish the Discourse on the Method together with three appendices: Dioptrics, Meteors, and Geometry. The Geometry creates what we now call the Cartesian coordinate system: a method for representing geometric figures as algebraic equations and algebraic equations as geometric figures. Every student who has ever plotted a point on an (x, y) grid is using your invention. The appendices to the Discourse also include an account of the structure of the eye and how lenses work (Dioptrics) and an explanation of rainbows (Meteors). You are not, by disposition, a modest man about intellectual priority. But you write the Discourse in French rather than Latin — specifically to reach readers who do not have academic training — and you explicitly say you want your ideas to be tested and criticized.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1637</div>
+    <p class="decision-q">Coordinate geometry — the Cartesian grid — is one of the most practically important mathematical inventions in history. What did Descartes actually achieve?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. He unified two previously separate mathematical disciplines — algebra (manipulating symbols and equations) and geometry (shapes and space) — by showing that every geometric figure can be described as an equation and every equation can be graphed as a curve. This unification made both disciplines more powerful by allowing methods from one to be applied to problems in the other.</button>
+      <button class="dopt" onclick="choose(this,3,false)">B. He invented a notation system — the x-y coordinate grid — that is simple enough to be taught to children but powerful enough to underpin calculus, physics, computer graphics, and engineering. The invention is essentially a notation, but notation matters: the right notation can make previously intractable problems tractable.</button>
+      <button class="dopt" onclick="choose(this,3,true)">C. Both A and B simultaneously — the achievement was the conceptual unification (algebra can describe geometry) and the practical notation (the coordinate grid). These are the same achievement at different levels of abstraction. By making x and y the coordinates of any point in a plane, Descartes created a tool that could handle any geometric problem algebraically and any algebraic problem geometrically. Newton and Leibniz could not have developed calculus without this foundation — the derivative is defined in terms of coordinates. Computer graphics, GPS, structural engineering, and machine learning all run on coordinate geometry. The full consequences were not visible in 1637 but were built into the structure of the invention.</p>
+      <button class="dopt" onclick="choose(this,3,false)">D. He solved a specific problem in optics (how to grind lenses) and invented coordinate geometry as a mathematical tool for this specific application — the general framework emerged from a practical engineering question rather than from a theoretical desire to unify algebra and geometry.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>You publish your method of reasoning as an essay with three scientific appendices. One appendix, almost as an aside, introduces a system for representing any geometric curve as an equation and any equation as a curve. Every student who has ever graphed a line or plotted a point on an x-y axis is using what you set down here, though you did not announce it as particularly important.</strong> <strong>The Geometry and coordinate systems:</strong> The mathematical historian Carl Boyer, in "A History of Mathematics," describes the publication of Descartes' Geometry as one of the pivotal moments in the history of mathematics: "In the history of mathematics there is perhaps no other work which has had such far-reaching influence as Descartes' Géométrie." The coordinate system (x and y axes, arbitrary naming of coordinates) appears almost casually in the course of solving specific geometric problems — Descartes didn't announce it as a major innovation but used it as a tool. Later readers — particularly Leibniz and Newton — recognized that the tool was more significant than the specific problems it was used to solve, and built calculus on it.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1641</div>
+  <div class="timeline-dot">Netherlands · Age 45</div>
+  <div class="narrative">
+    <p>You publish the <em>Meditations on First Philosophy</em>. They are six meditations in which you undertake to doubt everything that can possibly be doubted — the external world (maybe I'm dreaming), other minds (maybe there's only me), my own memory and reasoning (maybe an evil demon is deceiving me). You find, after stripping away everything that can be doubted, one thing you cannot doubt: that you are doubting. Doubting is thinking. Therefore something is thinking. "Cogito ergo sum." I think, therefore I am. From this single certain foundation, you attempt to rebuild the whole of human knowledge: God exists (the Ontological Argument), God would not be a deceiver, therefore we can trust clear and distinct perceptions, therefore science is possible. Whether the argument succeeds is still debated. That it defined the central problem of modern philosophy — the gap between the mind and the external world — is not debated.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1641</div>
+    <p class="decision-q">The evil demon thought experiment asks: how do you know an all-powerful deceiver isn't making everything you perceive false? What does this question accomplish?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. It accomplishes nothing practically useful — we cannot live as if an evil demon might be deceiving us, and a thought experiment with no practical import is a philosophical curiosity rather than an important insight.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. It identifies the genuine epistemological problem — the gap between how things appear and how they are. Before the evil demon, philosophy could assume that careful observation and reasoning reliably produced true beliefs. After it, the question "but how do you know?" has a formidable version: you don't, because systematic deception is not ruled out by any evidence available within the system of your perceptions. This is not a skeptical conclusion to live by; it is a philosophical problem to solve. Descartes used it to establish the minimum certain foundation. Later philosophy — Hume, Kant, contemporary epistemology — inherited the problem of how to bridge the gap between perception and reality that the evil demon makes vivid. This is still the central problem in epistemology.</p>
+      <button class="dopt" onclick="choose(this,4,false)">C. It establishes the importance of certainty as an epistemic standard — by showing how much can be doubted, Descartes demonstrated that the standard of certain, indubitable knowledge is very demanding and that most of what we think we know falls short of it.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. It is a religious argument in disguise — the evil demon sets up a problem that only Descartes' God can solve (a benevolent God would not deceive us), and the real function is to establish the necessity of God as a guarantor of knowledge rather than to pose a genuine epistemological challenge.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You publish a thought experiment asking whether an all-powerful demon might be deceiving you about everything you perceive — the external world, other minds, your own memory and reasoning. You mean it as a genuine philosophical challenge, not a curiosity. Philosophy has spent four centuries trying to answer it satisfactorily.</strong> <strong>The evil demon and modern philosophy:</strong> The philosopher Bernard Williams, in "Descartes: The Project of Pure Enquiry" (1978), argues that the evil demon thought experiment is the founding move of modern epistemology: it poses the question of how the mind can know anything about a reality external to it in its sharpest possible form. Descartes' own resolution (God as guarantor) was rejected by Hume (there is no certain knowledge of God either) and by Kant (but we can establish the conditions of possible experience without appealing to God). Contemporary philosophy of mind and epistemology (the "brain-in-a-vat" thought experiment in Hilary Putnam; the simulation hypothesis in Nick Bostrom) are all updated versions of the evil demon. The question is still genuinely open. Descartes posed it in the sharpest possible form, which is the most important thing a philosopher can do with an unsolved problem.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1643</div>
+  <div class="timeline-dot">Netherlands · Age 47</div>
+  <div class="narrative">
+    <p>Princess Elisabeth of Bohemia — twenty-four years old, living in exile in the Hague — writes to you. She has read the Meditations and has a question: if the mind and the body are entirely different substances (as you claim in the mind-body dualism of the Meditations), how do they interact? You say the mind is a thinking, unextended substance; the body is an extended, unthinking substance. But when I decide to move my hand, my mind causes my body to move. If they are entirely different kinds of thing, how does the causation work? You correspond with Elisabeth for several years. Your answer — that the mind and body interact through the pineal gland — is not satisfying even to you. The mind-body problem that Elisabeth identified in your philosophy in 1643 has not been resolved to this day. It is one of the central unsolved problems in philosophy of mind.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1643</div>
+    <p class="decision-q">Elisabeth identifies the mind-body problem in Descartes' philosophy. He cannot adequately answer it. What does this tell us about his contribution?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. That the dualism is false — the mind-body problem exposes a fatal contradiction in Cartesian philosophy, and the inability to solve it is evidence that the mind-body distinction Descartes drew is simply wrong.</button>
+      <button class="dopt" onclick="choose(this,5,false)">B. That philosophy should be more modest about metaphysical claims — Descartes' confident assertion that mind and body are entirely different substances was unjustified given that he couldn't explain how they interact, and the lesson is that philosophical claims require answerable questions before being stated.</button>
+      <button class="dopt" onclick="choose(this,5,true)">C. That posing a problem clearly is a genuine philosophical achievement even without solving it — the mind-body problem (how does non-physical consciousness cause physical events?) is real, important, and has occupied philosophy and neuroscience from Descartes' time to the present. Elisabeth's objection made the problem vivid. Descartes' inability to solve it doesn't mean he was wrong to raise the mind-body distinction; it means he encountered a genuine problem at the frontier of his framework. Problems this difficult typically take centuries. The Cartesian problem is still being worked on.</p>
+      <button class="dopt" onclick="choose(this,5,false)">D. That correspondence with sharp critics is the best test of a philosophical system — Elisabeth's objection improved Descartes' thinking even if it didn't produce a solution, and the correspondence model of philosophical development is what made this progress possible.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>A princess in exile writes to ask you how your non-physical mind moves your physical hand — since you have defined mind and body as entirely different substances with no common properties. You are the most rigorous philosopher in Europe. You never adequately answer her. Neither has anyone since.</strong> <strong>Elisabeth and the mind-body problem:</strong> The Descartes-Elisabeth correspondence has been published in full and is considered philosophically significant independent of the Meditations. Elisabeth's first letter (May 16, 1643) poses the question with unusual precision: if the soul is merely a thinking substance, without extension or materiality, by what property can it move the body's material mechanisms? Descartes' responses acknowledge the difficulty and propose the pineal gland as the locus of mind-body interaction — an answer generally considered unsatisfactory even in the 17th century. Contemporary philosophy of mind (consciousness studies, philosophy of neuroscience) describes the "hard problem of consciousness" (David Chalmers, 1995) as the same problem: how does subjective experience arise from physical processes? Elisabeth asked it in 1643; we still don't have a satisfying answer.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1649</div>
+  <div class="timeline-dot">Stockholm, Sweden · Age 53</div>
+  <div class="narrative">
+    <p>Queen Christina of Sweden invites you to Stockholm to teach her philosophy and to help found an academy of arts and sciences. She is twenty-three, the most powerful ruler in northern Europe, genuinely interested in philosophy. You accept. You have spent the previous two decades in the Netherlands sleeping until noon — this is your stated habit; you do your best thinking in the morning lying in bed — and working at your own pace. Queen Christina wants philosophy lessons at 5 AM, three times a week, in the Royal Library. The Royal Library in Stockholm in winter is very cold. You are fifty-three and have a weak constitution. You develop pneumonia in January 1650. You are dead by February 11. Your last words are recorded as: "My soul, thou hast been captive a long time. The hour has now come when thou must quit this prison and leave the encumbrances of this body."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1649</div>
+    <p class="decision-q">Descartes died in Stockholm because he accepted a royal invitation that disrupted the conditions under which he worked best. Should he have refused?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Yes — he was in his productive late period and should have protected the conditions that sustained his work. A philosopher's primary obligation is to his ideas, not to powerful patrons, and the Stockholm invitation should have been declined.</button>
+      <button class="dopt" onclick="choose(this,6,false)">B. No — refusing a queen in 1649 was not a realistic option without significant professional and reputational cost, and the decision was constrained by social realities that make the "should he have refused" question anachronistic.</button>
+      <button class="dopt" onclick="choose(this,6,true)">C. The more interesting question is what the Stockholm episode reveals about the relationship between conditions and productivity — Descartes had spent twenty years protecting his working conditions (sleeping until noon, moving frequently to maintain privacy, avoiding professional commitments). The Stockholm disruption was fatal not just biologically but as a model: the conditions that allowed his best work required protection, and once they were violated, the consequences were irreversible. This is true in less dramatic ways for most creative workers: the conditions that support the work need to be defended, and the social pressures that erode them are real.</p>
+      <button class="dopt" onclick="choose(this,6,false)">D. The outcome was unpredictable — he could not have known that the Swedish winter at 5 AM would kill him; the decision to accept was reasonable given the information available, and the result was bad luck rather than a bad decision.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>You have slept until noon every day for twenty years, considering it essential to your best thinking. Queen Christina of Sweden summons you to Stockholm for philosophy lessons at 5 AM in a cold library in winter. You accept the invitation. You are dead four months later. The working conditions you spent two decades protecting turned out to be load-bearing.</strong> <strong>The Stockholm death:</strong> Descartes' correspondence from Stockholm, November 1649 through January 1650, shows increasing discomfort with the cold, the early hours, and the pace of court life. He wrote to Chanut (the French ambassador who had facilitated the invitation) that he was not thriving but felt obligated to the Queen. He developed pneumonia in late January after apparently treating a sick French diplomat, and declined rapidly. The doctor whom Queen Christina sent prescribed a treatment (bleeding) that Descartes refused, preferring to try tobacco and wine (his preferred remedies). He died February 11, 1650. He was fifty-three. His manuscripts were later collected and taken to France; his body was originally buried in Stockholm and moved to Paris in 1667, where it now rests in the church of Saint-Germain-des-Prés.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">Legacy</div>
+  <div class="timeline-dot">1650 and beyond</div>
+  <div class="narrative">
+    <p>Descartes' skull was separated from his body during one of the transfers between Sweden and France. It was later identified in a collection and is now in the Musée de l'Homme in Paris, where it can be viewed. This would have amused him, given his interest in the relationship between mind and body. His complete works were placed on the Index of Forbidden Books in 1663, posthumously. His philosophy — rationalism, the primacy of clear and distinct ideas, the mathematical method applied to knowledge — became the starting point of the modern philosophical tradition. Locke, Hume, Kant, and almost every philosopher who came after began by responding to Descartes. To be a philosopher in the Western tradition is to have a position on the cogito, the evil demon, and the mind-body problem. He defined the conversation.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · Legacy</div>
+    <p class="decision-q">What is the most important thing about Descartes' contribution to philosophy?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. The cogito — "I think, therefore I am" is the most famous sentence in the history of philosophy, and the certainty it establishes from radical doubt is the most important philosophical move in the Western tradition.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. The method — the Discourse on Method's four rules (accept only what is clear, divide problems into parts, proceed from simple to complex, check everything) established the analytical method that underlies modern science and philosophy.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. The questions — Descartes didn't solve the mind-body problem or conclusively prove God's existence or establish the full foundation of knowledge he set out to build. What he did is define the questions that modern philosophy would spend the next four centuries attempting to answer. "How can the mind know the external world?" (epistemology); "How does consciousness relate to physical processes?" (philosophy of mind); "What can be known with certainty?" (epistemology again). By posing these questions in the sharpest possible form, he created the agenda for modern philosophy. In intellectual history, defining the right questions is often more important than solving them.</p>
+      <button class="dopt" onclick="choose(this,7,false)">D. The coordinate system — coordinate geometry has had more practical impact on human civilization than any of his philosophical ideas, and the Cartesian grid is his most significant contribution when measured by actual use and consequences in science, technology, and everyday life.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>Your skull was separated from your body during the transfer of your remains from Stockholm to Paris. Multiple skulls were subsequently offered for sale as yours; one is now in the Musée de l'Homme. Your complete works were placed on the Index of Forbidden Books in 1663, thirteen years after your death. The mind-body problem you identified in 1643 is still philosophically unsolved.</strong> <strong>Descartes' intellectual legacy:</strong> The philosopher Richard Rorty, in "Philosophy and the Mirror of Nature" (1979), argues that the entire tradition of Western epistemology since Descartes has been organized around what he calls the "Cartesian anxiety" — the worry that if we can't establish certain foundations for knowledge, we can't know anything. This anxiety, posed by the evil demon and partially resolved by the cogito, is the generating problem of modern philosophy. Locke, Berkeley, Hume, Kant, Husserl, and Wittgenstein are all responses to Descartes' problem. The philosopher who creates the problem that others respond to for four centuries has done something philosophically significant regardless of whether their own proposed solutions are correct.</p>
+    </div>
+  </div>
+
+  <div class="decision-block">
+    <div class="decision-header">Final Question</div>
+    <p class="decision-q">Descartes slept until noon every day, calling it his most productive time. What does his working method reveal about intellectual productivity?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. That morning hours are most productive for intellectual work — Descartes was doing his best thinking in the extended morning of lying in bed, and the literature on cognitive performance supports morning periods as optimal for complex reasoning.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. That unusual working conditions (lying in bed until noon, never teaching, moving frequently) are compatible with the highest intellectual achievement — the lesson is that conventional work arrangements are not necessary for exceptional output.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. That the conditions required for the best intellectual work vary by person and work type — and that protecting those conditions against social pressure is often what makes exceptional intellectual output possible. Descartes spent twenty years protecting his conditions (privacy, morning time, no fixed schedule) and produced the Meditations, the Discourse, the Geometry. He spent one winter violating them at 5 AM in a cold library and died. The lesson is not about morning hours or lying in bed specifically; it is about the importance of identifying what conditions your best work requires and defending them with some seriousness.</p>
+      <button class="dopt" onclick="choose(this,8,false)">D. That genius is largely independent of method — Descartes' unusual working conditions were his personal preference, but comparable intellectual achievements have been produced by people who worked entirely differently, suggesting no single method is necessary or sufficient for exceptional work.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>You sleep until noon every day of your adult productive life, calling the morning hours spent lying in bed your most intellectually active time. When you violate this condition — rising at 5 AM in a cold Stockholm library — you are dead within four months. The conditions that sustained your best work required protection, and you did not protect them from a queen.</strong> <strong>Descartes' working conditions:</strong> The historian Steven Nadler, in "A Book Forged in Hell" and other works, has analyzed the working conditions of 17th-century Dutch philosophers and notes that Descartes' long morning hours in bed were not idiosyncratic — many educated Europeans of his era remained in bed late, reading and corresponding, before rising for the day. What was unusual was his systematic protection of this time from interruption and professional obligation. The contrast with Leibniz (who worked in courts and bureaucracies, wrote mostly in travel coaches and waiting rooms) or Newton (who worked with frenzied intensity in concentrated bursts) suggests that the specific conditions were individual. What Descartes, Leibniz, and Newton share is the protection of thinking time from social demands — by different means but for the same purpose.</p>
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">René Descartes · 1596–1650</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"Cogito ergo sum — I think, therefore I am."<br><em style="font-size:13px;color:var(--muted);">— René Descartes, Meditations on First Philosophy</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="pascal-simulator.html" class="next-card">
+        <div class="next-card-name">Blaise Pascal</div>
+        <div class="next-card-sub">Probability, the Wager, and a night of fire</div>
+      </a>
+      <a href="schopenhauer-simulator.html" class="next-card">
+        <div class="next-card-name">Arthur Schopenhauer</div>
+        <div class="next-card-sub">Will, pessimism, and the late fame</div>
+      </a>
+      <a href="wittgenstein-simulator.html" class="next-card">
+        <div class="next-card-name">Ludwig Wittgenstein</div>
+        <div class="next-card-sub">Whereof one cannot speak — silence</div>
+      </a>
+      <a href="hypatia-simulator.html" class="next-card">
+        <div class="next-card-name">Hypatia of Alexandria</div>
+        <div class="next-card-sub">Mathematics and philosophy in the ancient world</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You reasoned like Descartes — carefully, systematically, and without flinching from what the doubt actually implied. The cogito is not a clever trick; it is the only thing left after everything else has been removed. You found it.';else if(pct>=0.625)t.textContent='You followed the method more often than not. Descartes\' great discipline was not brilliance but subtraction — removing every assumption that could be doubted until only the indubitable remained. You did this most of the time, which is more than most.';else if(pct>=0.375)t.textContent='You chose the reasonable interpretation at each turn, and Descartes\' philosophy is not reasonable — it is radical. The evil demon is not a curiosity; it is a genuine problem. The mind-body problem is not an academic puzzle; it is still unsolved. The difference between your answers and his is the willingness to follow doubt wherever it leads.';else t.textContent='You stopped before the doubt went all the way down. Descartes did not stop. He doubted the external world, his own memory, the reliability of his reasoning, the existence of his body. What survived that process was one sentence. You would have kept more — and known less.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

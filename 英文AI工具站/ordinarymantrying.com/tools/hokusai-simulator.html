@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Hokusai?</title>
+<meta name="description" content="He changed his name 30 times. He said his work before age 70 was worthless. He created The Great Wave at 72. 8 decisions from Japan's greatest artist.">
+<meta property="og:title" content="What Would You Do If You Were Hokusai?">
+<meta property="og:description" content="The artist who reinvented himself every decade. 8 decisions from the extraordinary life of Katsushika Hokusai.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/hokusai-simulator.html">
+<style>
+:root{
+  --bg:#F0EEF5;--card:#FAF9FC;--ink:#0E0A18;--muted:#4A4060;--line:#C8C0D8;
+  --accent:#2A1A5C;--accent-bg:#E8E4F4;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(240,238,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#0E0A18;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B8B0D0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#180A30;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0EDF8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#100818;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0EDF8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B8B0D0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#180A30;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#0E0A18;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F0EDF8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B8B0D0;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#F0EDF8;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#C0B0F0;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Katsushika Hokusai</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #30</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Hokusai?</h1>
+  <p class="cover-sub">He changed his artist name at least 30 times. He moved house 93 times. He said that everything he drew before the age of 70 was not worth counting. He created <em>The Great Wave off Kanagawa</em> at 72. At 89, dying, he said: "If only Heaven will give me just another ten years... just five more years, then I could become a real painter." <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Katsushika Hokusai</strong> (葛飾北斎, 1760–1849) · Japanese ukiyo-e artist · Born in Edo (modern Tokyo) · Apprenticed to a woodblock carver at 12; entered the studio of master Katsukawa Shunshō at 18 · Changed his artist name approximately 30 times throughout his career — each name change marked a new artistic phase · Created the <em>Thirty-six Views of Mount Fuji</em> series (including <em>The Great Wave</em>) between 1830–1832, at ages 70–72 · Author of the 15-volume <em>Hokusai Manga</em> (sketching manuals) · Lived in extreme poverty for most of his life · Died in 1849 at approximately 89, still working · <em>The Great Wave</em> is one of the most reproduced artworks in human history.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1778, Edo (Tokyo)</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Name Changes</span></div>
+<div class="year-banner">1798</div>
+<div class="timeline-dot">Edo · Age ~38</div>
+<div class="narrative">
+  <p>You have already changed your artist name several times. This is not unusual in Japanese art — names change with teachers, with styles, with life phases. But your name changes are different: each one marks a deliberate reinvention. You change not just the name but the entire aesthetic direction of your work.</p>
+  <p>You have been Shunrō, Sōri, and now you take the name Hokusai — "North Star Studio." You are in your late thirties. Your early work showed genuine skill but followed established conventions. You have now broken with your teacher's school entirely — an unusual and somewhat scandalous move — and you are developing an approach that will absorb influences from Dutch and Chinese painting alongside the Japanese traditions.</p>
+  <p>The name Hokusai sticks. You will use variations of it for the rest of your life. But you will still rename yourself within it: Iitsu, Manji, Gakyō Rōjin ("Old Man Mad About Drawing").</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — Breaking With the School</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Hokusai broke with his teacher's school — a serious breach of the master-student relationship in Edo Japan. Why was this necessary?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">A</span><span class="dopt-body">The Katsukawa school's aesthetic was too narrow for what he was developing. He needed to absorb Western perspective, Chinese painting techniques, and other traditions that his school didn't teach. Staying meant limiting the work.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">He had a difficult personality and didn't work well within hierarchical structures. The break was partly temperamental — he was a person who had to do things his own way.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">The break was forced — he was expelled from the Katsukawa school after his teacher's death, when the new head of the school found his increasingly unconventional work objectionable.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">The break with Katsukawa school</div>
+      <p><strong>You're expelled from your teacher's school — and it turns out to be the best thing that could have happened to the work.</strong> After Katsukawa Shunshō died in 1793, the school was taken over by Shunkō, who reportedly found Hokusai's increasingly divergent style problematic and effectively expelled him. Whether this was forced on Hokusai or welcomed by him (or both) is unclear. What's certain is that the expulsion freed him to develop an extraordinarily eclectic approach — he studied with masters of at least five different schools, absorbed Dutch copper-engraving techniques through imported prints, studied Chinese ink painting, and created a synthesis that had never existed before. The break was a precondition for the work, whether or not he intended it that way.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Manga</span></div>
+<div class="year-banner">1814</div>
+<div class="timeline-dot">Nagoya · Age ~54</div>
+<div class="narrative">
+  <p>You publish the first volume of the <em>Hokusai Manga</em> — not a narrative comic (the word "manga" at this time simply means "whimsical pictures") but a 15-volume encyclopedia of drawing instruction. It contains thousands of sketches: humans in every possible pose, animals, plants, landscapes, demons, ghosts, buildings, tools, waves. It is, effectively, a visual dictionary of the observable world.</p>
+  <p>The <em>Manga</em> will eventually sell in enormous numbers, become a standard reference for Japanese artists, and — after Japan opens to Western trade in the 1850s — be imported to Europe where it will profoundly influence Impressionist painters including Monet, Degas, and Van Gogh. This influence is called Japonisme. Hokusai's sketching manuals will reshape Western painting, though he will be dead before most of this happens.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Manga's Purpose</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Hokusai spent years creating a 15-volume drawing encyclopedia. Was this primarily artistic or commercial?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Commercial. He needed income and teaching materials sold. The Manga was a practical project that funded his other work.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">Artistic. The act of sketching everything — every possible form of the observable world — was itself a practice of seeing. The Manga was a form of total visual attention.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">C</span><span class="dopt-body">Both inseparably. For Hokusai, teaching drawing was drawing — the act of analyzing form clearly enough to explain it to students deepened his own understanding. Commercial necessity and artistic practice were the same project.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">The Manga's influence on Western art</div>
+      <p><strong>Your sketching manuals reshape the entire direction of Western painting — Monet, Degas, Van Gogh — and you are dead before any of it happens. The Japonisme movement that transforms Impressionism begins with your drawing encyclopedia, imported 40 years after you finished it.</strong> The Hokusai Manga was imported to France beginning in the 1850s and '60s. Edmond de Goncourt wrote the first major European monograph on Hokusai in 1896. Edgar Degas, Claude Monet, Mary Cassatt, and Vincent van Gogh all owned Japanese prints and were profoundly influenced by Japanese compositional techniques — asymmetric framing, flat areas of color, the "cropped" view that cuts off figures at the edges. Van Gogh copied Japanese prints directly in oil paint. Monet's garden at Giverny, with its Japanese bridge and water lilies, was designed around Japanese aesthetic principles. Hokusai's visual vocabulary entered European painting and through it, modern art. He died in 1849, before any of this happened.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Great Wave</span></div>
+<div class="year-banner">1831</div>
+<div class="timeline-dot">Edo · Age ~71</div>
+<div class="narrative">
+  <p>You are approximately 71 years old. You have been working for over 50 years. You publish <em>The Great Wave off Kanagawa</em> as part of a series called <em>Thirty-six Views of Mount Fuji</em>. The print shows a massive wave about to crash over three fishing boats, with Mount Fuji visible in the background, reduced to a small triangular form beneath the curling water.</p>
+  <p>The Wave uses Western perspective — the recession of depth into the background — combined with the traditional Japanese ukiyo-e style of flat color and bold outline. The result is something that had never existed before in either tradition: a wave that feels simultaneously flat and three-dimensional, decorative and terrifying, ancient and modern.</p>
+  <p>It sells immediately. It will go on to become one of the most recognized images in human history.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Great Wave at 71</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Hokusai created his most famous work at 71, after 50+ years of practice. What made it possible for his greatest work to come so late?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Technical mastery. After 50 years, he had complete control of every element of woodblock printing. The Wave is great because it required exactly the skills he'd spent a lifetime developing.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">The synthesis of traditions. He had spent 50 years absorbing Japanese, Chinese, and Dutch techniques. The Wave could only be created once all three were fully internalized — which took that long.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and also the accumulation of visual observations across five decades. The Wave required not just technical mastery and synthetic knowledge, but having actually looked at waves for 50 years until he understood what made them visually extraordinary.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Hokusai said about his development</div>
+      <p><strong>At 73, you write that everything you drew before age 70 was not worth taking into account. You are reporting a technical assessment, not performing modesty. The same person who wrote that created The Great Wave at 71.</strong> In the postscript to the <em>Hundred Views of Mount Fuji</em> (1834), Hokusai wrote: "From the age of six I had a passion for copying the form of things, and since I was fifty, I have published many drawings, yet of all I drew by my seventieth year there is nothing worth taking into account. At seventy-three years I partly understood the structure of animals, birds, insects and fishes, and the life of grasses and plants. And so, at eighty-six I shall progress further; at ninety I shall even further penetrate their secret meaning, and by one hundred I shall perhaps truly have reached the level of the marvellous and divine. When I am one hundred and ten, each dot, each line will possess a life of its own." He died at 89, still working.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Poverty</span></div>
+<div class="year-banner">1820</div>
+<div class="timeline-dot">Edo · Age ~60</div>
+<div class="narrative">
+  <p>You have spent most of your life in poverty. You move house constantly — 93 times by the end of your life, sometimes because of debt, sometimes because you find a messy house easier to abandon than to clean. Your studio is always chaotic.</p>
+  <p>You have been supported at various times by patrons, by print publishers, by the income from the Manga. But you spend freely, give money to your grandson who gambles, and never accumulate significant savings. Your daughter Ōi (also a talented artist) lives with you and helps support you in your later years.</p>
+  <p>The poverty doesn't seem to trouble you as much as it troubles everyone around you. You work regardless.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Poverty</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Hokusai lived in poverty despite being famous and prolific. Was this a failure of financial management or a deliberate choice?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Financial failure — he was bad with money, supported a gambling grandson, and couldn't maintain a household. The poverty was a practical problem he never solved.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">B</span><span class="dopt-body">Implicitly chosen — the same personality that produced constant reinvention, 93 house moves, and 30 name changes also produced indifference to financial security. The poverty and the art came from the same temperament.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">Structural — ukiyo-e artists were paid relatively little compared to the commercial value their work generated. Publishers and print sellers made the profits. Hokusai's poverty was partly the economics of his industry.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">Hokusai's daughter Ōi</div>
+      <p><strong>Hokusai's late career — the most celebrated period of his life's work — was financially supported by his daughter, who was also a masterwork-level artist whose work may appear in pieces signed by his name. She received almost no recognition in her lifetime.</strong> Katsushika Ōi (also known as Hokusai's daughter, fl. 1818–1855) was herself an extraordinary artist who worked alongside her father and supported him financially in his later years. Some scholars believe she painted portions of works signed by Hokusai, and her own night scenes and bijin-ga (pictures of beautiful women) are considered masterworks. She essentially subsidized her father's late career. She received almost no recognition in her lifetime — women's work was systematically underattributed — and remains far less known than her father despite her talent. Hokusai's late career was partly made possible by Ōi's work and care.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · One Hundred Views</span></div>
+<div class="year-banner">1834</div>
+<div class="timeline-dot">Edo · Age ~74</div>
+<div class="narrative">
+  <p>You publish the first volume of <em>One Hundred Views of Mount Fuji</em>. You have now created two major series on Fuji — the <em>Thirty-six Views</em> (which actually contained 46 prints) and now the <em>Hundred Views</em>. Why Fuji? You have been asked this. The mountain is unchanging while everything around it changes. It is the fixed point against which movement becomes visible. It is Japan's symbol of permanence — and you are interested in permanence.</p>
+  <p>Also: it photographs beautifully, metaphorically speaking. The same mountain seen from different distances, times of day, seasons, and human contexts produces an infinite variety of images. It is the perfect subject for an artist interested in how perspective transforms perception.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Obsession With Fuji</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Why would an artist spend years drawing the same mountain from different angles?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Commercial strategy — Fuji was a reliable seller. The series format generated ongoing income and sustained public interest better than individual prints.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">The same subject from infinite perspectives is a question about how much of "the thing" is in the thing and how much is in the viewing. Fuji is a meditation on the relationship between object and perception — the artist's fundamental problem.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">Personal obsession. He had a specific emotional relationship with Fuji as a symbol of Japan's permanence and his own aspirations for his work to last. The mountain was both subject and metaphor.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">Monet and the series approach</div>
+      <p><strong>Claude Monet arrived at the same conclusion independently, decades later: paint the same subject from enough angles — haystacks, a cathedral, water lilies — and you learn more about seeing itself than from a thousand different subjects viewed once. Two artists, separated by a century and a continent, found the same answer.</strong> Claude Monet independently arrived at the same artistic insight several decades later: he painted the same haystacks, the same Rouen Cathedral façade, and the same water lilies repeatedly, under different light conditions and seasons. His series (1890s) were an explicit investigation of how light and time change the appearance of an unchanged object. Art historians note the parallel between Hokusai's Fuji series and Monet's series approach without claiming direct influence (Monet was influenced by Japanese art generally, but the series idea seems independently arrived at). Both artists were asking: if you look at the same thing long enough, from enough angles, what do you learn about seeing itself? The answer, for both: more than you would learn from looking at a thousand different things once.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Old Man Mad About Drawing</span></div>
+<div class="year-banner">1834</div>
+<div class="timeline-dot">Edo · Age ~74</div>
+<div class="narrative">
+  <p>You take a new name: Gakyō Rōjin Manji — "The Old Man Mad About Drawing." You are 74. You are not slowing down. You are producing new work constantly. You say you are just beginning to understand what you're doing.</p>
+  <p>Japan is changing around you. The Edo period is entering its final decades. Western ships are appearing with increasing frequency. The isolation that defined Japan for two centuries is beginning to crack. You are not interested in politics. You are interested in drawing.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — "Old Man Mad About Drawing"</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">At 74, Hokusai renamed himself "The Old Man Mad About Drawing." What does it mean to be "mad" about your work in old age?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">It's a performance — in Edo culture, eccentric artist names were a form of branding. "Mad" was endearing and marketable.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">B</span><span class="dopt-body">It describes something real: the obsession that sustains extraordinary work is not casual enthusiasm but something closer to mania — the inability to stop, the inability to be satisfied, the continual reaching for something just beyond current grasp. At 74, this is unusual. He is naming it accurately.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">It's a statement of freedom — at 74, he no longer needed to perform respectability. He could name himself whatever described what he actually was, without concern for social convention.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">Late-life productivity — the pattern across artists</div>
+      <p><strong>Beethoven's greatest quartets were written while he was deaf. Verdi's greatest comic opera was composed at 79. Titian's most experimental paintings came at 90. The pattern across enough exceptional artists stops being a coincidence.</strong> Hokusai's late-career peak is one of the most extreme examples of a pattern that appears across exceptional artists: the best work often comes late. Beethoven's late quartets (composed while deaf, in his 50s). Verdi's *Falstaff* (his greatest comic opera, composed at 79). Titian painted until 90 and his final work shows the most experimental technique of his career. The pattern suggests that creative capacity doesn't decline with age the way physical capacity does — and that the inhibitions of youth (concern for reception, adherence to convention, fear of failure) may actually constrain great work. The "old man mad about drawing" was free in a way the young Hokusai couldn't have been.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Illness and Recovery</span></div>
+<div class="year-banner">1839</div>
+<div class="timeline-dot">Edo · Age ~79</div>
+<div class="narrative">
+  <p>You suffer a stroke at approximately 79 years old. Many artists would stop here. You do not. You recover and return to work. You claim that the stroke freed you — that the shaking of your hand afterward produced a quality of line you couldn't achieve before. You call your post-stroke style "the trembling line."</p>
+  <p>You also reportedly prayed to the gods to give you just ten more years of life. You did not get ten. You got approximately ten.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Trembling Line</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Hokusai claimed his post-stroke trembling hand produced better lines than his controlled pre-stroke hand. Was this true, or a way of accepting limitation?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">A way of accepting limitation. The trembling was a real constraint, and calling it an advantage was how an extraordinary artist made peace with decline.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">Both true and a way of accepting limitation — the two aren't mutually exclusive. Constraints genuinely produce different (sometimes better) results, AND finding the advantage in a constraint is how artists survive adversity. Both things can be true simultaneously.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">True. Post-stroke work by skilled artists often shows qualities — looseness, energy, a certain expressive unpredictability — that careful pre-stroke technique didn't produce. The neurology of controlled vs. uncontrolled movement produces genuinely different mark-making.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">Constraint and artistic development</div>
+      <p><strong>Matisse, confined to a wheelchair, invented the cut-paper collage technique that produced some of his most celebrated work. Beethoven's deafness produced his most harmonically adventurous compositions. A constraint is not necessarily a limitation — it can be a redirection.</strong> The relationship between physical limitation and artistic development is well-documented. Beethoven's late quartets — composed in complete deafness — are his most internally structured and harmonically adventurous works. Matisse, confined to a wheelchair in his final years, invented the cut-paper collage technique (papiers découpés) that produced some of his most celebrated work. Philip Glass has said that his minimalist musical language developed partly from the constraints of writing for non-professional musicians. In each case, a limitation forced a different kind of attention to what was possible within the constraint. Hokusai's trembling line may have introduced a quality of spontaneity that his exceptionally controlled earlier work couldn't achieve. The limitation was real; so was the advantage it produced.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Final Wish</span></div>
+<div class="year-banner">1849</div>
+<div class="timeline-dot">Edo · Age ~89</div>
+<div class="narrative">
+  <p>You are dying, at approximately 89 years old. According to accounts written by disciples, your last words are: "If only Heaven will give me just another ten years... just five more years, then I could become a real painter."</p>
+  <p>You have been painting for 73 years. You have created tens of thousands of works — prints, paintings, drawings, books. You have produced one of the most recognized images in human history. And your last thought is that you have not yet become a real painter.</p>
+  <p>Some people find this tragic. Others find it inspiring. Very few find it surprising.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — "Just Five More Years"</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Hokusai's last words were a request for five more years to become a "real painter." After 73 years of work and The Great Wave, what was still missing?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Nothing was missing. The last words reflect an artist's inability to see his own achievement — the same drive that produces great work also prevents satisfaction with it. He had already done it.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Something was genuinely missing. His own standard of what a "real painter" could achieve was higher than what he had reached. The gap was real, not false modesty.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The question is the wrong frame. The gap between achievement and aspiration is what produced the achievement. Without the belief that five more years would make him a "real painter," he would not have worked as he did at 89. The dissatisfaction and the greatness were the same thing.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">The Great Wave's afterlife</div>
+      <p><strong>You die at 89 certain you have not yet done your best work. Your "not good enough" is displayed in museums on every continent and appears on more coffee mugs, t-shirts, and tattoos than almost any other image in human history.</strong> *The Great Wave off Kanagawa* is one of the most reproduced artworks in history. It appears on mugs, t-shirts, tattoos, phone cases, and emoji. It was the first Japanese artwork to be widely known in the West — imported in the 1850s after Japan opened its borders — and helped spark the Japonisme movement that influenced Impressionism and Art Nouveau. In Japan, it became a symbol of national identity. Hokusai printed it as one piece in a series, with no particular sense that it would be more important than the others. He died thinking he hadn't yet done his best work. His "not good enough" is displayed in museums on every continent.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Hokusai's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="next-sims">
+  <p class="next-label">Explore More Lives</p>
+  <div class="next-grid">
+    <a href="vangogh-simulator.html" class="next-card">
+      <span class="next-name">Vincent van Gogh</span>
+      <span class="next-desc">Sold one painting in his lifetime. Changed art forever.</span>
+    </a>
+    <a href="frida-simulator.html" class="next-card">
+      <span class="next-name">Frida Kahlo</span>
+      <span class="next-desc">35 surgeries. Painted through all of them.</span>
+    </a>
+    <a href="curie-simulator.html" class="next-card">
+      <span class="next-name">Marie Curie</span>
+      <span class="next-desc">Two Nobel Prizes. Died from the radiation she discovered.</span>
+    </a>
+    <a href="confucius-simulator.html" class="next-card">
+      <span class="next-name">Confucius</span>
+      <span class="next-desc">Wandered 14 years. No ruler listened. Changed civilization anyway.</span>
+    </a>
+  </div>
+</div>
+<div class="cta-box">
+  <p>Hokusai changed his name 30 times, moved house 93 times, created The Great Wave at 72, and died at 89 saying he needed five more years to become a real painter. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All Life Simulators — Darwin, Kafka, Einstein and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/vangogh-simulator.html" style="color:var(--accent)">Van Gogh Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Hokusai";body="You grasped why the school break was necessary, that the Manga was art and commerce simultaneously, that The Great Wave required all three dimensions of mastery, that the poverty reflected temperament more than failure, and that the dissatisfaction and the greatness were the same thing. The complete Hokusai.";}else if(pct>=0.625){title="The Visual Thinker";body="You understood the core: the late peak, the synthetic approach, the obsession with a single subject as a meditation on perception. Where you may have simplified: for Hokusai, almost every choice operated on multiple levels simultaneously. The trembling line was both a limitation and an advantage. The poverty was both a failure and a temperamental expression.";}else if(pct>=0.375){title="The Practical Eye";body="You tended toward single explanations — commercial or artistic, limitation or acceptance. Hokusai's genius was precisely the refusal of this either/or: the Manga was both, the poverty was both, the trembling line was both. His whole career was a demonstration that apparent opposites could coexist in the same work.";}else{title="The Skeptic";body="You questioned whether the late-life claims were genuine — the trembling line as advantage, the statement that pre-70 work was worthless. These could be false modesty or performance. But 73 years of documented work, culminating in one of the most reproduced images in history, suggests the self-assessment — however extreme — was more honest than modest."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

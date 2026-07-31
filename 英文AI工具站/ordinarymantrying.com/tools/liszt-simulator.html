@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Franz Liszt Life Simulator — Lisztomania, Abbé & the Music Nobody Understood | Ordinary Man Trying</title>
+<meta name="description" content="Step into Franz Liszt's shoes across 8 pivotal decisions — from hearing Paganini to becoming an abbé to writing music 80 years ahead of its time. The greatest pianist who ever lived.">
+<style>
+:root{
+  --bg:#F5EEF0;--card:#FAF6F7;--ink:#180A08;--muted:#502018;--line:#DCC8C8;
+  --accent:#5A0818;--accent-bg:#F0D8D8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,238,240,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#180A08;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C8A8A8;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#140808;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F5E8E8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.3);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F5E8E8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C8A8A8;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C8A8A8;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Franz Liszt</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #77 of 100</p>
+  <h1 class="cover-title">The Magician's Hands<br>& the Abbé's Robe</h1>
+  <p class="cover-sub">Franz Liszt caused women to faint. Audiences threw jewelry onto his stage. He kept the gloves he discarded at the piano; fans cut them into pieces and wore the scraps in lockets. He was the first musician to play an entire concert alone, from memory, without intermission — he invented the solo recital. He then gave up performing, took minor holy orders, became an abbé, taught hundreds of students for free, and spent his last years writing music so harmonically radical that it wasn't understood until the 20th century.</p>
+  <div class="cover-facts">
+    <p>🎹 Considered the greatest pianist in history &nbsp;·&nbsp; 🎵 Invented the solo piano recital &nbsp;·&nbsp; ⛪ Took minor holy orders as Abbé Liszt, 1865 &nbsp;·&nbsp; 👨‍🏫 Taught hundreds of students free of charge &nbsp;·&nbsp; Died July 31, 1886 &nbsp;·&nbsp; Age 74 &nbsp;·&nbsp; The late piano pieces anticipated 20th-century harmony by 80 years</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Liszt's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1831</div>
+  <div class="timeline-dot">Paris, France · Age 19</div>
+  <div class="narrative">
+    <p>You are sitting in the audience at the Théâtre de l'Odéon when Niccolò Paganini walks onstage. You have been living in Paris for eight years, teaching piano to the daughters of aristocrats, writing a little, performing occasionally. You are considered a good pianist. What happens over the next hour in the Odéon is different from anything you have ever experienced. Paganini plays the violin in ways that should not be physically possible. He plays three parts simultaneously. He plays entire pieces on a single string after cutting the others. He performs his own compositions, which are technically insane and emotionally overwhelming.</p>
+    <p>You leave the concert and go home and stay up most of the night writing in your journal. You have understood something: Paganini is not just a performer. He is a creator whose medium is the performance itself. The composer writes the notes; Paganini writes what happens when those notes enter the air of a concert hall and hit a human nervous system. You decide, that night, that you will do for the piano what Paganini has done for the violin.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1831</div>
+    <p class="decision-q">After hearing Paganini, what is the key insight that transforms your approach to the piano?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Technical mastery is an end in itself — the more difficult the passage, the greater the art.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. The performer can be a creative force equal to the composer — virtuosity, deployed with intention, is itself a form of composition, and the concert hall is the medium.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. The key is repertoire — Paganini plays his own music, and you must also write music that only you can play.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. The theatrical element is superficial — the music itself is what matters, and the performance should serve the score, not compete with it.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <strong>You are 19 years old, teaching piano to aristocrats' daughters in Paris for pocket money, when Niccolò Paganini walks onto the stage of the Théâtre de l'Odéon on March 9, 1831, and plays the violin in ways that should not be physically possible. You go home and stay awake all night. You have just understood something you cannot name yet.</strong> <strong>What Liszt took from Paganini:</strong> He took the concept of the performer as artist. In the decade that followed, he practiced eight to ten hours a day, systematically extending what was physically possible at the keyboard — developing hand-stretches, octave techniques, and polyphonic textures that no previous pianist had achieved. He also composed his own "Paganini Studies" — transcriptions of Paganini's violin works for piano, which essentially redefined what the instrument could do. His 1838–1847 concert tours are still the most legendary performance career in the history of classical music.
+    </div>
+  </div>
+
+  <div class="year-banner">1835</div>
+  <div class="timeline-dot">Paris & Geneva · Age 23</div>
+  <div class="narrative">
+    <p>Countess Marie d'Agoult is 29, married to a French count, and one of the most intellectually distinguished women in Parisian society. You have been in love with each other for a year. She is not happy in her marriage. You are not interested in conventional arrangements. Paris in 1835 has very clear ideas about what happens to women who leave their husbands for musicians, however famous: social ruin, legal vulnerability, separation from their children.</p>
+    <p>You elope together to Geneva in the spring of 1835. The scandal is immediate and severe. Her husband retains custody of her older children. She will eventually write novels under the pen name Daniel Stern and become a significant literary figure in her own right. But first she will spend seven years following you through Switzerland, Italy, and the concert halls of Europe, bearing you three children — including Cosima, who will marry Richard Wagner.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1835</div>
+    <p class="decision-q">You and Marie d'Agoult elope despite enormous social consequences. What does this decision represent for Liszt?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Recklessness — he failed to consider the consequences for Marie and their future children, prioritizing passion over responsibility.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. A deliberate Romantic commitment to living according to inner truth rather than social convention — both Liszt and Marie believed that authentic experience was more important than respectable performance.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. Strategic career planning — a scandalous relationship with a countess enhanced his celebrity and his access to aristocratic social circles.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. A temporary arrangement he expected to resolve conventionally once the initial passion settled.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <strong>In the spring of 1835, you and Countess Marie d'Agoult elope to Geneva, ending her marriage and costing her permanent custody of her older children — two social careers destroyed in a single decision, for a relationship everyone in Paris predicts will last eighteen months.</strong> <strong>Liszt and Marie d'Agoult:</strong> Their relationship lasted seven years and produced three children. Blandine and Daniel died young; Cosima survived to marry the conductor Hans von Bülow, then leave him for Richard Wagner — following almost exactly the pattern her parents established. The relationship eventually ended in bitterness and public attacks from Marie's pen name Daniel Stern. But the years in Switzerland and Italy — where Liszt composed the first version of his <em>Années de Pèlerinage</em> — were among his most musically productive. He always maintained that the relationship was the right choice, even when it became painful.
+    </div>
+  </div>
+
+  <div class="year-banner">1838</div>
+  <div class="timeline-dot">Vienna to Budapest · Age 26</div>
+  <div class="narrative">
+    <p>The Danube floods catastrophically in the winter of 1838. The lower districts of Pest — then a separate city from Buda — are under several feet of water. Thousands of people are left homeless. You are performing in Vienna when the news arrives. You were born in Hungary — in Raiding, in what is now Austria — to a Hungarian father and German-Austrian mother. You speak no Hungarian. You have lived in Paris for most of your life. Your relationship to "Hungary" is primarily symbolic and romantic. But when the flood happens, you feel it as a personal matter.</p>
+    <p>You give ten concerts in Vienna, donating all proceeds to Hungarian flood relief. You then travel to Pest and Budapest and perform more concerts. The audiences are extraordinary. For the first time in your life, you are surrounded by people who treat you not as a foreign celebrity but as a returning hero. The Hungarian national feeling in this period is intense — it is the early stirrings of the independence movement that will culminate in the 1848 revolution — and you are swept up in it completely.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1838</div>
+    <p class="decision-q">You perform benefit concerts for Hungary and are embraced as a national hero, despite never having lived there as an adult. What is the significance of this moment?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. A calculated publicity move — attaching yourself to national feeling was good for your public image in a market you hadn't previously cultivated.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. A genuine discovery of a sense of belonging — Liszt found in Hungarian national feeling an identity and emotional home that Paris's cosmopolitan celebrity had never provided, and this shaped his music (Hungarian Rhapsodies) for the rest of his life.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. Sentimental but ultimately superficial — he still couldn't speak Hungarian and his "Hungarian" music was largely built on Roma rather than authentic folk sources.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. The beginning of a political commitment that would distract him from the purely musical development of his career.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <strong>The Danube floods Pest in the winter of 1838, leaving thousands homeless, and you — a man who cannot speak Hungarian and has never lived there as an adult — give concert after concert in Vienna donating every florin, then travel to Budapest, and the crowds receive you as though you have finally come home.</strong> <strong>Liszt and Hungarian identity:</strong> The 1838 concerts launched a decade-long engagement with Hungary that produced the nineteen <em>Hungarian Rhapsodies</em> — compositions based largely on the music of Roma (Romani) musicians, which Liszt mistakenly identified as authentically Hungarian folk music. The confusion was genuine rather than cynical: Hungarian and Roma musical traditions were deeply intertwined in the 19th century. The Rhapsodies became enormously popular, making Liszt synonymous with Hungarian music worldwide — a cultural identification that outlasted the accuracy of its ethnographic basis.
+    </div>
+  </div>
+
+  <div class="year-banner">1840</div>
+  <div class="timeline-dot">London, England · Age 28</div>
+  <div class="narrative">
+    <p>"Lisztomania" — a word coined by Heinrich Heine — is at its peak. Women in the concert hall faint during your performances. You discard a white glove while walking to the stage; three women fight over it. A Hungarian countess reportedly wears a locket containing your discarded cigar stub. The composer Robert Schumann's wife Clara, herself one of the great pianists of the age, writes in her diary that she has never witnessed anything like the effect you produce on an audience.</p>
+    <p>You have also done something unprecedented in 1840: you performed an entire concert alone, from memory, without an orchestra, an opera singer, or any supporting act. You called it a "musical soliloquy." Others called it a "recital." No pianist had ever done this before — the word "recital" in its modern meaning didn't exist before you invented the thing it describes. The concert hall was full anyway. It was more than full.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1840</div>
+    <p class="decision-q">You have invented the solo piano recital — an entire evening of one musician, alone, from memory. What does this innovation actually represent?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. Cost-cutting — a single performer is cheaper to tour than an orchestra, and the format let him keep more of the ticket revenue.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. A transformation of the concert hall into a theatrical space where the performer's inner life is the subject — the music becomes the drama, and the pianist's relationship to it is what the audience comes to witness.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. Ego — he simply didn't want to share the stage with anyone who might reduce his star power.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. Audience education — he wanted to teach listeners to focus on the music itself, without the distraction of vocal stars and operatic drama.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <strong>In 1840, in London, you perform an entire evening of music alone — no orchestra, no opera singer, no intermission, entirely from memory — something no pianist had ever attempted, in a hall that is more than full, for an audience that came partly to see if you would fail.</strong> <strong>The invention of the recital:</strong> Before Liszt, piano concerts were variety events — a pianist would perform, then a singer, then a chamber group, then perhaps another pianist. Liszt's innovation of playing alone, the entire evening, from memory, repositioned the solo performer as the primary source of meaning. His practice of turning the piano sideways so the audience could see his hands and face (rather than his back) was also his idea. These conventions — the solo recital, the memory requirement, the profile position — are now universal and we take them for granted. Liszt invented them all.
+    </div>
+  </div>
+
+  <div class="year-banner">1848</div>
+  <div class="timeline-dot">Weimar, Germany · Age 36</div>
+  <div class="narrative">
+    <p>You stop touring. After eight years of the most celebrated concert career in European history — playing in literally hundreds of cities, performing for royalty, earning enormous sums, becoming the most famous musician alive — you accept a permanent position as Kapellmeister at the small court of Weimar and more or less stop giving public concerts. The decision shocks everyone. You are 36. You are at the absolute height of your powers. You could command any fee, any hall, any audience in Europe.</p>
+    <p>What you tell people is that you want to compose. What you don't say, but what becomes increasingly apparent over the following years, is that you have understood something about the relationship between performance and creation: performing at the level you perform is consuming and ultimately hollow. It is you serving the music. You want to make the music. You want to invent new forms — the symphonic poem, the thematic transformation — that don't exist yet and that will outlast your hands.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1848</div>
+    <p class="decision-q">At the peak of your performing career, you stop touring and take a quiet court position. Why?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Burnout — years of relentless touring had exhausted him physically and emotionally, and Weimar was a recovery period he intended to be temporary.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. A clear-eyed recognition that performing was finite and composing was permanent — he had done everything possible as a performer and now needed to create the works that would outlast him.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. Princess Carolyne's influence — his new partner wanted him settled and the Weimar position was a compromise that kept the relationship intact.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. The political upheavals of 1848 had made touring unsafe, and Weimar offered shelter while Europe reorganized itself.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <strong>At 36, you are the most celebrated musician alive, commanding any fee and any hall in Europe, so you accept a modest court position in Weimar — a small German city of 12,000 people — and stop giving public concerts forever.</strong> <strong>The Weimar years:</strong> The decade Liszt spent at Weimar (1848–1861) produced his major orchestral works: thirteen symphonic poems (a form he invented), the <em>Faust Symphony</em>, the <em>Dante Symphony</em>, and the complete <em>Piano Sonata in B minor</em> — now considered one of the greatest piano works ever written. He also championed the works of Berlioz, Wagner, and other composers whose music the conservative establishment was ignoring. His generosity with younger composers during this period — Wagner particularly — was extraordinary and came at real professional and social cost to himself.
+    </div>
+  </div>
+
+  <div class="year-banner">1865</div>
+  <div class="timeline-dot">Rome, Italy · Age 53</div>
+  <div class="narrative">
+    <p>You have been trying to marry Princess Carolyne zu Sayn-Wittgenstein for fourteen years. She is a Polish-Russian princess who left her husband in 1848 to be with you. The Catholic Church has complicated the situation at every step: her marriage was declared valid, then invalid, then valid again. In 1861, you and Carolyne were hours away from a wedding in Rome when it was called off at the last moment — one account says by direct order of the Pope, on the basis of her husband's renewed objection.</p>
+    <p>You have been living in Rome since 1861, in the Villa d'Este and occasionally in a monastery on the Aventine hill. The religious feeling that has always run through your life — and through your music — has deepened into something more. On April 25th, 1865, you receive the four minor orders of the Catholic Church: doorkeeper, lector, exorcist, and acolyte. You become Abbé Liszt. You will wear the cassock for the rest of your life.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1865</div>
+    <p class="decision-q">After the papal refusal of your marriage and fourteen years of frustrated plans, you take minor holy orders. What does this transformation represent?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Resignation — the Church had defeated him in the marriage question, and taking orders was capitulation, a way of making peace with an institution that had harmed him.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. A genuine spiritual transformation — the religious dimension of his character, always present in his music and his charity, found its appropriate external form. The cassock was not a costume but an arrival.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. Social strategy — as Abbé Liszt, he could move through Roman Catholic aristocratic society with greater freedom and protection than as a mere musician.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. Eccentricity — the minor orders required no vow of celibacy and meant very little in practical terms; the cassock was theater more than theology.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <strong>After fourteen years of trying to marry Princess Carolyne zu Sayn-Wittgenstein, blocked by the Vatican at the eleventh hour each time — including a wedding in Rome called off the morning it was to happen in 1861 — you receive the four minor orders of the Catholic Church on April 25, 1865, put on a cassock, and wear it for the rest of your life.</strong> <strong>Abbé Liszt:</strong> He was not universally believed to be sincere. Wagner, who had benefited enormously from Liszt's support and who by this point had married Liszt's daughter Cosima (after she left her husband for him), was characteristically contemptuous. But the religious works of Liszt's later career — the oratorios <em>Christus</em> and <em>The Legend of Saint Elizabeth</em>, the late piano pieces on sacred subjects — suggest a genuine rather than performative piety. He spent his last twenty years dividing his time between Rome, Weimar, and Budapest, wearing the cassock, teaching, composing, and attending Mass regularly. The transformation was real.
+    </div>
+  </div>
+
+  <div class="year-banner">1870s</div>
+  <div class="timeline-dot">Weimar, Rome, Budapest · Age 60s</div>
+  <div class="narrative">
+    <p>You teach. Every summer in Weimar, young pianists come to study with you from across Europe and America — sometimes thirty or forty students in residence at once. The classes are masterclasses: you sit beside the piano, the student plays, you comment, you demonstrate. You do not charge a single student a fee. You maintain this practice for the last twenty years of your life. Among your students: Hans von Bülow, Carl Tausig, Rafael Joseffy, Alexander Siloti, Eugen d'Albert, Moriz Rosenthal, Emil von Sauer, and — through them — virtually every major pianist of the 20th century. The Liszt pedagogical tradition runs through every conservatory in the world.</p>
+    <p>Why do you teach without payment? The question comes up occasionally, and your answer is always some variation of the same thing: knowledge that isn't passed on is wasted. You were given your gifts. You were taught, first by Czerny in Vienna when you were ten. The chain must continue. It is not charity; it is how music survives.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1870s</div>
+    <p class="decision-q">You teach hundreds of students for free across twenty years. What is the underlying principle?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Guilt — he had earned too much during his touring career and giving it away through teaching was a form of redistribution.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B) Vanity — teaching without charge ensured a steady supply of students who were grateful and devoted, amplifying his reputation.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. A belief that musical knowledge is a public good that must flow freely — he had been given gifts and taught by others, and refusing to pass that chain forward would be a betrayal of music itself, not a favor to anyone.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Financial security — he had inherited substantial sums from his concert career and simply didn't need the income from teaching.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <strong>Every summer in Weimar for twenty years, thirty or forty young pianists arrive from across Europe and America to study with you, and you charge every single one of them exactly nothing — not a fee, not a formal obligation, not even a request for public acknowledgment.</strong> <strong>Liszt's pedagogical legacy:</strong> The chain from Liszt to the present day is real and traceable. Liszt → Siloti → Rachmaninoff. Liszt → d'Albert → Arthur Schnabel → many others. Liszt → von Bülow → hundreds more. His refusal to charge transformed piano pedagogy: it meant that his students came because they wanted to learn, not because they could pay, and it meant that no student was under obligation to flatter him. The teaching was honest in a way that paid instruction often cannot be. The Liszt tradition is responsible for the technical standard of piano playing that has obtained worldwide since 1900.
+    </div>
+  </div>
+
+  <div class="year-banner">1882</div>
+  <div class="timeline-dot">Weimar, Germany · Age 70</div>
+  <div class="narrative">
+    <p>You are composing late piano pieces that nobody around you understands. <em>Nuages gris</em> (Grey Clouds) is harmonically ambiguous to the point of having no clear key. <em>La lugubre gondola</em> uses harmonies that will not appear in mainstream music for another forty years. <em>Bagatelle sans tonalité</em> — "Bagatelle without tonality" — is exactly what it says: a piece that abandons the tonal system that all Western music had operated within for three hundred years. Richard Wagner, who has heard these pieces, tells you that you have gone too far.</p>
+    <p>Your students don't know what to do with them. The publishers are not interested. The audiences who adored your performances in the 1840s expect lush, dramatic Romanticism, and what you are writing now is something else entirely — angular, strange, compressed, without the resolution they expect. You write them anyway. "I can wait," you tell a friend. "The future will understand."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1880s</div>
+    <p class="decision-q">Your late works are harmonically so advanced that even Wagner says you've gone too far. How do you respond to not being understood?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. Moderate the radicalism — write the music you hear but present it within a more conventional harmonic frame so it can actually reach audiences.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. Stop composing them publicly and keep them private — write for yourself without the distraction of incomprehension.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. Continue writing exactly what you hear and trust that the music is simply ahead of its time — "I can wait." The understanding will come when it comes.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. Seek out younger composers who might understand what you're doing — build a community of listeners rather than waiting alone.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <strong>In the 1880s, you are writing piano pieces so harmonically strange that Richard Wagner — a man who studied orchestration partly from your scores — listens to them and tells you they have gone too far, your publishers refuse to print them, and you write them anyway and tell a friend: "I can wait."</strong> <strong>Liszt's late works and musical history:</strong> The late piano pieces were not widely understood until the 20th century. <em>Nuages gris</em> anticipates Debussy's impressionism. The harmonic language of <em>Bagatelle sans tonalité</em> anticipates Arnold Schoenberg's atonal works by nearly thirty years. Bartók credited Liszt's late works as a direct influence on his own harmonic language. The "future" that Liszt said he could wait for arrived: these pieces are now recognized as the bridge between 19th-century Romanticism and 20th-century modernism. He died in Bayreuth in 1886, at a Wagner festival, four years after writing music that the 20th century was still catching up to.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Franz Liszt · 1811–1886</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"Beware of missing chances; otherwise it may be altogether too late some day."<br><em style="font-size:13px;color:var(--muted);">— Franz Liszt</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="chopin-simulator.html" class="next-card">
+        <div class="next-card-name">Frédéric Chopin</div>
+        <div class="next-card-sub">The piano, the exile & the last Mazurka</div>
+      </a>
+      <a href="beethoven-simulator.html" class="next-card">
+        <div class="next-card-name">Ludwig van Beethoven</div>
+        <div class="next-card-sub">Deafness, the Ninth Symphony & a letter unsent</div>
+      </a>
+      <a href="tchaikovsky-simulator.html" class="next-card">
+        <div class="next-card-name">Tchaikovsky</div>
+        <div class="next-card-sub">The Swan Lake, the secret & the last symphony</div>
+      </a>
+      <a href="mozart-simulator.html" class="next-card">
+        <div class="next-card-name">Wolfgang Mozart</div>
+        <div class="next-card-sub">Child prodigy, debt & the unfinished Requiem</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You traced Franz Liszt\'s complete arc: the Odéon night in 1831 when Paganini showed you what a performer could be, the Weimar years inventing the symphonic poem, the Roman cassock, and the pages of Nuages gris in the 1880s that Debussy would still be unlocking forty years later. You understood that each phase was not a retreat from the last but a deeper version of the same project — making something permanent out of what had been only performance.';else if(pct>=0.625)t.textContent='You matched the major pivots in Liszt\'s life. The Paganini conversion, the Weimar decision, the free teaching — you saw those clearly. What you may have missed is the connective tissue: every one of these choices was Liszt choosing creation over performance, permanence over fame. The late pieces that nobody understood in his lifetime are the final proof of that wager, written in a harmonic language the 20th century was still catching up to when he died.';else if(pct>=0.375)t.textContent='You felt the shape of Liszt\'s life but not always the reasoning inside it. He quit at 36 at the absolute peak of his performing career — not from exhaustion, not from Carolyne\'s preference, but because he had decided in 1831 that creating was more important than performing and had been working toward that conclusion ever since. The cassock and the free teaching and the dissonant late pieces are all the same decision, made once and followed through.';else t.textContent='At every turning point in Franz Liszt\'s life, you chose what a reasonable person in 1831, 1848, or 1882 would have chosen. Liszt did not. He invented the solo recital, took holy orders at 53, wrote music that the 20th century was still catching up to, and taught hundreds of students for free until he died. His 1886 obituaries were also confused about what he had actually done. The future sorted it out eventually.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

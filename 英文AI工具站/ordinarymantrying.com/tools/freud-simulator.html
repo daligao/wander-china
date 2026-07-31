@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Sigmund Freud?</title>
+<meta name="description" content="He invented psychoanalysis, promoted cocaine as a wonder drug, and fled the Nazis at 82. At 83, he asked his doctor to end his life. 8 decisions.">
+<meta property="og:title" content="What Would You Do If You Were Sigmund Freud?">
+<meta property="og:description" content="Cocaine, the unconscious, the seduction theory he abandoned, and a death request at 83. 8 decisions from the man who invented the talking cure.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/freud-simulator.html">
+<style>
+:root{
+  --bg:#F7F3F4;--card:#FDFBFB;--ink:#1A0808;--muted:#6A3040;--line:#D8C0C4;
+  --accent:#7A1A2E;--accent-bg:#F8ECED;
+  --right:#2A6B4A;--right-bg:#E6F5EE;--wrong:#8B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,243,244,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#200808;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #D0A0A8;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#3A0A10;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#FFF0F2;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.3);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#2A0810;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#FFF0F2;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #D0A0A8;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#2A0810;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.quote-block{background:var(--ink);color:#F8EEF0;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#A07080;margin-top:12px;font-family:var(--mono);}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#1A0808;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#FFF0F2;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #D0A0A8;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.cta-box{background:var(--accent);color:#FFF0F2;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#FFB0BC;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Sigmund Freud</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #21</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Freud?</h1>
+  <p class="cover-sub">He invented psychoanalysis, spent years promoting cocaine as a miracle drug, abandoned a theory about childhood abuse to protect his colleagues, and fled Vienna at 82 when the Nazis arrived. He spent 16 years dying of jaw cancer while continuing to smoke 20 cigars a day. At 83, he asked his doctor to end his life. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Sigmund Freud</strong> (1856–1939) · Austrian neurologist · Founded psychoanalysis · Key works: <em>The Interpretation of Dreams</em> (1900), <em>Three Essays on Sexuality</em> (1905), <em>Civilisation and Its Discontents</em> (1930) · Fled Vienna for London in 1938 · Died September 23, 1939, by physician-assisted death · His daughter Anna Freud became a distinguished psychoanalyst · His theories have been both enormously influential and extensively criticized · 4 of his 6 sisters died in Nazi concentration camps after he escaped.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1884, Vienna</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Cocaine Papers</span></div>
+<div class="year-banner">1884</div>
+<div class="timeline-dot">Vienna · Age 28</div>
+<div class="narrative">
+  <p>You are 28, a young neurologist at the Vienna General Hospital, engaged to Martha Bernays and desperately short of money. You have just obtained a sample of a new substance — cocaine — and have been reading the literature on its effects with growing excitement. German army doctors are reporting that it eliminates fatigue. American physicians are using it for morphine withdrawal.</p>
+  <p>You try it yourself. The effects are remarkable: clarity, energy, absence of anxiety, a sense of well-being you have not felt in years. You write to Martha: "If it goes well, I will write an essay on it and I expect it will win its place in therapeutics by the side of morphium."</p>
+  <p>You write the essay — "Über Coca" — and publish it in July 1884. In it you recommend cocaine for a wide range of conditions: depression, morphine addiction, digestive disorders, and as a general tonic. Your colleague Carl Koller, to whom you mentioned the substance, meanwhile discovers its use as a local anesthetic for eye surgery — a genuinely important medical breakthrough. Koller gets the credit for that. You get the credit for the general enthusiasm.</p>
+  <p>Within a few years, the cocaine epidemic has begun. Physicians are prescribing it freely; patients are becoming addicted. Your friend Ernst Fleischl von Marxow, whom you treated for morphine addiction with cocaine, has developed a severe cocaine addiction instead and is dying.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Cocaine Advocacy</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The cocaine epidemic is underway. Your original paper helped start it. What do you do?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Publicly retract your endorsement. The evidence now clearly shows addiction potential. Scientific integrity requires correcting a mistake immediately, regardless of the professional embarrassment.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">B</span><span class="dopt-body">Quietly move on. Write a brief acknowledgment that the addiction risks were underestimated, then redirect your research energy toward other problems. The talking cure is already beginning to interest you more.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">Continue defending the paper. The addiction problem reflects misuse and individual predisposition, not the substance itself. Your original recommendations were sound; the epidemic is not your responsibility.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Freud actually did</div>
+      <p><strong>You publish an enthusiastic endorsement of cocaine as a treatment for depression, morphine addiction, and fatigue. Your friend Ernst, whom you specifically treat for morphine addiction using cocaine, develops a severe cocaine addiction instead and dies.</strong> Freud largely moved on. He published a follow-up paper in 1887 that acknowledged some risks but did not constitute a full retraction. He continued to use cocaine himself for several more years for headaches and nasal problems before gradually stopping. In his autobiography, written in 1925, he discussed the cocaine episode briefly and with some embarrassment, noting that the "grave reproach" for the drug's misuse rightly attached to him. By then, however, he had redirected his intellectual energy entirely toward psychoanalysis — the project that would define his life's work. His movement away from cocaine toward the talking cure is one of the more productive career pivots in the history of medicine.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Seduction Theory</span></div>
+<div class="year-banner">1896</div>
+<div class="timeline-dot">Vienna · Age 40</div>
+<div class="narrative">
+  <p>You have been developing a theory of hysteria and neurosis based on your clinical work. Your current hypothesis — which you have now presented publicly — is that the neuroses of your patients can be traced, almost universally, to actual sexual abuse in childhood. You call this the "seduction theory."</p>
+  <p>When you present this to the Vienna Society of Psychiatry and Neurology in April 1896, the reception is catastrophic. The president of the society, Richard von Krafft-Ebing, says your paper sounds like "a scientific fairy tale." Your colleagues are appalled. The theory implies widespread child sexual abuse in respectable Viennese families — something they find both implausible and professionally dangerous to suggest.</p>
+  <p>Over the following year, you become increasingly uncertain yourself. Your clinical evidence, on reflection, is ambiguous. Are your patients reporting actual memories of abuse, or are these fantasies? You also note that the theory, if true, would implicate your own father, who died in 1896 — and with whom you have a complicated relationship you are beginning to analyze in yourself.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Abandoning the Seduction Theory</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You are increasingly uncertain about the seduction theory. The professional pressure to abandon it is intense. The clinical evidence is ambiguous. Do you retract?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Hold the theory. The professional hostility proves nothing. If the evidence originally supported it, recanting under social pressure would be intellectually dishonest. Return to the clinical material and test it more rigorously.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">Abandon it — but replace it with something more interesting. The patients' fantasies about seduction may be as clinically significant as actual abuse. The unconscious wish is the real subject. This is the pivot to psychoanalysis proper.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Abandon it quietly without explanation. The theory was a mistake; there is no need to publicize the retreat. Simply stop referring to it and let it be forgotten.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Freud actually did — and what it cost him</div>
+      <p><strong>You present a theory that most neuroses trace to actual childhood sexual abuse. The president of the Vienna Society of Psychiatry calls it "a scientific fairy tale." You abandon the theory — and feminist scholars 80 years later argue you did it to protect your colleagues, not because the evidence changed.</strong> In September 1897, Freud wrote to his friend Wilhelm Fliess: "I no longer believe in my neurotica [seduction theory]." He replaced it with the Oedipus complex — the idea that children experience unconscious sexual wishes toward parents and that neurosis arises from the repression and mismanagement of these wishes, not from actual abuse. This pivot is the foundation of psychoanalysis as we know it. It has also been the subject of sustained criticism: the feminist scholar Jeffrey Moussaieff Masson argued in the 1980s that Freud abandoned a true theory under professional pressure, leaving victims of actual childhood abuse without clinical support. This remains one of the most contested episodes in the history of psychology.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>The interpretation of dreams is the royal road to a knowledge of the unconscious activities of the mind.</q>
+  <div class="q-attr">— Sigmund Freud, The Interpretation of Dreams, 1900</div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Dream Book</span></div>
+<div class="year-banner">1899</div>
+<div class="timeline-dot">Vienna · Age 43</div>
+<div class="narrative">
+  <p>You have spent four years writing what you consider your most important work: <em>Die Traumdeutung</em> — The Interpretation of Dreams. The book argues that dreams are not random noise but meaningful communications from the unconscious, that they represent the disguised fulfillment of repressed wishes, and that systematic interpretation of dream content is a route into the unconscious mind.</p>
+  <p>The publisher releases it in November 1899, backdated to 1900 to make it seem like a new-century work. In its first six weeks, it sells 123 copies. Over the next eight years, it will sell another 228 — total sales in nearly a decade of under 400 copies.</p>
+  <p>You receive almost no professional recognition. The established medical and psychological communities ignore or dismiss it. You are 43, an outsider, with a small private practice and a theory that virtually no one takes seriously.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — After the Dream Book Fails</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Interpretation of Dreams has sold fewer than 400 copies in eight years. The professional world has ignored it. Do you continue?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">A</span><span class="dopt-body">Continue. Write the next book — Three Essays on Sexuality. Build a small circle of followers who will develop the clinical applications. The idea will find its audience when the world is ready for it.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Seek institutional validation. Apply for a university professorship, get the academic credentials, and publish in mainstream medical journals rather than standalone books. The ideas need institutional backing to reach physicians.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">Simplify. The Interpretation of Dreams is too long and theoretical. Write a shorter, more accessible version that physicians and educated general readers can actually use clinically.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Freud actually did</div>
+      <p><strong>The Interpretation of Dreams sells 123 copies in its first six weeks. It sells another 228 in the following eight years. Total sales in nearly a decade: fewer than 400 copies. You keep writing.</strong> Freud continued. He published Three Essays on the Theory of Sexuality in 1905 — a work arguing that human sexuality was present from infancy, not adolescence, and that adult neurosis was traceable to disturbances in psychosexual development. This was, if anything, even more scandalous than the dream book. He also began building the Wednesday Psychological Society — a small group that met weekly in his waiting room, which eventually became the Vienna Psychoanalytic Society and the nucleus of the international psychoanalytic movement. By 1909, when G. Stanley Hall invited him to lecture at Clark University in Massachusetts, psychoanalysis had an international following. Freud's method of building a movement — small loyal circle, journals, training institutes, international associations — became the template for how intellectual movements organize themselves.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Break with Jung</span></div>
+<div class="year-banner">1912</div>
+<div class="timeline-dot">Vienna · Age 56</div>
+<div class="narrative">
+  <p>Carl Gustav Jung was your most important disciple — the person you called your "crown prince," the man you designated as the first president of the International Psychoanalytic Association and your intended successor. He is not Jewish; in an era of anti-Semitism, his leadership of the movement offered a way to argue that psychoanalysis was a universal science, not a "Jewish science."</p>
+  <p>The relationship has been deteriorating for two years. Jung is diverging from your theory in fundamental ways — he rejects the centrality of sexuality in the unconscious, proposes a collective unconscious containing universal archetypes, and is developing what he will call "analytical psychology." He also gave a series of lectures at Fordham University in New York in which he publicly revised your theories without crediting the departures as departures.</p>
+  <p>You have been exchanging increasingly hostile letters. You are convinced he is motivated partly by anti-Semitism — that his desire to distance himself from sexuality in the unconscious is also a desire to distance himself from what is perceived as Jewishness. He is convinced you are authoritarian and unable to tolerate disagreement.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Jung Rupture</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Jung is diverging from your theory and the personal relationship has broken down. Do you end it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">A</span><span class="dopt-body">End it. A movement cannot have two incompatible theories at its center. The break is painful but necessary — better a clean rupture than a continuing compromise that weakens both positions.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Negotiate. Allow Jung to develop his alternative framework as a distinct branch while maintaining the institutional connection. A broader psychoanalytic tent is stronger than a narrower one.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">Wait. Jung's deviations may not survive clinical practice. Give him time to find that the patients lead him back to the original theory. Premature ruptures create martyrs.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What Freud actually did</div>
+      <p><strong>You call Jung your "crown prince" and designated successor — the man who will lead psychoanalysis after you. Three years later, you cut off all contact. The rupture produces two of the 20th century's most influential psychological frameworks, still argued against each other today.</strong> The rupture happened in January 1913 with a final letter from Freud proposing they abandon their personal relationship while maintaining formal professional contact — and then, in a letter of April 1914, even that ended. Jung resigned as president of the International Psychoanalytic Association. Freud wrote a sharp polemical essay, "On the History of the Psychoanalytic Movement," establishing the official narrative of the break. The split produced two of the 20th century's most influential psychological frameworks: Freudian psychoanalysis and Jungian analytical psychology. They are still taught, practiced, and debated against each other today. Whether the rupture needed to be as total as it was remains disputed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Cancer</span></div>
+<div class="year-banner">1923</div>
+<div class="timeline-dot">Vienna · Age 67</div>
+<div class="narrative">
+  <p>You have a growth on your jaw and palate. The biopsy confirms: cancer. Leukoplakia — cancer of the mucous membrane, almost certainly caused by the 20 cigars you smoke every day. You have been smoking since you were a student. You have tried to stop, many times, and have always returned to it. On one occasion you described the withdrawal as worse than any analysis.</p>
+  <p>Your physician Felix Deutsch has actually known the cancer diagnosis for several weeks but concealed it from you, afraid of how you would react. When you discover this, you are furious — not at the diagnosis, but at the deception. You find another physician.</p>
+  <p>The cancer requires surgery. It will be the first of 33 operations over the next 16 years. The surgeries leave your jaw partially destroyed; you will need a prosthesis to eat and speak. The prosthesis is painful and ill-fitting. Talking becomes difficult. You work through all of it.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Cigars</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have jaw cancer caused by smoking. Your surgeon has told you to stop. Do you stop?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Stop. The medical evidence is clear. Whatever the psychological dependency, the choice is between cigars and life. Rational self-interest requires stopping.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">Continue. The cigars are inseparable from the intellectual work. You have tried stopping before and the depression that follows makes the work impossible. You choose the work — and the cigars.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">Try to stop, fail, and try again — repeat indefinitely. The addiction is real and the intention to stop is genuine, but the outcome is not within your control.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Freud actually did</div>
+      <p><strong>You have jaw cancer caused by 20 cigars a day. You undergo 33 operations over 16 years — surgery that partially destroys your jaw, requiring a painful prosthesis to eat or speak. You keep smoking. You are aware this is exactly the irrational behavior driven by unconscious forces that your own theory describes.</strong> Freud continued smoking for the remaining 16 years of his life, through 33 operations, through a prosthesis that made eating painful and talking difficult, through the deterioration of his jaw. He described the cigars as essential to his work — "I owe to the cigar a great intensification of my capacity to work and a facilitation of my self-control." His biographer Ernest Jones wrote that Freud could acknowledge the self-destructive nature of the habit intellectually while being completely unable to stop. He was, in other words, exhibiting exactly the kind of irrational behavior driven by unconscious forces that his own theory described. He was aware of this irony.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Anschluss</span></div>
+<div class="year-banner">1938</div>
+<div class="timeline-dot">Vienna · Age 82</div>
+<div class="narrative">
+  <p>On March 12, 1938, German troops enter Austria. The Anschluss — the annexation of Austria into the Third Reich — happens in hours. Within days, Viennese Jews are being forced to scrub streets on their hands and knees while crowds watch. Jewish businesses are being confiscated. The Psychoanalytic Publishing House is seized. The Gestapo searches your apartment. Your daughter Anna is taken for Gestapo interrogation and held for a day before being released.</p>
+  <p>You have been refusing to leave Vienna for years. You are 82, in constant pain from the jaw cancer, and have spent 47 years in this city building psychoanalysis. You have said: "I shall not leave Vienna. I will die in my place."</p>
+  <p>After Anna's interrogation, you change your mind.</p>
+  <p>The American ambassador William Bullitt and your former patient Princess Marie Bonaparte work to secure your exit. The Nazis require payment of a "Reich flight tax" — essentially, ransom. Marie Bonaparte pays it. You are required to sign a document stating that you have been treated with "full respect" by the Gestapo. You sign it, then add by hand: "I can heartily recommend the Gestapo to anyone."</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Leaving Vienna</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You resisted leaving for years. What changed your mind?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">The direct threat to you personally. The Gestapo search of your apartment made clear that theoretical anti-Semitism had become operational. Self-preservation finally overrode attachment to place.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">B</span><span class="dopt-body">The interrogation of Anna. You could accept danger to yourself. You could not accept danger to her. The moment the threat transferred from you to your daughter, leaving became the only option.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">The seizure of the publishing house. The destruction of the institutional infrastructure of psychoanalysis — the physical manifestation of the work — was what finally made staying pointless.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What Freud said changed his mind</div>
+      <p><strong>You refuse to leave Vienna even as the Gestapo searches your apartment and Jews are forced to scrub streets on their knees. You say: "I will die in my place." Then the Nazis interrogate your daughter Anna. You leave within weeks — but four of your six sisters, who cannot get out, die in Nazi concentration camps.</strong> Freud later said it was Anna's interrogation that decided it. He had been willing to face personal danger but could not expose Anna to it. He left Vienna on June 4, 1938, by the Orient Express — at 82, in severe pain, accompanied by his wife Martha, Anna, his physician Max Schur, and his famous collection of antiquities. He arrived in London to enormous public attention. Four of his six sisters, who remained in Vienna and were unable to leave, were killed in Nazi concentration camps — Mitzi, Pauline, Adolf, and Rosa. Freud never knew their fates; he died in September 1939, weeks after the war began.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · London</span></div>
+<div class="year-banner">1939</div>
+<div class="timeline-dot">London, Maresfield Gardens · Age 83</div>
+<div class="narrative">
+  <p>You have been in London for 15 months. The house at 20 Maresfield Gardens — now a museum — has become your home. Your antiquities are arranged around your consulting couch exactly as they were in Vienna. You have been working: completing the final sections of <em>Moses and Monotheism</em>, writing in pain, through a prosthesis that makes every word difficult.</p>
+  <p>The cancer has spread. The jaw is now largely destroyed. The pain is severe and unrelenting. You are being given small doses of morphine but have asked Max Schur, your physician, not to give you so much that you lose consciousness — you want to remain lucid enough to work.</p>
+  <p>In September 1939 — the month Germany invades Poland and the Second World War begins — the cancer becomes inoperable. You are bedridden. The pain is beyond what morphine at current doses can control.</p>
+  <p>You remind Max Schur of a promise he made years earlier: that when the time came, he would not let you suffer needlessly.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Final Request</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have reminded Schur of his promise. You are asking him to help you die. What is behind the decision?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">The pain is the primary factor. You have a high tolerance for suffering — 16 years of jaw cancer proved that — but the current pain is beyond that tolerance. This is a straightforward medical decision about quality of remaining life.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">The work is done. You have written what you needed to write. The pain is unbearable, yes — but more fundamentally, there is nothing left that requires you to be conscious. Dying is now the rational choice.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">It is consistent with everything you have believed. You have spent 50 years arguing that human beings make more rational decisions than culture admits. Choosing the timing of your own death is the final application of that principle.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Freud said, and what happened</div>
+      <p><strong>You remind your physician of a promise made years earlier. On September 23, 1939 — as Germany invades Poland and World War II begins — he administers two injections of morphine. You die in the early hours of the morning. Your physician describes you as having "the appearance of a man resting after long and arduous work."</strong> Freud said to Schur: "My dear Schur, you certainly remember our first talk. You promised me then not to forsake me when my time came. Now it is nothing but torture and makes no sense any more." Schur administered two injections of morphine on September 23, 1939. Freud died peacefully in the early hours of the morning. He was 83. Anna was present. Martha, his wife of 53 years, was told afterward. Schur described Freud at the end as having "the appearance of a man resting after long and arduous work." He had published his last book, Moses and Monotheism, earlier that year. He had not stopped working until he physically could not.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Legacy Question</span></div>
+<div class="year-banner">Afterward</div>
+<div class="timeline-dot">The question that remains</div>
+<div class="narrative">
+  <p>Freud's reputation has gone through multiple revolutions since his death. He was treated as a near-prophet in the mid-20th century — a figure who had fundamentally explained the human mind. Then, in the 1970s and 1980s, systematic criticism began: his methods were unscientific, his case histories selectively reported, his cocaine advocacy irresponsible, his abandonment of the seduction theory possibly motivated by professional cowardice.</p>
+  <p>Today the picture is complicated. Few professional psychologists or psychiatrists practice classical psychoanalysis. The specific theoretical claims — the Oedipus complex, the id/ego/superego structure, the primacy of infantile sexuality — are not accepted as empirically established. But the broader Freudian legacy is everywhere: the idea that there is an unconscious, that early experiences shape adult behavior, that the relationship between patient and therapist is itself therapeutically significant, that irrational behavior has intelligible underlying causes. These ideas are so embedded in Western culture that they have become invisible.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Freudian Verdict</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Was Freud right? Given everything — the cocaine, the seduction theory abandonment, the unverifiable case histories — what is the honest assessment?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Fundamentally right. The specific theories need revision, but the core insight — that human behavior is driven by forces we are not consciously aware of — is the most important psychological discovery of the modern era.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Fundamentally wrong. The methods were not scientific, the case histories were selective, and the influence of psychoanalysis delayed the development of evidence-based treatments that have actually helped millions of people.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The wrong question. Freud was a literary and cultural phenomenon as much as a scientific one. He gave the 20th century a new vocabulary for talking about inner life. Whether the specific claims are true is less important than what the vocabulary made possible.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What most historians of science now conclude</div>
+      <p><strong>The specific Freudian claims — the Oedipus complex, dream interpretation as coded wish fulfillment, the death drive — are not accepted as empirically proven. But the idea that there is an unconscious, that early experience shapes adult behavior, that irrational behavior has intelligible causes — these are now so embedded in Western culture they have become invisible.</strong> The philosopher Adolf Grünbaum argued that Freud's theories are falsifiable in principle but unconfirmed in practice. The neuroscientist Mark Solms has spent decades trying to find neural correlates for Freudian concepts, with partial success. Most working psychologists treat Freud the way physicians treat Hippocrates: a founding figure whose specific theories have been superseded but whose framework defined the questions still being asked. The psychoanalytic concepts that have survived empirical testing best: the existence of implicit (unconscious) memory, the role of early attachment in adult relationships, the therapeutic value of the patient-therapist relationship. The concepts that have not: the specific Oedipal structure, dream interpretation as coded wish fulfillment, the death drive. What survives of Freud is less his answers than his questions.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Freud's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="cta-box">
+  <p>Freud invented a system for understanding the irrational and then spent 16 years demonstrating its limits by smoking himself to death while knowing exactly what he was doing. He was, in the end, as interesting as his patients. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All 23 Life Simulators — Newton, Darwin, Nietzsche, Kafka and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/nietzsche-simulator.html" style="color:var(--accent)">Nietzsche Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Freud";body="You matched Freud at nearly every turn — including the cigars, which most people think they would have quit. Freud's characteristic move was to keep working, quietly move past mistakes rather than loudly correct them, and choose the work over everything else. You understood that instinct.";}else if(pct>=0.625){title="The Analyst's Patience";body="You matched Freud on the major structural decisions — the seduction theory pivot, the Jung rupture, building the movement slowly — but probably diverged on the personal ones. The cigars especially. Most people believe they would quit. Freud didn't, and the evidence from clinical practice is that most people in his position don't.";}else if(pct>=0.375){title="The Scientific Mind";body="You consistently chose the more scientifically rigorous options — retracting the cocaine paper, holding the seduction theory, seeking institutional validation. These are defensible. Freud's actual path was murkier and more productive. He moved on without full retractions, pivoted without announcing pivots, and built something from the mud of his uncertainty.";}else{title="The Different Path";body="You chose transparency, recantation, and scientific rigor at almost every turn. These are admirable impulses. Whether they would have produced psychoanalysis — or something better — is genuinely unknowable. Freud was not transparent, and psychoanalysis was not scientifically rigorous. It was also the most influential theory of mind of the 20th century."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

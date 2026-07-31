@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Isaac Newton?</title>
+<meta name="description" content="He invented calculus, explained gravity, and described light — all before age 26. Then sat on it for 20 years. Then spent 30 years trying to turn lead into gold. 8 decisions.">
+<meta property="og:title" content="What Would You Do If You Were Isaac Newton?">
+<meta property="og:description" content="8 decisions across the life of the man who may have been the greatest scientist in history — and spent half his life on alchemy and theology instead.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/newton-simulator.html">
+<style>
+:root{
+  --bg:#F8F4F0;--card:#FDFBF9;--ink:#120808;--muted:#6A5050;--line:#D8CCBC;
+  --accent:#7A1E2E;--accent-bg:#F8EEED;
+  --right:#2A6B4B;--right-bg:#E8F5EE;--wrong:#8B2020;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(248,244,240,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#2A1010;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #D8B0B0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#5A1A1A;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#FFF4F4;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.3);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#2A1010;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#FFF4F4;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #D8B0B0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#2A1010;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.quote-block{background:var(--ink);color:#F8F0F0;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#907070;margin-top:12px;font-family:var(--mono);}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#2A1010;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#FFF4F4;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #D8B0B0;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.cta-box{background:var(--accent);color:#FFF4F4;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#FFB0B0;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Isaac Newton</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #18</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Newton?</h1>
+  <p class="cover-sub">Before age 26, during a plague year alone in the countryside, he invented calculus, described the laws of motion, explained gravity, and discovered that white light contains all colors. Then he sat on most of it for 20 years. Then he spent 30 more years trying to turn lead into gold. <strong>8 decisions — what would you have done with a mind like that?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Isaac Newton</strong> (1643–1727) · English mathematician and physicist · Invented calculus (independently of Leibniz) · Formulated the laws of motion and universal gravitation · Published <em>Principia Mathematica</em> (1687), considered the greatest scientific book ever written · Warden and Master of the Royal Mint · President of the Royal Society · Also wrote more pages on alchemy and biblical prophecy than on physics · Never married · Possibly a virgin his entire life.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1665, Woolsthorpe</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Plague Year</span></div>
+<div class="year-banner">1665</div>
+<div class="timeline-dot">Woolsthorpe Manor, Lincolnshire · Age 22</div>
+<div class="narrative">
+  <p>The Great Plague has arrived in Cambridge. The university has closed. You are sent home to your mother's farm at Woolsthorpe — a manor in Lincolnshire, a small stone house, an apple orchard, fields. You are 22. You have no laboratory, no colleagues, no supervisor, no deadlines.</p>
+  <p>You have notebooks, a prism, some lenses, and an almost frightening ability to concentrate on a problem until it breaks. You will spend 18 months here, largely alone.</p>
+  <p>In those 18 months, you will: invent the mathematics of calculus (you call it "the method of fluxions"). Derive the law of universal gravitation from first principles after watching an apple fall in the orchard. Discover that white light is not pure but is composed of all colors of the spectrum. Begin the foundations of what will become the Principia Mathematica.</p>
+  <p>You write almost none of this down in publishable form. You fill private notebooks in a cramped hand. When Cambridge reopens, you will return and tell almost no one what you have done.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Notebooks</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have made discoveries that may rewrite the foundations of science. You are 22, unknown, with no academic position. Do you publish immediately?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Publish now. The ideas are revolutionary. The sooner they are out, the sooner they can be tested, refined, and built upon. Sitting on them is wasteful.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">B</span><span class="dopt-body">Continue developing the ideas privately until they are complete and unassailable. You will not publish something that can be criticized before you have answered every possible objection yourself.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">Share the ideas with your supervisor and a small circle of trusted mathematicians, but hold off on formal publication until you have a university position to give you credibility.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Newton actually did</div>
+      <p><strong>You discover gravity, invent calculus, and describe the nature of light — all before age 26 — then tell almost no one and return to Cambridge as though nothing happened.</strong> Newton sat on his discoveries for years. He shared calculus with almost no one. He told virtually no one about the gravity work. He returned to Cambridge, became a Fellow, was appointed Lucasian Professor of Mathematics at 26, and continued working privately. His reluctance to publish came from a deep, almost paranoid fear of criticism and priority disputes. It was not false modesty — he genuinely could not bear the thought of someone attacking his ideas before he considered them finished. He would eventually be forced to publish by the persistence of Edmund Halley (of Halley's Comet), who essentially commissioned the Principia and paid for its printing himself in 1687, twenty years after the plague year.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Prism</span></div>
+<div class="year-banner">1672</div>
+<div class="timeline-dot">Cambridge · Age 29</div>
+<div class="narrative">
+  <p>You have published your first major scientific paper — a letter to the Royal Society describing your experiments with prisms and the nature of light. You have shown, conclusively, that white light is not pure but is a mixture of all colors, each of which refracts at a different angle. This is not what anyone believed. The established theory, held by Robert Hooke and others, was that colors were modifications of white light — additions or distortions. You have shown they are components.</p>
+  <p>Hooke has written a dismissive response. He says your experiments are nothing new and your conclusions are unproven. You have been waiting for this — the public criticism you feared. Your response is devastating: precise, logical, contemptuous. But the argument is now public. Other critics pile on. You find the experience intolerable.</p>
+  <div class="dialogue">"I intend to be no further solicitous about matters of philosophy," you write to Henry Oldenburg. "And if I am so, this will be the last time."</div>
+  <p>You mean it. You want to withdraw from public science entirely.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — After the First Attack</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Hooke has attacked your optics paper publicly. The experience is intolerable. Do you withdraw from scientific publication?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">A</span><span class="dopt-body">Largely withdraw. Continue the work privately but stop seeking publication. The ideas will be there when you are ready to defend them absolutely. The public argument is not worth it.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">Fight back publicly and vigorously. Science advances through open argument. If Hooke is wrong, demonstrate it in print until no one can doubt it.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Find allies at the Royal Society who will defend your work. Use the institutional structure rather than engaging in personal back-and-forth with Hooke.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Newton actually did</div>
+      <p><strong>After Hooke's public attack, you withdraw from scientific publication for 15 years — and when Hooke dies in 1703, every authenticated portrait of him mysteriously vanishes from the Royal Society's records.</strong> Newton largely withdrew from publication after the optics dispute. He spent the next several years working almost entirely in private, going deeper into alchemy, theology, and mathematics. He did not publish another major work for 15 years. His feud with Hooke was never resolved — when Hooke died in 1703, Newton became President of the Royal Society and some historians believe he systematically erased Hooke from the historical record: there is no authenticated portrait of Hooke in existence, and several contemporaries noted that materials relating to Hooke disappeared during Newton's presidency.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>If I have seen further, it is by standing on the shoulders of giants.</q>
+  <div class="q-attr">— Isaac Newton, letter to Robert Hooke, 1675 (possibly intended as a pointed slight at the short-statured Hooke)</div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Principia</span></div>
+<div class="year-banner">1684</div>
+<div class="timeline-dot">Cambridge · Age 41</div>
+<div class="narrative">
+  <p>Edmund Halley — astronomer, future predictor of the comet that bears his name — comes to visit you at Cambridge. He asks you a question that has been puzzling him and his colleagues: what shape would the orbit of a planet be if the force of attraction toward the sun decreased with the square of the distance?</p>
+  <p>You answer immediately: an ellipse. Halley asks how you know. You say you calculated it years ago. He asks to see the calculation. You tell him you cannot find the paper. You will redo it and send it to him.</p>
+  <p>What you send him three months later is not just the calculation. It is the beginning of what will become the Principia Mathematica — a unified mathematical description of the physical universe. Halley reads it and understands immediately that this is the most important scientific document ever produced. He travels back to Cambridge and begs you to let him publish it.</p>
+  <p>You have been sitting on the foundational ideas for 20 years. Hooke now claims that the inverse-square law was his idea and you have stolen it. You are furious.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — Publish the Principia</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Halley wants to publish your masterwork. Hooke is claiming priority. You have been sitting on these ideas for 20 years. Do you finally publish?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Refuse. Hooke's claim of priority will taint the publication. Wait until the priority dispute is resolved in your favor before releasing the book.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">B</span><span class="dopt-body">Publish — but remove all references to Hooke from the manuscript. Let the work speak for itself without giving him the satisfaction of acknowledgment.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">Publish with a generous acknowledgment of Hooke's contribution to the inverse-square idea. Priority disputes are petty and beneath the work.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Newton actually did</div>
+      <p><strong>You publish the Principia in 1687 — Halley pays the printing costs himself. Every reference to Hooke has been removed from the manuscript. Hooke dies in 1703 and every authenticated portrait of him then disappears from the Royal Society's records.</strong> Newton published the Principia in 1687, with Halley paying the printing costs personally. He removed all acknowledgments of Hooke from the manuscript — not one mention of Hooke remained in the final version, despite references that had existed in early drafts. The Principia described the laws of motion, universal gravitation, the orbits of planets and comets, tidal theory, and the speed of sound. It was immediately recognized as revolutionary. Leibniz, who had independently invented calculus, said it was the work of the greatest mind that ever lived. It was dedicated to the Royal Society. Hooke received no credit and died bitter six years before Newton — who reportedly became notably more sociable immediately after Hooke's death in 1703.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Alchemy</span></div>
+<div class="year-banner">1690</div>
+<div class="timeline-dot">Cambridge · Age 47</div>
+<div class="narrative">
+  <p>You have written more words about alchemy than about physics. Your alchemical notebooks — which you kept strictly secret your entire life, because alchemy was technically illegal in England — contain over a million words. You have built a furnace in your garden and conducted experiments for decades. You are looking for the Philosopher's Stone. You believe it is possible to transmute base metals into gold.</p>
+  <p>You are also writing extensively about biblical prophecy. You believe the Book of Daniel and the Book of Revelation contain encoded predictions about history and the future. You have dated the end of the world — your estimate, based on detailed calculations from scripture, is not before 2060.</p>
+  <p>Your theological writings are even more secret than your alchemical ones: you have concluded, after 30 years of study, that the doctrine of the Trinity is a fraud introduced into Christianity in the 4th century. You believe Jesus was not God. This is heresy. If published, it would cost you everything — your Cambridge fellowship requires you to be ordained in the Church of England, which you have repeatedly avoided and been given special exceptions from.</p>
+  <p>A colleague discovers your alchemical notebooks. He asks what you are doing.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Secret Work</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have spent 30 years on alchemy and heterodox theology that you cannot publish. Is this how you should be spending the greatest scientific mind alive?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Stop the alchemy. It is a dead end and you know it. The time would be better spent on mathematics or optics — areas where your methods actually work.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">B</span><span class="dopt-body">Continue. You do not yet understand why the alchemy fails. Understanding failure is also understanding. The universe has laws you have not discovered yet — the same method that found gravity may find other things.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">Publish the theological work anonymously. The alchemy is a private obsession. But the theology — that the Trinity is a historical forgery — is scholarship that the world should have, even if you can't sign it.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What Newton actually did</div>
+      <p><strong>You write over a million words on alchemy and biblical prophecy — more than on all your physics combined — in notebooks you keep secret because alchemy is illegal in England. When they are auctioned in 1936, John Maynard Keynes reads them and calls you the last of the magicians.</strong> Newton continued both. He never published his alchemical or theological work in his lifetime. After his death, John Maynard Keynes bought a trunk of Newton's alchemical papers at auction and read them. Keynes then wrote his famous essay: "Newton was not the first of the age of reason. He was the last of the magicians." Modern scientists have found something stranger: Newton's alchemical experiments, while they never produced gold, did include careful observations about chemical processes that anticipate modern chemistry. He may have been one of the last people to attempt to unify the physical and the spiritual into a single system. He was also, very likely, slowly poisoning himself with mercury from his furnace experiments — which may explain the mental breakdown that followed in 1693.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Breakdown</span></div>
+<div class="year-banner">1693</div>
+<div class="timeline-dot">Cambridge · Age 50</div>
+<div class="narrative">
+  <p>Something has gone very wrong. You have been writing letters to friends — Samuel Pepys, John Locke — that are incoherent, accusatory, paranoid. You accuse Locke of trying to "embroil" you with women. You tell Pepys you have neither ate nor slept well for a twelvemonth. Your mental state has collapsed in a way that frightens everyone who knows you.</p>
+  <p>Historians have debated what happened. Mercury poisoning from your alchemy experiments is one theory — examination of your hair centuries later found mercury levels 40 times higher than normal. A nervous breakdown from overwork and social isolation is another. A profound loneliness, possibly following the end of a close friendship, is a third.</p>
+  <p>You recover over the following year. But you never return to serious original scientific work. The greatest mind in science — at age 50, with possibly decades of productive life ahead — essentially stops doing science.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — After the Breakdown</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have recovered but something fundamental has shifted. Science no longer holds you the way it did. What do you do with the rest of your life?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Force yourself back to science. The work is incomplete — there are still problems in optics and mathematics you have not solved. Discipline yourself back to the desk.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">Accept the offer from the government: leave Cambridge and become Warden of the Royal Mint. Use your analytical mind on a completely different problem — the reliability of England's currency.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">Retire to your theological and alchemical work entirely. The public science has been done. Spend the remaining years on the secret work you have always found more meaningful.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Newton actually did</div>
+      <p><strong>You have your mental breakdown at fifty — likely from chronic mercury poisoning from your own furnace experiments — then move to London, take charge of England's currency crisis, and send twenty-eight counterfeiters to the gallows. You never return to original scientific research.</strong> Newton accepted the appointment as Warden of the Royal Mint in 1696, moving to London. He took the job with the same obsessive intensity he had brought to physics. England's currency was in crisis — coins were being clipped and counterfeited at a rate that threatened the economy. Newton reorganized the mint, prosecuted counterfeiters with a ferocity that sent 28 people to the gallows, and oversaw the Great Recoinage that replaced all of England's clipped coins. He became Master of the Mint in 1699, a position he held for life. He was extraordinarily good at it. He never returned to original scientific research.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Counterfeiters</span></div>
+<div class="year-banner">1699</div>
+<div class="timeline-dot">The Tower of London, Royal Mint · Age 56</div>
+<div class="narrative">
+  <p>You have been methodically hunting counterfeiters. England's currency counterfeiting problem is severe, and you have brought to it the same systematic approach you brought to physics. You have built a network of informants. You attend executions. You have personally interrogated suspects in taverns, prisons, and brothels, sometimes in disguise. You are, in some senses, running a detective operation.</p>
+  <p>The most skilled counterfeiter in England is William Chaloner — a charming, brilliant con man who has fooled the Mint before and who has publicly claimed that he, not Newton, knows how to reform the currency. He has accused Newton of corruption. He has friends in Parliament.</p>
+  <p>You have spent three years building a case against Chaloner. You now have it. He will hang.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Chaloner</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Chaloner has embarrassed you publicly and challenged your competence. You have enough evidence to prosecute him. What drives your pursuit of him?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Pure duty. Counterfeiting threatens the stability of the realm. The personal insults are irrelevant — this is about the law and the currency.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">B</span><span class="dopt-body">Both duty and personal score-settling — and you know it. The man insulted you publicly, and you will not let that go. But the prosecution itself is legitimate regardless of your personal motivation.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">Show mercy once the case is built. A life sentence serves the law's purpose. The gallows is unnecessary, and Chaloner's public humiliation is already complete.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What Newton actually did</div>
+      <p><strong>William Chaloner publicly accuses you of corruption and incompetence. You spend three years building a case against him, personally interrogating witnesses in taverns, prisons, and brothels — sometimes in disguise. He is convicted, hanged, and drawn and quartered at Tyburn in 1699. You attend to confirm the sentence is carried out.</strong> Newton pursued Chaloner with a ferocity that went beyond professional duty. He personally wrote the brief against him, gathered evidence across multiple jurisdictions, and ensured there was no escape from the charge. Chaloner was convicted, hanged, and drawn and quartered at Tyburn in 1699. Newton attended to make sure it was carried out. He sent 28 people to their deaths during his time at the Mint. His biographer Richard Westfall wrote that Newton "brought to the persecution of counterfeiters the same avenging wrath he directed at anyone who questioned his priority or his character." He was, in this as in science, absolutely unforgiving.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · Leibniz</span></div>
+<div class="year-banner">1712</div>
+<div class="timeline-dot">London, Royal Society · Age 69</div>
+<div class="narrative">
+  <p>Gottfried Wilhelm Leibniz, the German mathematician, invented calculus independently of you — probably around 1675, after you had already done so in 1666 but before you published anything. His notation (which we still use today: dy/dx, the integral sign) is actually superior to yours. He published first.</p>
+  <p>You have been at war with Leibniz over the priority of calculus for a decade. The dispute has consumed European mathematics. Now, as President of the Royal Society, you have appointed a committee to investigate the priority question.</p>
+  <p>You have also secretly written the committee's final report yourself, while nominally letting the committee produce it independently. The report concludes that you invented calculus first and that Leibniz is a plagiarist. The report does not mention that you wrote it.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Committee Report</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have secretly written the Royal Society's report on the calculus dispute — a report that finds in your favor. Is this acceptable?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Yes. You are right about the priority — you did invent it first. The fact that you wrote the report yourself is simply efficiency. The conclusion is correct regardless of who drafted it.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">It is wrong and you know it. But you do it anyway, because you cannot bear to let Leibniz have the credit and you have the institutional power to prevent it.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">Recuse yourself. The Royal Society cannot run an honest investigation into a dispute involving its president. Appoint an independent European committee with no stake in the outcome.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Newton actually did</div>
+      <p><strong>You are President of the Royal Society and have appointed a committee to investigate whether you or Leibniz invented calculus. You secretly write the committee's report yourself. The report concludes you invented it first and that Leibniz is a plagiarist. Leibniz dies in 1716, partially broken by the dispute. Newton reportedly said: "I broke his heart."</strong> Newton wrote the report himself and published it under the committee's name. Leibniz died in 1716, partially broken by the dispute and largely ignored by his own patron, the Elector of Hanover, who had just become King George I of England — Newton's territory. Newton reportedly said, of defeating Leibniz: "I broke his heart." The modern historical consensus is that both men invented calculus independently, that Leibniz's notation was better, and that Newton's behavior in the priority dispute was one of the ugliest episodes in the history of science. Newton was right about the priority question. He was completely wrong in how he pursued it.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Apple</span></div>
+<div class="year-banner">1726</div>
+<div class="timeline-dot">London · Age 83</div>
+<div class="narrative">
+  <p>You are 83, one year before your death. You are still sharp. You are still working on revisions to the Principia and your optical work. You have never married. You have, as far as anyone knows, never had a romantic relationship. You have lived in your own mind for more than 80 years.</p>
+  <p>A young antiquarian named William Stukeley visits you and records what you say. You tell him the story of the apple — watching one fall in the orchard at Woolsthorpe during the plague year, which led you to wonder why apples always fall perpendicularly to the ground. "Why should it not go sideways, or upwards? Assuredly, the reason is that the Earth draws it."</p>
+  <p>This is not quite the story of a sudden revelation — you developed gravity over years of calculation. But the apple is true, and the moment of wondering is true. At 83, sitting with Stukeley, you are the most famous scientist who has ever lived. The Principia has remade the world. Your portrait hangs in institutions across Europe.</p>
+  <p>Stukeley asks what you consider your greatest achievement.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Greatest Work</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Looking back at 83 — the Principia, the alchemy, the Mint, the calculus war — what was the most important thing you did?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">The Principia. There is nothing else to say. It is the greatest scientific work in history. Everything else is secondary.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Reforming the currency. The Principia was pure theory. The Mint work actually changed the daily lives of ordinary people — something the physics never directly did.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">You have not found it yet. The secret work — the alchemy, the theology — remains unresolved. What lies beneath matter and meaning is still the real question. The physics described the surface. You never reached the bottom.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What Newton actually said</div>
+      <p><strong>At eighty-three, one year before you die, you tell William Stukeley that you seem to yourself like a boy on the sea-shore finding smoother pebbles while the great ocean of truth lies all undiscovered before you. You have just described the laws of the universe. You are still not satisfied.</strong> Newton told Stukeley: "I do not know what I may appear to the world, but to myself I seem to have been only like a boy playing on the sea-shore, and diverting myself in now and then finding a smoother pebble or a prettier shell than ordinary, whilst the great ocean of truth lay all undiscovered before me." He died on March 31, 1727. He was given a state funeral at Westminster Abbey — the first scientist ever so honored. His pallbearers included dukes and earls. Voltaire attended. 7,000 pages of unpublished alchemical and theological manuscripts went into a trunk that Keynes eventually bought at auction in 1936. The ocean of truth remained, as Newton said, largely undiscovered. It still does.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Newton's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="cta-box">
+  <p>Newton described himself as a boy on a beach finding pretty shells while the ocean of truth lay undiscovered before him. He had just described the universe. Some people will never be satisfied — not by gravity, not by calculus, not by the Principia. Newton was one of them. <strong>Step into another life.</strong></p>
+  <p><a href="simulators.html">→ All Life Simulators — Darwin, Einstein, Van Gogh, Tesla, Da Vinci and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/darwin-simulator.html" style="color:var(--accent)">Darwin Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Newton";body="Eight decisions and you matched Newton at almost every turn — including the ones that make him morally complicated. Sitting on discoveries for 20 years. Writing the committee report yourself. Pursuing Leibniz past the point of decency. Newton was not a likable man. He was a relentless one. You understood the difference.";}else if(pct>=0.625){title="You Understood the Caution";body="You matched Newton on the decisions requiring patience and secrecy — sitting on the plague-year discoveries, withdrawing after Hooke's attack, following the alchemy into unexplained territory. Where you likely diverged: the Leibniz dispute and Chaloner. Newton's willingness to use institutional power vindictively is the least sympathetic part of his biography and the hardest to match.";}else if(pct>=0.375){title="A More Generous Scientist";body="You would have published earlier, acknowledged Leibniz more fairly, shown Chaloner some mercy. These make you a better person than Newton and possibly a less influential scientist. Newton's refusal to give an inch — on priority, on credit, on any public challenge — was inseparable from the focused ferocity that produced the Principia.";}else{title="The Open Path";body="You consistently chose generosity and openness over Newton's characteristic secrecy and vindictiveness. These are better human impulses. The question Newton's life raises is whether the Principia could have been written by a more generous man — or whether the same stubbornness that kept him from publishing for 20 years was also what made the ideas unassailable when they finally appeared."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

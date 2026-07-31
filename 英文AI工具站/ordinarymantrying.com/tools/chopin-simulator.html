@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Frédéric Chopin Life Simulator — The Exile Who Never Came Home</title>
+<meta name="description" content="Make the same decisions as Frédéric Chopin — from Warsaw to Paris, from love to tuberculosis. Could you compose masterpieces while dying?">
+<style>
+:root{
+  --bg:#F0EDF5;--card:#F7F4FA;--ink:#120818;--muted:#604880;--line:#DCCCE8;
+  --accent:#3A1060;--accent-bg:#EBE4F5;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Poland → France · 1810–1849</div>
+  <h1>Could You Have Been<br>Frédéric Chopin?</h1>
+  <div class="cover-sub">He left Poland at 20 and never came back. He coughed blood while composing. He loved in secret, died in poverty, and left 230 works that defined an entire era of music. Eight decisions. Could you have made them?</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">230+</div><div class="stat-l">Works composed</div></div>
+    <div class="stat"><div class="stat-n">39</div><div class="stat-l">Years of life</div></div>
+    <div class="stat"><div class="stat-n">0</div><div class="stat-l">Times he returned to Poland</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Warsaw, November 1830 · Age 20</div>
+<p class="narrative">Warsaw is trembling. A revolution against Russian rule is about to break out — young men are sharpening sabres, printing pamphlets, whispering plans in candlelit rooms. You are 20 years old, a prodigy who has played before tsars and been called "the greatest musical talent in Europe." Your friends are preparing to fight. Your teachers say you must leave — that your talent belongs to the world, not to a single doomed uprising. If you go, you may never come back. If you stay, you may never compose again.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · Leave or Stay</div>
+  <div class="d-situation">Your country is about to rise up against its occupiers. Your piano is packed. The carriage is waiting. What do you do?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Go — carry Poland in your music instead of on your back in a fight you cannot win</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. Stay — you cannot flee while your countrymen bleed</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Go, but only to Vienna — stay close, within reach of home</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Chopin left — and never returned. The Warsaw uprising was crushed within months. He went to Paris, where he would spend the rest of his life as a celebrated exile. He wept when he heard Warsaw had fallen, filled notebooks with grief, and composed the "Revolutionary" Étude — a storm of left-hand fury in the bass, mourning and furious at once. He turned absence into art. His Polonaises and Mazurkas became musical acts of national memory — keeping Poland alive in Europe's drawing rooms long after the uprising died.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Paris, 1832 · The Debut</div>
+<p class="narrative">Your first Paris concert is a modest success — praised by critics, noticed by the right people. But you leave the stage feeling hollow. The concert hall swallowed your most delicate phrases. The piano's whisper became a murmur in six hundred seats; the nuances you spent years perfecting vanished into the rafters. Later that week, a countess invites you to play her salon — thirty aristocrats in a gilded drawing room, a candelabra on the piano, every breath audible. Here, every note arrives exactly as you intended it.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · Salons vs Concert Halls</div>
+  <div class="d-situation">Concert halls offer fame and reach. Salons offer intimacy and artistic control. Both offer income. Which becomes your stage?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Choose the salon — your music breathes in intimate spaces, not cathedrals</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Conquer the concert hall — the large venue means more money and more impact</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Stop performing entirely — you hate the stage; just compose</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Chopin gave perhaps twenty public concerts in his entire lifetime — an extraordinarily small number for a professional pianist. He chose salons. His performances became exclusive, legendary events — Franz Liszt said hearing Chopin was like hearing a poet speak directly into your ear. Chopin taught wealthy students by day, played salons by evening, and composed in between. He called concert halls "a necessary torture." The salon was where he was most himself.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Paris, 1830s · The Nocturne</div>
+<p class="narrative">An Irish composer named John Field invented a piano form called the "Nocturne" — slow, lyrical, meant to evoke night and reverie. You play Field's Nocturnes. You admire them. You also see, with cold clarity, exactly what they could become. Field's pieces are beautiful but thin. Yours are deeper, stranger, more harmonically daring. The question is whether to acknowledge that you're building on another man's invention — or simply let the music speak for itself.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · Building on Another's Form</div>
+  <div class="d-situation">You're transforming Field's invention into something incomparably greater. How do you handle the relationship between influence and originality?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Acknowledge Field but transform the form so completely it becomes unrecognizably your own</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Rename the form entirely to avoid any comparison with Field</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Abandon Nocturnes — originality means not building on someone else's invention</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Chopin kept the name and transformed everything else. He composed 21 Nocturnes — and today when you say "Nocturne," you mean Chopin, not Field. Field himself reportedly heard a Chopin Nocturne played and said, acidly: "Talent de chambre" (a bedroom talent). He missed the point. Chopin's Nocturnes introduced chromatic harmonies, long-breathed melodic lines, and emotional depths that Field never approached. Taking an existing form and making it definitively yours — that's not imitation. That's mastery.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Paris, 1836 · George Sand</div>
+<p class="narrative">You are introduced to Aurore Dupin — novelist, who publishes under the name George Sand. She is everything you are not: loud, politically radical, smokes cigars, wears trousers, has had public affairs with Musset and Liszt. You find her coarse. She finds you fascinating. She pursues you openly and aggressively. You resist for two years. Then, slowly, you don't.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Incompatible Love</div>
+  <div class="d-situation">She is your opposite in every visible way. But she pursues you, and you feel something. Do you begin the relationship?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Yes — the incompatibility is real, but so is the pull, and she will give you your most creative years</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. No — the personality clash is too great; maintain a friendly distance</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Yes, but immediately try to change her to match your sensibilities</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Chopin and George Sand were together nine years (1838–1847). She created the stable domestic environment he never had — organizing his life, caring for him during his tuberculosis episodes, protecting his composing time. His most celebrated works — the Ballades, Scherzos, Nocturnes, the Sonatas — were written during these nine years. Sand later wrote, rather coldly, that she had been "his mother, not his lover." The relationship was lopsided and exhausting. It was also the source of his greatest music.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Majorca, Winter 1838–1839</div>
+<p class="narrative">You and Sand have fled to Majorca for the winter — warmer climate, cheaper living, privacy. It turns into a catastrophe. The damp monastery you rent is frigid. Rain hammers the stone walls. You cough blood into your handkerchief and hide it from Sand. The locals, terrified of tuberculosis, shun you; your rented piano hasn't arrived from Paris; when it does, it costs a fortune in customs duty. And yet. In this miserable cold room, something is happening on the manuscript paper.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · Suffering Through the Work</div>
+  <div class="d-situation">You are ill, cold, isolated, and homesick. You are also composing some of the most important music of your life. Stay or leave?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Stay until the Preludes are finished — the suffering is inseparable from the music</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. Leave immediately — health before art; you can finish the Preludes in Paris</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Stay but stop pushing yourself — rest first, compose when you're stronger</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Chopin stayed until he finished the 24 Preludes — one for each major and minor key, 24 perfect miniatures ranging from 45 seconds to several minutes. The "Raindrop" Prelude was supposedly composed while listening to raindrops hit the monastery roof. He left Majorca in February 1839, so ill he could barely walk, carried to the boat on a stretcher. The Preludes became one of the most influential piano collections ever written. He paid for them with his health.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Paris, 1840s · The Polish Question</div>
+<p class="narrative">You are famous in Paris — celebrated, sought-after, wealthy enough. You are also a Pole living under Russian occupation at one remove — an exile who cannot go home. Every Polonaise you write is an act of remembrance. Every Mazurka is a folk dance reborn as high art. Aristocrats and revolutionaries both claim you. Polish exiles ask you to fundraise publicly. You could make speeches. You could give benefit concerts. You have a platform.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · Music as Politics</div>
+  <div class="d-situation">You have an enormous platform and a homeland under occupation. Should you use your fame to make explicit political statements?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Let the music speak — your Polonaises and Mazurkas are more powerful than any speech</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Be explicitly political — give your concerts as public fundraisers for Polish independence</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Downplay your Polish identity — you are a Parisian artist now, not an exile</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Chopin rarely made public political statements, but his music was politically understood by everyone who heard it. His Polonaises were banned in Russian-occupied Poland. When he died, his request was that his heart be taken to Warsaw — his body would be buried in Paris, but his heart went home. It still rests in a column in the Church of the Holy Cross in Warsaw. He chose the most powerful political statement available to him: the music itself.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · Paris, 1847 · The End of Sand</div>
+<p class="narrative">George Sand has ended the relationship — coldly, publicly, over a dispute involving her children. She publishes a novel shortly after that many read as a vicious portrait of you. You are devastated in a way you cannot explain to people who didn't understand the relationship. Your tuberculosis, which had been manageable under her care, now advances rapidly. You stop composing almost entirely. There is no dramatic breakdown — you simply go quiet.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · Grief and Silence</div>
+  <div class="d-situation">After the break, you compose almost nothing for nearly two years. Critics and friends urge you to work through the pain. Should you force yourself?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. Let the silence be — this is grief, not laziness, and forced art is worse than silence</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. Force yourself to compose through the pain — idleness makes the grief worse</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. Burn your manuscripts in grief — a clean break from everything</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> Chopin barely composed in 1847 and 1848. The works he managed — the Nocturne in E minor (Op. posth.), the Mazurka in F minor — are heartbreaking in their quiet resignation. He was not being lazy. He was dying. His lungs were failing, his hands were stiffening, and the emotional engine that had driven nine years of composition had shut down. He did not force it. He gave the grief its full weight. His silence was the honest response to the truth of his situation.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · England & Scotland, 1848 · The Final Tour</div>
+<p class="narrative">You are dying. Tuberculosis has hollowed you out — you weigh 40 kilograms, you hemorrhage while performing, you sometimes cannot climb a flight of stairs without stopping to catch your breath. And yet you have agreed to tour England and Scotland. Seven months of concerts, lessons, and exhausting travel, in a cold northern climate that punishes your lungs with every breath. You know it may kill you. You need the money — the Revolution of 1848 has scattered your wealthy Parisian students. Your bank account is nearly empty.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · The Final Tour</div>
+  <div class="d-situation">You are gravely ill. You are nearly bankrupt. England is waiting. Do you go?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. Go — you need the income, and perhaps performing is better than waiting alone to die in Paris</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. Refuse — performing while dying is undignified; borrow money from friends instead</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. Go but perform only once or twice — conserve your strength</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> Chopin went to England and Scotland and gave more than 30 concerts and private performances. He returned to Paris in November 1848 barely alive. His Scottish patron Jane Stirling reportedly raised a large sum of money and left it anonymously at his apartment — paying his debts and covering a year's rent without his knowledge. Chopin died in October 1849, at 39. Among his last words was a request that his heart be sent home to Poland. It was.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Chopin Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="bach-simulator.html">
+      <span class="next-name">Johann Sebastian Bach</span>
+      <span class="next-desc">The Baroque master who encoded his own name into the final fugue — and died before finishing it</span>
+    </a>
+    <a class="next-card" href="beethoven-simulator.html">
+      <span class="next-name">Ludwig van Beethoven</span>
+      <span class="next-desc">He went deaf and composed his greatest symphony — without hearing a single note of it</span>
+    </a>
+    <a class="next-card" href="mozart-simulator.html">
+      <span class="next-name">Wolfgang Amadeus Mozart</span>
+      <span class="next-desc">A child prodigy who composed 600 works and died at 35 writing his own requiem</span>
+    </a>
+    <a class="next-card" href="austen-simulator.html">
+      <span class="next-name">Jane Austen</span>
+      <span class="next-desc">Another Romantic-era genius who worked in a constrained form — and changed everything inside it</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators →</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=Math.round(score/TOTAL*100);document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You understand what Chopin understood: that art made under constraint — exile, illness, grief, love — is not weakened by those constraints. It is made from them. You have the rare combination of emotional depth and artistic discipline that produces enduring work.';else if(score>=5)t.textContent='Strong instincts. You grasped most of Chopin\'s choices — the intimacy over scale, the patience with grief, the music as the truest form of statement. A few moments of practical compromise crept in, but you\'d have composed something lasting.';else if(score>=3)t.textContent='You made the safer choices at key moments — the larger halls, the forced productivity, the public persona over the private truth. Those choices might have produced a successful career. They wouldn\'t have produced the Nocturnes.';else t.textContent='You chose security over art, and health over suffering through to the end. Chopin\'s genius was inseparable from his willingness to let his circumstances — exile, love, illness, loss — become his material. Safety would have saved his body and silenced his music.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

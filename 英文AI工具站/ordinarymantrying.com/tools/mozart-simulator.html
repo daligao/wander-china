@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Mozart?</title>
+<meta name="description" content="Child prodigy at 5. Court composer at 17. Broke and free at 25. Dead at 35. 800 works. A pauper's grave. 8 decisions — would you have chosen the music over everything else?">
+<meta property="og:title" content="What Would You Do If You Were Mozart?">
+<meta property="og:description" content="8 decisions across the life of the greatest musical prodigy in history — from child performances for Empress Maria Theresa to a pauper's grave at 35.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/mozart-simulator.html">
+<style>
+:root{
+  --bg:#FAF8F5;--card:#FEFCFA;--ink:#1A1208;--muted:#7A6A50;--line:#DDD5C0;
+  --accent:#6B3A8C;--accent-bg:#F5EEF8;
+  --right:#2A6B4B;--right-bg:#E8F5EE;--wrong:#8B2020;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(250,248,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#2A1A3A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C8A8E0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#4A2A6A;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.15);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#2A1A3A;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C8A8E0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#2A1A3A;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.quote-block{background:var(--ink);color:#F5EFF8;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#9080A0;margin-top:12px;font-family:var(--mono);}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#2A1A3A;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#fff;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C8A8E0;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.cta-box{background:var(--accent);color:#fff;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#D4A0FF;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Wolfgang Amadeus Mozart</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #15</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Mozart?</h1>
+  <p class="cover-sub">He performed for Empress Maria Theresa at age 6. By 17 he was a court composer. At 25 he walked away from the security of aristocratic patronage to write music for the public — and spent the next ten years alternating between triumph and debt. He died at 35, buried in a pauper's grave, with 800 works behind him. <strong>8 decisions. Would you have chosen the music?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Wolfgang Amadeus Mozart</strong> (1756–1791) · Austrian composer · Child prodigy who performed across Europe from age 6 · Composed 800+ works: symphonies, operas, concertos, chamber music · Court musician in Salzburg until age 25 · Moved to Vienna as a freelance composer — the first major composer to attempt this · Died at 35 · Cause of death still debated · <em>The Marriage of Figaro, Don Giovanni, The Magic Flute, Symphony No. 40, Requiem.</em></p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1777, Salzburg</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Tour</span></div>
+<div class="year-banner">1777</div>
+<div class="timeline-dot">Salzburg, Austria · Age 21</div>
+<div class="narrative">
+  <p>You have spent most of your life on the road. As a child you and your sister Nannerl were exhibited across Europe — before kings, emperors, and the Pope. The little prodigy. The miracle child. You performed for Empress Maria Theresa in Vienna at age 6. You composed your first symphony at 8.</p>
+  <p>Now you are 21 and you have been working as a court musician in Salzburg for five years under the Archbishop Colloredo. The Archbishop is not cruel — he is simply conventional, and convention in his court is not kind to ambition. He pays you a modest salary. He tells you what to compose. He does not appreciate you.</p>
+  <p>You have asked permission to leave Salzburg and travel — to find a better position, to audition for courts in Paris and Munich, to see if the world beyond this small city has anything to offer. The Archbishop has denied your request twice. Your father Leopold, who has managed your career your entire life, is anxious. He fears that without the security of a court position, you will drift.</p>
+  <p>You are 21. You are a genius. You are bored. You ask again.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — Leave Salzburg</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Archbishop has denied your travel requests twice. Your father urges patience. Do you push harder to leave?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">A</span><span class="dopt-body">Push harder. Request a formal leave of absence. If denied again, resign the court position entirely. Salzburg is a cage. You need to find the right stage.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Accept the situation. A court position is security. Compose within the constraints — many of the greatest works in history were made under strict limits.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">Focus on private commissions within Salzburg. Build a reputation locally that forces the Archbishop to give you more freedom.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Mozart actually did</div>
+      <p><strong>You leave with your mother, fall in love with the wrong Weber sister in Mannheim, delay the journey to Paris for months, and watch your mother die there while you find no suitable position.</strong> Mozart and his mother left Salzburg in September 1777, his father staying behind — too anxious about his job security to accompany them. They traveled to Munich, Augsburg, and Mannheim, where Mozart fell in love with a singer, Aloysia Weber, and delayed the journey to Paris for months. His father wrote increasingly frantic letters from Salzburg: get to Paris, stop wasting time, think about your career. Mozart eventually went to Paris. His mother died there. He found no suitable permanent position. He returned to Salzburg in January 1779, humiliated, heartbroken, and more determined than ever to leave for good.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Break</span></div>
+<div class="year-banner">1781</div>
+<div class="timeline-dot">Vienna · Age 25</div>
+<div class="narrative">
+  <p>Two years have passed since you returned to Salzburg in defeat. But something has changed: the Archbishop has taken you to Vienna, and Vienna is not Salzburg. Vienna has music everywhere. Vienna has opera, concerts, the nobility that matters. Vienna is where you should be.</p>
+  <p>The Archbishop treats you like a servant. He seats you below the valets at table. He refuses to let you perform at private concerts where you might earn fees. He controls your movements. He does not understand what he has, or does not care.</p>
+  <p>One afternoon you try to deliver a petition requesting your release and are told to wait. You wait. You are made to wait repeatedly — deliberately, as a humiliation. Then, in a confrontation that escalates past the point of no return, the Archbishop's chamberlain Count Arco physically kicks you out of the office.</p>
+  <p>You write to your father that you have been "kicked out" — these are his exact words. Your father is horrified. He writes back urging you to apologize, to swallow your pride, to return to Salzburg. You are 25. You have no position, no certain income, and the most demanding musical city in the world at your feet.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Kick</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have been humiliated by the Archbishop's court. Your father begs you to apologize and return. What do you do?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Apologize. You cannot afford to be without patronage. A court position — any court position — is better than freelance uncertainty in a city as expensive as Vienna.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">Stay in Vienna. Write to your father that you cannot return to a man who has treated you this way. You will make your living from the public, not from courts.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Look for another court position first, then resign formally once you have something secure to move to.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Mozart actually did</div>
+      <p><strong>You stay in Vienna, refuse the apology your father begs for, and spend the next ten years alternating between triumphant premieres and letters to friends requesting small loans.</strong> Mozart stayed in Vienna. He wrote his father one of the most eloquent letters in musical history, explaining that he could not return to serve a man who had treated him as less than a servant. He would make his living as a freelance composer — something virtually no serious composer had attempted. He gave lessons, performed in concerts, wrote on commission, and composed at a rate that staggered observers. For several years it worked brilliantly. His Vienna period produced The Marriage of Figaro, Don Giovanni, Così fan tutte, the last three symphonies, and the piano concertos. He was free, he was productive, and he was permanently, cyclically broke.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>Neither a lofty degree of intelligence nor imagination nor both together go to the making of genius. Love, love, love — that is the soul of genius.</q>
+  <div class="q-attr">— Attributed to Mozart</div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Marriage</span></div>
+<div class="year-banner">1782</div>
+<div class="timeline-dot">Vienna · Age 26</div>
+<div class="narrative">
+  <p>Aloysia Weber, the singer you fell in love with in Mannheim, has married someone else. You are now in love with her younger sister, Constanze. You have been living in the Weber household as a lodger. The situation is somewhat awkward — Vienna gossips, and gossip about a young composer living in a house with unmarried daughters has reached your father's ears in Salzburg.</p>
+  <p>Constanze's mother has required you to sign a legal document promising to marry Constanze within three years or pay her an annual sum if you don't. You signed it under pressure and then Constanze tore it up herself, saying she trusted you and didn't want a contract.</p>
+  <p>Your father is against the marriage. He has never met Constanze and considers the Weber family scheming opportunists. He writes that you are throwing your career away on a woman of no social standing, that the marriage will saddle you with domestic responsibilities that will ruin your creative life.</p>
+  <p>You are in love. Vienna is expensive. You need a home of your own.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — Constanze</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Your father is against the marriage. He may cut off his support if you proceed. Do you marry Constanze Weber?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">A</span><span class="dopt-body">Marry her. You are 26 and capable of making your own decisions. Your father's approval is not required. Constanze is your choice.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Wait until your father approves, or until you have enough income that his support doesn't matter. Alienating him now is a real financial risk.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">Bring Constanze to Salzburg first so your father can meet her. If he sees who she actually is, he may relent.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Mozart actually did</div>
+      <p><strong>You marry Constanze without your father's consent — and the letters you write explaining why remain among the most moving things you ever put on paper.</strong> Mozart married Constanze on August 4, 1782, before his father gave consent. Leopold Mozart was furious and remained cool toward Constanze for years. History has treated Constanze harshly — often portrayed as frivolous and a poor manager of Mozart's finances. More recent scholarship is gentler: she was a practical woman who survived her husband by 50 years, worked hard to protect and publish his manuscripts after his death, and gave six birth to children, four of whom died in infancy. Whatever the marriage's practical complications, Mozart wrote to his father that Constanze was "not homely, but she is no beauty either" — and then spent the rest of the letter describing her kind heart, her capacity for love, and why he could not imagine his life without her.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Prague or Vienna</span></div>
+<div class="year-banner">1787</div>
+<div class="timeline-dot">Vienna → Prague · Age 31</div>
+<div class="narrative">
+  <p>The Marriage of Figaro was a sensation in Prague. Vienna received it more coolly — too many notes, the Emperor reportedly said, though he kept coming back. Prague has commissioned a new opera. They want you specifically. They offer good terms.</p>
+  <p>Vienna is where the power is — the Emperor, the nobility, the appointments that could give you financial security. But the Viennese audience is fickle and has recently moved on to lesser composers who give them what they want more easily.</p>
+  <p>Prague loves you without reservation. They sing your tunes in the streets. When you arrive the city goes mad. You write to a friend: "My Praguers understand me."</p>
+  <p>You could cultivate Vienna, where a court appointment would solve your money problems permanently. Or you could go to Prague, write what you want to write, and remain dependent on commissions and concert income for the rest of your career.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — Prague</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Prague offers you everything you want artistically. Vienna offers financial security if you play the politics correctly. Which city do you serve?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">A</span><span class="dopt-body">Accept the Prague commission. Write Don Giovanni for an audience that understands you. Vienna will come around eventually.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Focus on Vienna. Lobby for the imperial court appointment. A stable income in the capital will let you write whatever you want without financial anxiety.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">Accept both. Write the Prague opera and perform in Vienna simultaneously. The workload is crushing but the income from both is necessary.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What Mozart actually did</div>
+      <p><strong>You go to Prague, write Don Giovanni, and receive the longest ovation of your life — then Vienna hands you a job writing dance music for court balls at less than half what your predecessor earned.</strong> Mozart went to Prague and wrote Don Giovanni — widely considered one of the greatest operas ever composed. He conducted the premiere himself in October 1787, and Prague gave it a standing ovation so prolonged that he had to return to the stage three times. Vienna eventually got the opera too, and received it with polite appreciation. Mozart was appointed imperial chamber composer in Vienna shortly after Don Giovanni — at a salary less than half what his predecessor Gluck had received, for a job that required him to write dance music for court balls. He wrote to a friend that the salary was "too much for what I do, too little for what I could do."</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Freemasons</span></div>
+<div class="year-banner">1784</div>
+<div class="timeline-dot">Vienna · Age 28</div>
+<div class="narrative">
+  <p>You have been invited to join a Masonic lodge. Freemasonry in Vienna is fashionable among the enlightened nobility and intellectual class — it promotes reason, brotherhood, and ideals of human equality that fit naturally with your own thinking. Your father is suspicious; the Church regards Masonry with official hostility.</p>
+  <p>But Haydn is a Mason. Many of your most important patrons are Masons. The lodges give you access to networks, audiences, and commissions that an outsider cannot reach. There is a spiritual dimension too — you find yourself drawn to the ritual and the philosophy.</p>
+  <p>Joining will mean navigating the Church's disapproval, your father's anxiety, and the possibility that Emperor Joseph II may move to restrict Masonic activity in Austria.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Lodge</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Joining the Freemasons offers artistic community and professional networks but invites Church disapproval. Do you join?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">A</span><span class="dopt-body">Join. The philosophy aligns with your values. The community will nourish your work. The political risks are manageable.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">Decline. The Church connection matters for the patronage system. You cannot afford to be seen as politically suspect.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">Attend as an associate but don't formally join. Get the network benefits without the formal commitment.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Mozart actually did</div>
+      <p><strong>You join, bring your father in the following year, and encode Masonic ritual so thoroughly into The Magic Flute that scholars are still mapping it two centuries later.</strong> Mozart joined the Masonic lodge Zur Wohltätigkeit (Beneficence) in December 1784, rising to the rank of Master Mason within a year. He brought his father into the lodge when Leopold visited Vienna in 1785. Masonic themes pervaded his later music — The Magic Flute (1791) is essentially a Masonic allegory with the lodge's rituals thinly encoded in the libretto. His Masonic Funeral Music (K. 477) is among his most deeply felt works. When Emperor Joseph II restricted Masonic lodges in 1785, Mozart's lodge merged with others and continued. He remained a committed Mason until his death. The network proved valuable; the artistic inspiration proved permanent.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Father</span></div>
+<div class="year-banner">1787</div>
+<div class="timeline-dot">Vienna · Age 31</div>
+<div class="narrative">
+  <p>Your father Leopold is dying in Salzburg. He is 67. You have not seen him in two years. He has been ill for months and the letters have grown shorter.</p>
+  <p>You are in Vienna, deep in the composition of Don Giovanni. The Prague premiere is scheduled for October. You have students, debts, and a pregnant wife. The journey to Salzburg takes several days each way.</p>
+  <p>You write to Leopold: "As death, when we come to consider it closely, is the true goal of our existence, I have formed during the last few years such close relations with this best and truest friend of mankind, that his image is not only no longer terrifying to me, but is indeed very soothing and consoling."</p>
+  <p>You do not go to Salzburg.</p>
+  <p>Leopold Mozart dies on May 28, 1787, without seeing his son again.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Journey</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Your father is dying. You are in the middle of composing Don Giovanni. Do you go to Salzburg?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Go immediately. The opera can wait. Nothing you will ever write matters more than seeing your father before he dies. You have weeks, perhaps.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Send word that you will come when the premiere is settled. Leopold would understand — he built your career. He knows what is at stake.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">Write him the most honest letter you can about death and meaning. Pour your heart into it. Then stay in Vienna and finish the opera. You cannot explain why — you simply cannot go.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What Mozart actually did</div>
+      <p><strong>You do not go to Salzburg. You write a letter about death instead — one of the most remarkable letters on mortality ever written by a composer — and stay in Vienna to finish Don Giovanni.</strong> Mozart did not go to Salzburg. He wrote the letter about death instead — one of the most remarkable letters on mortality ever written by a composer. Why he didn't go remains one of the most debated questions in his biography. Some historians believe he genuinely could not face it. Others note practical constraints — money, the premiere, Constanze's pregnancy. What is known: he grieved deeply. He wrote to his friend Gottfried von Jacquin that the news of his father's death had left him devastated and unable to work for days. Don Giovanni premiered in Prague that October. It contains some of the most searching music Mozart ever wrote about mortality, judgment, and what awaits us after death.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Stranger</span></div>
+<div class="year-banner">1791</div>
+<div class="timeline-dot">Vienna · Age 35</div>
+<div class="narrative">
+  <p>A messenger in gray arrives at your door with a commission: write a Requiem Mass, anonymously. The patron will remain unknown. The fee is generous. You are told more will follow upon delivery.</p>
+  <p>You are already overextended — you are completing The Magic Flute for a popular Viennese theater, you are working on a clarinet concerto, you are sick. You have been sick for months. The illness comes and goes but does not leave entirely.</p>
+  <p>You accept the commission. As you work on the Requiem over the following months, you begin to believe — in your most exhausted, feverish moments — that you are writing it for yourself. That the stranger in gray was a messenger of death. That you will not finish it.</p>
+  <p>The Magic Flute premieres in September to rapturous public response. You are too ill to conduct it properly. The Requiem is unfinished. December arrives.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Requiem</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You are ill and overworked. The mysterious Requiem commission is consuming you. Do you keep working on it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Set the Requiem aside. Focus on recovering your health. The commission can be returned or delayed. Your life is more important than any single work.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">Keep working. You know this piece matters. Whatever the patron's intentions, the music is real. Finish as much as you can while you can still hold the pen.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">Dictate the remaining sections to a student — Süssmayr — and document your intentions in detail. Protect the work even if you cannot finish it personally.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Mozart actually did</div>
+      <p><strong>You keep working from your sickbed, singing the parts to your student and weeping that you will not finish it — and you stop at bar 8 of the Lacrimosa.</strong> Mozart kept working on the Requiem until he physically couldn't. His wife Constanze later recalled him working on it in his final weeks, singing parts to his student Süssmayr from his sickbed and weeping at the thought of not completing it. He died on December 5, 1791, with the Lacrimosa (the eighth movement) unfinished at bar 8. Süssmayr completed the work from Mozart's notes and sketches. The mysterious patron turned out to be Count Franz von Walsegg, an amateur musician who commissioned works secretly and then performed them as his own. Mozart never knew. The Requiem has been performed continuously ever since. Mozart was buried in an unmarked common grave, as was customary for his social class in Vienna. The exact location is unknown.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Last Notes</span></div>
+<div class="year-banner">1791</div>
+<div class="timeline-dot">Vienna · December 4, 1791 · The night before</div>
+<div class="narrative">
+  <p>December 4, 1791. You are thirty-five years old and you know you are dying. The Requiem score is on the bed beside you. Your friends and students have gathered. Someone later recalled that you sang the alto part softly, conducting with your hands, until you could no longer lift them.</p>
+  <p>You have written 626 works catalogued in the Köchel index. Forty-one symphonies. Twenty-seven piano concertos. Eighteen piano sonatas. Twenty-two operas. Requiems, masses, serenades, string quartets, dances. You have been composing since you were four years old.</p>
+  <p>You have also spent more than you earned for most of your adult life. Your estate will leave Constanze with debts. You never obtained the court position that would have given you security. You spent your finest years in Vienna writing music for an audience that sometimes preferred lesser composers.</p>
+  <p>You have no idea that 200 years from now your name will be the first answer most people give when asked to name a classical composer. You do not know about the movies, the merchandise, the babies whose parents play your music in the womb. You know only the score on the bed beside you, and that bar 8 of the Lacrimosa is where you stopped.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Last Question</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Knowing what you know now — would you have traded the freedom and the music for financial security?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Yes. The debt and the anxiety shortened your life. Security might have meant more time — more music. The world lost decades of what you could have written.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Partially. More security, less compromise. You could have served a good patron without surrendering your creative voice entirely.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">No. The work that came from freedom — Don Giovanni, the late symphonies, The Magic Flute, the Requiem — could only have come this way. The price was the life. The music was worth it.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What Mozart's life suggests</div>
+      <p><strong>You die at 35 in an unmarked common grave, never having expressed regret about leaving Salzburg, your final letters discussing music rather than money.</strong> Mozart never expressed regret about leaving Salzburg. His letters from his Vienna years — even the ones begging friends for loans — describe a man who understood exactly what he had traded and accepted the trade. He wrote to his father in 1781: "I am no longer so unfortunate as to be in Salzburg service." His final letters discuss music, not money. What the historical record shows is that the ten years of freedom in Vienna produced the greatest music of his career — possibly the greatest music ever written. Whether a comfortable court appointment in Munich or Paris would have produced the same body of work is unknowable. What we know is that the choice he made produced what it produced.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Mozart's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="cta-box">
+  <p>Mozart chose the music every time the music conflicted with security. He died at 35, broke, in an unmarked grave, having written more great work than most composers produce in 80 years. The question his life poses is still unanswered: what would he have written with more time? <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/index.html#simulators">→ All Life Simulators — Van Gogh, Tesla, Einstein, Beethoven and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/beethoven-simulator.html" style="color:var(--accent)">Beethoven Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Chose the Music Every Time";body="You matched Mozart at the moments that cost the most: leaving Salzburg without a guaranteed landing, staying in Vienna after Count Arco's kick, marrying Constanze without your father's blessing, writing Don Giovanni for Prague over Vienna's political preferences. The hardest call to match is Decision 8 — the willingness to say the life was worth what it cost, knowing it ended at 35 in an unmarked grave. Mozart didn't agonize over this. You don't seem to either.";}else if(pct>=0.625){title="You Understood What He Was Trading";body="You matched Mozart on most of the decisions where the music conflicted with security — the break from Colloredo, the Prague commission, the Masonic lodge. Where you diverged tends to be the personal calls: the marriage your father opposed, the father you didn't visit before he died. Mozart's priorities were unusually clear: the music first, then everything else in whatever order it fell. You followed that logic most of the way.";}else if(pct>=0.375){title="You Would Have Kept the Court Position";body="At most of the key moments you took the option that preserved stability. Stayed with the Archbishop. Waited for the Vienna appointment. Skipped Prague for politics. These choices might have bought a longer life — Haydn lived to 77 under patronage, writing until his eighties. What they wouldn't have bought is Don Giovanni, the final three symphonies, or The Magic Flute. The ten years Mozart spent broke and free in Vienna were the ten years that matter.";}else{title="You Would Have Outlived Him by Decades";body="You chose security at every turn — the court position, your father's approval, the safe assignment over the risky commission. This is the rational choice, and Mozart's story doesn't argue against it easily. He died at 35, in debt, in an unmarked grave. A safer path might have meant more years, more music. But the freelance decade in Vienna — the one you'd have skipped — is the one that produced everything we still remember."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

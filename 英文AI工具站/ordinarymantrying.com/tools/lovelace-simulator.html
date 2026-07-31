@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Ada Lovelace?</title>
+<meta name="description" content="She wrote the world's first computer algorithm in 1843 — for a machine that hadn't been built yet. She died at 36. 8 decisions from the first programmer.">
+<meta property="og:title" content="What Would You Do If You Were Ada Lovelace?">
+<meta property="og:description" content="The daughter of Byron who wrote algorithms for a computer in 1843. 8 decisions from the life of Ada Lovelace.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/lovelace-simulator.html">
+<style>
+:root{
+  --bg:#EEF0F5;--card:#F8F9FC;--ink:#0A0E1A;--muted:#404860;--line:#C0C8D8;
+  --accent:#1A2460;--accent-bg:#E4E8F4;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,240,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#0A0E1A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B0B8D0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#080E28;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#EEF0F8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#080E1A;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#EEF0F8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B0B8D0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#080E28;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#0A0E1A;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#EEF0F8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B0B8D0;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#EEF0F8;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#A0B0E0;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Ada Lovelace</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #31</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Ada Lovelace?</h1>
+  <p class="cover-sub">She was Byron's daughter, raised to be a mathematician to counteract her father's madness. She met Charles Babbage at 17 and immediately understood his Analytical Engine — a machine that didn't yet exist. At 27, she wrote the world's first computer algorithm, for a computer that wouldn't be built for another 100 years. She died at 36. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Ada Lovelace</strong> (Augusta Ada King, Countess of Lovelace; 1815–1852) · English mathematician · Father: Lord Byron, the poet (left when she was one month old; died when she was eight) · Mother: Anne Isabella Milbanke, who insisted on mathematical education to counteract "poetic" tendencies · Met Charles Babbage in 1833, age 17 · Translated Luigi Menabrea's article on Babbage's Analytical Engine (1843), adding her own notes three times longer than the original — including what is now recognized as the first algorithm intended to be processed by a machine · Died 1852, age 36, of uterine cancer · The programming language Ada (1980) is named in her honor.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1833, London</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · Meeting Babbage</span></div>
+<div class="year-banner">1833</div>
+<div class="timeline-dot">London · Age 17</div>
+<div class="narrative">
+  <p>You are 17 and already well-educated in mathematics — your mother ensured this, terrified that you might inherit your father Byron's romantic, irrational tendencies. You attend a party hosted by Charles Babbage, the mathematician and inventor. He shows you a small working model of his Difference Engine — a mechanical calculator designed to compute mathematical tables automatically.</p>
+  <p>Most of the guests see a curiosity, an impressive machine. You see something else: you immediately grasp the principle and start asking questions about its implications that Babbage has barely asked himself. He is delighted. He calls you "the Enchantress of Numbers." A lifelong collaboration — unusual for a Victorian woman — begins.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — Understanding the Machine</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">At 17, Lovelace immediately understood the Difference Engine's principles when almost no one else did. What made this possible?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Mathematical training. Her mother's insistence on rigorous mathematical education gave her the conceptual framework to understand the machine where others saw only mechanics.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Imagination. She brought something beyond mathematics — the ability to see what the machine could become rather than just what it was. Her father's poetic inheritance, despite her mother's efforts, was the crucial ingredient.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and she herself said so. She described her approach as "poetical science" — the combination of mathematical rigor and imaginative extrapolation. Her mother gave her the tools; her father gave her the reach. She was the synthesis of both parents.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">Lovelace's "poetical science"</div>
+      <p><strong>Your mother raises you on mathematics specifically to counteract your father Byron's "poetic madness." Byron, writing from abroad, also hoped you would be logical rather than creative. The synthesis both parents worked to prevent — mathematical precision combined with poetic imagination — is what you call "poetical science," and what makes you the first programmer.</strong> In her letters, Lovelace described her approach as "poetical science" — a term she coined to describe the combination of mathematical precision and imaginative speculation that characterized her thinking. She was aware of inheriting something from both parents: the mathematical discipline from her mother's education, and an ability to think in metaphors and abstractions that she associated with her father's influence (though she barely knew him). Her mentor Mary Somerville encouraged both aspects. Lovelace wrote: "I am more than ever now the bride of science. Religion to me is science, and science is religion." Her unique contribution to the Analytical Engine notes was precisely this combination — she understood the mathematics precisely AND could imagine applications that Babbage himself hadn't articulated.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Analytical Engine</span></div>
+<div class="year-banner">1840</div>
+<div class="timeline-dot">London · Age 24</div>
+<div class="narrative">
+  <p>Babbage has moved beyond the Difference Engine to a far more ambitious project: the Analytical Engine. Unlike the Difference Engine, which could only compute mathematical tables, the Analytical Engine is general-purpose — it can perform any mathematical operation, store numbers in memory, use conditional branching (if/then logic), and be programmed with punch cards. It is, in concept, the first general-purpose computer. It exists only on paper and in Babbage's mind.</p>
+  <p>The government has refused to fund further development. Babbage has spent his own fortune on it. You believe in the machine completely — more, in some ways, than Babbage does.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Believing in the Machine</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Lovelace believed deeply in a machine that had never been built and might never be built. Was this visionary or foolish?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Foolish — the Analytical Engine was never built, and spending intellectual energy on a hypothetical machine produced no practical results in her lifetime.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">Visionary — the machine's principles were sound, and working through its implications produced insights about computation that were genuinely ahead of their time. The Notes she wrote are valid regardless of whether the machine was built.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Neither — she was simply doing what mathematicians do: exploring the implications of a formal system. Whether the physical machine was built was less important than the mathematical ideas it represented.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">The Analytical Engine and modern computers</div>
+      <p><strong>The Analytical Engine is never built in your lifetime or Babbage's. In the 1940s, Alan Turing and others reinvent the same principles from scratch — then discover you had described them a century earlier. Turing cites your objections to the machine's limits as a live philosophical question in 1950, 107 years after you wrote them.</strong> Charles Babbage's Analytical Engine (designed 1837) contained all the fundamental components of a modern computer: an arithmetic logic unit (the "mill"), memory (the "store"), control flow with conditional branching and loops, and input/output via punch cards. It was never built because Victorian-era machining technology couldn't produce parts to the required precision, and funding dried up. In the 1940s, when Alan Turing and others were developing the theoretical foundations of modern computing, they were largely rediscovering what Babbage had designed and Lovelace had described. Turing's 1950 paper on artificial intelligence directly references Lovelace's objection that machines can only do what they're programmed to do — engaging with her 107-year-old argument as a live philosophical question.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Notes</span></div>
+<div class="year-banner">1843</div>
+<div class="timeline-dot">London · Age 27</div>
+<div class="narrative">
+  <p>An Italian mathematician, Luigi Menabrea, has written an article about Babbage's Analytical Engine in French, based on a lecture Babbage gave in Turin. Babbage asks you to translate it into English. You do — and you add your own notes, which turn out to be three times longer than the original article.</p>
+  <p>The notes contain: a description of how the engine could be programmed to calculate Bernoulli numbers — what is now recognized as the first algorithm designed to be executed by a machine. They also contain your speculation that the Analytical Engine could go beyond numbers: it could operate on any symbolic system that could be expressed formally — music, language, logic.</p>
+  <p>You sign the notes only "A.A.L." — your initials. Women did not typically publish under their own names in 1843.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The First Algorithm</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Lovelace's Note G describes how to calculate Bernoulli numbers on the Analytical Engine — the first computer algorithm. Was she the first programmer or was Babbage?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Babbage. He designed the machine and had developed algorithmic thinking throughout the design process. Lovelace translated and elaborated his ideas.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Lovelace. Note G contains a complete, original algorithm with loops and sub-routines that goes beyond anything Babbage had written. She is the first programmer by any reasonable definition.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">The question is partly anachronistic — "programmer" is a 20th century category. Both contributed; the algorithm in Note G is Lovelace's original work, AND it emerged from an intensive collaboration with Babbage. The debate reflects later concerns about credit more than the reality of the collaboration.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">The Babbage-Lovelace debate</div>
+      <p><strong>You publish the world's first computer algorithm in 1843 and sign it only "A.A.L." because women don't publish under their own names. The notes you add to a translation are three times longer than the article you were hired to translate. The U.S. Department of Defense names a programming language after you in 1980 — 128 years after your death.</strong> The question of who deserves credit has been debated since the 1980s when computer scientists began examining the Notes carefully. Babbage's papers show that he had developed some algorithmic thinking earlier, and he commented on drafts of the Notes. Some scholars argue he contributed to Note G significantly. Others argue Lovelace's formulation — with its explicit loops and conditional logic — went beyond what Babbage had articulated. The historical consensus now is that both contributed, and that Lovelace's framing of the algorithm's structure was original and significant. Her broader vision of the machine — that it could manipulate any symbolic system, not just numbers — is unambiguously hers, and is the insight that distinguishes the Analytical Engine concept from all previous calculating machines.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · "The Engine Cannot Think"</span></div>
+<div class="year-banner">1843</div>
+<div class="timeline-dot">London · Age 27</div>
+<div class="narrative">
+  <p>In Note G, you address a question that will occupy computer scientists 100 years later: can the machine think? Your answer is clear: "The Analytical Engine has no power of originating anything. It can only do what we know how to order it to perform."</p>
+  <p>This is now known as the "Lovelace Objection" — the argument that computers can only do what they are programmed to do, and therefore cannot genuinely think or create. Alan Turing, in his famous 1950 paper on machine intelligence, directly engages this objection, calling it "Lady Lovelace's objection" and arguing that a sufficiently complex machine might still surprise its creators.</p>
+  <p>The debate is still unresolved. The question you posed in 1843 is still being argued today.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — Can Machines Think?</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Lovelace argued machines can only do what they're programmed to do. Turing argued they might still surprise us. Who was right?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Lovelace. Even the most advanced AI systems today operate on patterns in training data. They can recombine and extrapolate, but they don't originate — they do what they were implicitly programmed to do by the training process.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Turing. Machine outputs regularly surprise their creators — including in chess, protein folding, and mathematical proof-checking. Surprise is a meaningful criterion, and machines consistently produce it.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">The argument is still genuinely open because "think" and "originate" are undefined. Lovelace was right that machines do what they're programmed to do; Turing was right that sufficiently complex systems surprise their programmers. Both statements can be simultaneously true — which means the question is about definitions, not facts.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">The Lovelace Objection in 2024</div>
+      <p><strong>In 1843 you write that the Analytical Engine "has no power of originating anything — it can only do what we know how to order it to perform." Alan Turing calls this "Lady Lovelace's Objection" in his 1950 paper on machine intelligence and spends several pages arguing against you. The argument is still unresolved.</strong> The Lovelace Objection is still cited in AI philosophy. The modern version of the debate: Large Language Models like GPT-4 and Claude regularly produce outputs that surprise their creators, including mathematical proofs and novel arguments. But they do this through pattern-matching on training data — they don't have goals, intentions, or a genuine understanding of meaning (by most definitions). Whether this makes them "thinking" depends entirely on what you mean by "thinking." Lovelace's insight was that you need to define what you mean by origination before the question can be answered. 180 years later, we still haven't agreed on a definition. Her objection remains an open question, not a settled answer.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Wider Vision</span></div>
+<div class="year-banner">1843</div>
+<div class="timeline-dot">London · Age 27</div>
+<div class="narrative">
+  <p>In your Notes, you write something that goes far beyond Babbage's own description of his machine. He conceived it as a mathematical calculator. You see something larger: the Analytical Engine "might act upon other things besides number, were objects found whose mutual fundamental relations could be expressed by those of the abstract science of operations."</p>
+  <p>In other words: if music could be expressed as formal relationships between notes, the Engine could compose music. If language could be expressed formally, it could process language. The machine is not a calculator — it is a general-purpose symbol manipulator.</p>
+  <p>This is, in 1843, the conceptual foundation of all modern computing. You are 27.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Beyond Numbers</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Lovelace saw the Analytical Engine as capable of operating on music, language, and any formal symbolic system. Babbage saw it as a calculator. How did she see further?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">She was younger and less invested in the existing framing. Fresh perspective allowed her to see possibilities the inventor had constrained himself from seeing.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">Her "poetical science" approach — combining mathematical rigor with imaginative extrapolation — was exactly suited to this question. She could hold the formal precision of the machine's operations AND imagine their application to non-numerical domains. Babbage was a pure mathematician; she was something harder to categorize.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">Her background in music. She was an accomplished musician and could immediately see how musical notation — a formal symbolic system — could be processed by the engine. Music was the specific bridge between mathematics and broader symbolic manipulation.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">The Analytical Engine and modern computing</div>
+      <p><strong>Babbage sees a calculator. You see, in 1843, a machine that could compose music, process language, and manipulate any symbolic system expressible in formal rules — the conceptual definition of every computer built in the following 200 years. You are 27. The machine you are describing won't be built for another century.</strong> Lovelace's insight that the Analytical Engine could operate on any formal symbolic system is now understood as the conceptual definition of a general-purpose computer. Modern computers process music, language, images, video, and complex simulations — all of which are ultimately represented as formal symbolic structures (binary code). When Alan Turing formalized the concept of a universal computing machine in 1936, he was giving mathematical rigor to what Lovelace had described conceptually in 1843. The Cambridge mathematician and historian Doron Swade, who led the team that built a complete working Difference Engine at the Science Museum in London, said of Lovelace: "She was the first to articulate a vision of computation that goes beyond arithmetic calculation." Babbage built the hardware concept. Lovelace built the software concept. Both were necessary.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Illness</span></div>
+<div class="year-banner">1850</div>
+<div class="timeline-dot">London · Age 34</div>
+<div class="narrative">
+  <p>You have been chronically ill throughout your life — measles at 8 left you temporarily paralyzed; digestive problems have plagued you for decades; headaches and nerve pain appear repeatedly in your letters. Your treatments have included laudanum and other opiates, which produce their own complications.</p>
+  <p>In 1850, uterine cancer is diagnosed. You have two more years. You continue working — mathematical correspondence, plans for a general "calculus of the nervous system" that would bring mathematical rigor to neuroscience. You try to develop a system for betting on horse races, which fails badly and requires your husband to quietly settle the debts.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Gambling System</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Lovelace attempted to develop a mathematical betting system that failed and left significant debts. How should we understand this in relation to her mathematical genius?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">A straightforward failure — she applied mathematical thinking to a domain it couldn't help, driven partly by illness and opiates impairing her judgment.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Consistent with her character — the same extrapolative imagination that saw past Babbage's framing also led her to believe mathematical pattern-finding could beat the horses. The same strength and weakness.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and also a reminder that genius in one domain is not genius in all domains. Mathematical insight into the structure of computation doesn't transfer to horse racing odds. The gambling system failure is what makes her a person rather than a legend.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">The complete picture</div>
+      <p><strong>While dying of uterine cancer at 34, you develop a mathematical betting system for horse races. It fails badly. You secretly pawn your jewelry to cover the debts before your husband finds out. The same extrapolative imagination that described modern computing convinced you mathematics could beat the horses.</strong> Lovelace's letters reveal a complex person: brilliant, ambitious, sometimes grandiose (she described herself as the "High Priestess of Babbage's Engine"), chronically ill, dependent on laudanum, and capable of poor judgment. The gambling debts are documented; she concealed them from her husband using pawned jewelry as collateral. She also had a passionate letter-writing friendship with Babbage that included arguments about credit for the Notes. She was, in short, a real person with the full complexity that implies. Her mathematical work was not diminished by her personal difficulties; her personal difficulties don't make her mathematical work more impressive. They just make her human.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The End</span></div>
+<div class="year-banner">1852</div>
+<div class="timeline-dot">London · Age 36</div>
+<div class="narrative">
+  <p>You die in November 1852, at 36, of uterine cancer. At your request, you are buried next to your father, Lord Byron, at the Church of St. Mary Magdalene in Hucknall, Nottinghamshire. The father who left when you were one month old, whom you never really knew, whose legacy your mother spent your entire childhood trying to counteract. You wanted to lie next to him.</p>
+  <p>Your Notes on the Analytical Engine are mostly forgotten for nearly 100 years.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — Buried Next to Byron</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Lovelace requested burial next to Byron — the father she never knew, whose influence her mother spent her life suppressing. What does this tell us?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Romantic sentiment — she had romanticized an absent father her whole life. The burial request was the final expression of a lifelong fantasy about a relationship that never existed.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">Self-definition. By insisting on lying next to Byron, she was claiming her full identity — both the mathematical discipline her mother gave her AND the poetical imagination she associated with her father. She was refusing to be only one thing.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">A statement about her mother. After a lifetime of her mother's anxious attempts to make her a mathematician rather than a poet, the burial request was a final rejection of that framing.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">The Byron connection</div>
+      <p><strong>Byron leaves when you are one month old. He dies in Greece when you are eight; your mother does not tell you immediately and does not allow you to attend any memorial. You spend your life synthesizing his poetic inheritance with your mother's mathematical discipline. At 36, dying, you ask to be buried next to him.</strong> Ada was one month old when Byron left. He died in Greece when she was eight — she was not told until weeks later, and her mother reportedly did not allow her to attend any memorial. Byron wrote to his half-sister about Ada: "Is the girl imaginative? ... I hope God will spare her from being poetical — it is enough to have one such fool in the family." He hoped she would be logical, not creative. Her mother spent Ada's childhood fulfilling this wish, emphasizing mathematics. Ada's own synthesis — "poetical science" — was her resolution of this tension. The burial request, made when dying, was her final statement: I am both. I belong to both.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Rediscovery</span></div>
+<div class="year-banner">1953 onward</div>
+<div class="timeline-dot">History · Delayed recognition</div>
+<div class="narrative">
+  <p>In 1953, 101 years after your death, your Notes on the Analytical Engine are republished. The computer revolution is already underway — ENIAC was built in 1945, stored-program computers in the late 1940s. Scholars reading the Notes recognize immediately what you had described. The programming concepts — loops, sub-routines, conditional branching — are now being implemented in actual machines.</p>
+  <p>In 1980, the U.S. Department of Defense names a programming language Ada in your honor. You are credited as the first programmer. The debate about what you actually contributed and how much you relied on Babbage begins almost immediately and continues today.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Delayed Recognition</span><span class="d-num">08 / 08</span></div>
+  <div name="decision-body" class="decision-body">
+    <div class="decision-q">Lovelace's work was ignored for 100 years and then became foundational to computer science. What does this delay tell us about how innovation is recognized?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Ideas are recognized when the technology catches up with them. The Notes waited 100 years because the hardware to implement the ideas didn't exist yet. Recognition requires context.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Women's work is systematically underrecognized in real time. The 100-year delay reflects the invisibility of women's intellectual contribution in Victorian England, not the ideas' obscurity.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — the ideas genuinely required the computing revolution for their context to become clear, AND the 100-year delay was extended by the systematic underrecognition of women's intellectual work. Both factors were real and both produced the delay.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">The recognition of women's scientific contributions</div>
+      <p><strong>Your Notes are published in 1843 and largely ignored for 101 years. In 1953, with working computers already running, scholars read your work and recognize immediately that you described the principles first. A programming language is named Ada in your honor in 1980 — 128 years after your death, when the U.S. Department of Defense finally needs a name.</strong> Ada Lovelace is one of many women whose scientific contributions were delayed in recognition or attributed to male colleagues. Rosalind Franklin's X-ray crystallography work on DNA structure was used without credit by Watson and Crick. Lise Meitner co-discovered nuclear fission but was not included in the Nobel Prize awarded to Otto Hahn. Cecilia Payne-Gaposchkin discovered that stars are made primarily of hydrogen and helium but was discouraged from publishing this conclusion. The pattern is consistent enough that it has a name: the "Matilda Effect" (coined by historian Margaret Rossiter in 1993) — the systematic underrecognition of women scientists. Lovelace's delay was both about the technology gap AND about the Matilda Effect. Acknowledging both doesn't diminish either.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Lovelace's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="next-sims">
+  <p class="next-label">Explore More Lives</p>
+  <div class="next-grid">
+    <a href="curie-simulator.html" class="next-card">
+      <span class="next-name">Marie Curie</span>
+      <span class="next-desc">First woman to win a Nobel Prize. Won two. Died from the radiation she discovered.</span>
+    </a>
+    <a href="tesla-simulator.html" class="next-card">
+      <span class="next-name">Nikola Tesla</span>
+      <span class="next-desc">Invented AC power. Died alone in a hotel room. Edison got the credit.</span>
+    </a>
+    <a href="einstein-simulator.html" class="next-card">
+      <span class="next-name">Albert Einstein</span>
+      <span class="next-desc">Published special relativity at 26. Changed physics. Struggled with quantum mechanics.</span>
+    </a>
+    <a href="darwin-simulator.html" class="next-card">
+      <span class="next-name">Charles Darwin</span>
+      <span class="next-desc">Waited 20 years to publish. The delay almost cost him everything.</span>
+    </a>
+  </div>
+</div>
+<div class="cta-box">
+  <p>Ada Lovelace wrote the world's first computer algorithm at 27, for a machine that wouldn't be built for 100 years. She died at 36 asking to be buried next to the father she never knew. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All Life Simulators — Darwin, Tesla, Marie Curie and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/curie-simulator.html" style="color:var(--accent)">Marie Curie Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Lovelace";body="You understood that 'poetical science' synthesized both parents' legacies, that the machine-vision emerged from this synthesis, that the algorithm debate requires acknowledging both her originality and the collaboration, and that the 100-year delay reflected both technology gaps and gender. That's the complete Lovelace.";}else if(pct>=0.625){title="The First Programmer";body="You grasped the essentials: the visionary machine, the Lovelace Objection still being argued today, the wider vision beyond numbers. Where you may have simplified: almost every major question about Lovelace has a 'both' answer. The credit question, the delay question, the burial question — all require holding two things true simultaneously.";}else if(pct>=0.375){title="The Victorian Mathematician";body="You tended toward single explanations where Lovelace's life requires multiple simultaneous truths. Her genius was synthesis — combining things that seemed separate. The same applies to understanding her: her mathematical training AND her poetic imagination, her groundbreaking work AND her gambling debts, the technology gap AND the gender gap in the delayed recognition.";}else{title="The Skeptic";body="You questioned the scope of her contribution, the clarity of her vision, the significance of the burial choice. These are legitimate scholarly debates. The emerging consensus is that her contribution was real and original — not just a translation, not just an elaboration of Babbage's ideas, but a genuine conceptual advance that took 100 years for the world to need."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

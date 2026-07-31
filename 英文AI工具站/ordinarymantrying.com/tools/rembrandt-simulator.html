@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Rembrandt?</title>
+<meta name="description" content="The greatest Dutch painter went bankrupt at the peak of his fame, lost his house, and painted his most powerful self-portraits in poverty. 8 decisions from Rembrandt van Rijn.">
+<meta property="og:title" content="What Would You Do If You Were Rembrandt?">
+<meta property="og:description" content="Went bankrupt at the height of fame. Kept painting. Died in poverty. Left 80 self-portraits. 8 decisions from Rembrandt.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/rembrandt-simulator.html">
+<style>
+:root{
+  --bg:#F2EDE5;--card:#FAF7F2;--ink:#140800;--muted:#4A3010;--line:#C8A870;
+  --accent:#5A3800;--accent-bg:#F0E0C0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(242,237,229,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#140800;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B09050;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#120600;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0E0C0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#120600;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0E0C0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B09050;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#120600;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#140800;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F0E0C0;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B09050;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#F0E0C0;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#C8A860;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Rembrandt van Rijn</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #45</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Rembrandt?</h1>
+  <p class="cover-sub">At 28, he was the most famous painter in Amsterdam — rich, celebrated, married to a wealthy woman. By 50, he was bankrupt, his house sold, his possessions auctioned. He spent his last decade painting his greatest work in poverty, surrounded by the two people who still believed in him. He left over 80 self-portraits — a complete visual autobiography across 40 years. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Rembrandt Harmenszoon van Rijn</strong> (1606–1669) · Dutch Golden Age painter, printmaker, draughtsman · Born Leiden; moved to Amsterdam 1631 · Married Saskia van Uylenburgh (1634); she died 1642 · Declared insolvent 1656; house and art collection sold 1657–1658 · Companion Hendrickje Stoffels and son Titus formed a company to employ him after bankruptcy · Major works: <em>The Night Watch</em> (1642), <em>The Anatomy Lesson</em> (1632), <em>Self-Portrait with Two Circles</em> (c.1665), <em>The Return of the Prodigal Son</em> (c.1669) · Over 300 paintings, 300 etchings, 2,000 drawings · Died Amsterdam, October 4, 1669, in poverty.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1632, Amsterdam</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Anatomy Lesson</span></div>
+<div class="year-banner">1632</div>
+<div class="timeline-dot">Amsterdam · Age 26</div>
+<div class="narrative">
+  <p>You have just arrived in Amsterdam from Leiden, and you have been commissioned to paint the Amsterdam Guild of Surgeons performing a public anatomy demonstration. The subject is the corpse of a criminal; the presiding surgeon is Dr. Nicolaes Tulp. This is a standard subject — guild portraits and anatomy lessons were a well-established Dutch genre. What you do with it is not standard.</p>
+  <p>Instead of a posed group portrait, you paint a scene of concentrated attention: seven men caught in the act of observation, each face expressing something different about what it means to look at the human body opened. The painting makes you immediately famous in Amsterdam at 26.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — Drama vs. Dignity</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Rembrandt transformed a routine guild commission into a scene of psychological drama. What did this reveal about his approach to painting?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Commercial intelligence — he knew that something unusual would get him noticed, and he was right. The innovation was partly marketing.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Artistic philosophy — he believed painting should capture psychological truth, not just physical likeness. Every commission was an opportunity to show what he actually cared about: the inner life of the subject.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">Both inseparable — in 1632, being brilliant and being commercially effective were the same strategy. He was young enough that exceeding the brief wasn't risky; it was necessary to establish himself. Later in his career, when patrons wanted conventional portraits and he delivered psychologically intense studies instead, the strategy stopped working commercially — but he kept doing it anyway.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">The Anatomy Lesson's innovations</div>
+      <p><strong>You arrive in Amsterdam at 26 with a single major commission — and instead of playing it safe, you turn a standard guild portrait into a scene of psychological drama. It works immediately. Every convention you break here becomes an innovation that will frustrate your commercial relationships 30 years later.</strong> <em>The Anatomy Lesson of Dr. Nicolaes Tulp</em> (1632) broke several conventions of the genre. Standard anatomy lesson paintings showed figures posed formally for a group portrait. Rembrandt showed a crowd caught in mid-moment: some figures lean in, some look at the viewer, one reads from an anatomy text. The light — the famous Rembrandt light — comes from the left and illuminates the pale arm of the cadaver, making the dead body the visual center even though Tulp is the institutional center. The painting was so successful that Rembrandt remained in Amsterdam and never returned to Leiden. It launched a decade of prosperity and commissions. The same approach — using the commission's subject as an occasion for psychological investigation — produced his greatest work, and eventually caused friction with patrons who wanted something more conventional.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Night Watch</span></div>
+<div class="year-banner">1642</div>
+<div class="timeline-dot">Amsterdam · Age 36</div>
+<div class="narrative">
+  <p>The Amsterdam civic guards — the Kloveniers — have commissioned a group portrait from you. They are paying well; each of the 18 men depicted pays a fee proportional to how prominently he appears. Group portraits of civic guards were a standard Dutch genre, and the standard approach is clear: each man posed, clearly recognizable, equal or near-equal prominence.</p>
+  <p>What you paint is a scene of guards moving out on patrol, in dramatic chiaroscuro light, with some figures more prominently lit than others and some almost in shadow. Two figures who paid the most — Captain Banninck Cocq and his lieutenant — dominate the composition. Others are partly obscured. It is a painting, not a group portrait.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Night Watch Controversy</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Night Watch broke the conventions of the group portrait genre. Did Rembrandt prioritize art over his clients' reasonable expectations — and was that justified?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Not justified — the clients were paying for equal-prominence group portraits and got something else. Rembrandt violated the implicit contract and put his artistic vision above his clients' legitimate expectations.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">Justified by the result — the Night Watch is now the most famous painting in the Netherlands and one of the most famous in the world. The clients got more than they expected, even if some of them complained about their prominence. The artistic choice paid off culturally, if not immediately commercially.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">The controversy itself is probably exaggerated — contemporary documents don't show strong complaints from the Kloveniers. The story that the Night Watch was poorly received is a later myth. The painting was displayed and presumably accepted.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What actually happened with the Night Watch</div>
+      <p><strong>You paint 18 men who each paid to appear prominently — and put some of them in shadow. The story that they rioted against you is probably a myth constructed later to explain your later difficulties. What is true: you made them pay for art rather than flattery, and the painting is now worth more than anything any of them left behind.</strong> <em>De Nachtwacht</em> (1642) is one of the most studied paintings in history. The claim that it was poorly received and damaged Rembrandt's career is contested by historians. No contemporary documents record complaints from the Kloveniers about the painting. Rembrandt continued to receive commissions after 1642. His financial difficulties began later and had multiple causes: he overspent on his art collection, took out loans, and his patron network changed after Saskia died in 1642 (the same year). What is true is that the Night Watch is radically different from conventional group portraits — more theatrical, more dynamic, more interested in overall effect than individual flattery. Whether the Kloveniers objected to this or whether the story was constructed later to explain Rembrandt's later difficulties is still debated. The painting survived, was cut down in 1715 to fit a wall (losing parts of the original), and is now in the Rijksmuseum, drawing millions of visitors.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · Collecting</span></div>
+<div class="year-banner">1645</div>
+<div class="timeline-dot">Amsterdam · Age 39</div>
+<div class="narrative">
+  <p>You have been buying. Art — paintings by other artists, drawings, prints, sculptures. Antiques, curiosities, weapons, armor, stuffed animals. You have turned your large house on the Breestraat into a cabinet of wonders. You study these objects and use them in your paintings — the fabrics, the helmets, the exotic costumes appear in portrait after portrait.</p>
+  <p>You are also spending money you don't have on these objects. You bought your house for 13,000 guilders, a very large sum for a painter, and never paid it off. Your income is substantial, but your spending is more substantial. You are building debt that will eventually collapse everything.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Collection</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Rembrandt's obsessive collecting fueled his art but drove him to bankruptcy. Was the collection a resource or a vice?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Vice — he could have achieved the same artistic results by borrowing or renting props, or by using his imagination more and physical objects less. The collecting was compulsive self-indulgence that destroyed his financial stability.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">B</span><span class="dopt-body">Resource that he mispriced — the collection was genuinely essential to his work. The textures, light-catching surfaces, and historical associations of real objects gave his paintings a material richness impossible to invent. But he acquired at a level that didn't match his income. The problem was scale, not the collecting itself.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">Neither — the bankruptcy had multiple causes, and the collection was one of them but not the dominant one. The mortgage on his house was the larger problem. Blaming the collection is simplifying a complex financial collapse.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">The collection sold at auction</div>
+      <p><strong>The 300+ objects you spent 20 years acquiring — Raphael drawings, Japanese armor, classical sculptures, stuffed animals — sell at auction in 1657 and 1658 for a fraction of what you paid. Twenty years of obsessive collecting, gone in two days. What remains: the paintings you made by studying them.</strong> When Rembrandt was declared insolvent in 1656, an inventory was taken of his possessions before they were auctioned. The inventory survives and is one of the most fascinating documents in art history: it lists hundreds of paintings by other artists (Raphael, Giorgione, Rubens, Brouwer, Lievens — his contemporaries and predecessors), Japanese armor, shells, busts, classical sculptures, animal skins, geographical maps, globes, weapons, musical instruments, prints, books, drawings. The collection sold at auction in 1657–1658 for far less than Rembrandt had paid — auctions of distressed assets rarely recover market value. He was left with almost nothing. The house was also sold. He moved to a much smaller house in the Jordaan district. He continued to paint in the smaller house; some of his greatest work was made there, in cramped quarters, without the collection he had built.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Hendrickje and Titus</span></div>
+<div class="year-banner">1656</div>
+<div class="timeline-dot">Amsterdam · Age 50</div>
+<div class="narrative">
+  <p>You are bankrupt. Your house is being sold. Your creditors are pursuing you. Your friend and lover Hendrickje Stoffels — who has been living with you since about 1649 — and your son Titus have devised a solution: they will form a company as art dealers, and hire you as an employee. This means your income is legally theirs, and your creditors cannot attach it. It also means the people who love you are also now your employers.</p>
+  <p>Hendrickje is 32; you are 50. She will die in 1663, probably of plague. Titus will die in 1668, a year before you. You will lose both of them before you die.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — Being Saved by Those Who Love You</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Hendrickje and Titus structured their lives to protect Rembrandt's ability to work after his bankruptcy. What does this arrangement reveal about the relationship between art and those who support it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">That great artists often need enablers — people who absorb the practical costs so the artist can focus on the work. The arrangement was functional, if emotionally complex.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">That Rembrandt was irresponsible, and Hendrickje and Titus paid the price. He spent recklessly, they sacrificed practically, and the burden was unjust.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">Both are true, and the complexity is the point. Hendrickje was not merely an enabler — she was a partner in the enterprise of his art. His late paintings of her show what he saw: a person of dignity and inner life, painted with the same intensity as his self-portraits. The arrangement was practically unjust to her and spiritually essential to both of them. Art's support structures are rarely clean.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">Hendrickje Stoffels</div>
+      <p><strong>In 1654, the Amsterdam Reformed Church summons your companion Hendrickje to answer for living with you without marriage. She stands before the consistory while pregnant with your daughter. She accepts the censure and is barred from communion. She stays anyway. Six years later, she and your son Titus create a company to keep your creditors off your work and your income.</strong> Hendrickje Stoffels appeared in Rembrandt's household around 1649, initially as a servant. She became his companion after he could not marry her — his arrangement with Saskia's estate required him to lose inheritance rights if he remarried. In 1654, the Amsterdam Reformed Church summoned her for living with Rembrandt "in whoredom" without marriage. She appeared before the consistory while pregnant with his daughter Cornelia; she was censured and barred from communion. She accepted the censure. She continued to live with Rembrandt. In 1660, she and Titus formed the art dealing company. She died in 1663, probably during a plague epidemic, at around 37 years old. Rembrandt painted her multiple times — in a red cap, bathing in a stream, as Bathsheba reading David's letter. The Bathsheba (1654) shows her in a moment of private contemplation, about to be summoned. It is one of the most intimate and technically accomplished female portraits of the century.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Late Style</span></div>
+<div class="year-banner">1660</div>
+<div class="timeline-dot">Amsterdam · Age 54</div>
+<div class="narrative">
+  <p>You are painting differently. Earlier, you used thin, precise brushwork to render detail — the texture of lace, the sheen of silk, the individual hairs of a beard. Now you apply paint thickly, in broad strokes, letting the impasto build up so that the surface of the painting has a physical texture. Up close, the surface is rough, almost sculptural. From a distance, it resolves into a face.</p>
+  <p>Patrons want the precise, detailed work of your early career. You are doing something that fewer of them understand or want. You are also producing some of the most powerful portraits in the history of Western painting.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Late Style</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Rembrandt's later work became less commercially successful but is now considered his greatest. What does this tell us about the relationship between market success and artistic achievement?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">They are inversely correlated in the short run — what the market wants at any given moment is often behind what the best artists are doing. Rembrandt's commercial failure in the 1660s is evidence that he was ahead of his time.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">They are unrelated — market success depends on fashion, marketing, and luck; artistic achievement depends on skill and vision. The correlation between them in either direction is coincidental.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">The question is partly the wrong one. Rembrandt's late work was less popular in Amsterdam because Amsterdam's taste had moved on — toward the lighter, more decorative style of his successors. But "ahead of his time" isn't quite right either; his late work isn't proto-modern, it's deeply of its own moment. What he was doing was too personal, too psychologically demanding, too uninterested in flattery to be easily commercialized. That's not a market timing problem; it's an artistic commitment problem.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">Late Rembrandt</div>
+      <p><strong>Patrons in 1660s Amsterdam want the precise lace-and-silk work that made you famous at 26. What you deliver instead — thick impasto surfaces, rough strokes, faces that refuse to flatter — finds almost no buyers. Art historians today call it your greatest work. The decade that produced it also produced your most complete poverty.</strong> The paintings Rembrandt made in his last decade — <em>The Jewish Bride</em> (c.1665), <em>Self-Portrait with Two Circles</em> (c.1665–1669), <em>The Return of the Prodigal Son</em> (c.1669) — are considered by many art historians his greatest. The impasto technique (thick paint application) creates surfaces of extraordinary physical richness; the faces are rendered with a depth of psychological observation that has no equal in Western portraiture. The self-portraits of his final decade show an old man who has lost everything except his painting, looking at himself without illusion, with something close to compassion. Art historian Kenneth Clark wrote that the late Rembrandt was "one of the very few painters of the world whose work reveals an understanding of human life comparable with the greatest writers." This work produced few commissions in the 1660s. It has been reproduced, exhibited, and studied more than almost any other Western art in the centuries since.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Self-Portraits</span></div>
+<div class="year-banner">1665</div>
+<div class="timeline-dot">Amsterdam · Age 59</div>
+<div class="narrative">
+  <p>You have been painting yourself for 40 years. Not just to practice — self-portraits were a legitimate subject, and you used your own face as the model for historical and religious figures throughout your career. But also to look. The earliest self-portraits show a young man experimenting with expression, making faces. The middle ones show success and prosperity. The late ones show age, loss, and something harder to name.</p>
+  <p>There are more than 80 of them across your career. Together they constitute the most extensive visual autobiography in Western art.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Eighty Self-Portraits</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Why did Rembrandt paint himself so many times?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Practicality — he was an available, free, always-present model. Self-portraits were a way to practice facial expression and lighting without hiring a model.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Commercial opportunity — self-portraits were a recognized and saleable genre. Rembrandt established his own face as a brand and sold studies of it to collectors.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">All of these, plus something more. The late self-portraits show someone who has moved past practice and commerce into something else: a sustained, honest, lifelong examination of what it is to be a human face aging in time. The later ones are not flattering. They don't hide the aging or the loss. They are looking at the thing that is hardest to look at — yourself, truly — and refusing to look away.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">The self-portrait series</div>
+      <p><strong>You paint your own face more than 80 times across 40 years — young and experimenting, prosperous and proud, bankrupt and aging. The last ones don't hide anything: no wig, no costume, no flattering light. Just an old man looking at himself in a mirror, apparently without self-pity or appeal.</strong> Rembrandt's self-portrait series — approximately 80 paintings, 30 etchings, and a number of drawings — is unique in art history for its completeness and honesty across time. Early self-portraits (1620s) show him experimenting with extreme expressions: gaping mouth, twisted grimace, wide eyes — studies in what a face can do. Middle-career portraits (1630s–1640s) show prosperity and confidence, often in historical costume (as an apostle, as a gentleman). The late portraits (1650s–1669) show progressive aging, economic ruin, and a face that has stopped performing. <em>Self-Portrait with Two Circles</em> (c.1665–1669, National Gallery London) shows him in working clothes, palette in hand, with two unexplained circles behind him (perhaps a reference to a famous drawing challenge, perhaps simply painted). The face looks at the viewer without apology or appeal. It is regarded as one of the greatest self-portraits ever painted.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Prodigal Son</span></div>
+<div class="year-banner">1668</div>
+<div class="timeline-dot">Amsterdam · Age 62</div>
+<div class="narrative">
+  <p>Your son Titus has died. He was 27. He died shortly after his marriage, possibly of plague. Of the four children you had with Saskia, he was the only one who survived past infancy. Hendrickje died five years before him. Now Titus is also gone.</p>
+  <p>You are 62. You are painting what may be your last major work: the Return of the Prodigal Son. An old father embraces a kneeling, ragged son who has returned after wasting his inheritance. The father's hands on the son's back are the most luminous thing in the painting — one more masculine, one more feminine, as if all the tenderness the world contains is in those hands.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Return of the Prodigal Son</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Rembrandt painted the Prodigal Son near the end of his life, after losing Saskia, Hendrickje, and Titus. Is biography relevant to understanding art?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">No — the painting stands independently. Its quality and meaning don't depend on knowing anything about Rembrandt's life. Importing biographical context into art appreciation is a category error.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">Yes, completely — understanding the painting requires knowing that Rembrandt had lost everyone. The father's hands are more moving because we know who painted them and what he had lost. Biography deepens the work.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">The painting works without the biography — it's formally and emotionally complete. The biography adds another layer for viewers who have it, but doesn't add meaning so much as confirm that the emotional register is not accidental. Knowing Rembrandt had lost Titus doesn't tell us what the painting means; it tells us why it was painted with this particular completeness of feeling.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">The Prodigal Son</div>
+      <p><strong>Your son Titus dies in 1668 at 27, shortly after his marriage. You are 62. Hendrickje died five years before him. You paint a father embracing a prodigal son returned home in rags — and make the father's hands the most luminous thing in the picture. Whether you knew Titus was dying when you began it, no one can say.</strong> <em>The Return of the Prodigal Son</em> (c.1668–1669, Hermitage Museum, St. Petersburg) is often ranked among the greatest paintings in Western art. The subject is the parable from Luke 15: a son who wastes his inheritance and returns in humiliation to find his father running to embrace him. Rembrandt's version focuses entirely on the embrace. The son's head is shaved (as a slave's would be). His shoes are worn through. His coat is barely a rag. The father bends over him with immense, encompassing tenderness. The hands — one firm and masculine, one gentle and feminine — lay on the son's back with the weight of a lifetime of waiting. Henri Nouwen, the Dutch priest and spiritual writer, spent days studying this painting and wrote a book about it: <em>The Return of the Prodigal Son: A Story of Homecoming</em>. He concluded the painting was not about the son but about the father — and about what it means to become that kind of father. Whether Rembrandt knew his son Titus was dying when he painted it is unclear. Titus died in 1668; the painting is dated approximately 1668–1669.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The End</span></div>
+<div class="year-banner">1669</div>
+<div class="timeline-dot">Amsterdam · Age 63</div>
+<div class="narrative">
+  <p>You die on October 4, 1669. You are 63 years old. You have outlived your two wives, your companion Hendrickje, and your son Titus. Your surviving daughter Cornelia, who was born to you and Hendrickje, is 15. She will later marry and move to Batavia (Jakarta), taking some of your drawings with her.</p>
+  <p>You die poor. Your possessions at death: a few paintings, some clothing, painting equipment, a Bible. You are buried in an unmarked grave in the Westerkerk in Amsterdam. Your grave was never marked. It was rediscovered in 1906.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — What Rembrandt Left</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Rembrandt died poor, with no tombstone, having outlived almost everyone he loved. Was his life, taken as a whole, a success or a failure?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Failure on his own terms — he went bankrupt, lost his house and collection, outlived his family, and died in poverty. By any conventional measure of the life he was trying to build in the 1630s, he failed.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Success by other terms — the paintings he made in poverty are among the greatest art ever produced. The conventional failure enabled the artistic achievement. On those terms, the life succeeded.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The question is too neat. Rembrandt didn't choose poverty to make great art; he made great art despite poverty. The suffering was real and not redeemed by the paintings — the paintings don't make Hendrickje's death or Titus's death less tragic. What's true is that he kept working through the losses, and what he made from that sustained working is what we have. Whether that constitutes success depends on who is counting.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">After Rembrandt</div>
+      <p><strong>He dies on October 4, 1669, in poverty. His possessions at death: a few paintings, some clothing, paint equipment, a Bible. He is buried in an unmarked grave in the Westerkerk. The grave stays unmarked for 237 years. By then, his house at Jodenbreestraat — auctioned off in 1657 — is already a museum.</strong> Rembrandt's reputation declined after his death and stayed low for over a century. 17th-century Dutch taste moved toward lighter, more decorative painting — the smooth elegance of Vermeer, the sunny interiors of De Hooch. Rembrandt's rough impasto and psychological intensity were out of fashion. His rehabilitation began in the late 18th century with the Romantic movement, which valued authenticity, emotion, and the mark of the hand. By the 19th century, he was recognized as the greatest Dutch painter. Today, the Rijksmuseum in Amsterdam — housed in part in the same city where he lived and died poor — draws millions of visitors to see the Night Watch and his other works. His house on the Jodenbreestraat, which was auctioned off in 1657, is now a museum: Het Rembrandthuis. The unmarked grave in the Westerkerk has a plaque. The paintings are priceless.</p>
+    </div>
+  </div>
+</div>
+
+<div class="ending" id="ending">
+  <div class="ending-score" id="final-score">0/8</div>
+  <div class="ending-label">Your Rembrandt Score</div>
+  <div class="ending-title" id="final-title"></div>
+  <div class="ending-body" id="final-body"></div>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue the Series</div>
+  <div class="next-grid">
+    <a class="next-card" href="vangogh-simulator.html">
+      <span class="next-name">Vincent van Gogh</span>
+      <span class="next-desc">Another painter who made his greatest work in poverty, without recognition, and died before seeing it valued.</span>
+    </a>
+    <a class="next-card" href="davinci-simulator.html">
+      <span class="next-name">Leonardo da Vinci</span>
+      <span class="next-desc">The opposite arc: universally celebrated in his own time, never went bankrupt, left everything unfinished anyway.</span>
+    </a>
+    <a class="next-card" href="michelangelo-simulator.html">
+      <span class="next-name">Michelangelo</span>
+      <span class="next-desc">Also painted his deepest self-portrait into his work. Also worked until he literally couldn't stand up.</span>
+    </a>
+    <a class="next-card" href="frida-simulator.html">
+      <span class="next-name">Frida Kahlo</span>
+      <span class="next-desc">Another painter who used self-portraiture as the primary mode — also from conditions of physical and emotional suffering.</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <p>Rembrandt's story is one of 100 historical life simulators on this site. Each one asks: given the same constraints, pressures, and information — what would you have chosen?</p>
+  <p><a href="simulators.html">Browse all simulators →</a></p>
+</div>
+
+</div>
+</div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Look Like Rembrandt";body="You understand his decisions the way he made them: not as single causes but as layers. The Anatomy Lesson was commercial AND philosophical. The Night Watch broke a contract AND produced something better. The collection was a resource AND mispriced AND part of a larger collapse. Hendrickje was partner AND enabler AND the person who absorbed the cost. The late style was commitment, not miscalculation. And the 80 self-portraits were practice AND commerce AND the most sustained honest looking in Western art.";}else if(pct>=0.625){title="The Dutch Observer";body="You grasped the essentials: the bankruptcy had multiple causes, Hendrickje was more than an enabler, the late style's commercial failure was predictable but not preventable, and the self-portraits span something larger than practice or commerce. Where you simplified: Rembrandt's choices rarely had single explanations. The Night Watch broke a contract — and the contract was worth breaking. Both things are true.";}else if(pct>=0.375){title="The Face in the Light";body="You see Rembrandt the way most viewers do: through the paint, the light on a face, the hands in the Prodigal Son. That's what he was producing. The bankruptcy, the losses, the late style's commercial failure — these are biography. The paintings are something else. He kept them separate too, for as long as he could.";}else{title="You Would Have Paid the Mortgage";body="You see clearly what went wrong: 13,000 guilders for a house never paid off, too much spent on the collection. A more financially disciplined Rembrandt might have kept the house and a stable career. He also might not have painted the Return of the Prodigal Son in 1668 with that particular completeness of feeling. The two things may not be separable."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

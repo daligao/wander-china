@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Beethoven?</title>
+<meta name="description" content="He began losing his hearing at 26. By 44 he was completely deaf. He kept composing anyway — and wrote the 9th Symphony, which he never heard. 8 decisions you make first.">
+<meta property="og:title" content="What Would You Do If You Were Beethoven?">
+<meta property="og:description" content="8 decisions across the life of a composer who went deaf and kept writing music he would never hear. Would you have kept going?">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/beethoven-simulator.html">
+<style>
+:root{
+  --bg:#F4F2EE;--card:#FAFAF8;--ink:#110E08;--muted:#6A6050;--line:#D8D0BC;
+  --accent:#3A2A0A;--accent-bg:#F5F0E4;
+  --right:#2A6B4B;--right-bg:#E8F5EE;--wrong:#8B2020;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(244,242,238,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#2A2010;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C8B880;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#4A3800;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F5F0E4;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#2A2010;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.letter{background:var(--accent-bg);border:1px solid #C8B880;border-radius:8px;padding:18px 20px;margin:20px 0;font-family:var(--serif);font-size:16px;font-style:italic;color:#2A2010;line-height:1.85;}
+.letter-from{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;font-style:normal;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F5F0E4;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C8B880;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#2A2010;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.quote-block{background:var(--ink);color:#F5F0E4;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#907860;margin-top:12px;font-family:var(--mono);}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#2A2010;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F5F0E4;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C8B880;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.cta-box{background:var(--accent);color:#F5F0E4;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#FFE4A0;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Ludwig van Beethoven</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #16</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Beethoven?</h1>
+  <p class="cover-sub">He started losing his hearing at 26. By 44 he was completely deaf — he could not hear a single note. He kept composing anyway. The Ninth Symphony, written in total silence, was performed in Vienna in 1824. He had to be turned around by a singer to see the audience's ovation because he couldn't hear it. <strong>8 decisions. Would you have kept writing?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Ludwig van Beethoven</strong> (1770–1827) · German composer · Bridged the Classical and Romantic eras · Began losing hearing around 1796 · Completely deaf by approximately 1818 · Composed 9 symphonies, 32 piano sonatas, 16 string quartets, 5 piano concertos, 1 opera · <em>The Moonlight Sonata, Für Elise, Symphony No. 5, Symphony No. 9 ("Ode to Joy"), The Eroica, The Late Quartets.</em></p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1792, Vienna</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Arrival</span></div>
+<div class="year-banner">1792</div>
+<div class="timeline-dot">Vienna · Age 22</div>
+<div class="narrative">
+  <p>You have left Bonn for Vienna, the musical capital of the world. You came once before, at 17, with a letter of introduction to Mozart — but your mother fell ill and you had to return before you could study with him. Now Mozart is dead, and Haydn has heard you play and offered to take you as a student. You have come to Vienna to become a composer.</p>
+  <p>Vienna is not impressed by you yet. You are short, pockmarked, and famously difficult. You have already developed the habit of playing at dinner parties and then stopping midway through and leaving if anyone talks during the music. You have told several aristocratic patrons exactly what you think of their taste. You have very few social graces and absolutely no interest in developing them.</p>
+  <p>But when you play — at the keyboard, improvising — something happens to rooms. People go quiet. Some weep. The Prince Karl von Lichnowsky hears you improvise and immediately invites you to live in his house. He will pay your expenses.</p>
+  <p>You could accept the patronage and the security of a household position. Or you could remain independent — take lessons, give lessons, build your reputation, and answer to no one.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Patron's House</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Prince Lichnowsky offers to house and support you. You will have security — and an obligation. Do you accept?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">A</span><span class="dopt-body">Accept. Use the security to study, compose, and build your name in Vienna. You can manage a patron's expectations — your piano playing alone is worth the arrangement.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Decline. You cannot compose freely in someone else's house. Your music requires absolute independence. Find your own lodgings and your own income.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">Accept temporarily while you establish yourself, then move out as soon as you can afford to. Use the patronage strategically.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Beethoven actually did</div>
+      <p><strong>You accept the Prince's hospitality, live in his house for years — then smash a bust of him on the floor and walk out over a request to play for French officers.</strong> Beethoven accepted and lived with the Lichnowsky family for several years. It was a productive arrangement — he composed his first published works there, built his reputation as an improviser, and gained access to Vienna's musical elite. He eventually left — dramatically, after a confrontation with Lichnowsky over a request that Beethoven play for some of Lichnowsky's French officer guests during the Napoleonic occupation. Beethoven refused, smashed a bust of the Prince, and moved out. He later wrote to Lichnowsky: "Prince, what you are, you are by birth. What I am, I am through myself. Of princes there have been and will be thousands. Of Beethoven there is only one." They reconciled eventually. The confrontation defined their relationship perfectly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Silence Begins</span></div>
+<div class="year-banner">1798</div>
+<div class="timeline-dot">Vienna · Age 28</div>
+<div class="narrative">
+  <p>For two years you have been noticing something wrong with your hearing. A ringing that doesn't stop. Sounds becoming muffled in certain frequencies. You have said nothing to anyone — not your friends, not your patrons, not your students. A deaf composer. The thought is too terrible to examine directly.</p>
+  <p>You have consulted doctors privately. They have no real answers. They prescribe almond oil in the ears. They prescribe cold baths. They prescribe rest — which you cannot take. You are at the height of your powers as a pianist. Every concert you give increases your reputation. And every concert you give, you are listening more carefully to what you can still hear, and calculating what you are losing.</p>
+  <p>People close to you have begun to notice that you sometimes misunderstand what they say. You respond to the wrong thing. You smile at the wrong moment. You are covering it with bravado and social dominance, but the cover will not hold forever.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Secret</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Your hearing is deteriorating. You have told no one. Do you continue to hide it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">A</span><span class="dopt-body">Keep hiding it. Your career as a pianist depends on the perception that you are at the height of your powers. Reveal nothing until you have to. Compose furiously while you can still hear.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">Tell your closest friends and patrons. They will find out eventually. Confiding in them now gives you allies and removes the exhausting burden of concealment.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Retire from public performance now, before the loss becomes obvious. Concentrate entirely on composition, where hearing matters less immediately.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Beethoven actually did</div>
+      <p><strong>You hide your deafness from the world for over a decade. Your closest friends discover it by watching you smile at the wrong moments and respond to words they never said.</strong> Beethoven hid his deafness for years. He wrote about it privately in letters — the famous Heiligenstadt Testament of 1802 was found after his death, never sent. He told very few people. He continued performing publicly until 1811, when he gave his last public piano concert. Privately, he used an ear trumpet. He used conversation books — notebooks in which visitors wrote what they wanted to say and he responded verbally. The deception was enormous and exhausting, and it colored everything about his personality during these years: the aggression, the social withdrawal, the famous rudeness. He was in constant fear of being discovered.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>Music is the mediator between the spiritual and the sensual life.</q>
+  <div class="q-attr">— Ludwig van Beethoven</div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Testament</span></div>
+<div class="year-banner">1802</div>
+<div class="timeline-dot">Heiligenstadt, near Vienna · Age 32</div>
+<div class="narrative">
+  <p>You have gone to the village of Heiligenstadt, on your doctor's advice, to rest and see if the country air helps your hearing. It does not. The ringing continues. The loss continues.</p>
+  <p>On October 6, 1802, you write a document addressed to your two brothers — a letter you will never send, that will be found only after your death. It begins: "O you men who think or say that I am malevolent, stubborn or misanthropic, how greatly do you wrong me. You do not know the secret reason why I seem that way to you."</p>
+  <p>The letter goes on to describe the last six years — the humiliation of not being able to hear a shepherd's flute, of pretending to understand conversations you cannot follow, of being a musician who is losing the one sense his art requires. You have considered suicide. You have come close. The only thing that has stopped you, you write, is the art: "It seemed to me impossible to leave the world until I had brought forth all that I felt was within me."</p>
+  <p>You seal the letter. You do not send it. You return to Vienna.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Decision to Live</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have written the Heiligenstadt Testament. You are 32, losing your hearing, and have considered ending your life. You are returning to Vienna. What keeps you going?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">The need to prove yourself. You will write music so great that the deafness becomes part of the legend rather than the limitation.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Your obligations to the people who depend on you — your brothers, your patrons, your students. You cannot abandon them.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">The unfinished music. There is too much inside you that has not yet been written. Dying now would mean that music never exists. That is the one thing you cannot accept.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Beethoven actually wrote</div>
+      <p><strong>You write a suicide note in October 1802, seal it, and never send it. What follows — the Eroica, the Fifth Symphony, the Appassionata — is the most productive creative decade of any composer's life.</strong> Beethoven wrote exactly this in the Testament: "It was only my art that held me back." Not obligation. Not ego. The music that wasn't written yet. He returned to Vienna from Heiligenstadt and began what musicologists call his "heroic period" — the Eroica Symphony, the Appassionata sonata, the Razumovsky string quartets, Fidelio. He composed with a fury that seemed driven by the knowledge that his time with full hearing was running out. The Eroica alone changed what a symphony could be. He wrote it in 1804, two years after the Testament.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Napoleon</span></div>
+<div class="year-banner">1804</div>
+<div class="timeline-dot">Vienna · Age 34</div>
+<div class="narrative">
+  <p>You have been working on a new symphony — your third, and by far the largest you have attempted. It is unlike anything anyone has written: forty-five minutes long, with a funeral march in the second movement, a scherzo that rewrites the rules of that form. You have been writing it in honor of Napoleon Bonaparte, whom you have admired as the embodiment of Enlightenment ideals — the man who overturned monarchy, who promised liberty to all people.</p>
+  <p>You have written "Buonaparte" on the title page of the score.</p>
+  <p>Then the news arrives: Napoleon has declared himself Emperor of France. He has crowned himself, placed the crown on his own head in Notre Dame Cathedral rather than letting the Pope do it. He has become what he was supposed to have ended.</p>
+  <p>Your student Ferdinand Ries, standing in the room with you, watches what happens next.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Name on the Score</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Napoleon has declared himself Emperor. His name is on your score. What do you do?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Keep the dedication. Napoleon has done more for human freedom than any other leader alive. One mistake does not erase that. The music was written in honor of what he stood for.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">B</span><span class="dopt-body">Scratch it out. He is just another ambitious man who wanted a crown. The music now means what you always meant it to mean — heroism itself, not this particular hero.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">Withdraw the symphony entirely and revise it. A work dedicated to a fallen ideal needs to become something else before it can be released.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What Beethoven actually did</div>
+      <p><strong>You grab the title page with Napoleon's name on it, tear it in half, and throw it on the floor. The symphony that launched Romantic music was originally dedicated to the man you now call "nothing more than an ordinary human being."</strong> Beethoven seized the title page, tore it in half, and threw it on the floor. Ries later wrote that he exclaimed: "Is he then, too, nothing more than an ordinary human being? Now he, too, will trample on all the rights of man, indulge only his ambition; now he will think himself superior to all men, become a tyrant!" The symphony was retitled simply "Eroica" — heroic — and eventually published with the dedication removed. It premiered in 1805 and was poorly received: the Viennese audience found it too long and too difficult. Today it is considered the work that launched Romantic music.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Immortal Beloved</span></div>
+<div class="year-banner">1812</div>
+<div class="timeline-dot">Teplitz, Bohemia · Age 42</div>
+<div class="narrative">
+  <p>You have written a letter that begins: "My angel, my all, my very self." It continues for three pages, addressed only to "My Immortal Beloved." You have never named her in the letter. The letter was never sent. It was found in a secret drawer of your writing desk after your death.</p>
+  <p>Who she was has been debated by scholars for two hundred years. The most likely candidate, based on the evidence, is Antonie Brentano, a married Viennese noblewoman with whom you formed a deep bond. You have never married. You have been in love before — with Giulietta Guicciardi, with Josephine von Brunswick, with others — and each time the relationship has ended, partly because of your temperament, partly because the women were of higher social class, partly for reasons that remain private.</p>
+  <p>The Immortal Beloved letter represents your last serious emotional engagement. After 1812, there are no more love letters. You are 42. You are increasingly deaf. You are increasingly solitary. You turn the grief into the late piano sonatas — works of such complexity that pianists still argue about whether they are technically playable as written.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Letter</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have written the most intimate letter of your life. You have not sent it. What do you do with this love that cannot be?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Send the letter. Whatever the consequences — her marriage, the social scandal — honesty about love is more important than propriety.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">Destroy it. Unresolvable feelings are a distraction from the work. You are 42 and the music is what you have. Burn the letter and move forward.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">Keep it unsent, unsent forever. What cannot be said to a person can be said to music. Write it into the work — the Diabelli Variations, the late sonatas, the quartets that no one yet understands.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Beethoven actually did</div>
+      <p><strong>You keep the most intimate letter of your life — addressed only to "My Immortal Beloved," never named — in a secret drawer until your death. Scholars have debated her identity for two hundred years and still have no consensus.</strong> The letter was kept, unsent, until his death. Beethoven never married. He never had a sustained romantic relationship. What he had was the late work — some of the most emotionally vast music ever written. The Piano Sonata No. 29 (Hammerklavier), the Diabelli Variations, the last five string quartets, the Ninth Symphony — all produced between 1818 and 1826, in conditions of complete deafness, social isolation, and a bitter legal battle over his nephew Karl. The late quartets were so advanced that critics at the time called them "the ravings of a deaf man." Today they are studied by every serious musician and are considered among the highest achievements in all of music.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Nephew</span></div>
+<div class="year-banner">1815</div>
+<div class="timeline-dot">Vienna · Age 45</div>
+<div class="narrative">
+  <p>Your brother Caspar Carl has died of tuberculosis, leaving a son, Karl. His will names you and Karl's mother Johanna as co-guardians. You immediately contest this arrangement — you want sole guardianship, and you are willing to fight for it through the courts for as long as it takes.</p>
+  <p>You believe Johanna is an unfit mother. The court proceedings drag on for five years, exhausting your energy and your finances. Karl himself is caught between two adults fighting over him. He will eventually, at age 20, attempt suicide — partly, he will say, because he is "tired of this life."</p>
+  <p>Your friends beg you to let the custody case go. Your doctor says the stress is damaging your health. The legal fees are substantial. Karl does not seem to want to live with you exclusively.</p>
+  <p>You cannot let it go.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Karl</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The custody battle for your nephew is consuming your life and hurting the child you are fighting for. Do you keep fighting?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Accept a compromise. Shared guardianship with Johanna is imperfect but livable. Karl needs peace more than he needs to belong entirely to either of you.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Drop the case entirely. Your love for Karl is not in question, but the legal battle is destroying both of you. Let him grow up without this war.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">Keep fighting. You promised your brother. You believe Karl's future is at stake. You will not stop until the courts give you a final answer.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What Beethoven actually did</div>
+      <p><strong>You fight five years through the courts for sole custody of your nephew. You win. At 20, he shoots himself in the head. He survives, has five children, and spends the rest of his life rarely speaking of you.</strong> Beethoven fought for five years. He won sole guardianship in 1820 after an appeal to the highest court in Vienna. Karl lived with him — unhappily, by most accounts. Karl's 1826 suicide attempt was a pistol shot to his head that wounded but didn't kill him. He recovered, joined the military, married, had five children, and outlived Beethoven by 30 years. He rarely spoke about his uncle afterward. Beethoven, informed of the suicide attempt in the hospital, reportedly sat down in a chair, covered his face with his hands, and sat there without speaking. He aged visibly in the days that followed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Ninth</span></div>
+<div class="year-banner">1824</div>
+<div class="timeline-dot">Vienna · Age 54</div>
+<div class="narrative">
+  <p>You are completely deaf. Have been for several years. You compose by hearing the music in your head — a capacity that, bafflingly to everyone who studies it, has not diminished with the physical loss of hearing. If anything, the music in your head has become larger, more complex, more demanding of the musicians who will have to play it.</p>
+  <p>You have been working on a symphony. It is your ninth — and like the Eroica, it is unlike anything that has existed before. In the final movement, you have done something no one has ever done in a symphony: you have added a chorus and four vocal soloists, setting Schiller's poem "Ode to Joy." A symphony that ends with singing.</p>
+  <p>The premiere is scheduled for May 7, 1824, at the Kärntnertor Theater in Vienna. You are told the audience may not accept it — the work is 65 minutes long, the final movement alone is 24 minutes, the choral writing is brutally difficult. Some musicians have said the vocal parts are unsingable as written.</p>
+  <p>You want to conduct the premiere yourself.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Premiere</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You are completely deaf. You want to stand on the podium and conduct the premiere of the Ninth Symphony. Should you?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Step back. Let Michael Umlauf conduct. Attend the premiere in the audience. A deaf conductor conducting a symphony he cannot hear is too great a risk for the premiere.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">Stand on the podium. You cannot hear the music, but you know every note of it better than anyone alive. The musicians will follow the actual conductor, but you will be there — present, visible, inseparable from this work you have spent your life building toward.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">Don't attend at all. The premiere belongs to the audience and the musicians. Your presence would make it about your deafness rather than the music.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Beethoven actually did</div>
+      <p><strong>You stand on the podium at the premiere of the Ninth Symphony and conduct a work you cannot hear. The musicians have been quietly told to follow someone else. At the end, you keep conducting into silence — until a singer walks over and turns you around to face the standing ovation.</strong> Beethoven stood on the podium at the premiere of the Ninth Symphony on May 7, 1824. Michael Umlauf conducted from beside him — the musicians had been quietly told to follow Umlauf, not Beethoven. Beethoven moved his arms and body in response to the score in his head, sometimes ahead of the music, sometimes behind. He could hear nothing. At the end of the symphony, he kept conducting into silence — the audience was already applauding, rising, waving hats and handkerchiefs. He didn't know. The contralto Caroline Unger walked over and gently turned him around to face the audience. He saw the standing ovation. Five curtain calls. He wept. It was the last public performance of his life.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Raised Fist</span></div>
+<div class="year-banner">1827</div>
+<div class="timeline-dot">Vienna · March 26, 1827 · Age 56</div>
+<div class="narrative">
+  <p>You are dying of liver failure. You have been confined to bed for months. The illness has been slow and painful. You have received final rites. You have been visited by friends and admirers. Schubert came to see you — Schubert, who idolized you and who himself has only one more year to live.</p>
+  <p>Your apartment is in disorder. You have always lived in disorder — moving apartments dozens of times in Vienna, leaving chaos in each one. Now you cannot leave.</p>
+  <p>The last string quartet you completed, Op. 135, ends with a musical riddle inscribed in the score: a musical phrase marked with the question "Must it be?" and an answering phrase marked "It must be!" You wrote this at age 56, deaf, ill, knowing you were dying, in a work that would not be performed until after your death.</p>
+  <p>On March 26, 1827, there is a sudden storm — thunder, lightning, snow. You stir. You raise your right fist toward the ceiling. Then your hand falls. You are gone.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — Must It Be?</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Deaf for the last decade of your life, you wrote your greatest music in silence. Looking back — was the deafness the cost, or part of the work?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">The cost. The late quartets would have been greater still if you could have heard them. Deafness was not the source of the music — it was an obstacle you worked around.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Neither. The music came from somewhere that had nothing to do with the ears. The deafness is irrelevant to what made it great.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">Part of the work. The deafness forced you inward. The music in your head, unmediated by any external sound, became something no hearing composer could have written. Must it be? It must be.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What musicologists believe</div>
+      <p><strong>The late string quartets you write in total deafness are so strange that contemporaries call them "the ravings of a deaf man." Brahms studies them for decades. Bartók says they are the only music that makes him question everything he thought he knew.</strong> The debate about Beethoven's deafness and his late music has no settled answer — but the dominant view among serious scholars is that the late work could only have been written by someone composing from an interior world. The late string quartets (Op. 127, 130, 131, 132, 135) contain harmonic and structural ideas that seemed incomprehensible to his contemporaries precisely because they bore no relationship to what actual instruments sounded like in a room. They were written from the inside out. Brahms studied them for decades. Bartók said they were the only music that made him question everything he thought he knew. The Op. 131 quartet in C-sharp minor — seven movements played without pause, written in total deafness — is still considered by many musicians to be the greatest piece of chamber music ever composed. Must it be? It must be.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Beethoven's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="cta-box">
+  <p>Beethoven asked one question across 56 years and answered it the same way every time: must it be? It must be. The Ninth Symphony was written in silence and heard for the first time when a singer turned him around to face the applause. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/index.html#simulators">→ All Life Simulators — Van Gogh, Tesla, Mozart, Einstein and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/mozart-simulator.html" style="color:var(--accent)">Mozart Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Beethoven";body="Eight decisions — including the ones that look irrational from outside — and you matched Beethoven at almost every turn. The hardest match: Decision 7, conducting the Ninth while completely deaf. Most people would step aside. Beethoven stood on the podium for a symphony he could not hear, in a city that had not always treated him well, and was turned around by a singer to see the ovation he would never hear.";}else if(pct>=0.625){title="You Understood the Stubbornness";body="You matched Beethoven on most of the decisions that required refusing to accommodate the limitation — hiding the deafness, scratching Napoleon's name, standing on the podium. Where you diverged tends to be the places where a reasonable person would compromise. Beethoven's career is essentially a record of refusing to compromise, even when it would have been smarter not to.";}else if(pct>=0.375){title="A More Collaborative Life";body="You would have accepted more help, made more compromises, chosen more practical paths. Shared custody, a conductor at the Ninth, perhaps even sending the letter. These aren't failures — they're the choices of someone who understands that music doesn't require suffering to be great. Whether Beethoven's music required it is still debated.";}else{title="The Reasonable Path";body="You chose accommodation and practicality at most turns — which is what the situations called for, rationally. Reveal the deafness early. Let Karl go. Step back from the podium. These are sensible decisions that would have produced a less turbulent life. Whether they would have produced the late quartets is the question Beethoven's life leaves permanently open."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

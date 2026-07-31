@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Michelangelo?</title>
+<meta name="description" content="He refused the Sistine Chapel, painted it alone for 4 years, then kept working until he died at 88 with a chisel in his hand. 8 decisions from the greatest artist who ever lived.">
+<meta property="og:title" content="What Would You Do If You Were Michelangelo?">
+<meta property="og:description" content="Sculptor. Painter against his will. Architect at 71. Working until his last breath at 88. 8 decisions from the life of Michelangelo.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/michelangelo-simulator.html">
+<style>
+:root{
+  --bg:#F5EEE8;--card:#FCF8F4;--ink:#1A0A00;--muted:#5A3A20;--line:#D4B898;
+  --accent:#5A3010;--accent-bg:#F2E4D4;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,238,232,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#1A0A00;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C8A880;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#180800;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F8EEE0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#180800;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F8EEE0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C8A880;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#180800;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#1A0A00;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F8EEE0;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C8A880;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#F8EEE0;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#E0C090;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Michelangelo</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #39</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Michelangelo?</h1>
+  <p class="cover-sub">He called himself a sculptor, not a painter. Then a Pope forced him to paint the Sistine Chapel ceiling. He fired all his assistants and worked alone for four years. Then he designed St. Peter's Basilica at 71, knowing he'd never see it finished. He died three days before his 89th birthday, still working. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Michelangelo di Lodovico Buonarroti Simoni</strong> (1475–1564) · Italian sculptor, painter, architect, poet · One of four transformative figures of the High Renaissance alongside Leonardo, Raphael, and Titian · Trained in the Medici household under Lorenzo the Magnificent · Major works: <em>Pietà</em> (1499), <em>David</em> (1504), Sistine Chapel ceiling (1512), <em>Last Judgment</em> (1541), design of St. Peter's Basilica dome (1547–1564) · Only artist since antiquity to have two biographies published during his lifetime · Died February 18, 1564, Rome — 3 days before his 89th birthday · His last work, the <em>Rondanini Pietà</em>, was unfinished on the day he died.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1489, Florence</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Forbidden Study</span></div>
+<div class="year-banner">1492</div>
+<div class="timeline-dot">Florence · Age 17</div>
+<div class="narrative">
+  <p>You are living in the Medici household, trained in sculpture, obsessed with the human body. The problem: you cannot truly understand what you are carving. The marble figures you make look like marble figures. You want them to look like bodies — real bodies, with the weight of actual flesh, the exact attachment of muscle to bone.</p>
+  <p>The Church forbids the dissection of human corpses. But the prior of Santo Spirito has quietly offered you access to the hospital's dead in exchange for a wooden crucifix. You will work at night. If discovered, the consequences could be severe.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Anatomy of Truth</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Michelangelo dissected human corpses secretly to understand anatomy for his sculpture. Was this the right call?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">No — the risk wasn't worth it. He could have studied ancient Greek and Roman sculpture, which already showed the human form with great accuracy. Breaking the law for marginal anatomical knowledge was foolish.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">B</span><span class="dopt-body">Yes — ancient sculpture showed the surface, not the mechanism. Understanding what was underneath — how muscles attach, how the body distributes weight — is what created the unprecedented naturalism in his work. The David and the Pietà required this knowledge. The risk was justified by what it made possible.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">The question is irrelevant to the outcome. Michelangelo's genius was visual and manual, not intellectual. What made his work great wasn't anatomical knowledge but innate talent and obsessive practice.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What anatomy gave Michelangelo</div>
+      <p><strong>You break Church law at 17 to cut open the dead, and spend the rest of your life proving it was necessary.</strong> Michelangelo dissected corpses on and off throughout his life — scholars believe he performed over 30 dissections. His anatomical knowledge shows in specific, unexpected places: the precise way the David's neck tendons tighten as he turns his head, the weight distribution in the Pietà's Madonna bearing Christ's body, the twisting torsos in the Sistine Chapel ceiling that show how the body's muscles interact under load. His contemporary Leonardo da Vinci also dissected corpses — some of the same period — and their anatomical drawings influenced each other. What separated their use of anatomy: Leonardo used it to understand the body as a machine; Michelangelo used it to represent the body as a soul made visible. The knowledge served opposite ultimate purposes for each.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Pietà</span></div>
+<div class="year-banner">1499</div>
+<div class="timeline-dot">Rome · Age 23</div>
+<div class="narrative">
+  <p>You are 23. A French cardinal has commissioned a marble sculpture: the Virgin Mary holding the body of the dead Christ. The <em>Pietà</em>. You have never carved anything this ambitious. When you finish it, it is the most perfect marble sculpture most people have ever seen.</p>
+  <p>After it is installed in St. Peter's Basilica, you overhear visitors attributing it to another sculptor — Cristoforo Solari of Milan. You return at night. You carve your name across the Virgin's sash — "MICHAËL ANGELUS BONAROTUS FLORENT FACIEBAT." It is the only work you ever sign. You later say you regretted it as an act of vanity.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Signing the Pietà</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Michelangelo signed the Pietà in secret and later called it vanity. What does this moment reveal about the tension between pride and humility in artistic genius?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">The regret was genuine and the signing was a mistake — great art doesn't need the artist's name attached. The Pietà's worth is independent of who made it, and claiming credit is a kind of ego that diminishes the work.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">The regret was performance — he was 23, he deserved the credit, and getting credit at 23 for the greatest sculpture in Rome mattered for his career. Calling it vanity later was the socially acceptable framing.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">C</span><span class="dopt-body">Both feelings were genuine, and that's the interesting part. He felt the injustice of being uncredited strongly enough to act. He also felt the pride of the act as unseemly once he'd cooled down. Greatness and ego aren't separable; the drive that makes someone carve the Pietà at 23 is the same drive that makes them go back and sign it at night.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">The only signed work</div>
+      <p><strong>You carve your name into the Virgin's sash in the middle of the night — then spend the next 65 years regretting it, and never sign anything again.</strong> The Pietà is the only work Michelangelo signed. Everything else — David, the Sistine ceiling, the Last Judgment, all his architecture — bears no signature. The Pietà signature is also the most personal: he used the Latin form of his name in the imperfect tense, "faciebat" (was making), rather than "fecit" (made) — implying the work was ongoing, never finished. Whether this was modesty or further assertion of ownership — "I made this, and I'm still making" — is debated. The marble sash where he carved it is the Virgin's garment, across her chest. At 23, he was the best sculptor in Rome. He knew it. The person who attributed the work to Solari simply hadn't heard of Michelangelo yet. A month later, everyone had.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The David</span></div>
+<div class="year-banner">1501</div>
+<div class="timeline-dot">Florence · Age 26</div>
+<div class="narrative">
+  <p>A committee has offered you a commission: an enormous block of white Carrara marble, 17 feet tall, standing abandoned in the workshop of the Florence Cathedral for 35 years. Two sculptors before you started working on it and gave up. It has a hole drilled partway through. You study it for two years before touching it.</p>
+  <p>The subject is David — the shepherd boy before he kills Goliath. Every other artist has depicted the moment after: David holding Goliath's severed head in triumph. You depict something different: the moment before, when David has seen the giant and is deciding. He is calm. He is thinking.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Moment Before</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Every other David showed the triumphant aftermath. Michelangelo showed the moment of decision before the battle. What was he saying?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">He was making a civic statement — Florence was a small city-state surrounded by powerful enemies. David facing Goliath before the fight was a symbol of Florentine defiance: we face our enemies, and we are unafraid.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">He was solving a technical problem — the triumphant David required holding a severed head, which would have complicated the balance of the sculpture at 17 feet. The "before" moment allowed a cleaner, more stable figure.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, and something more — he was depicting the inner life of a heroic decision. The most powerful moment isn't victory; it's the instant before action, when everything is still possible and the person has already committed. David's concentrated expression and coiled tension show what it feels like to be about to do something that will change everything.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">David's innovation</div>
+      <p><strong>You choose the moment of decision over the moment of triumph — and in doing so, change what Western art thinks is worth depicting.</strong> The David (1504) was placed at the entrance of the Palazzo della Signoria (Florence's town hall), not in a church — an unprecedented placement for a religious subject. At 17 feet, it was the largest freestanding marble statue carved since classical antiquity. Michelangelo's insight about depicting the "before" moment influenced art history: it shifted Western aesthetics from depicting the climax of an action to depicting psychological states. David's right hand is larger than his left — proportionally exaggerated — because it holds the sling, and at that moment in the story, the hand that will throw the stone is the most important thing in the world. The head tilts left, the eyes look right — he has spotted Goliath. The body is calm; only the details are tense. Michelangelo put the drama inside.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Ceiling</span></div>
+<div class="year-banner">1508</div>
+<div class="timeline-dot">Rome · Age 33</div>
+<div class="narrative">
+  <p>Pope Julius II wants you to paint the ceiling of the Sistine Chapel. You refuse. You say you are a sculptor, not a painter. You say the commission should go to Raphael. Julius insists. You refuse again. Julius is not a man who accepts refusal. He is, among other things, known as "il Papa terribile" — the fearsome Pope.</p>
+  <p>You accept. You accept the commission that will occupy four years of your life, ruin your health, and produce what is still considered the greatest painted ceiling in the world.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — Being Forced to Paint</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Michelangelo was essentially forced to paint the Sistine Chapel ceiling — a commission he didn't want. What does it mean that arguably the greatest painting ever made was produced under compulsion?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">A</span><span class="dopt-body">It reveals something important about creative genius: once forced to attempt something, he brought everything to it. The preference for sculpture was a matter of identity and habit, not actual limitation. Constraints that force engagement with something outside your comfort zone can produce work that self-directed projects don't.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">It's an interesting coincidence that doesn't generalize. Michelangelo was uniquely talented — being forced to paint happened to work out in this case, but "being forced outside your comfort zone produces greatness" is not a reliable principle.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">The "compulsion" framing overstates it. Once he accepted, it became his project, and his ego made him pour everything into it. The question isn't why being forced produced great work; it's why he didn't want the commission in the first place, when he was clearly capable.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">Four years on his back</div>
+      <p><strong>You fire all your assistants within weeks, spend four years on scaffolding with paint falling in your eyes, develop a spinal deformity — and produce the greatest painted ceiling in history.</strong> The Sistine Chapel ceiling (1508–1512) covers 5,000 square feet and contains 343 figures. Michelangelo painted it alone — he hired assistants, found their work unacceptable, and dismissed them within weeks. He worked standing on scaffolding of his own design, neck bent back, paint falling in his eyes. He developed a spinal deformity and damaged eyesight. He could only read by holding a book above his head for years afterward. The ceiling was unveiled on November 1, 1512. Raphael, who had been suggested as an alternative to Michelangelo, saw it before the unveiling and immediately returned to his own paintings to revise them. Michelangelo called the ceiling "a grave mistake" and said it ruined his health. He spent the rest of his life complaining about it — and was commissioned to paint the Last Judgment in the same chapel 24 years later.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Last Judgment</span></div>
+<div class="year-banner">1541</div>
+<div class="timeline-dot">Rome · Age 66</div>
+<div class="narrative">
+  <p>Twenty-nine years after the ceiling, another Pope has commissioned you to paint the altar wall of the same chapel. The <em>Last Judgment</em>. You are 60 when you begin and 66 when you finish. It is massive — 48 feet tall — and deeply, furiously personal.</p>
+  <p>You paint your enemies in hell. The papal master of ceremonies, Biagio da Cesena, complained that the nude figures were inappropriate for a sacred space — "suitable for a bathhouse or tavern, not a papal chapel." You painted him as Minos, judge of the underworld, with donkey ears and a serpent biting his genitals. When he complained to the Pope, the Pope replied that his jurisdiction did not extend to hell.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Painting Your Enemies in Hell</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Michelangelo used the Last Judgment — a commission from the Pope — to settle personal scores. What does this tell us about his relationship to his patrons?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">He was reckless — abusing a papal commission for personal revenge was dangerous and unprofessional. He was lucky the Pope found it amusing rather than threatening.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">He had correctly assessed his own position. By 1541, Michelangelo was so culturally indispensable that he could get away with things no other artist could. He tested the limits deliberately because he knew where they were. The painting of Cesena was a precise calculation of how much he could do.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">It shows the permanent tension in his career between serving patrons and his own vision. The enemies-in-hell move was a reassertion of artistic ownership over a commission he didn't fully control. The subversive gesture was the only form of freedom available.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">The politics of the Last Judgment</div>
+      <p><strong>You paint the Pope's master of ceremonies in hell with donkey ears and a serpent biting his genitals — and the Pope rules it is outside his jurisdiction to help him.</strong> The Last Judgment generated enormous controversy — not just for the nudes (which were later overpainted by Daniele da Volterra, who earned the nickname "Il Braghettone," the Breeches Maker) but for its theological content. Michelangelo depicted Christ as a beardless, athletic avenger, not the gentle savior of medieval tradition. He included a self-portrait: the flayed skin of St. Bartholomew hanging limply in the saint's hand — the face on the deflated skin is Michelangelo's own, hollow and exhausted. It's one of the most haunting self-portraits in art history: the artist as used-up material. Cesena's portrait was painted over in the 18th century restoration. The original has never been recovered.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Designing St. Peter's at 71</span></div>
+<div class="year-banner">1547</div>
+<div class="timeline-dot">Rome · Age 71</div>
+<div class="narrative">
+  <p>You are 71. Pope Paul III appoints you chief architect of the new St. Peter's Basilica. The project has been ongoing for 40 years under various architects — the original design is a mess of competing visions. You are handed a building half-built and fully confused.</p>
+  <p>You work without pay. You know you will not live to see the dome completed. You simplify the plan, take control of construction, and spend your last 17 years on a building you will never see finished. The dome as actually built follows your design.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Working on the Unfinishable</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Michelangelo worked unpaid for 17 years on a building he knew he'd never see completed. What motivated this?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Religious devotion — he genuinely believed he was serving God, and the basilica's completion would happen in God's time. His labor was a form of prayer, and its end was not his to witness.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Legacy — at 71, St. Peter's was the largest stage left available to him. The dome, more than any individual sculpture or painting, would ensure his name lasted as long as Rome.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">Both are probably true, and they're not separate in Michelangelo's mind. He wrote extensively about the soul and art as religious activity — for him, making something beautiful for God and making something that lasts forever were the same thing. The distinction between devotion and ambition may be a modern one he wouldn't have recognized.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">St. Peter's dome</div>
+      <p><strong>You take the job unpaid at 71, knowing you will die before it is finished, and design a dome that every major civic building in the Western world will imitate for the next 400 years.</strong> Michelangelo became chief architect of St. Peter's in 1547 at age 71 and worked on it until his death in 1564 at 88. His key contribution was the design of the dome — the largest in the world at the time, based partly on Brunelleschi's Florence Cathedral dome but taller and more dynamic. He refused any payment, saying it was "for the salvation of my soul" and for the honor of God. The dome was actually completed by Giacomo della Porta in 1590, 26 years after Michelangelo died, using his plans with some modifications. From almost any angle in Rome, the dome is visible. It was the direct model for domes in Washington D.C., Paris (Panthéon and Invalides), London (St. Paul's), and dozens of other major buildings. Michelangelo designed the template for how major civic buildings in the Western world would look for 400 years.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · Eighty-Eight Years Old</span></div>
+<div class="year-banner">1563</div>
+<div class="timeline-dot">Rome · Age 88</div>
+<div class="narrative">
+  <p>You are 88. Your hands shake. Your eyesight is failing. Most of the people who knew you as a young man are dead. Lorenzo de' Medici died when you were 17. Julius II died in 1513. Leonardo da Vinci died in 1519. Pope Paul III died in 1549. Bramante. Raphael. An entire generation of greatness.</p>
+  <p>You are still carving. You are working on a sculpture you started years ago and have been unable to let go of — the <em>Rondanini Pietà</em>. It shows Christ and the Virgin again, as it did in your first great work. But this time it looks nothing like that first Pietà. It is rough, unresolved, almost abstract. It looks like something that is becoming rather than finished.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Last Pietà</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Rondanini Pietà — Michelangelo's last work, unfinished when he died — looks deliberately rough compared to his earlier perfection. What does this mean?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">His skills declined with age — the roughness is not intentional but a product of failing hands and failing eyes. The Rondanini shows a great artist at the end of his ability.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">He deliberately moved away from technical perfection. In his late work, he was more interested in spiritual truth than surface beauty. The roughness is intentional — he was showing what lay underneath the polished surface of his earlier work, the unfinished quality of the human soul.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">The question can't be answered — we don't know what the Rondanini would have looked like if he had lived to finish it. Calling the roughness intentional imposes a meaning on an incomplete work.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">Late style</div>
+      <p><strong>In your final week of life, at 88, you are still cutting into marble — not to polish it but to dissolve it, searching for something your technically perfect early work couldn't hold.</strong> Art historians have studied the phenomenon of "late style" in major artists — the tendency for great artists in old age to abandon the technical refinement that made them famous in favor of rougher, more essential forms. Titian did it. Rembrandt did it. Beethoven did it. Michelangelo did it spectacularly. His last works are deeply anti-monumental: instead of the superhuman perfection of the David or the muscular figures of the Sistine ceiling, the Rondanini Pietà shows Christ and Mary merging together, barely differentiated, as if dissolving rather than suffering. The unfinished surface — which Michelangelo worked on the week before he died — suggests a figure emerging from or disappearing into the stone. Whether this was a conscious aesthetic choice or what happened when he could no longer control the marble, the result is among his most moving works.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · Three Days Before Eighty-Nine</span></div>
+<div class="year-banner">1564</div>
+<div class="timeline-dot">Rome · Age 88</div>
+<div class="narrative">
+  <p>February 12, 1564. Six days before your birthday. You have a fever. Your students beg you to stop working. You continue. You have been carving for 70 years — since you were a child in Settignano, and the stone-carver's wife who nursed you said you absorbed the taste for chisel and marble with her milk. On February 14, you are forced to stop, too weak to stand. On February 18, you die.</p>
+  <p>You are 88 years and 356 days old. Three days short of 89. You have outlasted most of the world you were born into and all of the rivals you competed with.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — What Made Michelangelo Michelangelo</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Michelangelo worked for 70 years across sculpture, painting, architecture, and poetry. What was the single most important factor in his achievement?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Natural talent. He was born with an ability to perceive form and translate it into stone that no amount of training could have produced. The talent is prior to everything else.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">The Medici household. Being raised alongside the greatest collection of ancient sculpture and the finest humanist scholars in Europe gave him access to resources and ideas that formed his intellectual and aesthetic foundation. Environment made the talent productive.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The refusal to be satisfied. From the night dissections at 17 to the Rondanini at 88, what drives the whole arc is the conviction that what he had done was not yet good enough — that the marble contained something truer than he had yet found. The talent and the environment were necessary but not sufficient. The restlessness is what kept going.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">The unfinished</div>
+      <p><strong>You die with the Rondanini Pietà unfinished, your chisel still nearby — and the works you never completed turn out to be the ones that reveal your thinking most clearly.</strong> Michelangelo left many works deliberately or accidentally unfinished — the <em>Slaves</em> in the Accademia in Florence, the <em>St. Matthew</em>, the <em>Rondanini Pietà</em>. For centuries, art critics tried to explain these as failures. In the 20th century, the interpretation reversed: the unfinished works are seen as the most revealing, the place where you can see his thinking, the choices he made. The figure emerging from the stone — <em>non finito</em> — became a defining concept of Michelangelo's work. Vasari wrote that Michelangelo believed the ideal form existed inside the block, and the sculptor's task was to remove what was not it. If that's true, then the unfinished pieces show the form partway out, still partially enclosed — which may be closer to the truth of what Michelangelo was doing than the polished completed works.</p>
+    </div>
+  </div>
+</div>
+
+<div class="ending" id="ending">
+  <div class="ending-score" id="final-score">0/8</div>
+  <div class="ending-label">Your Michelangelo Score</div>
+  <div class="ending-title" id="final-title"></div>
+  <div class="ending-body" id="final-body"></div>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue the Series</div>
+  <div class="next-grid">
+    <a class="next-card" href="davinci-simulator.html">
+      <span class="next-name">Leonardo da Vinci</span>
+      <span class="next-desc">The exact contemporary Michelangelo competed with — and rarely spoke to. Both giants. Different methods entirely.</span>
+    </a>
+    <a class="next-card" href="gaudi-simulator.html">
+      <span class="next-name">Antoni Gaudí</span>
+      <span class="next-desc">Also designed a building he'd never see finished — the Sagrada Família. Also worked until near death.</span>
+    </a>
+    <a class="next-card" href="vangogh-simulator.html">
+      <span class="next-name">Vincent van Gogh</span>
+      <span class="next-desc">Opposite arc: Van Gogh worked intensely for 10 years and died unknown. What Michelangelo had, Van Gogh lacked entirely.</span>
+    </a>
+    <a class="next-card" href="hokusai-simulator.html">
+      <span class="next-name">Katsushika Hokusai</span>
+      <span class="next-desc">Another artist who worked until 88 and said he still needed more time. Different continent, same obsession.</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <p>Michelangelo's story is one of 100 historical life simulators on this site. Each one asks: given the same constraints, pressures, and information — what would you have chosen?</p>
+  <p><a href="simulators.html">Browse all simulators →</a></p>
+</div>
+
+</div>
+</div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Still Hear the Figure Inside the Stone";body="You made the same hard calls Michelangelo made: illegal dissections to understand what marble actually holds, forty years of ceiling and altar wall under popes who didn't ask. You understand why he fired the assistants, signed his name onto the Pietà at midnight, and spent his final week still cutting into the Rondanini. The drive that let him keep going at 88 isn't mystical — it's the refusal to accept what he'd already made. You understand that refusal from the inside.";}else if(pct>=0.625){title="You Would Have Painted the Ceiling";body="You grasped most of what Michelangelo was doing: why the anatomy mattered, why David needed to be shown before the battle rather than after, why St. Peter's was worth 17 unpaid years he'd never see finished. Where you diverge is in the finer math of power — how precisely you can test a papal commission, how far you can push the enemies-in-hell move. Michelangelo knew exactly where that line was and stepped just over it every time. You'd have done the same thing, mostly.";}else if(pct>=0.375){title="You Would Have Stopped at the David";body="The David alone would have been enough — it's the greatest statue in Europe, and you'd have known it at 26. But Michelangelo wasn't built for 'enough.' The Sistine ceiling he didn't want, the St. Peter's he wouldn't live to see, the Rondanini still unresolved after years of work — these weren't triumphs you'd have naturally pursued. You see value in completion, in a life that ends when the work does. That's a defensible way to live. It's just not his.";}else{title="You Would Have Been a Very Good Sculptor";body="There's nothing wrong with finishing the Pietà at 23, taking credit for it cleanly, and moving on to the next commission without dissecting corpses or antagonizing popes. You'd have had a successful career, reasonable health, and work that was done when it was supposed to be done. Michelangelo's version produced the Sistine ceiling and the dome of St. Peter's — but also four years lying on scaffolding in the dark, a permanent spinal deformity, and a last sculpture he was still cutting into the week he died."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

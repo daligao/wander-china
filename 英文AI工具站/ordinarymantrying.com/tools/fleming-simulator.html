@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alexander Fleming Life Simulator — Penicillin, Lucky Accidents & the Antibiotic Age | Ordinary Man Trying</title>
+<meta name="description" content="Follow Alexander Fleming across 8 pivotal decisions — from the 1928 contaminated petri dish that changed medicine forever, to World War I wound observations, to sharing the Nobel Prize he nearly didn't win.">
+<style>
+:root{
+  --bg:#EEF5EE;--card:#F5FAF5;--ink:#061006;--muted:#284828;--line:#B0D0B0;
+  --accent:#1A4A1A;--accent-bg:#D8ECD8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,245,238,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#061006;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #90B890;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#030803;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#D8ECD8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#D8ECD8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #90B890;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #90B890;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Alexander Fleming</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #84 of 100</p>
+  <h1 class="cover-title">He Left a Petri Dish Out.<br>It Changed Medicine Forever.</h1>
+  <p class="cover-sub">Alexander Fleming served as a battlefield physician in World War I, watching soldiers die of infected wounds while the antiseptics applied to help them made things worse. He came back to London determined to find something that killed bacteria without destroying human tissue. In 1928, returning from a holiday, he noticed a contaminated petri dish of Staphylococci. A mold had landed on it — and around the mold, all the bacteria were dead. He had the prepared mind to see what he was looking at. It took another fifteen years and two other scientists to turn his observation into medicine. He shared the Nobel Prize anyway.</p>
+  <div class="cover-facts">
+    <p>🧫 Penicillin discovery: September 1928 &nbsp;·&nbsp; ⚕️ WWI battlefield physician — observed antiseptic failures firsthand &nbsp;·&nbsp; 💧 Lysozyme discovered 1922 (first antibacterial discovery) &nbsp;·&nbsp; 🏆 Nobel Prize 1945 shared with Florey and Chain &nbsp;·&nbsp; 🌍 Penicillin has saved an estimated 200 million lives &nbsp;·&nbsp; Died March 11, 1955 · Age 73</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Fleming's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1914</div>
+  <div class="timeline-dot">Western Front, France · Age 33</div>
+  <div class="narrative">
+    <p>You are thirty-three, a physician trained at St Mary's Hospital Medical School in London, and you are serving in a field hospital on the Western Front under Almroth Wright, one of the pioneers of vaccine therapy. You are watching men die of infected wounds. The injuries from artillery and shrapnel are severe, and the bacterial infections that follow them are frequently more lethal than the initial wounds. Surgeons and medics apply antiseptics — carbolic acid, boric acid, hydrogen peroxide — directly to wounds. This is standard practice. You begin to suspect it is making things worse.</p>
+    <p>The problem, as you will analyze it, is that antiseptics are not selective: they kill bacteria, but they also destroy the white blood cells that the body deploys to fight infection. In wounds with complex geometry — shrapnel wounds, shell wounds with deep irregular channels — the antiseptic cannot reach the bacteria deep in the tissue, but it can destroy the leucocytes at the wound's accessible surfaces. You are watching a treatment harm patients. You begin collecting evidence. Wright is skeptical of your analysis. The evidence accumulates regardless.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1914</div>
+    <p class="decision-q">Fleming observes that antiseptics may be harming rather than helping wounded soldiers. What does this require of him?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Reporting to superior officers — the observation, if correct, has immediate implications for treatment protocols and must be escalated quickly.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. The willingness to follow evidence against established practice — antiseptics were widely believed to save lives, and arguing against them required both rigorous evidence and professional courage to maintain a position contrary to expert consensus.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Finding an immediate replacement — the observation is only useful if he can identify a better treatment to propose alongside the critique of current practice.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Caution and silence — wartime is not the moment to introduce controversy about established treatment protocols, and the observation should wait for peacetime research conditions.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+<p><strong>You watch soldiers die of infected wounds on the Western Front while the antiseptics meant to save them destroy the white blood cells that are the body's only real defense. You begin collecting evidence. Your superior is skeptical. The evidence accumulates regardless.</strong></p>
+      <strong>Fleming on antiseptics:</strong> Fleming and Wright published papers arguing that antiseptics, in deep wounds, were doing more harm than good. The papers were largely ignored during the war — too disruptive to established practice, too uncomfortable to act on. The same mistake was repeated in World War II, until penicillin made the antiseptic debate moot. Fleming's wartime experience was not wasted: it gave him a precise understanding of what a truly useful antibacterial agent needed to do — kill bacteria without harming human tissue. This understanding is what made him recognize what he was looking at in 1928.
+    </div>
+  </div>
+
+  <div class="year-banner">1922</div>
+  <div class="timeline-dot">St Mary's Hospital, London · Age 41</div>
+  <div class="narrative">
+    <p>You have a cold. This is professionally useful: you add a drop of nasal mucus to a culture of bacteria and observe the result. The mucus kills some of the bacteria. You investigate the mechanism and discover that it contains an enzyme — you name it lysozyme — that breaks down the cell walls of certain bacteria. You have discovered a naturally occurring antibacterial substance in the human body. It is not clinically powerful enough to be a medicine — it kills only relatively harmless bacteria — but it proves a principle: the body contains substances that selectively destroy bacteria without harming human tissue. You write up the finding and publish.</p>
+    <p>The paper receives little attention. Lysozyme is a curiosity, not a medical breakthrough. You file it away. You continue your research. The principle you have proved — selective antibacterial action — is the thing you will need to recognize penicillin when it appears.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1922</div>
+    <p class="decision-q">Fleming's lysozyme discovery receives little attention. Why does it matter anyway?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. It doesn't — lysozyme is a dead end, and the real importance of Fleming's work begins in 1928 with penicillin.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. It trained his attention — by discovering and studying a naturally occurring antibacterial substance, Fleming developed the conceptual framework and the observational habits that allowed him to recognize penicillin as important rather than dismissing it as contamination. Discovery favors the prepared mind.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. It established his professional reputation — the lysozyme papers gave Fleming credibility at St Mary's that allowed him the laboratory time and resources to pursue subsequent research.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. It inspired the penicillin search — recognizing that natural substances could kill bacteria led him to systematically search for more powerful examples.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+<p><strong>You have a cold in 1922 and add a drop of your own nasal mucus to a bacterial culture to see what happens. What you find — an enzyme that kills bacteria without harming human tissue — proves the principle that leads directly to penicillin six years later.</strong></p>
+      <strong>Prepared minds:</strong> Louis Pasteur said "chance favors only the prepared mind." Fleming's preparation was specific: he had spent years thinking about what an ideal antibacterial agent would look like (kills bacteria, spares human cells, works in the complex environment of a wound), and he had developed the technique of looking at contaminated cultures rather than discarding them, because contamination could be informative. When the penicillin mold landed on his Staphylococcus plate in 1928, the prepared mind saw a clear zone of dead bacteria around it and asked why — rather than noting contamination and discarding the plate, which is what an unprepared mind would have done.
+    </div>
+  </div>
+
+  <div class="year-banner">1928</div>
+  <div class="timeline-dot">St Mary's Hospital, London · Age 47</div>
+  <div class="narrative">
+    <p>Late August 1928. You have gone on holiday, leaving some Staphylococcus culture plates on your bench — an untidy habit that several colleagues find irritating. The London summer has been unusually cool and then warm. When you return in early September and begin sorting through the plates before discarding them, one plate catches your attention. A mold has contaminated it — a common enough event in microbiology laboratories — but around the mold, in a clear halo, the Staphylococcus colonies are dead or dying. A contaminating mold is killing your bacteria.</p>
+    <p>You call over a colleague, D.M. Pryce, and say: "That's funny." You do not discard the plate. You photograph it. You culture the mold. You identify it as <em>Penicillium notatum</em>. You test its antibacterial properties. You find that even heavily diluted, it kills Staphylococci and other harmful bacteria but does not harm white blood cells. You name the antibacterial substance penicillin. You publish in 1929. The paper receives almost no interest from the clinical community.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1928</div>
+    <p class="decision-q">Fleming sees a contaminated plate and says "That's funny." What made this observation historically decisive?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. The specific mold that contaminated the plate — Penicillium notatum was unusually potent, and any bacteriologist would have noticed the effect.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. Fleming's decision to investigate rather than discard — contamination of cultures was routine, and the standard response was to discard the plate and start again. Fleming's recognition that the contamination pattern was unusual, his choice to photograph and culture it, and his persistence in identifying the substance and testing it were what made the accident productive.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. The cool London summer — the unusual temperature conditions allowed the mold to grow before the bacteria overwhelmed it, creating the visible halo effect. Without the weather, the discovery wouldn't have happened.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. The timing — had Fleming made this observation in 1918 rather than 1928, the wartime need for antibacterials would have driven rapid development that didn't occur in the relatively peaceful late 1920s.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+<p><strong>You return from holiday in September 1928, sort through old culture plates before discarding them, and say "That's funny" to a colleague instead of throwing the plate away. That single act of curiosity will save an estimated 200 million lives.</strong></p>
+      <strong>The accident and the observation:</strong> Several other bacteriologists may have seen similar contamination effects before 1928 and missed them. The role of luck in Fleming's discovery is real but limited: the luck was in the contamination occurring. The science was in recognizing what it meant. Fleming's laboratory notebooks show that he did not just notice the halo — he immediately hypothesized a diffusible antibacterial substance, designed experiments to test this, measured the inhibition zones quantitatively, and tested the substance's effects on multiple bacterial species and on leucocytes. The accidental contamination was the beginning; the rigorous investigation was the discovery.
+    </div>
+  </div>
+
+  <div class="year-banner">1929</div>
+  <div class="timeline-dot">London, England · Age 48</div>
+  <div class="narrative">
+    <p>Your paper "On the Antibacterial Action of Cultures of a Penicillium" is published in the <em>British Journal of Experimental Pathology</em> in June 1929. You describe penicillin's antibacterial properties, its apparent non-toxicity to leucocytes, and its potential therapeutic use. You also note that penicillin is unstable — it breaks down quickly and is difficult to extract in purified form. You make several attempts to produce penicillin in a stable, concentrated form suitable for clinical use. You are not a chemist, and the purification problem defeats you. In 1934, you effectively stop active research on penicillin.</p>
+    <p>The paper sits largely unread for a decade. In 1939, Howard Florey and Ernst Chain at Oxford read it and begin systematic work on producing penicillin in medically useful form. By 1941 they have purified it sufficiently to treat patients. By 1944, with American industrial funding, it is produced on a large enough scale to treat D-Day casualties. Fleming's discovery becomes the antibiotic age. He learns about the Oxford work from newspaper reports, which have, by this point, begun attributing the discovery entirely to him.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1929</div>
+    <p class="decision-q">Fleming publishes penicillin findings but cannot solve the purification problem and stops active research. Is this a failure?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. Yes — a more persistent researcher would have found a way to attract chemists to solve the purification problem, and the delay of fifteen years cost many lives.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. No — Fleming correctly identified what he had found and what it could do, published his findings, and was working at the limit of his expertise. The purification problem required organic chemistry skills he didn't have. Science advances through division of labor: his job was to make the discovery; Florey and Chain's job was the development. Both were necessary.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. Partly — the failure was in not recruiting chemists to the problem, which was within his power to do even if the chemistry was not.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. The question is wrong — penicillin's development was inevitable once the observation was published; the fifteen-year gap simply reflects the normal pace of pharmaceutical research.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+<p><strong>You publish the penicillin paper in 1929, try for five years to purify a stable form, fail, and stop active research. Florey and Chain read your paper a decade later and succeed where you couldn't. The fifteen-year gap is not failure — it is science advancing through the division of labor.</strong></p>
+      <strong>Fleming's role and limits:</strong> Several historians have argued that Fleming didn't push hard enough for penicillin's development in the 1930s — that he could have found chemists to work on purification if he had tried. Fleming's defenders note that the purification problem was genuinely difficult: even Florey and Chain, with full Oxford chemistry department support and eventually American industrial backing, took years to solve it. The fifteen-year gap between discovery and clinical use is attributable to technical difficulty more than neglect. What is not in doubt is that Fleming's 1929 paper was the foundation of everything that followed.
+    </div>
+  </div>
+
+  <div class="year-banner">1941</div>
+  <div class="timeline-dot">Oxford & London, England · Age 60</div>
+  <div class="narrative">
+    <p>Howard Florey and Ernst Chain have purified penicillin and begun human trials. The first patient is Albert Alexander, a policeman in Oxford who scratched his face on a rose thorn and whose resulting infection has spread to his entire face, scalp, and lungs. He is dying. On February 12, 1941, he receives the first injection of purified penicillin. Within twenty-four hours his temperature drops and he begins to improve. They run out of penicillin after five days (they were recycling it from his urine), and Alexander eventually dies. But the proof of principle is complete: penicillin works in humans.</p>
+    <p>Fleming visits Oxford to see the work. He is generous about Florey and Chain's contribution; they are less generous about his. In the press coverage that follows, newspapers focus on Fleming's original discovery — the story of the contaminated petri dish is more dramatic than the Oxford chemistry work — and Fleming becomes the face of penicillin. Florey finds this deeply irritating. The Nobel Committee, when it awards the prize in 1945, splits it three ways.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1941</div>
+    <p class="decision-q">The Nobel Prize is split equally between Fleming, Florey, and Chain. Is this allocation fair?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. No — Fleming deserves the larger share because without the original observation in 1928, there would be nothing for Florey and Chain to develop.</button>
+      <button class="dopt" onclick="choose(this,5,false)">B. No — Florey and Chain deserve the larger share because they did the harder and more immediately life-saving work of turning an observation into a medicine.</button>
+      <button class="dopt" onclick="choose(this,5,true)">C. Yes — discovery, development, and clinical implementation are all essential steps, and the Nobel Committee was right to recognize all three. The history of medicine requires all of them. Ranking them against each other falsifies the collaborative nature of scientific progress.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. The question is less important than it seems — what matters is that penicillin reached patients and has since saved hundreds of millions of lives, not who gets credit.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+<p><strong>The 1945 Nobel splits three ways: Fleming, Florey, Chain. Florey finds this deeply irritating. The argument about who deserves the most credit will not be settled. The answer that survives is that all three steps — discovery, development, clinical implementation — were necessary, so all three scientists were necessary.</strong></p>
+      <strong>The three-way split:</strong> The priority dispute between Fleming and Florey became one of the most public disputes in the history of science. Florey's position — that the Oxford team did the real work — has significant merit. Fleming's position — that the discovery is what everything else depends on — also has merit. In practice, the Nobel split is the right answer: no single step in the chain from observation to medicine is dispensable, and the committee's decision to divide the prize reflects this accurately. Fleming's public profile was and remains higher than Florey's and Chain's, which continues to rankle among historians of science — but public recognition and scientific priority are different things.
+    </div>
+  </div>
+
+  <div class="year-banner">1945</div>
+  <div class="timeline-dot">Stockholm, Sweden · Age 64</div>
+  <div class="narrative">
+    <p>December 1945. Nobel Prize in Physiology or Medicine. You, Howard Florey, and Ernst Chain. In your Nobel lecture, you are careful to credit Florey and Chain's work on development; you describe your own role accurately. In your public interviews, you warn — repeatedly and specifically — about the danger of using penicillin in insufficient doses. If patients take too little penicillin, or stop too early, the bacteria will survive in reduced numbers and those survivors will be the ones with natural resistance. The resistant strains will multiply. You are predicting antibiotic resistance in 1945, two years after penicillin becomes widely available.</p>
+    <p>Your Nobel lecture warning about resistance is the most prescient public statement in the history of medicine. By 2025, antibiotic-resistant infections are estimated to kill 1.3 million people per year. Fleming knew this was coming before the age of antibiotics had properly begun.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1945</div>
+    <p class="decision-q">Fleming warns about antibiotic resistance in his Nobel lecture. What does this warning require him to say to a world that is celebrating penicillin as a miracle cure?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Nothing — the warning risks undermining public confidence in penicillin before it is well established, and should be left to medical professionals rather than broadcast publicly.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. Exactly what he says — that the miracle is real but conditional, that it can be ruined by misuse, and that the human tendency to take a little of something that works rather than the full required dose will eventually produce bacteria that penicillin cannot kill. A Nobel lecture is precisely the right place for this warning.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. The warning is premature — antibiotic resistance in 1945 was a theoretical concern not yet supported by observed clinical evidence, and Fleming was extrapolating beyond what the science warranted.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. A qualified version — warning about potential resistance while emphasizing that proper medical supervision will prevent the problem, rather than predicting that resistance will inevitably develop.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+<p><strong>At your Nobel lecture in December 1945, you warn a world celebrating penicillin as a miracle cure that patients who take too little will breed the resistant strains that kill the next patient. By 2025, antibiotic-resistant infections kill 1.3 million people per year. You were right about everything.</strong></p>
+      <strong>Fleming's resistance warning:</strong> He said explicitly in his Nobel lecture: "The time may come when penicillin can be bought by anyone in the shops. Then there is the danger that the ignorant man may easily underdose himself and by exposing his microbes to non-lethal quantities of the drug make them resistant." This was not an obvious prediction in 1945 — most public and medical commentary was celebrating penicillin as a definitive solution to bacterial infection. Fleming's warning was based on his understanding of bacterial evolution and selection: bacteria that survive a partial dose are, by definition, those with natural resistance, and they will reproduce. The warning was correct in every detail.
+    </div>
+  </div>
+
+  <div class="year-banner">1950</div>
+  <div class="timeline-dot">London, England · Age 69</div>
+  <div class="narrative">
+    <p>You are now Sir Alexander Fleming (knighted 1944) and one of the most recognizable scientists in the world. You travel widely, give lectures, accept honorary degrees — you will receive twenty-five honorary degrees from universities across Europe and America. Your second wife is Amalia Coutsouris-Voureka, a Greek bacteriologist who was one of your research team. You continue to work at St Mary's until near the end of your life.</p>
+    <p>What you watch, in these final years, is the antibiotic age you started: the discovery and development of streptomycin (1943), chloramphenicol (1947), tetracycline (1948), erythromycin (1952). A revolution in medicine that has fundamentally changed the relationship between humans and infectious disease. Before penicillin, a scratch on a rose thorn could kill a man. After penicillin, infections that had killed for all of human history became treatable. You know exactly how large this is. You are also watching the first resistant strains appear, exactly as you predicted.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1950</div>
+    <p class="decision-q">Fleming sees the antibiotic revolution he helped create but also the emerging resistance problem. How does he understand his own place in history?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. With pride — he was present at the creation of the antibiotic age, the most significant advance in medicine since the germ theory.</button>
+      <button class="dopt" onclick="choose(this,7,true)">B. With the scientist's characteristic ambivalence — proud of the discovery but aware that the contaminated plate in 1928 involved considerable luck, that the development work was done by others, that the resistance problem he predicted is already emerging, and that the antibiotic era he helped create may have a limited lifespan unless new approaches are found.</button>
+      <button class="dopt" onclick="choose(this,7,false)">C. With frustration at Florey's continuing public campaign to claim primary credit for penicillin's development, which overshadowed Fleming's original discovery in scientific history.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. With primarily personal satisfaction — the Nobel, the knighthood, and the public recognition vindicated a career that had been professionally unremarkable before 1928.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+<p><strong>You are Sir Alexander Fleming, collecting your twenty-fifth honorary degree, one of the most recognizable scientists alive. You keep telling interviewers that luck played a central role in the discovery. You are one of the few Nobel laureates precise enough to mean it — and accurate enough to specify exactly what the luck was and what it was not.</strong></p>
+      <strong>Fleming's self-assessment:</strong> He repeatedly told interviewers that luck played a central role in the penicillin discovery, and he was specific about what the luck was: the mold contaminating the plate rather than some other contaminant, the unusual London summer temperatures, his own decision to look at old plates before discarding them rather than simply throwing them away. He distinguished the luck (which was real) from the preparation (which allowed the luck to be productive). His Nobel lecture is notable for its precision about both the science and its own limitations. He was not a modest man — his public profile was enormous and he cultivated it — but he was an accurate one.
+    </div>
+  </div>
+
+  <div class="year-banner">1955</div>
+  <div class="timeline-dot">London, England · Age 73</div>
+  <div class="narrative">
+    <p>March 11, 1955. You die of a heart attack at your home in London. You are seventy-three. Howard Florey sends a telegram of condolence to your wife. They have never fully reconciled the question of credit. It doesn't matter anymore. By the time of your death, penicillin and the antibiotics it inspired have saved an estimated eighty million lives. By 2025, the number will be estimated at two hundred million. No single discovery in the history of medicine has saved more people.</p>
+    <p>The contaminated petri dish you photographed in September 1928 rather than discarding — because "that's funny" — is one of the most consequential acts of observation in history. You knew, when you saw it, that the clear halo of dead bacteria meant something. You were right.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 1955</div>
+    <p class="decision-q">Fleming's discovery saved more lives than perhaps any single observation in history. What is the most important lesson of his career for how science works?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. Persistence — Fleming kept working on antibacterial substances for decades, and persistence rather than any single moment of luck explains the outcome.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. Luck — the penicillin discovery was primarily an accident, and its lesson is that science depends on chance occurrences in ways we systematically underestimate.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. The interaction of preparation and accident — luck creates the opportunity, but only a prepared mind can recognize it. Fleming's World War I observations, his lysozyme work, and his years of thinking about what an ideal antibacterial agent would look like are what made the contaminated plate visible as a discovery rather than a nuisance. Science advances at the intersection of chance and readiness.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. Collaboration — penicillin's development required Fleming's observation, Florey and Chain's chemistry, and American industrial scale-up. No individual is responsible; teams are what matter.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+<p><strong>Every bacteriologist working in London in 1928 could have found that contaminated plate and thrown it away. You found it, photographed it, and asked why the bacteria were dying in a clear halo around the mold. The contamination was ordinary. What made it a discovery was that you knew what you were looking at.</strong></p>
+      <strong>Pasteur's principle confirmed:</strong> "Chance favors only the prepared mind" — said about Pasteur himself, but applicable to Fleming with precision. The contamination of culture plates was common. The prepared mind — shaped by specific experiences of antiseptic failure in wartime, by lysozyme research, by years of thinking about what a useful antibacterial substance would have to do — was uncommon. The observation that the halo was significant rather than routine contamination was not luck: it was the application of accumulated knowledge to a chance event. This is how most major scientific discoveries actually happen, and Fleming's case illustrates it with unusual clarity.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Alexander Fleming · 1881–1955</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"One sometimes finds what one is not looking for."<br><em style="font-size:13px;color:var(--muted);">— Alexander Fleming</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="curie-simulator.html" class="next-card">
+        <div class="next-card-name">Marie Curie</div>
+        <div class="next-card-sub">Two Nobel Prizes & the element she named</div>
+      </a>
+      <a href="franklin-simulator.html" class="next-card">
+        <div class="next-card-name">Rosalind Franklin</div>
+        <div class="next-card-sub">Photo 51 & the DNA story she wasn't told</div>
+      </a>
+      <a href="darwin-simulator.html" class="next-card">
+        <div class="next-card-name">Charles Darwin</div>
+        <div class="next-card-sub">20 years before publishing — why?</div>
+      </a>
+      <a href="babbage-simulator.html" class="next-card">
+        <div class="next-card-name">Charles Babbage</div>
+        <div class="next-card-sub">He designed the computer. In 1833.</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understood Fleming\'s career at its actual depth — the wartime antiseptic observation that defined what a useful antibacterial agent needed to do, the lysozyme work that trained the attention, the 1928 contamination as accident requiring readiness to matter, the three-way Nobel as correct, and the resistance warning as the most prescient public statement in the history of medicine. You saw the science clearly.';else if(pct>=0.625)t.textContent='You grasped the arc of Fleming\'s discovery — the prepared mind, the accident, the three-way Nobel split. A few of the deeper connections between his wartime observations and his recognition of penicillin\'s significance slipped past.';else if(pct>=0.375)t.textContent='You caught some of Fleming\'s story but missed the through-lines: how the Western Front observation defined what an ideal antibacterial agent needed to do, how the lysozyme work built the habit of looking carefully at contamination, how the 1945 resistance warning was conclusion not speculation. The life is more structured than it appears.';else t.textContent='Fleming\'s discovery is more structured than the lucky accident story suggests. The contamination was luck. The preparation — two decades of thinking about what an ideal antibacterial agent would have to do — is what made the accident productive. And the resistance warning in 1945 was right about everything, long before anyone was listening.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

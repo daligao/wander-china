@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jacques Cousteau Life Simulator — Invented Scuba &amp; Explored the Silent World | Ordinary Man Trying</title>
+<meta name="description" content="Live Jacques Cousteau's life across 8 pivotal decisions — from co-inventing the Aqualung to filming The Silent World, from the Calypso voyages to becoming the ocean's most famous advocate.">
+<style>
+:root{
+  --bg:#EEF4F8;--card:#F5FAFB;--ink:#060C12;--muted:#183050;--line:#A8C4D8;
+  --accent:#103058;--accent-bg:#D0E8F5;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,244,248,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#060C12;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #80B0D0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#040A10;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#D0E8F5;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#D0E8F5;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #80B0D0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #80B0D0;border-radius:999px;margin-bottom:12px;gap:8px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Jacques Cousteau</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #100 of 100</p>
+  <h1 class="cover-title">He Co-Invented the Aqualung.<br>He Showed Us a World That Had Always Been There.</h1>
+  <p class="cover-sub">Jacques-Yves Cousteau was a French naval officer who co-invented the Aqualung scuba device, pioneered underwater color cinematography, commanded the research vessel <em>Calypso</em> for forty years, won the Palme d'Or at Cannes for an underwater documentary, and became the world's most effective ocean conservationist before "conservation" was a common word. He didn't discover the ocean. He made it visible. When he was done, the world understood something it had not understood before: that there was a silent, extraordinary civilization beneath the surface of the sea, and that it was in danger, and that it was worth saving.</p>
+  <div class="cover-facts">
+    <p>🤿 Co-invented the Aqualung scuba device (1943) with Émile Gagnan — transformed diving &nbsp;·&nbsp; 🎬 "The Silent World" (1956): won Palme d'Or at Cannes + Academy Award — first underwater color film &nbsp;·&nbsp; 🚢 Commanded R/V Calypso 1950–1997 — over 100 expeditions &nbsp;·&nbsp; 📺 "The Undersea World of Jacques Cousteau" (1968–1975): watched by 300M viewers globally &nbsp;·&nbsp; 🌊 Founded Cousteau Society (1973) — 300,000 members at peak &nbsp;·&nbsp; 1910–1997 · Saint-André-de-Cubzac to Paris</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Cousteau's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1936</div>
+  <div class="timeline-dot">Toulon, France · Age 26</div>
+  <div class="narrative">
+    <p>You are twenty-six, a French naval officer, driving too fast on a mountain road near Toulon when you lose control of the car and crash. You break both arms severely — so severely that naval surgeons consider amputation. You choose rehabilitation instead. To rebuild the strength in your arms, you begin swimming daily in the Mediterranean. A friend lends you a pair of Fernez goggles. You put your face in the water. You see the underwater world for the first time — clearly, without distortion, through the glass of the goggles. You are immediately and completely captured. You later write: "Sometimes we are lucky enough to know that our lives have been changed, to discard the old, embrace the new, and run headlong down an immutable course." You have just chosen your course. The car accident that nearly ended your career in aviation — you had been on track for a naval flying assignment — redirected you toward the ocean. You will never leave it.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1936</div>
+    <p class="decision-q">Cousteau discovered his life's work through a car accident and a pair of borrowed goggles. What does this accidental beginning reveal?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. That great vocations are often accidental — the specific encounter that reveals one's life work is typically contingent, and the work that follows is not proof that it was "meant to be" but simply what a capable person does when they find the right domain.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. That the accident was necessary only in the sense that it created the condition (rehabilitation swimming) that produced the encounter (goggles, Mediterranean) — but many people swim for rehabilitation and do not become Jacques Cousteau. The accident was necessary but not sufficient. What was also required was the specific way Cousteau's perceptual and aesthetic sensibility responded to what he saw. The capacity to recognize immediately that this was his world — not that it was interesting, but that it was his — is what the goggles revealed rather than created. The accident opened the door; what he brought through it was already his.</p>
+      <button class="dopt" onclick="choose(this,1,false)">C. The importance of preserved optionality — the accident closed one path (aviation) and opened another (ocean exploration). Lives with optionality remaining when one path closes allow for redirection; lives with no alternative paths cannot recover from such accidents. Cousteau's broad capabilities (engineering, photography, film, writing) gave him optionality that made the redirection possible.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. That physical recovery activities often reveal interests — the deliberate exposure to new physical experiences during rehabilitation produces encounters that would not otherwise occur, and the car accident is a roundabout example of what happens when someone is systematically exposed to new environments.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You spend years training to be a naval aviator — then you drive off a mountain road near Toulon in 1936 and break both arms so badly that surgeons discuss amputation. Someone lends you a pair of goggles. You put your face in the Mediterranean. You never fly again.</strong></p>
+      <strong>The car accident and the goggles:</strong> Cousteau's own account in "The Silent World" (1953) describes the encounter with the underwater world through Fernez goggles as immediately transformative: "I was in a new world — a world more beautiful and alive than I had ever imagined." The accident itself had closed his path toward naval aviation, which was his original ambition; without it, the specific sequence (rehabilitation, swimming, goggles, Mediterranean) would not have occurred. The underwater film director and historian Jean-Michel Cousteau (his son) has noted that Jacques Cousteau's specific gifts — visual sensitivity, narrative instinct, physical courage — were perfectly suited to underwater documentation in a way they would not have been to aviation. The accident matched him to his domain.
+    </div>
+  </div>
+
+  <div class="year-banner">1943</div>
+  <div class="timeline-dot">Mediterranean Sea · Age 33</div>
+  <div class="narrative">
+    <p>You have been diving with compressed air in improvised ways — bottles strapped to your back, hoses, awkward rigs that work but not reliably. The problem is the regulator: you need a valve that delivers air at exactly the ambient water pressure (which increases with depth), not at a fixed pressure. You describe the problem to Émile Gagnan, an engineer at Air Liquide who has been working on compressed gas regulators for wartime fuel shortages. In January 1943, Gagnan adapts one of his regulators to your design. You test it in the Marne River. It works imperfectly at first — the air delivery is uneven between inhalation and exhalation. Gagnan makes a modification. You test it again, in the Mediterranean, to a depth of sixty feet. It works. You have co-invented the Aqualung — the self-contained underwater breathing apparatus that will become the scuba. You are under German occupation. You file the patent. You continue diving.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1943</div>
+    <p class="decision-q">The Aqualung solved the problem of autonomous underwater breathing. What did this invention actually unlock?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Commercial diving — professional underwater work (inspection, repair, salvage, construction) became practical without the equipment limitations of hard-hat diving, which was the economically significant application of scuba technology.</button>
+      <button class="dopt" onclick="choose(this,2,false)">B. Recreational diving — the Aqualung made underwater experience available to non-professional divers, creating an industry and a constituency of people with direct experience of the underwater world, which eventually became environmentally significant.</button>
+      <button class="dopt" onclick="choose(this,2,true)">C. Both the experience and the knowledge of the ocean, simultaneously — before the Aqualung, scientific knowledge of the deep ocean came from nets, dredges, and the observations of helmet divers who couldn't go very deep or stay long. The Aqualung gave marine biologists, geologists, and ecologists the ability to spend hours in the underwater environment, observing directly rather than inferring. The inventory of ocean life, the understanding of coral reef ecology, the documentation of deep ocean topography — all of these accelerated dramatically after 1943 because researchers could now go where the life actually was. The recreational aspect produced public interest; the scientific access produced knowledge. Cousteau used the device for both simultaneously.</p>
+      <button class="dopt" onclick="choose(this,2,false)">D. Primarily cinematography — the most historically significant consequence of the Aqualung was enabling underwater filmmaking, and the environmental and scientific consequences were secondary to the visual documentation that created the public understanding of ocean ecosystems.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>Under German occupation, in January 1943, you and an Air Liquide engineer solve a valve problem in a few weeks and invent the technology that will eventually give six million people direct access to the ocean floor. You file the patent. You continue diving.</strong></p>
+      <strong>The Aqualung's impact:</strong> The Aqualung patent was filed in France in 1943 and in the United States in 1946. Air Liquide and US Divers (later acquired by Aqua Lung International) commercialized it. By 1952, scuba diving was a recreational sport; by 1960, there were over a million certified divers in the United States. The marine biologist Sylvia Earle, who became the first person to dive alone to 1,000 feet depth (in a different apparatus), has said that the Aqualung "changed humanity's relationship to the ocean more than any other single invention." Scientific applications included the discovery of hydrothermal vents (1977, whose biology required direct observation by submersible), the mapping of coral reef ecosystems, and the documentation of oceanic change over time that forms the baseline for contemporary climate science.
+    </div>
+  </div>
+
+  <div class="year-banner">1950</div>
+  <div class="timeline-dot">Antibes, France · Age 40</div>
+  <div class="narrative">
+    <p>A British millionaire named Loel Guinness is willing to lease you a converted minesweeper for one franc per year. The ship is the Calypso — 140 feet, built in the United States during the Second World War as a minesweeper, converted for oceanographic research. You accept. You spend the next forty-seven years sailing the Calypso to every ocean on Earth. Over 100 major expeditions. You install an underwater observation chamber in the bow below the waterline — a porthole into the sea from which you can film and observe while the ship is moving. You equip it with the best underwater cameras available. You hire divers, scientists, filmmakers. You are now running a research vessel, a film production company, and a global expedition program simultaneously. You are not sure how you will pay for any of it. You will figure it out.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1950</div>
+    <p class="decision-q">Cousteau accepted a ship for one franc a year without knowing how to fund the expeditions it required. Was this reckless or visionary?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. Reckless — accepting a ship without a funding plan is financially irresponsible. The fact that it worked out does not make the decision prudent; it makes it lucky. A Cousteau who couldn't figure out funding would have wrecked his career.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. Visionary in a specific sense — he understood that the Calypso was the enabling asset, and that funding follows a sufficiently compelling project in a way that cannot be secured without the project first existing. The ship made the expeditions possible; the expeditions produced films; the films produced income and sponsorship. The sequence required starting with the ship, even without clear funding, because the funding structure could not be built without the ship. This is the logic of certain kinds of initiative: you accept the enabling resource when it is available and work out the economics afterward. It requires confidence that the work is valuable enough to attract support, and Cousteau had that confidence from the quality of his earlier underwater filming.</p>
+      <button class="dopt" onclick="choose(this,3,false)">C. Both: it was reckless by conventional financial standards and visionary in terms of understanding how creative projects actually get funded — the two assessments are not contradictory, and both apply to the 1950 decision.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. Neither particularly — the one-franc lease reduced his financial exposure considerably, and the decision to accept a nearly free ship for uncertain but promising work is not especially reckless by any reasonable standard. The subsequent funding challenges were real but predictable and manageable.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>You accept a 140-foot minesweeper for one franc a year without knowing how you will pay for a single expedition. The funding takes fifteen years to stabilize — but the sequence you guessed at in 1950 turns out to be exactly right.</strong></p>
+      <strong>The Calypso funding:</strong> Cousteau's financial management of the Calypso expeditions is documented in his own writings and in the biography by Brad Matsen ("Jacques Cousteau: The Sea King," 2009). The primary funding sources evolved over time: early expeditions were funded partly by French petroleum companies (FAROS, later Elf) that hired the Calypso for survey work in the Persian Gulf; "The Silent World" film (1956) and subsequent books provided both income and credibility for further grants and sponsorships; the television series ("The Undersea World of Jacques Cousteau," 1968–1975) provided the largest sustained income source. The sequence Cousteau intuited in 1950 — ship → expeditions → films → income → more expeditions — is exactly what materialized, but it took fifteen years to stabilize.
+    </div>
+  </div>
+
+  <div class="year-banner">1956</div>
+  <div class="timeline-dot">Cannes Film Festival · Age 46</div>
+  <div class="narrative">
+    <p>"Le Monde du Silence" — The Silent World — wins the Palme d'Or at Cannes. It is the first documentary ever to win the festival's top prize, and it is made almost entirely underwater. You and your co-director Louis Malle have spent years developing camera housings, lighting rigs, and techniques for underwater color cinematography that simply did not exist before. The film shows coral reefs, whale sharks, octopuses, sleeping sperm whales, and divers moving through water in ways that television viewers and cinema audiences have never seen. It also wins the Academy Award for Best Documentary. You are suddenly famous everywhere. The ocean has become accessible to anyone who can sit in a theater. What the Aqualung did for divers, the film does for everyone else.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1956</div>
+    <p class="decision-q">The Silent World made the ocean visible to hundreds of millions of people. What is the relationship between visual access and conservation concern?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,true)">A. Visibility is a prerequisite for concern — you cannot care about losing something you do not know exists, and the ocean was, before Cousteau's films, genuinely invisible to most people. They knew fish came from the sea; they did not know about coral reefs, whale social behavior, octopus intelligence, or deep-sea ecosystems. By making these things visible — first in film, then in television — Cousteau created the constituency for ocean conservation that is the only basis for effective policy. Rachel Carson's "The Sea Around Us" (1951) reached readers; Cousteau's films reached audiences of 300 million simultaneously. The scale of the visual medium is what made ocean conservation possible as a mass movement rather than a specialist concern.</p>
+      <button class="dopt" onclick="choose(this,4,false)">B. Partial — visibility creates awareness but not necessarily concern. Many people who saw Cousteau's films in the 1960s and 1970s did not subsequently change their behavior or support conservation policy. Awareness is necessary but not sufficient for effective conservation.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. The relationship is complex and possibly negative in some respects — Cousteau's films and the recreational diving industry they inspired brought millions of divers into direct contact with coral reefs, contributing to physical damage (anchors, touching coral, fin damage) at the same time as they created conservation advocates. The visibility was a double-edged instrument.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. Secondary to policy — what actually protects oceans is legislation, international treaty, and enforcement, which are driven by scientific evidence and political advocacy rather than by public sentiment produced by documentary films. Cousteau's films created public goodwill but the actual conservation work required different mechanisms.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>Before 1956, most people had never seen a living coral reef, a whale shark, or an octopus moving through open water. Your documentary wins the Palme d'Or at Cannes — the first documentary ever to do so — and changes what "the ocean" means to anyone who sees it.</strong></p>
+      <strong>Film and conservation:</strong> The marine biologist Sylvia Earle has written extensively about the Cousteau effect on public understanding of the ocean. She notes that before 1956, scientific knowledge of ocean life existed primarily in academic literature and natural history museums. After "The Silent World," the ocean became a visual reality for general audiences worldwide. The subsequent explosion of ocean conservation legislation (the US Marine Mammal Protection Act of 1972, the Endangered Species Act of 1973, the Clean Water Act of 1972) occurred in a political context that Cousteau's films had helped create by giving the public a specific, emotional investment in ocean life. Rachel Carson and Cousteau together — text and image — built the baseline public understanding that ocean pollution threatened a world worth protecting.
+    </div>
+  </div>
+
+  <div class="year-banner">1968</div>
+  <div class="timeline-dot">Television / Global · Age 58</div>
+  <div class="narrative">
+    <p>"The Undersea World of Jacques Cousteau" premieres on ABC in January 1968. You are in a red woolly cap on the Calypso's deck, and you are talking to the camera directly and personally: here is what we found; here is why it matters; here is what we do not yet understand. The series runs for eight years, producing 36 one-hour specials. It is watched by 300 million people in the United States alone, and by comparable audiences across Europe and Japan. You become, in the 1970s, one of the most recognized human faces on Earth. Children in Kansas and Osaka and Johannesburg know your red cap. You have created not just an audience for ocean science but a generation of marine biologists, divers, oceanographers, and conservationists who cite your television programs as the original inspiration for their careers.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1968</div>
+    <p class="decision-q">Cousteau used television to reach 300 million viewers simultaneously. What did this medium do that scientific publication and even film could not?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Scale — television reached audiences orders of magnitude larger than any publication or film distribution system, and the scale alone explains the difference in impact.</button>
+      <button class="dopt" onclick="choose(this,5,false)">B. Regularity — the weekly or seasonal television series structure created a sustained relationship between Cousteau and his audience that a single film could not. Viewers knew he was coming back, followed successive expeditions, and developed a long-term relationship with the ocean through his continuing presence.</button>
+      <button class="dopt" onclick="choose(this,5,true)">C. Both scale and intimacy simultaneously — television in the 1960s-70s was a domestic medium watched in family living rooms, creating a very different relationship between presenter and audience than cinema (where you are in public, with strangers) or print (where you are alone with a text). Cousteau in the living room was Cousteau in the family. The red cap, the French accent, the evident physical pleasure he took in the water — these created intimacy at scale, which is the specific capability of broadcast television that no other medium of the era could replicate. Intimacy at scale is what created the Cousteau constituency: people who felt personally connected to the ocean through a person they felt they knew.</p>
+      <button class="dopt" onclick="choose(this,5,false)">D. The specific aesthetic quality of underwater color cinematography — by the late 1960s, the technical quality of Cousteau's underwater footage was sufficiently better than anything else available that the visual experience itself was the differentiating factor, and any medium could have carried it.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>The man in the red woolly cap becomes one of the most recognized faces on Earth. Three hundred million people learn what the ocean looks like — in their living rooms, personally, from someone they feel they know — and a generation of marine biologists cites him as the reason they went to sea.</strong></p>
+      <strong>Television and Cousteau:</strong> The media scholar Neil Postman, in "Amusing Ourselves to Death" (1985), analyzed television's capacity for "intimate" presentation of information in ways that print could not achieve, citing Cousteau as one of the few television personalities who used the medium's intimacy in service of genuine knowledge rather than pure entertainment. The marine scientist and filmmaker Jean Painlevé, who preceded Cousteau in underwater filmmaking, reached specialized audiences through cinema; Cousteau's television audience was incomparably larger and more demographically diverse. The specific mechanism — red cap, direct address, personal tone, accessible language — was Cousteau's deliberate choice of persona: he wanted to be the neighbor who happened to have been diving, not the scientist who condescended to share findings.
+    </div>
+  </div>
+
+  <div class="year-banner">1973</div>
+  <div class="timeline-dot">Global Oceans · Age 63</div>
+  <div class="narrative">
+    <p>You found the Cousteau Society in 1973, with the explicit mission of ocean conservation and research. At its peak the Society has 300,000 members worldwide. You have noticed something that the accumulated footage from twenty-three years of Calypso expeditions makes undeniable: the ocean is changing. Fish populations that were dense in the 1950s are sparse in the 1970s. Coral reefs that were vivid in the 1950s are bleached in the 1970s. The silence of "The Silent World" is, by 1973, increasingly literal: the diversity of sound that a healthy ocean produces has diminished. You begin speaking of this explicitly — not as a prediction but as a documented observation. You are among the first public figures with the credibility and the audience to say it: the ocean is being destroyed, and it matters, and we have the evidence.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1973</div>
+    <p class="decision-q">Cousteau documented ocean decline over two decades of filming — before-and-after footage from the same locations. What made this evidence particularly powerful?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. The scientific rigor — Cousteau's systematic documentation of the same locations over time provided a kind of natural experiment that conventional scientific monitoring had not attempted at that scale.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. The visual specificity — scientific data on ocean decline existed (fish catch statistics, water quality measurements, scientific surveys), but it existed in forms that required expertise to interpret and that conveyed no direct emotional reality. Cousteau had film of the same reef in 1954 and in 1974 — you could see the coral that was there and the coral that wasn't. The visual before-and-after required no interpretation. The audience that had watched his 1968 television programs had seen what a healthy ocean looked like; when he showed them what it looked like in 1974, the difference was immediately visible to anyone. The credibility came not from scientific credentials but from the accumulated visual testimony of a man they had watched for years. He was not reporting data; he was showing them what he had seen with his own eyes.</p>
+      <button class="dopt" onclick="choose(this,6,false)">C. The celebrity — Cousteau's fame gave his warnings a reach that unknown scientists could not achieve. The same information delivered by an academic would have reached thousands; Cousteau's reach extended to millions, and the celebrity was what enabled the scale.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. The institutional backing — the Cousteau Society gave the warnings institutional credibility that individual declarations could not carry, and the combination of celebrity and institution was what created the political impact.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>Twenty-three years of Calypso footage prove what fish catch statistics had been suggesting quietly: the reefs you filmed in the 1950s are sparse and bleached in the 1970s. You don't need a study. You have the film.</strong></p>
+      <strong>Visual documentation of decline:</strong> Cousteau's 1975 television special "The Cousteau Odyssey: The Nile" included direct comparison of what the team had filmed in the 1950s at specific Mediterranean sites versus what they found in the 1970s. The Cousteau Society's subsequent campaigns for the Antarctic Treaty (1991) and against drift net fishing specifically used this visual comparison method: here is what we filmed; here is what it looks like now. The Antarctic Treaty protection of the continent from mining and oil exploration passed with an unusual degree of public engagement, which Cousteau and his team attributed partly to three years of public campaigning that included documentary films of the Antarctic ecosystem — making visible what was at risk. The campaign succeeded. The Antarctic Treaty's environmental protocol was signed in 1991.
+    </div>
+  </div>
+
+  <div class="year-banner">1985</div>
+  <div class="timeline-dot">Washington DC / Global Oceans · Age 75</div>
+  <div class="narrative">
+    <p>President Reagan awards you the Presidential Medal of Freedom. You are seventy-five. The Calypso is still sailing. You have been awarded honorary degrees by twelve universities, medals by the governments of France, Monaco, and the United States. The Cousteau Society has members on six continents. The ocean is in worse condition than it was in 1950. Fish populations continue to decline. Coral reef bleaching events are occurring with increasing frequency. Plastic pollution is accumulating in ocean gyres that the Calypso expeditions documented. You are more famous than ever and more worried than ever. The ratio between celebrity and impact — between how many people know your name and how many ocean species have been saved — is not favorable. You continue working. The ocean keeps asking for more than you can give it.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1985</div>
+    <p class="decision-q">Despite Cousteau's global fame and decades of advocacy, ocean health continued to decline. What does this tell us about the limits of public communication as a conservation tool?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. That public communication is insufficient without binding policy — awareness and concern, however widespread, do not produce conservation outcomes without specific legislation, enforcement, and international agreement that constrain harmful behavior regardless of individual attitudes.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. That the economic scale of the problem exceeds what any advocacy can address — the fishing industry, oil industry, and shipping industry that degrade the ocean operate at economic scales that celebrity advocacy cannot match, and the fundamental driver of ocean decline is economic, not informational.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. Both, and something more specific: the time lag between public communication and policy change is too long relative to the rate of ecological decline — even if Cousteau's advocacy eventually produces policy (the Antarctic Treaty, various fishing regulations), the pace of ecological change is faster than the pace of political response. This is the characteristic problem of environmental advocacy: the urgency is real, the communication is effective, the policy response is slow, and the delay is paid for by the ecosystem rather than by the humans who caused the delay. Cousteau's frustration in his later years reflects exactly this time-lag problem: he created the concern; the policy lagged; the ocean declined in the gap.</p>
+      <button class="dopt" onclick="choose(this,7,false)">D. That Cousteau's conservation approach was too focused on charismatic megafauna (whales, dolphins, whale sharks) and not enough on the ecosystem processes (nutrient cycles, plankton ecology, deep-sea dynamics) that are most critical to ocean health. The advocacy created the wrong priorities.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>You receive the Presidential Medal of Freedom at 75. The ocean you have spent forty years defending is in worse condition than when you started. Every warning came before the policy response, and the gap between the two is paid for by the ecosystem.</strong></p>
+      <strong>Conservation time lags:</strong> The conservation biologist E.O. Wilson described the problem Cousteau encountered as the "extinction debt" — the gap between when ecological damage is done and when the consequences are fully visible and politically actionable. Cousteau had the additional problem that the ocean, by its nature, hides its changes: a deforested hillside is immediately visible; a depleted fishery requires data to demonstrate. The marine scientist Boris Worm's 2006 "Science" paper projecting fishery collapse by 2048 made explicit what Cousteau's visual documentation had been suggesting for thirty years. The political response to environmental problems consistently lags the scientific understanding of those problems, which itself lags the ecological reality. Cousteau was ahead of the policy curve; the ocean paid the interim cost.
+    </div>
+  </div>
+
+  <div class="year-banner">1997</div>
+  <div class="timeline-dot">Paris · Age 87</div>
+  <div class="narrative">
+    <p>June 25, 1997. You die in Paris of heart failure, aged eighty-seven. The Calypso is docked in Singapore for repairs when you die; it is later damaged in an accident in Singapore harbor and is not repaired in your lifetime. Your son Jean-Michel continues the Cousteau Society's work. You were married twice, had two sons (Philippe, who died in a seaplane accident in 1979, and Jean-Michel), and granddaughters who are now active in ocean conservation. You spent forty-seven years on the Calypso. You co-invented a device that changed how humanity relates to the ocean. You made the underwater world visible to half a billion people. You documented its decline with the same camera that had documented its abundance. You did not save the ocean. You made enough people love it that saving it remained possible. This is not a small thing.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 1997</div>
+    <p class="decision-q">Cousteau made the ocean visible and loveable to half a billion people. The ocean continued to decline. Was his life a success?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. No — the measure of an ocean conservationist is ocean health, and ocean health declined continuously during and after his lifetime. The films, the fame, and the Cousteau Society did not achieve the ultimate objective.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. Yes — he accomplished more than any individual in human history to make the ocean understood and valued, and the standards for "success" should be calibrated to what one person can reasonably achieve, not to the full resolution of problems that require civilization-wide change.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. The frame of success/failure is too small for what Cousteau did — he changed what humanity knows about the ocean, permanently and irreversibly. The ocean he showed people in the 1950s and the ocean he showed them declining in the 1980s are both now part of the permanent record of what was there and what was lost. This record is the foundation for every effort to restore what has been damaged. The ocean's decline is not Cousteau's failure; it is a consequence of industrial civilization that he worked against. What he accomplished is that the decline happened in the presence of witnesses — hundreds of millions of witnesses who knew what they were losing because he had shown them. This is not nothing. It may not be enough. But it is what one person, working in one medium, with the gifts he had, could do. It was genuine and it was large and it was not sufficient. These three things are all true simultaneously.</p>
+      <button class="dopt" onclick="choose(this,8,false)">D. Success in cultural terms, failure in environmental terms — his cultural legacy (the films, the television series, the Aqualung) is secure and significant; his environmental legacy (actual ocean protection) is mixed at best. The two assessments are separate and should not be conflated.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>He dies in Paris on June 25, 1997. His son Philippe had died in a seaplane crash in 1979 — eighteen years before him. The Calypso is in Singapore for repairs. The Great Barrier Reef has lost over half its coral since he first filmed it. He did not save the ocean. He made enough people love it that saving it remained possible.</strong></p>
+      <strong>Cousteau's legacy:</strong> The Cousteau Society currently has members in over 120 countries. Jean-Michel Cousteau has continued making ocean documentaries. The species inventory of the world's oceans that began with Cousteau's expeditions has been extended by the Census of Marine Life (2000–2010), which identified approximately 250,000 known marine species with estimates of 750,000 total. The Great Barrier Reef, which Cousteau filmed in the 1960s, has lost over half its coral since then due to warming ocean temperatures and acidification. The Antarctic Treaty that Cousteau campaigned for continues to protect the continent from exploitation. The Aqualung and its successors have enabled approximately 6 million active scuba divers worldwide, most of whom cite their dive experiences as their primary reason for caring about ocean conservation. The accounting is genuinely complex. The life was genuinely large.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete · Simulator #100 of 100</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Jacques Cousteau · 1910–1997</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"The sea, once it casts its spell, holds one in its net of wonder forever."<br><em style="font-size:13px;color:var(--muted);">— Jacques-Yves Cousteau</em></p>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:24px;">You've completed all 100 historical life simulators. Explore more lives below.</p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="fuller-simulator.html" class="next-card">
+        <div class="next-card-name">Buckminster Fuller</div>
+        <div class="next-card-sub">Geodesic dome &amp; redesigning the world</div>
+      </a>
+      <a href="earhart-simulator.html" class="next-card">
+        <div class="next-card-name">Amelia Earhart</div>
+        <div class="next-card-sub">First woman to fly the Atlantic solo</div>
+      </a>
+      <a href="darwin-simulator.html" class="next-card">
+        <div class="next-card-name">Charles Darwin</div>
+        <div class="next-card-sub">The Beagle, the delay, and natural selection</div>
+      </a>
+      <a href="faraday-simulator.html" class="next-card">
+        <div class="next-card-name">Michael Faraday</div>
+        <div class="next-card-sub">Bookbinder's apprentice to electromagnetic fields</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understood the accident as necessary, the Aqualung as legacy, the one-franc ship as the right bet even before the funding was secure. You see how Cousteau moved between scientist, filmmaker, and celebrity without losing the thread — because the thread was always the same: get people underwater, literally or by proxy. Three hundred million people saw what he chose to show them. That is the whole project.';else if(pct>=0.625)t.textContent='You grasp the major turns: the accident as redirection, the Aqualung as the invention that made everything else possible, the Calypso as the right bet before the funding was secured. Where you differ: the fine-grained reading of how deliberate his choices were — the red cap, the personal tone, the selection of what to film — was as precise as his engineering.';else if(pct>=0.375)t.textContent='You respond to Cousteau as explorer: the Aqualung, the deep dives, the coral reefs. The media strategy — television, the red cap, the intimate address — seems secondary. He understood that it was not. The ocean had to be seen by people who would never get wet for it to be worth protecting.';else t.textContent='The original plan — naval aviation — was a perfectly good plan. Career, prestige, a clear path. Cousteau was on that path until the mountain road outside Toulon in 1936. He was 26 and both arms were nearly amputated. You might have spent the rehabilitation period waiting to fly again. He spent it learning to swim.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

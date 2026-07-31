@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Évariste Galois Life Simulator — He Invented Modern Algebra the Night Before He Died</title>
+<meta name="description" content="Make the same decisions as Évariste Galois — who invented group theory at 17, had his work rejected twice by the French Academy, was imprisoned, and spent the night before his fatal duel writing mathematics.">
+<style>
+:root{
+  --bg:#F5EEF2;--card:#FAF5F8;--ink:#180A10;--muted:#502838;--line:#DCCAD8;
+  --accent:#480818;--accent-bg:#F5D8E0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">France · 1811–1832</div>
+  <h1>Could You Have Been<br>Évariste Galois?</h1>
+  <div class="cover-sub">He invented group theory — the mathematical framework that underlies all of modern algebra, particle physics, and crystallography — before he was 20 years old. The French Academy of Sciences lost or rejected his papers twice. He was imprisoned for political activities. On the night before a duel he had no hope of surviving, he wrote out all his mathematical ideas in a letter that he knew would be his last — filling the margins with "I have no time, I have no time." He died the next morning. He was 20 years old.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">20</div><div class="stat-l">Years of age at death — the night before spent writing mathematics</div></div>
+    <div class="stat"><div class="stat-n">2×</div><div class="stat-l">Papers lost or rejected by the French Academy of Sciences</div></div>
+    <div class="stat"><div class="stat-n">60</div><div class="stat-l">Years before his work was fully understood</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Paris, 1828 · The Academy, Age 16</div>
+<p class="narrative">You are 16 and have just discovered mathematics with a ferocity that shuts out everything else. You have read Legendre's geometry and Lagrange's algebra in days where other students take months. You have been working on a problem that has resisted the greatest mathematicians in Europe for 300 years: which polynomial equations can be solved by radicals? You have found the answer. Not an approximation. The complete answer. You write it up and submit it to the French Academy of Sciences. Cauchy — the most eminent mathematician in France — reviews it. Your paper is lost.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Lost Paper</div>
+  <div class="d-situation">Your paper has been lost by the Academy. You are 16, you have proved something major, and the establishment has misplaced it. Do you resubmit?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Yes — rewrite it and resubmit; losing your work to institutional carelessness doesn't change whether it's correct</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. No — find another venue; a mathematician who loses your paper cannot be trusted to evaluate it</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Wait — you are 16 and the work may benefit from more development before you face another review</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Galois rewrote and resubmitted — and the second submission was also lost. Fourier received it and died before reviewing it. The Academy lost or misplaced two papers containing some of the most important mathematics of the 19th century. Galois eventually submitted a third version, which was reviewed by Poisson and rejected as "incomprehensible" — not because the mathematics was wrong (it was correct) but because Galois had not explained enough of his reasoning for the reviewer to follow it. The mathematics was genuinely new. The reviewers could not understand it. This is what it looks like to be ahead of your time.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Paris, 1829 · The Polytechnique</div>
+<p class="narrative">The Ecole Polytechnique is the best mathematical institution in France. Admission requires passing a rigorous oral examination. You fail it — twice. The examiner asks you to explain a theorem in a way that Galois considers elementary; he refuses to go through the basics and throws a blackboard eraser at the examiner's head. Or so the story goes. What is certain is that you are not admitted to the Polytechnique. Your father, the mayor of your village, kills himself. You are 17, your father is dead, you have failed the most important examination of your career, and you have invented group theory.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · After the Polytechnique</div>
+  <div class="d-situation">You have failed the Polytechnique entrance examination. Your father is dead. Do you try again?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Find another path — enter the Ecole Normale instead, keep working, find a way to get the mathematics out regardless of institutional standing</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Try the Polytechnique again next year — the examination is passable and the credential matters for the mathematical community</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Work directly with mathematicians rather than through institutions — send the work to Gauss, to Jacobi, to people who can understand it</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Galois entered the Ecole Normale, a less prestigious institution. He continued working on his group theory. He also wrote to Gauss — who received the letter and apparently did not respond. The mathematical establishment of Europe was not equipped to evaluate what Galois was doing. Gauss, who had independently worked on some related questions, either did not understand or did not respond. The isolation was total: a 17-year-old in Paris had invented a mathematical framework that no one else could yet comprehend. His response was not to simplify or to explain more — it was to keep going deeper.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Paris, 1830 · Prison</div>
+<p class="narrative">You are 18 and the July Revolution has just toppled Charles X. You are a Republican. You walk through Paris in the National Guard uniform that the King had banned, which is technically illegal. You make a toast at a Republican dinner that is heard as a threat against the King. You are arrested. You are acquitted. You are arrested again — this time for wearing the uniform again at a Bastille Day celebration. You are sentenced to six months in prison at Sainte-Pélagie. You are 19. You continue doing mathematics in prison.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · Prison</div>
+  <div class="d-situation">You are imprisoned for political activities while your unpublished mathematical work sits in the Academy's files. Do you spend the prison time on mathematics or on the political cause?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Mathematics — the political cause will continue without you; the mathematics exists only if you produce it</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Both — political engagement is as real a responsibility as mathematical work; do not abandon your principles for productivity</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Neither — use the time to rest and plan; you are burning yourself out at 19 with simultaneous political and mathematical intensity</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Galois continued doing mathematics in prison. He also drank heavily and became increasingly erratic. The mathematical work he produced in the final months of his life includes a comprehensive account of his theory — what he called the "Galois theory" of equations, which gave the complete answer to the question of which polynomial equations can be solved by radicals. He was working at extraordinary speed, as if he knew time was running out. Which, in retrospect, it was.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Paris, May 1832 · The Duel</div>
+<p class="narrative">You are out of prison. You are 20. The circumstances of what follows are unclear: a woman, a duel, a challenge that you accept or perhaps provoke. The night before the duel — May 29, 1832 — you write through the night. You write out your complete mathematical theory in letters to your friend Auguste Chevalier. You annotate your previous papers. In the margins you write again and again: "I have no time, I have no time." You are writing as fast as you can. You are writing because you know you will not survive the morning.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Night Before</div>
+  <div class="d-situation">You have the night before a duel you may not survive. Do you spend it writing mathematics?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Yes — the mathematics is the only thing that will outlast the duel; write everything down for Chevalier</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Sleep — face the duel rested and with a better chance of surviving; the mathematics can wait</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Refuse to duel — the challenge is not worth dying over; accept the dishonor and survive to do the mathematics</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Galois wrote through the night. The letter to Chevalier — with its marginalia of "I have no time" — is one of the most extraordinary documents in the history of mathematics. It contains the complete outline of Galois theory: the theory of groups, the theory of field extensions, the complete characterization of which polynomial equations are solvable by radicals. In the morning he went to the duel and was shot in the abdomen. He died the following day. He was 20 years old. He told his brother not to cry: "Je n'ai pas besoin de tout mon courage pour mourir à vingt ans." I do not need all my courage to die at twenty.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · The Rejection Letters</div>
+<p class="narrative">The letter Galois wrote to Chevalier is sent to Gauss and Jacobi by Chevalier. Neither responds. The papers are published in an obscure mathematical journal. They are essentially ignored for 11 years. Then in 1843, Joseph Liouville reads them carefully. He announces to the Academy that Galois had produced a theory of extraordinary importance. He edits and publishes Galois's papers in the Journal de mathématiques pures et appliquées in 1846, 14 years after Galois's death. From that point on, Galois theory becomes the foundation of modern algebra.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · The 14-Year Gap</div>
+  <div class="d-situation">The most important algebraic work of the 19th century sat essentially unread for 14 years after its author died. What does this tell us?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. That mathematical ideas have a timeline independent of the mathematician's life — the work needed the mathematical community to develop enough to receive it</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. That the institutions failed — Cauchy, Gauss, Jacobi, and the Academy all had the papers and did not engage with them seriously</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. That Galois himself failed — better exposition would have gotten the work understood sooner; the genius was not in question but the communication was inadequate</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> All three explanations have supporters. The mathematical community was simply not ready for group theory in 1830 — the conceptual framework needed to understand what Galois had done didn't widely exist yet. This is genuinely not the Academy's fault. At the same time, Poisson's review notes that Galois had not provided sufficient explanation — which is a real criticism of the exposition. And Cauchy and Gauss chose not to pursue what they received. The 14 years were probably necessary regardless, but good luck on any of those dimensions might have shortened the gap.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Galois Theory</div>
+<p class="narrative">Galois theory answers the question that had defeated mathematicians since the Renaissance: which polynomial equations can be solved using only addition, subtraction, multiplication, division, and root extractions? The answer involves a new mathematical object — the "group" — that captures the symmetries of the equation's solutions. The quadratic formula works (degree 2). Cardano's and Ferrari's formulas work (degrees 3 and 4). No general formula exists for degree 5 or higher. Galois proved this by showing the associated symmetry groups are not "solvable" in a precise technical sense. He had invented a new branch of mathematics to answer an old question.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · The Groups</div>
+  <div class="d-situation">Galois invented "groups" as a tool to answer the question about polynomials. The concept turned out to be far more powerful than the specific problem it solved. Was this serendipity or intention?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Intention — Galois understood that the groups themselves were the important thing, not just the specific answer; the papers show this clearly</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Serendipity — he was solving a specific problem; the broader importance of groups was discovered by later mathematicians who worked with his ideas</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Both — he understood the groups were important but could not have foreseen their application in physics, crystallography, and every other field where symmetry matters</div>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Galois understood that groups were fundamental mathematical objects, not just calculation tools. His papers discuss them as entities with properties worth studying for their own sake. He could not have foreseen their role in physics — that came a century later, with Noether's theorem (1915) and the group-theoretic description of particle physics. But the papers show a mind that understood it was doing something more than solving one equation problem. "I have done mathematics," he wrote. He had. He had invented a kind of it.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · What the Duel Was About</div>
+<p class="narrative">The circumstances of the duel remain disputed. The woman involved has been identified as Stephanie-Felice du Motel, the daughter of a physician. Whether Galois challenged someone for her honor, or was challenged, or was set up by agents of the government who wanted him silenced, is unknown. He wrote in his last letter: "I am the victim of an infamous coquette." He accepted the duel knowing he had almost no chance — his opponent was an expert marksman and Galois had very little dueling experience. He wrote his mathematics anyway, which is the only thing that makes sense of the story.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The Last Act</div>
+  <div class="d-situation">He was 20, facing a duel he would likely lose, and he spent the night before writing mathematics. How do we understand that choice?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. As the clearest possible statement of what he valued — the mathematics was what he was, and leaving a record of it was the most important thing he could do with the night</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. As desperation — he wrote because he was afraid he would die and he could not face the thought of the mathematics dying with him</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. As a kind of acceptance — the duel was the end and the letter to Chevalier was a goodbye; writing was how he said it</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> The night before the duel is one of the most extraordinary moments in the history of science. A 20-year-old knows he may die in the morning and spends the night writing out a complete account of a mathematical theory that no one in the world yet understands. "I have no time" appears again and again in the margins. He had invented group theory at 17. He spent the next three years failing to get anyone to recognize it. In the last hours he had, he wrote it all down one more time, as clearly as he could, in a letter to a friend. Then he went to the field and was shot. It is the saddest and most complete act of intellectual courage in the history of mathematics.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · The Legacy</div>
+<p class="narrative">Galois theory is the foundation of modern abstract algebra. It answers the question about polynomial equations definitively. It also gave mathematics the concept of the group — the most important structure in all of modern mathematics, used in physics to describe fundamental particles, in chemistry to classify crystals, in computer science to analyze algorithms. Group theory appears in every mathematical discipline. It was invented by a 17-year-old in Paris between failed Academy submissions. It was written down completely by a 20-year-old the night before his death.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · The Meaning of 20 Years</div>
+  <div class="d-situation">He invented one of the most important mathematical frameworks in history and died at 20. What do we do with this?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. We recognize that mathematical talent of this kind is not constrained by age or circumstance — the groups exist; Galois found them; that is the fact</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. We grieve what was not written — a Galois who lived to 40 would have produced mathematics we cannot imagine</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. We question the institutions — the Academy, the Polytechnique, the dueling culture — that failed and killed a 20-year-old genius</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> All three responses are real and not mutually exclusive. The mathematics exists and is extraordinary — that is the permanent fact. The grief at what was not produced is also real: Abel had died at 26 of tuberculosis two years before Galois's duel, also leaving a transformed mathematics behind; the 1820s killed two of the greatest mathematical minds of the century. The institutional failures were real: the Academy lost two papers and rejected a third. What remains is the letter to Chevalier, with its "I have no time" in the margins, and the groups — which Galois found at 17 and wrote out again at 20 in the last hours he had. They are still there.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Galois Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="cantor-simulator.html">
+      <span class="next-name">Georg Cantor</span>
+      <span class="next-desc">Another mathematician whose work was ahead of the community's ability to evaluate it</span>
+    </a>
+    <a class="next-card" href="ramanujan-simulator.html">
+      <span class="next-name">Srinivasa Ramanujan</span>
+      <span class="next-desc">Another self-taught mathematical genius who worked in isolation from the establishment</span>
+    </a>
+    <a class="next-card" href="keats-simulator.html">
+      <span class="next-name">John Keats</span>
+      <span class="next-desc">Another 19th-century genius who died young enough that we can only imagine what came next</span>
+    </a>
+    <a class="next-card" href="newton-simulator.html">
+      <span class="next-name">Isaac Newton</span>
+      <span class="next-desc">The mathematician who built the calculus that Galois's groups would later be used to understand</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You understand exactly what Galois understood — resubmit the lost paper, use prison for mathematics, spend the last night writing, and recognize that the groups are important beyond the specific problem they solve. The letter to Chevalier is what you would have written. The groups are what you would have found.';else if(score>=5)t.textContent='Strong mathematical instincts. You understood the need to persist despite institutional failure and the importance of the mathematical record. A few choices drifted toward personal survival or political engagement over mathematical work, but you would have preserved the essential theory.';else if(score>=3)t.textContent='You sought more institutional support, better exposition, and a chance to survive the duel rather than write through the night. Those choices might have kept Galois alive longer. Whether they would have produced more mathematics — or the same mathematics more slowly — is the question the history cannot answer.';else t.textContent='You let the Academy rejection stop you, slept instead of writing the night before the duel, and refused the challenge to survive. The groups would have waited for someone else to find them. They were found eventually. But the night before the duel, when "I have no time" filled the margins and the complete theory was written out in one final letter to a friend — that specific act would not exist.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

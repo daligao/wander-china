@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amelia Earhart Life Simulator — Atlantic Solo Flight &amp; the Final Disappearance | Ordinary Man Trying</title>
+<meta name="description" content="Live Amelia Earhart's life across 8 pivotal decisions — from her first solo Atlantic crossing in 1932, to her record-breaking flights, to the final around-the-world attempt that ended in silence over the Pacific.">
+<style>
+:root{
+  --bg:#EEF2F8;--card:#F5F8FC;--ink:#060C1A;--muted:#283060;--line:#B8C8DC;
+  --accent:#1A3870;--accent-bg:#D8E4F5;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,242,248,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#060C1A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #98B0D0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#060C1A;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#D8E4F5;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#D8E4F5;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #98B0D0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #98B0D0;border-radius:999px;margin-bottom:12px;gap:8px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Amelia Earhart</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #91 of 100</p>
+  <h1 class="cover-title">She Flew the Atlantic Alone.<br>Then She Flew Into Silence.</h1>
+  <p class="cover-sub">Amelia Earhart was the first woman to fly the Atlantic solo (1932), the first woman to fly solo from Hawaii to California (1935), and the holder of numerous speed and altitude records. She understood that being famous for flying required doing things worth being famous for — and she kept raising the bar until the bar became an around-the-world flight at the equator, the longest route possible. On July 2, 1937, 22,000 feet above the Pacific Ocean, her radio transmissions went silent. She was 39 years old. She was never found. She remains the world's most famous missing person.</p>
+  <div class="cover-facts">
+    <p>✈️ First woman to fly the Atlantic solo (1932) — 14 hours 56 minutes, Harbour Grace to Northern Ireland &nbsp;·&nbsp; 🌊 First solo Hawaii-California flight (1935), declared "impossible" beforehand &nbsp;·&nbsp; 📻 Disappeared July 2, 1937 over the central Pacific &nbsp;·&nbsp; 📖 Published three books and lectured widely for women in aviation &nbsp;·&nbsp; 🎓 Helped found Ninety-Nines (international women pilots organization) &nbsp;·&nbsp; 1897–1937 · Atchison, Kansas to the Pacific Ocean</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Earhart's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1920</div>
+  <div class="timeline-dot">Long Beach, California · Age 23</div>
+  <div class="narrative">
+    <p>December 28, 1920. Your father has taken you to an airshow at Daugherty Field in Long Beach. You watch a barnstormer perform. Then your father pays a dollar for you to take a ten-minute flight over the field. You are twenty-three, a former military nurse's aid, daughter of a railroad lawyer, recently graduated from the Ogontz School in Pennsylvania. You have no particular career path. You are at the airfield as a spectator. But the moment the wheels leave the ground, something settles into certainty. You later write: "As soon as we left the ground, I knew I had to fly." You begin flying lessons the following January with Neta Snook, one of the few female flight instructors. Your father has paid $1. The ten minutes cost your whole future career.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1920</div>
+    <p class="decision-q">Earhart knew immediately after her first flight that she had found her vocation. What does this instantaneous clarity reveal about the nature of finding one's calling?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. That vocational calling is more physical than intellectual — the body recognizes fit before the mind can articulate it, and Earhart's response was sensory (the moment the wheels left the ground) rather than reasoned.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. That clarity of vocation often requires an encounter with the actual thing — not descriptions of it, not proximity to it, but direct experience of it. Earhart had been near aviation for years (airshows, newspaper coverage) without the clarity triggering. The ten-minute flight provided what description could not: the actual sensation of what the work felt like. Most callings are not found through introspection but through accidental contact with the right experience.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. That calling is primarily recognition of talent — what Earhart was recognizing in that moment was her exceptional spatial awareness and physical coordination, and the certainty was the unconscious recognition of capacity rather than passion.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. That early certainty about vocation is unusual and not generally instructive — most people develop their life's work through extended exploration rather than moments of clarity, and Earhart's experience is a rare exception rather than a generalizable model.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+<p><strong>Your father spends one dollar on a ten-minute flight at Daugherty Field in 1920. You spend the next seventeen years — and your life itself — on what those ten minutes showed you.</strong></p>
+      <strong>The first flight:</strong> Earhart's description of the first flight experience — written a decade later in her memoir "The Fun of It" — is notable for its precision about the moment of clarity: not the decision to take lessons, not seeing a plane up close, but the moment of actual takeoff. The psychologist Mihaly Csikszentmihalyi's work on "flow" states suggests something similar: the experience of an activity in its most fundamental form — not a description but the thing itself — is often the only way to discover whether it creates the engagement that characterizes meaningful work. You cannot know from watching; you have to do.
+    </div>
+  </div>
+
+  <div class="year-banner">1928</div>
+  <div class="timeline-dot">Trepassey Bay, Newfoundland · Age 31</div>
+  <div class="narrative">
+    <p>You are invited to be the first woman to fly the Atlantic — as a passenger. Two experienced male pilots, Wilmer Stultz and Louis Gordon, will actually fly the Fokker trimotor "Friendship." You will be the load of ballast, a passenger with a famous name. Publisher George Putnam is organizing the flight for maximum publicity, and a woman crossing the Atlantic — even as ballast — will generate more headlines than two skilled men alone. You accept, knowing exactly what you are and are not. When the flight succeeds and you are celebrated as the first woman to cross the Atlantic by air, you say: "I was just baggage, like a sack of potatoes." You also say: "Some day I'll come back and do it alone." It takes four years.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1928</div>
+    <p class="decision-q">Earhart accepted the Atlantic passenger role knowing she was "just ballast." Was this the right decision?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,true)">A. Yes — the famous name she acquired from the 1928 flight provided the funding, public attention, and publisher relationships that made her 1932 solo crossing possible. She accepted an incomplete version of what she wanted because she recognized it as the path to the complete version. Accepting a lesser thing as a step toward a greater one requires both strategic clarity and patience with one's own incompleteness.</button>
+      <button class="dopt" onclick="choose(this,2,false)">B. No — by accepting credit she had not earned, she compromised her authenticity. The 1932 solo crossing earned the fame the 1928 trip claimed. She should have waited and done it alone first, even if this meant losing the first-woman-across-the-Atlantic headline to someone else.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. The decision is impossible to evaluate because the alternatives are counterfactual — we cannot know whether a direct path to the 1932 solo crossing was available without the 1928 flight's resources and fame, so we cannot know whether accepting the passenger role was necessary or merely convenient.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. Conditionally yes — provided she followed through on the solo flight, which she did. The 1928 choice is only defensible as preparation for 1932. If she had stopped after 1928, living off fame she had not truly earned, it would have been an error.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+<p><strong>You cross the Atlantic in 1928 and tell reporters you were "just baggage, like a sack of potatoes." The publisher who organized the trip for maximum headlines becomes your husband. You wait four years and do it alone.</strong></p>
+      <strong>The 1928 flight and its aftermath:</strong> George Putnam, the publisher who organized the 1928 flight, became Earhart's husband in 1931. The relationship was partly professional from the start: he managed her celebrity and her books; she provided a story that sold. Earhart was clear-eyed about this — her friendship with Eleanor Roosevelt was in part based on a shared understanding of what it meant to inhabit a public role while doing the actual work it was supposed to represent. The 1932 solo crossing — 14 hours 56 minutes, Harbour Grace, Newfoundland to Culmore, Northern Ireland — was Earhart doing alone what she had been given credit for doing not-alone. It transformed the borrowed reputation into an earned one.
+    </div>
+  </div>
+
+  <div class="year-banner">1932</div>
+  <div class="timeline-dot">Harbour Grace, Newfoundland · Age 34</div>
+  <div class="narrative">
+    <p>May 20, 1932. You take off from Harbour Grace, Newfoundland at 7:12 PM in a Lockheed Vega. You are alone. You intend to fly to Paris. Within hours, you encounter severe icing, which causes the altimeter to fail. You fly blind into storms. The exhaust manifold cracks. The plane catches fire. You consider turning back. You do not turn back. You descend through clouds, thinking you are near Paris, and find yourself fifty feet above the Atlantic Ocean. You pull up. You make for land. You land in a farmer's pasture in Culmore, Northern Ireland. The farmer asks if you have come far. You say: "From America." This is a considerable understatement. You become the first woman to fly the Atlantic solo and the first person to fly the Atlantic solo twice.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1932</div>
+    <p class="decision-q">The 1932 flight encountered cracked manifold, icing, altimeter failure, and fire. At what point should Earhart have turned back?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. At the altimeter failure — navigating the Atlantic without altitude measurement was a genuine safety threshold, and continuing beyond this failure was reckless rather than courageous.</button>
+      <button class="dopt" onclick="choose(this,3,false)">B. She should never have turned back — the willingness to continue despite equipment failure is exactly what extraordinary achievement requires, and the successful outcome validates the decision to continue.</button>
+      <button class="dopt" onclick="choose(this,3,true)">C. The turn-back question is less useful than the preparation question — the right moment to abort is better determined by the pilot's actual competence level than by any specific failure threshold. Earhart had the skill to manage the cascade of failures she encountered. The real judgment is made before takeoff: do I have the skills to handle unexpected emergencies? If yes, the individual failures become manageable variables rather than hard stop points. The question "when should I have turned back" is retrospective; the question "what level of competence is required before I go" is prospective and more useful.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. At the manifold crack — an exhaust fire is a hard abort condition in any aircraft, and continuing after fire is visible was unreasonable risk regardless of the outcome.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+<p><strong>The altimeter fails over the Atlantic. The manifold cracks and catches fire. You are alone at night and you find yourself fifty feet above the water when the clouds finally clear. You do not turn back. You land in a farmer's field in Northern Ireland.</strong></p>
+      <strong>The flight and its risks:</strong> Earhart's account of the 1932 flight (published in "The Fun of It") is notable for her clinical description of managing each failure in sequence: icing, altimeter, manifold, near-sea-level flight. She describes reasoning through each problem as it arose. The flight historian Susan Butler has written that Earhart's 1932 crossing is often discussed in terms of courage but more accurately demonstrates advanced situational awareness and problem-solving under compounded stress — the skills trained by thousands of hours of flight, not qualities innate to heroism. The distinction matters: courage is rare and unteachable; technical skill under pressure is the product of practice.
+    </div>
+  </div>
+
+  <div class="year-banner">1935</div>
+  <div class="timeline-dot">Wheeler Field, Hawaii · Age 37</div>
+  <div class="narrative">
+    <p>January 11, 1935. You are the first person — not first woman, first person — to fly solo from Hawaii to California, a distance of 2,408 miles over open ocean. Experts and other aviators have declared the flight too dangerous to be practical. Ten people have died attempting it. The added risk is that Hawaii is a small target in a very large ocean: navigation errors that miss California mean additional hundreds of miles of coast; navigation errors that miss Hawaii mean death. You take off from Wheeler Field, Oahu and land at Oakland Municipal Airport 17 hours and 7 minutes later. When asked why you did it, you say that the flight "had to be done." This is a characteristic answer: the flight was necessary not because anyone required it but because it had not yet been done, and things that can be done and have not been done exert a particular pull on you.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1935</div>
+    <p class="decision-q">Earhart consistently pursued records that "had to be done" because they hadn't been done yet. What does this drive reveal about the psychology of exploration?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. That fame was the primary motivator — the records generated publicity, the publicity generated speaking fees and book sales, and the "had to be done" language was a more appealing frame for what was essentially career strategy.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. That the existence of an unachieved possible is itself a kind of claim on those capable of achieving it — Earhart's sense that the flight "had to be done" reflects a genuine orientation toward possibility gaps. Some people feel the existence of something that could be done and hasn't been as a kind of pull, a moral incompleteness. This is not irrational, not fame-seeking, but a specific cognitive and motivational orientation that characterizes explorers, scientists, and artists who work at the edge of the possible.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. That external validation was the real need — the records were a way of being seen as extraordinary, and the desire to be extraordinary was the underlying driver that the "had to be done" language obscured.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. That the progressive nature of record-breaking creates its own logic — once you have done one solo flight, the next uncompleted flight becomes the natural target, and the compulsion is the internal logic of a series rather than any deeper value about exploration.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You are the first person — not first woman, first person — to fly solo from Hawaii to California. Ten people have died trying it. The target is a two-square-mile atoll in the middle of the Pacific. You land at Oakland 17 hours later. When asked why you did it, you say the flight "had to be done." That is the whole answer.</strong></p>
+      <strong>The drive to explore:</strong> George Mallory's famous response to "Why climb Everest?" — "Because it's there" — is the same orientation Earhart expressed, in more words. The psychologist Abraham Maslow's later work on "self-actualization" describes a similar dynamic: people who have met their basic needs and their social needs eventually feel pulled toward the outer limit of what they are capable of, independent of further reward. What is interesting about Earhart is that she was also commercially sophisticated about her flying — she needed the record-breaking for her speaking fees and her public role. But her description of what pulled her toward these flights suggests the commercial and the vocational were genuinely aligned rather than the former masking the latter.
+    </div>
+  </div>
+
+  <div class="year-banner">1936</div>
+  <div class="timeline-dot">Purdue University, Indiana · Age 39</div>
+  <div class="narrative">
+    <p>You have accepted a position as "adviser in aeronautics" at Purdue University, where your role is partly to counsel women students about career opportunities in science and technology. You have also secured funding from the Purdue Research Foundation for a new aircraft: a Lockheed Electra 10E, twin-engine, with a research cabin behind the cockpit. You are planning the last great record that has not been completed: a flight around the world at the equator — not the shortest polar route, as Wiley Post had already taken, but the longest route, approximately 29,000 miles. The equatorial route was chosen precisely because it is harder. You and your navigator Fred Noonan begin planning. The flight is scheduled for summer 1937.</p>
+    <p>You write a letter to your husband George Putnam — a letter to be opened only if you do not return — in which you say: "I want to do it because I want to do it. Women must try to do things as men have tried. When they fail, their failure must be but a challenge to others."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1936</div>
+    <p class="decision-q">Earhart's letter to Putnam says "I want to do it because I want to do it" — she knew the risk and chose to go. How should we interpret the acceptance of mortal risk in pursuit of a goal?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. As irrational — no goal that can be framed as a sporting record justifies mortal risk, and the letter's calm is the calm of someone who has rationalized an unreasonable choice rather than genuinely accepting it.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. As a coherent life choice made by someone who had clearly weighed it — the letter suggests Earhart understood the risk, had thought carefully about what mattered to her, and decided that a life in which she stopped at the edge of what was dangerous was not the life she wanted. This is not recklessness but a specific value system: some people judge a life by its reach, not its length. The letter does not read as someone who has convinced herself she will survive; it reads as someone who has accepted that she might not and chosen to go anyway.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. As primarily symbolic — the letter frames the risk as on behalf of women who "must try to do things," and the individual risk is secondary to the larger claim being staked for others. The acceptance of risk was altruistic rather than personal.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. As a failure of preparation — better navigation equipment, better radio protocols, or a different course would have made the flight survivable, and the mortal risk was a consequence of inadequate preparation rather than a genuinely accepted tradeoff.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>Before you leave on the world flight, you write your husband a letter to be opened only if you don't return. It says: "I want to do it because I want to do it." The letter is now in Purdue's archive. You are not in the archive.</strong></p>
+      <strong>Earhart's letter:</strong> The complete letter to Putnam has been published and is notable for its tone: neither melodramatic nor minimizing. She writes as if giving instructions for a possibility she has genuinely contemplated and accepted. The sentence "I want to do it because I want to do it" has been called by the biographer Doris Rich "the most honest sentence in aviation literature" — because most accounts of dangerous exploration rely on altruistic or scientific framing rather than simply acknowledging personal desire. Earhart's willingness to say "I want this for myself" without further justification is unusual in the literature of exploration, where the individual is usually required to serve a collective purpose to justify the risk.
+    </div>
+  </div>
+
+  <div class="year-banner">1937</div>
+  <div class="timeline-dot">Lae, New Guinea · Age 39</div>
+  <div class="narrative">
+    <p>June 29, 1937. You and Fred Noonan land at Lae, New Guinea, having completed 22,000 miles of the 29,000-mile journey. You are 7,000 miles from Oakland. The next leg — 2,556 miles to Howland Island, a two-square-mile coral atoll in the central Pacific — is the most dangerous of the entire route. Howland Island is essentially a dot. The navigation must be precise. The radio communication protocol between the Electra and the US Coast Guard cutter Itasca (stationed at Howland) is not well coordinated. Noonan, the navigator, has had problems with alcohol in the past. The plane's belly antenna has been removed before departure to reduce weight. You take off from Lae at 10:00 AM local time on July 2. Your last clear radio transmission is received at 8:43 AM Pacific time: "We are on the line 157 337. Will repeat message. We will repeat this on 6210 kilocycles. Wait. We are running on north and south line."</p>
+    <p>Then silence. The Itasca hears what may be your voice several more times, but too briefly and weakly for direction-finding. The most extensive aerial and naval search in history, covering 250,000 square miles, finds nothing. You are never found.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1937</div>
+    <p class="decision-q">What most likely happened to Earhart and Noonan over the Pacific?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,true)">A. They ran out of fuel searching for Howland Island and ditched in the ocean — the most technically supported explanation, consistent with fuel load, flight time, the final radio transmissions indicating they were on a north-south search line but could not locate the island, and the failure of the Itasca's radio coordination to help them navigate in the final critical hours.</button>
+      <button class="dopt" onclick="choose(this,6,false)">B. They found and landed on Nikumaroro (Gardner Island) and died there as castaways — the TIGHAR (The International Group for Historic Aircraft Recovery) theory, supported by some physical evidence (human bones found in 1940, artifacts) but not confirmed.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. They were captured by the Japanese — a theory popular in mid-20th century America but unsupported by documentary evidence and generally rejected by aviation historians.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. Navigation equipment failure caused them to be significantly off course — they landed somewhere they had not planned to land, and the location of the wreck remains unfound due to the depth and extent of the search area.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>At 8:43 AM on July 2, 1937, the Coast Guard cutter Itasca receives your last clear transmission: "We are on the line 157 337." Then silence. The Navy searches 250,000 square miles — the largest maritime search in US history. They find nothing. You are never found. You are still legally presumed dead.</strong></p>
+      <strong>The disappearance:</strong> The aviation historian Elgen Long's extensive reconstruction of the final flight, in "Amelia Earhart: The Mystery Solved" (1999), concludes that the fuel exhaustion/ditching explanation is consistent with all the reliable evidence: the plane's fuel load, the speed and altitude of the flight, the timing of radio transmissions, and the final transmissions indicating a north-south search pattern. The radio coordination failures between the Electra and the Itasca were documented: Earhart was transmitting on a frequency the Itasca could not use for direction-finding during the final critical period. The Nikumaroro theory remains possible but unconfirmed. The Japanese capture theory has no credible evidence.
+    </div>
+  </div>
+
+  <div class="year-banner">1937</div>
+  <div class="timeline-dot">Legacy · Age 39</div>
+  <div class="narrative">
+    <p>The search ends July 18, 1937. She is presumed dead. She is thirty-nine. She has set records no one else would break for decades. She has helped found the Ninety-Nines, the international organization of women pilots that still exists. She has written three books. She has lectured at hundreds of venues across America, consistently pushing women toward aviation and engineering careers. She has demonstrated that the things everyone says women cannot do are simply things women have not yet done.</p>
+    <p>Her disappearance, and the mystery attached to it, has made her more famous than she might have been as an old woman. This is not a comfortable thought. But the mystery has kept her name in print for nearly a century, and the name in print has kept her work — the records, the advocacy, the proof — in circulation. The sky above Howland Island is still there. The line 157 337 still runs through the Pacific. We still don't know exactly what happened. Some things remain unresolved.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · Legacy</div>
+    <p class="decision-q">Earhart's disappearance made her more famous than she might have been had she survived to old age. What does this tell us about how we construct the legacies of people who die at the height of their power?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. That mystery is a more durable narrative than completion — a finished story closes; an unresolved one stays open and active in the culture's imagination indefinitely.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. That early death preserves a permanent heroic image — the person cannot have a disappointing late career, a decline in powers, or a revision of their earlier positions. The fixed image at peak achievement is easier to sustain than the complexity of an ongoing life.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. Both factors operate simultaneously — the mystery keeps people searching for answers (an active cognitive engagement that makes the name recur in culture), and the fixed image allows idealization that a completed life would have complicated. Earhart benefits from both: a genuine achievement record that deserves admiration, and an ending that requires continued engagement. The discomfort is real: her death at 39 made her cultural presence larger than her death at 87 likely would have. We should be honest about this even while admiring what she actually accomplished.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. That the fame is primarily a product of how 20th-century American media constructed women's achievement stories — Earhart's disappearance was transformed into a particular narrative (brave woman, lonely sky, unanswered questions) that would not have been attached to a male aviator in the same circumstances.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>You disappear at 39. The mystery keeps people searching for ninety years. The records, the advocacy, the books, the organization-building — all of that is real and earned. The disappearance made it louder. Both things are true at once.</strong></p>
+      <strong>Legacy and disappearance:</strong> Biographers of figures who die young (Keats, Earhart, James Dean, Marilyn Monroe) consistently note the paradox: the incompleteness that is a personal tragedy is a cultural advantage. An incomplete life generates more sustained engagement than a complete one because the audience must fill the gap with its own projection. What Earhart actually achieved — the records, the advocacy, the books, the organization-building — would be significant regardless of the ending. The mystery amplifies, but it does not create, the substance of the legacy. The honest position is that she earned the fame through the work; the disappearance made it louder.
+    </div>
+  </div>
+
+  <div class="year-banner">Legacy</div>
+  <div class="timeline-dot">1937 and beyond</div>
+  <div class="narrative">
+    <p>In 1932, five years before she disappeared over the Pacific, Earhart became the first woman to fly the Atlantic solo. When she landed in a farmer's pasture in Northern Ireland and he asked if she had come far, she said: "From America." In that moment — tired, having managed a cracked manifold and an altimeter failure and near-sea-level flight through Atlantic fog — she was simply done with a thing that needed to be done. She had set out to do it alone; she had done it alone; she had arrived. The farmer's field, the cow looking at her, the cold Irish morning. These are the coordinates of a life well-lived: you said you would go, and you went, and you arrived.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · Legacy</div>
+    <p class="decision-q">What is the most enduring lesson from Amelia Earhart's life?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. That representation matters — she was significant primarily as a symbol for women entering male-dominated fields, and the flight records were the vehicle for this symbolic work rather than achievements valuable in themselves.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. That preparation is everything — she succeeded where others failed because she was more skilled and more methodically prepared, and the lesson is rigorous preparation for whatever you attempt.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. That the things you want to do have to actually be done by you — no proxy version, no partial credit, no waiting for a more convenient time or a safer route. She was "baggage" in 1928 and knew it; she corrected it in 1932. She could have rested on the Atlantic crossing; she flew to Hawaii instead. She could have stopped at Hawaii; she planned the equatorial route instead. The pattern is consistent: she kept doing the next thing that hadn't been done yet. The lesson is not courage or representation or preparation — it is the consistent refusal to mistake proximity for participation.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. That accepting risk is inseparable from meaningful achievement — she chose to accept mortal risk in 1937 as she had in 1932, and the disappearance should be understood as the cost of a life committed to the edge of the possible rather than as a tragedy that negates the life.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>You were "baggage" in 1928 and knew it. You corrected it in 1932 with a solo flight across the Atlantic. Then Hawaii. Then the equatorial route. The pattern is consistent: you kept doing the next thing that hadn't been done yet, until there was no next thing left to do.</strong></p>
+      <strong>Earhart's consistent pattern:</strong> Looking at her decisions from 1920 to 1937, the consistent thread is the move from vicarious to actual: she watched, then she did; she was a passenger, then she flew it alone; others had flown the Atlantic, then she flew it alone; others had flown the equatorial route, and she was preparing to. Each move is from "being present while others do the thing" to "doing the thing." The 1928 passenger flight is the most important moment not because it was the Atlantic crossing but because she accepted it as an incomplete version and committed immediately to the complete version. This pattern — accepting imperfect starting conditions while committing to better conditions ahead — is the structural characteristic of her entire trajectory.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Amelia Earhart · 1897–1937</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"Adventure is worthwhile in itself."<br><em style="font-size:13px;color:var(--muted);">— Amelia Earhart</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="chanel-simulator.html" class="next-card">
+        <div class="next-card-name">Coco Chanel</div>
+        <div class="next-card-sub">From orphanage to liberating women's fashion</div>
+      </a>
+      <a href="saint-exupery-simulator.html" class="next-card">
+        <div class="next-card-name">Antoine de Saint-Exupéry</div>
+        <div class="next-card-sub">The Little Prince — written while disappearing</div>
+      </a>
+      <a href="fuller-simulator.html" class="next-card">
+        <div class="next-card-name">Buckminster Fuller</div>
+        <div class="next-card-sub">Geodesic dome &amp; redesigning the world</div>
+      </a>
+      <a href="cousteau-simulator.html" class="next-card">
+        <div class="next-card-name">Jacques Cousteau</div>
+        <div class="next-card-sub">Invented scuba &amp; explored the silent world</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understood Earhart\'s consistent pattern — the refusal to mistake proximity for participation. She was baggage in 1928 and corrected it in 1932. She did not stop correcting.';else if(pct>=0.625)t.textContent='You grasped most of what Earhart was doing: the vocational clarity, the preparation, the acceptance of risk. The pattern of consistent escalation was harder to see.';else if(pct>=0.375)t.textContent='You saw the Atlantic crossing and the disappearance. What you missed is what connects them: the same decision, made repeatedly, to do the actual thing rather than stand near it.';else t.textContent='You are still watching from the ground. Earhart paid a dollar for ten minutes in the air and never looked down again.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>
