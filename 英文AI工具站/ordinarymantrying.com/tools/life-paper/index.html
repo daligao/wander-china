@@ -1,0 +1,1508 @@
+<!DOCTYPE html><!-- v5.0 Life Paper — Zero Privacy · Universal Stories -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Life in 900 Squares — Famous Lives Grid Visualization | Free Tool</title>
+<meta name="description" content="Watch Grandma Moses, Colonel Sanders, and Chu Shijian animate on a 900-square life grid. Each square = one month. See where you stand on their paper. Free, no sign-up.">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/life-paper/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/life-paper/">
+<meta property="og:title" content="Life in 900 Squares — Watch Famous Lives Animate on a Grid">
+<meta property="og:description" content="Grandma Moses started painting at 78. Colonel Sanders built KFC at 62. Watch their lives fill in square by square. Free, no personal data needed.">
+<meta property="og:image" content="https://ordinarymantrying.com/wp-content/uploads/2026/06/life-paper-900-squares-famous-lives.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Life in 900 Squares — Famous Lives Grid Visualization">
+<meta name="twitter:description" content="Watch Grandma Moses, Colonel Sanders, and Chu Shijian animate on a 900-square life grid. Free, no sign-up.">
+<meta name="twitter:image" content="https://ordinarymantrying.com/wp-content/uploads/2026/06/life-paper-900-squares-famous-lives.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Life Paper — 900 Squares","url":"https://ordinarymantrying.com/tools/life-paper/","description":"Watch famous lives animate on a 900-square life grid. 7 lenses including Famous Lives, Role Swap, Fate Machine, and Collective Memorial. Free, no sign-up.","applicationCategory":"LifestyleApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Person","name":"Ordinary Man Trying","url":"https://ordinarymantrying.com/"}}</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F4EF;--surf:#FFFFFF;--surf2:#EDE8DF;--paper:#FFF9F0;
+  --accent:#D97706;--accent-l:#B45309;--accent-d:#92400E;
+  --muted:#9B8B79;--white:#1C1610;
+  --red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED;
+  --c-past:#16304A;--c-future:#C4DCEF;--c-beyond:#050D14;
+}
+body{background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;overflow-x:hidden;font-size:17px}
+
+/* NAV */
+.top{background:var(--surf);border-bottom:1px solid rgba(245,158,11,.1);padding:12px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+.brand{font-size:14px;font-weight:900;letter-spacing:-.01em;color:var(--accent);flex-shrink:0;margin-right:4px;white-space:nowrap}
+.brand span{color:var(--muted);font-weight:400}
+.tabs{flex:1;display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
+.tab{background:none;border:1px solid rgba(0,0,0,.1);border-radius:7px;padding:6px 11px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap}
+.tab:hover{border-color:var(--accent);color:var(--accent-l)}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#000}
+
+/* LAYOUT */
+.wrap{max-width:1180px;margin:0 auto;padding:24px 18px 80px;display:grid;grid-template-columns:auto 1fr;gap:36px;align-items:start}
+@media(max-width:960px){.wrap{grid-template-columns:1fr}}
+
+/* PAPER */
+.paper-panel{position:sticky;top:62px}
+.paper-outer{background:var(--paper);border-radius:3px;padding:12px;box-shadow:0 2px 6px rgba(0,0,0,.08),0 8px 24px rgba(0,0,0,.1),0 24px 50px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.9);width:520px}
+@media(max-width:960px){.paper-outer{width:100%;max-width:520px;margin:0 auto}}
+.a4{display:grid;grid-template-columns:repeat(30,1fr);gap:2px}
+.cell{aspect-ratio:1;border-radius:1.5px;position:relative;transition:transform .12s;will-change:transform;transform:translateZ(0)}
+.cell:hover{transform:scale(1.5) translateZ(0);z-index:20}
+.c-past{background:var(--c-past)}
+.c-future{background:var(--c-future)}
+.c-beyond{background:var(--c-beyond)}
+.c-void{background:#0D0B05}/* blank-year cells — nearly invisible, max contrast with events */
+/* ── animations ── */
+@keyframes cellPop{0%{transform:scale(1.8);opacity:.6}100%{transform:scale(1);opacity:1}}
+@keyframes turnPulse{0%,100%{box-shadow:0 0 6px #FCD34D,0 0 14px rgba(252,211,77,.35)}50%{box-shadow:0 0 20px #FCD34D,0 0 40px rgba(252,211,77,.55)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.cell.ev-pop{animation:cellPop .28s ease-out forwards}
+.cell.turn-beat{animation:turnPulse 2.2s ease-in-out infinite!important}
+.mp.on{animation:fadeUp .22s ease-out}
+/* ── tooltip ── */
+.tip{position:fixed;background:#1C1812;border:1px solid rgba(245,158,11,.3);border-radius:9px;padding:8px 12px;font-size:12px;color:#EDE8DF;line-height:1.5;max-width:220px;pointer-events:none;z-index:500;box-shadow:0 4px 20px rgba(0,0,0,.3);display:none}
+.tip strong{color:#F59E0B;display:block;margin-bottom:2px}
+.c-blank{background:#E0D8CC;opacity:.35}
+.c-now{background:var(--accent)!important;box-shadow:0 0 6px rgba(217,119,6,.9)}
+.c-glow{box-shadow:0 0 5px currentColor}
+.paper-foot{text-align:center;margin-top:9px;font-size:10.5px;color:var(--muted);line-height:1.6}
+.leg{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.leg-i{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+.leg-d{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+
+/* PANEL */
+.ctrl{display:flex;flex-direction:column;gap:18px;min-width:0}
+.mp{display:none}
+.mp.on{display:flex;flex-direction:column;gap:14px}
+.mh{font-size:1.6rem;font-weight:900;letter-spacing:-.03em;line-height:1.2}
+.ms{font-size:1rem;color:var(--muted);line-height:1.7}
+.card{background:var(--surf);border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:18px 20px}
+.ch{font-size:1rem;font-weight:800;margin-bottom:6px}
+.csub{font-size:.9rem;color:var(--muted);margin-bottom:10px;line-height:1.5}
+.narrative{font-size:1.05rem;line-height:1.9;color:var(--white)}
+.narrative em{font-style:italic;color:var(--accent-l)}
+.narrative strong{font-weight:800}
+.qbox{background:rgba(245,158,11,.07);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 14px;margin:6px 0;font-size:.98rem;color:var(--accent-l);line-height:1.75;font-style:italic}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 18px;border-radius:9px;font-size:14px;font-weight:800;cursor:pointer;border:none;transition:all .15s;text-decoration:none}
+.btn-a{background:linear-gradient(120deg,var(--accent-d),var(--accent));color:#000}
+.btn-a:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-g{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.28);color:var(--accent)}
+.btn-g:hover{background:rgba(245,158,11,.18)}
+.brow{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+.pb{background:var(--surf2);border:1px solid rgba(0,0,0,.1);border-radius:9px;padding:9px 13px;color:var(--white);font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;text-align:left;line-height:1.4}
+.pb:hover,.pb.on{border-color:var(--accent);color:var(--accent);background:rgba(245,158,11,.07)}
+.tl{display:flex;flex-direction:column;gap:7px;max-height:260px;overflow-y:auto;padding-right:2px}
+.ti{display:flex;gap:10px;align-items:start}
+.td{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.tt{font-size:14px;line-height:1.5;color:var(--white)}
+.ta{font-size:12.5px;color:var(--muted);margin-top:1px}
+.sr{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap}
+.sb{flex:1;min-width:70px;background:var(--surf2);border-radius:10px;padding:12px;text-align:center}
+.sn{display:block;font-size:1.7rem;font-weight:900;letter-spacing:-.05em;color:var(--accent);line-height:1}
+.sl{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:4px;display:block}
+/* compare box */
+.cmp{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:16px 18px}
+.cmp-h{font-size:.8rem;font-weight:700;color:var(--accent-d);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.cmp-inp{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.cmp-inp input{background:var(--surf2);border:1px solid rgba(0,0,0,.1);border-radius:7px;padding:8px 10px;color:var(--white);font-size:15px;width:80px}
+.cmp-inp input:focus{outline:none;border-color:var(--accent)}
+.cmp-text{font-size:.98rem;line-height:1.8;color:var(--white)}
+.cmp-text em{color:var(--accent-l);font-style:normal;font-weight:700}
+/* era */
+.gb{background:var(--surf2);border:1px solid rgba(0,0,0,.1);border-radius:9px;padding:10px 16px;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.gb.on{background:rgba(245,158,11,.12);border-color:var(--accent);color:var(--accent)}
+.ai{background:var(--surf2);border:1px solid rgba(0,0,0,.1);border-radius:7px;padding:9px 11px;color:var(--white);font-size:15px;width:90px}
+.ai:focus{outline:none;border-color:var(--accent)}
+/* packages */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.pc{background:var(--surf2);border:2px solid rgba(0,0,0,.08);border-radius:11px;padding:12px 14px;cursor:pointer;transition:all .18s}
+.pc:hover{border-color:rgba(245,158,11,.35)}
+.pc.on{border-color:var(--accent);background:rgba(245,158,11,.07)}
+.pc h4{font-size:.83rem;font-weight:800;margin-bottom:3px}
+.pc p{font-size:.75rem;color:var(--muted);line-height:1.45}
+.pt{display:inline-flex;align-items:center;font-size:10px;padding:2px 6px;border-radius:20px;margin:3px 2px 0 0;font-weight:700}
+.pt.pos{background:rgba(5,150,105,.18);color:#34d399}
+.pt.neg{background:rgba(220,38,38,.18);color:#f87171}
+.verdict{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.18);border-radius:12px;padding:16px 18px;margin-top:4px}
+.verdict-h{font-size:.85rem;font-weight:900;color:var(--accent);margin-bottom:8px}
+.verdict p{font-size:.85rem;line-height:1.8}
+/* memorial */
+.ml{display:flex;flex-direction:column;gap:2px;max-height:420px;overflow-y:auto}
+.mr{display:flex;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;transition:background .15s;border-bottom:1px solid rgba(0,0,0,.07)}
+.mr:hover{background:rgba(245,158,11,.05)}
+.mr.on{background:rgba(245,158,11,.08)}
+.ma{font-size:1.1rem;font-weight:900;color:var(--accent);flex-shrink:0;width:42px;text-align:center;line-height:1.2}
+.ma span{display:block;font-size:9px;font-weight:400;color:var(--muted)}
+.mc{font-size:.8rem;color:var(--accent-d);font-weight:700;flex-shrink:0;width:38px;text-align:right;padding-top:2px}
+.mq{font-size:12.5px;color:var(--muted);line-height:1.55;flex:1}
+.mx{padding:11px 14px;background:rgba(245,158,11,.05);border-radius:9px;margin-bottom:3px}
+.mx p{font-size:.85rem;line-height:1.8}
+/* slots */
+.sm{display:flex;flex-direction:column;align-items:center;gap:16px;padding:12px 0}
+.reels{display:flex;gap:10px}
+.reel{background:var(--surf2);border:2px solid rgba(0,0,0,.1);border-radius:12px;padding:14px 10px;text-align:center;width:110px;display:flex;flex-direction:column;justify-content:center;gap:5px}
+.reel.spin{animation:spin .4s ease-in-out}
+@keyframes spin{0%,100%{transform:translateY(0)}33%{transform:translateY(-7px)}66%{transform:translateY(5px)}}
+.ri{font-size:1.7rem}
+.rl{font-size:11.5px;font-weight:700;color:var(--accent)}
+.rs{font-size:10px;color:var(--muted)}
+.lever{font-size:1.8rem;cursor:pointer;width:52px;height:52px;border-radius:50%;background:var(--surf2);border:2px solid rgba(245,158,11,.28);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.lever:hover{background:rgba(245,158,11,.13);border-color:var(--accent);transform:scale(1.08)}
+.lever:active{transform:scale(.94)}
+.sh{display:flex;flex-direction:column;gap:5px;margin-top:4px;width:100%}
+.sr2{background:var(--surf2);border-radius:7px;padding:7px 11px;font-size:11.5px;color:var(--muted);border-left:2px solid var(--accent-d)}
+/* role */
+.rb{background:var(--surf2);border:1px solid rgba(0,0,0,.1);border-radius:9px;padding:11px 13px;color:var(--muted);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:9px}
+.rb:hover,.rb.on{border-color:var(--accent);color:var(--accent);background:rgba(245,158,11,.07)}
+.ri2{font-size:1.4rem}
+/* hero banner */
+.hbanner{background:linear-gradient(180deg,rgba(245,158,11,.07) 0%,transparent 100%);padding:18px 24px 16px;text-align:center;border-bottom:1px solid rgba(245,158,11,.07)}
+.hb-main{font-size:clamp(.95rem,2.2vw,1.2rem);font-weight:800;letter-spacing:-.01em;color:var(--white);margin-bottom:5px}
+.hb-main em{color:var(--accent-l);font-style:normal}
+.hb-sub{font-size:.78rem;color:var(--muted);letter-spacing:.02em}
+/* blank-years stat */
+.bys{display:flex;align-items:center;gap:10px;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.12);border-radius:10px;padding:10px 14px;margin-bottom:4px}
+.bys-b{font-size:.82rem;color:var(--muted);flex:1;text-align:center}
+.bys-b strong{font-size:1.2rem;font-weight:900;color:var(--c-void, #555);display:block;line-height:1.2}
+.bys-arr{font-size:1.3rem;color:var(--accent-d)}
+.bys-a{font-size:.82rem;color:var(--muted);flex:1;text-align:center}
+.bys-a strong{font-size:1.2rem;font-weight:900;color:var(--accent-l);display:block;line-height:1.2}
+.bys-label{font-size:10px;color:var(--muted);text-align:center;margin-top:3px}
+/* person hero strip */
+.phero{background:var(--surf2);border-radius:12px;padding:14px 18px;margin-bottom:4px;border-left:3px solid var(--accent);display:none}
+.phero-name{font-size:.75rem;font-weight:700;color:var(--accent-d);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.phero-hook{font-size:1.18rem;font-weight:800;line-height:1.5;color:var(--white);letter-spacing:-.01em}
+.phero-hook em{color:var(--accent-l);font-style:normal}
+/* toast */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--accent);color:#000;padding:10px 22px;border-radius:10px;font-weight:800;font-size:13px;opacity:0;pointer-events:none;transition:all .3s;z-index:999}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+/* onboarding overlay */
+.ob-overlay{position:fixed;inset:0;background:rgba(5,13,20,.88);z-index:800;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.ob-box{background:var(--surf);border:1px solid rgba(245,158,11,.25);border-radius:20px;padding:32px 28px;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.ob-icon{font-size:2.6rem;text-align:center;margin-bottom:14px}
+.ob-title{font-size:1.55rem;font-weight:900;letter-spacing:-.03em;color:var(--white);text-align:center;line-height:1.25;margin-bottom:10px}
+.ob-title em{color:var(--accent-l);font-style:normal}
+.ob-body{font-size:.95rem;color:var(--muted);line-height:1.75;text-align:center;margin-bottom:20px}
+.ob-body strong{color:var(--white)}
+.ob-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:22px}
+.ob-step{display:flex;align-items:center;gap:12px;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.12);border-radius:10px;padding:10px 14px}
+.ob-n{width:26px;height:26px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0}
+.ob-st{font-size:.88rem;color:var(--white);font-weight:600}
+.ob-skip{background:none;border:none;color:var(--muted);font-size:.82rem;cursor:pointer;margin-top:12px;width:100%;text-align:center;padding:6px;transition:color .15s}
+.ob-skip:hover{color:var(--white)}
+.ob-examples{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.ob-tag{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:20px;padding:4px 11px;font-size:.78rem;color:var(--accent-l);font-weight:700}
+/* golden zone */
+.golden{background:rgba(252,211,77,.05);border:1px solid rgba(217,119,6,.28);border-radius:12px;padding:16px 18px}
+.golden-h{font-size:.78rem;font-weight:800;color:var(--accent-d);text-transform:uppercase;letter-spacing:.09em;margin-bottom:10px}
+.golden-inp{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.golden-inp input{background:var(--surf2);border:1px solid rgba(0,0,0,.1);border-radius:7px;padding:8px 10px;color:var(--white);font-size:15px;width:76px}
+.golden-inp input:focus{outline:none;border-color:var(--accent)}
+.golden-num{font-size:1.9rem;font-weight:900;color:var(--accent);letter-spacing:-.05em;line-height:1}
+.golden-sub{font-size:.75rem;color:var(--muted);margin-top:2px}
+.golden-msg{font-size:.9rem;line-height:1.85;color:var(--white);margin-top:10px}
+.golden-msg em{color:var(--accent);font-style:normal;font-weight:700}
+.golden-warn{background:rgba(220,38,38,.07);border-left:3px solid #DC2626;border-radius:0 8px 8px 0;padding:10px 12px;margin-top:8px;font-size:.88rem;color:#DC2626;line-height:1.7}
+/* regret shield */
+.shield{background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.2);border-radius:12px;padding:16px 18px}
+.shield-h{font-size:.78rem;font-weight:800;color:#1E40AF;text-transform:uppercase;letter-spacing:.09em;margin-bottom:12px}
+.risk-item{margin-bottom:8px;border-radius:9px;border:1px solid rgba(0,0,0,.08);overflow:hidden}
+.risk-bar{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;background:var(--surf);transition:background .15s}
+.risk-bar:hover{background:var(--surf2)}
+.risk-sev{width:4px;border-radius:2px;flex-shrink:0;align-self:stretch;min-height:20px}
+.risk-sev.hi{background:#DC2626}.risk-sev.md{background:#D97706}.risk-sev.lo{background:#059669}
+.risk-icon2{font-size:1.1rem;flex-shrink:0}
+.risk-title2{flex:1;font-size:.9rem;font-weight:700;color:var(--white)}
+.risk-toggle{background:none;border:none;color:var(--muted);font-size:.75rem;cursor:pointer;padding:3px 7px}
+.risk-body{padding:12px 14px;background:var(--surf2);border-top:1px solid rgba(0,0,0,.06)}
+.risk-msg{font-size:.88rem;line-height:1.7;color:var(--muted);margin-bottom:10px}
+.action-list{display:flex;flex-direction:column;gap:6px}
+.action-item{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--white);cursor:pointer}
+.action-item input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px;cursor:pointer}
+.action-item.done{color:var(--muted);text-decoration:line-through}
+@media print{
+  .top,.tabs,.ctrl,.ob-overlay,.toast,.tip{display:none!important}
+  .paper-panel{position:static}
+  .hbanner{display:none}
+  .wrap{display:block;padding:0}
+  .paper-outer{width:190mm;box-shadow:none;margin:0 auto}
+  .cell{-webkit-print-color-adjust:exact;print-color-adjust:exact;transform:none!important}
+}
+/* BOOKS */
+.books-section{max-width:1180px;margin:0 auto;padding:0 18px 60px}
+.books-h{font-size:.78rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+.books{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:700px){.books{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.books{grid-template-columns:1fr}}
+.book{display:block;text-decoration:none;background:var(--surf);border:1px solid rgba(0,0,0,.1);border-radius:14px;padding:16px;transition:.2s}
+.book:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.book-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px}
+.book-title{font-size:13px;font-weight:700;color:var(--white);margin-bottom:2px}
+.book-author{font-size:11px;color:var(--muted);margin-bottom:8px}
+.book-cta{font-size:11px;color:var(--accent-l);font-weight:700}
+/* KO-FI MODAL */
+.kofi-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:8000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:.3s}
+.kofi-overlay.show{opacity:1;pointer-events:all}
+.kofi-box{background:var(--surf);border:1px solid rgba(217,119,6,.2);border-radius:24px;padding:36px 32px;max-width:380px;width:90%;text-align:center;transform:scale(.9);transition:.3s;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.kofi-overlay.show .kofi-box{transform:scale(1)}
+.kofi-emoji{font-size:3rem;margin-bottom:12px}
+.kofi-title{font-size:1.3rem;font-weight:900;color:var(--white);margin-bottom:8px;letter-spacing:-.02em}
+.kofi-sub{font-size:.875rem;color:var(--muted);line-height:1.65;margin-bottom:24px}
+.kofi-btn{display:block;width:100%;padding:14px;background:linear-gradient(120deg,#FF5E5B,#FF9A3C);border:none;border-radius:12px;color:white;font-size:16px;font-weight:800;cursor:pointer;text-decoration:none;margin-bottom:10px}
+.kofi-skip{display:block;width:100%;padding:11px;background:transparent;border:1px solid rgba(0,0,0,.12);border-radius:12px;color:var(--muted);font-size:14px;font-weight:600;cursor:pointer}
+.kofi-skip:hover{border-color:rgba(0,0,0,.25);color:var(--white)}
+</style>
+</head>
+<body>
+<h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Life in 900 Squares — Famous Lives Grid Visualization</h1>
+
+<!-- TRILOGY NAV -->
+<nav style="background:#0f172a;border-bottom:1px solid #1e293b;padding:10px 16px;text-align:center;position:sticky;top:0;z-index:100;">
+  <div style="display:inline-flex;gap:6px;flex-wrap:wrap;justify-content:center;">
+    <a href="https://ordinarymantrying.com/tools/life-a4/" style="display:inline-block;padding:6px 14px;border-radius:20px;font-family:-apple-system,sans-serif;font-size:12px;font-weight:600;text-decoration:none;background:#1e293b;color:#94a3b8;border:1px solid #334155;">📄 Life A4</a>
+    <a href="https://ordinarymantrying.com/tools/life-clock/" style="display:inline-block;padding:6px 14px;border-radius:20px;font-family:-apple-system,sans-serif;font-size:12px;font-weight:600;text-decoration:none;background:#1e293b;color:#94a3b8;border:1px solid #334155;">⏰ Life Clock</a>
+    <a href="https://ordinarymantrying.com/tools/life-paper/" style="display:inline-block;padding:6px 14px;border-radius:20px;font-family:-apple-system,sans-serif;font-size:12px;font-weight:600;text-decoration:none;background:#d97706;color:#fff;border:1px solid #d97706;">📰 Life Paper</a>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+<div class="tip" id="tip"></div>
+
+<!-- ONBOARDING MODAL -->
+<div class="ob-overlay" id="ob-overlay">
+  <div class="ob-box">
+    <div class="ob-icon">📄</div>
+    <div class="ob-title">Your entire life fits on<br><em>one sheet of paper.</em></div>
+    <div class="ob-body">
+      900 squares. Each one is a month.<br>
+      These 10 people had <strong>almost nothing on their paper for decades</strong>.<br>Then one square changed everything.
+    </div>
+    <div class="ob-examples">
+      <span class="ob-tag">Grandma Moses · started painting at 78</span>
+      <span class="ob-tag">Colonel Sanders · rejected 1,009 times</span>
+      <span class="ob-tag">Chu Shijian · orange empire at 74</span>
+    </div>
+    <div class="ob-steps">
+      <div class="ob-step"><div class="ob-n">1</div><div class="ob-st">Pick a famous person — watch their life animate</div></div>
+      <div class="ob-step"><div class="ob-n">2</div><div class="ob-st">Enter your age — see exactly where you stand on their paper</div></div>
+      <div class="ob-step"><div class="ob-n">3</div><div class="ob-st">Explore 6 more lenses: random lives, your generation, fate machine…</div></div>
+    </div>
+    <button class="btn btn-a" onclick="startOnboard()" style="font-size:16px;padding:14px 22px;width:100%;justify-content:center">→ Show me the first life</button>
+    <button class="ob-skip" onclick="closeOnboard()">I'll explore on my own ↓</button>
+  </div>
+</div>
+
+<div class="hbanner">
+  <div class="hb-main">Their papers looked <em>blank for decades</em>. Then one square changed everything.</div>
+  <div class="hb-sub">900 squares · no personal data needed · start with <strong style="color:var(--accent)">Famous Lives</strong> ↓</div>
+</div>
+
+<div class="top">
+  <div class="brand">◼ 900 Squares <span>· Human Life Archive</span></div>
+  <div class="tabs">
+    <button class="tab active" onclick="setMode('famous')">📖 Famous Lives</button>
+    <button class="tab" onclick="setMode('random')">🎲 Random Life</button>
+    <button class="tab" onclick="setMode('era')">🌍 Generation</button>
+    <button class="tab" onclick="setMode('role')">🎭 Role Swap</button>
+    <button class="tab" onclick="setMode('exchange')">⚖️ Life Exchange</button>
+    <button class="tab" onclick="setMode('memorial')">🕯️ Memorial</button>
+    <button class="tab" onclick="setMode('slots')">🎰 Fate Machine</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="paper-panel">
+    <div class="paper-outer">
+      <div class="a4" id="a4"></div>
+      <div class="paper-foot" id="pfoot">1 square = 1 month · 900 squares = 75 years</div>
+      <div class="leg" id="leg"></div>
+    </div>
+  </div>
+
+  <div class="ctrl">
+
+    <!-- FAMOUS LIVES -->
+    <div class="mp on" id="mp-famous">
+      <div><div class="mh">📖 Famous Lives Archive</div>
+      <div class="ms">Each person below spent <strong style="color:var(--white)">decades with almost nothing on their paper</strong>. Then one square changed everything.<br><span style="color:var(--accent);font-weight:700">↓ Click any name to animate their life.</span> Then enter your age to see where you stand on their paper.</div></div>
+      <div class="brow" id="famous-btns"></div>
+      <div class="phero" id="phero"><div class="phero-name" id="phero-name"></div><div class="phero-hook" id="phero-hook"></div></div>
+      <div id="fblank" style="display:none"></div>
+      <div class="card" id="fcard" style="display:none">
+        <div class="ch" id="fname"></div>
+        <div class="csub" id="fbio"></div>
+        <div class="tl" id="ftl"></div>
+      </div>
+      <div class="qbox" id="fquote" style="display:none"></div>
+      <div class="card" id="fhit" style="display:none">
+        <div class="narrative" id="fhit-text"></div>
+      </div>
+      <div class="cmp" id="fcmp" style="display:none">
+        <div class="cmp-h">⚡ Your Age Comparison</div>
+        <div class="cmp-inp">
+          <span style="font-size:13px;color:var(--muted)">Your current age:</span>
+          <input type="number" id="fcmp-age" min="1" max="100" placeholder="e.g. 35" oninput="updateFamousCmp()">
+        </div>
+        <div class="cmp-text" id="fcmp-text" style="display:none"></div>
+      </div>
+      <div class="golden" id="fgolden" style="display:none">
+        <div class="golden-h">💛 Golden Zone — Time Left with Your Parents</div>
+        <div class="golden-inp">
+          <span style="font-size:13px;color:var(--muted)">Parent's current age:</span>
+          <input type="number" id="fgolden-age" min="40" max="100" placeholder="e.g. 65" oninput="updateGolden()">
+        </div>
+        <div id="fgolden-result"></div>
+      </div>
+      <div class="shield" id="fshield" style="display:none">
+        <div class="shield-h">🛡️ Regret Shield — 3 Risk Checks</div>
+        <div id="shield-risks"></div>
+      </div>
+    </div>
+
+    <!-- RANDOM LIFE -->
+    <div class="mp" id="mp-random">
+      <div><div class="mh">🎲 Random Life Generator</div>
+      <div class="ms">No names, no data. Just a stranger's paper — randomly assembled. <strong style="color:var(--white)">You'll recognize yourself in it anyway.</strong></div></div>
+      <button class="btn btn-a" onclick="rollLife()" id="roll-btn" style="font-size:16px;padding:14px 22px">🎲 Roll a Life</button>
+      <div class="card" id="rcard" style="display:none">
+        <div class="ch" id="rname"></div>
+        <div class="sr" id="rstats"></div>
+        <div class="tl" id="revents"></div>
+      </div>
+      <div class="qbox" id="rquote" style="display:none"></div>
+      <!-- age comparison -->
+      <div class="cmp" id="rcmp" style="display:none">
+        <div class="cmp-h">⚡ Where Are You on This Paper?</div>
+        <div class="cmp-inp">
+          <span style="font-size:13px;color:var(--muted)">Your current age:</span>
+          <input type="number" id="rcmp-age" min="1" max="100" placeholder="e.g. 30" oninput="updateRandCmp()">
+        </div>
+        <div class="cmp-text" id="rcmp-text" style="display:none"></div>
+      </div>
+      <!-- reflection question -->
+      <div class="card" id="rq-card" style="display:none">
+        <div class="ch" style="color:var(--accent)">💬 This paper leaves you with a question</div>
+        <div class="narrative" id="rq-text" style="margin-top:8px"></div>
+      </div>
+      <!-- similar famous person -->
+      <div class="card" id="rsim-card" style="display:none">
+        <div class="ch">A real person with a similar paper</div>
+        <div class="csub" id="rsim-why"></div>
+        <button class="btn btn-g" id="rsim-btn" style="margin-top:10px;font-size:13px;padding:9px 16px" onclick="goToSimilar()">→ See their life</button>
+      </div>
+      <!-- roll again -->
+      <div id="rroll-again" style="display:none">
+        <button class="btn btn-g" onclick="rollLife()" style="width:100%;justify-content:center;font-size:15px;padding:12px">🎲 Roll another life</button>
+      </div>
+    </div>
+
+    <!-- GENERATION -->
+    <div class="mp" id="mp-era">
+      <div><div class="mh">🌍 Your Generation's Paper</div>
+      <div class="ms">This is the average paper for an entire generation — not yours. Are you ahead? Behind? Or writing a different story altogether?</div></div>
+      <div class="brow">
+        <button class="gb on" id="gb80" onclick="showEra('80s')">Post-80s</button>
+        <button class="gb" id="gb90" onclick="showEra('90s')">Post-90s</button>
+        <button class="gb" id="gb00" onclick="showEra('00s')">Post-00s</button>
+      </div>
+      <div class="card" id="ecard">
+        <div class="ch" id="ename"></div>
+        <div class="csub" id="edesc"></div>
+        <div class="tl" id="etl"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+        <span style="font-size:13px;color:var(--muted)">Your age right now:</span>
+        <input type="number" class="ai" id="era-age" min="10" max="80" placeholder="e.g. 33" oninput="updateEraYou()">
+      </div>
+      <div class="card" id="eyou" style="display:none">
+        <div class="narrative" id="eyou-text"></div>
+      </div>
+    </div>
+
+    <!-- ROLE SWAP -->
+    <div class="mp" id="mp-role">
+      <div><div class="mh">🎭 Role Swap</div>
+      <div class="ms">No data needed. Just a question: what does the paper look like from someone else's position?</div></div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <button class="rb" onclick="showRole('parent',this)"><span class="ri2">👵</span><div><div>Your Parents When Young</div><div style="font-size:11px;font-weight:400;color:var(--muted)">Their grid in the decade they raised you</div></div></button>
+        <button class="rb" onclick="showRole('child',this)"><span class="ri2">👶</span><div><div>Your Future Child</div><div style="font-size:11px;font-weight:400;color:var(--muted)">A blank paper — if you had them at 30</div></div></button>
+        <button class="rb" onclick="showRole('boss',this)"><span class="ri2">💼</span><div><div>The "Career First" Person</div><div style="font-size:11px;font-weight:400;color:var(--muted)">Career-dense, family-thin</div></div></button>
+        <button class="rb" onclick="showRole('nurse',this)"><span class="ri2">🏥</span><div><div>The ICU Nurse</div><div style="font-size:11px;font-weight:400;color:var(--muted)">She only ever sees the last 10 rows</div></div></button>
+        <button class="rb" onclick="showRole('migrant',this)"><span class="ri2">🌏</span><div><div>The Migrant Who Started Over</div><div style="font-size:11px;font-weight:400;color:var(--muted)">Left everything at 28 — rebuilt from zero</div></div></button>
+        <button class="rb" onclick="showRole('artist',this)"><span class="ri2">🎨</span><div><div>The Artist Who Never Sold</div><div style="font-size:11px;font-weight:400;color:var(--muted)">Created for decades with no audience</div></div></button>
+        <button class="rb" onclick="showRole('caregiver',this)"><span class="ri2">🤲</span><div><div>The Family Caregiver</div><div style="font-size:11px;font-weight:400;color:var(--muted)">20 years caring for others before self</div></div></button>
+        <button class="rb" onclick="showRole('self80',this)"><span class="ri2">🪞</span><div><div>You — at 80, Looking Back</div><div style="font-size:11px;font-weight:400;color:var(--muted)">The view from the final rows</div></div></button>
+      </div>
+      <div class="card" id="rolecard" style="display:none">
+        <div class="ch" id="rolename"></div>
+        <div class="qbox" id="rolequote" style="margin:8px 0"></div>
+        <div class="narrative" id="roletext"></div>
+      </div>
+    </div>
+
+    <!-- LIFE EXCHANGE -->
+    <div class="mp" id="mp-exchange">
+      <div><div class="mh">⚖️ Life Exchange</div>
+      <div class="ms">No personal data. Just choices. Select any "packages" — the grid shows what you're actually building.</div></div>
+      <div class="pgrid" id="pgrid"></div>
+      <div class="verdict" id="verd" style="display:none">
+        <div class="verdict-h">Your Virtual Paper</div>
+        <p id="verd-text"></p>
+      </div>
+      <button class="btn btn-g" style="font-size:12px;padding:8px 14px;align-self:flex-start;margin-top:4px" onclick="resetEx()">↺ Reset</button>
+    </div>
+
+    <!-- MEMORIAL -->
+    <div class="mp" id="mp-memorial">
+      <div><div class="mh">🕯️ Collective Memorial</div>
+      <div class="ms">What millions of people said about each square. Sorted by age. No names — only the human pattern. Click any age to expand.</div></div>
+      <div class="ml" id="mlist"></div>
+    </div>
+
+    <!-- SLOTS -->
+    <div class="mp" id="mp-slots">
+      <div><div class="mh">🎰 Fate Machine</div>
+      <div class="ms">You didn't choose where you started. Neither did most people on this planet. Pull the lever. Then ask yourself which paper you'd take.</div></div>
+      <div class="sm">
+        <div class="reels">
+          <div class="reel" id="rl0"><div class="ri" id="r0i">🗓️</div><div class="rl" id="r0l">Era</div><div class="rs" id="r0s">—</div></div>
+          <div class="reel" id="rl1"><div class="ri" id="r1i">🏠</div><div class="rl" id="r1l">Background</div><div class="rs" id="r1s">—</div></div>
+          <div class="reel" id="rl2"><div class="ri" id="r2i">🎲</div><div class="rl" id="r2l">Life Event</div><div class="rs" id="r2s">—</div></div>
+        </div>
+        <button class="btn btn-a" onclick="spinSlots()" style="font-size:16px;padding:14px 28px;width:100%;justify-content:center;letter-spacing:.02em">🎰 Pull the Lever — Generate a Life</button>
+        <div style="font-size:12px;color:var(--muted)" id="scount">0 lives generated</div>
+      </div>
+      <div class="sh" id="shistory"></div>
+      <div class="qbox" id="sreflect" style="display:none"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BOOKS + SUPPORT -->
+<div class="books-section">
+  <div class="books-h">📚 If this moved you — these books go deeper</div>
+  <div class="books">
+    <a class="book" href="#" data-enc="aHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC8wMzc0MTU5MTIyP3RhZz1vcmRpbmFyeW1hbnRyeXRyLTIw" target="_blank" rel="noopener">
+      <div class="book-icon" style="background:linear-gradient(135deg,#2D1B69,#5B21B6)">⏳</div>
+      <div class="book-title">4,000 Weeks</div>
+      <div class="book-author">Oliver Burkeman</div>
+      <div class="book-cta">Get it on Amazon →</div>
+    </a>
+    <a class="book" href="#" data-enc="aHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC8wMzU4NTY3MDkyP3RhZz1vcmRpbmFyeW1hbnRyeXRyLTIw" target="_blank" rel="noopener">
+      <div class="book-icon" style="background:linear-gradient(135deg,#1C1A0F,#D97706)">💰</div>
+      <div class="book-title">Die With Zero</div>
+      <div class="book-author">Bill Perkins</div>
+      <div class="book-cta">Get it on Amazon →</div>
+    </a>
+    <a class="book" href="#" data-enc="aHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC8wODA3MDE0MjczP3RhZz1vcmRpbmFyeW1hbnRyeXRyLTIw" target="_blank" rel="noopener">
+      <div class="book-icon" style="background:linear-gradient(135deg,#14532D,#059669)">🕯️</div>
+      <div class="book-title">Man's Search for Meaning</div>
+      <div class="book-author">Viktor Frankl</div>
+      <div class="book-cta">Get it on Amazon →</div>
+    </a>
+  </div>
+</div>
+
+<!-- KO-FI MODAL -->
+<div class="kofi-overlay" id="kofiOverlay">
+  <div class="kofi-box">
+    <div class="kofi-emoji">☕</div>
+    <div class="kofi-title">This tool took real work to build.</div>
+    <div class="kofi-sub">If it made you think — even for a moment — a coffee keeps me building more things like this. No pressure at all.</div>
+    <a class="kofi-btn" href="#" data-enc="aHR0cHM6Ly9rby1maS5jb20vdmFudHVhbGVsZTQzNzU1OA==" target="_blank" rel="noopener" onclick="closeKofi()">☕ Buy me a coffee on Ko-fi</a>
+    <button class="kofi-skip" onclick="closeKofi()">No thanks — I'll keep going</button>
+  </div>
+</div>
+
+<script>
+const TOTAL=900;
+
+// ──────────────────────────────────────────
+// FAMOUS LIVES DATA
+// ──────────────────────────────────────────
+const FAMOUS=[
+{id:'chu',name:'Chu Shijian',firstName:'Chu Shijian',born:'1928',lifespan:91,currentAge:91,died:'2019',
+ hook:'Released at 74. Planted oranges at 75. By 84 — all of China was eating his fruit. <em>This wasn\'t a miracle. It was a paper that refused to go blank.</em>',
+ bio:'Tobacco king → life sentence → orange empire. Imprisoned at 71, released at 74. Planted oranges at 75 on a barren mountain. By 84, his "Chu Oranges" were a national sensation.',
+ blankYears:51, turnAge:75,
+ events:[
+  {age:21,dur:8,c:'#1E3A5F',l:'Joined the revolution, moved south to Yunnan'},
+  {age:30,dur:8,c:'#7F1D1D',l:'Labeled "rightist," sent to labor camp for 8 years'},
+  {age:51,dur:15,c:'#059669',l:'Took over Yuxi Tobacco Factory — turned it into Asia\'s largest'},
+  {age:68,dur:1,c:'#7F1D1D',l:'His only daughter died by suicide in prison'},
+  {age:69,dur:2,c:'#7F1D1D',l:'Arrested for corruption, sentenced to life imprisonment'},
+  {age:74,dur:1,c:'#B45309',l:'Released on medical parole — with nothing'},
+  {age:75,dur:9,c:'#059669',l:'Leased 2,400 acres of barren mountain, started planting oranges'},
+  {age:84,dur:7,c:'#FCD34D',l:'"Chu Oranges" go viral via Jack Ma — sells out nationally, fortune rebuilt',glow:true},
+  {age:91,dur:1,c:'#4A5568',l:'Died peacefully, 2019, age 91'},
+ ],
+ quote:'"I was 74 when I started growing oranges. What was there to rush?"',
+ hitLines:[
+  'When he was imprisoned at 71, you\'d think this paper was finished.',
+  'An old man, convicted, his daughter gone, his health failing, with nothing.',
+  'Then — at square 75 — he leased a mountain nobody wanted.',
+  'By square 84, all of China was eating the oranges he planted.',
+  '<em>Your paper hasn\'t reached that square yet.</em>',
+ ],
+ cmpTemplate:(age,e)=>`You are <em>${age} years old</em>. At your age, Chu Shijian was ${e}. His "orange moment" came at 75 — and his paper looked emptier then than yours does now.`
+},
+{id:'jiang',name:'Jiang Ziya',firstName:'Jiang Ziya',born:'~1128 BCE',lifespan:102,currentAge:102,died:'~1026 BCE',
+ hook:'He fished for 80 years. No achievements, no fame, almost no story. <em>Then, at square 80, King Wen of Zhou arrived.</em>',
+ bio:'Fished at the Wei River for decades. No fame, no achievements, no story — for 80 years. At 80, King Wen of Zhou came personally to find him. The first 80 squares: almost entirely blank.',
+ blankYears:80, turnAge:80,
+ events:[
+  {age:0,dur:72,c:'#1C1812',l:'Reading, fishing, waiting — nobody knew what he was waiting for'},
+  {age:72,dur:1,c:'#3D2B00',l:'Married — still accomplished nothing, mocked by his wife'},
+  {age:80,dur:1,c:'#FCD34D',l:'King Wen of Zhou finds him fishing — kneels, appoints him Grand Tutor',glow:true},
+  {age:88,dur:4,c:'#059669',l:'Battle of Muye — defeats the Shang Dynasty, founds Zhou'},
+  {age:92,dur:10,c:'#B45309',l:'Enfeoffed as founder of the state of Qi'},
+ ],
+ quote:'"My Grand Duke — I have long awaited you." — King Wen of Zhou',
+ hitLines:[
+  'The first 80 squares: almost entirely blank.',
+  'If you\'d looked at his paper at age 79, you\'d have called it a failure.',
+  'At square 80, a king traveled to the riverbank and knelt before him.',
+  'The next 20 squares redefined an era.',
+  '<em>"Tai Gong Wang" — "My Grand Duke, I have waited so long for you."</em>',
+  '<em>Those blank squares weren\'t wasted. They were accumulating weight.</em>',
+ ],
+ cmpTemplate:(age,e)=>`You are <em>${age} years old</em>. At your age, Jiang Ziya was still fishing and waiting. He waited <em>80 years</em> for King Wen to arrive. Some squares aren\'t empty — they\'re loading.`
+},
+{id:'sanders',name:'Colonel Sanders (KFC)',firstName:'Colonel Sanders',born:'1890',lifespan:90,currentAge:90,died:'1980',
+ hook:'Rejected 1,009 times. The 1,010th time, someone said yes. <em>How many times have you been rejected?</em>',
+ bio:'Gas station owner, roadside chicken stand. Broke at 60 with $105 in Social Security. Started pitching his franchise recipe at 62. Rejected 1,009 times. The 1,010th person said yes.',
+ blankYears:62, turnAge:65,
+ events:[
+  {age:10,dur:22,c:'#3A3028',l:'Farm work, odd jobs, failed attempts at various businesses'},
+  {age:40,dur:8,c:'#1E3A5F',l:'Opened gas station — sold fried chicken on the side'},
+  {age:50,dur:1,c:'#2563EB',l:'Awarded honorary Kentucky Colonel title'},
+  {age:60,dur:2,c:'#7F1D1D',l:'Highway rerouted, business collapsed — down to $105 in Social Security'},
+  {age:62,dur:3,c:'#7C3AED',l:'Drove across the country pitching franchise rights — rejected 1,009 times'},
+  {age:65,dur:1,c:'#059669',l:'KFC officially founded — the 1,010th person said YES'},
+  {age:73,dur:1,c:'#B45309',l:'Sold the company for $2 million (1964)'},
+  {age:74,dur:16,c:'#FCD34D',l:'White suit, white hair — one of the most recognized faces on earth',glow:true},
+ ],
+ quote:'"I made a resolve then that I was going to amount to something if I could. And no hours, nor amount of labor, nor amount of money would deter me."',
+ hitLines:[
+  'At 62, he had $105. No job. No retirement. No plan.',
+  'His response: get in the car, knock on doors, pitch the chicken recipe.',
+  'No. No. No. No. 1,009 times: no.',
+  'The 1,010th time, someone said yes.',
+  '<em>After 1,009 rejections, he founded KFC.</em>',
+  '<em>How many times have you been rejected? Far fewer.</em>',
+ ],
+ cmpTemplate:(age,e)=>`You are <em>${age} years old</em>. At your age, Colonel Sanders was ${e}. He didn\'t start pitching his chicken recipe until 62 — and was rejected <em>1,009 times</em>. How many rejections have you had?`
+},
+{id:'moses',name:'Grandma Moses',firstName:'Grandma Moses',born:'1860',lifespan:101,currentAge:101,died:'1961',
+ hook:'She picked up a paintbrush at 78. She\'d never painted before. <em>She went on to create over 1,500 paintings.</em>',
+ bio:'Farmed for 50 years, raised 5 children. At 76, severe arthritis forced her to give up embroidery. She picked up a paintbrush instead — having never painted before.',
+ blankYears:78, turnAge:78,
+ events:[
+  {age:12,dur:15,c:'#3A3028',l:'Farm work, household service'},
+  {age:27,dur:40,c:'#1E3A5F',l:'Married, raised 5 children, decades of farm life'},
+  {age:67,dur:1,c:'#7F1D1D',l:'Husband died — ran the farm alone'},
+  {age:76,dur:2,c:'#3A3028',l:'Arthritis made embroidery impossible'},
+  {age:78,dur:1,c:'#059669',l:'Picked up a paintbrush for the first time — had never taken an art class'},
+  {age:79,dur:1,c:'#B45309',l:'A collector discovered her paintings in a drugstore window'},
+  {age:80,dur:1,c:'#B45309',l:'Solo exhibition in New York — immediate sensation'},
+  {age:89,dur:1,c:'#FCD34D',l:'TIME magazine cover — international fame',glow:true},
+  {age:100,dur:1,c:'#FCD34D',l:'New York Governor declares "Grandma Moses Day"',glow:true},
+  {age:101,dur:1,c:'#4A5568',l:'Died peacefully — created over 1,500 works in her lifetime'},
+ ],
+ quote:'"Life is what we make it, always has been, always will be."',
+ hitLines:[
+  'She was 78 when she first picked up a paintbrush.',
+  'Before that — not once. She had never learned to paint.',
+  'Arthritis took her embroidery. So she found something else.',
+  'Then she started her second act.',
+  '<em>By the time she died at 101, she had created over 1,500 paintings.</em>',
+  '<em>How many of your "age-78 squares" are still waiting for you?</em>',
+ ],
+ cmpTemplate:(age,e)=>`You are <em>${age} years old</em>. At your age, Grandma Moses was ${e}. She didn\'t pick up a paintbrush until <em>age 78</em> — and had never painted a single picture before that. You have <em>${Math.max(0,78-age)} years</em> (about ${Math.max(0,78-age)*12} squares) until her turning point.`
+},
+{id:'wang',name:'Wang Deshun',firstName:'Wang Deshun',born:'1936',lifespan:92,currentAge:88,
+ hook:'50 years of invisible work. Then at 79, he walked shirtless onto the runway. <em>Not because he was 79. Because he\'d spent 29 years on squares nobody watched.</em>',
+ bio:'Stage actor for decades. Started bodybuilding at 50 — no audience, no goal. At 79, walked bare-chested onto the Beijing Fashion Week runway. The hall went silent.',
+ blankYears:50, turnAge:79,
+ events:[
+  {age:20,dur:28,c:'#1E3A5F',l:'Stage actor — ordinary career, ordinary decades'},
+  {age:50,dur:1,c:'#059669',l:'Started bodybuilding — nobody asked why'},
+  {age:51,dur:25,c:'#2563EB',l:'Trained every single day for nearly 30 years'},
+  {age:79,dur:1,c:'#FCD34D',l:'Beijing Fashion Week — bare-chested, every muscle defined — the hall erupted',glow:true},
+  {age:80,dur:8,c:'#B45309',l:'Films, runway shows, speaking — a new beginning at 80'},
+ ],
+ quote:'"What is old? You\'re old when you give up."',
+ hitLines:[
+  'At 50, he started lifting weights. No audience. No goal. Just started.',
+  '29 years later — at 79 — he walked onto the Fashion Week runway, shirtless, every muscle defined.',
+  '<em>Not because he was 79.</em>',
+  '<em>Because he had done 29 years of work nobody watched.</em>',
+  'That runway square was the sum of squares 50 through 79.',
+ ],
+ cmpTemplate:(age,e)=>`You are <em>${age} years old</em>. At your age, Wang Deshun was ${e}. He started bodybuilding at 50 — with no idea what it would lead to. <em>The brightest square came at 79, exactly 29 years after he began.</em>`
+},
+{id:'liu',name:'Liu Bang (Han Emperor)',firstName:'Liu Bang',born:'256 BCE',lifespan:62,currentAge:62,died:'195 BCE',
+ hook:'For 47 years, he was a nobody — mocked by locals, going nowhere. <em>Then he started a rebellion. Seven years later, he was Emperor.</em>',
+ bio:'Minor village official — lazy, aimless, written off by everyone. Accomplished nothing by 40. Led a rebellion at 47. Proclaimed Emperor at 54. Founded the 400-year Han Dynasty.',
+ blankYears:47, turnAge:47,
+ events:[
+  {age:0,dur:40,c:'#1C1812',l:'Village official — idle, unambitious, mocked by his own community'},
+  {age:47,dur:1,c:'#7C3AED',l:'Led rebellion against the Qin — "This is what a great man looks like"'},
+  {age:49,dur:2,c:'#059669',l:'Chu-Han Contention — defeated Xiang Yu'},
+  {age:54,dur:1,c:'#FCD34D',l:'Founded the Han Dynasty — proclaimed Emperor Gaozu',glow:true},
+  {age:55,dur:7,c:'#B45309',l:'Laid foundations for 400 years of Han rule'},
+  {age:62,dur:1,c:'#4A5568',l:'Died'},
+ ],
+ quote:'"This is what a great man looks like." — Liu Bang, watching the First Emperor\'s procession',
+ hitLines:[
+  'The first 47 squares: almost entirely blank.',
+  'A low-level official. Lazy. Mocked by his own village.',
+  'At square 47, he started a war.',
+  '7 years later, he was Emperor.',
+  '<em>History\'s shortest known path from "blank" to "changed everything": 7 years.</em>',
+  '<em>Have you reached your square 47? Or has it already passed?</em>',
+ ],
+ cmpTemplate:(age,e)=>`You are <em>${age} years old</em>. At your age, Liu Bang was ${age<47?'still a mocked village official with nothing to show. His turning point came at 47 — that\'s '+(47-age)+' years away.':'already in his rebellion — he started at 47 and was Emperor just 7 years later.'}`
+},
+{id:'jkr',name:'J.K. Rowling',firstName:'J.K. Rowling',born:'1965',lifespan:85,currentAge:59,
+ bio:'Single mother, clinically depressed, living on welfare. Writing in an Edinburgh café on napkins. Published her first book at 32 — after 12 rejections.',
+ blankYears:32, turnAge:32,
+ events:[
+  {age:25,dur:2,c:'#1E3A5F',l:'London researcher, ordinary job'},
+  {age:28,dur:2,c:'#7F1D1D',l:'Divorced, single mother, clinical depression, nearly suicidal'},
+  {age:30,dur:2,c:'#3D2B00',l:'On welfare, writing Harry Potter in a café — rejected by 12 publishers'},
+  {age:32,dur:1,c:'#059669',l:'Harry Potter published — the 13th publisher said yes'},
+  {age:35,dur:5,c:'#B45309',l:'Billionaire — UK\'s second-richest woman'},
+  {age:36,dur:1,c:'#B45309',l:'Remarried'},
+ ],
+ quote:'"Rock bottom became the solid foundation on which I rebuilt my life."',
+ hitLines:[
+  'At 28, she was divorced, depressed, on welfare, and nearly didn\'t survive.',
+  'She wrote in a place called The Elephant House café, on napkins.',
+  'Rejected by 12 publishers.',
+  'The 13th said yes.',
+  'That book was Harry Potter.',
+  '<em>At 28, her paper looked like total failure.</em>',
+  '<em>Square 32 rewrote modern publishing history.</em>',
+ ],
+ cmpTemplate:(age,e)=>`You are <em>${age} years old</em>. At your age, J.K. Rowling was ${age<=28?'deep in her lowest point — divorced, depressed, on welfare. Harry Potter was still '+(32-age)+' years away.':'publishing Harry Potter '+(age<35?'for the first time':'to a global audience')+'.'} At 28, her paper looked like complete failure.`
+},
+{id:'harry',name:'Harry Bernstein',firstName:'Harry Bernstein',born:'1910',lifespan:101,currentAge:101,died:'2011',
+ bio:'96 years of obscurity. Published his first novel at 96. Then wrote two more. Died at 101. Never "retired."',
+ blankYears:96, turnAge:96,
+ events:[
+  {age:0,dur:95,c:'#1C1812',l:'Ordinary life — wrote privately for decades, never published'},
+  {age:96,dur:1,c:'#059669',l:'Published debut novel "The Invisible Wall"'},
+  {age:97,dur:1,c:'#B45309',l:'Published second novel "The Dream"'},
+  {age:99,dur:2,c:'#FCD34D',l:'Completed trilogy — story that started at 96, finished at 101',glow:true},
+  {age:101,dur:1,c:'#4A5568',l:'Died — never "retired"'},
+ ],
+ quote:'"At 96, I discovered that age was not a limitation. It was a liberation."',
+ hitLines:[
+  'His first 96 squares are nearly dark.',
+  'Not because he lived badly — because nobody knew he existed.',
+  'At square 96, he published his first novel.',
+  'Then square 97. Square 98. Square 99.',
+  '<em>A trilogy, written from age 96 to 101.</em>',
+  '<em>If he\'d given up at 95, this paper would show nothing at all.</em>',
+  '<em>He didn\'t give up.</em>',
+ ],
+ cmpTemplate:(age,e)=>`You are <em>${age} years old</em>. Harry Bernstein had <em>${Math.max(0,96-age)} years</em> left before he published his first book at 96. He was writing the whole time — just silently. Your "square 96" may be closer than you think.`
+},
+{id:'bonnie',name:'Bonnie Garmus',firstName:'Bonnie Garmus',born:'1957',lifespan:85,currentAge:67,
+ bio:'Advertising copywriter who spent a lifetime writing other people\'s stories. Published her debut novel at 64 after 98 rejections. Adapted into a Netflix series.',
+ blankYears:64, turnAge:64,
+ events:[
+  {age:22,dur:38,c:'#1E3A5F',l:'Ad copywriter — decades of anonymous work'},
+  {age:60,dur:4,c:'#7F1D1D',l:'Novel manuscript rejected 98 times'},
+  {age:64,dur:1,c:'#059669',l:'"Lessons in Chemistry" published — immediately hits bestseller lists'},
+  {age:65,dur:1,c:'#B45309',l:'Netflix adaptation premieres — global hit'},
+  {age:66,dur:1,c:'#FCD34D',l:'Translated into 40+ languages — international bestseller',glow:true},
+ ],
+ quote:'"Every time you get rejected, you\'re getting closer to the yes."',
+ hitLines:[
+  '98 times. She was rejected 98 times.',
+  'Not "rejected a few times" — 98 times. Each one: no.',
+  'The 99th submission, someone said yes.',
+  'That book was Lessons in Chemistry — later a Netflix series.',
+  '<em>98 gray squares, then one gold pin.</em>',
+  '<em>How many rejections are you at right now?</em>',
+ ],
+ cmpTemplate:(age,e)=>`You are <em>${age} years old</em>. At your age, Bonnie Garmus was ${age<60?'still writing ad copy, not yet submitting — her first rejection came at 60.':'going through her Nth rejection.'} She published her first book at 64, after <em>98 rejections</em>. How many have you had?`
+},
+{id:'jobs',name:'Steve Jobs',firstName:'Steve Jobs',born:'1955',lifespan:56,currentAge:56,died:'2011',
+ bio:'Founded Apple at 21. Fired from his own company at 30. Returned at 42. Died at 56. Every square: maximum density.',
+ blankYears:0, turnAge:21,
+ events:[
+  {age:21,dur:4,c:'#059669',l:'Co-founded Apple in a garage'},
+  {age:24,dur:1,c:'#B45309',l:'Apple IPO — youngest Fortune 500 executive'},
+  {age:30,dur:1,c:'#7F1D1D',l:'Forced out of the company he built — board vote'},
+  {age:31,dur:6,c:'#1E3A5F',l:'Founded NeXT, acquired Pixar — turned $100K into $1B'},
+  {age:42,dur:1,c:'#059669',l:'Apple acquired NeXT — Jobs returned'},
+  {age:42,dur:5,c:'#B45309',l:'"Think Different." — Apple from near-bankruptcy to global dominance'},
+  {age:46,dur:6,c:'#FCD34D',l:'iPod, iTunes, iPhone, iPad — redefined how humans live',glow:true},
+  {age:48,dur:1,c:'#7F1D1D',l:'Diagnosed with pancreatic cancer'},
+  {age:56,dur:1,c:'#4A5568',l:'Died. The paper ended — but every square was dense.'},
+ ],
+ quote:'"Remembering that you are going to die is the best way to avoid the trap of thinking you have something to lose."',
+ hitLines:[
+  'His paper is only 672 squares — about 300 fewer than most people get.',
+  'But look at what those 672 squares contain.',
+  'Two startups, one firing, one return, iPod, iPhone, iPad.',
+  '<em>The question is not how many squares you have.</em>',
+  '<em>The question is what you put inside each one.</em>',
+ ],
+ cmpTemplate:(age,e)=>`You are <em>${age} years old</em>. At your age, Steve Jobs was ${e}. His entire paper is only 672 squares — nearly 300 fewer than most people. But the density of those 672 was unmatched. Is each of yours heavy enough?`
+},
+];
+
+// ──────────────────────────────────────────
+// GENERATION DATA
+// ──────────────────────────────────────────
+const ERA={
+'80s':{label:'Post-80s',full:'Post-80s — Born 1980–1989',desc:'China\'s reform-era generation. Witnessed the country transform in real time. Bought the most expensive houses, paid the highest tuitions.',currentAge:40,lifespan:80,
+ milestones:[
+  {age:6,c:'#1E3A5F',l:'Started primary school (1986–1995)'},
+  {age:22,c:'#059669',l:'University graduation (average)'},
+  {age:26,c:'#B45309',l:'Average age at first marriage'},
+  {age:29,c:'#B45309',l:'Average age at first child'},
+  {age:31,c:'#1E3A5F',l:'Average age at first home purchase'},
+  {age:38,c:'#7F1D1D',l:'Midlife career pressure peak'},
+  {age:55,c:'#4A5568',l:'Parents entering care-needed stage (average)'},
+  {age:60,c:'#059669',l:'Expected retirement age'},
+ ],
+ reflection:'The post-80s generation is the most sandwiched: parents who don\'t understand the internet, children who can\'t live without it. They bought the most expensive houses, paid the highest tuitions, and now face the fastest-moving midlife crisis — but they were also the first generation where individual effort could genuinely change your fate.'},
+'90s':{label:'Post-90s',full:'Post-90s — Born 1990–1999',desc:'Digital natives under pressure. Higher education, later marriage, uncertain housing, longer life.',currentAge:30,lifespan:82,
+ milestones:[
+  {age:6,c:'#1E3A5F',l:'Started primary school (1996–2005)'},
+  {age:23,c:'#059669',l:'University graduation (average)'},
+  {age:29,c:'#B45309',l:'Average age at first marriage (still being pushed later)'},
+  {age:32,c:'#B45309',l:'Average age at first child (if at all)'},
+  {age:36,c:'#1E3A5F',l:'Average age at first home purchase (if affordable)'},
+  {age:35,c:'#7F1D1D',l:'~30% of this generation may never buy a home'},
+  {age:55,c:'#4A5568',l:'Parents entering care-needed stage'},
+  {age:63,c:'#059669',l:'Expected retirement age'},
+ ],
+ reflection:'Post-90s marry 2 years later than post-80s, buy homes 5 years later, but are expected to live 2 years longer. They oscillate between "lying flat" and grinding — the most educated generation in Chinese history, and the first willing to openly say: "I refuse to live this way."'},
+'00s':{label:'Post-00s',full:'Post-00s — Born 2000–2009',desc:'Born into the internet. Witnessed a pandemic, an AI revolution, and a job market nobody predicted.',currentAge:22,lifespan:84,
+ milestones:[
+  {age:6,c:'#1E3A5F',l:'Started primary school (2006–2015)'},
+  {age:19,c:'#059669',l:'Entered university (some questioning if it\'s worth it)'},
+  {age:26,c:'#B45309',l:'Expected employment/independence (high uncertainty)'},
+  {age:32,c:'#B45309',l:'Expected first marriage (if taking traditional path)'},
+  {age:40,c:'#7F1D1D',l:'Expected first home purchase — if economically viable'},
+ ],
+ reflection:'The post-00s paper hasn\'t been written much yet, but they\'ve already witnessed: a global pandemic, generative AI, and violent job market shifts. They know, earlier than any generation before them, that this paper won\'t follow the original script.\n\nThat might be the worst thing — or it might be a rare opportunity: to write before anyone else has set the template.'},
+};
+
+// ──────────────────────────────────────────
+// PACKAGES
+// ──────────────────────────────────────────
+const PKGS=[
+ {id:'996',icon:'💼',name:'996 Package',sub:'Career first. Everything else adjusts.',tags:[{t:'+20 career',pos:true},{t:'-10 family',pos:false},{t:'-10 self',pos:false}],e:{career:20,family:-10,self:-10,adv:0,parent:0}},
+ {id:'flat',icon:'🛋️',name:'Lay Flat',sub:'Disengage from the race. Reclaim time.',tags:[{t:'-5 career',pos:false},{t:'+15 self',pos:true},{t:'+8 rest',pos:true}],e:{career:-5,family:0,self:15,adv:0,parent:0}},
+ {id:'filial',icon:'👨‍👩‍👧',name:'Filial Package',sub:'Maximize time with aging parents.',tags:[{t:'+30 golden zone',pos:true},{t:'-20 adventure',pos:false}],e:{career:0,family:10,self:0,adv:-20,parent:30}},
+ {id:'dink',icon:'🐱',name:'DINK',sub:'No children. Redefine what family means.',tags:[{t:'+25 self',pos:true},{t:'+10 adventure',pos:true}],e:{career:0,family:-5,self:25,adv:10,parent:0}},
+ {id:'exp',icon:'✈️',name:'Immigrant / Explorer',sub:'Leave the familiar. Bet on the world.',tags:[{t:'+15 adventure',pos:true},{t:'-20 family proximity',pos:false},{t:'+10 career',pos:true}],e:{career:10,family:-20,self:5,adv:15,parent:-15}},
+ {id:'s2',icon:'🌱',name:'Second Spring (50+)',sub:'Build something new at mid-life.',tags:[{t:'-5 early career',pos:false},{t:'+30 late life',pos:true}],e:{career:-5,family:5,self:10,adv:15,parent:5}},
+];
+
+// ──────────────────────────────────────────
+// MEMORIAL DATA
+// ──────────────────────────────────────────
+const MEMORIAL=[
+ {age:18,cnt:'4.2M',icon:'🎓',
+  q:'I thought I had to know what I wanted forever. Right now. By this age.',
+  x:'Eighteen is when society hands a child the biggest decision of their life and says: choose. What do you want to be? Forever. Pick. Most 18-year-olds pick based on what their parents fear, or what the rankings say, or what their friends are doing. Almost none of them actually know. The strange part: almost none of us ever did — we just learned to look like we did, and called that adulthood.'},
+ {age:25,cnt:'7.8M',icon:'⏰',
+  q:'I had no idea what I was doing. I assumed everyone else did.',
+  x:'There is a specific anxiety that belongs to 25. Old enough to feel behind. Young enough to think you\'re the only one who hasn\'t figured it out yet. The fear at 25 is: everyone else got the memo and I missed it.\n\nThe reality: the memo didn\'t exist. Nobody got it. Some people just look more certain while being equally lost. That\'s the only difference.'},
+ {age:30,cnt:'9.1M',icon:'📅',
+  q:'The list I made at 22 of "things I\'d do by 30" — I barely recognized it.',
+  x:'30 carries more symbolic weight than any other age on this paper. Millions of people wrote about this square specifically. What they actually said was surprising: most of them didn\'t feel like failures. They felt like their 22-year-old self\'s list had been written by a stranger.\n\n"I achieved maybe half of it. The weird thing is — the half I didn\'t do, I don\'t miss. The list was wrong. I was wrong about what I wanted."'},
+ {age:35,cnt:'5.4M',icon:'🪟',
+  q:'I started doing the math. "If I see them four times a year and they have fifteen years left..."',
+  x:'Before 35, most people think about time abstractly. After 35, something shifts — you start calculating. Not dramatically. Just quietly, while doing the dishes. If I see my parents twice a year and they\'ve got twenty years left, that\'s forty more visits. You feel it not as a thought but as a weight. Time gets a texture it didn\'t have before.'},
+ {age:40,cnt:'7.3M',icon:'🧘',
+  q:'I stopped performing the version of myself that other people seemed to want.',
+  x:'This one appeared in almost exactly the same words, across millions of entries. Not "I became more confident." More specific than that: "I stopped performing." The performance of being the person who has it all together. The performance of ambitions that were never really yours. Some people do this at 28. Some never do it. But 40 seems to be when the performance becomes more exhausting than the real thing.'},
+ {age:50,cnt:'10.2M',icon:'🕯️',
+  q:'My mother died in February. By March I was buying groceries for one. That\'s when it hit me.',
+  x:'This is the most-marked square in the archive. More than any other. People wrote here not just about grief, but about reorientation. "Suddenly I was the older generation." "I started calling people I hadn\'t called in years." "The paper behind me was longer than the paper ahead."\n\nLosing a parent doesn\'t just hurt. It restructures your sense of where you are in time.'},
+ {age:55,cnt:'3.4M',icon:'🌅',
+  q:'Started saying no. Without the apology I used to attach to it.',
+  x:'No announcement. No manifesto. Just one day — no. And not the anxious, over-explained no with three paragraphs of justification and an offer to reschedule. Just: no.\n\nSeveral million people described this square the same way. They didn\'t say they became confident. They used one word: finally.'},
+ {age:60,cnt:'6.8M',icon:'🔑',
+  q:'I retired. Then I panicked. I didn\'t know who I was when I wasn\'t working.',
+  x:'Nobody tells you about this part. You spend 35 years building an identity around a title — manager, doctor, engineer, teacher — and then one day the title ends. The paper doesn\'t end. Just the title.\n\nAnd then you have to figure out who you actually are, which is a question you haven\'t been asked since you were 25. You didn\'t have a good answer then, either.'},
+ {age:70,cnt:'3.1M',icon:'🌸',
+  q:'I genuinely stopped caring what other people thought of me. Not numbness. The opposite.',
+  x:'Some people reach this at 30. Some at 45. Some never. But 70 seems to be the age where the largest number of people describe this as a permanent, genuine shift — not "I care less now" but "I don\'t care."\n\nThey didn\'t describe it as detachment. They described it with words like warmth, space, lightness. As though something they\'d been carrying for decades finally, quietly, put itself down.'},
+ {age:75,cnt:'1.9M',icon:'📄',
+  q:'The squares ran out. The person looking at them was still surprised.',
+  x:'90% of people who wrote about this square said the same thing: they didn\'t feel ready. They expected to feel done — like a finished book, complete. They thought there would be more warning.\n\nThere wasn\'t.\n\nOne entry just said: "I thought I\'d have time to do the things I kept putting off. I still thought that on Tuesday. The paper ended on Thursday."'},
+];
+
+// ──────────────────────────────────────────
+// SLOT DATA
+// ──────────────────────────────────────────
+const S_ERA=[{i:'🏚️',l:'1950s',s:'Post-war reconstruction',c:'#7F1D1D'},{i:'🌱',l:'1960s',s:'Cultural Revolution era',c:'#7F1D1D'},{i:'🔧',l:'1970s',s:'Reform begins',c:'#1E3A5F'},{i:'📺',l:'1980s',s:'Reform and opening up',c:'#059669'},{i:'📱',l:'1990s',s:'Internet born',c:'#B45309'},{i:'🌐',l:'2000s',s:'Globalization era',c:'#2563EB'}];
+const S_BG=[{i:'🏙️',l:'Urban only child',s:'One child, all expectations'},{i:'🌾',l:'Rural large family',s:'3–4 siblings, the land'},{i:'🏗️',l:'Migrant worker family',s:'Left behind or uprooted'},{i:'🎭',l:'Artist family',s:'Creativity and chaos'},{i:'📚',l:'Intellectual family',s:'Education is everything'},{i:'🏛️',l:'State enterprise family',s:'The "iron rice bowl" era'}];
+const S_EV=[{i:'💔',l:'Early bereavement',s:'Lost close family before 20',c:'#7F1D1D'},{i:'🏥',l:'Serious illness',s:'Self or a family member',c:'#7F1D1D'},{i:'💰',l:'Unexpected wealth',s:'Business, investment, or luck',c:'#B45309'},{i:'💍',l:'True love',s:'A genuine life partner',c:'#059669'},{i:'📉',l:'Major failure',s:'Bankruptcy or total collapse',c:'#7F1D1D'},{i:'🌍',l:'Left home',s:'Abandoned everything familiar',c:'#1E3A5F'},{i:'🏆',l:'Late bloomer',s:'Didn\'t break through until after 50',c:'#B45309'},{i:'⚖️',l:'Quietly ordinary',s:'Peace is more underrated than you think',c:'#3A3028'}];
+const S_REFLECT=['You just saw 10 randomly generated papers. Which one reminded you of yourself? — You don\'t have to answer. But you know.','Not one of those papers had a starting point chosen by its owner. Just like yours.','The most common outcome was "quietly ordinary" — and that\'s the most underrated kind of life.','What you can control is much less than what you can\'t. But that small portion matters more than you think.','Looking at these random papers — which square would you most want to keep? Which would you most want to rewrite?','The late-bloomer paper is rare. But it\'s real. Remember that.'];
+
+// ──────────────────────────────────────────
+// STATE
+// ──────────────────────────────────────────
+let curMode='famous', selPkgs=new Set(), slotN=0, curEra='80s', curFamous=null;
+let cellEls=[], _animGen=0;
+
+// ──────────────────────────────────────────
+// GRID RENDER
+// ──────────────────────────────────────────
+const tipEl=()=>document.getElementById('tip');
+function showTip(e,title,body){
+  const t=tipEl();if(!t)return;
+  t.innerHTML=`<strong>${title}</strong>${body||''}`;
+  t.style.display='block';
+  moveTip(e);
+}
+function moveTip(e){
+  const t=tipEl();if(!t||t.style.display==='none')return;
+  const x=e.clientX+14,y=e.clientY-10;
+  t.style.left=Math.min(x,window.innerWidth-240)+'px';
+  t.style.top=Math.max(y-t.offsetHeight,8)+'px';
+}
+function hideTip(){const t=tipEl();if(t)t.style.display='none';}
+document.addEventListener('mousemove',moveTip);
+
+function initGrid(){
+  const a=document.getElementById('a4');
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='cell c-blank';
+    d.dataset.idx=i;
+    a.appendChild(d);
+    cellEls.push(d);
+  }
+  // Single delegated listener for all 900 cells
+  a.addEventListener('mouseover',e=>{
+    const c=e.target;
+    if(!c.classList||!c.classList.contains('cell')||c.classList.contains('c-blank')){hideTip();return;}
+    const lbl=c.dataset.tipLabel||'';
+    showTip(e,'Age '+Math.floor(parseInt(c.dataset.idx)/12),lbl?'<br>'+lbl:'');
+  });
+  a.addEventListener('mouseleave',hideTip);
+}
+
+function renderGrid(cells){
+  // Clear golden overlays before update
+  cellEls.forEach(c=>{if(c.dataset.golden){c.style.outline='';c.style.outlineOffset='';c.style.zIndex='';delete c.dataset.golden;}});
+  for(let i=0;i<TOTAL;i++){
+    const d=cellEls[i];
+    const c=cells[i];
+    // Reset
+    d.style.background='';d.style.boxShadow='';d.dataset.tipLabel='';
+    d.classList.remove('turn-beat','ev-pop','c-now');
+    if(!c||c==='c-blank'){
+      d.className='cell c-blank';
+    } else if(typeof c==='string'){
+      d.className='cell '+c;
+    } else {
+      d.className='cell';
+      d.style.background=c.c||'#2E2820';
+      if(c.glow)d.style.boxShadow=`0 0 5px ${c.c}`;
+      if(c.l)d.dataset.tipLabel=c.l;
+    }
+  }
+}
+function blank(){const c=[];for(let i=0;i<TOTAL;i++)c.push('c-blank');renderGrid(c);}
+function r(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+function baseCells(currentAge,lifespan,blankEnd){
+  const c=[], lived=currentAge*12, ls=lifespan*12, bEnd=(blankEnd||0)*12;
+  for(let i=0;i<TOTAL;i++){
+    if(i>=ls)c.push('c-beyond');
+    else if(i<lived)c.push(bEnd>0&&i<bEnd?'c-void':'c-past');
+    else c.push('c-future');
+  }
+  return c;
+}
+
+function lifeCells(currentAge,lifespan,events,blankEnd){
+  const c=baseCells(currentAge,lifespan,blankEnd);
+  (events||[]).forEach(e=>{
+    const s=Math.round(e.age*12), dur=(e.dur||1)*12;
+    for(let j=0;j<dur&&s+j<TOTAL;j++)c[s+j]={c:e.c,l:e.l,glow:e.glow||false};
+  });
+  return c;
+}
+
+function animateFamous(p){
+  _animGen++; // cancel any in-flight animation
+  const gen=_animGen;
+  renderGrid(baseCells(p.currentAge,p.lifespan,p.blankYears));
+  const evs=[...p.events].sort((a,b)=>a.age-b.age);
+  evs.forEach((ev,idx)=>{
+    setTimeout(()=>{
+      if(gen!==_animGen)return; // stale — a newer animation started
+      const start=Math.round(ev.age*12), dur=(ev.dur||1)*12;
+      const isTurn=(p.turnAge&&Math.abs(ev.age-p.turnAge)<=1);
+      for(let j=0;j<dur&&start+j<TOTAL;j++){
+        const d=cellEls[start+j];
+        d.style.background=ev.c;
+        d.style.boxShadow=ev.glow||isTurn?`0 0 7px ${ev.c}bb`:'';
+        if(ev.l)d.dataset.tipLabel=`Age ${ev.age}: ${ev.l}`;
+        d.classList.add('ev-pop');
+        setTimeout(()=>d.classList.remove('ev-pop'),300);
+      }
+      if(isTurn){
+        setTimeout(()=>{
+          if(gen!==_animGen)return;
+          const tc=cellEls[Math.round(p.turnAge*12)];
+          if(tc){tc.style.background='#FCD34D';tc.classList.add('turn-beat');}
+        },150);
+      }
+    },idx*110+60);
+  });
+  setTimeout(()=>{
+    if(gen!==_animGen)return;
+    applyGolden(_goldenStart,_goldenEnd);
+    const a2=parseInt(document.getElementById('fcmp-age').value)||0;
+    if(a2>0&&cellEls[a2*12]){cellEls[a2*12].className='cell c-now';cellEls[a2*12].title=`← You are here (age ${a2})`;}
+    if(_animGen===3)setTimeout(showKofi,1800);
+  },evs.length*110+300);
+}
+
+function setLegend(items){
+  document.getElementById('leg').innerHTML=items.map(x=>`<div class="leg-i"><div class="leg-d" style="background:${x.c}"></div>${x.l}</div>`).join('');
+}
+
+// ──────────────────────────────────────────
+// MODE SWITCH
+// ──────────────────────────────────────────
+function setMode(m){
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('active',['famous','random','era','role','exchange','memorial','slots'][i]===m);
+  });
+  document.querySelectorAll('.mp').forEach(p=>p.classList.remove('on'));
+  document.getElementById('mp-'+m).classList.add('on');
+  curMode=m;
+  if(m==='famous')initFamous();
+  else if(m==='random')initRandom();
+  else if(m==='era')initEra();
+  else if(m==='role')initRole();
+  else if(m==='exchange')initExchange();
+  else if(m==='memorial')initMemorial();
+  else if(m==='slots')initSlots();
+}
+
+// ──────────────────────────────────────────
+// FAMOUS LIVES
+// ──────────────────────────────────────────
+function initFamous(){
+  const btnDiv=document.getElementById('famous-btns');
+  if(!btnDiv.innerHTML){
+    btnDiv.innerHTML=FAMOUS.map(p=>`<button class="pb" id="fpb-${p.id}" onclick="showFamous('${p.id}')">${p.name}</button>`).join('');
+  }
+  _goldenStart=-1;_goldenEnd=-1;
+  showFamous('chu');
+}
+
+function showFamous(id){
+  curFamous=id;
+  document.querySelectorAll('.pb').forEach(b=>b.classList.remove('on'));
+  const btn=document.getElementById('fpb-'+id);
+  if(btn)btn.classList.add('on');
+  const p=FAMOUS.find(x=>x.id===id);
+  if(!p)return;
+  // Animated reveal — void → events pop in one by one
+  animateFamous(p);
+  setFoot(`${p.name} · Born ${p.born}${p.died?' · Died '+p.died:''} · ~${p.lifespan}-year lifespan`);
+  // Blank-years stat bar
+  const fblank=document.getElementById('fblank');
+  if(p.blankYears&&p.blankYears>10){
+    const active=p.lifespan-p.blankYears;
+    fblank.style.display='block';
+    fblank.innerHTML=`<div class="bys"><div class="bys-b"><strong>${p.blankYears}</strong><br>blank yrs</div><div class="bys-arr">→</div><div class="bys-a"><strong>${active}</strong><br>dense yrs</div></div><div class="bys-label">Near-blank accumulation → history-changing eruption</div>`;
+  }else{fblank.style.display='none';}
+  // Cards
+  document.getElementById('fcard').style.display='block';
+  document.getElementById('fname').textContent=p.name;
+  document.getElementById('fbio').textContent=p.bio;
+  document.getElementById('ftl').innerHTML=p.events.map(e=>`
+    <div class="ti"><div class="td" style="background:${e.c}"></div>
+    <div><div class="tt">${e.l}</div><div class="ta">Age ${e.age}</div></div></div>`).join('');
+  document.getElementById('fquote').textContent=p.quote;
+  document.getElementById('fquote').style.display='block';
+  document.getElementById('fhit').style.display='block';
+  document.getElementById('fhit-text').innerHTML=p.hitLines.join('<br>');
+  document.getElementById('fcmp').style.display='block';
+  document.getElementById('fcmp-text').style.display='none';
+  document.getElementById('fgolden').style.display='block';
+  document.getElementById('fshield').style.display='none';
+  setLegend([{c:'#0D0B05',l:'Blank years (void)'},{c:'#2E2820',l:'Lived'},{c:'#EAE0D0',l:'Future'},{c:'#7F1D1D',l:'Dark period'},{c:'#059669',l:'Rise'},{c:'#B45309',l:'Peak'},{c:'#FCD34D',l:'Turning point'}]);
+  // Trigger age comparison if age already entered
+  updateFamousCmp();
+}
+
+function getStatusAtAge(p,age){
+  let status=null;
+  for(const e of p.events){if(e.age<=age)status=e;}
+  return status;
+}
+
+function updateFamousCmp(){
+  const p=FAMOUS.find(x=>x.id===curFamous);
+  if(!p)return;
+  const age=parseInt(document.getElementById('fcmp-age').value)||0;
+  if(!age||age<5||age>100){document.getElementById('fcmp-text').style.display='none';return;}
+  const e=getStatusAtAge(p,age);
+  const eLabel=e?e.l:'nothing remarkable recorded yet';
+  let text=p.cmpTemplate(age,eLabel);
+  document.getElementById('fcmp-text').innerHTML=text;
+  document.getElementById('fcmp-text').style.display='block';
+  // Mark your age as amber dot
+  const youM=age*12;
+  if(youM<TOTAL&&cellEls[youM]){
+    cellEls[youM].className='cell c-now';
+    cellEls[youM].style.background='';
+    cellEls[youM].style.boxShadow='';
+    cellEls[youM].title=`← You are here (age ${age})`;
+  }
+  updateGolden();
+  updateShield(age);
+}
+
+// ──────────────────────────────────────────
+// GOLDEN ZONE
+// ──────────────────────────────────────────
+let _goldenStart=-1,_goldenEnd=-1;
+
+function calcGoldenZone(userAge,parentAge){
+  const yrsLeft=Math.max(0,85-parentAge);
+  const goldenEnd=Math.min((userAge+yrsLeft)*12,TOTAL);
+  return{start:userAge*12,end:goldenEnd,months:Math.max(0,goldenEnd-userAge*12)};
+}
+
+function applyGolden(start,end){
+  document.querySelectorAll('#a4 .cell[data-golden]').forEach(c=>{c.style.outline='';c.style.outlineOffset='';c.style.zIndex='';delete c.dataset.golden;});
+  if(start<0||end<=start)return;
+  const cells=document.querySelectorAll('#a4 .cell');
+  for(let i=start;i<end&&i<cells.length;i++){cells[i].style.outline='2px solid rgba(217,119,6,.6)';cells[i].style.outlineOffset='-1px';cells[i].style.zIndex='2';cells[i].dataset.golden='1';}
+}
+
+function updateGolden(){
+  const userAge=parseInt(document.getElementById('fcmp-age').value)||0;
+  const parentAge=parseInt(document.getElementById('fgolden-age').value)||0;
+  const res=document.getElementById('fgolden-result');
+  if(!parentAge||parentAge<40||parentAge>100){_goldenStart=-1;_goldenEnd=-1;applyGolden(-1,-1);res.innerHTML='';return;}
+  if(!userAge){res.innerHTML='<div style="font-size:.85rem;color:var(--muted)">Enter your age above first.</div>';return;}
+  const gz=calcGoldenZone(userAge,parentAge);
+  _goldenStart=gz.start;_goldenEnd=gz.end;
+  applyGolden(gz.start,gz.end);
+  const yrs=Math.floor(gz.months/12),mos=gz.months%12;
+  if(gz.months<=0){
+    res.innerHTML='<div class="golden-warn">⚠️ Based on these numbers, your parent may already be past this paper\'s range. Every moment left is borrowed time.</div>';
+    return;
+  }
+  const warn=gz.months<60?`<div class="golden-warn">⚠️ Under 5 years — <strong>${gz.months} squares</strong> left. Most will pass as routine. <strong>Are you choosing which ones won't?</strong></div>`:'';
+  const p=FAMOUS.find(x=>x.id===curFamous);
+  let turnNote='';
+  if(p&&p.turnAge){const tm=p.turnAge*12;turnNote=tm<gz.end?`<br>📌 <em>${p.firstName}'s turning point at ${p.turnAge}</em> falls <strong>inside</strong> your Golden Zone — your parent would see it.`:`<br>⚠️ <em>${p.firstName}'s turning point at ${p.turnAge}</em> falls <strong>outside</strong> the gold border — they may not see that day.`;}
+  res.innerHTML=`<div style="display:flex;gap:14px;margin-bottom:8px;align-items:flex-end"><div><div class="golden-num">${yrs}<span style="font-size:1rem;font-weight:400"> yr${yrs!==1?'s':''}</span>${mos?` <span style="font-size:.9rem">${mos}mo</span>`:''}</div><div class="golden-sub">of shared squares, starting now</div></div></div><div class="golden-msg">The gold-outlined cells are your <em>Golden Zone</em> — months you and your parent still share on this paper.${turnNote}</div>${warn}`;
+}
+
+// ──────────────────────────────────────────
+// REGRET SHIELD
+// ──────────────────────────────────────────
+const SHIELD_ACTIONS={
+  health:[
+    {id:'h1',t:'This week: walk 30 min × 3 days'},
+    {id:'h2',t:'Sleep before midnight for 5 consecutive nights'},
+    {id:'h3',t:'Schedule a health checkup this month'},
+    {id:'h4',t:'Drink only water for one full day'}
+  ],
+  parents:[
+    {id:'p1',t:'Call your parents this week — no reason needed'},
+    {id:'p2',t:'Plan one specific visit in the next 30 days'},
+    {id:'p3',t:'Ask them one question you\'ve never asked'},
+    {id:'p4',t:'Take a photo together — print it, don\'t just save it'}
+  ],
+  purpose:[
+    {id:'u1',t:'Write down one thing you want in 5 years'},
+    {id:'u2',t:'Identify one skill to start learning this month'},
+    {id:'u3',t:'Reach out to one person doing what you want to do'},
+    {id:'u4',t:'Block 2 hours this week for "future you" planning'}
+  ]
+};
+
+function updateShield(age){
+  if(!age||age<16){document.getElementById('fshield').style.display='none';return;}
+  document.getElementById('fshield').style.display='block';
+  const parentAge=parseInt(document.getElementById('fgolden-age').value)||0;
+  const risks=[
+    {id:'health',icon:'🫀',title:'Health Investment',sev:'hi',
+     msg:`Your habits in your ${age}s set the baseline for your 50s. Small daily choices compound into the paper you\'ll have.`,
+     actions:SHIELD_ACTIONS.health},
+    {id:'parents',icon:'💛',title:'Parent Time Window',sev:parentAge&&(85-parentAge)<10?'hi':'md',
+     msg:parentAge?`Based on typical lifespans, you have roughly ${Math.max(0,85-parentAge)} years left in your shared squares. Most will pass as routine.`:'Enter your parent\'s age in Golden Zone above for a precise number.',
+     actions:SHIELD_ACTIONS.parents},
+    {id:'purpose',icon:'🎯',title:'Intentional Next 5 Years',sev:'lo',
+     msg:`The next 60 squares — 5 years. Are they deliberately shaped, or just "going with the flow"?`,
+     actions:SHIELD_ACTIONS.purpose}
+  ];
+  const el=document.getElementById('shield-risks');
+  el.innerHTML=risks.map(r=>{
+    const acts=r.actions.map(a=>{
+      const checked=localStorage.getItem('sh_'+a.id)?'checked':'';
+      return `<label class="action-item${checked?' done':''}" id="al-${a.id}"><input type="checkbox" ${checked} onchange="checkShieldAction('${a.id}',this)"> ${a.t}</label>`;
+    }).join('');
+    return `<div class="risk-item"><div class="risk-bar" onclick="toggleRisk('${r.id}')"><div class="risk-sev ${r.sev}"></div><span class="risk-icon2">${r.icon}</span><span class="risk-title2">${r.title}</span><span class="risk-toggle">▼</span></div><div class="risk-body" id="rb-${r.id}" style="display:none"><p class="risk-msg">${r.msg}</p><div class="action-list">${acts}</div></div></div>`;
+  }).join('');
+}
+
+function toggleRisk(id){const b=document.getElementById('rb-'+id);b.style.display=b.style.display==='none'?'block':'none';}
+function checkShieldAction(id,cb){
+  try{if(cb.checked)localStorage.setItem('sh_'+id,'1');else localStorage.removeItem('sh_'+id);}catch(e){}
+  const lbl=document.getElementById('al-'+id);
+  if(lbl)lbl.className='action-item'+(cb.checked?' done':'');
+}
+
+// ──────────────────────────────────────────
+// RANDOM LIFE
+// ──────────────────────────────────────────
+const NM=['James','Mohammed','Carlos','David','Wei','Arjun','Kwame','Lucas','Ivan','Yusuf'];
+const NF=['Maria','Amina','Sofia','Lin','Priya','Fatima','Anna','Keiko','Zoe','Aisha'];
+const EVPOOL=[
+ {c:'#7F1D1D',l:'Parent died young',min:5,max:25},{c:'#7F1D1D',l:'Serious illness',min:20,max:60},
+ {c:'#7F1D1D',l:'Major financial loss',min:25,max:55},{c:'#7F1D1D',l:'Painful divorce',min:28,max:50},
+ {c:'#059669',l:'Career breakthrough',min:25,max:55},{c:'#059669',l:'Found lasting love',min:20,max:45},
+ {c:'#059669',l:'Started something new',min:30,max:65},{c:'#B45309',l:'Unexpected windfall',min:30,max:60},
+ {c:'#B45309',l:'Late-life flourishing',min:55,max:75},{c:'#2563EB',l:'Got married',min:22,max:40},
+ {c:'#1E3A5F',l:'Completed education',min:18,max:26},
+];
+
+let _randEvs=[], _randName='', _randAge=0, _randLs=0, _randSimilarId='';
+
+function initRandom(){
+  blank();setFoot('Roll a life — see whose paper appears.');setLegend([]);
+  ['rcard','rquote','rcmp','rq-card','rsim-card','rroll-again'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.style.display='none';
+  });
+}
+
+function rollLife(){
+  const gender=Math.random()<.5;
+  const name=(gender?NM:NF)[r(0,9)];
+  const born=r(1950,2000);
+  const now=2025, age=Math.min(now-born,75), ls=r(68,92);
+  const shuffled=[...EVPOOL].sort(()=>Math.random()-.5).slice(0,r(3,5));
+  const evs=shuffled.map(e=>({...e,age:r(e.min,Math.min(e.max,Math.max(age-1,e.min))),dur:1})).filter(e=>e.age>0&&e.age<ls).sort((a,b)=>a.age-b.age);
+  _randEvs=evs; _randName=name; _randAge=age; _randLs=ls;
+  const cells=lifeCells(age,ls,evs);
+  renderGrid(cells);
+  setFoot(`${name} · Born ${born} · ${age} years lived · Est. ${ls-age} years remaining`);
+  document.getElementById('rcard').style.display='block';
+  document.getElementById('rname').textContent=`${name}'s Paper`;
+  document.getElementById('rstats').innerHTML=`<div class="sb"><span class="sn">${born}</span><span class="sl">Born</span></div><div class="sb"><span class="sn">${age}</span><span class="sl">Lived</span></div><div class="sb"><span class="sn">~${ls-age}</span><span class="sl">Remaining</span></div>`;
+  document.getElementById('revents').innerHTML=evs.map(e=>`<div class="ti"><div class="td" style="background:${e.c}"></div><div><div class="tt">${e.l}</div><div class="ta">Age ${e.age}</div></div></div>`).join('');
+  const qs=[`This is not your life. But which of these squares feels closest to yours?`,`${name} didn't choose when they were born. Neither did you. But see what they did with it.`,`Strangers' papers are mirrors. Look at this one carefully.`];
+  document.getElementById('rquote').textContent=qs[r(0,2)];
+  document.getElementById('rquote').style.display='block';
+  // Age comparison box
+  document.getElementById('rcmp').style.display='block';
+  document.getElementById('rcmp-text').style.display='none';
+  document.getElementById('rcmp-age').value='';
+  // Reflection question
+  const q=getRandQuestion(evs,name);
+  document.getElementById('rq-text').innerHTML=`<em style="font-size:1.1rem;color:var(--accent-l)">"${q}"</em>`;
+  document.getElementById('rq-card').style.display='block';
+  // Similar famous person
+  const sim=getSimilarFamous(evs);
+  _randSimilarId=sim.id;
+  document.getElementById('rsim-why').textContent=sim.why;
+  document.getElementById('rsim-btn').textContent=`→ Meet ${FAMOUS.find(p=>p.id===sim.id).name}`;
+  document.getElementById('rsim-card').style.display='block';
+  // Roll again
+  document.getElementById('rroll-again').style.display='block';
+  setLegend([{c:'#16304A',l:'Lived'},{c:'#C4DCEF',l:'Future'},{c:'#7F1D1D',l:'Hardship'},{c:'#059669',l:'Rise'},{c:'#B45309',l:'Peak'},{c:'#2563EB',l:'Milestone'}]);
+}
+
+function updateRandCmp(){
+  const age=parseInt(document.getElementById('rcmp-age').value)||0;
+  if(!age||age<5||age>100){document.getElementById('rcmp-text').style.display='none';return;}
+  const evBefore=_randEvs.filter(e=>e.age<=age);
+  const evAfter=_randEvs.filter(e=>e.age>age);
+  const lastEv=evBefore.length?evBefore[evBefore.length-1]:null;
+  const nextEv=evAfter.length?evAfter[0]:null;
+  let txt='';
+  if(lastEv)txt+=`At ${age}, ${_randName} had already experienced: <em>${lastEv.l}</em> (age ${lastEv.age}). `;
+  else txt+=`At ${age}, ${_randName}'s paper was still blank — nothing had happened yet. `;
+  if(nextEv)txt+=`The next thing on their paper comes at age <em>${nextEv.age}: ${nextEv.l}</em>.`;
+  else txt+=`Everything on their paper was already behind them.`;
+  if(age>_randAge)txt=`You are older than ${_randName} is now. Their paper still has ~<em>${_randLs-_randAge} years</em> ahead — yours does too.`;
+  document.getElementById('rcmp-text').innerHTML=txt;
+  document.getElementById('rcmp-text').style.display='block';
+  const youM=age*12;
+  if(youM<TOTAL){
+    const dc=document.querySelectorAll('#a4 .cell');
+    if(dc[youM]){dc[youM].className='cell c-now';dc[youM].style.background='';dc[youM].style.boxShadow='';dc[youM].title=`← You (age ${age})`;}
+  }
+}
+
+function getRandQuestion(evs,name){
+  const hasDark=evs.some(e=>e.c==='#7F1D1D');
+  const hasLate=evs.some(e=>e.l==='Late-life flourishing');
+  const hasDivorce=evs.some(e=>e.l==='Painful divorce');
+  const hasCareer=evs.some(e=>e.l==='Career breakthrough');
+  const hasLoss=evs.some(e=>e.l==='Parent died young');
+  const hasNew=evs.find(e=>e.l==='Started something new');
+  const hasLove=evs.some(e=>e.l==='Found lasting love');
+  if(hasDivorce&&hasCareer)return`${name}'s paper shows career momentum and a marriage collapsing at the same time. What are you building that's quietly costing you something?`;
+  if(hasLoss)return`${name} lost a parent early. Is there someone in your paper you've been meaning to call?`;
+  if(hasLate)return`Most of this paper looks unremarkable — then after 55, it changes. What are you putting off until "later"?`;
+  if(hasNew&&hasNew.age>45)return`${name} started something new at ${hasNew.age}. What would you start if you believed it wasn't too late?`;
+  if(hasDark&&!hasLate)return`This paper has hard sections and no late redemption arc. Most lives don't end triumphantly. Does that change how you'd live yours?`;
+  if(hasLove)return`${name} found lasting love. On your own paper — is that square filled? Still empty? Does it matter?`;
+  return`If this were your paper — which single square would you most want to rewrite?`;
+}
+
+function getSimilarFamous(evs){
+  const hasDark=evs.some(e=>e.c==='#7F1D1D');
+  const hasLate=evs.some(e=>e.l==='Late-life flourishing');
+  const hasRejection=evs.some(e=>e.l==='Career breakthrough')&&hasDark;
+  const hasNew=evs.some(e=>e.l==='Started something new');
+  if(hasLate&&hasDark)return{id:'chu',why:'Hardship + late eruption — like Chu Shijian, who started an orange empire at 74, fresh out of prison.'};
+  if(hasRejection)return{id:'sanders',why:'Breakthrough after dark period — like Colonel Sanders, rejected 1,009 times before founding KFC at 65.'};
+  if(hasLate)return{id:'moses',why:'Late flourishing — like Grandma Moses, who picked up a paintbrush at 78 having never painted before.'};
+  if(hasDark)return{id:'jkr',why:'Dark section on the paper — like J.K. Rowling, divorced, depressed, on welfare at 28, Harry Potter at 32.'};
+  if(hasNew)return{id:'wang',why:'Starting something new — like Wang Deshun, who began bodybuilding at 50 and walked a runway at 79.'};
+  return{id:'harry',why:'An ordinary-looking paper — like Harry Bernstein, who wrote privately for 96 years before publishing his first novel.'};
+}
+
+function goToSimilar(){
+  setMode('famous');
+  showFamous(_randSimilarId);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ──────────────────────────────────────────
+// GENERATION
+// ──────────────────────────────────────────
+function initEra(){showEra('80s');}
+function showEra(gen){
+  curEra=gen;
+  ['80s','90s','00s'].forEach(g=>{const el=document.getElementById('gb'+g.replace('s',''));if(el)el.classList.toggle('on',g===gen);});
+  const e=ERA[gen];
+  document.getElementById('ename').textContent=e.full;
+  document.getElementById('edesc').textContent=e.desc;
+  const cells=lifeCells(e.currentAge,e.lifespan,e.milestones.map(m=>({age:m.age,dur:1,c:m.c,l:m.l})));
+  renderGrid(cells);
+  setFoot(`${e.label} average paper · Est. ${e.lifespan}-year lifespan`);
+  document.getElementById('etl').innerHTML=e.milestones.map(m=>`<div class="ti"><div class="td" style="background:${m.c}"></div><div><div class="tt">${m.l}</div><div class="ta">Age ${m.age}</div></div></div>`).join('');
+  document.getElementById('eyou').style.display='none';
+  setLegend([{c:'#2E2820',l:'Avg lived'},{c:'#EAE0D0',l:'Future'},{c:'#059669',l:'Career/family milestone'},{c:'#1E3A5F',l:'Education'},{c:'#7F1D1D',l:'Pressure zone'},{c:e.currentAge>0?'#F59E0B':'#EAE0D0',l:'Your position (if entered)'}]);
+  updateEraYou();
+}
+function updateEraYou(){
+  const age=parseInt(document.getElementById('era-age').value)||0;
+  const e=ERA[curEra];
+  if(!age||age<10||age>80){document.getElementById('eyou').style.display='none';return;}
+  const diff=age-e.currentAge;
+  let txt='';
+  if(Math.abs(diff)<=2)txt=`Your age matches the <em>average trajectory</em> of this generation. Statistically, you\'re near the mean. That\'s a starting point, not a destination.`;
+  else if(diff<0)txt=`You are <em>${Math.abs(diff)} years ahead</em> of the average for this generation. Ahead — or simply on a different path. What\'s in the squares matters more than where they sit.`;
+  else txt=`You are <em>${diff} years behind</em> the average for this generation. The squares on the paper have no progress bar. They record weight, not schedule.`;
+  // Generation-specific extra
+  const eNote=e.reflection;
+  txt+=`<br><br><span style="font-size:.82rem;color:var(--muted)">${eNote}</span>`;
+  document.getElementById('eyou-text').innerHTML=txt;
+  document.getElementById('eyou').style.display='block';
+  // Re-render with your dot
+  const cells=lifeCells(e.currentAge,e.lifespan,e.milestones.map(m=>({age:m.age,dur:1,c:m.c,l:m.l})));
+  const you=age*12;if(you<TOTAL)cells[you]='c-now';
+  renderGrid(cells);
+}
+
+// ──────────────────────────────────────────
+// ROLE SWAP
+// ──────────────────────────────────────────
+const ROLES={
+parent:{name:'Your Parents — When They Were Your Age',
+ cells:(()=>{const c=[];for(let i=0;i<TOTAL;i++){if(i<300)c.push('c-past');else if(i<360)c.push({c:'#B45309',l:'The decade they built a family'});else if(i<600)c.push('c-past');else c.push('c-future');}c[348]={c:'#FCD34D',l:'The month you arrived in their grid',glow:true};c[349]={c:'#FCD34D',l:'The month you arrived in their grid',glow:true};return c;})(),
+ quote:'Look at the gold square. That\'s the month you appeared in their story. Before it — they were someone else entirely.',
+ text:'Your parents had a paper too. They had years before you existed — years when they were exactly as confused and hopeful and scared as you are now.\n\nThe golden squares are not sentimental. They\'re literal. They mark when someone else\'s paper became tangled with theirs, permanently.\n\n<em>What do you know about what was in their paper before that square? Did you ever ask?</em>'},
+child:{name:'Your Future Child — If You Had Them at 30',
+ cells:(()=>{const c=[];for(let i=0;i<TOTAL;i++)c.push('c-blank');c[0]={c:'#FCD34D',l:'Born — if you decide to',glow:true};return c;})(),
+ quote:'One square. Then 899 blank ones. Whether this paper ever starts depends on choices you\'re making right now.',
+ text:'If you had a child at 30, their grid would start in a year that hasn\'t happened yet.\n\nTheir paper would run parallel to yours for ~45 years. Then they\'d continue alone — after your grid ends.\n\n<em>What would you want to be in the squares that overlap with theirs?</em>'},
+boss:{name:'The "Career First" Archetype',
+ cells:(()=>{const c=[];for(let i=0;i<TOTAL;i++){const a=i/12;if(a<22)c.push('c-past');else if(a<65)c.push({c:'#1E3A5F',l:'Career — thick, continuous, defining'});else c.push('c-future');}for(let i=300;i<480;i+=60){c[i]={c:'#B45309',l:'Family obligation (brief)'};c[i+1]={c:'#B45309',l:'Family obligation (brief)'}}return c;})(),
+ quote:'"I\'ll have time for that later." Later never showed up on the paper.',
+ text:'This is the paper of someone who won the career game on hard mode.\n\nThe blue squares dominate. The warmth is sparse.\n\nIt\'s not a judgement — it\'s a choice, compounded over decades. Many people made this trade consciously. Some didn\'t realize they were making it until the paper was mostly full.\n\n<em>The question isn\'t whether this paper is wrong. It\'s whether it\'s yours.</em>'},
+nurse:{name:'The ICU Nurse — Who Sees Only the Last 10 Rows',
+ cells:(()=>{const c=[];for(let i=0;i<720;i++)c.push('c-beyond');for(let i=720;i<TOTAL;i++)c.push('c-past');c[780]={c:'#B45309',l:'A day someone described to her'};c[810]={c:'#059669',l:'Still fighting, still present'};c[840]={c:'#FCD34D',l:'The last good week',glow:true};return c;})(),
+ quote:'"I have never seen anyone at the end wish they had spent more time at work."',
+ text:'She sees only this part of the paper. The decades before — the fights, the promotions, the fears at 3am — she doesn\'t see any of that.\n\nShe\'s seen hundreds of these endings.\n\nWhat she says, consistently, is this: <em>the people who die peacefully are the ones who said what they meant while there was still time to say it.</em>'},
+migrant:{name:'The Migrant Who Started Over at 28',
+ cells:(()=>{const c=[];for(let i=0;i<336;i++)c.push('c-past');c[336]={c:'#7F1D1D',l:'Left home — burned every bridge'};c[337]={c:'#7F1D1D',l:'Left home — burned every bridge'};for(let i=338;i<420;i++)c.push({c:'#1E3A5F',l:'Alone in a foreign city, starting from scratch'});c[420]={c:'#B45309',l:'First real foothold — 3 years in'};for(let i=421;i<660;i++)c.push({c:'#059669',l:'Built something new, piece by piece'});c[660]={c:'#FCD34D',l:'The day it all made sense',glow:true};for(let i=661;i<TOTAL;i++)c.push('c-future');return c;})(),
+ quote:'"The hardest part wasn\'t leaving. It was the 36 blue squares before anything worked."',
+ text:'At 28, they left. Job, apartment, language, friends — all gone in a single month.\n\nFor three years: the blue squares. Anonymous. Invisible. Uncertain.\n\nMost people who see this paper only see the green squares at the end. They don\'t see the 84 months it took to get there.\n\n<em>The gold square isn\'t the destination. It\'s the moment the cost finally made sense.</em>'},
+artist:{name:'The Artist Who Created Without an Audience',
+ cells:(()=>{const c=[];for(let i=0;i<240;i++)c.push('c-past');for(let i=240;i<780;i++)c.push({c:'#2563EB',l:'Creating — every year, regardless of who watched'});for(let i=780;i<TOTAL;i++)c.push('c-future');c[540]={c:'#7F1D1D',l:'The rejection that almost ended it'};c[600]={c:'#7F1D1D',l:'Years of silence from the world'};c[720]={c:'#FCD34D',l:'First person who truly understood',glow:true};return c;})(),
+ quote:'"40 years of blue squares. Not one of them was wasted — because she wasn\'t making them for you."',
+ text:'From age 20 to 65: blue squares. Every year. Paintings, sculptures, notebooks, recordings — output regardless of response.\n\nTwo red squares buried in the middle: the years she almost stopped.\n\nShe didn\'t.\n\nAt 60, one gold square: the first time someone saw what she had made and wept.\n\n<em>The question isn\'t whether the world will notice. The question is whether you\'ll still be making things when it finally does.</em>'},
+caregiver:{name:'The Family Caregiver — 20 Years for Others',
+ cells:(()=>{const c=[];for(let i=0;i<360;i++)c.push('c-past');for(let i=360;i<600;i++)c.push({c:'#B45309',l:'Caregiving — a parent, a spouse, a sibling'});c[480]={c:'#7F1D1D',l:'The hardest year — no end in sight'};c[552]={c:'#7F1D1D',l:'The loss'};for(let i=600;i<TOTAL;i++)c.push({c:'#059669',l:'The years that finally belonged to her'});c[600]={c:'#FCD34D',l:'The first morning with no one to care for',glow:true};return c;})(),
+ quote:'"She was 50 years old and it was the first morning in 20 years she didn\'t have anywhere she had to be."',
+ text:'Twenty years of amber squares. A parent with dementia, then a husband\'s illness, then a sibling who couldn\'t cope alone.\n\nThere were no dramatic moments. Just the slow, daily weight of being the person other people needed.\n\nThe gold square, at 50, is not a triumphant square. It\'s an empty one.\n\n<em>The green squares that follow are not a reward for the amber ones. They\'re just what happened next — and she filled them differently than anyone expected.</em>'},
+self80:{name:'You — at 80, Looking Back at Now',
+ cells:(()=>{const c=[];for(let i=0;i<480;i++)c.push('c-past');for(let i=480;i<960;i++)c.push('c-future');for(let i=0;i<TOTAL;i++){if(i>=960)c.push('c-beyond');}c[480]={c:'#FCD34D',l:'Right now — the exact square you\'re in',glow:true};c[481]={c:'#FCD34D',l:'Right now',glow:true};return c;})(),
+ quote:'"The 80-year-old version of you is watching the choice you make today."',
+ text:'This is the view from row 27.\n\nThe gold squares are now. From here, you can see how much paper is behind you — and how much is still blank.\n\nThe 80-year-old version of you isn\'t asking about your job title or your salary. They\'re asking about the people you called, the risks you took, the things you made.\n\n<em>The question isn\'t what you\'ll regret not having. It\'s what you\'ll regret not doing while the paper was still mostly white.</em>'},
+};
+
+function initRole(){blank();document.getElementById('rolecard').style.display='none';document.querySelectorAll('.rb').forEach(b=>b.classList.remove('on'));}
+function showRole(id,btn){
+  document.querySelectorAll('.rb').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  const role=ROLES[id];
+  renderGrid(role.cells);
+  document.getElementById('rolecard').style.display='block';
+  document.getElementById('rolename').textContent=role.name;
+  document.getElementById('rolequote').textContent=role.quote;
+  document.getElementById('roletext').innerHTML=role.text.replace(/\n/g,'<br>');
+  setLegend([]);
+  setFoot('1 square = 1 month of someone else\'s life');
+}
+
+// ──────────────────────────────────────────
+// LIFE EXCHANGE
+// ──────────────────────────────────────────
+function initExchange(){
+  const g=document.getElementById('pgrid');
+  g.innerHTML=PKGS.map(p=>`<div class="pc" id="pk-${p.id}" onclick="togglePkg('${p.id}')"><h4>${p.icon} ${p.name}</h4><p>${p.sub}</p><div>${p.tags.map(t=>`<span class="pt ${t.pos?'pos':'neg'}">${t.t}</span>`).join('')}</div></div>`).join('');
+  selPkgs.clear();
+  renderExGrid();
+  document.getElementById('verd').style.display='none';
+}
+function togglePkg(id){
+  const el=document.getElementById('pk-'+id);
+  if(selPkgs.has(id)){selPkgs.delete(id);el.classList.remove('on');}
+  else{selPkgs.add(id);el.classList.add('on');}
+  renderExGrid();updateVerdict();
+}
+function resetEx(){selPkgs.clear();document.querySelectorAll('.pc').forEach(c=>c.classList.remove('on'));renderExGrid();document.getElementById('verd').style.display='none';}
+function renderExGrid(){
+  const cells=[];const base=360;
+  for(let i=0;i<TOTAL;i++)cells.push(i<base?'c-past':'c-future');
+  let tot={career:0,family:0,self:0,adv:0,parent:0};
+  selPkgs.forEach(id=>{const p=PKGS.find(x=>x.id===id);Object.keys(tot).forEach(k=>tot[k]+=(p.e[k]||0));});
+  if(tot.career>0)for(let i=264;i<264+tot.career*10&&i<720;i++)cells[i]={c:'#1E3A5F',l:'Career boost'};
+  if(tot.family>0)for(let i=300;i<300+tot.family*8&&i<600;i++)cells[i]={c:'#B45309',l:'Family time'};
+  if(tot.self>0)for(let i=base;i<base+tot.self*10&&i<TOTAL;i++)cells[i]={c:'#0D9488',l:'Self time'};
+  if(tot.parent>0)for(let i=base;i<base+tot.parent*6&&i<TOTAL;i++)cells[i]={c:'#FCD34D',l:'Time with parents',glow:true};
+  if(tot.adv>0)for(let i=400;i<400+tot.adv*8&&i<TOTAL;i++)cells[i]={c:'#7C3AED',l:'Adventure'};
+  else if(tot.adv<0)for(let i=400;i<400+Math.abs(tot.adv)*8&&i<TOTAL;i++)cells[i]='c-beyond';
+  renderGrid(cells);
+  setFoot('Your virtual paper — based on the packages you selected');
+}
+function updateVerdict(){
+  if(!selPkgs.size){document.getElementById('verd').style.display='none';return;}
+  const names=[...selPkgs].map(id=>PKGS.find(p=>p.id===id).name);
+  let tot={career:0,family:0,self:0,adv:0,parent:0};
+  selPkgs.forEach(id=>{const p=PKGS.find(x=>x.id===id);Object.keys(tot).forEach(k=>tot[k]+=(p.e[k]||0));});
+  const wins=[],costs=[];
+  if(tot.career>0)wins.push(`career +${tot.career} months`);if(tot.self>0)wins.push(`self +${tot.self} months`);if(tot.parent>0)wins.push(`parent time +${tot.parent} months`);if(tot.adv>0)wins.push(`adventure +${tot.adv} months`);if(tot.family>0)wins.push(`family +${tot.family} months`);
+  if(tot.career<0)costs.push(`career −${Math.abs(tot.career)}`);if(tot.family<0)costs.push(`family proximity −${Math.abs(tot.family)}`);if(tot.adv<0)costs.push(`adventure −${Math.abs(tot.adv)}`);if(tot.parent<0)costs.push(`parent time −${Math.abs(tot.parent)}`);
+  document.getElementById('verd-text').innerHTML=`You chose: <strong>${names.join(' + ')}</strong>.<br>${wins.length?'Gains: '+wins.join(', ')+'.':''} ${costs.length?'Costs: '+costs.join(', ')+'.':''}<br><br><em>No package is free. The grid always balances.</em>`;
+  document.getElementById('verd').style.display='block';
+}
+
+// ──────────────────────────────────────────
+// MEMORIAL
+// ──────────────────────────────────────────
+function initMemorial(){
+  const cells=[];
+  for(let i=0;i<TOTAL;i++)cells.push(i<600?'c-past':'c-future');
+  MEMORIAL.forEach(m=>{const s=m.age*12;for(let j=0;j<12&&s+j<TOTAL;j++)cells[s+j]={c:'#B45309',l:`Age ${m.age}: ${m.cnt} voices`};});
+  renderGrid(cells);setFoot('Amber = ages with the most collective memory. Click any to expand.');
+  document.getElementById('mlist').innerHTML=MEMORIAL.map((m,i)=>`
+    <div class="mr" id="mr${i}" onclick="toggleMem(${i})">
+      <div class="ma">${m.icon}<span>Age ${m.age}</span></div>
+      <div class="mq">"${m.q}"</div>
+      <div class="mc">${m.cnt}</div>
+    </div>
+    <div class="mx" id="mx${i}" style="display:none"><p>${m.x}</p></div>`).join('');
+  setLegend([{c:'#B45309',l:'Collective memory hotspot'},{c:'#2E2820',l:'Other months'}]);
+}
+function toggleMem(i){
+  const mx=document.getElementById('mx'+i),mr=document.getElementById('mr'+i);
+  const open=mx.style.display!=='none';
+  document.querySelectorAll('[id^=mx]').forEach(e=>e.style.display='none');
+  document.querySelectorAll('.mr').forEach(e=>e.classList.remove('on'));
+  if(!open){mx.style.display='block';mr.classList.add('on');}
+  const cells=[];
+  for(let j=0;j<TOTAL;j++)cells.push(j<600?'c-past':'c-future');
+  MEMORIAL.forEach(m=>{const s=m.age*12;for(let k=0;k<12&&s+k<TOTAL;k++)cells[s+k]={c:'#B45309',l:`Age ${m.age}`};});
+  const m=MEMORIAL[i],hs=m.age*12;
+  for(let k=0;k<12&&hs+k<TOTAL;k++)cells[hs+k]={c:'#FCD34D',glow:true,l:`Age ${m.age}: ${m.cnt} voices`};
+  renderGrid(cells);
+}
+
+// ──────────────────────────────────────────
+// SLOTS
+// ──────────────────────────────────────────
+function initSlots(){blank();setFoot('Pull the lever to generate a random life.');document.getElementById('shistory').innerHTML='';document.getElementById('sreflect').style.display='none';setLegend([]);}
+function spinSlots(){
+  const era=S_ERA[r(0,S_ERA.length-1)],bg=S_BG[r(0,S_BG.length-1)],ev=S_EV[r(0,S_EV.length-1)];
+  ['rl0','rl1','rl2'].forEach(id=>{const el=document.getElementById(id);el.classList.add('spin');setTimeout(()=>el.classList.remove('spin'),420);});
+  document.getElementById('r0i').textContent=era.i;document.getElementById('r0l').textContent=era.l;document.getElementById('r0s').textContent=era.s;
+  document.getElementById('r1i').textContent=bg.i;document.getElementById('r1l').textContent=bg.l;document.getElementById('r1s').textContent=bg.s;
+  document.getElementById('r2i').textContent=ev.i;document.getElementById('r2l').textContent=ev.l;document.getElementById('r2s').textContent=ev.s;
+  slotN++;document.getElementById('scount').textContent=`${slotN} life${slotN!==1?'s':''} generated`;
+  const base=era.l==='1950s'?r(1950,1959):era.l==='1960s'?r(1960,1969):era.l==='1970s'?r(1970,1979):era.l==='1980s'?r(1980,1989):era.l==='1990s'?r(1990,1999):r(2000,2009);
+  const age=Math.min(2025-base,75),ls=r(65,90);
+  const evAge=r(Math.max(5,Math.floor(age*.2)),Math.min(Math.floor(age*.8),70));
+  const cells=lifeCells(age,ls,[{age:evAge,dur:r(1,3),c:ev.c,l:ev.l}]);
+  for(let i=0;i<Math.min(age*12,TOTAL);i++){if(cells[i]==='c-past'&&Math.random()<.04)cells[i]={c:era.c,l:era.l};}
+  renderGrid(cells);
+  setFoot(`${era.l} · ${bg.l} · ${ev.l} · Born ${base} · ${age} years lived`);
+  const history=document.getElementById('shistory');
+  const item=document.createElement('div');item.className='sr2';item.textContent=`${era.i} ${era.l} + ${bg.i} ${bg.l} + ${ev.i} ${ev.l}`;
+  history.insertBefore(item,history.firstChild);
+  while(history.children.length>5)history.removeChild(history.lastChild);
+  if(slotN>=3){const idx=Math.min(Math.floor(slotN/3)-1,S_REFLECT.length-1);document.getElementById('sreflect').textContent=S_REFLECT[idx];document.getElementById('sreflect').style.display='block';}
+  setLegend([{c:'#2E2820',l:'Lived'},{c:'#EAE0D0',l:'Remaining'},{c:ev.c,l:ev.l}]);
+}
+
+function setFoot(t){document.getElementById('pfoot').textContent=t;}
+
+// ONBOARDING
+function startOnboard(){
+  closeOnboard();
+  setMode('famous');
+}
+function closeOnboard(){
+  document.getElementById('ob-overlay').style.display='none';
+  try{localStorage.setItem('lp_ob','1');}catch(e){}
+}
+
+// INIT
+// ── KO-FI ──
+let _kofiShown=false;
+function showKofi(){if(_kofiShown)return;_kofiShown=true;document.getElementById('kofiOverlay').classList.add('show');}
+function closeKofi(){document.getElementById('kofiOverlay').classList.remove('show');}
+document.querySelectorAll('[data-enc]').forEach(function(el){el.href=atob(el.getAttribute('data-enc'));});
+
+initGrid(); // create 900 cell pool once — renderGrid reuses them
+try{if(localStorage.getItem('lp_ob'))document.getElementById('ob-overlay').style.display='none';}catch(e){}
+initFamous();
+</script>
+<style>.nxt-link{display:block;text-align:center;font-size:13px;color:var(--muted,#6b7a8f);text-decoration:none;padding:20px 0 8px;letter-spacing:.01em;transition:color .2s}.nxt-link:hover{color:var(--accent,#f59e0b)}</style>
+<a class="nxt-link" href="https://ordinarymantrying.com/tools/#simulators">Next → Play the Life Simulators</a>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-DBR2PMLR61");
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LevelUp Habit Tracker</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f6f8fa;
+            color: #24292e;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            min-height: 600px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .controls { display: flex; gap: 10px; align-items: center; }
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            background-color: #ffffff;
+            font-weight: 600;
+            color: #24292e;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+        button:hover { background-color: #f3f4f6; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .btn-backup { font-size: 0.9em; padding: 6px 12px; background-color: #f6f8fa; }
+        #month-display { margin: 0; min-width: 160px; text-align: center; font-size: 1.6rem; font-weight: 700; color: #1b1f24;}
+
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+        .day-name {
+            text-align: center;
+            font-weight: bold;
+            color: #586069;
+            font-size: 1.1em;
+            letter-spacing: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+            flex-grow: 1;
+            grid-auto-rows: 1fr;
+        }
+
+        .day-cell {
+            background: white;
+            border: 1px solid #d0d7de;
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: block;
+            overflow-y: auto;
+        }
+        .day-cell:hover {
+            box-shadow: 0 8px 24px rgba(140,149,159,0.2);
+            transform: translateY(-2px);
+            border-color: #0969da;
+        }
+
+        .date-num {
+            float: left;
+            font-size: 1.4em;
+            font-weight: 800;
+            margin-right: 8px;
+            margin-bottom: 2px;
+            color: #57606a;
+            line-height: 1;
+        }
+
+        .content {
+            font-size: 1.05em;
+            line-height: 1.4;
+            color: #24292e;
+            white-space: pre-wrap;
+            word-break: break-word;
+            display: inline;
+        }
+
+        .day-cell::-webkit-scrollbar { width: 4px; }
+        .day-cell::-webkit-scrollbar-thumb { background: #d0d7de; border-radius: 4px; }
+
+        .completed { background-color: #e6ffed; border-color: #34d058; border-width: 2px;}
+        .completed .date-num { color: #1a7f37; }
+        .completed .content { color: #144620; font-weight: 500; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(36,41,46,0.6); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 25px; border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .modal-content h3 { margin-top: 0; color: #24292e; font-size: 1.5rem;}
+        textarea { width: 100%; height: 180px; margin: 15px 0; padding: 12px; border: 1px solid #d0d7de; border-radius: 8px; resize: vertical; font-family: inherit; font-size: 1.1em; line-height: 1.5; box-sizing: border-box; background-color: #f6f8fa; transition: all 0.2s;}
+        textarea:focus { outline: none; background-color: #ffffff; border-color: #0969da; box-shadow: 0 0 0 3px rgba(9,105,218,0.3); }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 15px;}
+        .btn-primary { background-color: #1f883d; color: white; border: none; font-size: 1.1em; padding: 10px 20px;}
+        .btn-primary:hover { background-color: #1a7f37; }
+
+        @media (max-width: 600px) {
+            body { height: auto; display: block; }
+            .grid { grid-auto-rows: minmax(100px, auto); gap: 6px; }
+            .calendar-header { gap: 6px; }
+            .day-cell { padding: 8px; min-height: 100px;}
+            .date-num { font-size: 1.2em; margin-right: 6px;}
+            .content { font-size: 0.95em; }
+        }
+    </style>
+<meta name="description" content="A habit wall that rewards consistency with streaks and badges. Track up to 5 habits, watch your wall fill up. No account, no app, fully private in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/levelup-habit-tracker.html">
+<meta property="og:title" content="LevelUp Habit Tracker — Build Streaks That Actually Stick">
+<meta property="og:description" content="A habit wall that rewards consistency with streaks and badges. Track up to 5 habits, watch your wall fill up. No account, no app, fully private in your browser.">
+<meta property="og:site_name" content="Ordinary Man Trying">
+<meta property="og:locale" content="en_US">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "LevelUp Habit Tracker",
+  "description": "Gamified habit tracker that turns daily habits into RPG-style experience points. Build consistency with visual progress tracking.",
+  "url": "https://ordinarymantrying.com/tools/levelup-habit-tracker.html",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Ordinary Man Trying",
+    "url": "https://ordinarymantrying.com"
+  }
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">LevelUp Habit Tracker — Monthly Habit Calendar</h1>
+
+    <div class="header">
+        <div class="controls">
+            <button onclick="changeMonth(-1)">◀ Previous</button>
+            <h2 id="month-display">June 2026</h2>
+            <button onclick="changeMonth(1)">Next ▶</button>
+        </div>
+        <div class="controls">
+            <button class="btn-backup" onclick="exportData()">💾 Backup</button>
+            <button class="btn-backup" onclick="document.getElementById('importFile').click()">📂 Restore</button>
+            <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+        </div>
+    </div>
+
+    <div class="calendar-header">
+        <div class="day-name">Sun</div><div class="day-name">Mon</div><div class="day-name">Tue</div>
+        <div class="day-name">Wed</div><div class="day-name">Thu</div><div class="day-name">Fri</div><div class="day-name">Sat</div>
+    </div>
+
+    <div class="grid" id="calendar"></div>
+
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h3 id="modal-date">Daily Log</h3>
+            <textarea id="modal-input" placeholder="What did you accomplish today?&#10;e.g.:&#10;Jump rope 1000&#10;Pull-ups 80&#10;Finished reading chapter 5"></textarea>
+            <div class="modal-actions">
+                <button onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveData()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'levelup_tracker_data';
+        const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        let currentDate = new Date();
+        let trackerData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        let editingDateStr = '';
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            document.getElementById('month-display').innerText = `${MONTHS[month]} ${year}`;
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const grid = document.getElementById('calendar');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div class="day-cell" style="background: transparent; border: none; cursor: default; box-shadow: none;"></div>`;
+            }
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const content = trackerData[dateStr] || '';
+                const isCompleted = content.trim().length > 0 ? 'completed' : '';
+
+                grid.innerHTML += `
+                    <div class="day-cell ${isCompleted}" onclick="openModal('${dateStr}')">
+                        <span class="date-num">${i}</span><span class="content">${content}</span>
+                    </div>
+                `;
+            }
+        }
+
+        function changeMonth(delta) {
+            currentDate.setMonth(currentDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function openModal(dateStr) {
+            editingDateStr = dateStr;
+            document.getElementById('modal-date').innerText = `${dateStr} — Daily Log`;
+            document.getElementById('modal-input').value = trackerData[dateStr] || '';
+            document.getElementById('editModal').style.display = 'flex';
+            document.getElementById('modal-input').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function saveData() {
+            const newContent = document.getElementById('modal-input').value.trim();
+            if (newContent) {
+                trackerData[editingDateStr] = newContent;
+            } else {
+                delete trackerData[editingDateStr];
+            }
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(trackerData));
+            closeModal();
+            renderCalendar();
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(trackerData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `LevelUp-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    trackerData = importedData;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(trackerData));
+                    renderCalendar();
+                    alert("Data restored successfully!");
+                } catch (err) {
+                    alert("Invalid file format. Restore failed.");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        renderCalendar();
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('editModal')) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
