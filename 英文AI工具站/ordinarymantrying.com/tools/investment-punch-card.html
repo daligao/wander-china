@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-DBR2PMLR61");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buffett's 20-Punch Card Rule: Track Your Best Investment Decisions</title>
+<meta name="description" content="Warren Buffett said you only get 20 investment decisions in your lifetime. This tool makes that rule real. Log each investment, write your thesis, watch your remaining slots shrink.">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/investment-punch-card.html">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root{
+  --bg1:#0f0c29; --bg2:#302b63; --bg3:#24243e;
+  --cyan:#00d2ff; --blue:#3a7bd5;
+  --ballast:#5b8def; --core:#00d2ff; --satellite:#f5a623; --lab:#a78bfa;
+  --danger:#ff5470; --ok:#3ddc97; --ink:#e8eaf6; --dim:#8892b0;
+  --glass:rgba(255,255,255,0.06); --line:rgba(255,255,255,0.12);
+}
+body{
+  font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 50%,var(--bg3) 100%);
+  min-height:100vh; color:var(--ink);
+}
+.wrap{ max-width:1280px; margin:0 auto; padding:22px 18px 60px; }
+.masthead{ text-align:center; padding:10px 0 4px; }
+.masthead h1{
+  font-size:2em; letter-spacing:4px; font-weight:700;
+  background:linear-gradient(90deg,var(--cyan),var(--blue));
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
+.masthead .motto{ color:var(--dim); letter-spacing:4px; font-size:.85em; margin-top:6px; }
+.punch-strip{
+  display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin:16px 0 6px;
+}
+.pdot{
+  width:26px; height:26px; border-radius:50%; position:relative;
+  border:2px dashed rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:10px; color:var(--dim); cursor:default; transition:transform .2s;
+}
+.pdot.used{
+  border:2px solid var(--cyan); color:#03121a; font-weight:700;
+  background:radial-gradient(circle at 35% 30%, #bdf3ff, var(--cyan) 65%);
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.45), 0 0 12px rgba(0,210,255,.45);
+}
+.pdot.cleared{ filter:grayscale(.9) brightness(.75); }
+.pdot.cleared::after{
+  content:''; position:absolute; width:130%; height:2px; background:var(--danger);
+  transform:rotate(-35deg); border-radius:2px;
+}
+.pdot:hover{ transform:scale(1.18); }
+.topline{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin:14px 0; }
+.topline .date{ color:var(--dim); font-size:.9em; }
+.actions{ display:flex; gap:8px; flex-wrap:wrap; }
+.btn{
+  background:var(--glass); border:1px solid var(--line); color:var(--ink);
+  border-radius:10px; padding:8px 14px; cursor:pointer; font-size:.9em; transition:.25s;
+}
+.btn:hover{ background:rgba(0,210,255,.18); border-color:rgba(0,210,255,.5); }
+.btn.primary{ background:linear-gradient(135deg,var(--cyan),var(--blue)); border:none; color:#fff; font-weight:600; }
+.btn.danger{ border-color:rgba(255,84,112,.5); color:#ffb3c0; }
+.btn:focus-visible, .day-card:focus-visible{ outline:2px solid var(--cyan); outline-offset:2px; }
+.tag.scoretag.sgood{ background:rgba(61,220,151,.15); color:#7ee8bb; border:1px solid rgba(61,220,151,.5); }
+.tag.scoretag.smid{ background:rgba(245,166,35,.15); color:#ffd089; border:1px solid rgba(245,166,35,.5); }
+.tag.scoretag.slow{ background:rgba(255,84,112,.15); color:#ffb3c0; border:1px solid rgba(255,84,112,.5); }
+.daily-quote{
+  text-align:center;
+  color:#b9c4e8; font-size:.95em; letter-spacing:1px; line-height:1.9;
+  padding:10px 18px; margin:4px auto 10px; max-width:760px;
+  border-top:1px solid rgba(255,255,255,.08); border-bottom:1px solid rgba(255,255,255,.08);
+}
+.daily-quote .who{ color:var(--dim); font-size:.82em; letter-spacing:2px; }
+.stats{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin:10px 0 18px;
+}
+.stat{
+  background:var(--glass); border:1px solid var(--line); border-radius:12px; padding:12px 14px;
+}
+.stat .k{ color:var(--dim); font-size:.75em; letter-spacing:1px; }
+.stat .v{ font-size:1.35em; font-weight:700; margin-top:4px; font-variant-numeric:tabular-nums; }
+.stat.warn .v{ color:var(--danger); }
+.stat.good .v{ color:var(--ok); }
+.margin-banner{
+  display:none; background:rgba(255,84,112,.12); border:1px solid rgba(255,84,112,.5);
+  border-radius:12px; padding:12px 16px; margin-bottom:16px; color:#ffd2da; font-size:.92em; line-height:1.6;
+}
+.grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(225px,1fr)); gap:14px;
+}
+.cell{
+  background:var(--glass); border:1px solid var(--line); border-radius:14px;
+  min-height:185px; padding:12px; position:relative; transition:.25s; cursor:pointer;
+  display:flex; flex-direction:column; gap:6px;
+}
+.cell:hover{ transform:translateY(-3px); border-color:rgba(0,210,255,.45); box-shadow:0 10px 30px rgba(0,0,0,.35); }
+.cell.empty{ border-style:dashed; justify-content:center; align-items:center; color:var(--dim); }
+.cell.empty .num{ font-size:2.2em; font-weight:200; opacity:.5; }
+.cell.empty .hint{ font-size:.8em; letter-spacing:2px; }
+.cell .corner{ position:absolute; top:8px; right:10px; font-size:.72em; color:var(--dim); }
+.cell.warnover{ border-color:var(--danger); box-shadow:0 0 0 1px var(--danger) inset; }
+.tagrow{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+.tag{ font-size:.7em; padding:3px 9px; border-radius:10px; font-weight:600; letter-spacing:1px; }
+.tag.pos-Anchor{ background:rgba(91,141,239,.22); color:#9dbcff; border:1px solid rgba(91,141,239,.5); }
+.tag.pos-Core{ background:rgba(0,210,255,.18); color:var(--cyan); border:1px solid rgba(0,210,255,.5); }
+.tag.pos-Satellite{ background:rgba(245,166,35,.18); color:#ffd089; border:1px solid rgba(245,166,35,.5); }
+.tag.pos-Lab{ background:rgba(167,139,250,.18); color:#cdbcff; border:1px solid rgba(167,139,250,.5); }
+.tag.stype{ background:transparent; color:var(--dim); border:1px solid var(--line); }
+.cell .name{ font-size:1.05em; font-weight:700; }
+.cell .code{ color:var(--dim); font-size:.78em; margin-left:6px; font-weight:400; }
+.cell .meta{ font-size:.78em; color:var(--dim); line-height:1.55; }
+.cell .pct{
+  font-size:1.5em; font-weight:800; font-variant-numeric:tabular-nums;
+  background:linear-gradient(90deg,var(--cyan),var(--blue));
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
+.cell .pct.over{ -webkit-text-fill-color:var(--danger); }
+.cell .reason{
+  font-size:.78em; color:#b9bfd8; line-height:1.5; display:-webkit-box;
+  -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.mbadge{
+  font-size:.7em; padding:3px 8px; border-radius:8px; font-weight:700;
+  background:rgba(255,84,112,.2); color:#ffb3c0; border:1px solid rgba(255,84,112,.6);
+}
+.cell.iscleared{ opacity:.55; }
+.cell.iscleared::after{
+  content:'Exited · Hole Used'; position:absolute; top:46%; left:50%;
+  transform:translate(-50%,-50%) rotate(-12deg);
+  font-size:1em; letter-spacing:2px;
+  color:var(--danger); border:2px solid var(--danger); border-radius:6px; padding:4px 10px; opacity:.85;
+  pointer-events:none; background:rgba(15,12,41,.55);
+}
+.panel-duo{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:26px; }
+.panel{ background:var(--glass); border:1px solid var(--line); border-radius:14px; padding:16px; }
+.panel h3{ color:var(--cyan); font-size:1em; letter-spacing:2px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+.panel .body{ font-size:.85em; color:#c3c9e0; line-height:1.8; white-space:pre-wrap; }
+.panel textarea{ display:none; width:100%; min-height:150px; }
+.section{ margin-top:30px; }
+.section h2{ color:var(--cyan); font-size:1.15em; letter-spacing:2px; border-bottom:2px solid var(--line); padding-bottom:8px; margin-bottom:14px; }
+table{ width:100%; border-collapse:collapse; font-size:.85em; }
+th{ text-align:left; color:var(--dim); font-weight:600; padding:8px 10px; border-bottom:1px solid var(--line); letter-spacing:1px; white-space:nowrap; }
+td{ padding:9px 10px; border-bottom:1px solid rgba(255,255,255,.06); vertical-align:top; line-height:1.5; }
+tr:hover td{ background:rgba(255,255,255,.03); }
+td .del{ color:var(--dim); cursor:pointer; font-size:.85em; }
+td .del:hover{ color:var(--danger); }
+.formrow{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; align-items:flex-start; }
+input, select, textarea{
+  background:rgba(0,0,0,.25); color:var(--ink); border:1px solid var(--line);
+  border-radius:8px; padding:8px 10px; font-size:.9em; outline:none; transition:.25s; font-family:inherit;
+}
+input:focus, select:focus, textarea:focus{ border-color:var(--cyan); box-shadow:0 0 8px rgba(0,210,255,.25); }
+select option{ background:var(--bg3); }
+.formrow textarea{ flex:1; min-width:220px; min-height:38px; resize:vertical; }
+.tbl-scroll{ overflow-x:auto; }
+.modal{
+  display:none; position:fixed; inset:0; background:rgba(15,12,41,.82);
+  backdrop-filter:blur(6px); z-index:100; justify-content:center; align-items:center; padding:16px;
+}
+.modal.open{ display:flex; }
+.mbox{
+  background:#1d1c33; border:1px solid var(--line); border-radius:16px;
+  width:100%; max-width:560px; max-height:92vh; overflow-y:auto; padding:24px;
+  box-shadow:0 24px 60px rgba(0,0,0,.55);
+}
+.mbox h3{ color:var(--cyan); margin-bottom:14px; letter-spacing:1px; }
+.frm{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.frm .full{ grid-column:1 / -1; }
+.frm label{ display:block; font-size:.75em; color:var(--dim); margin-bottom:4px; letter-spacing:1px; }
+.frm label.red{ color:var(--danger); }
+.frm input, .frm select, .frm textarea{ width:100%; }
+.frm textarea{ min-height:72px; resize:vertical; }
+.macts{ display:flex; justify-content:space-between; gap:10px; margin-top:18px; flex-wrap:wrap; }
+.macts .right{ display:flex; gap:10px; margin-left:auto; }
+.ritual p{ color:#c3c9e0; line-height:1.8; font-size:.92em; margin-bottom:14px; }
+.ritual .holewarn{
+  text-align:center; font-size:1.05em;
+  color:#ffd089; border:1px dashed rgba(245,166,35,.5); border-radius:10px; padding:10px; margin-bottom:16px; letter-spacing:1px;
+}
+.chk{ display:flex; gap:10px; align-items:flex-start; padding:8px 0; font-size:.9em; color:#c3c9e0; cursor:pointer; }
+.chk input{ margin-top:3px; }
+.note{ font-size:.78em; color:var(--dim); line-height:1.6; margin-top:10px; }
+#aiPromptTxt{ width:100%; min-height:300px; font-size:.85em; line-height:1.7; }
+.toast{
+  position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:#1d1c33; border:1px solid rgba(0,210,255,.5); color:var(--ink);
+  padding:12px 22px; border-radius:12px; opacity:0; transition:.35s; z-index:200; pointer-events:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.5); max-width:90vw; text-align:center;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+.storage-notice{
+  display:none; background:rgba(245,166,35,.12); border:1px solid rgba(245,166,35,.5);
+  border-radius:12px; padding:10px 16px; margin-bottom:14px; color:#ffd089; font-size:.85em;
+}
+.cell.firedreview{
+  border-color:var(--danger) !important; border-style:solid !important;
+  box-shadow:0 0 0 2px var(--danger) inset, 0 0 18px rgba(255,84,112,.35) !important;
+}
+.firedmsg{ color:#ffb3c0; font-size:.74em; font-weight:700; letter-spacing:1px; }
+.abadge.fired{ background:rgba(255,84,112,.25); color:#ffb3c0; border-color:var(--danger); }
+.pctline{ font-size:.78em; color:var(--dim); font-variant-numeric:tabular-nums; }
+.pctline b{ color:var(--ink); }
+.pctline .hot{ color:var(--danger); font-weight:700; }
+.pl-pos{ color:var(--ok); } .pl-neg{ color:var(--danger); }
+.abadge{ font-size:.72em; padding:2px 7px; border-radius:8px; background:rgba(0,210,255,.12); color:var(--cyan); border:1px solid rgba(0,210,255,.4); }
+.abadge.late{ background:rgba(255,84,112,.18); color:#ffb3c0; border-color:rgba(255,84,112,.6); }
+tr.late td{ background:rgba(255,84,112,.08); }
+tr.late td:first-child{ color:var(--danger); font-weight:700; }
+.prow{ display:flex; align-items:center; gap:10px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+.prow .nm{ flex:1; font-size:.9em; }
+.prow .old{ color:var(--dim); font-size:.78em; width:90px; text-align:right; }
+.prow input{ width:110px; }
+@media (max-width:760px){
+  .masthead h1{ font-size:1.45em; letter-spacing:2px; }
+  .panel-duo{ grid-template-columns:1fr; }
+  .frm{ grid-template-columns:1fr; }
+  .pdot{ width:20px; height:20px; font-size:8px; }
+}
+@media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
+
+/* BOOKS */
+.books-section{max-width:900px;margin:40px auto 0;padding:0 20px 60px}
+.books-section h3{font-size:15px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px}
+.books{display:flex;gap:12px;flex-wrap:wrap}
+.book{flex:1;min-width:140px;background:rgba(255,255,255,.05);border-radius:12px;padding:14px;text-decoration:none;color:inherit;border:1px solid rgba(255,255,255,.08);transition:border-color .2s}
+.book:hover{border-color:rgba(99,102,241,.5);background:rgba(255,255,255,.08)}
+.book-icon{font-size:22px;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.book-title{font-size:13px;font-weight:700;margin-bottom:4px;line-height:1.3;color:#e2e8f0}
+.book-author{font-size:11px;color:#64748b;margin-bottom:8px}
+.book-cta{font-size:11px;font-weight:700;color:#818cf8}
+
+</style>
+<meta name="description" content="Buffett's 20-punch card rule made into a tool. You get 20 investment decisions for life — total, ever. Track every bet, write your thesis, score the business, and never lose a hole to impulse.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/investment-punch-card.html">
+<meta property="og:title" content="The 20-Decision Vault — Buffett's Punch Card Rule">
+<meta property="og:description" content="Buffett's 20-punch card rule made into a tool. You get 20 investment decisions for life — total, ever. Track every bet, write your thesis, score the business, and never lose a hole to impulse.">
+<meta property="og:site_name" content="Ordinary Man Trying">
+<meta property="og:locale" content="en_US">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "The 20-Decision Vault",
+  "description": "Buffett's 20-punch card rule made into a tool. You get 20 investment decisions for life \u2014 total, ever. Track every bet, write your thesis, score the business.",
+  "url": "https://ordinarymantrying.com/tools/investment-punch-card.html",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Ordinary Man Trying",
+    "url": "https://ordinarymantrying.com"
+  }
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <h1>The 20-Punch Card</h1>
+    <div class="motto">Buffett's Rule: You Only Get 20 Investment Decisions. Ever.</div>
+    <div class="motto" style="letter-spacing:1px;font-size:.78em;margin-top:6px;color:#5b8def">Log each trade · Write your thesis · Watch your remaining slots</div>
+  </div>
+
+  <div style="max-width:680px;margin:18px auto 10px;background:rgba(0,210,255,0.07);border:1px solid rgba(0,210,255,0.2);border-radius:14px;padding:18px 22px">
+    <p style="color:#a0c4e8;font-size:.92em;line-height:1.7;margin:0 0 10px">
+      Warren Buffett once said: imagine you only get <strong style="color:#00d2ff">20 investment decisions in your entire lifetime</strong>. Not per year — total. Every time you bought or sold, a hole was punched in your card. No refills.
+    </p>
+    <p style="color:#7a96b8;font-size:.85em;line-height:1.7;margin:0 0 16px">
+      This tool makes that thought experiment real. Each circle below is one punch. Add a new investment, write your thesis, and watch your remaining punches shrink. The discipline comes from knowing the card is finite. <strong style="color:#5b8def">Click "Add New Investment" below to use your first punch →</strong>
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;padding-top:14px;border-top:1px solid rgba(255,255,255,.1)">
+      <div><div style="color:var(--cyan);font-size:1.6em;font-weight:800">20</div><div style="color:var(--dim);font-size:.72em;letter-spacing:1px;line-height:1.5">lifetime slots<br>total, ever</div></div>
+      <div><div style="color:var(--cyan);font-size:1.6em;font-weight:800">20%</div><div style="color:var(--dim);font-size:.72em;letter-spacing:1px;line-height:1.5">Buffett's annual CAGR<br>over 58 years</div></div>
+      <div><div style="color:var(--cyan);font-size:1.6em;font-weight:800">25×</div><div style="color:var(--dim);font-size:.72em;letter-spacing:1px;line-height:1.5">Coca-Cola return<br>bought 1988, held 35yr</div></div>
+    </div>
+  </div>
+
+  <div class="punch-strip" id="punchStrip" title="Only 20 punches in a lifetime"></div>
+  <div class="daily-quote" id="dailyQuote"></div>
+
+  <div class="topline">
+    <span class="date" id="todayLine"></span>
+    <div class="actions">
+      <button class="btn" onclick="openAiPrompt()">🤖 AI Prompt</button>
+      <button class="btn" style="border-color:rgba(61,220,151,.45)" onclick="openModal('calmModal')">🧘 Market Crash Room</button>
+      <button class="btn" onclick="openSim()">🌱 Dividend Simulator</button>
+      <button class="btn" onclick="openPriceModal()">💹 Update Prices</button>
+      <button class="btn" onclick="scrollToId('alarmSec')">⏰ Verification Alarms</button>
+      <button class="btn" onclick="scrollToId('tradesSec')">📊 Trade Log</button>
+      <button class="btn" onclick="scrollToId('newsSec')">📰 News Log</button>
+      <button class="btn" onclick="document.getElementById('importFile').click()">📥 Import</button>
+      <button class="btn primary" onclick="exportJSON()">📤 Export JSON</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+    </div>
+  </div>
+
+  <div class="storage-notice" id="storageNotice">
+    ⚠️ Local storage is not available. Data will only persist for this session. Download this file and open it locally to save permanently.
+  </div>
+
+  <div class="stats" id="statsBar"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="section" id="hallSec">
+    <h2>🏆 Hall of Fame — What a Lifetime Decision Actually Looks Like</h2>
+    <p style="color:var(--dim);font-size:.85em;margin:-6px 0 14px">Every one of these was controversial at the time. All were held for decades. No stop-losses.</p>
+    <div class="grid">
+      <div class="cell" style="cursor:default">
+        <div class="tagrow"><span class="tag pos-Anchor">Anchor</span><span class="tag stype">Consumer</span><span class="tag scoretag sgood">25× Return</span></div>
+        <div class="name">Coca-Cola <span class="code">$KO</span></div>
+        <div class="meta">Warren Buffett · 1988 · Cost $1.3B</div>
+        <div class="pct">25×</div>
+        <div class="reason">"A business that can raise prices without losing customers." Bought the year after Black Monday. Still in Berkshire's portfolio 35+ years later.</div>
+      </div>
+      <div class="cell" style="cursor:default">
+        <div class="tagrow"><span class="tag pos-Anchor">Anchor</span><span class="tag stype">Financial</span><span class="tag scoretag sgood">100× Return</span></div>
+        <div class="name">American Express <span class="code">$AXP</span></div>
+        <div class="meta">Warren Buffett · 1964 · Cost $13M</div>
+        <div class="pct">100×+</div>
+        <div class="reason">Bought during the salad oil scandal when the stock fell 50%. The core brand franchise was untouched. Held for 60 years and still counting.</div>
+      </div>
+      <div class="cell" style="cursor:default">
+        <div class="tagrow"><span class="tag pos-Core">Core</span><span class="tag stype">Consumer</span><span class="tag scoretag sgood">80× Return</span></div>
+        <div class="name">See's Candies</div>
+        <div class="meta">Buffett &amp; Munger · 1972 · Cost $25M</div>
+        <div class="pct">80×</div>
+        <div class="reason">Munger convinced Buffett to pay up for quality. "The best business we ever bought." Generated $2B+ cumulative earnings — and taught them both what a moat really means.</div>
+      </div>
+      <div class="cell" style="cursor:default">
+        <div class="tagrow"><span class="tag pos-Core">Core</span><span class="tag stype">Financial</span><span class="tag scoretag sgood">1000× Return</span></div>
+        <div class="name">GEICO Insurance</div>
+        <div class="meta">Warren Buffett · 1951 · Cost $10,282</div>
+        <div class="pct">1000×+</div>
+        <div class="reason">"I put 65% of my net worth into it at age 20." Rode a bus to meet the CFO. Took 44 years to fully acquire the company. The original $10K became one of Berkshire's pillars.</div>
+      </div>
+      <div class="cell" style="cursor:default">
+        <div class="tagrow"><span class="tag pos-Anchor">Anchor</span><span class="tag stype">Technology</span><span class="tag scoretag sgood">3× Return</span></div>
+        <div class="name">Apple <span class="code">$AAPL</span></div>
+        <div class="meta">Warren Buffett · 2016 · Cost $36B</div>
+        <div class="pct">3×+</div>
+        <div class="reason">"Apple is a consumer products company, not a tech company." Became Berkshire's largest single holding. Buffett called it the best business in the world — and bought more every year through 2018.</div>
+      </div>
+      <div class="cell" style="cursor:default">
+        <div class="tagrow"><span class="tag pos-Core">Core</span><span class="tag stype">Media</span><span class="tag scoretag sgood">100× Return</span></div>
+        <div class="name">Washington Post <span class="code">$WPO</span></div>
+        <div class="meta">Warren Buffett · 1973 · Cost $11M</div>
+        <div class="pct">100×</div>
+        <div class="reason">Bought during Watergate when the stock had already fallen 50%. The newspaper's franchise was obvious — the political noise was temporary. A textbook fear/greed reversal.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="alarmSec">
+    <h2>⏰ Verification Alarms — give each logic-breaker a deadline</h2>
+    <div class="tbl-scroll"><table>
+      <thead><tr><th>Due Date</th><th>Stock</th><th>What to Verify</th><th>Status</th><th></th></tr></thead>
+      <tbody id="alarmBody"></tbody>
+    </table></div>
+    <div class="formrow">
+      <input type="date" id="aDue">
+      <input type="text" id="aStock" placeholder="Stock / Sector" style="width:130px">
+      <textarea id="aText" placeholder="What to verify (e.g. Did gross margin recover in H1? Did TC long-term contracts turn positive?)"></textarea>
+      <button class="btn primary" onclick="addAlarm()">Set Alarm</button>
+    </div>
+  </div>
+
+  <div class="panel-duo">
+    <div class="panel">
+      <h3>Buy Manual <button class="btn" style="font-size:.8em" onclick="editStrategy('buy')" id="buyEditBtn">Edit</button></h3>
+      <div class="body" id="buyBody"></div>
+      <textarea id="buyEdit"></textarea>
+    </div>
+    <div class="panel">
+      <h3>Sell Manual <button class="btn" style="font-size:.8em" onclick="editStrategy('sell')" id="sellEditBtn">Edit</button></h3>
+      <div class="body" id="sellBody"></div>
+      <textarea id="sellEdit"></textarea>
+    </div>
+  </div>
+
+  <div class="section" id="tradesSec">
+    <h2>📊 Trade Log — every trade needs a written reason</h2>
+    <div class="tbl-scroll"><table>
+      <thead><tr><th>Date</th><th>Action</th><th>Stock</th><th>Shares</th><th>Price</th><th>Reason</th><th></th></tr></thead>
+      <tbody id="tradesBody"></tbody>
+    </table></div>
+    <div class="formrow">
+      <input type="date" id="tDate">
+      <select id="tAction">
+        <option>Open Position</option><option>Add to Position</option><option>Reduce Position</option><option>Exit Position</option><option>Dividend Reinvest</option>
+      </select>
+      <input type="text" id="tStock" placeholder="Stock name" style="width:130px">
+      <input type="number" id="tQty" placeholder="Shares" style="width:90px">
+      <input type="number" id="tPrice" placeholder="Price" step="0.001" style="width:100px">
+      <textarea id="tReason" placeholder="Reason (required — write it for yourself 3 years from now)"></textarea>
+      <button class="btn primary" id="tAddBtn" onclick="addTrade()">Log</button>
+    </div>
+  </div>
+
+  <div class="section" id="newsSec">
+    <h2>📰 News Log — important signals about the company and industry</h2>
+    <div class="tbl-scroll"><table>
+      <thead><tr><th>Date</th><th>Stock</th><th>News / Signal</th><th>Link</th><th></th></tr></thead>
+      <tbody id="newsBody"></tbody>
+    </table></div>
+    <div class="formrow">
+      <input type="date" id="nDate">
+      <input type="text" id="nStock" placeholder="Stock / Sector" style="width:130px">
+      <textarea id="nContent" placeholder="News content (required)"></textarea>
+      <input type="url" id="nUrl" placeholder="URL (optional)" style="width:200px">
+      <button class="btn primary" id="nAddBtn" onclick="addNews()">Log</button>
+    </div>
+  </div>
+
+  <div style="text-align:center;color:var(--dim);font-size:.78em;letter-spacing:1px;margin-top:42px;line-height:2.1">One card · Twenty holes · One lifetime<br>Buy right, buy enough, hold firm — discipline before returns, honesty before discipline<br><span style="opacity:.7">Dedicated to the investors who lit the way</span></div>
+</div>
+
+<!-- Punching Ritual -->
+<div class="modal" id="ritualModal">
+  <div class="mbox ritual">
+    <h3>🕯️ Punching Ritual</h3>
+    <div class="holewarn" id="ritualHoleNo"></div>
+    <p>Buffett said: imagine you have a punch card with 20 slots. Every investment decision uses one slot. Once they're gone, you can't make any more investments.<br>Once punched, <b>this hole is permanent</b> — even if you exit the position later, the hole is spent.<br>Before committing: score the business — Survival 60 + Growth 10 + Culture 10 + Commitment 10 + Resources 10 — <b>95+ before you stake your claim.</b></p>
+    <label class="chk"><input type="checkbox" class="rit"> I've slept on this at least one night — this is not an impulse triggered by breaking news.</label>
+    <label class="chk"><input type="checkbox" class="rit"> I've completed the three-way qualitative assessment (industry / company / product) and can explain to a non-investor how it makes money, what its moat is, and what the worst-case year looks like.</label>
+    <label class="chk"><input type="checkbox" class="rit"> I've written my buy thesis and logic-breakers, and this position uses only my own capital — this card is always zero-leverage.</label>
+    <div class="macts"><div class="right">
+      <button class="btn" onclick="closeModal('ritualModal')">Think Again</button>
+      <button class="btn primary" onclick="ritualPass()">This hole is earned — continue →</button>
+    </div></div>
+  </div>
+</div>
+
+<!-- Hole Edit Modal -->
+<div class="modal" id="holeModal">
+  <div class="mbox">
+    <h3 id="holeTitle">Edit Hole</h3>
+    <div class="frm">
+      <div><label>Position Type</label>
+        <select id="hPos"><option>Anchor</option><option>Core</option><option>Satellite</option><option>Lab</option></select></div>
+      <div><label>Stock Type</label>
+        <select id="hSType"><option>Value Stock</option><option>Cyclical</option><option>Other</option></select></div>
+      <div><label>Company Name</label><input type="text" id="hName"></div>
+      <div><label>Ticker / Code</label><input type="text" id="hCode"></div>
+      <div><label>Buy Date</label><input type="date" id="hDate"></div>
+      <div><label>Shares Held</label><input type="number" id="hShares" min="0"></div>
+      <div><label>Cost Basis (per share)</label><input type="number" id="hCost" step="0.001" min="0"></div>
+      <div><label>Current Price (manual, for market value)</label><input type="number" id="hPrice" step="0.001" min="0"></div>
+      <div><label>Annual Dividend Per Share</label><input type="number" id="hDps" step="0.001" min="0"></div>
+      <div class="full"><label>Business Score (Survival/60 · Growth/10 · Culture/10 · Commitment/10 · Resources/10 — 95+ to stake your claim)</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <input type="number" id="hSc1" min="0" max="60" style="width:74px" placeholder="Survival" oninput="updScore()">
+          <input type="number" id="hSc2" min="0" max="10" style="width:74px" placeholder="Growth" oninput="updScore()">
+          <input type="number" id="hSc3" min="0" max="10" style="width:74px" placeholder="Culture" oninput="updScore()">
+          <input type="number" id="hSc4" min="0" max="10" style="width:74px" placeholder="Commitment" oninput="updScore()">
+          <input type="number" id="hSc5" min="0" max="10" style="width:74px" placeholder="Resources" oninput="updScore()">
+          <b id="scTotal" style="color:var(--cyan);min-width:64px">— pts</b>
+        </div></div>
+      <div class="full"><label>Buy Thesis (required, ≥ 15 chars — write it for yourself 3 years from now)</label><textarea id="hReason"></textarea></div>
+      <div class="full"><label>Logic-Breakers (what must happen for you to re-examine this position)</label><textarea id="hBreak" placeholder="e.g. Gross margin falls two consecutive reports / Key customer cuts orders by 30% / Management changes unexpectedly"></textarea></div>
+    </div>
+    <div class="macts">
+      <div id="holeDangerBtns" style="display:flex;gap:8px"></div>
+      <div class="right">
+        <button class="btn" onclick="closeModal('holeModal')">Cancel</button>
+        <button class="btn primary" onclick="saveHole()">Save</button>
+      </div>
+    </div>
+    <div class="note" id="holeNote"></div>
+  </div>
+</div>
+
+<!-- AI Prompt -->
+<div class="modal" id="aiModal">
+  <div class="mbox" style="max-width:680px">
+    <h3>🤖 AI Prompt — send with exported JSON to Claude</h3>
+    <textarea id="aiPromptTxt"></textarea>
+    <div class="macts"><div class="right">
+      <button class="btn" onclick="resetAiPrompt()">Restore Default</button>
+      <button class="btn" onclick="copyAiPrompt()">Copy Prompt</button>
+      <button class="btn primary" onclick="saveAiPrompt()">Save & Close</button>
+    </div></div>
+  </div>
+</div>
+
+<!-- Dividend Simulator -->
+<div class="modal" id="simModal">
+  <div class="mbox" style="max-width:660px">
+    <h3>🌱 Hold & Collect — Dividend Reinvestment Simulator</h3>
+    <div class="note" style="margin:0 0 10px">Dividends → buy more shares → more shares → more dividends. Compounding in its simplest form. All inputs are assumptions, not predictions.</div>
+    <div class="frm">
+      <div class="full"><label>Prefill from holdings (optional)</label><select id="simPick" onchange="simPickFill()"><option value="">— Enter manually —</option></select></div>
+      <div><label>Initial Capital</label><input type="number" id="simCap" value="100000"></div>
+      <div><label>Current Share Price</label><input type="number" id="simPrice" step="0.01" value="10"></div>
+      <div><label>Annual Dividend Per Share</label><input type="number" id="simDps" step="0.001" value="0.4"></div>
+      <div><label>Dividend Growth Rate (%/yr)</label><input type="number" id="simDg" step="0.1" value="5"></div>
+      <div><label>Share Price Growth (%/yr)</label><input type="number" id="simPg" step="0.1" value="5"></div>
+      <div><label>Years to Simulate (1–50)</label><input type="number" id="simYears" min="1" max="50" value="20"></div>
+    </div>
+    <div class="macts"><div class="right">
+      <button class="btn" onclick="closeModal('simModal')">Close</button>
+      <button class="btn primary" onclick="runSim()">Run Simulation</button>
+    </div></div>
+    <div id="simOut" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<!-- Market Crash Calm Room -->
+<div class="modal" id="calmModal">
+  <div class="mbox ritual">
+    <h3>🧘 Market Crash Calm Room</h3>
+    <div class="holewarn">In the short run, the market is a voting machine. In the long run, it is a weighing machine.</div>
+    <p><b>Step 1: Breathe. Return to the business.</b> Buying stock is buying a business — you don't need to watch the market at all. Did your company sell fewer products today? No? Then the price dropped, not the business. Fear is yours alone to handle — the only antidote is going back to fundamentals.</p>
+    <p><b>Step 2: Re-read your qualitative assessment and buy thesis.</b> They're right here on the card: did the industry, company, or product fundamentals change? Did any logic-breaker actually trigger? <b>Use financial reports and facts as evidence — never use price as evidence.</b> If the thesis is intact, today's drop is just Mr. Market offering a lower price — keep digging into the business.</p>
+    <p><b>Step 3: Identify the signal level.</b> Down 30% from peak = "Dim" — consider a small add with spare cash or dividends. Down 50% from peak = "Dark" — if thesis is intact, deploy all available spare cash with conviction. Two conditions always apply: <b>thesis unchanged, zero borrowing.</b> If either fails, go back to Step 1.</p>
+    <p style="text-align:center;color:#ffd089">Hold and collect. The business is still earning, still paying dividends — you've lost nothing.</p>
+    <div class="macts"><div class="right">
+      <button class="btn" onclick="closeModal('calmModal');scrollToId('grid');">Read My Buy Thesis</button>
+      <button class="btn primary" onclick="closeModal('calmModal');toast('Inaction is the highest form of action in a bear market.');">I will do nothing</button>
+    </div></div>
+  </div>
+</div>
+
+<!-- Bulk Price Update -->
+<div class="modal" id="priceModal">
+  <div class="mbox">
+    <h3>💹 Update Prices — fuel for the market-value view</h3>
+    <div class="note" style="margin:0 0 10px">Buy at cost, track at market value. Current price is only for risk exposure — it is never a reason to buy or sell.</div>
+    <div id="priceRows"></div>
+    <div class="macts"><div class="right">
+      <button class="btn" onclick="closeModal('priceModal')">Cancel</button>
+      <button class="btn primary" onclick="savePrices()">Save All</button>
+    </div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY = 'punchcard_en_v1';
+let mem = null;
+let storageOK = true;
+try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); }
+catch(e){ storageOK = false; document.getElementById('storageNotice').style.display='block'; }
+
+const DEFAULT_BUY = `【Buy Manual — Fellow Investor Edition】
+The True-High-Joy framework: True = true value, true growth, truthful with people; High = high quality, high character, no settling for mediocrity; Joy = invest with genuine enthusiasm.
+
+① Three-Way Qualitative Assessment (the foundation of long-term conviction):
+  Industry: outstanding position, gross margin/ROE/revenue/cash flow consistently #1 in sector, large addressable market, aligned with lasting human needs.
+  Company: stable operating history, sustained high dividends (5–10 consecutive years of DPS ≥ $0.30 is a simple, powerful filter), durable moat, clear long-term runway.
+  Product: simple to understand, essential or habitual, broad demand, excellent reputation and repeat purchase.
+
+② Six Observation Points: Direction (industry runway) · Track Record (operating history and strength) · Leadership (sector leader) · Growth (future upside) · Dividends (consistent payouts)
+  Three Traits: Simple · Resilient · Ambitious
+  Three Musts: Priceable · Replicable · Scalable
+
+③ Score before staking: Survival/60 + Growth/10 + Culture/10 + Commitment/10 + Resources/10 — 95+ before you commit. Score goes in the hole; revisit and adjust every year.
+
+④ Three-Point System:
+  a. Stake Your Claim — only partner with 95-point businesses.
+  b. Dark Day Add — down 30% from peak (Dim): add a little with spare cash or dividends. Down 50% (Dark): if thesis unchanged, deploy all available spare cash with conviction. Two conditions never change: thesis intact, zero borrowing.
+  c. Chant & Hold — stay confident in big drops, stay disciplined in big rallies, collect dividends and reinvest at lows, never compare with others.
+
+⑤ Buy Point: after qualifying a stock, wait patiently. Buy in the pool of fundamentally sound businesses when short-term bad news creates a shocking mispricing — be greedy when others are fearful.
+
+⑥ Hard Constraints: zero leverage · no single position cost > 20% · cyclicals never go in Anchor · sleep on it overnight · write buy thesis and logic-breakers before placing the order.
+
+The secret to making money: match your ambition to top-tier businesses. Let time turn it to gold.`;
+
+const DEFAULT_SELL = `【Sell Manual — Fellow Investor Edition】
+Hold and collect dividends. Selling is the exception — our default is always: hold, collect, reinvest.
+
+⓪ Core Rule: price movement — up or down — is never a reason to buy or sell.
+
+① I was wrong — qualitative re-assessment proves the original thesis had a major error. Cutting a loss isn't shameful; the hole is spent, the tuition is paid.
+
+② It deteriorated — a logic-breaker actually fired; business score fell below 90 (proven by financial reports and announcements, never by price). "Hold firm" requires "bought right" as its foundation.
+
+③ Family emergency — financial stability and family harmony always rank above investing returns.
+
+④ A rare, extraordinary rally — 3–5x in a year, 10x in two years: in line with the business's growth runway and market conditions, consider reducing modestly to lock in some gains. Don't be rigidly dogmatic; keep a core position to continue collecting dividends.
+
+※ Exiting does not release the hole. Before selling, you must be able to answer: which specific logic-breaker that you wrote at buy time has now fired? If you can't answer that, go back and keep holding.`;
+
+const DEFAULT_PROMPT = `You will receive my exported Investment Punch Card JSON. My system: Hold & Collect Dividends, three-way qualitative assessment (industry/company/product), Six Observation Points, Three Musts (Priceable/Replicable/Scalable), Three-Point System (Stake/Dark-Day-Add/Chant-Hold), business score 95+ to commit, zero leverage, only 20 buy decisions in a lifetime. Iron rule: buy at cost, hold at market value; use financial reports as evidence for all decisions, never price.
+
+【Field Guide】
+- holes[20]: lifetime max 20 buy decisions. used=punched; cleared=exited (hole permanently spent); posType=Anchor/Core/Satellite/Lab; stockType=Value Stock/Cyclical/Other; shares/cost=quantity and cost basis per share; price/priceDate=manual current price; dps=annual dividend per share (annual income=shares×dps, cost yield=dps/cost); score={a Survival/60, b Growth/10, c Culture/10, d Commitment/10, e Resources/10, total}; 95+ to commit, below 90 triggers a review reminder; reason=buy thesis; breakPoints=logic-breakers.
+- alarms: verification alarms. due=deadline; status=Pending/Passed/Review Triggered; overdue=yellow flag, "Review Triggered"=red flag.
+- trades: trade log (every trade requires a reason; adding requires "Dark Day" conditions: thesis unchanged, spare cash, zero borrowing).
+- news: news/signal log. settings: buy/sell manual text.
+
+【Your Role: Auditor, not Advisor】
+1) Find problems first, then strengths. No flattering adjectives — if used, discard and rewrite.
+2) Mandatory checks: single-position cost ≤ 20%; Anchor positions (by market value, excluding cyclicals) ≥ 40%; cyclicals not posing as Anchor; every hole scored ≥ 95 with complete thesis and logic-breakers; dividend continuity (5–10 year DPS ≥ 0.30 filter); overdue alarms and "Review Triggered" items; every add meets Dark Day conditions. This system is zero-leverage — if I mention financing, borrowing, or margin, warn me that I'm violating the card's first principle.
+3) We hold and collect — rarely sell. Respect this style; but when a logic-breaker genuinely fires or score drops below 90, speak plainly: "holding firm" requires "bought right," and distinguish "conviction" from "stubbornness."
+4) No buy/sell orders — only traffic lights (🟢🟡🔴) and decision points. The decision is mine.
+5) For financial data, prompt me to verify against the original financial reports. Forecasts: scenario ranges and monitoring signals only — no price targets.`;
+
+function emptyHole(idx){ return { idx, used:false }; }
+
+function defaultData(){
+  const holes = [];
+  for(let i=1;i<=20;i++) holes.push(emptyHole(i));
+  return {
+    version:'en-1.1',
+    meta:{ owner:'', updatedAt:new Date().toISOString() },
+    settings:{ buyStrategy:DEFAULT_BUY, sellStrategy:DEFAULT_SELL, aiPrompt:DEFAULT_PROMPT, warnSinglePct:20, capOffcardPct:15 },
+    holes, alarms:[], trades:[], news:[]
+  };
+}
+
+function migrate(d){
+  if(!d.settings) d.settings = {};
+  if(d.settings.warnSinglePct==null) d.settings.warnSinglePct = 20;
+  if(d.settings.capOffcardPct==null) d.settings.capOffcardPct = 15;
+  d.holes.forEach(h=>{ if(h.used){ if(h.price==null) h.price=0; if(h.priceDate==null) h.priceDate=''; if(h.dps==null) h.dps=0; } });
+  if(!Array.isArray(d.satellites)) d.satellites = [];
+  if(!Array.isArray(d.alarms)) d.alarms = [];
+  if(!Array.isArray(d.trades)) d.trades = [];
+  if(!Array.isArray(d.news)) d.news = [];
+  if(d.settings.buyStrategy==null) d.settings.buyStrategy = DEFAULT_BUY;
+  if(d.settings.sellStrategy==null) d.settings.sellStrategy = DEFAULT_SELL;
+  if(d.settings.aiPrompt==null) d.settings.aiPrompt = DEFAULT_PROMPT;
+  d.satellites.forEach(s=>{ if(s.cleared==null){ s.cleared=false; s.clearedDate=''; } });
+  return d;
+}
+
+function load(){
+  if(!storageOK){ if(!mem) mem = defaultData(); return mem; }
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw){ const d = defaultData(); localStorage.setItem(KEY, JSON.stringify(d)); return d; }
+    return migrate(JSON.parse(raw));
+  }catch(e){ return defaultData(); }
+}
+function save(){
+  D.meta.updatedAt = new Date().toISOString();
+  if(!storageOK){ mem = D; renderAll(); return; }
+  try{ localStorage.setItem(KEY, JSON.stringify(D)); }catch(e){ toast('Save failed: '+e.message); }
+  renderAll();
+}
+let D = load();
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmt(n){ return (+n||0).toLocaleString('en-US',{maximumFractionDigits:0}); }
+function fmt2(n){ return (+n||0).toLocaleString('en-US',{maximumFractionDigits:2}); }
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._tm); t._tm=setTimeout(()=>t.classList.remove('show'),3400); }
+function scrollToId(id){ document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function today(){ return new Date().toISOString().slice(0,10); }
+
+function costOf(h){ return (h.used && !h.cleared) ? (h.shares||0)*(h.cost||0) : 0; }
+function mktOf(h){ return (h.used && !h.cleared) ? (h.shares||0)*((h.price||h.cost)||0) : 0; }
+function totalCost(){ return D.holes.reduce((a,h)=>a+costOf(h),0); }
+function totalMkt(){ return D.holes.reduce((a,h)=>a+mktOf(h),0); }
+
+function alarmState(name){
+  let pending=false, late=false, fired=false;
+  D.alarms.forEach(a=>{
+    if(a.stock!==name) return;
+    if(a.status==='Review Triggered') fired=true;
+    if(a.status==='Pending'){ pending=true; if(a.due && a.due < today()) late=true; }
+  });
+  return { pending, late, fired };
+}
+
+const QUOTES = [
+  ['Hold and collect dividends. Accumulate steadily.', 'Teacher'],
+  ['Match your ambition to top-tier businesses. Let time turn it to gold.', 'Teacher'],
+  ['All anxiety in the stock market is rooted in a lack of understanding.', 'Teacher'],
+  ['The more the market swings and prices fall, the deeper you should dig into the business.', 'Teacher'],
+  ['The patterns that create long-term gains haven\'t changed — only investor mindsets waver.', 'Teacher'],
+  ['Qualitative analysis is the backbone of long-term conviction.', 'The Still Waters'],
+  ['A heart that trembles at short-term price moves will never hold steady for long-term compounding.', 'The Still Waters'],
+  ['Buy in the pool of fundamentally sound stocks beaten down by bad news — be greedy when others are fearful.', 'The Still Waters'],
+  ['Depth of fundamentals · Depth of price · Depth of thinking · Depth of strategy.', 'Four Depths'],
+  ['Stake your claim. Add on dark days. Chant and hold.', 'Three-Point System'],
+  ['Direction · Track Record · Leadership · Growth · Dividends.', 'Six Observation Points'],
+  ['Simple · Resilient · Ambitious.', 'Three Traits'],
+  ['Priceable · Replicable · Scalable.', 'Three Musts'],
+  ['True value, true growth; truthful with people, honest with facts.', 'True-High-Joy'],
+  ['You can only hold a stock for the long term if you truly understand its growth logic.', 'Teacher'],
+  ['Don\'t let short-term gains and losses drive your emotions — your mindset must match your ability.', 'Teacher'],
+  ['Control greed: no blind leverage, no chasing trends.', 'Teacher'],
+  ['Invest with calm. Find genuine joy in accumulating equity and collecting dividends.', 'Teacher'],
+  ['Fear is yours alone to overcome — digging deep into the business is the only cure.', 'Teacher'],
+  ['Buying stocks is buying businesses. You don\'t need to watch the market at all.', 'Teacher'],
+  ['Patience is one of the most valuable investing virtues.', 'Charlie Munger'],
+  ['In the short run, the market is a voting machine; in the long run, it is a weighing machine.', 'Benjamin Graham'],
+];
+
+function renderQuote(){
+  const day = Math.floor(Date.now()/86400000);
+  const q = QUOTES[day % QUOTES.length];
+  document.getElementById('dailyQuote').innerHTML = `" ${esc(q[0])} "<br><span class="who">— ${esc(q[1])}</span>`;
+}
+
+function renderAll(){ renderStrip(); renderQuote(); renderStats(); renderGrid(); renderAlarms(); renderStrategies(); renderTrades(); renderNews(); }
+
+function renderStrip(){
+  const el = document.getElementById('punchStrip');
+  el.innerHTML = D.holes.map(h=>{
+    const cls = h.used ? ('pdot used'+(h.cleared?' cleared':'')) : 'pdot';
+    const tip = h.used ? `${h.idx} · ${h.name||''}${h.cleared?' (exited)':''}` : `Hole ${h.idx} · unused`;
+    return `<div class="${cls}" title="${esc(tip)}">${h.idx}</div>`;
+  }).join('');
+  document.getElementById('todayLine').textContent =
+    new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+}
+
+function renderStats(){
+  const tc = totalCost(), tm = totalMkt();
+  const pl = tm - tc, plPct = tc? pl/tc*100 : 0;
+  const used = D.holes.filter(h=>h.used).length;
+  const anchorMkt = D.holes.filter(h=>h.used&&!h.cleared&&h.posType==='Anchor').reduce((a,h)=>a+mktOf(h),0);
+  const bp = tm? anchorMkt/tm*100 : 0;
+  const cycMkt = D.holes.filter(h=>h.used&&!h.cleared&&h.stockType==='Cyclical').reduce((a,h)=>a+mktOf(h),0);
+  const divSum = D.holes.filter(h=>h.used&&!h.cleared).reduce((a,h)=>a+(h.shares||0)*(h.dps||0),0);
+  const divYield = tc? divSum/tc*100 : 0;
+  const warnPct = D.settings.warnSinglePct||20;
+  let maxPct=0, maxName='';
+  D.holes.forEach(h=>{ const p = tc? costOf(h)/tc*100:0; if(p>maxPct){maxPct=p;maxName=h.name||'';} });
+  const lateN = D.alarms.filter(a=>a.status==='Pending' && a.due && a.due<today()).length;
+  const fireN = D.alarms.filter(a=>a.status==='Review Triggered').length;
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat"><div class="k">Total Cost Basis (zero leverage)</div><div class="v">¥ ${fmt(tc)}</div></div>
+    <div class="stat ${pl>=0?'good':'warn'}"><div class="k">Market Value · P&L</div><div class="v">¥ ${fmt(tm)}<span style="font-size:.55em"> ${pl>=0?'+':''}${plPct.toFixed(1)}%</span></div></div>
+    <div class="stat ${used>=18?'warn':''}"><div class="k">Holes Used</div><div class="v">${used} / 20</div></div>
+    <div class="stat ${bp<40?'warn':'good'}"><div class="k">Anchor % by Market Value (≥40%)</div><div class="v">${bp.toFixed(1)}%</div></div>
+    <div class="stat ${maxPct>warnPct?'warn':''}"><div class="k">Largest Position · Cost (≤${warnPct}%)</div><div class="v">${maxPct.toFixed(1)}%<span style="font-size:.5em;color:var(--dim)"> ${esc(maxName)}</span></div></div>
+    <div class="stat"><div class="k">Cyclical Exposure · Market Value</div><div class="v">${(tm?cycMkt/tm*100:0).toFixed(1)}%</div></div>
+    <div class="stat ${divSum>0?'good':''}"><div class="k">Annual Dividends · Cost Yield</div><div class="v">¥ ${fmt(divSum)}<span style="font-size:.55em"> · ${divYield.toFixed(2)}%</span></div></div>
+    <div class="stat ${(lateN+fireN)>0?'warn':'good'}"><div class="k">Alarms: Overdue / Triggered</div><div class="v">${lateN} / ${fireN}</div></div>`;
+}
+
+function renderGrid(){
+  const tc = totalCost(), tm = totalMkt();
+  const warnPct = D.settings.warnSinglePct||20;
+  document.getElementById('grid').innerHTML = D.holes.map(h=>{
+    if(!h.used){
+      return `<div class="cell empty" tabindex="0" onclick="startPunch(${h.idx})" onkeydown="if(event.key==='Enter')startPunch(${h.idx})">
+        <div class="num">${h.idx}</div><div class="hint">Empty · Click to Punch</div></div>`;
+    }
+    const cp = tc? costOf(h)/tc*100 : 0;
+    const mp = tm? mktOf(h)/tm*100 : 0;
+    const over = cp>warnPct;
+    const st = alarmState(h.name);
+    const ab = st.fired ? `<span class="abadge fired">🔴 Review</span>` : (st.pending ? `<span class="abadge ${st.late?'late':''}">⏰${st.late?' Overdue':''}</span>` : '');
+    const sb = (h.score&&h.score.total>0)? `<span class="tag scoretag ${h.score.total>=95?'sgood':(h.score.total>=90?'smid':'slow')}">${h.score.total}pts</span>` : '';
+    const dline = (h.dps>0&&!h.cleared)? `<div class="pctline">Annual div ¥${fmt((h.shares||0)*h.dps)} · Cost yield <b>${h.cost?(h.dps/h.cost*100).toFixed(2):'0.00'}%</b></div>` : '';
+    let priceLine = '';
+    if(h.price && !h.cleared){
+      const r = h.cost? (h.price/h.cost-1)*100 : 0;
+      priceLine = `<div class="pctline">Price ¥${fmt2(h.price)} · <span class="${r>=0?'pl-pos':'pl-neg'}">${r>=0?'+':''}${r.toFixed(1)}%</span> <span style="opacity:.6">(${esc(h.priceDate||'')})</span></div>`;
+    }
+    return `<div class="cell ${h.cleared?'iscleared':''} ${over?'warnover':''} ${st.fired&&!h.cleared?'firedreview':''}" tabindex="0"
+      ondblclick="editHole(${h.idx})" onkeydown="if(event.key==='Enter')editHole(${h.idx})"
+      onclick="if(window._tapTimer){clearTimeout(window._tapTimer);window._tapTimer=null;editHole(${h.idx});}else{window._tapTimer=setTimeout(()=>{window._tapTimer=null;},350);}">
+      <div class="corner">Hole ${h.idx} · ${esc(h.buyDate||'')}</div>
+      <div class="tagrow"><span class="tag pos-${esc(h.posType)}">${esc(h.posType)}</span><span class="tag stype">${esc(h.stockType)}</span>${sb}${ab}</div>
+      <div class="name">${esc(h.name)}<span class="code">${esc(h.code)}</span></div>
+      <div class="meta">${fmt(h.shares)} shares × ¥${fmt2(h.cost)} = ¥${fmt(costOf(h))}</div>
+      ${priceLine}
+      ${dline}
+      <div class="pctline">${h.cleared?'—':`Cost <b class="${over?'hot':''}">${cp.toFixed(1)}%</b> · Mkt <b class="${mp>warnPct?'hot':''}">${mp.toFixed(1)}%</b>`}</div>
+      ${st.fired&&!h.cleared?'<div class="firedmsg">‼️ Logic-breaker triggered — immediate review required</div>':''}
+      <div class="reason">${esc(h.reason)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderAlarms(){
+  const rows = [...D.alarms].sort((a,b)=>(a.due||'').localeCompare(b.due||''));
+  document.getElementById('alarmBody').innerHTML = rows.map(a=>{
+    const i = D.alarms.indexOf(a);
+    const isLate = a.status==='Pending' && a.due && a.due<today();
+    const cls = isLate||a.status==='Review Triggered' ? 'late' : '';
+    return `<tr class="${cls}"><td>${esc(a.due)}${isLate?' ⚠️ Overdue':''}</td><td>${esc(a.stock)}</td><td>${esc(a.text)}</td>
+      <td><select onchange="setAlarmStatus(${i},this.value)">
+        <option ${a.status==='Pending'?'selected':''}>Pending</option>
+        <option ${a.status==='Passed'?'selected':''}>Passed</option>
+        <option ${a.status==='Review Triggered'?'selected':''}>Review Triggered</option>
+      </select></td>
+      <td><span class="del" onclick="delAlarm(${i})">Delete</span></td></tr>`;
+  }).join('') || '<tr><td colspan="5" style="color:var(--dim)">No alarms set. Every logic-breaker should have a deadline — otherwise it\'s just decoration.</td></tr>';
+}
+
+function renderStrategies(){
+  document.getElementById('buyBody').textContent = D.settings.buyStrategy;
+  document.getElementById('sellBody').textContent = D.settings.sellStrategy;
+}
+
+function renderTrades(){
+  const rows = [...D.trades].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  document.getElementById('tradesBody').innerHTML = rows.map(t=>{
+    const i = D.trades.indexOf(t);
+    return `<tr><td>${esc(t.date)}</td><td>${esc(t.action)}</td><td>${esc(t.stock)}</td>
+      <td>${t.qty?fmt(t.qty):''}</td><td>${t.price?fmt2(t.price):''}</td>
+      <td>${esc(t.reason)}</td><td><span class="del" onclick="editTrade(${i})" style="margin-right:8px">✏️ Edit</span><span class="del" onclick="delTrade(${i})">Delete</span></td></tr>`;
+  }).join('') || '<tr><td colspan="7" style="color:var(--dim)">No trades logged. Write your reason here before every trade.</td></tr>';
+}
+
+function renderNews(){
+  const rows = [...D.news].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  document.getElementById('newsBody').innerHTML = rows.map(n=>{
+    const i = D.news.indexOf(n);
+    const link = n.url? `<a href="${esc(n.url)}" target="_blank" rel="noopener" style="color:var(--cyan)">Open</a>` : '';
+    return `<tr><td>${esc(n.date)}</td><td>${esc(n.stock)}</td><td>${esc(n.content)}</td>
+      <td>${link}</td><td><span class="del" onclick="editNews(${i})" style="margin-right:8px">✏️ Edit</span><span class="del" onclick="delNews(${i})">Delete</span></td></tr>`;
+  }).join('') || '<tr><td colspan="5" style="color:var(--dim)">No news logged.</td></tr>';
+}
+
+function updScore(){
+  const v = id=>+document.getElementById(id).value||0;
+  const t = Math.min(60,v('hSc1'))+Math.min(10,v('hSc2'))+Math.min(10,v('hSc3'))+Math.min(10,v('hSc4'))+Math.min(10,v('hSc5'));
+  const el = document.getElementById('scTotal');
+  el.textContent = t>0? t+' pts' : '— pts';
+  el.style.color = t>=95? 'var(--ok)' : (t>=90? '#ffd089' : (t>0?'var(--danger)':'var(--cyan)'));
+}
+
+let pendingIdx = null;
+function startPunch(idx){
+  pendingIdx = idx;
+  document.getElementById('ritualHoleNo').textContent = `About to punch hole #${idx} — your #${D.holes.filter(h=>h.used).length+1} lifetime decision`;
+  document.querySelectorAll('.rit').forEach(c=>c.checked=false);
+  openModal('ritualModal');
+}
+function ritualPass(){
+  const ok = [...document.querySelectorAll('.rit')].every(c=>c.checked);
+  if(!ok){ toast('All three confirmations must be checked before this hole is earned.'); return; }
+  closeModal('ritualModal');
+  openHoleForm(pendingIdx, true);
+}
+function editHole(idx){ openHoleForm(idx, false); }
+
+function openHoleForm(idx, isNew){
+  const h = D.holes[idx-1];
+  document.getElementById('holeTitle').textContent = (isNew?`Punching Hole #${idx}`:`Edit Hole #${idx}`) + (h.cleared?' (Exited)':'');
+  document.getElementById('hPos').value = h.posType||'Core';
+  document.getElementById('hSType').value = h.stockType||'Value Stock';
+  document.getElementById('hName').value = h.name||'';
+  document.getElementById('hCode').value = h.code||'';
+  document.getElementById('hDate').value = h.buyDate||today();
+  document.getElementById('hShares').value = h.shares!=null?h.shares:'';
+  document.getElementById('hCost').value = h.cost!=null?h.cost:'';
+  document.getElementById('hPrice').value = h.price||'';
+  document.getElementById('hDps').value = h.dps||'';
+  const sc = h.score||{};
+  document.getElementById('hSc1').value = sc.a!=null?sc.a:'';
+  document.getElementById('hSc2').value = sc.b!=null?sc.b:'';
+  document.getElementById('hSc3').value = sc.c!=null?sc.c:'';
+  document.getElementById('hSc4').value = sc.d!=null?sc.d:'';
+  document.getElementById('hSc5').value = sc.e!=null?sc.e:'';
+  updScore();
+  document.getElementById('hReason').value = h.reason||'';
+  document.getElementById('hBreak').value = h.breakPoints||'';
+  const dz = document.getElementById('holeDangerBtns');
+  dz.innerHTML = '';
+  if(!isNew && h.used && !h.cleared){
+    dz.innerHTML = `<button class="btn danger" onclick="clearHole(${idx})">Mark as Exited (hole not released)</button>`;
+  }
+  if(!isNew && h.used){
+    dz.innerHTML += `<button class="btn" style="opacity:.6" onclick="voidHole(${idx})">Void Hole (only for mis-entries)</button>`;
+  }
+  document.getElementById('holeNote').textContent =
+    isNew ? 'Saving will spend this hole. Note: cyclicals cannot be Anchor — the stats enforce this rule. Holes with empty logic-breakers are locked from adding.'
+          : 'Changed shares or cost? Log a reason in the Trade Log. Empty logic-breakers = locked from adding.';
+  document.getElementById('holeModal').dataset.idx = idx;
+  document.getElementById('holeModal').dataset.isnew = isNew?'1':'0';
+  openModal('holeModal');
+}
+
+function saveHole(){
+  const m = document.getElementById('holeModal');
+  const idx = +m.dataset.idx, isNew = m.dataset.isnew==='1';
+  const h = D.holes[idx-1];
+  const name = document.getElementById('hName').value.trim();
+  const reason = document.getElementById('hReason').value.trim();
+  const pos = document.getElementById('hPos').value;
+  const stype = document.getElementById('hSType').value;
+  if(!name){ toast('Company name is required.'); return; }
+  if(reason.length < 15){ toast('Buy thesis must be at least 15 characters — a decision not worth a sentence is not worth a hole.'); return; }
+  if(pos==='Anchor' && stype==='Cyclical'){ toast('Rule: cyclicals can never be Anchor positions. Change the position type or stock type.'); return; }
+  const prevShares = h.shares;
+  const newPrice = +document.getElementById('hPrice').value||0;
+  const sa=Math.min(60,+document.getElementById('hSc1').value||0), sbv=Math.min(10,+document.getElementById('hSc2').value||0),
+        scv=Math.min(10,+document.getElementById('hSc3').value||0), sd=Math.min(10,+document.getElementById('hSc4').value||0),
+        se=Math.min(10,+document.getElementById('hSc5').value||0);
+  const scTotal = sa+sbv+scv+sd+se;
+  Object.assign(h, {
+    used:true, posType:pos, stockType:stype, name,
+    code:document.getElementById('hCode').value.trim(),
+    buyDate:document.getElementById('hDate').value,
+    shares:+document.getElementById('hShares').value||0,
+    cost:+document.getElementById('hCost').value||0,
+    price:newPrice,
+    dps:+document.getElementById('hDps').value||0,
+    score:{a:sa,b:sbv,c:scv,d:sd,e:se,total:scTotal},
+    priceDate:(newPrice && newPrice!==h.price)? today() : (h.priceDate||''),
+    reason, breakPoints:document.getElementById('hBreak').value.trim()
+  });
+  if(h.cleared===undefined) h.cleared=false;
+  closeModal('holeModal');
+  save();
+  if(isNew) toast(`Hole #${idx} punched. ${20-D.holes.filter(x=>x.used).length} remaining — use them wisely.`);
+  else if(prevShares!==undefined && prevShares!==h.shares) toast('Shares changed — remember to log a reason in the Trade Log.');
+  else toast('Saved.');
+  if(!h.breakPoints) toast('Reminder: no logic-breakers set — this hole is locked from adding until you fill them in.');
+  if(scTotal>0 && scTotal<95) toast(`Business score: ${scTotal}/100 — you need 95+ to commit. Not there yet? Keep researching.`);
+}
+
+function clearHole(idx){
+  if(!confirm('Mark as exited? The hole is permanently spent and cannot be reused.\nPlease log your sell reason in the Trade Log first.')) return;
+  const h = D.holes[idx-1];
+  h.cleared = true; h.shares = 0;
+  closeModal('holeModal'); save();
+  toast(`Hole #${idx} marked as exited. It stays on the card as a permanent record of your decision.`);
+}
+
+function voidHole(idx){
+  if(!confirm('"Void" is only for accidental mis-entries. It restores the hole to empty.\nIf this was a real investment decision, use "Mark as Exited" instead.\nConfirm this was a mis-entry?')) return;
+  if(!confirm('Confirm: all data for this hole will be permanently deleted.')) return;
+  D.holes[idx-1] = emptyHole(idx);
+  closeModal('holeModal'); save();
+  toast(`Hole #${idx} restored to empty.`);
+}
+
+function addAlarm(){
+  const due = document.getElementById('aDue').value;
+  const stock = document.getElementById('aStock').value.trim();
+  const text = document.getElementById('aText').value.trim();
+  if(!due || !stock || !text){ toast('Due date, stock, and verification content are all required.'); return; }
+  D.alarms.push({ due, stock, text, status:'Pending' });
+  ['aStock','aText'].forEach(id=>document.getElementById(id).value='');
+  save(); toast('Alarm set. It will remind you at earnings season.');
+}
+function setAlarmStatus(i, v){
+  D.alarms[i].status = v; save();
+  if(v==='Review Triggered') toast('Logic-breaker triggered: review this position per your Sell Manual within one week.');
+  if(v==='Passed') toast('Thesis held. Log the evidence in your News Log.');
+}
+function delAlarm(i){ if(confirm('Delete this alarm?')){ D.alarms.splice(i,1); save(); } }
+
+function openSim(){
+  const sel = document.getElementById('simPick');
+  sel.innerHTML = '<option value="">— Enter manually —</option>' +
+    D.holes.filter(h=>h.used&&!h.cleared).map(h=>`<option value="${h.idx}">${esc(h.name)}</option>`).join('');
+  openModal('simModal');
+}
+function simPickFill(){
+  const idx = +document.getElementById('simPick').value;
+  if(!idx) return;
+  const h = D.holes[idx-1];
+  const p = h.price||h.cost||0;
+  document.getElementById('simPrice').value = p||'';
+  document.getElementById('simDps').value = h.dps||'';
+  document.getElementById('simCap').value = Math.round((h.shares||0)*p)||'';
+}
+function runSim(){
+  const cap = +document.getElementById('simCap').value||0;
+  let price = +document.getElementById('simPrice').value||0;
+  let dps = +document.getElementById('simDps').value||0;
+  const dg = (+document.getElementById('simDg').value||0)/100;
+  const pg = (+document.getElementById('simPg').value||0)/100;
+  const yrs = Math.min(50, Math.max(1, +document.getElementById('simYears').value||20));
+  if(cap<=0||price<=0||dps<0){ toast('Please fill in capital, price, and dividend.'); return; }
+  let shares = cap/price, cum = 0, rows = '', milestone = 0;
+  const shares0 = shares;
+  let lastDiv = 0, lastVal = cap;
+  for(let y=1; y<=yrs; y++){
+    const div = shares*dps;
+    cum += div; lastDiv = div;
+    if(!milestone && div >= cap*0.10) milestone = y;
+    shares += div/price;
+    lastVal = shares*price;
+    rows += `<tr><td>${y}</td><td>${fmt(div)}</td><td>${fmt(shares)}</td><td>${fmt(lastVal)}</td></tr>`;
+    dps *= (1+dg); price *= (1+pg);
+  }
+  const cagr = (Math.pow(lastVal/cap, 1/yrs)-1)*100;
+  let summary = `<div class="note" style="font-size:.88em;line-height:1.9">Shares: ${fmt(shares0)} → <b style="color:var(--ok)">${fmt(shares)}</b> (grew to ${(shares/shares0).toFixed(2)}x, without selling a single share)<br>Total dividends received: ¥${fmt(cum)}; Final year annual dividend: ¥${fmt(lastDiv)}; Final portfolio value: ¥${fmt(lastVal)} (CAGR ~${cagr.toFixed(1)}%)`;
+  if(milestone) summary += `<br><b style="color:#ffd089">Year ${milestone}: annual dividends exceeded 10% of original capital. This is the "living off dividends" inflection point.</b>`;
+  summary += `</div>`;
+  document.getElementById('simOut').innerHTML = summary +
+    `<div class="tbl-scroll" style="max-height:240px;overflow-y:auto"><table>
+      <thead><tr><th>Year</th><th>Annual Dividend</th><th>Shares (reinvested)</th><th>Portfolio Value</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+}
+
+function openPriceModal(){
+  const list = [];
+  D.holes.forEach(h=>{ if(h.used && !h.cleared) list.push({kind:'h', ref:h, label:h.name}); });
+  document.getElementById('priceRows').innerHTML = list.map((x,i)=>`
+    <div class="prow"><span class="nm">${esc(x.label)}</span>
+      <span class="old">Cost ¥${fmt2(x.ref.cost)}</span>
+      <input type="number" step="0.001" min="0" id="pr_${i}" value="${x.ref.price||''}" placeholder="Current price"></div>`).join('');
+  document.getElementById('priceModal')._list = list;
+  openModal('priceModal');
+}
+function savePrices(){
+  const list = document.getElementById('priceModal')._list || [];
+  list.forEach((x,i)=>{
+    const v = +document.getElementById('pr_'+i).value||0;
+    if(v && v!==x.ref.price){ x.ref.price = v; x.ref.priceDate = today(); }
+    else if(v) x.ref.price = v;
+  });
+  closeModal('priceModal'); save();
+  toast('Prices updated. Remember: buy at cost, track at market value — price is never a reason to act.');
+}
+
+function editStrategy(kind){
+  const body = document.getElementById(kind+'Body');
+  const ta = document.getElementById(kind+'Edit');
+  const btn = document.getElementById(kind+'EditBtn');
+  if(ta.style.display==='block'){
+    D.settings[kind+'Strategy'] = ta.value;
+    ta.style.display='none'; body.style.display='block'; btn.textContent='Edit';
+    save(); toast('Strategy saved.');
+  }else{
+    ta.value = D.settings[kind+'Strategy'];
+    ta.style.display='block'; body.style.display='none'; btn.textContent='Save';
+  }
+}
+
+let _editTrade = null;
+function editTrade(i){
+  const t = D.trades[i];
+  document.getElementById('tDate').value = t.date||today();
+  document.getElementById('tAction').value = t.action;
+  document.getElementById('tStock').value = t.stock;
+  document.getElementById('tQty').value = t.qty||'';
+  document.getElementById('tPrice').value = t.price||'';
+  document.getElementById('tReason').value = t.reason;
+  _editTrade = i;
+  document.getElementById('tAddBtn').textContent = 'Save Edit';
+  scrollToId('tradesSec');
+  toast('Editing this record — click "Save Edit" when done.');
+}
+function addTrade(){
+  const date = document.getElementById('tDate').value;
+  const reason = document.getElementById('tReason').value.trim();
+  const stock = document.getElementById('tStock').value.trim();
+  if(!date || !stock){ toast('Date and stock name are required.'); return; }
+  if(reason.length < 10){ toast('Reason must be at least 10 characters — this field is the brake pedal.'); return; }
+  const act = document.getElementById('tAction').value;
+  if(act==='Add to Position'){
+    if(!confirm('Three questions before adding (all must be true):\n\n1. Fundamentals unchanged? (based on financial reports, not gut feel)\n2. Price clearly below what you believe it\'s worth?\n3. Using spare cash — absolutely no borrowing?\n\nAll three? Click OK.\nAny doubt? Cancel and re-read your buy thesis.')) { toast('Add paused. Re-read your buy thesis first.'); return; }
+  }
+  const rec = { date, action:act, stock,
+    qty:+document.getElementById('tQty').value||0, price:+document.getElementById('tPrice').value||0,
+    reason };
+  if(_editTrade!=null){ D.trades[_editTrade] = rec; _editTrade = null; document.getElementById('tAddBtn').textContent = 'Log'; }
+  else D.trades.push(rec);
+  ['tStock','tQty','tPrice','tReason'].forEach(id=>document.getElementById(id).value='');
+  save(); toast('Trade logged.');
+}
+function delTrade(i){ if(confirm('Delete this trade record?')){ D.trades.splice(i,1); save(); } }
+
+let _editNews = null;
+function editNews(i){
+  const n = D.news[i];
+  document.getElementById('nDate').value = n.date||today();
+  document.getElementById('nStock').value = n.stock;
+  document.getElementById('nContent').value = n.content;
+  document.getElementById('nUrl').value = n.url||'';
+  _editNews = i;
+  document.getElementById('nAddBtn').textContent = 'Save Edit';
+  scrollToId('newsSec');
+  toast('Editing news record — click "Save Edit" when done.');
+}
+function addNews(){
+  const date = document.getElementById('nDate').value;
+  const content = document.getElementById('nContent').value.trim();
+  if(!date || !content){ toast('Date and content are required.'); return; }
+  const rec = { date, stock:document.getElementById('nStock').value.trim(),
+    content, url:document.getElementById('nUrl').value.trim() };
+  if(_editNews!=null){ D.news[_editNews] = rec; _editNews = null; document.getElementById('nAddBtn').textContent = 'Log'; }
+  else D.news.push(rec);
+  ['nStock','nContent','nUrl'].forEach(id=>document.getElementById(id).value='');
+  save(); toast('News logged.');
+}
+function delNews(i){ if(confirm('Delete this news record?')){ D.news.splice(i,1); save(); } }
+
+function openAiPrompt(){ document.getElementById('aiPromptTxt').value = D.settings.aiPrompt; openModal('aiModal'); }
+function saveAiPrompt(){ D.settings.aiPrompt = document.getElementById('aiPromptTxt').value; save(); closeModal('aiModal'); toast('Prompt saved.'); }
+function resetAiPrompt(){ document.getElementById('aiPromptTxt').value = DEFAULT_PROMPT; }
+function copyAiPrompt(){
+  const txt = document.getElementById('aiPromptTxt').value;
+  if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(()=>toast('Copied. Send with your exported JSON to Claude.')); }
+  else{ const ta=document.getElementById('aiPromptTxt'); ta.select(); document.execCommand('copy'); toast('Copied.'); }
+}
+
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(D,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `punch-card-${today().replace(/-/g,'')}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('Exported. Recommend monthly backups — you can also send directly to Claude for a portfolio review.');
+}
+function importJSON(ev){
+  const f = ev.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const d = JSON.parse(r.result);
+      if(!d.holes || !Array.isArray(d.holes) || d.holes.length!==20) throw new Error('Invalid format: missing 20 holes.');
+      if(!confirm('Import will overwrite all current data. Continue?')) return;
+      D = migrate(d); save(); toast('Import successful.');
+    }catch(e){ toast('Import failed: '+e.message); }
+  };
+  r.readAsText(f); ev.target.value='';
+}
+
+document.getElementById('tDate').value = today();
+document.getElementById('nDate').value = today();
+document.getElementById('aDue').value = today();
+document.querySelectorAll('.modal').forEach(m=>{
+  m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('open'); });
+});
+renderAll();
+</script>
+
+  <!-- BOOKS -->
+  <div class="books-section">
+    <h3>📚 The books behind this framework</h3>
+    <div class="books">
+      <a class="book" href="#" data-enc="aHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC8wMDYwNTU1NjYxP3RhZz1vcmRpbmFyeW1hbnRyeXRyLTIw" target="_blank" rel="noopener">
+        <div class="book-icon" style="background:linear-gradient(135deg,#1E3A5F,#1d4ed8)">📘</div>
+        <div class="book-title">The Intelligent Investor</div>
+        <div class="book-author">Benjamin Graham</div>
+        <div class="book-cta">Get on Amazon →</div>
+      </a>
+      <a class="book" href="#" data-enc="aHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC8xOTUzOTUzMjU1P3RhZz1vcmRpbmFyeW1hbnRyeXRyLTIw" target="_blank" rel="noopener">
+        <div class="book-icon" style="background:linear-gradient(135deg,#1C1A0F,#b45309)">📙</div>
+        <div class="book-title">Poor Charlie's Almanack</div>
+        <div class="book-author">Charlie Munger</div>
+        <div class="book-cta">Get on Amazon →</div>
+      </a>
+      <a class="book" href="#" data-enc="aHR0cHM6Ly93d3cuYW1hem9uLmNvbS9kcC8wNzQzMjAwNDAzP3RhZz1vcmRpbmFyeW1hbnRyeXRyLTIw" target="_blank" rel="noopener">
+        <div class="book-icon" style="background:linear-gradient(135deg,#1A3A1A,#15803d)">📗</div>
+        <div class="book-title">One Up on Wall Street</div>
+        <div class="book-author">Peter Lynch</div>
+        <div class="book-cta">Get on Amazon →</div>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('[data-enc]').forEach(el => {
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        window.open(atob(el.dataset.enc), '_blank', 'noopener');
+      });
+    });
+  </script>
+
+<style>.nxt-link{display:block;text-align:center;font-size:13px;color:var(--muted,#6b7a8f);text-decoration:none;padding:20px 0 8px;letter-spacing:.01em;transition:color .2s}.nxt-link:hover{color:var(--accent,#f59e0b)}</style>
+<a class="nxt-link" href="https://ordinarymantrying.com/tools/grassroots-research-checklist.html">Next → Start Field Research — The Supermarket Test</a>
+
+</body>
+</html>

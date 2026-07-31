@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>金字塔建仓器 — 多批买入均价计算 | AI投资OS</title>
+<meta name="description" content="别一次全仓。金字塔建仓：左侧下跌加仓or右侧突破加仓，多批次降低均价，风险预算控制，-30%压力测试，五大门派+8大AI指导。">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/pyramid-builder-cn.html">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09101F;--surf:#111827;--surf2:#1A2436;--surf3:#0d1526;--accent:#6366F1;--accent-l:#818CF8;--gold:#F59E0B;--green:#10B981;--red:#EF4444;--white:#F1F5F9;--muted:#64748B;--bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.12)}
+body{background:var(--bg);color:var(--white);font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif;line-height:1.7;font-size:17px;overflow-x:hidden}
+a{color:var(--accent-l);text-decoration:none}
+.nav{padding:13px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:.84em}.nav a{color:var(--muted)}.nav a:hover{color:var(--white)}.nav-cur{color:var(--white);font-weight:600}
+.hero{text-align:center;padding:46px 20px 26px;background:radial-gradient(ellipse at 50% 0%,rgba(245,158,11,.1) 0%,rgba(99,102,241,.07) 40%,transparent 70%)}
+.badge{display:inline-block;font-size:.68em;font-weight:700;letter-spacing:.06em;color:#fbbf24;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:30px;padding:4px 13px;margin-bottom:12px}
+.hero h1{font-size:clamp(1.8rem,5vw,2.9rem);font-weight:900;letter-spacing:-.02em;line-height:1.1;margin-bottom:10px}
+.hero h1 em{font-style:normal;color:var(--gold)}.hero p{font-size:.92em;color:var(--muted);max-width:520px;margin:0 auto}
+.wrap{max-width:700px;margin:0 auto;padding:26px 18px 60px}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:20px 18px;margin-bottom:12px}
+.sl{font-size:.62em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-l);margin-bottom:13px}
+.school-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px}
+@media(min-width:500px){.school-row{grid-template-columns:repeat(4,1fr)}}
+.sb{background:var(--surf2);border:2px solid var(--bd);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:.2s;font-size:.79em;font-weight:700;color:var(--muted);line-height:1.3}
+.sb:hover{border-color:var(--bd2);color:var(--white)}.sb.on{border-color:var(--accent);background:rgba(99,102,241,.12);color:var(--white)}
+.sb i{font-style:normal;font-size:1.3em;display:block;margin-bottom:2px}
+.mode-tabs{display:flex;gap:6px;margin-bottom:16px}
+.tab{flex:1;text-align:center;padding:9px 8px;background:var(--surf2);border:1px solid var(--bd);border-radius:9px;cursor:pointer;font-size:.82em;font-weight:700;color:var(--muted);transition:.2s}
+.tab.on{background:rgba(99,102,241,.12);border-color:var(--accent);color:var(--white)}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+@media(min-width:480px){.input-grid{grid-template-columns:repeat(3,1fr)}}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:.72em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.fg input,.fg select{background:var(--surf2);border:1px solid var(--bd);border-radius:9px;padding:9px 12px;color:var(--white);font-size:.9em;font-weight:600;outline:none;transition:.2s}
+.fg input:focus,.fg select:focus{border-color:var(--accent);background:var(--surf3)}
+.fg select option{background:var(--surf)}
+.risk-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px}
+.btn-go{width:100%;padding:13px;background:linear-gradient(120deg,var(--gold),#d97706);border:none;border-radius:12px;color:#1a0a00;font-size:1em;font-weight:800;cursor:pointer;transition:.2s}
+.btn-go:hover{filter:brightness(1.08)}
+#results{display:none}
+.tranche-table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:.84em}
+.tranche-table th{background:var(--surf2);border-bottom:1px solid var(--bd);padding:7px 9px;font-size:.65em;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);text-align:right}
+.tranche-table th:first-child{text-align:left}
+.tranche-table td{padding:7px 9px;border-bottom:1px solid var(--bd);text-align:right;color:var(--white)}
+.tranche-table td:first-child{text-align:left;color:var(--muted)}
+.tranche-table tr.summary td{font-weight:800;color:var(--accent-l);background:rgba(99,102,241,.05)}
+.risk-result-safe{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:13px;margin-bottom:12px}
+.risk-result-danger{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:13px;margin-bottom:12px}
+.stress-box{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:13px;margin-bottom:12px}
+.school5{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+@media(min-width:500px){.school5{grid-template-columns:repeat(4,1fr)}}
+.s5c{background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:10px}
+.s5c.active{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.s5c-name{font-size:.72em;font-weight:800;color:var(--white);margin-bottom:4px}
+.s5c-txt{font-size:.73em;color:var(--muted);line-height:1.5}
+.ai-grid{display:flex;flex-direction:column;gap:7px}
+.ai-c{display:flex;gap:14px;align-items:flex-start;background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:12px 15px;position:relative}
+.ai-head{min-width:108px;flex-shrink:0}
+.ai-n{font-size:.92em;font-weight:800;color:var(--white);margin-bottom:2px}
+.ai-t{font-size:.72em;color:var(--accent-l)}
+.ai-txt{font-size:.92em;color:var(--muted);line-height:1.55}
+.ai-q{font-size:.78em;color:#818CF8;border-top:1px solid var(--bd);margin-top:7px;padding-top:6px;font-style:italic;line-height:1.45}
+.ai-star{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:1.1em;opacity:.35;transition:.2s;padding:0;line-height:1}
+.ai-star.starred{opacity:1;filter:drop-shadow(0 0 4px gold)}
+.ai-links-row{display:flex;flex-wrap:wrap;gap:6px}
+.ai-links-label{font-size:.62em;color:var(--muted);margin-bottom:5px}
+.ai-hint{font-size:.67em;color:var(--muted);margin-bottom:8px;font-style:italic}
+.ai-lnk{display:inline-flex;align-items:center;gap:3px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:5px 10px;font-size:.74em;font-weight:600;color:var(--muted);text-decoration:none;transition:.2s;opacity:.55}
+.ai-lnk.active{background:rgba(99,102,241,.18);border-color:var(--accent);color:var(--accent-l);opacity:1;box-shadow:0 0 0 2px rgba(99,102,241,.2);font-weight:700}
+.ai-lnk:hover{color:var(--white);border-color:var(--accent);opacity:1}
+.bias{background:rgba(99,102,241,.06);border:1px solid rgba(129,140,248,.2);border-radius:10px;padding:13px}
+.bias-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-l);margin-bottom:6px}
+.bias-t{font-size:.83em;color:#c7d2fe;line-height:1.6}
+.next-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nt-btn{display:block;background:var(--surf2);border:1px solid var(--bd2);border-radius:10px;padding:11px 13px;text-decoration:none;transition:.2s}
+.nt-btn:hover{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.nt-lbl{font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+.nt-name{font-size:.84em;font-weight:700;color:var(--white)}
+.nt-desc{font-size:.72em;color:var(--muted)}
+.pb{background:var(--surf3);border:1px solid var(--bd2);border-radius:10px;padding:13px;position:relative}
+.pb-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.pb-txt{font-size:.79em;color:var(--muted);line-height:1.6;white-space:pre-wrap;word-break:break-word;padding-right:58px}
+.cp-btn{position:absolute;top:11px;right:11px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 10px;font-size:.7em;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
+.cp-btn:hover{color:var(--white);border-color:var(--accent)}.cp-btn.ok{color:var(--green);border-color:var(--green)}
+.footer{text-align:center;padding:20px;font-size:.8em;color:var(--muted);border-top:1px solid var(--bd)}
+.footer a{color:var(--accent-l);margin:0 7px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="ai-invest-os.html">← AI投资OS</a>
+  <span style="color:var(--bd2)">›</span>
+  <span class="nav-cur">金字塔建仓器</span>
+</nav>
+<div class="hero">
+  <div class="badge">决策工具 #5 — 建仓</div>
+  <h1><em>金字塔</em>建仓器</h1>
+  <p>别一次全仓。分批建仓降低均价，控制风险预算，让每一批买入都有依据。</p>
+</div>
+<div class="wrap">
+  <div class="card">
+    <div class="sl">第一步 — 投资门派</div>
+    <div class="school-row">
+      <button class="sb" id="sb-index" onclick="setSchool('index',this)"><i>📊</i>指数派</button>
+      <button class="sb" id="sb-value" onclick="setSchool('value',this)"><i>🦅</i>价值派</button>
+      <button class="sb" id="sb-growth" onclick="setSchool('growth',this)"><i>🌱</i>成长派</button>
+      <button class="sb" id="sb-trend" onclick="setSchool('trend',this)"><i>📈</i>趋势派</button>
+    </div>
+    <div class="sl">第二步 — 建仓方向</div>
+    <div class="mode-tabs">
+      <button class="tab on" onclick="switchMode('left',this)">📉 左侧：下跌摊薄</button>
+      <button class="tab" onclick="switchMode('right',this)">📈 右侧：突破加仓</button>
+    </div>
+    <div class="input-grid">
+      <div class="fg"><label>首批买入价（元）</label><input type="number" id="entry" value="50" step="0.01" min="0.01"></div>
+      <div class="fg"><label>每批间距（%）</label><input type="number" id="step" value="5" step="0.1" min="0.1"></div>
+      <div class="fg">
+        <label>批次数量</label>
+        <select id="tranches">
+          <option value="3">3批</option>
+          <option value="4">4批</option>
+          <option value="5" selected>5批</option>
+          <option value="6">6批</option>
+          <option value="7">7批</option>
+        </select>
+      </div>
+      <div class="fg"><label>总资金（元）</label><input type="number" id="capital" value="50000" min="1"></div>
+      <div class="fg">
+        <label>资金分配方式</label>
+        <select id="dist">
+          <option value="equal">均等分配</option>
+          <option value="inc">递增（越低越多）</option>
+          <option value="dec">递减（首批最多）</option>
+        </select>
+      </div>
+      <div class="fg"><label>止损价（元，可选）</label><input type="number" id="stoploss" value="0" step="0.01" min="0"></div>
+    </div>
+    <div class="risk-row">
+      <div class="fg"><label>总资产（元）</label><input type="number" id="totalPort" value="200000" min="1"></div>
+      <div class="fg"><label>最大可亏（%）</label><input type="number" id="maxLoss" value="5" step="0.1" min="0.1"></div>
+      <div class="fg"><label>风险预算</label><div id="risk-preview" style="padding:9px 12px;background:var(--surf2);border:1px solid var(--bd);border-radius:9px;font-size:.88em;font-weight:600;color:var(--muted)">—</div></div>
+    </div>
+    <button class="btn-go" onclick="calculate()">生成建仓计划 →</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="sl">建仓计划表</div>
+      <div style="overflow-x:auto">
+        <table class="tranche-table" id="tranche-table"></table>
+      </div>
+      <div id="risk-result"></div>
+      <div class="stress-box" id="stress-box"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">五大门派建仓哲学</div>
+      <div class="school5" id="school5-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">8大AI点评</div>
+      <div class="ai-hint">★ 点卡片上的星选出你最信任的AI，下方链接亮起来才有意义</div>
+      <div class="ai-grid" id="ai-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">⚠️ 认知偏差提醒</div>
+      <div class="bias">
+        <div class="bias-l">🎯 均值回归谬误 (Gambler's Fallacy)</div>
+        <div class="bias-t" id="bias-txt"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sl">继续分析 →</div>
+      <div class="next-tools" id="next-tools"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">一键生成AI分析提示词</div>
+      <div class="pb">
+        <div class="pb-l">复制 · 然后直接向你喜欢的AI提问</div>
+        <div class="pb-txt" id="prompt-txt"></div>
+        <button class="cp-btn" onclick="copyPrompt()">复制</button>
+        <div class="ai-links-label" style="margin-top:12px">★ 给上方AI卡片点星 · 点击下方链接直达</div>
+        <div class="ai-links-row">
+          <a class="ai-lnk active" data-id="claude" href="https://claude.ai/new" target="_blank" rel="noopener">🔵 Claude</a>
+          <a class="ai-lnk active" data-id="chatgpt" href="https://chatgpt.com" target="_blank" rel="noopener">🟢 ChatGPT</a>
+          <a class="ai-lnk" data-id="gemini" href="https://gemini.google.com" target="_blank" rel="noopener">🔴 Gemini</a>
+          <a class="ai-lnk" data-id="grok" href="https://grok.com" target="_blank" rel="noopener">⚡ Grok</a>
+          <a class="ai-lnk" data-id="deepseek" href="https://chat.deepseek.com" target="_blank" rel="noopener">🌊 DeepSeek</a>
+          <a class="ai-lnk" data-id="kimi" href="https://kimi.moonshot.cn" target="_blank" rel="noopener">🌙 Kimi</a>
+          <a class="ai-lnk" data-id="tongyi" href="https://tongyi.aliyun.com" target="_blank" rel="noopener">☁️ 通义</a>
+          <a class="ai-lnk" data-id="doubao" href="https://www.doubao.com" target="_blank" rel="noopener">🫧 豆包</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="ai-invest-os.html">← AI投资OS</a>
+    <a href="dca-simulator-cn.html">定投实验室</a>
+    <a href="recovery-navigator-cn.html">解套分析</a>
+    <a href="kelly-master-cn.html">凯利实验室</a>
+    <a href="portfolio-clarity-cn.html">持仓体检</a>
+  </div>
+</div>
+<script>
+function gp(){try{return JSON.parse(sessionStorage.getItem('ios_profile')||'{}')}catch(e){return{}}}
+function sp(u){sessionStorage.setItem('ios_profile',JSON.stringify({...gp(),...u}))}
+function qp(k){return new URLSearchParams(location.search).get(k)}
+let school=qp('school')||gp().school||'value';
+let mode='left';
+const SCHOOLS={index:{icon:'📊',name:'指数派'},value:{icon:'🦅',name:'价值派'},growth:{icon:'🌱',name:'成长派'},trend:{icon:'📈',name:'趋势派'}};
+function setSchool(s,el){school=s;document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');sp({school:s})}
+function switchMode(m,el){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');}
+(function(){
+  const btn=document.getElementById('sb-'+school);if(btn)btn.classList.add('on');
+  const prof=gp();
+  if(qp('price'))document.getElementById('entry').value=qp('price');
+  if(qp('capital')||prof.kellyCapital){
+    const v=qp('capital')||prof.kellyCapital;
+    document.getElementById('capital').value=v;
+    if(prof.portfolio)document.getElementById('totalPort').value=prof.portfolio;
+  }
+  if(qp('kelly'))document.getElementById('step').value=Math.max(2,parseInt(qp('kelly'))*0.1).toFixed(0);
+  updateRiskPreview();
+})();
+function updateRiskPreview(){
+  const tp=parseFloat(document.getElementById('totalPort').value)||200000;
+  const ml=parseFloat(document.getElementById('maxLoss').value)||5;
+  const maxDollar=tp*ml/100;
+  document.getElementById('risk-preview').textContent='最大可亏 ¥'+maxDollar.toFixed(0);
+}
+document.getElementById('totalPort').addEventListener('input',updateRiskPreview);
+document.getElementById('maxLoss').addEventListener('input',updateRiskPreview);
+function fmt(n){if(Math.abs(n)>=1e4)return'¥'+(n/1e4).toFixed(1)+'万';return'¥'+Math.abs(n).toFixed(0)}
+
+function calculate(){
+  const entry=parseFloat(document.getElementById('entry').value)||50;
+  const stepPct=parseFloat(document.getElementById('step').value)/100||0.05;
+  const n=parseInt(document.getElementById('tranches').value)||5;
+  const totalCap=parseFloat(document.getElementById('capital').value)||50000;
+  const dist=document.getElementById('dist').value;
+  const sl=parseFloat(document.getElementById('stoploss').value)||0;
+  const totalPort=parseFloat(document.getElementById('totalPort').value)||200000;
+  const maxLossPct=parseFloat(document.getElementById('maxLoss').value)||5;
+
+  // 计算每批资金
+  function weights(n,dist){
+    if(dist==='equal')return Array(n).fill(1/n);
+    if(dist==='inc'){const w=Array.from({length:n},(_,i)=>i+1);const s=w.reduce((a,b)=>a+b,0);return w.map(x=>x/s);}
+    const w=Array.from({length:n},(_,i)=>n-i);const s=w.reduce((a,b)=>a+b,0);return w.map(x=>x/s);
+  }
+  const wts=weights(n,dist);
+  const tranches=[];
+  let cumShares=0,cumCap=0;
+  for(let i=0;i<n;i++){
+    const price=mode==='left'?entry*(1-stepPct*i):entry*(1+stepPct*i);
+    const cap=totalCap*wts[i];
+    const shares=cap/price;
+    cumShares+=shares;cumCap+=cap;
+    const avgCost=cumCap/cumShares;
+    tranches.push({i:i+1,price,cap,shares,avgCost,cumShares,cumCap});
+  }
+  const lastT=tranches[n-1];
+
+  // 风险预算
+  const stopPrice=sl>0?sl:lastT.price*(1-0.2);
+  const dollarLoss=sl>0?(lastT.avgCost-sl)*lastT.cumShares:(lastT.avgCost-stopPrice)*lastT.cumShares;
+  const portLoss=(dollarLoss/totalPort)*100;
+  const maxDollar=totalPort*maxLossPct/100;
+  const safe=dollarLoss<=maxDollar;
+
+  sp({school,portfolio:totalPort});
+
+  // Table
+  let tHtml=`<thead><tr><th>批次</th><th>买入价</th><th>买入金额</th><th>买入股数</th><th>累计均价</th></tr></thead><tbody>`;
+  tranches.forEach(t=>{
+    tHtml+=`<tr>
+      <td>第${t.i}批</td>
+      <td>¥${t.price.toFixed(2)}</td>
+      <td>${fmt(t.cap)}</td>
+      <td>${t.shares.toFixed(0)}股</td>
+      <td style="color:var(--accent-l);font-weight:700">¥${t.avgCost.toFixed(2)}</td>
+    </tr>`;
+  });
+  tHtml+=`<tr class="summary"><td>汇总</td><td>—</td><td>${fmt(totalCap)}</td><td>${lastT.cumShares.toFixed(0)}股</td><td>¥${lastT.avgCost.toFixed(2)}</td></tr></tbody>`;
+  document.getElementById('tranche-table').innerHTML=tHtml;
+
+  // 风险结果
+  const riskCls=safe?'risk-result-safe':'risk-result-danger';
+  const riskColor=safe?'var(--green)':'var(--red)';
+  document.getElementById('risk-result').innerHTML=`
+    <div class="${riskCls}">
+      <div style="font-size:.7em;font-weight:700;color:${riskColor};margin-bottom:4px">${safe?'✅ 风险预算：安全':'⚠️ 风险预算：超限'}</div>
+      <div style="font-size:.82em;line-height:1.6;color:${safe?'#6ee7b7':'#fca5a5'}">
+        最终均价 ¥${lastT.avgCost.toFixed(2)} · ${sl>0?`止损价 ¥${sl}`:`末批再跌20% ≈ ¥${stopPrice.toFixed(2)}`}<br>
+        潜在最大亏损：${fmt(dollarLoss)}（占总资产 <strong>${portLoss.toFixed(1)}%</strong>）<br>
+        你的风险上限：${fmt(maxDollar)}（${maxLossPct}%）—— ${safe?'在预算内 ✅':'已超出预算，需减少批次或降低总仓位 ⚠️'}
+      </div>
+    </div>`;
+
+  // 压力测试 -30%
+  const stressLoss=totalCap*0.3;
+  const stressPort=stressLoss/totalPort*100;
+  document.getElementById('stress-box').innerHTML=`
+    <div style="font-size:.65em;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f87171;margin-bottom:6px">🦢 极端情境：末批买入后继续下跌30%</div>
+    <div style="font-size:.84em;font-weight:800;color:var(--red);margin-bottom:4px">组合亏损约 ${fmt(stressLoss + dollarLoss)}（${((stressLoss+dollarLoss)/totalPort*100).toFixed(1)}%）</div>
+    <div style="font-size:.79em;color:#fca5a5;line-height:1.6">黑天鹅不问你"建仓是否完成"。总仓位${(totalCap/totalPort*100).toFixed(0)}%的持仓在-30%时会损失总资产的${(totalCap*0.3/totalPort*100).toFixed(1)}%。这个数字让你睡不着，说明仓位需要缩减。</div>`;
+
+  buildSchool5(mode,entry,stepPct,n,lastT.avgCost,safe);
+  buildAiGrid(mode,entry,stepPct,n,totalCap,lastT.avgCost,safe,portLoss,maxLossPct);
+  document.getElementById('bias-txt').textContent=`"跌了就该买，还会涨回来的"——这是均值回归谬误。左侧建仓不是因为价格"该涨了"，而是因为你对资产价值有充分认识且价格在合理安全边际以内。下跌中的资产有三种可能：超跌（最终回升）、合理定价（不会回到原价）、永久毁损（归零）。区分这三种情况比金字塔的数学更重要。不要因为跌了就觉得"安全"。`;
+
+  const s=school;
+  document.getElementById('next-tools').innerHTML=`
+    <a class="nt-btn" href="kelly-master-cn.html?school=${s}&capital=${Math.round(totalCap)}">
+      <div class="nt-lbl">验证总仓位合理性</div>
+      <div class="nt-name">凯利仓位实验室</div>
+      <div class="nt-desc">这笔${fmt(totalCap)}仓位符合凯利公式吗？</div>
+    </a>
+    <a class="nt-btn" href="portfolio-clarity-cn.html?school=${s}">
+      <div class="nt-lbl">整体持仓分析</div>
+      <div class="nt-name">持仓体检中心</div>
+      <div class="nt-desc">这笔建仓后，持仓集中度如何？</div>
+    </a>`;
+
+  document.getElementById('prompt-txt').textContent=`我是${SCHOOLS[school].name}投资者，正在制定${mode==='left'?'左侧（下跌摊薄）':'右侧（突破加仓）'}金字塔建仓计划。
+
+建仓参数：
+- 方向：${mode==='left'?'左侧，下跌时逐批加仓':'右侧，突破时逐批加仓'}
+- 首批价：¥${entry}，间距：${(stepPct*100).toFixed(1)}%，共${n}批
+- 总资金：${fmt(totalCap)}，分配方式：${{'equal':'均等','inc':'递增（越低越多）','dec':'递减（首批最多）'}[document.getElementById('dist').value]}
+- 最终均价：¥${lastT.avgCost.toFixed(2)}
+- 风险预算：总亏损占总资产${portLoss.toFixed(1)}%，上限${maxLossPct}%（${safe?'安全':'超限'}）
+
+请帮我分析：
+1. 对${SCHOOLS[school].name}，${mode==='left'?'左侧':'右侧'}建仓是否符合该门派哲学？
+2. ${(stepPct*100).toFixed(0)}%的间距和${n}批次，在当前市场波动率下合理吗？
+3. 风险预算${portLoss.toFixed(1)}%在这笔建仓完成后偏高还是偏低？
+4. 如果极端情况下股价再跌30%，我应该如何应对（止损/继续持有/清仓）？
+5. 给我一个具体建议：应该调整哪个参数最重要？`;
+
+  document.getElementById('results').style.display='block';
+  setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function buildSchool5(mode,entry,step,n,avgCost,safe){
+  const views={
+    index:{verdict:'📊 指数不需要金字塔',txt:`指数投资的最佳建仓方式是定投，不是金字塔。指数没有个股的"错误定价"问题，金字塔建仓会引入择时风险。如果你在做指数的战术性配置，可用此工具，但要明确这是战术而非策略。`},
+    value:{verdict:mode==='left'?'✅ 价值派标准操作':'⚠️ 右侧不是价值派',txt:`左侧建仓是价值派的核心策略——在下跌中买入"确定低估"的资产。前提是：有充分的基本面研究，明确"价格低于内在价值"，而非仅仅因为价格便宜就买。`},
+    growth:{verdict:'🌱 成长股：小批次，高确信',txt:`成长股波动大，金字塔间距应更宽（10-15%），批次应更少（3批）。宁可错过部分涨幅，也不冒过早进入下跌趋势的风险。成长派首重业绩确认，其次才是价格摊薄。`},
+    trend:{verdict:mode==='right'?'📈 趋势派首选右侧':'⚠️ 不建议左侧',txt:`趋势派的金字塔是右侧的：等待突破确认后才开始加仓，趋势越强越加。左侧建仓是"逆势"，与趋势派哲学相悖。右侧每批间距建议2-5%，随盈利扩大仓位。`}
+  };
+  let h='';
+  Object.entries(views).forEach(([k,v])=>{
+    const s=SCHOOLS[k];const isActive=k===school;
+    const col=v.verdict.startsWith('✅')?'var(--green)':v.verdict.startsWith('⚠️')?'#fbbf24':'var(--muted)';
+    h+=`<div class="s5c${isActive?' active':''}"><div class="s5c-name">${s.icon} ${s.name}</div><div style="font-size:.66em;font-weight:700;margin-bottom:4px;color:${col}">${v.verdict}</div><div class="s5c-txt">${v.txt}</div></div>`;
+  });
+  document.getElementById('school5-grid').innerHTML=h;
+}
+
+function interpolate(tpl,vars){
+  let s=String(tpl).replace(/\{([^}]+)\}/g,(m,k)=>k in vars?vars[k]:m);
+  return s.replace(/%%/g,'%');
+}
+function buildAiGrid(mode,entry,step,n,totalCap,avgCost,safe,portLoss,maxLoss){
+  const isLeft=mode==='left';
+  const vars={PORT_LOSS:portLoss.toFixed(1)+'%',N:n,STOP:maxLoss+'%',TOTAL:fmt(totalCap),AVG:fmt(avgCost)};
+  const ais=[
+    {n:'Claude',i:'🔵',t:'价值视角',schools:{
+      value:{cd:'左侧建仓只在业务真正被低估时才有效——不只是便宜。每批买入前问：业务本身有没有变化，还是只有价格变了？触发{STOP}止损时{PORT_LOSS}的组合亏损是真实的——在第一笔下单前就接受它。',cu:'右侧建仓是趋势跟踪的股票应用。每批追涨都把均价推高到{AVG}——确保每次加仓都有价格确认，而非只靠信念。{N}批全建完后，{PORT_LOSS}的组合敞口必须配合严格追踪止损。',qd:'业务基本面有没有变化，还是只是价格便宜了？',qu:'每批加仓是有价格确认支撑，还是只是FOMO驱动？'},
+      growth:{cd:'分{N}批摊低仅在增速仍在加速时才有意义。每批加仓前确认增速指标——增速已断裂则立即停止，即便{PORT_LOSS}还未触及计划上限。',cu:'右侧追涨只在增速持续加速时才合理。每批追高{AVG}需要更强的增速证据，而非仅靠价格。如果增速在最后一批前熄灭，触发{STOP}割仓。',qd:'增速在当前价格水平仍在加速吗？',qu:'每批追涨都有更强的增速数据作支撑吗？'},
+      trend:{cd:'趋势未确认反转前，左侧建仓有悖趋势纪律。等待价格企稳信号，而非在下跌中分批；接受{PORT_LOSS}的风险只能在趋势出现逆转迹象后才启动。',cu:'右侧建仓是趋势派的正宗操作。每批确认后追加，均价升至{AVG}是顺势而为。止损必须随{AVG}上移同步上调，不可固定不动。',qd:'趋势是在企稳还是你只是在接飞刀？',qu:'止损线是否随{AVG}上移而同步上移？'}
+    }},
+    {n:'ChatGPT',i:'🟢',t:'决策框架',schools:{
+      value:{cd:'摊平是风险计划，不是祈祷策略。在下所有{N}批订单前，先接受：触发{STOP}止损意味着组合亏损{PORT_LOSS}。如果这个结果今天感觉难以承受，你的仓位规划本身就已经错了。',cu:'每次追涨都把均价抬高到{AVG}，压缩容错空间。{N}批全建完后，纪律比信心更重要。在亏损达到{PORT_LOSS}之前严守预设出场点。',qd:'在下第一笔单之前，你接受过{PORT_LOSS}的亏损结果吗？',qu:'每批追涨后，你能按计划严格执行出场吗？'},
+      growth:{cd:'成长股左侧摊平极危险。下跌{PORT_LOSS}可能反映增速断裂而非暂时低估。每批加仓前做一次完整的增速核查，结果决定是否继续。',cu:'右侧金字塔仅在增速证据随每批加仓持续强化时才成立。均价升至{AVG}是可接受的，但前提是每批都有更好的增速数据作背书。',qd:'增速是在恶化还是只是价格下跌了？',qu:'每批追涨背后有更强的增速证据，还是只是价格在涨？'},
+      trend:{cd:'趋势规则：绝不摊低。触发{STOP}接受{PORT_LOSS}才是正确动作。分{N}批加仓到下跌仓位违反了唯一能让亏损保持可控的铁律。',cu:'趋势确认是每批追涨的前提。每批追到{AVG}需要严格的追踪止损持续上移。{PORT_LOSS}是一次趋势判断错误的代价——按这个假设来规划初始仓位。',qd:'你已接受趋势向下，下一步是割仓而非加仓吗？',qu:'追踪止损是否随每次加仓同步上移，以保护{PORT_LOSS}？'}
+    }},
+    {n:'Gemini',i:'🔴',t:'风险分析',schools:{
+      value:{cd:'分{N}批买入下跌的刀，过早锁定了{TOTAL}资金。{STOP}止损触发时，{AVG}新均价对应{PORT_LOSS}的组合亏损，且已无余粮应对真正的恐慌底部。保留30-40%%资金作为战略储备。',cu:'在价格冲高时分{N}批追涨，恰恰在动能耗尽前压缩了安全边际。追涨把均价推高到{AVG}，一旦行情反转，{PORT_LOSS}的亏损在{STOP}触发前就已经爆发。',qd:'{N}批全打完还剩多少子弹应对继续下跌？',qu:'在追涨最后一批时行情反转，你能撑过去吗？'},
+      growth:{cd:'成长股左侧摊低危险：增速断裂时，{PORT_LOSS}只是可量化的下限——真实损失是资本被困在破损复合器中的机会成本。每批前核查增速，否则停止整个金字塔计划。',cu:'成长股右侧追涨要求增速和价格双重确认。把{TOTAL}分{N}批推高到{AVG}，假设增速持续加速。若增速在最后一批前熄灭，回落触{STOP}产生{PORT_LOSS}恰在情绪最高涨时。',qd:'基本面恶化时，下行金字塔会不会被证明是致命的？',qu:'你在追涨已成熟的成长周期，还是在增速仍在加速的早期？'},
+      trend:{cd:'趋势下行金字塔是策略矛盾体。系统性风险分析拒绝对确认的下行趋势加仓。{N}批进下跌把{TOTAL}资金锁定在组合里最差的仓位上。{STOP}存在的理由正是因为这个策略本身就是高风险设计。',cu:'趋势跟踪金字塔需要严格的追踪止损。{N}批全建，均价{AVG}代表资金全押在趋势延续上。任何反转穿越{STOP}交出{PORT_LOSS}——按最大风险规划初始仓位，而非追涨时的最后一批。',qd:'你的数据确认趋势反转了，还是这是一个反趋势赌注包装成价值？',qu:'你的止损方法是经过测试且一致的，还是事后临时拍脑袋的？'}
+    }},
+    {n:'Grok',i:'⚡',t:'趋势现实派',schools:{
+      value:{cd:'分{N}批摊平是趋势派最典型的自杀操作。每次在下跌中加仓都是在没有任何确认信号的情况下部署资金。{STOP}止损已经在威胁{TOTAL}的{PORT_LOSS}。这不是耐心，是否认现实包装成的策略。',cu:'突破追涨是唯一合理的趋势操作。分{N}批在强势中建仓让你顺势而行。但{AVG}新均价已经在压缩容错空间。没有严格的追踪止损，下一次回调就会让{TOTAL}慢慢流血。',qd:'在市场还没证明趋势反转之前，你为什么要加仓？',qu:'随着{AVG}上升，你真的会跟进收紧止损，还是只是祈祷？'},
+      growth:{cd:'成长股左侧金字塔是趋势逆向操作。每批在下跌中加仓都是没有任何确认信号的资金部署。若增速已断裂，{PORT_LOSS}只是第一个数字，不是最后一个。',cu:'成长股右侧追涨仅在增速与价格同步确认时才成立。每批追至{AVG}必须跟随更强的增速证据。止损收紧的速度必须快于均价上升的速度。',qd:'增速在你每次加仓时是在加速还是在减速？',qu:'每批价格确认背后是否也有增速确认？'},
+      trend:{cd:'左侧摊低是趋势派最典型的自杀操作。每次在下跌中加仓都是在没有任何确认信号的情况下部署资金。{STOP}止损已经在威胁{TOTAL}的{PORT_LOSS}。这不是耐心，是否认现实包装成的策略。',cu:'趋势金字塔只接受顺势追涨。每批{N}次追涨需要新的确认信号，而非重复同一个信号。止损收紧速度必须快于{AVG}上升速度。{PORT_LOSS}是趋势失败的代价——按这个假设sizing初始单子。',qd:'这个趋势在多个时间周期上都得到确认，还是只有一个时间周期在骗你？',qu:'你会随每批加仓持续收紧止损，还是守着一个固定的{STOP}？'}
+    }},
+    {n:'DeepSeek',i:'🌊',t:'系统量化',schools:{
+      value:{cd:'{N}步下行金字塔在崩盘时存在同时成交的风险——价格跳空穿越限价单，实际敞口远超预期。触发{STOP}导致{TOTAL}的{PORT_LOSS}亏损。把限价单设在前期支撑位以下足够远，避免{N}批同时成交。',cu:'分{N}批追涨把每批成本推高到{AVG}，需要越来越大的涨幅才能盈利。回落触及{STOP}就产生{TOTAL}的{PORT_LOSS}亏损。每批追涨的预期回报在递减。',qd:'如果{N}批订单在崩盘时同时成交，你能承受{PORT_LOSS}的亏损吗？',qu:'{N}批追涨把均价推到{AVG}，解套需要多大的涨幅？'},
+      growth:{cd:'{N}批下行金字塔把{AVG}摊低，但触发{STOP}损失{TOTAL}的{PORT_LOSS}。若价格跳空，{N}批限价单可能同时成交，超额敞口。只有均值回归概率超过止损被触发概率时，加仓的期望值才是正数。',cu:'追涨金字塔把{AVG}越推越高，未来回报递减。{N}批全建后回落触{STOP}损失{TOTAL}的{PORT_LOSS}。每批的边际期望回报呈几何递减；收益结构类似负凸性。',qd:'触发{STOP}后，回升到{AVG}以上的基准概率是多少？',qu:'最后一批成交后价格回落5%，止损前的保本概率是多少？'},
+      trend:{cd:'趋势派从不用下行金字塔摊低。{STOP}止损存在是为了防止灾难，但期望几何增长是通过早割仓而非摊低来最大化的。接受{PORT_LOSS}风险只能在仓位按能承受趋势失败来sizing之后。',cu:'趋势派用{N}批追涨进入赢家，推高{AVG}但复合动能。{STOP}防止灾难。期望几何增长通过凯利比例加仓来最大化，接受趋势失败时{TOTAL}损失{PORT_LOSS}的可能。',qd:'资金为什么要部署在确认下行趋势的仓位上？',qu:'每批加仓后，趋势继续前的中位不利激进幅度是多少？'}
+    }},
+    {n:'Kimi',i:'🌙',t:'A股视角',schools:{
+      value:{cd:'买跌摊平在A股是自杀。ST摘牌远超美股，{N}次补仓拉低{AVG}等于陪葬。{PORT_LOSS}只是开始，{STOP}形同虚设，{TOTAL}越补越亏。',cu:'A股追涨杀跌是散户头号死因。突破先看真假，{N}次追高推高{AVG}，{TOTAL}高位站岗。{STOP}形同虚设，{PORT_LOSS}只是前奏。',qd:'你是在给退市股陪葬吗？',qu:'真突破还是主力诱多出货？'},
+      growth:{cd:'A股成长股下行金字塔是价值投资逻辑在错误市场上的应用。退市、欺诈风险和政策切换，可以让价格在{STOP}触发前就跳空，{PORT_LOSS}变成无底洞。',cu:'A股成长股右侧金字塔需要确认催化剂是真实的，而非传言驱动。在{N}批追至{AVG}之前，确认增速故事已被官方公告记录——A股机构资金在叙事切换时会瞬间消失。',qd:'增速叙事有官方文件佐证，还是只是市场传言？',qu:'每批加仓时机构资金还在流入，还是已经开始分发？'},
+      trend:{cd:'A股跌停板会把你锁在仓位里无法出场。分{N}批左侧建仓而趋势仍向下，意味着你的{STOP}可能在下一个跌停前无法执行，{PORT_LOSS}变成无上限。',cu:'A股右侧金字塔需要确认趋势有政策面支持。没有宏观顺风，A股突破往往是主力出货的工具。用量能和公告逐一确认每批{N}次。',qd:'跌停时你能执行止损吗？',qu:'每批加仓时机构资金还在净流入吗？'}
+    }},
+    {n:'通义',i:'☁️',t:'风控',schools:{
+      value:{cd:'{N}批摊平后若触发止损，组合亏损{PORT_LOSS}易超预期。必须预留{TOTAL}的20%%作风险缓冲，避免弹尽粮绝。',cu:'追涨后{AVG}上移，若{STOP}未同步调整，实际亏损空间被压缩。每批建仓后必须重算止损线，严守{TOTAL}风险上限。',qd:'摊平{N}批后还留多少风险储备？',qu:'建仓后是否重设了止损线？'},
+      growth:{cd:'价值派下行金字塔必须在每批加仓前做增速核查。在追加{N}批之前，确认关键增速指标没有恶化。恶化则放弃剩余批次，即便{PORT_LOSS}还未触及计划上限。',cu:'成长股右侧金字塔要求增速和价格双重确认。每批推高{AVG}后，都要重新评估增速是否继续支撑论点。每批后设置季报复查条件，否则停止追加。',qd:'在追加下一批之前，做过正式的增速核查了吗？',qu:'增速和价格指标都在支持每一批的追加吗？'},
+      trend:{cd:'下行金字塔从来都不是趋势操作——也不应被当作趋势操作对待。如果趋势向下，唯一正确的动作是不加仓、并在止损触发时出场。{PORT_LOSS}只是止损设置正确时的下限。',cu:'趋势上行金字塔要求每批后重新校准止损。随着{AVG}向当前价靠拢，风险回报率在压缩。{N}批加仓后，追踪止损是保护{PORT_LOSS}的唯一手段。',qd:'趋势真的反转了，还是这只是价格行为的一厢情愿解读？',qu:'追踪止损是在随{AVG}等比例上移吗？'}
+    }},
+    {n:'豆包',i:'🫧',t:'行为心理',schools:{
+      value:{cd:'逢跌分批买入看似摊低了{AVG}持仓成本，实则是沉没成本谬误，{N}批次越跌越买本质是不肯认错，{PORT_LOSS}就是固执的代价。',cu:'突破追涨模式下FOMO情绪主导决策，{N}批次越涨越加仓，高位冲动入场后，不甘心止损的心态极易破坏{STOP}纪律。',qd:'你越跌越买是理性还是不肯认错？',qu:'追涨被套你能严守止损纪律吗？'},
+      growth:{cd:'确认偏误让每一批下行追加都"感觉更便宜更安全"。你选择性记得摊低成功的案例，忘掉随后进一步崩溃的案例。追加第{N}批之前，问问是否有新证据支撑论点——还是只是更低的{AVG}让你感觉更踏实。',cu:'过度自信在成长故事里驱动右侧追涨超过理性仓位。{N}批加仓，持仓感觉像是一把稳牌——恰恰是纪律最关键的时候。{PORT_LOSS}在{STOP}处是预定纪律；不管故事感觉多强，执行它。',qd:'每批追加是有新证据，还是只是更低的价格让你感觉更便宜？',qu:'金字塔高位时你能严守止损，哪怕那时是你最笃定的时刻？'},
+      trend:{cd:'损失厌恶叠加沉没成本，把下行金字塔变成灾难。每批代表已经投入的资金，让下一批感觉像是"完成计划"而非加码犯错。随着每批追加，{PORT_LOSS}在增长而情感承诺在加深。',cu:'行情顶部对应着最后一批追涨。当上行金字塔感觉最自然最明显——{N}批全建，{AVG}上升，处处印证趋势——恰恰是反转风险最高的时刻。偏偏那时候执行{STOP}最考验意志。',qd:'你追加是因为论点改善了，还是因为情感上已经投入太深无法退出？',qu:'在上行金字塔的顶端，你能在最强确信度时反向执行{STOP}吗？'}
+    }},
+  ];
+  document.getElementById('ai-grid').innerHTML=ais.map(a=>{
+    const sd=a.schools[school]||a.schools.value;
+    const rawC=isLeft?sd.cd:sd.cu;
+    const rawQ=isLeft?sd.qd:sd.qu;
+    const c=interpolate(rawC,vars);
+    const q=interpolate(rawQ,vars);
+    const id=N2ID[a.n]||a.n.toLowerCase();
+    return `<div class="ai-c"><button class="ai-star${selAIs.has(id)?' starred':''}" data-id="${id}" onclick="toggleAI('${id}')" title="标记为我的AI">★</button><div class="ai-head"><div class="ai-n">${a.i} ${a.n}</div><div class="ai-t">${a.t}</div></div><div style="flex:1;min-width:0"><div class="ai-txt">${c}</div><div class="ai-q">❓ ${q}</div></div></div>`;
+  }).join('');
+}
+
+const selAIs=new Set(['claude','chatgpt']);
+const N2ID={Claude:'claude',ChatGPT:'chatgpt',Gemini:'gemini',Grok:'grok',DeepSeek:'deepseek',Kimi:'kimi',Tongyi:'tongyi',Doubao:'doubao','通义':'tongyi','豆包':'doubao'};
+function toggleAI(id){
+  selAIs.has(id)?selAIs.delete(id):selAIs.add(id);
+  document.querySelectorAll('.ai-star').forEach(b=>b.classList.toggle('starred',selAIs.has(b.dataset.id)));
+  document.querySelectorAll('.ai-lnk').forEach(b=>b.classList.toggle('active',selAIs.has(b.dataset.id)));
+}
+function copyPrompt(){
+  navigator.clipboard.writeText(document.getElementById('prompt-txt').textContent).then(()=>{
+    const b=document.querySelector('.cp-btn');b.textContent='✓ 已复制';b.classList.add('ok');
+    setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},2000);
+  });
+}
+</script>
+</body>
+</html>
