@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-DBR2PMLR61");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>3-Question IQ Challenge</title>
+<style>
+  :root{
+    --bg-1:#1b2430; --bg-2:#2c3e44;
+    --device:#0d1216; --bezel:#05080a;
+    --screen:#FBF7F2; --ink:#1f2933; --muted:#717c87;
+    --line:#e7ded3;
+    --accent:#FF6B5B; --accent-ink:#fff;
+    --teal:#1f8a82; --teal-soft:#e3f2f0;
+    --good:#1f8a82; --bad:#d8654f;
+    --tile:#fff; --tile-line:#ece2d6;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:var(--sans); color:var(--ink);
+    background:radial-gradient(120% 120% at 50% 0%,var(--bg-2),var(--bg-1));
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+
+  /* device */
+  .phone{
+    width:370px; max-width:100%; height:760px; max-height:94vh;
+    background:linear-gradient(160deg,#14191d,var(--device));
+    border-radius:46px; padding:13px;
+    box-shadow:0 2px 0 #2a3137 inset,0 40px 80px -30px #000,0 0 0 2px var(--bezel);
+    position:relative;
+  }
+  .notch{position:absolute; top:13px; left:50%; transform:translateX(-50%);
+    width:138px; height:26px; background:var(--bezel); border-radius:0 0 18px 18px; z-index:5}
+  .screen{position:relative; height:100%; background:var(--screen);
+    border-radius:34px; overflow:hidden; display:flex; flex-direction:column}
+
+  /* status bar */
+  .statusbar{flex:0 0 auto; padding:14px 22px 8px; display:flex; align-items:center; justify-content:space-between}
+  .brand{font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:700}
+  .counter{font-family:var(--mono); font-size:14px; font-weight:600; color:var(--teal);
+    background:var(--teal-soft); padding:5px 11px; border-radius:999px; transition:opacity .3s}
+  .counter.idle{opacity:0}
+
+  /* content + transitions */
+  .content{flex:1 1 auto; padding:8px 24px 26px; overflow-y:auto; display:flex; flex-direction:column;
+    transition:opacity .26s ease, transform .26s ease}
+  .content.leaving{opacity:0; transform:translateY(8px)}
+  .content.blank{opacity:0}
+
+  .step{font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:800; margin:6px 0 18px}
+  h1{font-size:30px; line-height:1.15; margin:0 0 12px; font-weight:800; letter-spacing:-.02em}
+  h2{font-size:23px; line-height:1.28; margin:0 0 8px; font-weight:800; letter-spacing:-.01em}
+  p.lead{font-size:16px; line-height:1.5; color:var(--muted); margin:0 0 22px}
+  .spacer{flex:1 1 auto}
+
+  .btn{appearance:none; border:none; cursor:pointer; width:100%; font-family:var(--sans);
+    font-size:17px; font-weight:700; padding:16px; border-radius:16px;
+    background:var(--accent); color:var(--accent-ink); transition:transform .08s ease, filter .15s ease}
+  .btn:active{transform:scale(.98)} .btn:hover{filter:brightness(1.04)}
+  .btn.ghost{background:transparent; color:var(--muted); font-weight:600; font-size:14px; padding:12px}
+  .btn:focus-visible,.choice:focus-visible,.share:focus-visible{outline:3px solid var(--teal); outline-offset:2px}
+
+  .choices{display:flex; flex-direction:column; gap:11px; margin-top:4px}
+  .choice{appearance:none; cursor:pointer; font-family:var(--sans); text-align:left;
+    background:var(--tile); border:1.5px solid var(--tile-line); color:var(--ink);
+    font-size:17px; font-weight:700; padding:17px 18px; border-radius:15px;
+    transition:transform .08s ease, border-color .15s ease}
+  .choice:hover{border-color:var(--accent)} .choice:active{transform:scale(.985)}
+
+  /* results */
+  .score-ring{display:flex; align-items:baseline; gap:8px; margin:2px 0 6px}
+  .score-ring .num{font-family:var(--mono); font-size:60px; font-weight:700; line-height:1; color:var(--accent)}
+  .score-ring .den{font-size:22px; font-weight:700; color:var(--muted)}
+  .tier{font-size:17px; font-weight:800; line-height:1.4; margin:0 0 4px}
+  .note{font-size:13px; color:var(--muted); line-height:1.5; margin:0 0 18px}
+
+  .card{border:1.5px solid var(--line); border-radius:16px; padding:15px 16px; margin:0 0 12px; background:#fff}
+  .card .ctag{font-size:11px; letter-spacing:.12em; text-transform:uppercase; font-weight:800; color:var(--accent); margin:0 0 8px; display:flex; gap:8px; align-items:center}
+  .card .verdict{font-family:var(--mono); font-size:11px; font-weight:700; padding:2px 7px; border-radius:6px}
+  .verdict.ok{color:#fff; background:var(--good)} .verdict.miss{color:#fff; background:var(--bad)}
+  .card .qt{font-size:15px; font-weight:700; line-height:1.4; margin:0 0 10px}
+  .card .ans{font-size:14px; line-height:1.5; margin:0 0 4px}
+  .card .ans .k{color:var(--muted)}
+  .card .ans .ok{color:var(--good); font-weight:700} .card .ans .miss{color:var(--bad); font-weight:700}
+  .card .why{font-size:14px; line-height:1.55; color:var(--ink); margin:10px 0 0; padding-top:10px; border-top:1px solid var(--line)}
+
+  .sharehead{font-size:14px; font-weight:800; margin:20px 0 10px; text-align:center}
+  .sharegrid{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:8px}
+  .share{appearance:none; border:none; cursor:pointer; color:#fff; font-family:var(--sans);
+    font-size:14px; font-weight:700; padding:13px; border-radius:13px;
+    display:flex; align-items:center; justify-content:center; gap:8px; transition:transform .08s ease, filter .15s}
+  .share:active{transform:scale(.97)} .share:hover{filter:brightness(1.07)}
+  .s-x{background:#000} .s-fb{background:#1877F2} .s-wa{background:#25D366}
+  .s-rd{background:#FF4500} .s-tg{background:#229ED9} .s-cp{background:#3a4750}
+
+  .toast{position:absolute; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:#fff; font-size:14px; font-weight:600; padding:11px 18px; border-radius:999px;
+    opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; z-index:20}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+
+  @media (prefers-reduced-motion: reduce){.content,.btn,.choice,.share{transition:none}}
+</style>
+<meta name="description" content="Three questions that sound simple but trip up most people. The answers feel obvious — and they're usually wrong. Test your logical thinking in under 2 minutes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/example-iq-challenge.html">
+<meta property="og:title" content="3-Question IQ Challenge — Can You Get All 3 Right?">
+<meta property="og:description" content="Three questions that sound simple but trip up most people. The answers feel obvious — and they're usually wrong. Test your logical thinking in under 2 minutes.">
+<meta property="og:site_name" content="Ordinary Man Trying">
+<meta property="og:locale" content="en_US">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="statusbar">
+        <span class="brand">IQ Challenge</span>
+        <span class="counter idle" id="counter">1 / 3</span>
+      </div>
+      <div class="content" id="content"></div>
+      <div class="toast" id="toast"></div>
+    </div>
+  </div>
+
+<script>
+/* ===================== CONFIG ===================== */
+/* Once you host this file at a public URL, paste it here so social shares
+   carry a real link. Leave blank to share text only. */
+const SHARE_URL = "";
+
+const QUESTIONS = [
+  {
+    tag:'Logic',
+    q:"You're in a race. You overtake the runner in 2nd place. What position are you in now?",
+    options:["1st place","2nd place","3rd place"],
+    answer:"2nd place",
+    why:"When you overtake the person in 2nd, you take their spot — so you're now in 2nd, not 1st. To be 1st you'd have to pass the leader. Most people blurt out \u201c1st\u201d because overtaking feels like winning."
+  },
+  {
+    tag:'Trap',
+    q:"You're in a swimming race. You overtake the swimmer in last place. What position are you in now?",
+    options:["Last place","Second to last","It can't be done — the question doesn't work"],
+    answer:"It can't be done — the question doesn't work",
+    why:"You can't overtake the person in last place. If you were behind them to pass, then they weren't last — you were. The scenario contradicts itself, so there's no valid answer. The trick is that it copies the shape of question 1 to lull you into answering on autopilot."
+  },
+  {
+    tag:'Lateral',
+    q:"A mute man buys a pen by miming writing. Now a blind man wants to buy sunglasses. How does he ask for them?",
+    options:["Mime putting on sunglasses","Just speak and ask out loud","Write it down on a note"],
+    answer:"Just speak and ask out loud",
+    why:"He's blind, not mute — he can simply talk. The riddle primes you with the miming story so you go hunting for a clever gesture, when the obvious move is to use his voice. (Writing a note wouldn't help a blind man either.)"
+  }
+];
+
+/* ===================== STATE ===================== */
+const C = document.getElementById('content');
+const COUNTER = document.getElementById('counter');
+const TOAST = document.getElementById('toast');
+let responses = [];
+let score = 0;
+
+/* ===================== HELPERS ===================== */
+const shuffle = a => a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstElementChild; }
+function setCounter(n){ if(n){ COUNTER.classList.remove('idle'); COUNTER.textContent=n+' / 3'; } else { COUNTER.classList.add('idle'); } }
+
+let toastTimer=null;
+function toast(msg){
+  TOAST.textContent=msg; TOAST.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>TOAST.classList.remove('show'),1800);
+}
+
+/* clear screen, then render next */
+function go(renderFn){
+  C.classList.add('leaving');
+  setTimeout(()=>{
+    C.innerHTML=''; C.classList.remove('leaving'); C.classList.add('blank');
+    setTimeout(()=>{ renderFn(); C.scrollTop=0; C.classList.remove('blank'); }, 180);
+  }, 220);
+}
+
+/* ===================== SCREENS ===================== */
+function intro(){
+  setCounter(null);
+  const v = el(`<div>
+    <div class="step">3 questions</div>
+    <h1>Think you can't be tricked? Three questions say otherwise.</h1>
+    <p class="lead">Three short brain-teasers, each built to catch a fast, gut answer. Read carefully — the obvious choice is usually the trap. You'll get your score and the reasoning at the end.</p>
+    <div class="spacer"></div>
+    <button class="btn" id="start">Start the challenge</button>
+    <p class="note" style="text-align:center">A bit of fun — not a real IQ test.</p>
+  </div>`);
+  C.innerHTML=''; C.appendChild(v);
+  v.querySelector('#start').onclick=()=>{ responses=[]; score=0; go(()=>question(0)); };
+}
+
+function question(i){
+  setCounter(i+1);
+  const Q = QUESTIONS[i];
+  const opts = shuffle([...Q.options]);
+  const v = el(`<div>
+    <div class="step">Question ${i+1} · ${Q.tag}</div>
+    <h2>${Q.q}</h2>
+    <div class="choices" id="opts"></div>
+    <div class="spacer"></div>
+  </div>`);
+  C.innerHTML=''; C.appendChild(v);
+  const box=v.querySelector('#opts');
+  opts.forEach(o=>{
+    const b=el(`<button class="choice">${o}</button>`);
+    b.onclick=()=>{
+      responses[i]=o;
+      if(i<QUESTIONS.length-1) go(()=>question(i+1)); else { computeScore(); go(results); }
+    };
+    box.appendChild(b);
+  });
+}
+
+function computeScore(){
+  score = QUESTIONS.reduce((acc,Q,i)=> acc + (responses[i]===Q.answer?1:0), 0);
+}
+
+function tierText(s){
+  return [
+    "All three got you. Don't feel bad — that's exactly what they're engineered to do. Now you know the trick.",
+    "Caught out twice. These riddles are built to hijack a quick answer — you're in good company.",
+    "Quick wit. Just one slipped past you.",
+    "Sharp thinker. You didn't fall for a single trap."
+  ][s];
+}
+
+function results(){
+  setCounter(null);
+  const cards = QUESTIONS.map((Q,i)=>{
+    const yours=responses[i], ok=yours===Q.answer;
+    return `<div class="card">
+      <div class="ctag">Question ${i+1} · ${Q.tag}
+        <span class="verdict ${ok?'ok':'miss'}">${ok?'CORRECT':'MISSED'}</span></div>
+      <div class="qt">${Q.q}</div>
+      <div class="ans"><span class="k">You said:</span> <span class="${ok?'ok':'miss'}">${yours}</span></div>
+      ${ok?'':`<div class="ans"><span class="k">Answer:</span> <span class="ok">${Q.answer}</span></div>`}
+      <div class="why">${Q.why}</div>
+    </div>`;
+  }).join('');
+
+  const v = el(`<div>
+    <div class="step">Your result</div>
+    <div class="score-ring"><span class="num">${score}</span><span class="den">/ 3</span></div>
+    <div class="tier">${tierText(score)}</div>
+    <p class="note">These are classic lateral-thinking riddles, not a measure of intelligence — they reward slowing down, not speeding up.</p>
+
+    ${cards}
+
+    <div class="sharehead">Got friends who'd fall for these?</div>
+    <div class="sharegrid">
+      <button class="share s-x"  data-p="x">𝕏  Post</button>
+      <button class="share s-fb" data-p="facebook">Facebook</button>
+      <button class="share s-wa" data-p="whatsapp">WhatsApp</button>
+      <button class="share s-rd" data-p="reddit">Reddit</button>
+      <button class="share s-tg" data-p="telegram">Telegram</button>
+      <button class="share s-cp" data-p="copy">Copy link</button>
+    </div>
+
+    <button class="btn" id="again" style="margin-top:12px">Try again</button>
+    <button class="btn ghost" id="home">Back to start</button>
+  </div>`);
+  C.innerHTML=''; C.appendChild(v);
+
+  v.querySelectorAll('.share').forEach(b=> b.onclick=()=>share(b.dataset.p));
+  v.querySelector('#again').onclick=()=>{ responses=[]; score=0; go(()=>question(0)); };
+  v.querySelector('#home').onclick=()=>{ responses=[]; score=0; go(intro); };
+}
+
+/* ===================== SHARE ===================== */
+function share(platform){
+  const text = `I scored ${score}/3 on the 3-Question IQ Challenge \u{1F9E0} How many can you get?`;
+  const url = SHARE_URL.trim();
+  const t = encodeURIComponent(text), u = encodeURIComponent(url);
+
+  if(platform==='copy'){
+    const payload = text + (url?` ${url}`:'');
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(payload).then(()=>toast('Copied to clipboard'),()=>toast('Could not copy'));
+    } else { toast('Copy not supported here'); }
+    return;
+  }
+
+  let link='';
+  switch(platform){
+    case 'x':        link=`https://twitter.com/intent/tweet?text=${t}${url?'&url='+u:''}`; break;
+    case 'facebook':
+      if(!url){ toast('Set SHARE_URL to share on Facebook'); return; }
+      link=`https://www.facebook.com/sharer/sharer.php?u=${u}`; break;
+    case 'whatsapp': link=`https://wa.me/?text=${encodeURIComponent(text+(url?' '+url:''))}`; break;
+    case 'reddit':   link=`https://www.reddit.com/submit?title=${t}${url?'&url='+u:''}`; break;
+    case 'telegram': link=`https://t.me/share/url?url=${u||t}&text=${t}`; break;
+  }
+  window.open(link,'_blank','noopener');
+}
+
+/* ===================== BOOT ===================== */
+intro();
+</script>
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Recovery Planner — AI Invest OS Tools</title>
+<meta name="description" content="Hold, add more, or cut losses? This decision tool models 3 recovery paths, calculates the hidden opportunity cost of staying stuck, and gives you an AI action plan.">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/recovery-navigator.html">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09101F;--surf:#111827;--surf2:#1A2436;--surf3:#0d1526;--accent:#6366F1;--accent-l:#818CF8;--gold:#F59E0B;--green:#10B981;--red:#EF4444;--white:#F1F5F9;--muted:#64748B;--bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.12)}
+body{background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;line-height:1.7;font-size:17px;overflow-x:hidden}
+a{color:var(--accent-l);text-decoration:none}
+.nav{padding:13px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:.84em}.nav a{color:var(--muted)}.nav a:hover{color:var(--white)}.nav-cur{color:var(--white);font-weight:600}
+.hero{text-align:center;padding:46px 20px 26px;background:radial-gradient(ellipse at 50% 0%,rgba(239,68,68,.12) 0%,transparent 60%)}
+.badge{display:inline-block;font-size:.68em;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#f87171;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:30px;padding:4px 13px;margin-bottom:12px}
+.hero h1{font-size:clamp(1.8rem,5vw,2.9rem);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-bottom:10px}
+.hero h1 em{font-style:normal;color:#f87171}.hero p{font-size:.92em;color:var(--muted);max-width:480px;margin:0 auto}
+.wrap{max-width:740px;margin:0 auto;padding:26px 18px 60px}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:20px 18px;margin-bottom:12px}
+.sl{font-size:.62em;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-l);margin-bottom:13px}
+.school-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px}
+@media(min-width:500px){.school-row{grid-template-columns:repeat(4,1fr)}}
+.sb{background:var(--surf2);border:2px solid var(--bd);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:.2s;font-size:.79em;font-weight:700;color:var(--muted);line-height:1.3}
+.sb:hover{border-color:var(--bd2);color:var(--white)}.sb.on{border-color:var(--accent);background:rgba(99,102,241,.12);color:var(--white)}
+.sb i{font-style:normal;font-size:1.3em;display:block;margin-bottom:2px}
+.frow{display:grid;gap:11px;margin-bottom:14px}
+@media(min-width:480px){.frow{grid-template-columns:1fr 1fr}}
+@media(min-width:640px){.frow-4{grid-template-columns:1fr 1fr 1fr 1fr}}
+.fl label{display:block;font-size:.73em;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-bottom:4px}
+.fl input{width:100%;background:var(--surf2);border:1.5px solid var(--bd2);border-radius:9px;padding:9px 12px;color:var(--white);font-size:.94em;font-weight:600;outline:none;transition:.2s}
+.fl input:focus{border-color:var(--accent)}
+.btn-go{width:100%;padding:13px;background:linear-gradient(120deg,var(--accent),var(--accent-l));border:none;border-radius:12px;color:#fff;font-size:1em;font-weight:800;cursor:pointer;transition:.2s}
+.btn-go:hover{filter:brightness(1.12)}
+#results{display:none}
+/* loss header */
+.loss-header{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:16px;text-align:center;margin-bottom:14px}
+.loss-pct{font-size:2.2em;font-weight:900;color:#f87171;line-height:1}
+.loss-sub{font-size:.82em;color:var(--muted);margin-top:4px}
+/* sunk cost reset */
+.sunk-box{background:rgba(99,102,241,.07);border:1px solid rgba(129,140,248,.2);border-radius:10px;padding:13px;margin-bottom:14px}
+.sunk-q{font-size:.9em;font-weight:700;color:var(--white);margin-bottom:6px}
+.sunk-hint{font-size:.8em;color:var(--muted);line-height:1.6}
+/* 3 paths */
+.paths{display:grid;gap:10px;margin-bottom:14px}
+@media(min-width:560px){.paths{grid-template-columns:repeat(3,1fr)}}
+.path-card{background:var(--surf2);border:1px solid var(--bd);border-radius:12px;padding:14px}
+.path-icon{font-size:1.6em;margin-bottom:7px}
+.path-name{font-size:.88em;font-weight:800;color:var(--white);margin-bottom:4px}
+.path-school{font-size:.66em;color:var(--accent-l);margin-bottom:8px}
+.path-metric{margin-bottom:5px}
+.pm-lbl{font-size:.66em;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.pm-val{font-size:.92em;font-weight:700;color:var(--white)}
+.path-verdict{margin-top:9px;padding-top:9px;border-top:1px solid var(--bd);font-size:.76em;color:var(--muted);line-height:1.55}
+.path-card.winner{border-color:var(--green);background:rgba(16,185,129,.05)}
+.path-card.worst{border-color:rgba(239,68,68,.3)}
+/* opp cost */
+.opp-box{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:13px;margin-bottom:12px}
+.opp-l{font-size:.65em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fbbf24;margin-bottom:6px}
+.opp-t{font-size:.85em;color:#fde68a;line-height:1.6}
+/* school 5 */
+.school5{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+@media(min-width:500px){.school5{grid-template-columns:repeat(4,1fr)}}
+.s5c{background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:10px}
+.s5c.active{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.s5c-name{font-size:.72em;font-weight:800;color:var(--white);margin-bottom:4px}
+.s5c-txt{font-size:.73em;color:var(--muted);line-height:1.5}
+/* ai grid */
+.ai-grid{display:flex;flex-direction:column;gap:7px}
+.ai-c{display:flex;gap:14px;align-items:flex-start;background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:12px 15px;position:relative}
+.ai-head{min-width:108px;flex-shrink:0}
+.ai-n{font-size:.92em;font-weight:800;color:var(--white);margin-bottom:2px}
+.ai-t{font-size:.72em;color:var(--accent-l)}
+.ai-txt{font-size:.92em;color:var(--muted);line-height:1.55}
+.ai-q{font-size:.78em;color:#818CF8;border-top:1px solid var(--bd);margin-top:7px;padding-top:6px;font-style:italic;line-height:1.45}
+.ai-star{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:1.1em;opacity:.35;transition:.2s;padding:0;line-height:1}
+.ai-star.starred{opacity:1;filter:drop-shadow(0 0 4px gold)}
+.ai-links-row{display:flex;flex-wrap:wrap;gap:6px}
+.ai-links-label{font-size:.62em;color:var(--muted);margin-bottom:5px}
+.ai-hint{font-size:.67em;color:var(--muted);margin-bottom:8px;font-style:italic}
+.ai-lnk{display:inline-flex;align-items:center;gap:3px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:5px 10px;font-size:.74em;font-weight:600;color:var(--muted);text-decoration:none;transition:.2s;opacity:.55}
+.ai-lnk.active{background:rgba(99,102,241,.18);border-color:var(--accent);color:var(--accent-l);opacity:1;box-shadow:0 0 0 2px rgba(99,102,241,.2);font-weight:700}
+.ai-lnk:hover{color:var(--white);border-color:var(--accent);opacity:1}
+.bias{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:13px}
+.bias-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#f87171;margin-bottom:6px}
+.bias-t{font-size:.83em;color:#fca5a5;line-height:1.6}
+.next-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nt-btn{display:block;background:var(--surf2);border:1px solid var(--bd2);border-radius:10px;padding:11px 13px;text-decoration:none;transition:.2s}
+.nt-btn:hover{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.nt-lbl{font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+.nt-name{font-size:.84em;font-weight:700;color:var(--white)}
+.nt-desc{font-size:.72em;color:var(--muted)}
+.pb{background:var(--surf3);border:1px solid var(--bd2);border-radius:10px;padding:13px;position:relative}
+.pb-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.pb-txt{font-size:.79em;color:var(--muted);line-height:1.6;white-space:pre-wrap;word-break:break-word;padding-right:58px}
+.cp-btn{position:absolute;top:11px;right:11px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 10px;font-size:.7em;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
+.cp-btn:hover{color:var(--white);border-color:var(--accent)}.cp-btn.ok{color:var(--green);border-color:var(--green)}
+.footer{text-align:center;padding:20px;font-size:.8em;color:var(--muted);border-top:1px solid var(--bd)}
+.footer a{color:var(--accent-l);margin:0 7px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="ai-invest-os.html">← AI Invest OS</a>
+  <span style="color:var(--bd2)">›</span>
+  <span class="nav-cur">Recovery Planner</span>
+</nav>
+<div class="hero">
+  <div class="badge">Experiment Tool #2 — Decision Lab</div>
+  <h1><em>Recovery Planner</em></h1>
+  <p>Hold, add more, or cut your losses? This tool models 3 recovery paths side by side — including the hidden opportunity cost nobody talks about.</p>
+</div>
+<div class="wrap">
+  <div class="card">
+    <div class="sl">Step 1 — Your Investing School</div>
+    <div class="school-row">
+      <button class="sb" id="sb-index" onclick="setSchool('index',this)"><i>📊</i>Index</button>
+      <button class="sb" id="sb-value" onclick="setSchool('value',this)"><i>🦅</i>Value</button>
+      <button class="sb" id="sb-growth" onclick="setSchool('growth',this)"><i>🌱</i>Growth</button>
+      <button class="sb" id="sb-trend" onclick="setSchool('trend',this)"><i>📈</i>Trend</button>
+    </div>
+    <div class="sl">Step 2 — Your Position</div>
+    <div class="frow frow-4">
+      <div class="fl"><label>Purchase Price ($)</label><input type="number" id="cost" value="50" min="0.01" step="0.01"></div>
+      <div class="fl"><label>Current Price ($)</label><input type="number" id="price" value="32" min="0.01" step="0.01"></div>
+      <div class="fl"><label>Number of Shares</label><input type="number" id="shares" value="200" min="1"></div>
+      <div class="fl"><label>Extra Capital ($)</label><input type="number" id="extra" value="3000" min="0"></div>
+    </div>
+    <div style="font-size:.8em;color:var(--muted);margin-bottom:14px">Extra capital = cash available to add to this position. Set to 0 if you have nothing to add.</div>
+    <button class="btn-go" onclick="calculate()">Model My 3 Recovery Paths →</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="loss-header" id="loss-header"></div>
+      <div class="sunk-box">
+        <div class="sunk-q">🧠 The Sunk Cost Reset Question:</div>
+        <div class="sunk-hint">"Forget your purchase price. Imagine you have this same dollar amount in cash <em>today</em> — would you choose to buy this stock at its current price? If no, that's your answer."<br><br>This question — not the calculations below — is often the most honest signal.</div>
+      </div>
+      <div class="paths" id="paths"></div>
+      <div class="opp-box" id="opp-box"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">All 5 Schools — Their Recommended Path</div>
+      <div class="school5" id="school5-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">8 AI Committee — Hold or Fold?</div>
+      <div class="ai-hint">★ Star your best AI above — the links below only glow when you pick one</div>
+      <div class="ai-grid" id="ai-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">⚠️ The Bias Behind Your Loss</div>
+      <div class="bias" id="bias-box"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">Continue Your Analysis →</div>
+      <div class="next-tools" id="next-tools"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">Your Personalized AI Prompt</div>
+      <div style="font-size:.8em;color:var(--muted);margin-bottom:9px">Paste into any AI to get a school-specific recovery decision analysis.</div>
+      <div class="pb">
+        <div class="pb-l">Copy · then ask any AI directly below</div>
+        <div class="pb-txt" id="prompt-txt"></div>
+        <button class="cp-btn" onclick="copyPrompt()">Copy</button>
+        <div class="ai-links-label" style="margin-top:12px">★ Star an AI card above to highlight it here</div>
+        <div class="ai-links-row">
+          <a class="ai-lnk active" data-id="claude" href="https://claude.ai/new" target="_blank" rel="noopener">🔵 Claude</a>
+          <a class="ai-lnk active" data-id="chatgpt" href="https://chatgpt.com" target="_blank" rel="noopener">🟢 ChatGPT</a>
+          <a class="ai-lnk" data-id="gemini" href="https://gemini.google.com" target="_blank" rel="noopener">🔴 Gemini</a>
+          <a class="ai-lnk" data-id="grok" href="https://grok.com" target="_blank" rel="noopener">⚡ Grok</a>
+          <a class="ai-lnk" data-id="deepseek" href="https://chat.deepseek.com" target="_blank" rel="noopener">🌊 DeepSeek</a>
+          <a class="ai-lnk" data-id="kimi" href="https://kimi.moonshot.cn" target="_blank" rel="noopener">🌙 Kimi</a>
+          <a class="ai-lnk" data-id="tongyi" href="https://tongyi.aliyun.com" target="_blank" rel="noopener">☁️ Tongyi</a>
+          <a class="ai-lnk" data-id="doubao" href="https://www.doubao.com" target="_blank" rel="noopener">🫧 Doubao</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="ai-invest-os.html">← AI Invest OS</a>
+    <a href="dca-simulator.html">DCA Lab</a>
+    <a href="kelly-master.html">Kelly Lab</a>
+    <a href="dividend-engine.html">Dividend Engine</a>
+    <a href="pyramid-builder.html">Pyramid Builder</a>
+    <a href="portfolio-clarity.html">Portfolio Doctor</a>
+  </div>
+</div>
+
+<script>
+function gp(){try{return JSON.parse(sessionStorage.getItem('ios_profile')||'{}')}catch(e){return{}}}
+function sp(u){sessionStorage.setItem('ios_profile',JSON.stringify({...gp(),...u}))}
+function qp(k){return new URLSearchParams(location.search).get(k)}
+
+let school=qp('school')||gp().school||'index';
+const SCHOOLS={index:{icon:'📊',name:'Index'},value:{icon:'🦅',name:'Value'},growth:{icon:'🌱',name:'Growth'},trend:{icon:'📈',name:'Trend'}};
+
+function setSchool(s,el){school=s;document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');sp({school:s})}
+(function(){
+  const btn=document.getElementById('sb-'+school);if(btn)btn.classList.add('on');
+  const p=qp('price');const c=qp('cost');const ex=qp('capital');
+  if(p)document.getElementById('price').value=p;
+  if(c)document.getElementById('cost').value=c;
+  if(ex)document.getElementById('extra').value=ex;
+})();
+
+function fmt(n){if(Math.abs(n)>=1e6)return'$'+(n/1e6).toFixed(2)+'M';if(Math.abs(n)>=1e3)return'$'+(n/1e3).toFixed(1)+'K';return'$'+n.toFixed(0)}
+function fmtPct(n){return(n>=0?'+':'')+n.toFixed(1)+'%'}
+function yrs(pct,annual){if(annual<=0)return'Never';const n=Math.log(1+pct/100)/Math.log(1+annual/100);return n.toFixed(1)+' yrs';}
+
+function calculate(){
+  const cost=parseFloat(document.getElementById('cost').value)||50;
+  const price=parseFloat(document.getElementById('price').value)||32;
+  const shares=parseInt(document.getElementById('shares').value)||200;
+  const extra=parseFloat(document.getElementById('extra').value)||0;
+
+  const currentVal=price*shares;
+  const originalVal=cost*shares;
+  const lossDollar=currentVal-originalVal;
+  const lossPct=(price-cost)/cost*100;
+  const breakEvenPct=(cost-price)/price*100; // % rise needed from current price
+  const totalLoss=originalVal-currentVal;
+  sp({lossPrice:price,lossCost:cost,lossExtra:extra,school:school});
+
+  // Loss header
+  document.getElementById('loss-header').innerHTML=`
+    <div class="loss-pct">${lossPct.toFixed(1)}% Loss</div>
+    <div class="loss-sub">Current value: ${fmt(currentVal)} · Original: ${fmt(originalVal)} · Dollar loss: ${fmt(lossDollar)}</div>
+    <div style="font-size:.76em;color:var(--muted);margin-top:5px">To break even from here: <strong style="color:var(--white)">${breakEvenPct.toFixed(1)}% gain</strong> needed</div>`;
+
+  // Path A: Hold & wait
+  const holdYrs3=yrs(breakEvenPct,5),holdYrs10=yrs(breakEvenPct,10);
+  // Path B: Buy more (average down)
+  const newShares=extra>0?Math.floor(extra/price):0;
+  const totalShares=shares+newShares;
+  const totalCost=originalVal+extra;
+  const newAvg=totalCost/totalShares;
+  const newBreakEven=(newAvg-price)/price*100;
+  const buyMoreYrs=yrs(newBreakEven,10);
+  // Path C: Cut losses, move to index
+  const switchVal=currentVal;
+  const switchYrs3=yrs(breakEvenPct,7); // at 7% index return vs old stock at 5%
+  // Time to recover via index vs holding
+  // How long before index at 10%/yr overtakes holding at 5%/yr?
+  // index: switchVal*(1.10)^t vs holding: price*shares*(1.05)^t
+  // They're the same today. Index at 10% will outperform 5% immediately.
+
+  const paths=[
+    {
+      icon:'⏳',name:'Hold & Wait',school:'Index / Value',
+      metrics:[
+        {l:'Break-even gain needed',v:fmtPct(breakEvenPct)},
+        {l:'Years to break-even at 5%/yr',v:holdYrs3},
+        {l:'Years to break-even at 10%/yr',v:holdYrs10},
+      ],
+      verdict:`The bet: this stock recovers on its own. Requires ${fmtPct(breakEvenPct)} gain just to get back to zero. No new capital needed. Works best when fundamentals are intact and you're willing to wait ${holdYrs10}.`,
+      class: extra<500?'winner':''
+    },
+    {
+      icon:'📉',name:'Buy More (Average Down)',school:'Value School',
+      metrics:[
+        {l:'New average cost',v:extra>0?fmt(newAvg):'—'},
+        {l:'New break-even gain',v:extra>0?fmtPct(newBreakEven):'—'},
+        {l:'Years to break-even at 10%/yr',v:extra>0?buyMoreYrs:'No capital'},
+      ],
+      verdict:extra>0?`Adding ${fmt(extra)} lowers avg cost to ${fmt(newAvg)} — a ${fmtPct(newBreakEven)} break-even vs ${fmtPct(breakEvenPct)} now. Only rational if fundamentals are still strong and the drop is due to market fear, not business deterioration.`:'Set Extra Capital > 0 to model this path.',
+      class:extra>0&&newBreakEven<breakEvenPct*0.6?'winner':''
+    },
+    {
+      icon:'✂️',name:'Cut & Pivot',school:'Trend / Growth',
+      metrics:[
+        {l:'Amount freed up',v:fmt(currentVal)+(extra>0?' + '+fmt(extra):'')},
+        {l:'Pivot to index: return needed',v:fmtPct(Math.abs(lossPct/(1+lossPct/100)))},
+        {l:'Years to recover at 10% index',v:switchYrs3},
+      ],
+      verdict:`Accept the loss. Take ${fmt(currentVal)} (${extra>0?'+ '+fmt(extra)+' ':''}total: ${fmt(currentVal+extra)}) and pivot to an index ETF at ~10%/yr. You need ${switchYrs3} to fully recover — but the index compounds in your favor with less company-specific risk.`,
+      class: lossPct<-40?'winner':''
+    }
+  ];
+
+  let pHtml='';
+  paths.forEach(p=>{
+    pHtml+=`<div class="path-card ${p.class}">
+      <div class="path-icon">${p.icon}</div>
+      <div class="path-name">${p.name}</div>
+      <div class="path-school">${p.school} approach</div>
+      ${p.metrics.map(m=>`<div class="path-metric"><div class="pm-lbl">${m.l}</div><div class="pm-val">${m.v}</div></div>`).join('')}
+      <div class="path-verdict">${p.verdict}</div>
+    </div>`;
+  });
+  document.getElementById('paths').innerHTML=pHtml;
+
+  // Opportunity cost
+  const oppCost5yr=currentVal*Math.pow(1.10,5)-currentVal;
+  const oppCost10yr=currentVal*Math.pow(1.10,10)-currentVal;
+  document.getElementById('opp-box').innerHTML=`
+    <div class="opp-l">💸 Hidden Opportunity Cost</div>
+    <div class="opp-t">Your ${fmt(currentVal)} locked in this position could instead compound at ~10%/yr in an index ETF:
+      <br>• In 5 years: +${fmt(oppCost5yr)} gain = ${fmt(currentVal+oppCost5yr)} total
+      <br>• In 10 years: +${fmt(oppCost10yr)} gain = ${fmt(currentVal+oppCost10yr)} total
+      <br><br>Every year you wait for this stock to recover, you forfeit this compounding. The question isn't just "will it recover" — it's "will it recover <em>faster</em> than an index ETF?"</div>`;
+
+  buildSchool5(lossPct,breakEvenPct,extra,newBreakEven);
+  buildAiGrid(lossPct,breakEvenPct,cost,price,extra,currentVal);
+  buildBias(lossPct,extra);
+  buildNextTools(price,cost,extra);
+  buildPrompt(cost,price,shares,extra,lossPct,breakEvenPct,currentVal);
+  document.getElementById('results').style.display='block';
+  setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function buildSchool5(lossPct,beq,extra,newBe){
+  const views={
+    index:{verdict:'✂️ Cut & Pivot',txt:`Index school has no attachment to individual names. Losses above 20% → acknowledge, cut, pivot to index. Sunk cost is irrelevant to future returns.`},
+    value:{verdict:'📉 Buy More (if fundamentals intact)',txt:`Value school: is the business worse? If no — the cheaper price is a gift. Double down with ${extra>0?'your extra capital':'available cash'}. If fundamentals deteriorated — this is a value trap.`},
+    growth:{verdict:'✂️ Cut if thesis is broken',txt:`Growth school: the thesis was specific. If the growth story is still intact, hold. If revenue growth decelerated or moat weakened — the thesis is broken. Cut.`},
+    trend:{verdict:'✂️ Cut — trend is down',txt:`Trend school follows price, not stories. A ${Math.abs(lossPct).toFixed(0)}% drop with no recovery signal = confirmed downtrend. Cut losses fast and reallocate to uptrends. Holding falling positions is anti-trend.`}
+  };
+  let h='';
+  Object.entries(views).forEach(([k,v])=>{
+    const s=SCHOOLS[k];const isActive=k===school;
+    const col=v.verdict.startsWith('✂️')?'#f87171':v.verdict.startsWith('📉')?'var(--green)':'#fbbf24';
+    h+=`<div class="s5c${isActive?' active':''}">
+      <div class="s5c-name">${s.icon} ${s.name}</div>
+      <div style="font-size:.66em;font-weight:700;margin-bottom:4px;color:${col}">${v.verdict}</div>
+      <div class="s5c-txt">${v.txt}</div>
+    </div>`;
+  });
+  document.getElementById('school5-grid').innerHTML=h;
+}
+
+function interpolate(tpl,vars){
+  let s=String(tpl).replace(/\{([^}]+)\}/g,(m,k)=>k in vars?vars[k]:m);
+  return s.replace(/%%/g,'%');
+}
+
+function buildAiGrid(lossPct,beq,cost,price,extra,currentVal){
+  const vars={
+    COST:fmt(cost),
+    PRICE:fmt(price),
+    LOSS_PCT:Math.abs(lossPct).toFixed(1)+'%',
+    CAPITAL:fmt(currentVal||0),
+    MONTHLY:extra>0?fmt(extra):'$0'
+  };
+  // Real responses collected from each AI
+  const ais=[
+    {n:'Claude',i:'🔵',role:'Value School',schools:{
+      value:{comment:'A {LOSS_PCT} loss doesn\'t tell you what to do — only business quality does. Cut if the thesis is broken. Hold if fundamentals are intact and the company is worth more than {PRICE}. Add only if you\'d deploy {MONTHLY} today as fresh capital with zero knowledge of your original {COST}. The cost basis is irrelevant to your next decision.',q:'Would you buy this stock at {PRICE} today if you owned zero shares?'},
+      growth:{comment:'A loss of {LOSS_PCT} demands one question: is growth still accelerating? If not, redeploy {CAPITAL} instead of defending the original decision. Average down with {MONTHLY} only when future earnings power clearly strengthens — not when price merely drops.',q:'Would you buy again if growth slowed next quarter?'},
+      trend:{comment:'The drop from {COST} to {PRICE} is the market\'s verdict, not noise. A losing position is evidence against your thesis until proven otherwise. Preserve {CAPITAL} by respecting exits. Never average down with {MONTHLY} against a falling trend regardless of conviction.',q:'Why fight the trend instead of following it?'}
+    }},
+    {n:'ChatGPT',i:'🟢',role:'Loss Arbiter',schools:{
+      value:{comment:'Your {LOSS_PCT} loss from {COST} to {PRICE} is irrelevant — markets never reimburse stubbornness. Add only because future returns justify more capital, not because you want a lower average. Hold only if the original thesis strengthened. Cut when better opportunities deserve your {CAPITAL} and {MONTHLY} more.',q:'Would you buy this stock today if you owned none?'},
+      growth:{comment:'A {LOSS_PCT} loss demands a growth audit before any action. If revenue and earnings growth remain intact at {PRICE} vs {COST}, the thesis survives. If growth has cracked, cut immediately — adding {MONTHLY} to a broken growth stock is compounding the error.',q:'Has growth improved since you first bought at {COST}?'},
+      trend:{comment:'Price is the only honest signal. {PRICE} below {COST} with a {LOSS_PCT} loss means the trend is against you. Adding {MONTHLY} to a losing trend position is not discipline — it\'s ego refusing to accept the market\'s verdict. Cut first, re-evaluate later.',q:'Would you initiate a new position at {PRICE} with no prior loss to anchor your thinking?'}
+    }},
+    {n:'Gemini',i:'🔴',role:'Quantitative Risk Analyst',schools:{
+      value:{comment:'Averaging down from {COST} to {PRICE} statistically accelerates wealth destruction in individual equities. Over 40%% of stocks suffer catastrophic loss and never recover. Deploying {MONTHLY} into a {LOSS_PCT} deficit only works if the core business fundamentally compounds. Otherwise you are amplifying permanent destruction of {CAPITAL}.',q:'Would you invest {CAPITAL} into this stock at {PRICE} today if you held zero shares?'},
+      growth:{comment:'A {LOSS_PCT} collapse from {COST} to {PRICE} often precedes permanent multiple contraction, a classic fat-tail base-rate failure for growth. Pumping {MONTHLY} into a shrinking {CAPITAL} base is suicidal if revenue growth has definitively decelerated. Growth stocks rarely recover when the underlying adoption thesis breaks completely.',q:'Has the original hyper-growth thesis been permanently invalidated?'},
+      trend:{comment:'Throwing {MONTHLY} at an asset bleeding from {COST} to {PRICE} is statistical suicide. A {LOSS_PCT} drop on {CAPITAL} explicitly triggers a trend-following stop-loss, yet you contemplate averaging down. Feeding losers accelerates account ruin. Cut the position and respect the market\'s ruling.',q:'Why allocate fresh capital to an asset demonstrating definitive negative momentum?'}
+    }},
+    {n:'Grok',i:'⚡',role:'Unfiltered Truth',schools:{
+      value:{comment:'Averaging down with {MONTHLY} into a position already down {LOSS_PCT} from {COST} to {PRICE} is not discipline — it is ego refusing to admit error. You think you\'re lowering your average cost. You\'re throwing fresh capital after a proven loser. Livermore learned the hard way: never average a losing trade. Your {CAPITAL} is already voting against you.',q:'Would you buy this stock at {PRICE} today with zero emotional baggage?'},
+      growth:{comment:'Down {LOSS_PCT} from {COST} to {PRICE} means nothing by itself. Check whether growth is intact. If revenue, margins, or unit economics are still accelerating, the drop is noise and holding or adding with {MONTHLY} is correct. If growth has cracked, exit immediately — price is merely confirming the damage.',q:'Is the growth rate still rising, or has it already rolled over?'},
+      trend:{comment:'You are down {LOSS_PCT} from {COST} to {PRICE} and still talking about adding {MONTHLY}. That is not recovery — it is averaging into a loser. Price has already voted. Calling it conviction while the trend is against you is ego. Trend rule is simple: stop first, questions later.',q:'Would you initiate this position today at {PRICE} with no prior loss?'}
+    }},
+    {n:'DeepSeek',i:'🌊',role:'Sunk Cost Quant',schools:{
+      value:{comment:'Your {LOSS_PCT} loss on {CAPITAL} at {PRICE} vs {COST} may signal undervaluation if fundamentals hold. Sunk cost is irrelevant; deploying {MONTHLY} is +EV only if intrinsic value exceeds price. Averaging down on value stocks with high recovery base rates can work.',q:'What\'s the historical base rate of recovery for a stock down {LOSS_PCT} with this book value?'},
+      growth:{comment:'A {LOSS_PCT} loss in a growth stock often reflects a broken thesis. Adding {MONTHLY} at {PRICE} amplifies exposure to negative skew. Expected value is likely negative if the original growth trajectory failed. Cut the loser and reallocate.',q:'What\'s the probability this growth stock loses another 50%% from {PRICE}?'},
+      trend:{comment:'Trend systems never average down. A {LOSS_PCT} loss on {CAPITAL} bought at {COST} is an exit signal. Adding {MONTHLY} violates the core rule: cut losers short. Expected value is maximized by redeploying to assets with positive momentum, not catching knives.',q:'Why is a -{LOSS_PCT} loser still open when trend rules demand early exits?'}
+    }},
+    {n:'Kimi',i:'🌙',role:'A-Share Reality',schools:{
+      value:{comment:'A-share delisting is now routine. A {LOSS_PCT} loss may just be the beginning — deploying {MONTHLY} risks compounding into zero. From {COST} to {PRICE} with no visible floor: averaging down on a delisting candidate burns your {CAPITAL} in the IPO graveyard. Check the fundamentals before the regulator does it for you.',q:'Are you averaging down into a future delisting?'},
+      growth:{comment:'A-share growth breakdown is permanent faster than in other markets. A {LOSS_PCT} drop from {COST} to {PRICE} in an A-share growth stock demands immediate thesis verification. If growth logic is broken, {MONTHLY} additions go straight into a black hole.',q:'Has the growth logic behind your A-share position been formally verified since the drop?'},
+      trend:{comment:'A-share limit-downs can lock you in before you can exit. Down {LOSS_PCT} from {COST} to {PRICE} means the trend is already broken. Never add {MONTHLY} to a falling A-share position — the next trading halt could make exit impossible.',q:'Can you realistically exit this A-share position before another limit-down?'}
+    }},
+    {n:'Tongyi',i:'☁️',role:'Risk Control',schools:{
+      value:{comment:'When fundamentals deteriorate or the trend reverses from a peak, cutting is the optimal solution. Adding requires strict pyramiding discipline — never averaging without a plan. The two most costly mistakes: holding a broken stock out of stubbornness, and adding without position limits. {LOSS_PCT} losses don\'t recover on hope alone.',q:'Is this {LOSS_PCT} loss due to fundamental deterioration, or market noise?'},
+      growth:{comment:'A {LOSS_PCT} decline from {COST} to {PRICE} demands a structured growth review before touching {MONTHLY}. If quarterly revenue growth is still accelerating, consider adding with a strict plan. If growth has stalled, treat it as capital reallocation, not thesis defense.',q:'Has a structured growth review been completed since the {LOSS_PCT} decline?'},
+      trend:{comment:'Trend confirmation is prerequisite before any averaging decision. {PRICE} below {COST} with a {LOSS_PCT} loss means position risk has already increased. Without a clear trend reversal signal, {MONTHLY} additions only deepen exposure. Set a price trigger for averaging, not an emotional one.',q:'What specific price action would confirm the trend has reversed before you add?'}
+    }},
+    {n:'Doubao',i:'🫧',role:'Behavioral Psychologist',schools:{
+      value:{comment:'Sunk cost fallacy combined with loss aversion locks you onto {COST} as an anchor you refuse to release. Even as {PRICE} weakens and {LOSS_PCT} expands, you average down on hope — letting {CAPITAL} keep shrinking. A small manageable loss becomes a deep trap. Acknowledging the error is the only rational first move.',q:'Can you admit the error and cut losses decisively?'},
+      growth:{comment:'Confirmation bias keeps you anchored to the original growth narrative long after the data has changed. You selectively seek news that justifies holding through the {LOSS_PCT} loss. The question is not whether recovery is possible — it is whether the original thesis still describes a real situation.',q:'Are you holding the original growth story or the current business reality?'},
+      trend:{comment:'Loss aversion plus anchoring creates a paralysis loop: you cannot accept selling at {PRICE} below your {COST} anchor, so you keep averaging down with {MONTHLY} while the trend continues against you. Pre-commit to a loss limit before you are in the position — not after the {LOSS_PCT} has already accumulated.',q:'Did you define a maximum loss limit before you bought at {COST}?'}
+    }},
+  ];
+  document.getElementById('ai-grid').innerHTML=ais.map(a=>{
+    const sd=a.schools[school]||a.schools.value;
+    const c=interpolate(sd.comment,vars);
+    const q=interpolate(sd.q,vars);
+    const id=N2ID[a.n]||a.n.toLowerCase();
+    return `<div class="ai-c"><button class="ai-star${selAIs.has(id)?' starred':''}" data-id="${id}" onclick="toggleAI('${id}')" title="Mark as my AI">★</button><div class="ai-head"><div class="ai-n">${a.i} ${a.n}</div><div class="ai-t">${a.role}</div></div><div style="flex:1;min-width:0"><div class="ai-txt">${c}</div><div class="ai-q">❓ ${q}</div></div></div>`;
+  }).join('');
+}
+
+function buildBias(lossPct,extra){
+  document.getElementById('bias-box').innerHTML=`
+    <div class="bias-l">🧠 Loss Aversion + Sunk Cost Fallacy</div>
+    <div class="bias-t">You're experiencing two cognitive biases simultaneously:
+      <br><br>1. <strong style="color:var(--white)">Loss Aversion:</strong> The pain of this ${Math.abs(lossPct).toFixed(0)}% loss feels about 2× more intense than a gain of the same size would feel. This asymmetry is hardwired — and it's pushing you toward "hold" even when "cut" might be optimal.
+      <br><br>2. <strong style="color:var(--white)">Sunk Cost Fallacy:</strong> The money you've already lost is gone regardless of what you do next. Your only decision is what to do with what remains. The purchase price is irrelevant to your future decision — but it feels relevant.
+      <br><br>Test: if someone handed you ${fmt(parseFloat(document.getElementById('price').value)*parseInt(document.getElementById('shares').value))} cash right now, would you buy this stock at today's price? If the answer is "no" or "I'm not sure" — you have your answer.</div>`;
+}
+
+function buildNextTools(price,cost,extra){
+  const s=school;
+  document.getElementById('next-tools').innerHTML=`
+    <a class="nt-btn" href="pyramid-builder.html?school=${s}&price=${price}&cost=${cost}&capital=${extra}">
+      <div class="nt-lbl">Choosing to add more?</div>
+      <div class="nt-name">Pyramid Builder</div>
+      <div class="nt-desc">Plan your buy-down tranches with avg cost calculator</div>
+    </a>
+    <a class="nt-btn" href="kelly-master.html?school=${s}&capital=${extra}">
+      <div class="nt-lbl">How much to risk?</div>
+      <div class="nt-name">Kelly Lab</div>
+      <div class="nt-desc">Calculate the optimal position size using Kelly Criterion</div>
+    </a>`;
+}
+
+function buildPrompt(cost,price,shares,extra,lossPct,beq,curVal){
+  const sn={index:'Index Investing (Bogle)',value:'Value Investing (Buffett)',growth:'Growth Investing (Fisher)',trend:'Trend Trading (Livermore)'};
+  const t=`I'm a ${sn[school]||'investor'} facing a position loss decision. My situation:
+• Purchase price: $${cost} | Current price: $${price}
+• Shares: ${shares} | Current value: ${fmt(curVal)}
+• Loss: ${lossPct.toFixed(1)}% | Break-even gain needed: ${beq.toFixed(1)}%
+• Extra capital available: ${fmt(extra)}
+
+Please analyze my 3 recovery options:
+Option A (Hold): Will it realistically recover? What fundamentals do I need to verify?
+Option B (Buy more): Does averaging down make sense here? What's the maximum I should add?
+Option C (Cut losses): If I pivot to an index ETF, what's the realistic recovery timeline?
+
+Also answer: What's the #1 bias likely distorting my thinking right now?
+Give me your recommendation for MY school (${sn[school]||'investing'}) specifically.`;
+  document.getElementById('prompt-txt').textContent=t;
+}
+
+const selAIs=new Set(['claude','chatgpt']);
+const N2ID={Claude:'claude',ChatGPT:'chatgpt',Gemini:'gemini',Grok:'grok',DeepSeek:'deepseek',Kimi:'kimi',Tongyi:'tongyi',Doubao:'doubao','通义':'tongyi','豆包':'doubao'};
+function toggleAI(id){
+  selAIs.has(id)?selAIs.delete(id):selAIs.add(id);
+  document.querySelectorAll('.ai-star').forEach(b=>b.classList.toggle('starred',selAIs.has(b.dataset.id)));
+  document.querySelectorAll('.ai-lnk').forEach(b=>b.classList.toggle('active',selAIs.has(b.dataset.id)));
+}
+function copyPrompt(){
+  navigator.clipboard.writeText(document.getElementById('prompt-txt').textContent).then(()=>{
+    const b=document.querySelector('.cp-btn');b.textContent='✓ Copied!';b.classList.add('ok');
+    setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},2000);
+  });
+}
+</script>
+</body>
+</html>
