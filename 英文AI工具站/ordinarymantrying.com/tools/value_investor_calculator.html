@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- Google tag (gtag.js) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-DBR2PMLR61");
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>价值投资计算器 - 巴菲特体系</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e2e8f0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+            background: linear-gradient(120deg, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 0.95em;
+        }
+
+        .form-wrapper {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #cbd5e1;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #60a5fa;
+            background: rgba(30, 41, 59, 0.9);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(148, 163, 184, 0.2);
+            margin: 40px 0;
+        }
+
+        .scoring-section h2 {
+            font-size: 1.3em;
+            margin-bottom: 25px;
+            color: #cbd5e1;
+        }
+
+        .score-item {
+            margin-bottom: 28px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .score-item label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .score-label-left {
+            font-size: 0.95em;
+        }
+
+        .score-label-right {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+
+        .score-description {
+            font-size: 0.85em;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(148, 163, 184, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+            margin-top: 8px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(96, 165, 250, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.6);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(96, 165, 250, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.6);
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: linear-gradient(to right, rgba(96, 165, 250, 0.3), rgba(52, 211, 153, 0.3));
+            height: 6px;
+            border-radius: 3px;
+        }
+
+        input[type="range"]::-moz-range-track {
+            background: transparent;
+            border: none;
+        }
+
+        .result-box {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .result-item {
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 0.85em;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .result-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 35px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-calculate {
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+            color: white;
+            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.3);
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(96, 165, 250, 0.4);
+        }
+
+        .btn-reset {
+            background: rgba(148, 163, 184, 0.2);
+            color: #cbd5e1;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .btn-reset:hover {
+            background: rgba(148, 163, 184, 0.3);
+            border-color: rgba(148, 163, 184, 0.5);
+        }
+
+        .recommendation {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .recommendation.strong-buy {
+            background: rgba(52, 211, 153, 0.15);
+            border: 2px solid rgba(52, 211, 153, 0.4);
+        }
+
+        .recommendation.buy {
+            background: rgba(96, 165, 250, 0.15);
+            border: 2px solid rgba(96, 165, 250, 0.4);
+        }
+
+        .recommendation.hold {
+            background: rgba(251, 146, 60, 0.15);
+            border: 2px solid rgba(251, 146, 60, 0.4);
+        }
+
+        .recommendation.sell {
+            background: rgba(239, 68, 68, 0.15);
+            border: 2px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .rec-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .rec-description {
+            font-size: 0.95em;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .form-wrapper {
+                padding: 25px;
+            }
+
+            .result-box {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💼 价值投资计算器</h1>
+            <p>基于巴菲特投资体系的股票价值评估工具</p>
+        </div>
+
+        <div class="form-wrapper">
+            <!-- 股票基本信息 -->
+            <div class="input-group">
+                <label for="stockName">股票名称</label>
+                <input type="text" id="stockName" placeholder="例如: 贵州茅台">
+            </div>
+
+            <div class="input-group">
+                <label for="stockCode">股票代码</label>
+                <input type="text" id="stockCode" placeholder="例如: 600519">
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- 评分区域 -->
+            <div class="scoring-section">
+                <h2>📊 价值评分 (1-10分)</h2>
+
+                <!-- 财务指标 -->
+                <div class="score-item">
+                    <label>
+                        <span class="score-label-left">财务指标 💰</span>
+                        <span class="score-label-right" id="scoreFinance">5</span>
+                    </label>
+                    <div class="score-description">ROE > 15%、负债率合理、现金流充足</div>
+                    <input type="range" id="rangeFinance" min="1" max="10" value="5">
+                </div>
+
+                <!-- 估值体系 -->
+                <div class="score-item">
+                    <label>
+                        <span class="score-label-left">估值体系 📈</span>
+                        <span class="score-label-right" id="scoreValuation">5</span>
+                    </label>
+                    <div class="score-description">PE相对历史低位、PB合理、有安全边际</div>
+                    <input type="range" id="rangeValuation" min="1" max="10" value="5">
+                </div>
+
+                <!-- 护城河 -->
+                <div class="score-item">
+                    <label>
+                        <span class="score-label-left">护城河 🏰</span>
+                        <span class="score-label-right" id="scoreMoat">5</span>
+                    </label>
+                    <div class="score-description">品牌力、市场地位、技术壁垒、成本优势</div>
+                    <input type="range" id="rangeMoat" min="1" max="10" value="5">
+                </div>
+
+                <!-- 管理层 -->
+                <div class="score-item">
+                    <label>
+                        <span class="score-label-left">管理层 👔</span>
+                        <span class="score-label-right" id="scoreManagement">5</span>
+                    </label>
+                    <div class="score-description">专业能力、诚信度、长期眼光、激励机制</div>
+                    <input type="range" id="rangeManagement" min="1" max="10" value="5">
+                </div>
+
+                <!-- 股息 -->
+                <div class="score-item">
+                    <label>
+                        <span class="score-label-left">股息 💵</span>
+                        <span class="score-label-right" id="scoreDividend">5</span>
+                    </label>
+                    <div class="score-description">分红率稳定、持续增长、高于银行利率</div>
+                    <input type="range" id="rangeDividend" min="1" max="10" value="5">
+                </div>
+
+                <!-- 行业景气度 -->
+                <div class="score-item">
+                    <label>
+                        <span class="score-label-left">行业景气度 🌟</span>
+                        <span class="score-label-right" id="scoreIndustry">5</span>
+                    </label>
+                    <div class="score-description">行业增长前景、竞争格局、政策支持</div>
+                    <input type="range" id="rangeIndustry" min="1" max="10" value="5">
+                </div>
+            </div>
+
+            <!-- 结果显示 -->
+            <div class="result-box">
+                <div class="result-item">
+                    <div class="result-label">总分</div>
+                    <div class="result-value" id="totalScore">30</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">平均分</div>
+                    <div class="result-value" id="avgScore">5.0</div>
+                </div>
+            </div>
+
+            <!-- 按钮 -->
+            <div class="button-group">
+                <button class="btn-calculate" onclick="calculateAndRecommend()">计算评分</button>
+                <button class="btn-reset" onclick="resetForm()">重置表单</button>
+            </div>
+
+            <!-- 投资建议 -->
+            <div id="recommendationBox"></div>
+        </div>
+    </div>
+
+    <script>
+        const scores = {
+            finance: 5,
+            valuation: 5,
+            moat: 5,
+            management: 5,
+            dividend: 5,
+            industry: 5
+        };
+
+        // 绑定滑块事件
+        document.getElementById('rangeFinance').addEventListener('input', (e) => {
+            scores.finance = parseInt(e.target.value);
+            document.getElementById('scoreFinance').textContent = e.target.value;
+            updateTotalScore();
+        });
+
+        document.getElementById('rangeValuation').addEventListener('input', (e) => {
+            scores.valuation = parseInt(e.target.value);
+            document.getElementById('scoreValuation').textContent = e.target.value;
+            updateTotalScore();
+        });
+
+        document.getElementById('rangeMoat').addEventListener('input', (e) => {
+            scores.moat = parseInt(e.target.value);
+            document.getElementById('scoreMoat').textContent = e.target.value;
+            updateTotalScore();
+        });
+
+        document.getElementById('rangeManagement').addEventListener('input', (e) => {
+            scores.management = parseInt(e.target.value);
+            document.getElementById('scoreManagement').textContent = e.target.value;
+            updateTotalScore();
+        });
+
+        document.getElementById('rangeDividend').addEventListener('input', (e) => {
+            scores.dividend = parseInt(e.target.value);
+            document.getElementById('scoreDividend').textContent = e.target.value;
+            updateTotalScore();
+        });
+
+        document.getElementById('rangeIndustry').addEventListener('input', (e) => {
+            scores.industry = parseInt(e.target.value);
+            document.getElementById('scoreIndustry').textContent = e.target.value;
+            updateTotalScore();
+        });
+
+        function updateTotalScore() {
+            const total = scores.finance + scores.valuation + scores.moat + scores.management + scores.dividend + scores.industry;
+            const avg = (total / 6).toFixed(1);
+            document.getElementById('totalScore').textContent = total;
+            document.getElementById('avgScore').textContent = avg;
+        }
+
+        function calculateAndRecommend() {
+            const stockName = document.getElementById('stockName').value || '该股票';
+            const total = scores.finance + scores.valuation + scores.moat + scores.management + scores.dividend + scores.industry;
+            const avg = total / 6;
+
+            let recommendation = '';
+            let cssClass = '';
+            let title = '';
+            let description = '';
+
+            if (avg >= 8.5) {
+                title = '⭐ 强烈推荐买入';
+                description = `${stockName}的各项评分均衡出众，具有极强的投资价值。符合巴菲特的长期持有标准，建议逐步建仓。`;
+                cssClass = 'strong-buy';
+            } else if (avg >= 7) {
+                title = '✅ 推荐买入';
+                description = `${stockName}的综合评分良好，大多数指标达到预期。可作为核心持仓，但建议分次建仓以降低成本。`;
+                cssClass = 'buy';
+            } else if (avg >= 5) {
+                title = '⏸️ 观望持有';
+                description = `${stockName}的评分处于中等水平，存在一定的投资机会，但同时也存在改进空间。建议继续关注，等待更好的买入时机。`;
+                cssClass = 'hold';
+            } else {
+                title = '❌ 暂不推荐';
+                description = `${stockName}的综合评分偏低，不符合当前投资标准。建议暂不购买，或等待明显改善后再考虑。`;
+                cssClass = 'sell';
+            }
+
+            const recBox = document.getElementById('recommendationBox');
+            recBox.innerHTML = `
+                <div class="recommendation ${cssClass}">
+                    <div class="rec-title">${title}</div>
+                    <div class="rec-description">${description}</div>
+                </div>
+            `;
+        }
+
+        function resetForm() {
+            document.getElementById('stockName').value = '';
+            document.getElementById('stockCode').value = '';
+            document.getElementById('rangeFinance').value = 5;
+            document.getElementById('rangeValuation').value = 5;
+            document.getElementById('rangeMoat').value = 5;
+            document.getElementById('rangeManagement').value = 5;
+            document.getElementById('rangeDividend').value = 5;
+            document.getElementById('rangeIndustry').value = 5;
+
+            scores.finance = 5;
+            scores.valuation = 5;
+            scores.moat = 5;
+            scores.management = 5;
+            scores.dividend = 5;
+            scores.industry = 5;
+
+            document.getElementById('scoreFinance').textContent = '5';
+            document.getElementById('scoreValuation').textContent = '5';
+            document.getElementById('scoreMoat').textContent = '5';
+            document.getElementById('scoreManagement').textContent = '5';
+            document.getElementById('scoreDividend').textContent = '5';
+            document.getElementById('scoreIndustry').textContent = '5';
+
+            updateTotalScore();
+            document.getElementById('recommendationBox').innerHTML = '';
+        }
+
+        // 初始化
+        updateTotalScore();
+    </script>
+</body>
+</html>

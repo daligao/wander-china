@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Portfolio Doctor — True Diversification Scanner | AI Invest OS</title>
+<meta name="description" content="You own 10 stocks. But how many do you really own? N-effective positions, fake diversification detection, black swan stress test, Core-Satellite grading, and 5-school analysis.">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/portfolio-clarity.html">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09101F;--surf:#111827;--surf2:#1A2436;--surf3:#0d1526;--accent:#6366F1;--accent-l:#818CF8;--gold:#F59E0B;--green:#10B981;--red:#EF4444;--white:#F1F5F9;--muted:#64748B;--bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.12)}
+body{background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;line-height:1.7;font-size:17px;overflow-x:hidden}
+a{color:var(--accent-l);text-decoration:none}
+.nav{padding:13px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:.84em}.nav a{color:var(--muted)}.nav a:hover{color:var(--white)}.nav-cur{color:var(--white);font-weight:600}
+.hero{text-align:center;padding:46px 20px 26px;background:radial-gradient(ellipse at 50% 0%,rgba(239,68,68,.1) 0%,rgba(99,102,241,.08) 40%,transparent 70%)}
+.badge{display:inline-block;font-size:.68em;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#f87171;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:30px;padding:4px 13px;margin-bottom:12px}
+.hero h1{font-size:clamp(1.8rem,5vw,2.9rem);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-bottom:10px}
+.hero h1 em{font-style:normal;color:var(--accent-l)}.hero p{font-size:.92em;color:var(--muted);max-width:500px;margin:0 auto}
+.wrap{max-width:740px;margin:0 auto;padding:26px 18px 60px}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:20px 18px;margin-bottom:12px}
+.sl{font-size:.62em;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-l);margin-bottom:13px}
+.school-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px}
+@media(min-width:500px){.school-row{grid-template-columns:repeat(4,1fr)}}
+.sb{background:var(--surf2);border:2px solid var(--bd);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:.2s;font-size:.79em;font-weight:700;color:var(--muted);line-height:1.3}
+.sb:hover{border-color:var(--bd2);color:var(--white)}.sb.on{border-color:var(--accent);background:rgba(99,102,241,.12);color:var(--white)}
+.sb i{font-style:normal;font-size:1.3em;display:block;margin-bottom:2px}
+/* position input table */
+.pos-table{width:100%;border-collapse:collapse;margin-bottom:14px}
+.pos-table th{font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:6px 8px;text-align:left;background:var(--surf2);border-bottom:1px solid var(--bd)}
+.pos-table td{padding:5px 8px;border-bottom:1px solid var(--bd)}
+.pos-table input,.pos-table select{background:var(--surf2);border:1px solid var(--bd);border-radius:6px;padding:6px 9px;color:var(--white);font-size:.88em;outline:none;width:100%}
+.pos-table input:focus,.pos-table select:focus{border-color:var(--accent)}
+.pos-table select option{background:var(--surf)}
+.pos-table .w-input{width:70px}
+.total-row{display:flex;align-items:center;justify-content:space-between;padding:8px 8px;background:var(--surf2);border-radius:8px;margin-bottom:14px;font-size:.84em}
+.total-val{font-weight:800;color:var(--white)}
+.total-val.ok{color:var(--green)}.total-val.bad{color:var(--red)}
+.total-port-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px 13px;background:var(--surf2);border:1px solid var(--bd);border-radius:9px}
+.tp-label{font-size:.8em;color:var(--muted);flex:1}
+.tp-input{background:var(--bg);border:1px solid var(--bd2);border-radius:7px;padding:6px 10px;color:var(--white);font-size:.9em;font-weight:600;outline:none;width:130px}
+.add-btn{background:var(--surf2);border:1px solid var(--bd2);border-radius:8px;padding:8px 16px;font-size:.82em;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s;margin-bottom:14px}
+.add-btn:hover{color:var(--white);border-color:var(--accent)}
+.btn-go{width:100%;padding:13px;background:linear-gradient(120deg,var(--accent),var(--accent-l));border:none;border-radius:12px;color:#fff;font-size:1em;font-weight:800;cursor:pointer;transition:.2s}
+.btn-go:hover{filter:brightness(1.12)}
+#results{display:none}
+/* Score cards */
+.score-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+@media(min-width:500px){.score-grid{grid-template-columns:repeat(4,1fr)}}
+.sc-card{background:var(--surf2);border:1px solid var(--bd);border-radius:11px;padding:13px;text-align:center}
+.sc-val{font-size:1.3em;font-weight:900;margin-bottom:3px}
+.sc-lbl{font-size:.63em;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+/* Neff gauge */
+.neff-box{background:var(--surf2);border:1px solid var(--bd);border-radius:11px;padding:14px;margin-bottom:13px}
+.neff-title{font-size:.7em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.neff-gauge{background:rgba(255,255,255,.06);border-radius:6px;height:16px;overflow:hidden;margin-bottom:6px}
+.neff-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--red),var(--gold),var(--green))}
+/* Holding breakdown */
+.holdings-list{display:flex;flex-direction:column;gap:7px;margin-bottom:13px}
+.h-item{background:var(--surf2);border:1px solid var(--bd);border-radius:9px;padding:10px 12px}
+.h-header{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.h-name{font-size:.88em;font-weight:800;color:var(--white);flex:1}
+.h-weight{font-size:.8em;font-weight:700;color:var(--accent-l)}
+.h-sector{font-size:.7em;color:var(--muted)}
+.h-bar{background:rgba(255,255,255,.06);border-radius:3px;height:6px;overflow:hidden}
+.h-fill{height:100%;border-radius:3px}
+.sector-group{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:9px;padding:10px 12px;margin-bottom:6px}
+.sg-label{font-size:.7em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#fbbf24;margin-bottom:4px}
+.sg-stocks{font-size:.82em;color:#fde68a}
+/* Black swan */
+.swan-box{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:11px;padding:14px;margin-bottom:13px}
+.swan-title{font-size:.65em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#f87171;margin-bottom:8px}
+.swan-val{font-size:1.5em;font-weight:900;color:#f87171;margin-bottom:4px}
+.swan-sub{font-size:.82em;color:#fca5a5;line-height:1.6}
+/* Core-Satellite */
+.cs-box{background:var(--surf2);border:1px solid var(--bd);border-radius:11px;padding:14px;margin-bottom:13px}
+.cs-title{font-size:.7em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px}
+.cs-bars{display:flex;height:20px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:7px}
+.cs-bar{display:flex;align-items:center;justify-content:center;font-size:.65em;font-weight:700;color:rgba(255,255,255,.8)}
+/* fake div warning */
+.fake-div{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:9px;padding:12px;margin-bottom:7px}
+.fake-div-safe{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:9px;padding:12px;margin-bottom:7px}
+.school5{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+@media(min-width:500px){.school5{grid-template-columns:repeat(5,1fr)}}
+.s5c{background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:10px}
+.s5c.active{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.s5c-name{font-size:.72em;font-weight:800;color:var(--white);margin-bottom:4px}
+.s5c-txt{font-size:.73em;color:var(--muted);line-height:1.5}
+.ai-grid{display:flex;flex-direction:column;gap:7px}
+.ai-c{display:flex;gap:14px;align-items:flex-start;background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:12px 15px;position:relative}
+.ai-head{min-width:108px;flex-shrink:0}
+.ai-n{font-size:.92em;font-weight:800;color:var(--white);margin-bottom:2px}
+.ai-t{font-size:.72em;color:var(--accent-l)}
+.ai-txt{font-size:.92em;color:var(--muted);line-height:1.55}
+.ai-q{font-size:.78em;color:#818CF8;border-top:1px solid var(--bd);margin-top:7px;padding-top:6px;font-style:italic;line-height:1.45}
+.ai-star{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:1.1em;opacity:.35;transition:.2s;padding:0;line-height:1}
+.ai-star.starred{opacity:1;filter:drop-shadow(0 0 4px gold)}
+.ai-links-row{display:flex;flex-wrap:wrap;gap:6px}
+.ai-links-label{font-size:.62em;color:var(--muted);margin-bottom:5px}
+.ai-hint{font-size:.67em;color:var(--muted);margin-bottom:8px;font-style:italic}
+.ai-lnk{display:inline-flex;align-items:center;gap:3px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:5px 10px;font-size:.74em;font-weight:600;color:var(--muted);text-decoration:none;transition:.2s;opacity:.55}
+.ai-lnk.active{background:rgba(99,102,241,.18);border-color:var(--accent);color:var(--accent-l);opacity:1;box-shadow:0 0 0 2px rgba(99,102,241,.2);font-weight:700}
+.ai-lnk:hover{color:var(--white);border-color:var(--accent);opacity:1}
+.bias{background:rgba(99,102,241,.06);border:1px solid rgba(129,140,248,.2);border-radius:10px;padding:13px}
+.bias-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-l);margin-bottom:6px}
+.bias-t{font-size:.83em;color:#c7d2fe;line-height:1.6}
+.next-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nt-btn{display:block;background:var(--surf2);border:1px solid var(--bd2);border-radius:10px;padding:11px 13px;text-decoration:none;transition:.2s}
+.nt-btn:hover{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.nt-lbl{font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+.nt-name{font-size:.84em;font-weight:700;color:var(--white)}
+.nt-desc{font-size:.72em;color:var(--muted)}
+.pb{background:var(--surf3);border:1px solid var(--bd2);border-radius:10px;padding:13px;position:relative}
+.pb-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.pb-txt{font-size:.79em;color:var(--muted);line-height:1.6;white-space:pre-wrap;word-break:break-word;padding-right:58px}
+.cp-btn{position:absolute;top:11px;right:11px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 10px;font-size:.7em;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
+.cp-btn:hover{color:var(--white);border-color:var(--accent)}.cp-btn.ok{color:var(--green);border-color:var(--green)}
+.footer{text-align:center;padding:20px;font-size:.8em;color:var(--muted);border-top:1px solid var(--bd)}
+.footer a{color:var(--accent-l);margin:0 7px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="ai-invest-os.html">← AI Invest OS</a>
+  <span style="color:var(--bd2)">›</span>
+  <span class="nav-cur">Portfolio Doctor</span>
+</nav>
+<div class="hero">
+  <div class="badge">Experiment Tool #6 — Decision Lab</div>
+  <h1><em>Portfolio Doctor</em></h1>
+  <p>You own 10 stocks — but how many effective positions do you actually have? Detect fake diversification, run a black swan stress test, and get a Core-Satellite grade.</p>
+</div>
+<div class="wrap">
+  <div class="card">
+    <div class="sl">Step 1 — Your Investing School</div>
+    <div class="school-row">
+      <button class="sb" id="sb-index" onclick="setSchool('index',this)"><i>📊</i>Index</button>
+      <button class="sb" id="sb-value" onclick="setSchool('value',this)"><i>🦅</i>Value</button>
+      <button class="sb" id="sb-growth" onclick="setSchool('growth',this)"><i>🌱</i>Growth</button>
+      <button class="sb" id="sb-trend" onclick="setSchool('trend',this)"><i>📈</i>Trend</button>
+    </div>
+    <div class="sl">Step 2 — Enter Your Holdings</div>
+    <div style="font-size:.8em;color:var(--muted);margin-bottom:12px">Enter each position: name, weight (% of portfolio), and sector. Weights should sum to 100%.</div>
+    <table class="pos-table">
+      <thead><tr><th>#</th><th>Position / Name</th><th>Weight (%)</th><th>Sector / Industry</th></tr></thead>
+      <tbody id="pos-body"></tbody>
+    </table>
+    <button class="add-btn" onclick="addRow()">+ Add Position</button>
+    <div class="total-row">
+      <span>Total Weight:</span>
+      <span class="total-val" id="total-weight">0%</span>
+    </div>
+    <div class="total-port-row">
+      <div class="tp-label">Total Portfolio Value (for black swan stress test)<br><span style="font-size:.72em;color:var(--muted);font-style:italic">Enter your actual portfolio value</span></div>
+      <input type="number" class="tp-input" id="total-pv" value="100000" min="1">
+    </div>
+    <button class="btn-go" onclick="calculate()">Run Portfolio Diagnosis →</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="sl">Portfolio Health Scores</div>
+      <div class="score-grid">
+        <div class="sc-card"><div class="sc-val" id="r-neff">—</div><div class="sc-lbl">N-Effective Positions</div></div>
+        <div class="sc-card"><div class="sc-val" id="r-hhi">—</div><div class="sc-lbl">Concentration (HHI)</div></div>
+        <div class="sc-card"><div class="sc-val" id="r-top3">—</div><div class="sc-lbl">Top-3 Concentration</div></div>
+        <div class="sc-card"><div class="sc-val" id="r-divScore">—</div><div class="sc-lbl">Diversification Score</div></div>
+      </div>
+      <!-- Neff gauge -->
+      <div class="neff-box" id="neff-box"></div>
+      <!-- Holdings breakdown -->
+      <div class="sl">Position Breakdown</div>
+      <div class="holdings-list" id="holdings-list"></div>
+      <!-- Fake diversification -->
+      <div class="sl">Fake Diversification Check</div>
+      <div id="fake-div-section"></div>
+    </div>
+
+    <!-- Black Swan -->
+    <div class="card">
+      <div class="sl">🦢 Black Swan Stress Test</div>
+      <div class="swan-box" id="swan-box"></div>
+      <div id="scenario-rows"></div>
+    </div>
+
+    <!-- Core-Satellite grade -->
+    <div class="card">
+      <div class="sl">Core-Satellite Architecture Grade</div>
+      <div class="cs-box" id="cs-box"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">All 5 Schools — Optimal Diversification Rules</div>
+      <div class="school5" id="school5-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">8 AI Committee — Portfolio Health Analysis</div>
+      <div class="ai-hint">★ Star your best AI above — the links below only glow when you pick one</div>
+      <div class="ai-grid" id="ai-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">⚠️ Behavioral Bias Check</div>
+      <div class="bias" id="bias-box"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">Continue Your Analysis →</div>
+      <div class="next-tools" id="next-tools"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">Your Personalized AI Prompt</div>
+      <div class="pb">
+        <div class="pb-l">Copy · then ask any AI directly below</div>
+        <div class="pb-txt" id="prompt-txt"></div>
+        <button class="cp-btn" onclick="copyPrompt()">Copy</button>
+        <div class="ai-links-label" style="margin-top:12px">★ Star an AI card above to highlight it here</div>
+        <div class="ai-links-row">
+          <a class="ai-lnk active" data-id="claude" href="https://claude.ai/new" target="_blank" rel="noopener">🔵 Claude</a>
+          <a class="ai-lnk active" data-id="chatgpt" href="https://chatgpt.com" target="_blank" rel="noopener">🟢 ChatGPT</a>
+          <a class="ai-lnk" data-id="gemini" href="https://gemini.google.com" target="_blank" rel="noopener">🔴 Gemini</a>
+          <a class="ai-lnk" data-id="grok" href="https://grok.com" target="_blank" rel="noopener">⚡ Grok</a>
+          <a class="ai-lnk" data-id="deepseek" href="https://chat.deepseek.com" target="_blank" rel="noopener">🌊 DeepSeek</a>
+          <a class="ai-lnk" data-id="kimi" href="https://kimi.moonshot.cn" target="_blank" rel="noopener">🌙 Kimi</a>
+          <a class="ai-lnk" data-id="tongyi" href="https://tongyi.aliyun.com" target="_blank" rel="noopener">☁️ Tongyi</a>
+          <a class="ai-lnk" data-id="doubao" href="https://www.doubao.com" target="_blank" rel="noopener">🫧 Doubao</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="ai-invest-os.html">← AI Invest OS</a>
+    <a href="dca-simulator.html">DCA Lab</a>
+    <a href="recovery-navigator.html">Recovery</a>
+    <a href="kelly-master.html">Kelly Lab</a>
+    <a href="dividend-engine.html">Dividend Engine</a>
+    <a href="pyramid-builder.html">Pyramid Builder</a>
+  </div>
+</div>
+
+<script>
+function gp(){try{return JSON.parse(sessionStorage.getItem('ios_profile')||'{}')}catch(e){return{}}}
+function sp(u){sessionStorage.setItem('ios_profile',JSON.stringify({...gp(),...u}))}
+function qp(k){return new URLSearchParams(location.search).get(k)}
+let school=qp('school')||gp().school||'value';
+let rowCount=0;
+const SCHOOLS={index:{icon:'📊',name:'Index'},value:{icon:'🦅',name:'Value'},growth:{icon:'🌱',name:'Growth'},trend:{icon:'📈',name:'Trend'}};
+const SECTORS=['Technology','Finance / Banking','Consumer Staples','Consumer Discretionary','Healthcare','Energy','Materials / Mining','Industrials','Real Estate','Utilities','Telecom','Crypto / Digital','International / Global','Cash / Bonds','Other'];
+const COLORS=['#6366F1','#10B981','#F59E0B','#EF4444','#818CF8','#34d399','#fbbf24','#f87171','#60a5fa','#a78bfa'];
+
+function setSchool(s,el){school=s;document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');sp({school:s})}
+(function(){
+  const btn=document.getElementById('sb-'+school);if(btn)btn.classList.add('on');
+  // Seed with 5 default rows
+  ['Position A','Position B','Position C','Position D','Position E'].forEach((n,i)=>{
+    addRowWith(n,[30,25,20,15,10][i],SECTORS[i]);
+  });
+  updateTotal();
+})();
+
+function addRow(){addRowWith('',0,'Other');}
+function addRowWith(name,weight,sector){
+  const tbody=document.getElementById('pos-body');
+  const idx=++rowCount;
+  const tr=document.createElement('tr');
+  tr.id='row-'+idx;
+  tr.innerHTML=`
+    <td style="font-size:.75em;color:var(--muted);font-weight:700">${idx}</td>
+    <td><input type="text" placeholder="e.g. Apple / BRK.B" value="${name}" oninput="updateTotal()"></td>
+    <td><input type="number" class="w-input" min="0" max="100" step="0.1" value="${weight||''}" oninput="updateTotal()"></td>
+    <td><select onchange="updateTotal()">${SECTORS.map(s=>`<option value="${s}"${s===sector?' selected':''}>${s}</option>`).join('')}</select></td>`;
+  tbody.appendChild(tr);
+  updateTotal();
+}
+
+function getRows(){
+  const rows=[];
+  document.querySelectorAll('#pos-body tr').forEach(tr=>{
+    const inputs=tr.querySelectorAll('input');
+    const sel=tr.querySelector('select');
+    const name=inputs[0]?inputs[0].value.trim():'';
+    const w=parseFloat(inputs[1]?inputs[1].value:0)||0;
+    const sector=sel?sel.value:'Other';
+    if(name&&w>0)rows.push({name,weight:w,sector});
+  });
+  return rows;
+}
+
+function updateTotal(){
+  const rows=getRows();
+  const total=rows.reduce((s,r)=>s+r.weight,0);
+  const el=document.getElementById('total-weight');
+  el.textContent=total.toFixed(1)+'%';
+  el.className='total-val '+(Math.abs(total-100)<0.5?'ok':'bad');
+}
+
+function fmt(n){if(Math.abs(n)>=1e6)return'$'+(n/1e6).toFixed(2)+'M';if(Math.abs(n)>=1e3)return'$'+(n/1e3).toFixed(1)+'K';return'$'+Math.abs(n).toFixed(0)}
+
+function calculate(){
+  const rows=getRows();
+  if(rows.length<2){alert('Please add at least 2 positions.');return;}
+  const total=rows.reduce((s,r)=>s+r.weight,0);
+  if(Math.abs(total-100)>5){alert(`Weights sum to ${total.toFixed(1)}% — they must sum to 100%.`);return;}
+  // Normalize weights
+  const positions=rows.map(r=>({...r,w:r.weight/total}));
+  const totalPV=parseFloat(document.getElementById('total-pv').value)||100000;
+
+  // HHI = sum of squared weights (as decimals)
+  const hhi=positions.reduce((s,p)=>s+p.w*p.w,0);
+  const neff=1/hhi;
+  // Top-3 concentration
+  const sorted=[...positions].sort((a,b)=>b.w-a.w);
+  const top3=sorted.slice(0,3).reduce((s,p)=>s+p.w*100,0);
+  // Diversification score (0-100): 100 = perfectly equal, 0 = all in one
+  const maxNeff=positions.length;
+  const divScore=Math.round((neff-1)/(maxNeff-1)*100);
+
+  sp({school,neff:neff.toFixed(1),divScore,portfolio:totalPV});
+
+  document.getElementById('r-neff').textContent=neff.toFixed(1);
+  document.getElementById('r-neff').style.color=neff<2?'var(--red)':neff<4?'var(--gold)':'var(--green)';
+  document.getElementById('r-hhi').textContent=(hhi*100).toFixed(1)+'%';
+  document.getElementById('r-hhi').style.color=hhi>0.35?'var(--red)':hhi>0.15?'var(--gold)':'var(--green)';
+  document.getElementById('r-top3').textContent=top3.toFixed(0)+'%';
+  document.getElementById('r-top3').style.color=top3>70?'var(--red)':top3>50?'var(--gold)':'var(--green)';
+  document.getElementById('r-divScore').textContent=divScore+'/100';
+  document.getElementById('r-divScore').style.color=divScore<30?'var(--red)':divScore<60?'var(--gold)':'var(--green)';
+
+  // Neff box
+  const neffPct=Math.min(neff/Math.max(maxNeff,10)*100,100);
+  const neffLabel=neff<2?'🔴 Dangerously Concentrated':neff<3?'🟡 High Concentration':neff<5?'🟠 Moderate Concentration':neff<8?'🟢 Good Diversification':'✅ Well Diversified';
+  document.getElementById('neff-box').innerHTML=`
+    <div class="neff-title">N-Effective Positions — True Diversification Metric</div>
+    <div class="neff-gauge"><div class="neff-fill" style="width:${neffPct}%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:.7em;color:var(--muted);margin-bottom:8px"><span>1 (max concentration)</span><span>${maxNeff} (equal weight)</span></div>
+    <div style="font-size:.86em;font-weight:700;color:var(--white);margin-bottom:4px">${neffLabel}</div>
+    <div style="font-size:.8em;color:var(--muted);line-height:1.6">You hold ${positions.length} positions, but due to weight imbalance, your portfolio behaves as if you only hold <strong style="color:var(--white)">${neff.toFixed(1)} equal-weight positions</strong>. Formula: N_eff = 1 ÷ Σ(weight²). A portfolio with 10 equal-weight stocks has N_eff = 10. Yours has ${neff.toFixed(1)}.</div>`;
+
+  // Holdings breakdown
+  let holdHtml='';
+  sorted.forEach((p,i)=>{
+    const color=COLORS[i%COLORS.length];
+    const pv=p.w*totalPV;
+    holdHtml+=`<div class="h-item">
+      <div class="h-header">
+        <div class="h-name">${p.name}</div>
+        <div style="font-size:.7em;color:var(--muted)">${fmt(pv)}</div>
+        <div class="h-weight">${(p.w*100).toFixed(1)}%</div>
+      </div>
+      <div class="h-sector" style="margin-bottom:5px">${p.sector}</div>
+      <div class="h-bar"><div class="h-fill" style="width:${(p.w*100).toFixed(0)}%;background:${color}"></div></div>
+    </div>`;
+  });
+  document.getElementById('holdings-list').innerHTML=holdHtml;
+
+  // Fake diversification detection — group by sector
+  const sectorMap={};
+  positions.forEach(p=>{if(!sectorMap[p.sector])sectorMap[p.sector]=[];sectorMap[p.sector].push(p);});
+  let fakeDivHtml='';
+  let hasConcentration=false;
+  Object.entries(sectorMap).forEach(([sec,ps])=>{
+    const secW=ps.reduce((s,p)=>s+p.w*100,0);
+    if(ps.length>=2||secW>30){
+      hasConcentration=true;
+      const names=ps.map(p=>`${p.name} (${(p.w*100).toFixed(0)}%)`).join(', ');
+      fakeDivHtml+=`<div class="fake-div">
+        <div style="font-size:.7em;font-weight:700;color:#f87171;margin-bottom:3px">⚠️ ${sec} — ${secW.toFixed(0)}% total exposure</div>
+        <div style="font-size:.8em;color:#fca5a5">${names} — These move together in sector downturns. Your effective exposure is higher than the position count suggests.</div>
+      </div>`;
+    }
+  });
+  if(!hasConcentration)fakeDivHtml=`<div class="fake-div-safe"><div style="font-size:.7em;font-weight:700;color:var(--green);margin-bottom:3px">✅ No obvious sector concentration detected</div><div style="font-size:.8em;color:rgba(52,211,153,.9)">Holdings appear spread across different sectors. Note: this is a simplified check — deeper correlation analysis requires price history data.</div></div>`;
+  document.getElementById('fake-div-section').innerHTML=fakeDivHtml;
+
+  // Black Swan
+  const top1=sorted[0];
+  const swanLoss80=top1.w*0.80;
+  const swanLoss50=top1.w*0.50;
+  document.getElementById('swan-box').innerHTML=`
+    <div class="swan-title">If ${top1.name} (${(top1.w*100).toFixed(0)}%) drops 80%...</div>
+    <div class="swan-val">Portfolio loses ${(swanLoss80*100).toFixed(1)}%</div>
+    <div class="swan-sub">Dollar loss: ${fmt(swanLoss80*totalPV)} of your ${fmt(totalPV)} portfolio. Enron, Evergrande, SVB — all seemed safe before they weren't. Your largest position is your hidden concentration risk.</div>`;
+  // Scenario rows
+  let scenHtml='';
+  const scenarios=[
+    {name:top1.name,drop:80,pct:top1.w},
+    sorted.length>1?{name:sorted[1].name,drop:80,pct:sorted[1].w}:null,
+    {name:'All positions',drop:40,pct:1},
+  ].filter(Boolean);
+  scenarios.forEach(sc=>{
+    const loss=sc.pct*sc.drop/100;
+    const dolLoss=loss*totalPV;
+    scenHtml+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surf2);border-radius:8px;margin-bottom:6px;font-size:.84em">
+      <span style="color:var(--white)">${sc.name} −${sc.drop}%</span>
+      <span style="font-weight:700;color:var(--red)">−${(loss*100).toFixed(1)}% (${fmt(dolLoss)})</span>
+    </div>`;
+  });
+  document.getElementById('scenario-rows').innerHTML=scenHtml;
+
+  // Core-Satellite grade
+  // Classify: Core = >20% positions in stable/value sectors, Satellite = <10% speculative
+  const coreW=positions.filter(p=>['Finance / Banking','Consumer Staples','Utilities','Healthcare'].includes(p.sector)).reduce((s,p)=>s+p.w,0);
+  const satW=positions.filter(p=>['Technology','Crypto / Digital','Materials / Mining'].includes(p.sector)).reduce((s,p)=>s+p.w,0);
+  const cashW=positions.filter(p=>p.sector==='Cash / Bonds').reduce((s,p)=>s+p.w,0);
+  const idealCore=0.6,idealSat=0.3,idealCash=0.1;
+  const coreScore=Math.max(0,100-Math.abs(coreW-idealCore)*200);
+  const csGrade=coreScore>70?'A':coreScore>50?'B':coreScore>30?'C':'D';
+  document.getElementById('cs-box').innerHTML=`
+    <div class="cs-title">Core-Satellite Architecture — Grade: <span style="font-size:1.3em;font-weight:900;color:${csGrade==='A'?'var(--green)':csGrade==='B'?'#fbbf24':'var(--red)'}"> ${csGrade}</span></div>
+    <div class="cs-bars">
+      <div class="cs-bar" style="flex:${Math.round(coreW*100)};background:var(--accent-l)">Core</div>
+      <div class="cs-bar" style="flex:${Math.round(satW*100)};background:var(--gold)">Sat.</div>
+      ${cashW>0?`<div class="cs-bar" style="flex:${Math.round(cashW*100)};background:var(--green)">Cash</div>`:''}
+    </div>
+    <div style="font-size:.8em;color:var(--muted);line-height:1.6">
+      <strong style="color:var(--white)">Your allocation:</strong> Core ${(coreW*100).toFixed(0)}% | Satellite ${(satW*100).toFixed(0)}% | Cash/Bonds ${(cashW*100).toFixed(0)}%<br>
+      <strong style="color:var(--white)">Ideal (general):</strong> Core 50–70% | Satellite 20–30% | Cash 10–20%<br>
+      Note: "Core" = stable/defensive sectors; "Satellite" = higher-growth/higher-risk. Many holdings may be in sectors not easily classified — this is a simplified estimate.
+    </div>`;
+
+  buildSchool5(neff,top3,hhi,positions.length);
+  buildAiGrid(neff,top3,sorted,totalPV,hhi,positions.length);
+  buildBias(neff,hhi,top3);
+  buildNextTools(sorted[0],totalPV);
+  buildPrompt(positions,neff,top3,hhi,divScore,totalPV);
+  document.getElementById('results').style.display='block';
+  setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function buildSchool5(neff,top3,hhi,n){
+  const views={
+    index:{verdict:'N/A — Index already diversified',txt:`Index investors hold the market. N_eff for a total market fund is hundreds of positions — no concentration risk by design. This tool applies to your active positions outside index funds.`},
+    value:{verdict:neff<3?'⚠️ Too concentrated':'✅ Concentrated is OK',txt:`Value school accepts concentration — Buffett holds 5–10 core positions. But concentration must come from fundamental certainty, not inertia. Each heavy position needs an active, researched thesis.`},
+    growth:{verdict:top3>70?'⚠️ Reduce top-3':'✅ Growth diversification OK',txt:`Growth school: top-3 at ${top3.toFixed(0)}% is ${top3>70?'dangerously':'reasonably'} concentrated. Individual growth stocks can drop 60–80% in a bad market. Cap any single growth name at 20%.`},
+    trend:{verdict:neff<3?'⚠️ Fewer, stronger positions':'✅ Position count OK',txt:`Trend school focuses on conviction positions. ${n} positions with N_eff=${neff.toFixed(1)} suggests ${neff<2?'dangerous concentration — why hold many names if one dominates?':'reasonable active management'}. Each position needs an independent trend signal.`}
+  };
+  let h='';
+  Object.entries(views).forEach(([k,v])=>{
+    const s=SCHOOLS[k];const isActive=k===school;
+    const col=v.verdict.startsWith('✅')?'var(--green)':v.verdict.startsWith('⚠️')?'#fbbf24':'var(--muted)';
+    h+=`<div class="s5c${isActive?' active':''}"><div class="s5c-name">${s.icon} ${s.name}</div><div style="font-size:.66em;font-weight:700;margin-bottom:4px;color:${col}">${v.verdict}</div><div class="s5c-txt">${v.txt}</div></div>`;
+  });
+  document.getElementById('school5-grid').innerHTML=h;
+}
+
+function interpolate(tpl,vars){
+  let s=String(tpl).replace(/\{([^}]+)\}/g,(m,k)=>k in vars?vars[k]:m);
+  return s.replace(/%%/g,'%');
+}
+
+function buildAiGrid(neff,top3,sorted,totalPV,hhi,n){
+  const top1=sorted[0];
+  const vars={
+    N_EFF:neff.toFixed(1),
+    TOP3:top3.toFixed(0)+'%',
+    HHI:(hhi*100).toFixed(1)+'%',
+    N:n,
+    TOP1:top1.name,
+    TOP1W:(top1.w*100).toFixed(0)+'%'
+  };
+  // Real responses collected from each AI (authentic voices, placeholder-interpolated)
+  const ais=[
+    {n:'Claude',i:'🔵',role:'Value School',schools:{
+      value:{comment:'Your {N_EFF} effective positions signal concentrated conviction. {TOP1} at {TOP1W} and {TOP3} in your top 3 create path-dependent outcomes — exceptional if right, devastating if wrong. Concentration beats the index only when your research genuinely exceeds what the market has already priced in. The question is not whether concentration works in theory, but whether your edge is real.',q:'Have you stress-tested your thesis on {TOP1} against its three most credible bear cases?'},
+      growth:{comment:'Growth portfolios tolerate concentration when businesses compound faster than alternatives. But {TOP1W} in {TOP1} with only {N_EFF} effective positions means growth deceleration resets your entire thesis simultaneously. {TOP3} in top 3 demands honest, ongoing monitoring across every holding — not annual check-ins.',q:'If {TOP1} revenue growth halves next quarter, does this position size still make sense?'},
+      trend:{comment:'A portfolio of {N} holdings with {N_EFF} effective diversification means trend breaks are not isolated events — they cascade. {TOP1} at {TOP1W} with {TOP3} in three names requires pre-committed exits before you need them. Without clearly defined exits, concentration is a bet whose outcome determines your opinion of your own judgment retroactively.',q:'What specific price action on {TOP1} would force you to cut the position by half?'}
+    }},
+    {n:'ChatGPT',i:'🟢',role:'Focus Judge',schools:{
+      value:{comment:'Concentration creates wealth only when backed by exceptional knowledge and relentless monitoring. Diversification protects what you do not know. At N_eff={N_EFF}, top-3={TOP3}, HHI={HHI} across {N} positions — {TOP1}\'s dominance already reveals which game you are playing. Stop claiming conviction if your research cannot justify every position under severe stress.',q:'Would you double your largest holding after a 50% drop?'},
+      growth:{comment:'Concentration belongs in the fastest compounders, not the most familiar companies. If {TOP3} dominates, every holding must justify leadership through accelerating growth. A low {N_EFF} is acceptable only while business momentum keeps outperforming. With {TOP1} at {TOP1W}, you are fully exposed to the day that story changes.',q:'Which holding would you sell first after slowing growth?'},
+      trend:{comment:'Price pays, stories do not. A concentrated portfolio with {N_EFF} effective positions magnifies both gains and mistakes. If {TOP1} breaks trend, reduce it immediately regardless of conviction. {TOP3} in your top 3 means concentration without disciplined exits becomes amplified risk.',q:'Will you cut {TOP1} after a confirmed trend break, regardless of your conviction?'}
+    }},
+    {n:'Gemini',i:'🔴',role:'Correlation Analyst',schools:{
+      value:{comment:'You hold {N} stocks, but your true diversification is only {N_EFF} — that gap is an illusion. When markets crack, correlated assets plunge together. If your {TOP3} top-3 dominates the same sector, you placed {N} versions of one bet. HHI={HHI} with {TOP1} leading means sector overlap is your hidden executioner. Stop collecting redundant tickers.',q:'Are you managing risk, or buying different logos for the exact same macroeconomic bet?'},
+      growth:{comment:'Your {TOP3} concentration and {N_EFF} effective positions imply massive bets on continuous scaling. If {TOP1} at {TOP1W} suffers a sudden growth deceleration — a classic fat-tail event for hyper-growth equities — your {N} total positions cannot absorb the multiple compression. Growth decelerates faster than consensus expects.',q:'What happens to your portfolio if your top grower permanently misses revenue consensus next quarter?'},
+      trend:{comment:'An {N_EFF} effective size across {N} holdings reveals severe price correlation. If the macro trend breaks, your {TOP3} concentration — anchored by {TOP1} at {TOP1W} — will suffer identical drawdowns. Correlated momentum bets crater in unison when liquidity regimes shift abruptly.',q:'Have you stress-tested your stop-losses if the entire correlated basket gaps down simultaneously at the open?'}
+    }},
+    {n:'Grok',i:'⚡',role:'Brutal Critic',schools:{
+      value:{comment:'Most advisors will never say this: {N_EFF} effective positions and HHI={HHI} mean you are not diversified at all. {TOP3} in three names is a concentrated bet, not a portfolio. Retail investors dress ego as conviction and call it strategy. {N} holdings change nothing when {TOP1} dominates. One bad quarter and the whole thing collapses. This is gambling with extra steps.',q:'Are you truly skilled enough to bet this hard on so few names?'},
+      growth:{comment:'With {N} holdings but {TOP1W} in {TOP1} and {TOP3} in the top three, your portfolio lives or dies on growth persistence. If the growth story holds, this concentration is correct. If growth is decelerating, the entire structure is already broken regardless of how many names you own.',q:'Is {TOP1}\'s growth still accelerating, or are you just watching the price?'},
+      trend:{comment:'Your {N_EFF} effective positions and {TOP3} top-three weight expose the lie. You call it conviction while price action is ignored. Trend does not care about your research or story. When the largest holding breaks structure, size becomes the enemy. This is not a portfolio — it is a single-point failure waiting to happen.',q:'Would you still own {TOP1} at this size if the trend had already reversed?'}
+    }},
+    {n:'DeepSeek',i:'🌊',role:'Systems Risk Analyst',schools:{
+      value:{comment:'N_EFF={N_EFF} with {TOP1W} in {TOP1} makes terminal wealth path-dependent on one stock\'s tail. Base rates show single-name ruin probability rises sharply below N_EFF=10. Top-3 at {TOP3} signals undiversified conviction risk.',q:'What\'s the 10-year survival probability of {TOP1} based on industry base rates?'},
+      growth:{comment:'Growth stocks exhibit wide outcome dispersion; {TOP1W} in {TOP1} means portfolio variance is dominated by a high-vol asset. With N_EFF={N_EFF}, a 2-sigma earnings miss could erase the {TOP3} top-3 weight. True diversification demands N_EFF>20 for growth.',q:'If {TOP1} misses earnings by one standard deviation, what\'s expected portfolio drawdown?'},
+      trend:{comment:'Concentration at {TOP1W} in {TOP1} only works with strict stops. N_EFF={N_EFF} is irrelevant if positions rotate rapidly. Top-3 {TOP3} implies a fat left tail if gaps bypass stops. Geometric growth demands Kelly-aligned sizing.',q:'If {TOP1} gaps down through your stop tomorrow, what % of portfolio is lost?'}
+    }},
+    {n:'Kimi',i:'🌙',role:'A-Share Cynic',schools:{
+      value:{comment:'You own {N} names but only {N_EFF} matter in a market where policy shifts vaporize entire sectors overnight. A-share liquidity evaporates faster than developed markets — {TOP3} concentration with HHI={HHI} means you are betting on Beijing\'s next press conference, not investing. Conviction in {TOP1} at {TOP1W} demands extraordinary research depth, not just familiarity.',q:'Can your {TOP1} thesis survive a policy-driven sector crackdown?'},
+      growth:{comment:'A-share growth stocks concentrate sector risk sharply. {TOP3} in top holdings means a single sector rotation wipes your thesis instantly. {N_EFF} effective positions is dangerously low — one earnings miss from {TOP1} at {TOP1W} in a momentum-driven market triggers cascade selling you cannot manage.',q:'If {TOP1}\'s growth logic breaks, how fast can you exit at {TOP1W} in A-shares?'},
+      trend:{comment:'A-share limit-up and limit-down rules create liquidity traps. With {TOP3} in your top three and {N_EFF} effective positions, a trend reversal on {TOP1} can lock you into a falling position for days. Without pre-defined exits, concentration in A-shares is not conviction — it is trapped capital.',q:'Does {TOP1} at {TOP1W} have the liquidity to exit quickly when the trend turns?'}
+    }},
+    {n:'Tongyi',i:'☁️',role:'Practical Risk Advisor',schools:{
+      value:{comment:'Stop confusing {N} holdings with diversification. True risk shows when HHI exceeds 30% — yours is {HHI}. If {TOP1} holds over 20% of your book you are gambling, not investing. Most ignore position limits chasing short-term gains and miss the tail risk entirely. No single name above 15%, top-3 under 40%, and push N_eff above 10. Diversification is survival.',q:'Why ignore position limits when your top holding risks catastrophic portfolio loss?'},
+      growth:{comment:'Growth concentration above {TOP3} creates fragile portfolios that snap without warning. {TOP1} at {TOP1W} needs constant verification — slowing growth in a high-multiple stock destroys capital far faster than the original thesis justified. Track each holding quarterly, not annually.',q:'Have you formally reviewed {TOP1}\'s growth metrics this quarter?'},
+      trend:{comment:'Position sizing without trend filters amplifies losses during market regime changes. {N_EFF} effective holdings across {N} names creates a portfolio that is simultaneously overconcentrated and hard to exit quickly. Define your exit trigger for {TOP1} at {TOP1W} before you need it.',q:'Is your exit strategy for {TOP1} written down and pre-committed?'}
+    }},
+    {n:'Doubao',i:'🫧',role:'Behavioral Psychologist',schools:{
+      value:{comment:'Investors reliably fall for the quantity illusion — they count {N} positions and declare themselves diversified. But N_eff={N_EFF} exposes the dangerous gap. A high {HHI} and outsized {TOP3} top-3 weight mean your true downside risk concentrates in a handful of holdings, no matter how many individual tickers fill your screen.',q:'Do you lie to yourself about how diversified your portfolio actually is?'},
+      growth:{comment:'FOMO drives investors to overweight hot growth narratives. {TOP3} dominated by {N_EFF} effective positions means the portfolio reflects emotional conviction in growth stories, not fundamental analysis. {TOP1} at {TOP1W} — ask yourself honestly: did you buy the business or the narrative?',q:'Are you holding {TOP1} because of data or because you fear missing out?'},
+      trend:{comment:'Loss aversion keeps investors holding through trend reversals long after the evidence demands action. With {TOP3} in top holdings and {N_EFF} effective positions, you cannot afford emotional hesitation. When {TOP1} at {TOP1W} breaks down, the psychological pull to wait for a recovery is precisely when discipline is most expensive to abandon.',q:'When {TOP1} breaks its trend, will behavioral bias or pre-set rules govern your response?'}
+    }},
+  ];
+  document.getElementById('ai-grid').innerHTML=ais.map(a=>{
+    const sd=a.schools[school]||a.schools.value;
+    const c=interpolate(sd.comment,vars);
+    const q=interpolate(sd.q,vars);
+    const id=N2ID[a.n]||a.n.toLowerCase();
+    return `<div class="ai-c"><button class="ai-star${selAIs.has(id)?' starred':''}" data-id="${id}" onclick="toggleAI('${id}')" title="Mark as my AI">★</button><div class="ai-head"><div class="ai-n">${a.i} ${a.n}</div><div class="ai-t">${a.role}</div></div><div style="flex:1;min-width:0"><div class="ai-txt">${c}</div><div class="ai-q">❓ ${q}</div></div></div>`;
+  }).join('');
+}
+
+function buildBias(neff,hhi,top3){
+  document.getElementById('bias-box').innerHTML=`
+    <div class="bias-l">🔮 Familiarity Bias + Pseudo-Diversification</div>
+    <div class="bias-t">Two biases create problematic portfolios:
+      <br><br>1. <strong style="color:var(--white)">Familiarity Bias:</strong> Investors overweight companies they know well — often in the same sector they work in or follow daily. Your concentration (N_eff=${neff.toFixed(1)}) may reflect knowing a few businesses deeply — but also missing diversification you don't notice.
+      <br><br>2. <strong style="color:var(--white)">Pseudo-Diversification:</strong> Owning 10 stocks in the same sector feels like diversification because "10 > 1." But 10 correlated positions can all crash together. The N-effective measure cuts through this illusion.
+      <br><br>Challenge: Remove your 3 largest names from your portfolio mentally. How comfortable are you with what remains? If the remaining positions feel inadequate — that concentration was deliberate, not diversification.</div>`;
+}
+
+function buildNextTools(top1,totalPV){
+  const s=school;const size=(top1.w*totalPV).toFixed(0);
+  document.getElementById('next-tools').innerHTML=`
+    <a class="nt-btn" href="kelly-master.html?school=${s}&capital=${size}">
+      <div class="nt-lbl">Validate your largest position</div>
+      <div class="nt-name">Kelly Lab</div>
+      <div class="nt-desc">Is ${top1.name} sized correctly by Kelly Criterion?</div>
+    </a>
+    <a class="nt-btn" href="recovery-navigator.html?school=${s}">
+      <div class="nt-lbl">One position underwater?</div>
+      <div class="nt-name">Recovery Planner</div>
+      <div class="nt-desc">Hold, add, or cut — 3-path decision analysis</div>
+    </a>`;
+}
+
+function buildPrompt(positions,neff,top3,hhi,divScore,totalPV){
+  const sn={index:'Index',value:'Value (Buffett)',growth:'Growth (Fisher)',trend:'Trend (Livermore)'};
+  const posStr=positions.map(p=>`${p.name}: ${(p.w*100).toFixed(1)}% (${p.sector})`).join('\n• ');
+  const t=`I'm a ${sn[school]||'value'} investor running a portfolio analysis.
+
+My holdings (${positions.length} positions):
+• ${posStr}
+• Total: $${totalPV.toLocaleString()}
+
+Portfolio metrics:
+• N-Effective positions: ${neff.toFixed(1)} (true diversification)
+• HHI concentration: ${(hhi*100).toFixed(1)}%
+• Top-3 concentration: ${top3.toFixed(0)}%
+• Diversification score: ${divScore}/100
+
+Please analyze:
+1. Is this concentration level appropriate for ${sn[school]}?
+2. Which positions have highest correlation to each other? Which to cut?
+3. If I could only add one new position, what sector/type would most reduce concentration risk?
+4. What's the biggest hidden risk in this portfolio that the metrics don't capture?
+5. Your specific recommendation for improving this portfolio for ${sn[school]}
+
+Be direct — identify the #1 problem and the #1 fix.`;
+  document.getElementById('prompt-txt').textContent=t;
+}
+
+const selAIs=new Set(['claude','chatgpt']);
+const N2ID={Claude:'claude',ChatGPT:'chatgpt',Gemini:'gemini',Grok:'grok',DeepSeek:'deepseek',Kimi:'kimi',Tongyi:'tongyi',Doubao:'doubao','通义':'tongyi','豆包':'doubao'};
+function toggleAI(id){
+  selAIs.has(id)?selAIs.delete(id):selAIs.add(id);
+  document.querySelectorAll('.ai-star').forEach(b=>b.classList.toggle('starred',selAIs.has(b.dataset.id)));
+  document.querySelectorAll('.ai-lnk').forEach(b=>b.classList.toggle('active',selAIs.has(b.dataset.id)));
+}
+function copyPrompt(){
+  navigator.clipboard.writeText(document.getElementById('prompt-txt').textContent).then(()=>{
+    const b=document.querySelector('.cp-btn');b.textContent='✓ Copied!';b.classList.add('ok');
+    setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},2000);
+  });
+}
+</script>
+</body>
+</html>

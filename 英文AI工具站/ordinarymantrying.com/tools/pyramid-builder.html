@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pyramid Builder — Position Sizing Simulator | AI Invest OS</title>
+<meta name="description" content="Left-side value buy-down or right-side trend buy-up? Visualize every tranche, calculate average cost, model risk budget, and get a school-specific entry plan.">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/pyramid-builder.html">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09101F;--surf:#111827;--surf2:#1A2436;--surf3:#0d1526;--accent:#6366F1;--accent-l:#818CF8;--gold:#F59E0B;--green:#10B981;--red:#EF4444;--white:#F1F5F9;--muted:#64748B;--bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.12)}
+body{background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;line-height:1.7;font-size:17px;overflow-x:hidden}
+a{color:var(--accent-l);text-decoration:none}
+.nav{padding:13px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:.84em}.nav a{color:var(--muted)}.nav a:hover{color:var(--white)}.nav-cur{color:var(--white);font-weight:600}
+.hero{text-align:center;padding:46px 20px 26px;background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,.14) 0%,transparent 60%)}
+.badge{display:inline-block;font-size:.68em;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-l);background:rgba(99,102,241,.12);border:1px solid rgba(129,140,248,.25);border-radius:30px;padding:4px 13px;margin-bottom:12px}
+.hero h1{font-size:clamp(1.8rem,5vw,2.9rem);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-bottom:10px}
+.hero h1 em{font-style:normal;color:var(--accent-l)}.hero p{font-size:.92em;color:var(--muted);max-width:480px;margin:0 auto}
+.wrap{max-width:740px;margin:0 auto;padding:26px 18px 60px}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:20px 18px;margin-bottom:12px}
+.sl{font-size:.62em;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-l);margin-bottom:13px}
+.school-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px}
+@media(min-width:500px){.school-row{grid-template-columns:repeat(4,1fr)}}
+.sb{background:var(--surf2);border:2px solid var(--bd);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:.2s;font-size:.79em;font-weight:700;color:var(--muted);line-height:1.3}
+.sb:hover{border-color:var(--bd2);color:var(--white)}.sb.on{border-color:var(--accent);background:rgba(99,102,241,.12);color:var(--white)}
+.sb i{font-style:normal;font-size:1.3em;display:block;margin-bottom:2px}
+.tabs{display:flex;gap:0;margin-bottom:16px;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.tab{flex:1;padding:9px;text-align:center;font-size:.8em;font-weight:700;cursor:pointer;color:var(--muted);background:var(--surf2);transition:.2s;border:none}
+.tab.on{background:var(--accent);color:#fff}.tab:hover:not(.on){color:var(--white)}
+.frow{display:grid;gap:11px;margin-bottom:14px}
+@media(min-width:480px){.frow{grid-template-columns:1fr 1fr 1fr}}
+.fl label{display:block;font-size:.73em;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-bottom:4px}
+.fl input,.fl select{width:100%;background:var(--surf2);border:1.5px solid var(--bd2);border-radius:9px;padding:9px 12px;color:var(--white);font-size:.94em;font-weight:600;outline:none;transition:.2s}
+.fl input:focus,.fl select:focus{border-color:var(--accent)}
+.fl select option{background:var(--surf)}
+.risk-budget{background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:14px}
+.rb-title{font-size:.75em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.rb-row{display:flex;gap:11px;align-items:center}
+.rb-row label{font-size:.8em;color:var(--muted);white-space:nowrap}
+.rb-row input{background:var(--bg);border:1px solid var(--bd2);border-radius:7px;padding:6px 10px;color:var(--white);font-size:.9em;font-weight:600;outline:none;width:100px}
+.btn-go{width:100%;padding:13px;background:linear-gradient(120deg,var(--accent),var(--accent-l));border:none;border-radius:12px;color:#fff;font-size:1em;font-weight:800;cursor:pointer;transition:.2s}
+.btn-go:hover{filter:brightness(1.12)}
+#results{display:none}
+.sgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+@media(min-width:480px){.sgrid{grid-template-columns:repeat(4,1fr)}}
+.sv{background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:12px;text-align:center}
+.sv-val{font-size:1.1em;font-weight:900;color:var(--white);margin-bottom:2px}
+.sv-lbl{font-size:.63em;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+/* Pyramid table */
+.pyramid-table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:.82em}
+.pyramid-table th{background:var(--surf2);color:var(--muted);font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;text-align:left;border-bottom:1px solid var(--bd)}
+.pyramid-table td{padding:8px 10px;border-bottom:1px solid var(--bd);color:var(--white)}
+.pyramid-table tr:last-child td{border-bottom:none}
+.pyramid-table .tranche-bar{display:block;height:6px;border-radius:3px;background:var(--accent-l);margin-top:4px}
+/* risk budget result */
+.rb-result{border-radius:10px;padding:12px;margin-bottom:13px}
+.rb-result.safe{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2)}
+.rb-result.warn{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)}
+.rb-result.danger{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2)}
+/* max drawdown warning */
+.max-draw{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:13px;margin-bottom:12px}
+.school5{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+@media(min-width:500px){.school5{grid-template-columns:repeat(4,1fr)}}
+.s5c{background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:10px}
+.s5c.active{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.s5c-name{font-size:.72em;font-weight:800;color:var(--white);margin-bottom:4px}
+.s5c-txt{font-size:.73em;color:var(--muted);line-height:1.5}
+.ai-grid{display:flex;flex-direction:column;gap:7px}
+.ai-c{display:flex;gap:14px;align-items:flex-start;background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:12px 15px;position:relative}
+.ai-head{min-width:108px;flex-shrink:0}
+.ai-n{font-size:.92em;font-weight:800;color:var(--white);margin-bottom:2px}
+.ai-t{font-size:.72em;color:var(--accent-l)}
+.ai-txt{font-size:.92em;color:var(--muted);line-height:1.55}
+.ai-q{font-size:.78em;color:#818CF8;border-top:1px solid var(--bd);margin-top:7px;padding-top:6px;font-style:italic;line-height:1.45}
+.ai-star{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:1.1em;opacity:.35;transition:.2s;padding:0;line-height:1}
+.ai-star.starred{opacity:1;filter:drop-shadow(0 0 4px gold)}
+.ai-links-row{display:flex;flex-wrap:wrap;gap:6px}
+.ai-links-label{font-size:.62em;color:var(--muted);margin-bottom:5px}
+.ai-hint{font-size:.67em;color:var(--muted);margin-bottom:8px;font-style:italic}
+.ai-lnk{display:inline-flex;align-items:center;gap:3px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:5px 10px;font-size:.74em;font-weight:600;color:var(--muted);text-decoration:none;transition:.2s;opacity:.55}
+.ai-lnk.active{background:rgba(99,102,241,.18);border-color:var(--accent);color:var(--accent-l);opacity:1;box-shadow:0 0 0 2px rgba(99,102,241,.2);font-weight:700}
+.ai-lnk:hover{color:var(--white);border-color:var(--accent);opacity:1}
+.bias{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:13px}
+.bias-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fbbf24;margin-bottom:6px}
+.bias-t{font-size:.83em;color:#fde68a;line-height:1.6}
+.next-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nt-btn{display:block;background:var(--surf2);border:1px solid var(--bd2);border-radius:10px;padding:11px 13px;text-decoration:none;transition:.2s}
+.nt-btn:hover{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.nt-lbl{font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+.nt-name{font-size:.84em;font-weight:700;color:var(--white)}
+.nt-desc{font-size:.72em;color:var(--muted)}
+.pb{background:var(--surf3);border:1px solid var(--bd2);border-radius:10px;padding:13px;position:relative}
+.pb-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.pb-txt{font-size:.79em;color:var(--muted);line-height:1.6;white-space:pre-wrap;word-break:break-word;padding-right:58px}
+.cp-btn{position:absolute;top:11px;right:11px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 10px;font-size:.7em;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
+.cp-btn:hover{color:var(--white);border-color:var(--accent)}.cp-btn.ok{color:var(--green);border-color:var(--green)}
+.footer{text-align:center;padding:20px;font-size:.8em;color:var(--muted);border-top:1px solid var(--bd)}
+.footer a{color:var(--accent-l);margin:0 7px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="ai-invest-os.html">← AI Invest OS</a>
+  <span style="color:var(--bd2)">›</span>
+  <span class="nav-cur">Pyramid Builder</span>
+</nav>
+<div class="hero">
+  <div class="badge">Experiment Tool #5 — Decision Lab</div>
+  <h1><em>Pyramid Builder</em></h1>
+  <p>Left-side buy-down (value) or right-side buy-up (trend)? Build your full position ladder — every tranche, average cost, risk budget, and max drawdown scenario.</p>
+</div>
+<div class="wrap">
+  <div class="card">
+    <div class="sl">Step 1 — Your Investing School</div>
+    <div class="school-row">
+      <button class="sb" id="sb-index" onclick="setSchool('index',this)"><i>📊</i>Index</button>
+      <button class="sb" id="sb-value" onclick="setSchool('value',this)"><i>🦅</i>Value</button>
+      <button class="sb" id="sb-growth" onclick="setSchool('growth',this)"><i>🌱</i>Growth</button>
+      <button class="sb" id="sb-trend" onclick="setSchool('trend',this)"><i>📈</i>Trend</button>
+    </div>
+    <div class="sl">Step 2 — Pyramid Mode</div>
+    <div class="tabs">
+      <button class="tab on" id="tab-down" onclick="switchMode('down',this)">📉 Left-Side — Buy the Dip (Value)</button>
+      <button class="tab" id="tab-up" onclick="switchMode('up',this)">📈 Right-Side — Buy the Breakout (Trend)</button>
+    </div>
+    <div class="sl" id="mode-label">Configure Your Buy-Down Pyramid</div>
+    <div class="frow">
+      <div class="fl"><label id="price-label">Current / Entry Price ($)</label><input type="number" id="entry-price" value="50" min="0.01" step="0.01"></div>
+      <div class="fl"><label id="step-label">Price Step per Tranche (%)</label><input type="number" id="price-step" value="10" min="1" max="50" step="0.5"></div>
+      <div class="fl"><label>Number of Tranches</label>
+        <select id="tranches">
+          <option value="3">3 tranches</option>
+          <option value="4">4 tranches</option>
+          <option value="5" selected>5 tranches</option>
+          <option value="6">6 tranches</option>
+          <option value="7">7 tranches</option>
+        </select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fl"><label>First Tranche Capital ($)</label><input type="number" id="first-capital" value="2000" min="1"></div>
+      <div class="fl"><label>Capital Scaling Mode</label>
+        <select id="scaling">
+          <option value="equal">Equal (same each tranche)</option>
+          <option value="increase" selected>Increasing (buy more deeper)</option>
+          <option value="decrease">Decreasing (front-load)</option>
+        </select>
+      </div>
+      <div class="fl"><label id="stop-label">Stop-Loss Below Entry (%)</label><input type="number" id="stop-loss" value="30" min="1" max="100" step="1"></div>
+    </div>
+    <div class="risk-budget">
+      <div class="rb-title">⚖️ Risk Budget — Total Portfolio Protection</div>
+      <div class="rb-row">
+        <label>Total Portfolio Value ($)</label>
+        <input type="number" id="total-portfolio" value="50000" min="1">
+        <label style="margin-left:8px">Max acceptable loss (% of portfolio)</label>
+        <input type="number" id="max-loss-pct" value="2" min="0.1" max="20" step="0.1">
+      </div>
+    </div>
+    <button class="btn-go" onclick="calculate()">Build My Pyramid Plan →</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="sl">Pyramid Results</div>
+      <div class="sgrid">
+        <div class="sv"><div class="sv-val" id="r-avgcost">—</div><div class="sv-lbl">Avg Cost (full)</div></div>
+        <div class="sv"><div class="sv-val" id="r-total">—</div><div class="sv-lbl">Total Capital</div></div>
+        <div class="sv"><div class="sv-val" id="r-beq">—</div><div class="sv-lbl">Break-even from avg</div></div>
+        <div class="sv"><div class="sv-val" id="r-maxloss" style="color:var(--red)">—</div><div class="sv-lbl">Max Loss if SL hits</div></div>
+      </div>
+      <div style="overflow-x:auto"><table class="pyramid-table" id="pyramid-table"></table></div>
+      <div class="rb-result" id="rb-result"></div>
+      <div class="max-draw" id="max-draw"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">All 5 Schools — Pyramid Strategy Perspective</div>
+      <div class="school5" id="school5-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">8 AI Committee — Position Building Analysis</div>
+      <div class="ai-hint">★ Star your best AI above — the links below only glow when you pick one</div>
+      <div class="ai-grid" id="ai-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">⚠️ Behavioral Bias Check</div>
+      <div class="bias" id="bias-box"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">Continue Your Analysis →</div>
+      <div class="next-tools" id="next-tools"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">Your Personalized AI Prompt</div>
+      <div class="pb">
+        <div class="pb-l">Copy · then ask any AI directly below</div>
+        <div class="pb-txt" id="prompt-txt"></div>
+        <button class="cp-btn" onclick="copyPrompt()">Copy</button>
+        <div class="ai-links-label" style="margin-top:12px">★ Star an AI card above to highlight it here</div>
+        <div class="ai-links-row">
+          <a class="ai-lnk active" data-id="claude" href="https://claude.ai/new" target="_blank" rel="noopener">🔵 Claude</a>
+          <a class="ai-lnk active" data-id="chatgpt" href="https://chatgpt.com" target="_blank" rel="noopener">🟢 ChatGPT</a>
+          <a class="ai-lnk" data-id="gemini" href="https://gemini.google.com" target="_blank" rel="noopener">🔴 Gemini</a>
+          <a class="ai-lnk" data-id="grok" href="https://grok.com" target="_blank" rel="noopener">⚡ Grok</a>
+          <a class="ai-lnk" data-id="deepseek" href="https://chat.deepseek.com" target="_blank" rel="noopener">🌊 DeepSeek</a>
+          <a class="ai-lnk" data-id="kimi" href="https://kimi.moonshot.cn" target="_blank" rel="noopener">🌙 Kimi</a>
+          <a class="ai-lnk" data-id="tongyi" href="https://tongyi.aliyun.com" target="_blank" rel="noopener">☁️ Tongyi</a>
+          <a class="ai-lnk" data-id="doubao" href="https://www.doubao.com" target="_blank" rel="noopener">🫧 Doubao</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="ai-invest-os.html">← AI Invest OS</a>
+    <a href="dca-simulator.html">DCA Lab</a>
+    <a href="recovery-navigator.html">Recovery</a>
+    <a href="kelly-master.html">Kelly Lab</a>
+    <a href="dividend-engine.html">Dividend Engine</a>
+    <a href="portfolio-clarity.html">Portfolio Doctor</a>
+  </div>
+</div>
+
+<script>
+function gp(){try{return JSON.parse(sessionStorage.getItem('ios_profile')||'{}')}catch(e){return{}}}
+function sp(u){sessionStorage.setItem('ios_profile',JSON.stringify({...gp(),...u}))}
+function qp(k){return new URLSearchParams(location.search).get(k)}
+let school=qp('school')||gp().school||'value';
+let mode='down';
+const SCHOOLS={index:{icon:'📊',name:'Index'},value:{icon:'🦅',name:'Value'},growth:{icon:'🌱',name:'Growth'},trend:{icon:'📈',name:'Trend'}};
+
+function setSchool(s,el){school=s;document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');sp({school:s})}
+(function(){
+  const btn=document.getElementById('sb-'+school);if(btn)btn.classList.add('on');
+  const p=qp('price');const c=qp('cost');const cap=qp('capital');const kel=qp('kelly');
+  if(p)document.getElementById('entry-price').value=p;
+  if(c)document.getElementById('entry-price').value=c;
+  if(cap)document.getElementById('first-capital').value=Math.round(parseFloat(cap)/5);
+  if(kel){// pre-fill total capital based on kelly
+    const tot=gp().portfolio||50000;
+    document.getElementById('first-capital').value=Math.round(tot*parseFloat(kel)/100/5);
+  }
+  // Auto-set school based on mode
+  if(school==='trend'){switchMode('up',document.getElementById('tab-up'));}
+})();
+
+function switchMode(m,el){
+  mode=m;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');
+  const isDown=m==='down';
+  document.getElementById('mode-label').textContent=isDown?'Configure Your Buy-Down Pyramid':'Configure Your Buy-Up Pyramid';
+  document.getElementById('price-label').textContent=isDown?'Current Price ($)':'Breakout Price ($)';
+  document.getElementById('step-label').textContent=isDown?'Price Drop per Tranche (%)':'Price Rise per Tranche (%)';
+  document.getElementById('stop-label').textContent=isDown?'Stop-Loss Below Entry (%)':'Trailing Stop (% below last tranche)';
+}
+
+function fmt(n){if(Math.abs(n)>=1e6)return'$'+(n/1e6).toFixed(2)+'M';if(Math.abs(n)>=1e3)return'$'+(n/1e3).toFixed(1)+'K';return'$'+Math.abs(n).toFixed(0)}
+
+function calculate(){
+  const entry=parseFloat(document.getElementById('entry-price').value)||50;
+  const step=parseFloat(document.getElementById('price-step').value)||10;
+  const n=parseInt(document.getElementById('tranches').value)||5;
+  const firstCap=parseFloat(document.getElementById('first-capital').value)||2000;
+  const scaling=document.getElementById('scaling').value;
+  const stopPct=parseFloat(document.getElementById('stop-loss').value)||30;
+  const totalPort=parseFloat(document.getElementById('total-portfolio').value)||50000;
+  const maxLossPct=parseFloat(document.getElementById('max-loss-pct').value)||2;
+  sp({school,pyramidEntry:entry,totalPort});
+
+  // Build tranches
+  const tranches=[];
+  for(let i=0;i<n;i++){
+    let capital;
+    if(scaling==='equal')capital=firstCap;
+    else if(scaling==='increase')capital=firstCap*(i+1);
+    else capital=firstCap*(n-i);
+    const price=mode==='down'?entry*Math.pow(1-step/100,i):entry*Math.pow(1+step/100,i);
+    const shares=Math.floor(capital/price);
+    tranches.push({idx:i+1,price,capital:shares*price,shares});
+  }
+  const totalShares=tranches.reduce((s,t)=>s+t.shares,0);
+  const totalCap=tranches.reduce((s,t)=>s+t.capital,0);
+  const avgCost=totalCap/totalShares;
+  const stopPrice=mode==='down'?entry*(1-stopPct/100):tranches[tranches.length-1].price*(1-stopPct/100);
+  const lossIfStop=(avgCost-stopPrice)/avgCost*100;
+  const dollarLoss=totalCap*(lossIfStop/100);
+  const portLoss=dollarLoss/totalPort*100;
+  const maxAllowed=totalPort*maxLossPct/100;
+
+  document.getElementById('r-avgcost').textContent='$'+avgCost.toFixed(2);
+  document.getElementById('r-total').textContent=fmt(totalCap);
+  const beq=Math.abs((entry-avgCost)/avgCost*100);
+  document.getElementById('r-beq').textContent=beq<0.1?'At market price':(beq.toFixed(1)+'% '+(mode==='down'?'gain needed':'gain already locked'));
+  document.getElementById('r-maxloss').textContent=fmt(dollarLoss);
+  document.getElementById('r-maxloss').style.color=portLoss>maxLossPct?'var(--red)':'var(--gold)';
+
+  // Pyramid table
+  const maxCap=Math.max(...tranches.map(t=>t.capital));
+  let rows=`<thead><tr><th>#</th><th>Price</th><th>Capital</th><th>Shares</th><th>Cumul. Avg Cost</th><th>Volume</th></tr></thead><tbody>`;
+  let cumShares=0,cumCap=0;
+  tranches.forEach(t=>{
+    cumShares+=t.shares;cumCap+=t.capital;
+    const cum=cumCap/cumShares;
+    const bw=(t.capital/maxCap*100).toFixed(0);
+    rows+=`<tr>
+      <td style="color:var(--accent-l);font-weight:700">${mode==='down'?'▼':'▲'} ${t.idx}</td>
+      <td style="font-weight:700">$${t.price.toFixed(2)}</td>
+      <td>${fmt(t.capital)}</td>
+      <td>${t.shares}</td>
+      <td>$${cum.toFixed(2)}</td>
+      <td><span class="tranche-bar" style="width:${bw}%"></span></td>
+    </tr>`;
+  });
+  rows+=`<tr style="border-top:2px solid var(--bd2)">
+    <td colspan="2" style="font-weight:700;color:var(--white)">TOTAL</td>
+    <td style="font-weight:700;color:var(--white)">${fmt(totalCap)}</td>
+    <td style="font-weight:700;color:var(--white)">${totalShares}</td>
+    <td style="font-weight:700;color:var(--accent-l)">$${avgCost.toFixed(2)} avg</td>
+    <td></td>
+  </tr></tbody>`;
+  document.getElementById('pyramid-table').innerHTML=rows;
+
+  // Risk budget result
+  const rbEl=document.getElementById('rb-result');
+  if(portLoss<=maxLossPct){
+    rbEl.className='rb-result safe';
+    rbEl.innerHTML=`<div style="font-size:.65em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:5px">✅ Risk Budget: OK — ${portLoss.toFixed(1)}% portfolio loss if stop-loss triggers</div><div style="font-size:.82em;color:rgba(52,211,153,.9);line-height:1.6">If all tranches fill and stop-loss at $${stopPrice.toFixed(2)} is hit: loss = ${fmt(dollarLoss)} (${portLoss.toFixed(1)}% of portfolio). This is within your ${maxLossPct}% risk budget. Plan is sized correctly.</div>`;
+  } else {
+    rbEl.className='rb-result danger';
+    rbEl.innerHTML=`<div style="font-size:.65em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:5px">⚠️ Risk Budget Exceeded — ${portLoss.toFixed(1)}% portfolio loss if stop-loss triggers</div><div style="font-size:.82em;color:#fca5a5;line-height:1.6">If all tranches fill and stop-loss triggers: loss = ${fmt(dollarLoss)} (${portLoss.toFixed(1)}% of portfolio). This exceeds your ${maxLossPct}% budget by ${(portLoss-maxLossPct).toFixed(1)}%. <br><strong>Reduce first-tranche capital to ~${fmt(maxAllowed/lossIfStop*100*0.8)} to stay within budget.</strong></div>`;
+  }
+
+  // Max drawdown warning
+  const lastPrice=tranches[tranches.length-1].price;
+  const continueDropPct=mode==='down'?30:50;
+  const worstCase=avgCost*(1-continueDropPct/100);
+  const worstLoss=totalCap-totalShares*worstCase;
+  document.getElementById('max-draw').innerHTML=`
+    <div style="font-size:.65em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#f87171;margin-bottom:5px">⚡ Stress Test: What If It Keeps Falling ${continueDropPct}% After Last Tranche?</div>
+    <div style="font-size:.82em;color:#fca5a5;line-height:1.6">If price falls another ${continueDropPct}% below your last tranche ($${lastPrice.toFixed(2)} → $${(lastPrice*(1-continueDropPct/100)).toFixed(2)}):
+      <br>• Portfolio value: ${fmt(totalShares*(lastPrice*(1-continueDropPct/100)))} (from ${fmt(totalCap)} invested)
+      <br>• Dollar loss: ${fmt(worstLoss)} (${(worstLoss/totalCap*100).toFixed(0)}% of position capital)
+      <br><strong>Question: is your conviction strong enough to hold — or would you need a 4th option: cut all losses?</strong></div>`;
+
+  buildSchool5(mode,avgCost,entry,totalCap,portLoss,n);
+  buildAiGrid(mode,avgCost,entry,totalCap,portLoss,n,stopPct);
+  buildBias(mode,portLoss,n);
+  buildNextTools(totalCap);
+  buildPrompt(mode,entry,avgCost,totalCap,n,step,stopPct,portLoss);
+  document.getElementById('results').style.display='block';
+  setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function buildSchool5(mode,avg,entry,total,portLoss,n){
+  const isDown=mode==='down';
+  const views={
+    index:{verdict:'📊 Not applicable',txt:`Index school doesn't pyramid individual stocks. If this is for a tactical satellite position, apply a 2–3 tranche structure with a hard stop — the index school keeps satellites small and disciplined.`},
+    value:{verdict:isDown?'✅ Left-side core strategy':'⚠️ Against value principles',txt:isDown?`Value school's home turf. Averaging down as price approaches your margin-of-safety target increases the expected return if the thesis is intact. Conviction must come from fundamentals, not price.`:`Value school doesn't chase price up. Buying at breakout prices often means overpaying. Value school prefers left-side entries.`},
+    growth:{verdict:'⚠️ Front-load, don\'t average down',txt:`Growth school: set your initial position and add only on dips to known support levels, not blindly. Averaging down on growth stocks that disappoint earnings is the #1 growth stock trap.`},
+    trend:{verdict:isDown?'⚠️ Against trend rules':'✅ Right-side core strategy',txt:isDown?`Trend school never averages down — the trend is your signal. A falling price in a confirmed downtrend says "exit," not "buy more."`:`Trend school's home turf. Add as price confirms momentum. Each new high is evidence the trend is intact.`}
+  };
+  let h='';
+  Object.entries(views).forEach(([k,v])=>{
+    const s=SCHOOLS[k];const isActive=k===school;
+    const col=v.verdict.startsWith('✅')?'var(--green)':v.verdict.startsWith('⚠️')?'#fbbf24':'var(--muted)';
+    h+=`<div class="s5c${isActive?' active':''}"><div class="s5c-name">${s.icon} ${s.name}</div><div style="font-size:.66em;font-weight:700;margin-bottom:4px;color:${col}">${v.verdict}</div><div class="s5c-txt">${v.txt}</div></div>`;
+  });
+  document.getElementById('school5-grid').innerHTML=h;
+}
+
+function interpolate(tpl,vars){
+  let s=String(tpl).replace(/\{([^}]+)\}/g,(m,k)=>k in vars?vars[k]:m);
+  return s.replace(/%%/g,'%');
+}
+function buildAiGrid(mode,avg,entry,total,portLoss,n,stop){
+  const isDown=mode==='down';
+  const vars={PORT_LOSS:portLoss.toFixed(1)+'%',N:n,STOP:stop+'%',TOTAL:fmt(total),AVG:fmt(avg)};
+  const ais=[
+    {n:'Claude',i:'🔵',t:'Value School',schools:{
+      value:{cd:'Left-side pyramiding works only when the business is genuinely undervalued — not just cheap. Before adding each tranche, ask: has anything about the business changed, or just the price? {PORT_LOSS} portfolio risk if stop triggers is real — accept it before the first order.',cu:'Right-side pyramiding is trend-following applied to stocks. Each tranche raises your {AVG} average cost — ensure each new entry is justified by price action, not hope. After {N} adds, {PORT_LOSS} portfolio exposure demands disciplined trailing stops.',qd:'Has the business fundamentally changed, or just the price?',qu:'Is each new tranche justified by price confirmation, or just FOMO?'},
+      growth:{cd:'Adding in {N} tranches is sensible only when intrinsic value increases as price falls. Accept {PORT_LOSS} before investing and respect {STOP}. Every purchase must strengthen expected value, not emotional comfort.',cu:'Scale into strength only while business momentum confirms the thesis. Each tranche must follow stronger evidence, not just rising prices. If growth disappoints, stop adding immediately even before {PORT_LOSS} reaches your planned limit.',qd:'Would you welcome lower prices because value improved?',qu:'Which growth metric cancels every remaining tranche?'},
+      trend:{cd:'Value investors averaging down must still respect trend — a falling stock in a falling sector is not a discount, it is confirmation. Accept {PORT_LOSS} risk only when price stabilizes, not while the trend is still down.',cu:'Build positions only when price confirms strength. Every addition toward {AVG} must follow trend continuation, never hope. Respect {STOP} without negotiation. Small planned losses prevent catastrophic portfolio damage beyond {PORT_LOSS}.',qd:'Is the trend stabilizing or is this a falling knife?',qu:'Will you execute the stop without hesitation if trend reverses?'}
+    }},
+    {n:'ChatGPT',i:'🟢',t:'Decision Framework',schools:{
+      value:{cd:'Averaging down is a risk plan, not a hope strategy. Before placing all {N} entries, accept that hitting {STOP} means a portfolio loss of {PORT_LOSS}. If that outcome feels unbearable today, your position sizing is already wrong.',cu:'Every breakout entry raises your average cost to {AVG} and shrinks your margin for error. After {N} additions, discipline matters more than conviction. Respect predefined exits before a loss reaches {PORT_LOSS}.',qd:'Have you accepted {PORT_LOSS} before placing the first order?',qu:'Will you exit exactly as planned after paying up each entry?'},
+      growth:{cd:'Averaging down on a growth stock is dangerous. A {LOSS_PCT} drop may signal fundamental deterioration, not temporary mispricing. Before adding {N} tranches, verify growth is intact — otherwise {PORT_LOSS} is just the beginning.',cu:'Scale into a growth breakout only while the growth thesis strengthens with each quarter. The rising {AVG} is acceptable only if business momentum clearly accelerates. Pre-define the growth metric that cancels the remaining tranches.',qd:'Is growth still accelerating, or are you averaging into deteriorating fundamentals?',qu:'Does each up-tranche coincide with stronger growth evidence, not just higher prices?'},
+      trend:{cd:'Trend rule: never average down. Hitting {STOP} and accepting {PORT_LOSS} is the correct action when price moves against you. Adding in {N} tranches to a falling position violates the only rule that keeps losses small.',cu:'Trend confirmation is the prerequisite for each up-tranche. Adding across {N} steps to reach {AVG} requires disciplined trailing stops that tighten as price rises. {PORT_LOSS} is the cost of one wrong trend call — keep it survivable.',qd:'Have you accepted the trend is down and the next action is cut, not add?',qu:'Is your trailing stop rising with each new tranche to protect {PORT_LOSS}?'}
+    }},
+    {n:'Gemini',i:'🔴',t:'Risk Analyst',schools:{
+      value:{cd:'Deploying across {N} batches into a falling knife traps your {TOTAL} capital too early. When your stop loss at {STOP} hits, your new average price of {AVG} yields a painful {PORT_LOSS} portfolio loss with zero dry powder left for true panic bottoms. Hold 30-40%% cash as a structural reserve.',cu:'Scaling up across {N} batches as prices surge compresses your margin of safety right when momentum exhaustion looms. Chasing breakouts pushes your average price to {AVG}, leaving your portfolio vulnerable to a sudden reversal where {PORT_LOSS} loss explodes before {STOP} triggers.',qd:'What liquidity remains when all {N} batches are spent while the asset continues falling?',qu:'Will you survive when the trend reverses at the exact moment your chasing is complete?'},
+      growth:{cd:'Down-pyramiding a growth stock across {N} tranches amplifies the risk that you are averaging into a thesis collapse, not a temporary discount. When growth stalls, {PORT_LOSS} from the {STOP} trigger is merely the measurable downside — the real loss is opportunity cost from capital tied up in a broken compounder.',cu:'Up-pyramiding into a growth breakout assumes the growth rate sustains. Each batch higher raises {AVG} and compresses the multiple at which you bought. If growth decelerates after the final tranche, a reversal to {STOP} delivers {PORT_LOSS} at exactly the wrong moment.',qd:'If growth disappoints next quarter, will the down-pyramid have proven fatal?',qu:'Are you buying into accelerating growth, or momentum that has already peaked?'},
+      trend:{cd:'A trend-down pyramid is a contradiction. Systematic risk analysis rejects averaging against confirmed downtrends. {N} batches into falling price lock {TOTAL} capital into the worst-performing position in your book. The {STOP} at {PORT_LOSS} portfolio loss exists precisely because this strategy is high-risk by design.',cu:'Trend-following pyramids require rigorous trailing stops. After {N} fills, your average cost at {AVG} represents capital fully committed to trend continuation. Any reversal through {STOP} delivers {PORT_LOSS} — size accordingly from the first batch, not the last.',qd:'Does your data confirm a trend reversal, or is this a counter-trend bet dressed as value?',qu:'Is your trailing stop methodology tested and consistent, or improvised after the fact?'}
+    }},
+    {n:'Grok',i:'⚡',t:'Trend Realist',schools:{
+      value:{cd:'Averaging down across {N} batches is the classic trend-trader suicide. Every add in a falling market is capital deployed without a single piece of confirming evidence. Your {STOP} stop already threatens {PORT_LOSS} of the total {TOTAL}. That is denial dressed as strategy.',cu:'Breakout pyramiding is the only legitimate trend play. Adding on strength across {N} batches keeps you aligned with price. But the new average at {AVG} is compressing your margin for error. Without a strict trailing stop, the next pullback turns this into a slow bleed.',qd:'Why are you adding size before the market has proven the trend has reversed?',qu:'Will you actually trail the stop tighter as {AVG} rises, or just hope?'},
+      growth:{cd:'Down-pyramiding on a growth stock is trend-following backwards. The business may be valuable, but {N} tranches into a falling price amplifies your exposure to every piece of bad news. If growth breaks, {PORT_LOSS} from {STOP} is just the floor — not the ceiling.',cu:'Growth pyramiding on strength is correct if you size each tranche based on growth evidence, not price momentum alone. As {AVG} rises, your entry cost follows. The trailing stop must rise faster than your cost basis to lock in gains.',qd:'Is growth accelerating or decelerating as you add the next tranche?',qu:'Does your growth evidence clearly support each additional tranche, or just price?'},
+      trend:{cd:'Averaging down across {N} batches is the classic trend-trader suicide. Every add in a falling market is capital deployed without a single piece of confirming evidence. Your {STOP} stop already threatens {PORT_LOSS} of the total {TOTAL}. That is denial dressed as strategy.',cu:'Trend pyramiding only works with iron discipline. Each of the {N} up-tranches must follow a new confirmation, not the same signal repeated. As {AVG} rises, the stop must trail tighter. {PORT_LOSS} is the risk of trend failure — size it as though the trend will fail.',qd:'Is this trend confirmed on multiple timeframes, or is it one timeframe fooling you?',qu:'Will you trail the stop tighter with every new tranche, or hold a static {STOP}?'}
+    }},
+    {n:'DeepSeek',i:'🌊',t:'Systematic Quant',schools:{
+      value:{cd:'A {N}-step down pyramid risks simultaneous fills in a crash as price gaps through limit orders, multiplying intended exposure. Hitting {STOP} triggers a {PORT_LOSS} loss on {TOTAL}. Set limit orders far below prior support to avoid accidentally filling all {N} batches at once.',cu:'Buying into strength with {N} up-pyramid steps raises your {AVG} with each fill, requiring an ever larger rally to profit. A reversal to {STOP} yields a {PORT_LOSS} loss on {TOTAL}. The expected return per batch shrinks as marginal cost rises.',qd:'If {N} orders fill instantly in a crash, can you stomach a {PORT_LOSS} loss?',qu:'After {N} up-steps raise your {AVG}, what price increase is needed just to break even?'},
+      growth:{cd:'A {N}-tranche down pyramid lowers {AVG} as price falls, but hitting {STOP} triggers a {PORT_LOSS} loss on {TOTAL}. If price gaps, all {N} orders fill instantly, overexposing. Buying more only raises expected return if mean reversion probability exceeds the stop-hit probability.',cu:'Up-pyramid buying into strength raises {AVG}, compressing future returns. After {N} fills, a reversal to {STOP} yields {PORT_LOSS} loss on {TOTAL}. Marginal expected return per tranche declines geometrically; the payoff profile mirrors negative convexity.',qd:'What\'s the base rate of recovery above {AVG} after a {STOP} stop is triggered?',qu:'If price falls 5%% after final fill, what\'s breakeven probability before {STOP}?'},
+      trend:{cd:'Trend followers never pyramid into losers using {N} tranches. A {STOP} stop prevents catastrophe, but the expected geometric growth is maximized by cutting early, not by averaging down. Accept {PORT_LOSS} only if the position is sized to survive trend failure from entry.',cu:'Trend followers pyramid into winners using {N} tranches, raising {AVG} but compounding momentum. A {STOP} stop prevents catastrophe. Expected geometric growth is maximized by Kelly-sized adds, accepting {PORT_LOSS} loss on {TOTAL} if trend fails.',qd:'Why is capital being deployed against a confirmed downtrend?',qu:'What is the median adverse excursion before trend resumes after each add?'}
+    }},
+    {n:'Kimi',i:'🌙',t:'A-Share Reality',schools:{
+      value:{cd:'Averaging down in A-shares risks riding a stock to delisting. {N} tranches pulling down to {AVG} means throwing good money after bad. {PORT_LOSS} is just the beginning when {STOP} fails to trigger before a trading halt.',cu:'Chasing breakouts is the #1 retail killer in A-shares. Before adding across {N} tranches up to {AVG}, confirm it\'s a real breakout — not a bull trap unloaded by major players. {PORT_LOSS} is just the prelude.',qd:'Are you averaging down into a structurally broken stock?',qu:'Is this a real breakout or are major players distributing into your buying?'},
+      growth:{cd:'A-share growth down-pyramid is value-investor logic in a market that punishes it. Delisting, fraud risk, and policy shifts can gap price through {STOP} overnight. {N} tranches averaging to {AVG} amplifies your exposure to A-share-specific permanent loss risks.',cu:'A-share growth up-pyramid requires verification that the catalyst is real, not rumor-driven. Before adding across {N} tranches to {AVG}, confirm the growth story is publicly documented — institutional buyers in A-shares disappear instantly when narratives change.',qd:'Has the growth narrative been verified by official filings, not just market rumors?',qu:'Are institutional investors still buying, or have they started distributing into your tranches?'},
+      trend:{cd:'A-share down-pyramid violates the first rule of survival in a market with limit-downs. Once price locks limit-down, your {STOP} cannot execute and {PORT_LOSS} becomes unlimited. Never pyramid down in A-shares — the liquidity risk is too severe.',cu:'A-share up-pyramid requires confirmation that the trend is policy-supported. Without macro tailwind, breakouts in A-shares are frequently engineered by major players who exit into retail buying. Verify each of the {N} tranches with volume and news confirmation.',qd:'Can you execute the stop if the stock hits limit-down?',qu:'Is institutional money flowing in or out as you add each tranche?'}
+    }},
+    {n:'Tongyi',i:'☁️',t:'Risk Control',schools:{
+      value:{cd:'After {N} tranches averaging down, if stop triggers, portfolio loss hits {PORT_LOSS} — often beyond expectation. Reserve 20%% of {TOTAL} outside the pyramid as a risk buffer. Never go all-in on {N} batches.',cu:'As you chase up to {AVG}, if {STOP} is not adjusted upward, your actual loss tolerance shrinks. After each tranche, recalculate the stop and enforce the {TOTAL} risk ceiling.',qd:'After all {N} tranches, how much risk reserve remains?',qu:'Have you reset the stop loss after each new tranche?'},
+      growth:{cd:'Down-pyramiding on a growth thesis must include a strict growth checkpoint at each tranche. Before adding, verify that key growth metrics have not deteriorated. If they have, abandon the remaining tranches immediately — {PORT_LOSS} at {STOP} is the maximum you planned; an unplanned deeper loss is avoidable.',cu:'Up-pyramiding into growth requires both price AND growth confirmation at each of the {N} steps. As {AVG} rises, your risk-to-reward ratio compresses. Set a quarterly growth review as a condition for adding subsequent tranches.',qd:'Has a formal growth check been completed before adding the next tranche?',qu:'Are both price and growth metrics confirming each new tranche?'},
+      trend:{cd:'Down-pyramid is never a trend play — and should never be treated as one. If the trend is down, the only correct action is to not add and to exit on the stop. {PORT_LOSS} is the floor only if you set the stop correctly from the beginning.',cu:'Trend up-pyramid requires stop recalibration after each tranche. As {AVG} rises toward current price, the stop must trail upward to protect accumulated gains. After {N} adds, the trailing stop is your only protection against {PORT_LOSS}.',qd:'Has the trend genuinely reversed, or is this a wishful interpretation of price action?',qu:'Is the trailing stop rising in proportion to the rising {AVG}?'}
+    }},
+    {n:'Doubao',i:'🫧',t:'Behavioral',schools:{
+      value:{cd:'Each down-tranche feels cheaper and "safer." That\'s the sunk cost fallacy — buying more into a falling position isn\'t analysis, it\'s refusing to admit error. {PORT_LOSS} is the real cost of stubbornness across {N} batches.',cu:'FOMO drives the decision at every up-tranche. After {N} adds pushing your average to {AVG}, the fear of missing out overrides the discipline to respect {STOP}. Chasing up is not courage — it\'s buying at peak enthusiasm.',qd:'Are you averaging down out of rational conviction or emotional stubbornness?',qu:'When chasing gets you stuck, will you actually honor {STOP}?'},
+      growth:{cd:'Confirmation bias makes each down-tranche feel like accumulation at a discount. You selectively remember the times averaging down worked and forget the times it preceded further collapse. Before the {N}th tranche, ask whether new evidence supports the thesis — not whether the lower {AVG} looks attractive.',cu:'Overconfidence in the growth story drives up-pyramiding beyond rational sizing. After {N} adds, the position feels like a sure thing — exactly when discipline is most critical. {PORT_LOSS} at {STOP} is the pre-committed discipline; honor it regardless of how strong the story feels.',qd:'Is each down-tranche supported by new evidence or just a lower price?',qu:'Will you honor the stop even when the growth story feels most compelling?'},
+      trend:{cd:'Loss aversion combined with sunk cost creates down-pyramid disasters. Each tranche represents money already committed, making the next tranche feel like "finishing the plan" rather than compounding a mistake. {PORT_LOSS} grows with each add while the emotional commitment deepens.',cu:'Peak enthusiasm correlates with the last up-tranche. The moment the up-pyramid feels most natural and obvious — all {N} tranches filled, {AVG} rising, everything confirming the trend — is precisely when reversal risk is highest. Honor {STOP} exactly then.',qd:'Are you adding because the thesis improved, or because you are emotionally committed to the plan?',qu:'At the top of an up-pyramid, can you follow {STOP} against your strongest conviction?'}
+    }},
+  ];
+     qu:'When chasing gets you stuck, will you actually honor {STOP}?'},
+  ];
+  document.getElementById('ai-grid').innerHTML=ais.map(a=>{
+    const sd=a.schools[school]||a.schools.value;
+    const rawC=isDown?sd.cd:sd.cu;
+    const rawQ=isDown?sd.qd:sd.qu;
+    const c=interpolate(rawC,vars);
+    const q=interpolate(rawQ,vars);
+    const id=N2ID[a.n]||a.n.toLowerCase();
+    return `<div class="ai-c"><button class="ai-star${selAIs.has(id)?' starred':''}" data-id="${id}" onclick="toggleAI('${id}')" title="Mark as my AI">★</button><div class="ai-head"><div class="ai-n">${a.i} ${a.n}</div><div class="ai-t">${a.t}</div></div><div style="flex:1;min-width:0"><div class="ai-txt">${c}</div><div class="ai-q">❓ ${q}</div></div></div>`;
+  }).join('');
+}
+
+function buildBias(mode,portLoss,n){
+  document.getElementById('bias-box').innerHTML=`
+    <div class="bias-l">${mode==='down'?'🧗 Gambler\'s Fallacy + Averaging Down Trap':'🏃 Momentum Chasing Bias'}</div>
+    <div class="bias-t">${mode==='down'?`<strong style="color:var(--white)">Averaging Down Trap:</strong> Every tranche feels "smarter" because it's cheaper. But this logic assumes the original price was fair — it wasn't, which is why it's falling. The gambler's fallacy applies: a stock is not "due" to reverse just because it's fallen far.
+      <br><br>The dangerous thought: "If ${n} tranches are good, more tranches would be better." That thinking leads to concentration that can destroy a portfolio.`:`<strong style="color:var(--white)">Momentum Chasing:</strong> Right-side pyramids feel safe because "the stock is working." But most trends end when they feel most certain. Each tranche higher reduces your margin of error.
+      <br><br>Risk: You build the full pyramid at exactly the wrong time — near the top of a momentum run. The stop-loss is your only protection.`}
+    <br><br>Rule: Never build a full pyramid unless you've verified the thesis at EACH price level — not just the first entry.</div>`;
+}
+
+function buildNextTools(totalCap){
+  const s=school;
+  document.getElementById('next-tools').innerHTML=`
+    <a class="nt-btn" href="kelly-master.html?school=${s}&capital=${Math.round(totalCap)}">
+      <div class="nt-lbl">Validate position size</div>
+      <div class="nt-name">Kelly Lab</div>
+      <div class="nt-desc">Is ${fmt(totalCap)} the right total size for this bet?</div>
+    </a>
+    <a class="nt-btn" href="portfolio-clarity.html?school=${s}">
+      <div class="nt-lbl">Portfolio concentration check</div>
+      <div class="nt-name">Portfolio Doctor</div>
+      <div class="nt-desc">After adding this position, are you still diversified?</div>
+    </a>`;
+}
+
+function buildPrompt(mode,entry,avg,total,n,step,stop,portLoss){
+  const sn={index:'Index',value:'Value (Buffett)',growth:'Growth (Fisher)',trend:'Trend (Livermore)'};
+  const t=`I'm a ${sn[school]||'investor'} building a ${mode==='down'?'buy-down':'buy-up'} pyramid position.
+
+My setup:
+• Mode: ${mode==='down'?'Left-side value averaging':'Right-side trend adding'}
+• Entry price: $${entry} | ${n} tranches at ${step}% apart
+• Average cost (full pyramid): $${avg.toFixed(2)}
+• Total capital commitment: ${fmt(total)}
+• Stop-loss triggers ${portLoss.toFixed(1)}% portfolio loss
+
+Please analyze:
+1. Is ${mode==='down'?'averaging down':'buying up momentum'} appropriate for ${sn[school]}?
+2. At what fundamental signal should I trigger each additional tranche?
+3. What's the scenario that would make me close the ENTIRE position immediately?
+4. How does this pyramid affect my overall portfolio concentration?
+5. What's the #1 mistake ${sn[school]} investors make with this strategy?`;
+  document.getElementById('prompt-txt').textContent=t;
+}
+
+const selAIs=new Set(['claude','chatgpt']);
+const N2ID={Claude:'claude',ChatGPT:'chatgpt',Gemini:'gemini',Grok:'grok',DeepSeek:'deepseek',Kimi:'kimi',Tongyi:'tongyi',Doubao:'doubao','通义':'tongyi','豆包':'doubao'};
+function toggleAI(id){
+  selAIs.has(id)?selAIs.delete(id):selAIs.add(id);
+  document.querySelectorAll('.ai-star').forEach(b=>b.classList.toggle('starred',selAIs.has(b.dataset.id)));
+  document.querySelectorAll('.ai-lnk').forEach(b=>b.classList.toggle('active',selAIs.has(b.dataset.id)));
+}
+function copyPrompt(){
+  navigator.clipboard.writeText(document.getElementById('prompt-txt').textContent).then(()=>{
+    const b=document.querySelector('.cp-btn');b.textContent='✓ Copied!';b.classList.add('ok');
+    setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},2000);
+  });
+}
+</script>
+</body>
+</html>

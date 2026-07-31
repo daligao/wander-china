@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>定投策略实验室 — 微笑曲线+五大门派 | AI投资OS</title>
+<meta name="description" content="定投不只是算数。微笑曲线模拟、早期暴跌vs晚期暴跌对比、五大门派解读、8大AI点评，让定投从数字变成决策。">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/dca-simulator-cn.html">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09101F;--surf:#111827;--surf2:#1A2436;--surf3:#0d1526;--accent:#6366F1;--accent-l:#818CF8;--gold:#F59E0B;--green:#10B981;--red:#EF4444;--white:#F1F5F9;--muted:#64748B;--bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.12)}
+body{background:var(--bg);color:var(--white);font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif;line-height:1.7;font-size:17px;overflow-x:hidden}
+a{color:var(--accent-l);text-decoration:none}
+.nav{padding:13px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:.84em}.nav a{color:var(--muted)}.nav a:hover{color:var(--white)}.nav-cur{color:var(--white);font-weight:600}
+.hero{text-align:center;padding:46px 20px 26px;background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,.12) 0%,rgba(16,185,129,.06) 40%,transparent 70%)}
+.badge{display:inline-block;font-size:.68em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-l);background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);border-radius:30px;padding:4px 13px;margin-bottom:12px}
+.hero h1{font-size:clamp(1.8rem,5vw,2.9rem);font-weight:900;letter-spacing:-.02em;line-height:1.1;margin-bottom:10px}
+.hero h1 em{font-style:normal;color:var(--accent-l)}.hero p{font-size:.92em;color:var(--muted);max-width:520px;margin:0 auto}
+.wrap{max-width:700px;margin:0 auto;padding:26px 18px 60px}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:20px 18px;margin-bottom:12px}
+.sl{font-size:.62em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-l);margin-bottom:13px}
+.school-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px}
+@media(min-width:500px){.school-row{grid-template-columns:repeat(5,1fr)}}
+.sb{background:var(--surf2);border:2px solid var(--bd);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:.2s;font-size:.79em;font-weight:700;color:var(--muted);line-height:1.3}
+.sb:hover{border-color:var(--bd2);color:var(--white)}.sb.on{border-color:var(--accent);background:rgba(99,102,241,.12);color:var(--white)}
+.sb i{font-style:normal;font-size:1.3em;display:block;margin-bottom:2px}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+@media(min-width:480px){.input-grid{grid-template-columns:repeat(3,1fr)}}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:.72em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.fg input{background:var(--surf2);border:1px solid var(--bd);border-radius:9px;padding:9px 12px;color:var(--white);font-size:.95em;font-weight:600;outline:none;transition:.2s}
+.fg input:focus{border-color:var(--accent);background:var(--surf3)}
+.smile-toggle{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:var(--surf2);border:1px solid var(--bd);border-radius:9px;cursor:pointer}
+.smile-toggle input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+.smile-toggle-txt{font-size:.84em;color:var(--white)}
+.smile-toggle-sub{font-size:.72em;color:var(--muted)}
+.btn-go{width:100%;padding:13px;background:linear-gradient(120deg,var(--accent),var(--accent-l));border:none;border-radius:12px;color:#fff;font-size:1em;font-weight:800;cursor:pointer;transition:.2s}
+.btn-go:hover{filter:brightness(1.12)}
+#results{display:none}
+.result-hero{text-align:center;padding:16px;background:var(--surf2);border-radius:12px;margin-bottom:14px}
+.rh-val{font-size:1.8em;font-weight:900;color:var(--accent-l);letter-spacing:-.02em}
+.rh-sub{font-size:.8em;color:var(--muted);margin-top:4px}
+.chart-wrap{margin-bottom:14px}
+.chart-title{font-size:.7em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px}
+.bar-chart{display:flex;align-items:flex-end;gap:3px;height:140px}
+.bar{flex:1;border-radius:4px 4px 0 0;position:relative;min-height:4px;transition:.3s}
+.bar-tip{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:.55em;color:var(--muted);white-space:nowrap}
+.smile-chart{overflow-x:auto;margin-bottom:14px}
+.smile-table{width:100%;border-collapse:collapse;font-size:.78em}
+.smile-table th{padding:6px 9px;font-size:.65em;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:1px solid var(--bd);text-align:right}
+.smile-table th:first-child{text-align:left}
+.smile-table td{padding:6px 9px;border-bottom:1px solid var(--bd);text-align:right;color:var(--white)}
+.smile-table td:first-child{text-align:left;color:var(--muted)}
+.smile-table .best{color:var(--green);font-weight:700}
+.school5{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+@media(min-width:500px){.school5{grid-template-columns:repeat(5,1fr)}}
+.s5c{background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:10px}
+.s5c.active{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.s5c-name{font-size:.72em;font-weight:800;color:var(--white);margin-bottom:4px}
+.s5c-txt{font-size:.73em;color:var(--muted);line-height:1.5}
+.ai-grid{display:flex;flex-direction:column;gap:7px}
+.ai-c{display:flex;gap:14px;align-items:flex-start;background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:12px 15px;position:relative}
+.ai-head{min-width:108px;flex-shrink:0}
+.ai-n{font-size:.92em;font-weight:800;color:var(--white);margin-bottom:2px}
+.ai-t{font-size:.72em;color:var(--accent-l)}
+.ai-txt{font-size:.92em;color:var(--muted);line-height:1.55}
+.ai-q{font-size:.78em;color:#818CF8;border-top:1px solid var(--bd);margin-top:7px;padding-top:6px;font-style:italic;line-height:1.45}
+.ai-star{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:1.1em;opacity:.35;transition:.2s;padding:0;line-height:1}
+.ai-star.starred{opacity:1;filter:drop-shadow(0 0 4px gold)}
+.ai-links-row{display:flex;flex-wrap:wrap;gap:6px}
+.ai-links-label{font-size:.62em;color:var(--muted);margin-bottom:5px}
+.ai-hint{font-size:.67em;color:var(--muted);margin-bottom:8px;font-style:italic}
+.ai-lnk{display:inline-flex;align-items:center;gap:3px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:5px 10px;font-size:.74em;font-weight:600;color:var(--muted);text-decoration:none;transition:.2s;opacity:.55}
+.ai-lnk.active{background:rgba(99,102,241,.18);border-color:var(--accent);color:var(--accent-l);opacity:1;box-shadow:0 0 0 2px rgba(99,102,241,.2);font-weight:700}
+.ai-lnk:hover{color:var(--white);border-color:var(--accent);opacity:1}
+.bias{background:rgba(99,102,241,.06);border:1px solid rgba(129,140,248,.2);border-radius:10px;padding:13px}
+.bias-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-l);margin-bottom:6px}
+.bias-t{font-size:.83em;color:#c7d2fe;line-height:1.6}
+.next-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nt-btn{display:block;background:var(--surf2);border:1px solid var(--bd2);border-radius:10px;padding:11px 13px;text-decoration:none;transition:.2s}
+.nt-btn:hover{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.nt-lbl{font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+.nt-name{font-size:.84em;font-weight:700;color:var(--white)}
+.nt-desc{font-size:.72em;color:var(--muted)}
+.pb{background:var(--surf3);border:1px solid var(--bd2);border-radius:10px;padding:13px;position:relative}
+.pb-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.pb-txt{font-size:.79em;color:var(--muted);line-height:1.6;white-space:pre-wrap;word-break:break-word;padding-right:58px}
+.cp-btn{position:absolute;top:11px;right:11px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 10px;font-size:.7em;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
+.cp-btn:hover{color:var(--white);border-color:var(--accent)}.cp-btn.ok{color:var(--green);border-color:var(--green)}
+.footer{text-align:center;padding:20px;font-size:.8em;color:var(--muted);border-top:1px solid var(--bd)}
+.footer a{color:var(--accent-l);margin:0 7px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="ai-invest-os.html">← AI投资OS</a>
+  <span style="color:var(--bd2)">›</span>
+  <span class="nav-cur">定投实验室</span>
+</nav>
+<div class="hero">
+  <div class="badge">决策工具 #1 — 定投</div>
+  <h1><em>定投策略实验室</em></h1>
+  <p>定投不只是算数。微笑曲线告诉你什么时候暴跌是朋友，五大门派告诉你如何拿住。</p>
+</div>
+<div class="wrap">
+  <div class="card">
+    <div class="sl">第一步 — 选择你的投资门派</div>
+    <div class="school-row">
+      <button class="sb" id="sb-index" onclick="setSchool('index',this)"><i>📊</i>指数派</button>
+      <button class="sb" id="sb-value" onclick="setSchool('value',this)"><i>🦅</i>价值派</button>
+      <button class="sb" id="sb-growth" onclick="setSchool('growth',this)"><i>🌱</i>成长派</button>
+      <button class="sb" id="sb-trend" onclick="setSchool('trend',this)"><i>📈</i>趋势派</button>
+    </div>
+    <div class="sl">第二步 — 定投参数</div>
+    <div class="input-grid">
+      <div class="fg"><label>每月定投（元）</label><input type="number" id="monthly" value="3000" min="1"></div>
+      <div class="fg"><label>年化收益率（%）</label><input type="number" id="rate" value="8" step="0.1" min="0.1"></div>
+      <div class="fg"><label>定投年数</label><input type="number" id="years" value="10" min="1" max="40"></div>
+    </div>
+    <label class="smile-toggle">
+      <input type="checkbox" id="smile-toggle" checked>
+      <div>
+        <div class="smile-toggle-txt">🙂 显示微笑曲线对比</div>
+        <div class="smile-toggle-sub">对比"早期暴跌"vs"晚期暴跌"vs"平稳上涨"三种市场情境</div>
+      </div>
+    </label>
+    <button class="btn-go" onclick="calculate()">开始诊断 →</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="result-hero">
+        <div class="rh-val" id="r-fv">—</div>
+        <div class="rh-sub" id="r-summary">—</div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">年度资产成长</div>
+        <div class="bar-chart" id="bar-chart"></div>
+      </div>
+      <div id="smile-section" style="display:none">
+        <div class="chart-title">微笑曲线对比 — 三种市场情境</div>
+        <div class="smile-chart">
+          <table class="smile-table" id="smile-table"></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sl">五大门派观点</div>
+      <div class="school5" id="school5-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">8大AI点评团</div>
+      <div class="ai-hint">★ 点卡片上的星选出你最信任的AI，下方链接亮起来才有意义</div>
+      <div class="ai-grid" id="ai-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">⚠️ 认知偏差提醒</div>
+      <div class="bias">
+        <div class="bias-l">📉 近期偏差 (Recency Bias)</div>
+        <div class="bias-t" id="bias-txt"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sl">继续分析 →</div>
+      <div class="next-tools" id="next-tools"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">一键生成AI分析提示词</div>
+      <div class="pb">
+        <div class="pb-l">复制 · 然后直接向你喜欢的AI提问</div>
+        <div class="pb-txt" id="prompt-txt"></div>
+        <button class="cp-btn" onclick="copyPrompt()">复制</button>
+        <div class="ai-links-label" style="margin-top:12px">★ 给上方AI卡片点星 · 点击下方链接直达</div>
+        <div class="ai-links-row">
+          <a class="ai-lnk active" data-id="claude" href="https://claude.ai/new" target="_blank" rel="noopener">🔵 Claude</a>
+          <a class="ai-lnk active" data-id="chatgpt" href="https://chatgpt.com" target="_blank" rel="noopener">🟢 ChatGPT</a>
+          <a class="ai-lnk" data-id="gemini" href="https://gemini.google.com" target="_blank" rel="noopener">🔴 Gemini</a>
+          <a class="ai-lnk" data-id="grok" href="https://grok.com" target="_blank" rel="noopener">⚡ Grok</a>
+          <a class="ai-lnk" data-id="deepseek" href="https://chat.deepseek.com" target="_blank" rel="noopener">🌊 DeepSeek</a>
+          <a class="ai-lnk" data-id="kimi" href="https://kimi.moonshot.cn" target="_blank" rel="noopener">🌙 Kimi</a>
+          <a class="ai-lnk" data-id="tongyi" href="https://tongyi.aliyun.com" target="_blank" rel="noopener">☁️ 通义</a>
+          <a class="ai-lnk" data-id="doubao" href="https://www.doubao.com" target="_blank" rel="noopener">🫧 豆包</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="ai-invest-os.html">← AI投资OS</a>
+    <a href="dividend-engine-cn.html">股息引擎</a>
+    <a href="recovery-navigator-cn.html">解套分析</a>
+    <a href="kelly-master-cn.html">凯利实验室</a>
+    <a href="pyramid-builder-cn.html">建仓金字塔</a>
+    <a href="portfolio-clarity-cn.html">持仓体检</a>
+  </div>
+</div>
+
+<script>
+function gp(){try{return JSON.parse(sessionStorage.getItem('ios_profile')||'{}')}catch(e){return{}}}
+function sp(u){sessionStorage.setItem('ios_profile',JSON.stringify({...gp(),...u}))}
+function qp(k){return new URLSearchParams(location.search).get(k)}
+let school=qp('school')||gp().school||'index';
+const SCHOOLS={index:{icon:'📊',name:'指数派'},value:{icon:'🦅',name:'价值派'},growth:{icon:'🌱',name:'成长派'},trend:{icon:'📈',name:'趋势派'}};
+function setSchool(s,el){school=s;document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');sp({school:s})}
+(function(){
+  const btn=document.getElementById('sb-'+school);if(btn)btn.classList.add('on');
+  const prof=gp();
+  if(qp('monthly')||prof.monthly)document.getElementById('monthly').value=qp('monthly')||prof.monthly;
+  if(qp('years')||prof.years)document.getElementById('years').value=qp('years')||prof.years;
+  if(prof.rate)document.getElementById('rate').value=prof.rate;
+})();
+
+function fmt(n){if(n>=1e8)return'¥'+(n/1e8).toFixed(2)+'亿';if(n>=1e4)return'¥'+(n/1e4).toFixed(1)+'万';return'¥'+Math.round(n).toLocaleString()}
+
+function calculate(){
+  const m=parseFloat(document.getElementById('monthly').value)||3000;
+  const r=parseFloat(document.getElementById('rate').value)/100||0.08;
+  const y=parseInt(document.getElementById('years').value)||10;
+  const monthly_r=r/12;const n=y*12;
+  const fv=m*((Math.pow(1+monthly_r,n)-1)/monthly_r)*(1+monthly_r);
+  const invested=m*n;
+  const gain=fv-invested;
+  sp({school,monthly:m,rate:r*100,years:y,dcaFV:Math.round(fv)});
+
+  document.getElementById('r-fv').textContent=fmt(fv);
+  document.getElementById('r-summary').textContent=`${y}年 · 累计投入${fmt(invested)} · 收益${fmt(gain)} · ${(gain/invested*100).toFixed(0)}%收益率`;
+
+  // 年度柱状图
+  let bars='';const maxFV=fv;
+  for(let yr=1;yr<=y;yr++){
+    const ni=yr*12;
+    const yFV=m*((Math.pow(1+monthly_r,ni)-1)/monthly_r)*(1+monthly_r);
+    const pct=(yFV/maxFV*100).toFixed(0);
+    const inv=m*ni;const g=yFV-inv;
+    bars+=`<div class="bar" style="flex:1;background:linear-gradient(180deg,var(--accent),var(--accent-l));height:${pct}%;border-radius:3px 3px 0 0" title="第${yr}年: ${fmt(yFV)}">
+      <span class="bar-tip">${yr}年</span></div>`;
+  }
+  document.getElementById('bar-chart').innerHTML=bars;
+
+  // 微笑曲线
+  if(document.getElementById('smile-toggle').checked){
+    document.getElementById('smile-section').style.display='block';
+    buildSmile(m,r,y,fv);
+  } else document.getElementById('smile-section').style.display='none';
+
+  buildSchool5(m,r,y,fv);
+  buildAiGrid(m,r,y,fv);
+  document.getElementById('bias-txt').textContent=`当市场上涨时，定投感觉"太慢"；当市场下跌时，定投感觉"亏损"。两种感觉都是陷阱。年化${(r*100).toFixed(0)}%的回报，${y}年复利会让你的${fmt(invested)}变成${fmt(fv)}。坚持比择时更重要——历史上，错过年内最好的10个交易日会让收益腰斩。`;
+
+  const s=school;
+  document.getElementById('next-tools').innerHTML=`
+    <a class="nt-btn" href="dividend-engine-cn.html?school=${s}&capital=${Math.round(fv)}&monthly=${m}">
+      <div class="nt-lbl">用定投结果测试</div>
+      <div class="nt-name">股息自由引擎</div>
+      <div class="nt-desc">定投${y}年后的${fmt(fv)}能否实现财务自由？</div>
+    </a>
+    <a class="nt-btn" href="recovery-navigator-cn.html?school=${s}&monthly=${m}">
+      <div class="nt-lbl">持仓套牢了？</div>
+      <div class="nt-name">解套路径分析</div>
+      <div class="nt-desc">继续定投 vs 止损，三条路径哪条对？</div>
+    </a>`;
+
+  document.getElementById('prompt-txt').textContent=`我是${SCHOOLS[school].name}投资者，正在评估定投计划。
+每月定投：${fmt(m)}，年化预期收益率：${(r*100).toFixed(1)}%，计划定投${y}年。
+终值预测：${fmt(fv)}（含定投复利）
+
+请帮我分析：
+1. 对于${SCHOOLS[school].name}，这个收益率预期是否合理？历史依据？
+2. 微笑曲线在什么条件下失效（比如长期熊市）？
+3. 年化${(r*100).toFixed(1)}%，${y}年后的${fmt(fv)}在通胀环境下的实际购买力？
+4. 给我一个具体建议：我应该定投什么品种？频率怎么调整？
+请直接给出你的判断，不要只列利弊。`;
+
+  document.getElementById('results').style.display='block';
+  setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function buildSmile(m,r,y,baselineFV){
+  // 三种情境模拟
+  const scenarios=[
+    {name:'🌧️ 早期暴跌',desc:'第1年跌40%，此后回升',crash:'early'},
+    {name:'⛈️ 晚期暴跌',desc:'最后1年跌40%',crash:'late'},
+    {name:'☀️ 平稳上涨',desc:'年年匀速涨',crash:'none'},
+  ];
+  function simFV(crash){
+    const monthly_r=r/12;let shares=0;let price=100;
+    for(let mo=1;mo<=y*12;mo++){
+      const yr=Math.ceil(mo/12);
+      if(crash==='early'&&yr===1)price=price*(1+(-0.4/12));
+      else if(crash==='late'&&yr===y)price=price*(1+(-0.4/12));
+      else price=price*(1+monthly_r);
+      price=Math.max(price,0.01);
+      shares+=m/price;
+    }
+    return shares*price;
+  }
+  const results=scenarios.map(sc=>({...sc,fv:simFV(sc.crash)}));
+  const best=Math.max(...results.map(s=>s.fv));
+  let html=`<thead><tr><th>情境</th><th>终值</th><th>vs平稳</th></tr></thead><tbody>`;
+  const baseline=results.find(s=>s.crash==='none').fv;
+  results.forEach(sc=>{
+    const diff=(sc.fv-baseline)/baseline*100;
+    const cls=sc.fv===best?'best':'';
+    html+=`<tr><td>${sc.name}<div style="font-size:.7em;color:var(--muted)">${sc.desc}</div></td>
+      <td class="${cls}">${fmt(sc.fv)}</td>
+      <td class="${cls}">${diff>=0?'+':''}${diff.toFixed(1)}%</td></tr>`;
+  });
+  html+=`</tbody>`;
+  document.getElementById('smile-table').innerHTML=html;
+}
+
+function buildSchool5(m,r,y,fv){
+  const views={
+    index:{verdict:'✅ 强力推荐定投',txt:`博格尔派的核心策略就是定投指数基金。年化${(r*100).toFixed(0)}%在大盘历史均值附近。${y}年坚持是99%散户做不到的——做到了就赢了大多数主动管理基金。`},
+    value:{verdict:'⚠️ 条件性支持',txt:`巴菲特说"时间是优质资产的朋友"——但价值派不盲目定投，要在估值低估时加码。你的定投计划需要结合PE/PB指标，低估时多投，高估时少投或暂停。`},
+    growth:{verdict:'🌱 定投成长股需谨慎',txt:`成长股波动大，定投的微笑曲线效果更强，但也可能长期不归——选错了标的比不定投更惨。成长派定投，选赛道比选频率更重要。`},
+    trend:{verdict:'📈 趋势派不推荐盲目定投',txt:`利弗莫尔派重视趋势，下跌趋势中定投是"接飞刀"。趋势派定投：趋势向上时全额投入，趋势转跌时减半或暂停，不是固定金额按月投入。`}
+  };
+  let h='';
+  Object.entries(views).forEach(([k,v])=>{
+    const s=SCHOOLS[k];const isActive=k===school;
+    const col=v.verdict.startsWith('✅')?'var(--green)':v.verdict.startsWith('⚠️')?'#fbbf24':'var(--muted)';
+    h+=`<div class="s5c${isActive?' active':''}"><div class="s5c-name">${s.icon} ${s.name}</div><div style="font-size:.66em;font-weight:700;margin-bottom:4px;color:${col}">${v.verdict}</div><div class="s5c-txt">${v.txt}</div></div>`;
+  });
+  document.getElementById('school5-grid').innerHTML=h;
+}
+
+function interpolate(tpl,vars){
+  let s=String(tpl).replace(/\{([^}]+)\}/g,(m,k)=>k in vars?vars[k]:m);
+  return s.replace(/%%/g,'%');
+}
+
+function buildAiGrid(m,r,y,fv){
+  const inv=m*y*12;
+  const mult=fv/inv;
+  const vars={
+    MONTHLY:fmt(m),
+    RATE:r+'%',
+    YEARS:y,
+    MULT:mult.toFixed(1)+'倍',
+    FV:fmt(fv),
+    INVESTED:fmt(inv)
+  };
+  // 8大AI真实采集观点（Kimi/通义/豆包为原始中文回答）
+  const ais=[
+    {n:'Claude',i:'🔵',role:'长期主义',schools:{
+      value:{comment:'{MULT}的终值在数学上是真实的——前提是你坚持下去。大多数定投计划在中途大跌时断掉，偏偏那时正是以最低价积累份额最快的时候。现在预设一个无论市场如何都能坚持的最低月投金额，不要等到恐慌时再决定。',q:'你能承诺无论市场涨跌都坚持的最低月投额是多少？'},
+      growth:{comment:'定投在标的持续复合增长时有效。每月{MONTHLY}投入{YEARS}年是押注标的保持增长——持续跟踪增速，而非机械执行。若{RATE}假设失效，{FV}与{MULT}都会落空。',q:'什么增速信号会让你暂停定投计划？'},
+      trend:{comment:'机械定投忽视价格结构。下跌趋势中继续投入{MONTHLY}只是在放大下行敞口。保护本金优先于计划连续性。只有市场方向支持时，{FV}的目标才有意义。',q:'确认下行趋势时，你会暂停定投吗？'}
+    }},
+    {n:'ChatGPT',i:'🟢',role:'纪律审计',schools:{
+      value:{comment:'定投成功靠的是战胜不一致的行为，而非魔法式地跑赢一次性买入。如果你有充足资金一次性投入，拖延本金通常代价更高。你真正的优势是撑过{YEARS}年不中断。每月{MONTHLY}、年化{RATE}——一致性决定{MULT}的结果，远比完美择时重要。',q:'面对残酷的50%暴跌，你还会继续定投吗？'},
+      growth:{comment:'定期定投仅在标的增长质量保持卓越时才有价值。{MONTHLY}投入{YEARS}年应强化赢家，而非平均进入正在衰退的业务。持续审查增速假设，而非默认{RATE}永远成立。',q:'什么增速信号会让你停止{MONTHLY}的投入？'},
+      trend:{comment:'机械定投无视价格结构。若势头减弱，投入{MONTHLY}只是在放大下行敞口。保全本金优于盲目坚持。{FV}的预测只有在市场方向支持时才有意义。',q:'主要趋势向下那一刻，你会暂停定投吗？'}
+    }},
+    {n:'Gemini',i:'🔴',role:'量化策略师',schools:{
+      value:{comment:'数学上，一次性买入67%的情况下跑赢定投。但数据永远忽略人类的恐慌。每月投入{MONTHLY}、坚持{YEARS}年、年化{RATE}，强制产生{FV}终值——{INVESTED}变成{MULT}——靠的正是定投阻止你择时进出。数学偏弱，行为无懈可击。',q:'你真的能承受一次性买入后立刻暴跌吗？还是说定投是你必须的心理保险？'},
+      growth:{comment:'用固定{RATE}预测{YEARS}年回报，忽略了成长股高速阶段终将结束的基准规律。每月{MONTHLY}持续买入假设标的永续成长；一旦增速范式转移，{MULT}倍增成幻象，{INVESTED}被困在衰退资产里。',q:'你的定投标的能在下一个十年持续维持高增速吗？'},
+      trend:{comment:'盲目投入{MONTHLY}坚持{YEARS}年，保证你在世俗下行趋势中也不断买入。预期{RATE}年化产出{MULT}倍的{INVESTED}，在熊市持续十年时就是数学幻想。绝不在弱势中顺水推舟。',q:'为什么在价格持续下行的资产上机械定投，而不设趋势过滤器？'}
+    }},
+    {n:'Grok',i:'⚡',role:'行为批评家',schools:{
+      value:{comment:'媒体假装数学是最难的部分，其实不是。每月{MONTHLY}、{RATE}年化、{YEARS}年——{INVESTED}变{FV}、{MULT}——算术很简单。真正搞垮计划的是你自己。你会在复利爆发前的那场大跌里恐慌停投。人性弱点，而非收益率，才是最大执行风险。',q:'账面跌40%、满屏都是卖出信号时，你还会坚持买入吗？'},
+      growth:{comment:'{YEARS}年盲目定投假设增长引擎永不熄灭。增速一旦减速，你预测的{FV}和{MULT}就成了空谈。没有基本面损伤的价格下跌是噪音；有基本面损伤的价格下跌把整个积累计划变成价值陷阱。',q:'什么增速指标会迫使你停止{MONTHLY}的月供？'},
+      trend:{comment:'你{MONTHLY}定投{YEARS}年，预测从{INVESTED}产出{MULT}的{FV}。趋势现实：你会在趋势破位的下跌中继续买入并美其名曰纪律。价格是唯一诚实的信号。结构崩溃时继续加仓不是耐心——是在为下跌融资。',q:'主要趋势向下那一刻，你会立刻暂停定投吗？'}
+    }},
+    {n:'DeepSeek',i:'🌊',role:'时序风险建模',schools:{
+      value:{comment:'每月{MONTHLY}、{RATE}年化、坚持{YEARS}年：{INVESTED}变为{FV}，即{MULT}。但真正的优势在于时序风险——早期暴跌反而让你以更低价格积累更多份额，放大终值。而在下跌时停止定投，把账面浮亏变成了永久财富损失。',q:'如果下个月组合跌30%，你会加大定投还是暂停？'},
+      growth:{comment:'成长股高波动使DCA效果放大：早期暴跌产生的打折份额能把{FV}推到远超{MULT}的水平。停止{MONTHLY}定投破坏了这种非对称性。如果你撑过痛苦期，终值分布将严重右偏。',q:'成长股第一年暴跌50%，你会倍增{MONTHLY}还是恐慌离场？'},
+      trend:{comment:'DCA的平均假设被趋势系统拒绝。{YEARS}年盲目投入{MONTHLY}忽视时序风险——漫长的早期回撤侵蚀几何增长，哪怕平均{RATE}年化看起来正常。趋势过滤器能绕过主要回撤期。',q:'为什么不加一个趋势过滤器来规避熊市中的{MONTHLY}投入？'}
+    }},
+    {n:'Kimi',i:'🌙',role:'A股锤',schools:{
+      value:{comment:'A股非美股。注册制稀释指数，政策黑天鹅打断{YEARS}年曲线，{MONTHLY}筹码在高波动里成陷阱。{MULT}收益是幸存者偏差，{FV}跑输理财不是没可能。',q:'你的定投是在给注册制接盘吗？'},
+      growth:{comment:'A股成长股定投是慢性自杀。{YEARS}年{MONTHLY}元买入增速放缓标的，{MULT}小于一，{FV}跑输{INVESTED}的理财收益。',q:'增速还在吗？'},
+      trend:{comment:'A股趋势派从不定投。{YEARS}年无脑买入等于下跌中接飞刀，{INVESTED}越来越大，{FV}可能永远回不到{MULT}倍。',q:'趋势向上吗？'}
+    }},
+    {n:'通义',i:'☁️',role:'纪律执行',schools:{
+      value:{comment:'定投成功关键在大跌时坚持。自动扣款{MONTHLY}是必须，锁定{YEARS}年无例外。当{FV}<{INVESTED}，加倍买入才能实现{MULT}增长。短期{RATE}波动是噪音，纪律执行决定一切。情绪是最大敌人。',q:'市场大跌时你停止定投的真实原因是什么？'},
+      growth:{comment:'{YEARS}年DCA忽略成长周期，若增速下滑，{MULT}×难实现。应结合季报动态调整{MONTHLY}，避免加仓逻辑断裂标的。',q:'成长逻辑是否仍可持续？'},
+      trend:{comment:'下跌中持续投入{MONTHLY}若无视趋势反转，{INVESTED}可能全损。趋势派需确认上升信号再启动，止损优先于摊平。',q:'当前趋势确认上升了吗？'}
+    }},
+    {n:'豆包',i:'🫧',role:'行为心理师',schools:{
+      value:{comment:'短视损失厌恶是定投的核心心理陷阱：大跌时你本能暂停{MONTHLY}定投回避浮亏，哪知{YEARS}年周期里低位筹码才是拉高{MULT}、增厚{FV}的关键，亲手葬送了定投的成本优势。',q:'大跌时你敢坚持定投甚至加仓吗？'},
+      growth:{comment:'FOMO情绪让你上涨时加码{MONTHLY}追成长赛道，回调却慌忙停投，彻底打乱{YEARS}定投节奏，最终{FV}大幅缩水。',q:'上涨加仓是理性还是怕踏空？'},
+      trend:{comment:'连续回调后你过度谨慎暂停{MONTHLY}投入，错过趋势反转起点，{YEARS}下来频繁择时，最终让{MULT}大打折扣。',q:'连跌后你敢坚持定投计划吗？'}
+    }},
+  ];
+  document.getElementById('ai-grid').innerHTML=ais.map(a=>{
+    const sd=a.schools[school]||a.schools.value;
+    const c=interpolate(sd.comment,vars);
+    const q=interpolate(sd.q,vars);
+    const id=N2ID[a.n]||a.n.toLowerCase();
+    return `<div class="ai-c"><button class="ai-star${selAIs.has(id)?' starred':''}" data-id="${id}" onclick="toggleAI('${id}')" title="标记为我的AI">★</button><div class="ai-head"><div class="ai-n">${a.i} ${a.n}</div><div class="ai-t">${a.role}</div></div><div style="flex:1;min-width:0"><div class="ai-txt">${c}</div><div class="ai-q">❓ ${q}</div></div></div>`;
+  }).join('');
+}
+
+const selAIs=new Set(['claude','chatgpt']);
+const N2ID={Claude:'claude',ChatGPT:'chatgpt',Gemini:'gemini',Grok:'grok',DeepSeek:'deepseek',Kimi:'kimi',Tongyi:'tongyi',Doubao:'doubao','通义':'tongyi','豆包':'doubao'};
+function toggleAI(id){
+  selAIs.has(id)?selAIs.delete(id):selAIs.add(id);
+  document.querySelectorAll('.ai-star').forEach(b=>b.classList.toggle('starred',selAIs.has(b.dataset.id)));
+  document.querySelectorAll('.ai-lnk').forEach(b=>b.classList.toggle('active',selAIs.has(b.dataset.id)));
+}
+function copyPrompt(){
+  navigator.clipboard.writeText(document.getElementById('prompt-txt').textContent).then(()=>{
+    const b=document.querySelector('.cp-btn');b.textContent='✓ 已复制';b.classList.add('ok');
+    setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},2000);
+  });
+}
+</script>
+</body>
+</html>

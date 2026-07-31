@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>凯利仓位实验室 — 科学确定买多少 | AI投资OS</title>
+<meta name="description" content="凯利公式不只是数学，是投资纪律的量化。胜率×赔率→最优仓位，滑块交互+多空牛熊三情境，8大AI解读，五大门派仓位哲学。">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/kelly-master-cn.html">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09101F;--surf:#111827;--surf2:#1A2436;--surf3:#0d1526;--accent:#6366F1;--accent-l:#818CF8;--gold:#F59E0B;--green:#10B981;--red:#EF4444;--white:#F1F5F9;--muted:#64748B;--bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.12)}
+body{background:var(--bg);color:var(--white);font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif;line-height:1.7;font-size:17px;overflow-x:hidden}
+a{color:var(--accent-l);text-decoration:none}
+.nav{padding:13px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:.84em}.nav a{color:var(--muted)}.nav a:hover{color:var(--white)}.nav-cur{color:var(--white);font-weight:600}
+.hero{text-align:center;padding:46px 20px 26px;background:radial-gradient(ellipse at 50% 0%,rgba(245,158,11,.1) 0%,rgba(99,102,241,.07) 40%,transparent 70%)}
+.badge{display:inline-block;font-size:.68em;font-weight:700;letter-spacing:.06em;color:#fbbf24;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:30px;padding:4px 13px;margin-bottom:12px}
+.hero h1{font-size:clamp(1.8rem,5vw,2.9rem);font-weight:900;letter-spacing:-.02em;line-height:1.1;margin-bottom:10px}
+.hero h1 em{font-style:normal;color:#fbbf24}.hero p{font-size:.92em;color:var(--muted);max-width:520px;margin:0 auto}
+.wrap{max-width:700px;margin:0 auto;padding:26px 18px 60px}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:20px 18px;margin-bottom:12px}
+.sl{font-size:.62em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-l);margin-bottom:13px}
+.school-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px}
+@media(min-width:500px){.school-row{grid-template-columns:repeat(4,1fr)}}
+.sb{background:var(--surf2);border:2px solid var(--bd);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:.2s;font-size:.79em;font-weight:700;color:var(--muted);line-height:1.3}
+.sb:hover{border-color:var(--bd2);color:var(--white)}.sb.on{border-color:var(--accent);background:rgba(99,102,241,.12);color:var(--white)}
+.sb i{font-style:normal;font-size:1.3em;display:block;margin-bottom:2px}
+.mode-tabs{display:flex;gap:6px;margin-bottom:16px}
+.tab{flex:1;text-align:center;padding:9px 8px;background:var(--surf2);border:1px solid var(--bd);border-radius:9px;cursor:pointer;font-size:.82em;font-weight:700;color:var(--muted);transition:.2s}
+.tab.on{background:rgba(99,102,241,.12);border-color:var(--accent);color:var(--white)}
+.mode-panel{display:none}.mode-panel.on{display:block}
+.slider-group{margin-bottom:14px}
+.sl-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.sl-label{font-size:.8em;font-weight:700;color:var(--white)}
+.sl-val{font-size:.9em;font-weight:800;color:var(--accent-l);min-width:50px;text-align:right}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;margin-bottom:3px}
+.sl-desc{font-size:.7em;color:var(--muted)}
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.sc-card{background:var(--surf2);border:1px solid var(--bd);border-radius:9px;padding:10px}
+.sc-name{font-size:.7em;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}
+.sc-name.bear{color:var(--red)}.sc-name.base{color:var(--gold)}.sc-name.bull{color:var(--green)}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.fg label{font-size:.68em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.fg input{background:var(--bg);border:1px solid var(--bd2);border-radius:7px;padding:6px 9px;color:var(--white);font-size:.88em;font-weight:600;outline:none}
+.fg input:focus{border-color:var(--accent)}
+.capital-row{display:flex;gap:9px;margin-bottom:14px;align-items:center}
+.capital-label{font-size:.8em;font-weight:700;color:var(--muted);flex:1}
+.capital-input{background:var(--surf2);border:1px solid var(--bd);border-radius:9px;padding:9px 12px;color:var(--white);font-size:.95em;font-weight:600;outline:none;width:160px}
+.capital-input:focus{border-color:var(--accent)}
+.trades-row{display:flex;gap:9px;margin-bottom:14px;align-items:center;background:var(--surf2);padding:10px 13px;border-radius:9px;border:1px solid var(--bd)}
+.tr-label{font-size:.8em;color:var(--muted);flex:1}
+.tr-input{background:var(--bg);border:1px solid var(--bd2);border-radius:7px;padding:6px 9px;color:var(--white);font-size:.9em;font-weight:700;outline:none;width:80px}
+.tr-input:focus{border-color:var(--accent)}
+.conf-stars{font-size:1.1em;letter-spacing:3px}
+.btn-go{width:100%;padding:13px;background:linear-gradient(120deg,var(--gold),#f59e0b);border:none;border-radius:12px;color:#1a1000;font-size:1em;font-weight:800;cursor:pointer;transition:.2s}
+.btn-go:hover{filter:brightness(1.08)}
+#results{display:none}
+.kelly-display{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+@media(min-width:480px){.kelly-display{grid-template-columns:repeat(4,1fr)}}
+.kd-card{background:var(--surf2);border:1px solid var(--bd);border-radius:11px;padding:13px;text-align:center}
+.kd-card.rec{border-color:var(--gold);background:rgba(245,158,11,.06)}
+.kd-pct{font-size:1.3em;font-weight:900;margin-bottom:2px}
+.kd-amt{font-size:.82em;color:var(--muted);margin-bottom:4px}
+.kd-lbl{font-size:.65em;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.ruin-chart{display:flex;gap:6px;align-items:flex-end;height:100px;margin-bottom:8px}
+.ruin-bar{flex:1;border-radius:4px 4px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:3px}
+.ruin-pct{font-size:.6em;font-weight:700;color:var(--white)}
+.ruin-lbl{font-size:.58em;color:var(--muted);text-align:center;margin-top:3px}
+.school5{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+@media(min-width:500px){.school5{grid-template-columns:repeat(4,1fr)}}
+.s5c{background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:10px}
+.s5c.active{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.s5c-name{font-size:.72em;font-weight:800;color:var(--white);margin-bottom:4px}
+.s5c-txt{font-size:.73em;color:var(--muted);line-height:1.5}
+.ai-grid{display:flex;flex-direction:column;gap:7px}
+.ai-c{display:flex;gap:14px;align-items:flex-start;background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:12px 15px;position:relative}
+.ai-head{min-width:108px;flex-shrink:0}
+.ai-n{font-size:.92em;font-weight:800;color:var(--white);margin-bottom:2px}
+.ai-t{font-size:.72em;color:var(--accent-l)}
+.ai-txt{font-size:.92em;color:var(--muted);line-height:1.55}
+.ai-q{font-size:.78em;color:#818CF8;border-top:1px solid var(--bd);margin-top:7px;padding-top:6px;font-style:italic;line-height:1.45}
+.ai-star{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:1.1em;opacity:.35;transition:.2s;padding:0;line-height:1}
+.ai-star.starred{opacity:1;filter:drop-shadow(0 0 4px gold)}
+.ai-links-row{display:flex;flex-wrap:wrap;gap:6px}
+.ai-links-label{font-size:.62em;color:var(--muted);margin-bottom:5px}
+.ai-hint{font-size:.67em;color:var(--muted);margin-bottom:8px;font-style:italic}
+.ai-lnk{display:inline-flex;align-items:center;gap:3px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:5px 10px;font-size:.74em;font-weight:600;color:var(--muted);text-decoration:none;transition:.2s;opacity:.55}
+.ai-lnk.active{background:rgba(99,102,241,.18);border-color:var(--accent);color:var(--accent-l);opacity:1;box-shadow:0 0 0 2px rgba(99,102,241,.2);font-weight:700}
+.ai-lnk:hover{color:var(--white);border-color:var(--accent);opacity:1}
+.bias{background:rgba(99,102,241,.06);border:1px solid rgba(129,140,248,.2);border-radius:10px;padding:13px}
+.bias-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-l);margin-bottom:6px}
+.bias-t{font-size:.83em;color:#c7d2fe;line-height:1.6}
+.next-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nt-btn{display:block;background:var(--surf2);border:1px solid var(--bd2);border-radius:10px;padding:11px 13px;text-decoration:none;transition:.2s}
+.nt-btn:hover{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.nt-lbl{font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+.nt-name{font-size:.84em;font-weight:700;color:var(--white)}
+.nt-desc{font-size:.72em;color:var(--muted)}
+.pb{background:var(--surf3);border:1px solid var(--bd2);border-radius:10px;padding:13px;position:relative}
+.pb-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.pb-txt{font-size:.79em;color:var(--muted);line-height:1.6;white-space:pre-wrap;word-break:break-word;padding-right:58px}
+.cp-btn{position:absolute;top:11px;right:11px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 10px;font-size:.7em;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
+.cp-btn:hover{color:var(--white);border-color:var(--accent)}.cp-btn.ok{color:var(--green);border-color:var(--green)}
+.footer{text-align:center;padding:20px;font-size:.8em;color:var(--muted);border-top:1px solid var(--bd)}
+.footer a{color:var(--accent-l);margin:0 7px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="ai-invest-os.html">← AI投资OS</a>
+  <span style="color:var(--bd2)">›</span>
+  <span class="nav-cur">凯利仓位实验室</span>
+</nav>
+<div class="hero">
+  <div class="badge">决策工具 #3 — 仓位</div>
+  <h1><em>凯利公式</em>仓位实验室</h1>
+  <p>胜率 × 赔率 = 最优仓位。别猜了，算出来。</p>
+</div>
+<div class="wrap">
+  <div class="card">
+    <div class="sl">第一步 — 投资门派</div>
+    <div class="school-row">
+      <button class="sb" id="sb-index" onclick="setSchool('index',this)"><i>📊</i>指数派</button>
+      <button class="sb" id="sb-value" onclick="setSchool('value',this)"><i>🦅</i>价值派</button>
+      <button class="sb" id="sb-growth" onclick="setSchool('growth',this)"><i>🌱</i>成长派</button>
+      <button class="sb" id="sb-trend" onclick="setSchool('trend',this)"><i>📈</i>趋势派</button>
+    </div>
+    <div class="sl">第二步 — 输入方式</div>
+    <div class="mode-tabs">
+      <button class="tab on" onclick="switchMode('slider',this)">🎛️ 直觉滑块模式</button>
+      <button class="tab" onclick="switchMode('scenario',this)">📊 熊/基/牛 三情境</button>
+    </div>
+
+    <div id="mode-slider" class="mode-panel on">
+      <div class="slider-group">
+        <div class="sl-header"><span class="sl-label">胜率 (p) — 这次交易获利的概率</span><span class="sl-val" id="p-val">55%</span></div>
+        <input type="range" min="1" max="99" value="55" oninput="document.getElementById('p-val').textContent=this.value+'%';liveCalc()">
+        <div class="sl-desc">历史相似操作中，有多少次实现了盈利？</div>
+      </div>
+      <div class="slider-group">
+        <div class="sl-header"><span class="sl-label">盈亏比 (b) — 预期盈利/预期亏损</span><span class="sl-val" id="b-val">2.0</span></div>
+        <input type="range" min="10" max="500" value="200" oninput="document.getElementById('b-val').textContent=(this.value/100).toFixed(1);liveCalc()">
+        <div class="sl-desc">例如：预期目标价+20%，止损-10%，则b=2.0</div>
+      </div>
+    </div>
+
+    <div id="mode-scenario" class="mode-panel">
+      <div class="scenario-grid">
+        <div class="sc-card">
+          <div class="sc-name bear">🐻 熊市情境</div>
+          <div class="fg"><label>概率 (%)</label><input type="number" id="bear-p" value="25" min="1" max="98"></div>
+          <div class="fg"><label>预期回报 (%)</label><input type="number" id="bear-r" value="-30" step="1"></div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-name base">📊 基准情境</div>
+          <div class="fg"><label>概率 (%)</label><input type="number" id="base-p" value="50" min="1" max="98"></div>
+          <div class="fg"><label>预期回报 (%)</label><input type="number" id="base-r" value="15" step="1"></div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-name bull">🐂 牛市情境</div>
+          <div class="fg"><label>概率 (%)</label><input type="number" id="bull-p" value="25" min="1" max="98"></div>
+          <div class="fg"><label>预期回报 (%)</label><input type="number" id="bull-r" value="50" step="1"></div>
+        </div>
+      </div>
+      <div style="font-size:.75em;color:var(--muted);margin-bottom:12px">⚠️ 三个概率相加需等于100%</div>
+    </div>
+
+    <div class="capital-row">
+      <div class="capital-label">总资产（元）<br><span style="font-size:.72em;color:var(--muted)">用于计算实际仓位金额</span></div>
+      <input type="number" class="capital-input" id="capital" value="100000" min="1">
+    </div>
+    <div class="trades-row">
+      <div class="tr-label">
+        <strong style="color:var(--white)">历史交易次数</strong><br>
+        <span style="font-size:.72em">决定你的胜率数据可信度（置信度评级）</span>
+      </div>
+      <input type="number" class="tr-input" id="trades" value="20" min="1">
+      <div class="conf-stars" id="conf-stars">⭐⭐⭐</div>
+    </div>
+    <button class="btn-go" onclick="calculate()">计算最优仓位 →</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="sl">凯利仓位建议</div>
+      <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:10px 13px;margin-bottom:12px;font-size:.83em;color:#fde68a">
+        <strong>凯利公式：</strong> f* = max(0, (p×b - (1-p)) ÷ b) — 让长期财富增长最大化的数学最优解
+      </div>
+      <div class="kelly-display" id="kelly-display"></div>
+      <div class="sl">超仓风险模拟（破产率）</div>
+      <div class="ruin-chart" id="ruin-chart"></div>
+      <div style="font-size:.75em;color:var(--muted)">说明：超过凯利仓位会加速长期破产风险，并非线性增加</div>
+    </div>
+
+    <div class="card">
+      <div class="sl">五大门派仓位哲学</div>
+      <div class="school5" id="school5-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">8大AI点评</div>
+      <div class="ai-hint">★ 点卡片上的星选出你最信任的AI，下方链接亮起来才有意义</div>
+      <div class="ai-grid" id="ai-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">⚠️ 认知偏差提醒</div>
+      <div class="bias">
+        <div class="bias-l">📈 过度自信偏差 (Overconfidence Bias)</div>
+        <div class="bias-t" id="bias-txt"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sl">继续分析 →</div>
+      <div class="next-tools" id="next-tools"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">一键生成AI分析提示词</div>
+      <div class="pb">
+        <div class="pb-l">复制 · 然后直接向你喜欢的AI提问</div>
+        <div class="pb-txt" id="prompt-txt"></div>
+        <button class="cp-btn" onclick="copyPrompt()">复制</button>
+        <div class="ai-links-label" style="margin-top:12px">★ 给上方AI卡片点星 · 点击下方链接直达</div>
+        <div class="ai-links-row">
+          <a class="ai-lnk active" data-id="claude" href="https://claude.ai/new" target="_blank" rel="noopener">🔵 Claude</a>
+          <a class="ai-lnk active" data-id="chatgpt" href="https://chatgpt.com" target="_blank" rel="noopener">🟢 ChatGPT</a>
+          <a class="ai-lnk" data-id="gemini" href="https://gemini.google.com" target="_blank" rel="noopener">🔴 Gemini</a>
+          <a class="ai-lnk" data-id="grok" href="https://grok.com" target="_blank" rel="noopener">⚡ Grok</a>
+          <a class="ai-lnk" data-id="deepseek" href="https://chat.deepseek.com" target="_blank" rel="noopener">🌊 DeepSeek</a>
+          <a class="ai-lnk" data-id="kimi" href="https://kimi.moonshot.cn" target="_blank" rel="noopener">🌙 Kimi</a>
+          <a class="ai-lnk" data-id="tongyi" href="https://tongyi.aliyun.com" target="_blank" rel="noopener">☁️ 通义</a>
+          <a class="ai-lnk" data-id="doubao" href="https://www.doubao.com" target="_blank" rel="noopener">🫧 豆包</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="ai-invest-os.html">← AI投资OS</a>
+    <a href="dca-simulator-cn.html">定投实验室</a>
+    <a href="recovery-navigator-cn.html">解套分析</a>
+    <a href="pyramid-builder-cn.html">建仓金字塔</a>
+    <a href="portfolio-clarity-cn.html">持仓体检</a>
+  </div>
+</div>
+<script>
+function gp(){try{return JSON.parse(sessionStorage.getItem('ios_profile')||'{}')}catch(e){return{}}}
+function sp(u){sessionStorage.setItem('ios_profile',JSON.stringify({...gp(),...u}))}
+function qp(k){return new URLSearchParams(location.search).get(k)}
+let school=qp('school')||gp().school||'value';
+let mode='slider';
+const SCHOOLS={index:{icon:'📊',name:'指数派'},value:{icon:'🦅',name:'价值派'},growth:{icon:'🌱',name:'成长派'},trend:{icon:'📈',name:'趋势派'}};
+function setSchool(s,el){school=s;document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');sp({school:s})}
+function switchMode(m,el){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');document.getElementById('mode-slider').classList.toggle('on',m==='slider');document.getElementById('mode-scenario').classList.toggle('on',m==='scenario');}
+(function(){
+  const btn=document.getElementById('sb-'+school);if(btn)btn.classList.add('on');
+  const prof=gp();const cap=qp('capital')||prof.kellyCapital;
+  if(cap)document.getElementById('capital').value=cap;
+  updateConf();
+})();
+function updateConf(){
+  const t=parseInt(document.getElementById('trades').value)||0;
+  const stars=t>=100?'⭐⭐⭐⭐⭐':t>=50?'⭐⭐⭐⭐':t>=20?'⭐⭐⭐':t>=5?'⭐⭐':'⭐';
+  document.getElementById('conf-stars').textContent=stars;
+}
+document.getElementById('trades').addEventListener('input',updateConf);
+function liveCalc(){} // slider live preview (placeholder)
+function fmt(n){if(Math.abs(n)>=1e8)return'¥'+(n/1e8).toFixed(2)+'亿';if(Math.abs(n)>=1e4)return'¥'+(n/1e4).toFixed(1)+'万';return'¥'+Math.abs(n).toFixed(0)}
+
+function calculate(){
+  let p,b;
+  const capital=parseFloat(document.getElementById('capital').value)||100000;
+  const trades=parseInt(document.getElementById('trades').value)||1;
+  if(mode==='slider'){
+    p=parseInt(document.querySelector('#mode-slider input[type=range]').value)/100;
+    b=parseInt(document.querySelectorAll('#mode-slider input[type=range]')[1].value)/100;
+  } else {
+    const bp=parseFloat(document.getElementById('bear-p').value)||25;
+    const baser=parseFloat(document.getElementById('base-p').value)||50;
+    const bull=parseFloat(document.getElementById('bull-p').value)||25;
+    const totalP=bp+baser+bull;
+    const bearR=parseFloat(document.getElementById('bear-r').value)/100||-.3;
+    const baseR=parseFloat(document.getElementById('base-r').value)/100||.15;
+    const bullR=parseFloat(document.getElementById('bull-r').value)/100||.5;
+    const ev=(bp/totalP)*bearR+(baser/totalP)*baseR+(bull/totalP)*bullR;
+    const wins=((baser/totalP)*baseR+(bull/totalP)*bullR);
+    const losses=Math.abs((bp/totalP)*bearR);
+    p=wins>0&&losses>0?(baser/totalP+bull/totalP):0.55;
+    b=wins>0&&losses>0?wins/losses:1.5;
+  }
+  const fullK=Math.max(0,(p*b-(1-p))/b);
+  const halfK=fullK/2;
+  const quarterK=fullK/4;
+  const recK=halfK;
+  sp({school,kellyFull:fullK,kellyCapital:capital});
+
+  const kItems=[
+    {lbl:'全凯利 (f*)',pct:fullK,color:'var(--red)'},
+    {lbl:'半凯利（推荐）',pct:halfK,color:'var(--gold)',rec:true},
+    {lbl:'1/4凯利（保守）',pct:quarterK,color:'var(--green)'},
+    {lbl:'你的推荐仓位',pct:recK,color:'var(--accent-l)',rec:true},
+  ];
+  document.getElementById('kelly-display').innerHTML=kItems.map(k=>`
+    <div class="kd-card${k.rec?' rec':''}">
+      <div class="kd-pct" style="color:${k.color}">${(k.pct*100).toFixed(1)}%</div>
+      <div class="kd-amt">${fmt(k.pct*capital)}</div>
+      <div class="kd-lbl">${k.lbl}</div>
+    </div>`).join('');
+
+  // 破产率模拟图（说明性数据）
+  const ruinData=[
+    {lbl:'1/4凯利',pct:fullK,ruinRisk:2,color:'var(--green)'},
+    {lbl:'1/2凯利',pct:halfK,ruinRisk:8,color:'var(--accent-l)'},
+    {lbl:'全凯利',pct:fullK,ruinRisk:20,color:'var(--gold)'},
+    {lbl:'1.5x凯利',pct:fullK*1.5,ruinRisk:52,color:'#f97316'},
+    {lbl:'2x凯利',pct:fullK*2,ruinRisk:85,color:'var(--red)'},
+  ];
+  document.getElementById('ruin-chart').innerHTML=ruinData.map(d=>`
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+      <div class="ruin-bar" style="height:${d.ruinRisk}%;background:${d.color};width:100%;border-radius:4px 4px 0 0;align-items:center;justify-content:center;min-height:20px">
+        <span class="ruin-pct">${d.ruinRisk}%</span>
+      </div>
+      <div class="ruin-lbl">${d.lbl}</div>
+    </div>`).join('');
+
+  buildSchool5(fullK,halfK,capital,p,b,trades);
+  buildAiGrid(fullK,halfK,capital,p,b,trades);
+  document.getElementById('bias-txt').textContent=`散户最常见的凯利错误：高估自己的胜率，低估亏损。如果你的历史交易次数只有${trades}次，置信度${trades>=20?'尚可':'严重不足'}——样本量越小，你高估胜率的风险越高。真实的投资胜率往往比你记得的低10-20%，因为人类会选择性记住盈利的交易。建议：第一次用凯利公式时，把你估计的胜率降低5-10%后再计算。`;
+
+  const s=school;const hkPct=Math.round(halfK*100);
+  document.getElementById('next-tools').innerHTML=`
+    <a class="nt-btn" href="pyramid-builder-cn.html?school=${s}&kelly=${hkPct}&capital=${Math.round(halfK*capital)}">
+      <div class="nt-lbl">用凯利仓位建仓</div>
+      <div class="nt-name">金字塔建仓器</div>
+      <div class="nt-desc">把${(halfK*100).toFixed(0)}%的仓位拆成多批买入</div>
+    </a>
+    <a class="nt-btn" href="portfolio-clarity-cn.html?school=${s}">
+      <div class="nt-lbl">整体持仓分析</div>
+      <div class="nt-name">持仓体检中心</div>
+      <div class="nt-desc">这笔仓位在整体持仓中是否过度集中？</div>
+    </a>`;
+
+  document.getElementById('prompt-txt').textContent=`我是${SCHOOLS[school].name}投资者，正在用凯利公式确定仓位大小。
+
+我的参数（${mode==='slider'?'直觉滑块':'多情境加权'}模式）：
+- 胜率 p = ${(p*100).toFixed(0)}%
+- 盈亏比 b = ${b.toFixed(2)}
+- 历史交易次数：${trades}次
+- 总资产：${fmt(capital)}
+
+凯利计算结果：
+- 全凯利 f* = ${(fullK*100).toFixed(1)}%（${fmt(fullK*capital)}）
+- 推荐（半凯利）= ${(halfK*100).toFixed(1)}%（${fmt(halfK*capital)}）
+
+请帮我分析：
+1. 我的胜率${(p*100).toFixed(0)}%和盈亏比${b.toFixed(2)}对${SCHOOLS[school].name}来说合理吗？
+2. ${trades}次交易样本量的置信度如何？胜率数据需要怎么调整？
+3. 在当前市场环境下，半凯利${(halfK*100).toFixed(1)}%的仓位对于${SCHOOLS[school].name}偏高还是偏低？
+4. 如果我用全凯利${(fullK*100).toFixed(1)}%，主要风险是什么？
+请给出具体建议，不要模糊表达。`;
+
+  document.getElementById('results').style.display='block';
+  setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function buildSchool5(fk,hk,capital,p,b,trades){
+  const views={
+    index:{verdict:'📊 凯利只适用于主动仓位',txt:`指数投资不需要凯利公式——你买的是"市场"，没有个股胜率可言。如果你已经在买指数，这个工具分析的是你的"卫星仓位"主动赌注。`},
+    value:{verdict:fk>0.3?'⚠️ 全凯利太激进':'✅ 价值派可用凯利',txt:`巴菲特和芒格是重仓集中的典型，但他们的胜率数据来自数十年深度研究。你的${trades}次历史交易和他们的"胜率"性质完全不同。用半凯利，并且只在你最懂的公司上。`},
+    growth:{verdict:'🌱 成长股波动更大，降低仓位',txt:`成长股的实际亏损往往大于预期——盈亏比估计容易偏乐观。建议把你的b值降低20%再算一次，结果更安全。`},
+    trend:{verdict:'📈 趋势派的胜率最可追溯',txt:`趋势策略有清晰的量化历史，胜率和盈亏比是最可信的。如果你的策略有100次以上的历史，凯利公式对趋势派最有指导意义。`},
+  };
+  let h='';
+  Object.entries(views).forEach(([k,v])=>{
+    const s=SCHOOLS[k];const isActive=k===school;
+    const col=v.verdict.startsWith('✅')?'var(--green)':v.verdict.startsWith('⚠️')?'#fbbf24':'var(--muted)';
+    h+=`<div class="s5c${isActive?' active':''}"><div class="s5c-name">${s.icon} ${s.name}</div><div style="font-size:.66em;font-weight:700;margin-bottom:4px;color:${col}">${v.verdict}</div><div class="s5c-txt">${v.txt}</div></div>`;
+  });
+  document.getElementById('school5-grid').innerHTML=h;
+}
+
+function interpolate(tpl,vars){
+  let s=String(tpl).replace(/\{([^}]+)\}/g,(m,k)=>k in vars?vars[k]:m);
+  return s.replace(/%%/g,'%');
+}
+function buildAiGrid(fk,hk,capital,p,b,trades){
+  const vars={
+    FULL_K:(fk*100).toFixed(1)+'%',
+    HALF_K:(hk*100).toFixed(1)+'%',
+    WIN_RATE:(p*100).toFixed(0)+'%',
+    RATIO:b.toFixed(2)+'×',
+    TRADES:trades
+  };
+  const ais=[
+    {n:'Claude',i:'🔵',t:'价值视角',schools:{
+      value:{comment:'凯利公式数学上优雅，但前提是输入数据准确。{TRADES}笔历史交易的胜率估计误差极大。{FULL_K}全凯利理论最优，但输入是人的主观判断。以{HALF_K}半凯利为上限，先从基本面验证论点再加仓。',q:'如果剔除牛市顺风的影响，你的{WIN_RATE}胜率还能维持吗？'},
+      growth:{comment:'凯利估算机会，而非确定性。即便拿到{FULL_K}，结果仍取决于你的优势是否真实且持续提升。{TRADES}笔数据是置信度的基础。成长型优势衰减极快——一旦动能出现减弱迹象，主动降低仓位。',q:'你的优势除了历史{TRADES}笔交易，还有多大确定性？'},
+      trend:{comment:'凯利放大的是纪律严明的趋势跟踪，而非预测。规则一旦被破坏，{FULL_K}就变成危险品。{TRADES}笔样本有限，可能夸大置信度。仓位应在纪律减弱之前收缩，而不是在亏损连发之后被迫收缩。',q:'你在{TRADES}笔历史交易中，有没有一次违反过止损规则？'}
+    }},
+    {n:'ChatGPT',i:'🟢',t:'决策框架',schools:{
+      value:{comment:'凯利公式计算精确，但你的输入数据不精确。{FULL_K}全凯利的可信度取决于它背后的假设质量。仅凭{TRADES}笔交易，估计误差足以主导最终结果。把凯利值当作仓位上限，而非目标。',q:'如果交易样本翻倍，你还会相信同样的凯利估算吗？'},
+      growth:{comment:'{FULL_K}/{HALF_K}的凯利仓位建立在{TRADES}笔观察中{WIN_RATE}胜率和{RATIO}盈亏比之上。成长策略的生死取决于增速轨迹是否持续。增速还在，可以加仓；增速衰减，整个凯利输入已经过时。',q:'当前增速是否仍支持原假设的{WIN_RATE}和{RATIO}？'},
+      trend:{comment:'你的{WIN_RATE}来自{TRADES}笔交易、{RATIO}盈亏比产出全凯利{FULL_K}和半凯利{HALF_K}。趋势系统的真实胜率很难持续维持这个水平。高估优势产生的仓位大小，保证你在第一次深度回撤时就放弃系统。',q:'下一轮多月亏损连发后，你还会坚持全凯利下注吗？'}
+    }},
+    {n:'Gemini',i:'🔴',t:'场景分析',schools:{
+      value:{comment:'{TRADES}笔{WIN_RATE}胜率、{RATIO}盈亏比的数据，危险地忽略了肥尾风险。以{FULL_K}执行在黑天鹅中几乎必然破产，因为回撤幅度总被系统性低估。必须给极端熊市赋予更高权重，退守{HALF_K}。',q:'你的计算假设市场永不崩溃——你的组合能抗住极端肥尾事件吗？'},
+      growth:{comment:'成长投资依赖极端肥尾赢家，严重扭曲了{TRADES}样本中的{RATIO}指标。{WIN_RATE}的成功率要求无懈可击的执行力。在{FULL_K}上运行，忽略了成长周期骤然切换会残酷杀死估值倍数的基准规律。以{HALF_K}为默认上限，在不可避免的成长冬天存活下来。',q:'如果驱动你盈亏比的少数超额赢家突然消失，组合还能撑住吗？'},
+      trend:{comment:'即便{TRADES}笔显示{WIN_RATE}胜率与{RATIO}回报，{FULL_K}在漫长震荡市或肥尾假突破中仍会产生数学意义上的破产。趋势系统在波动率切换时会面临严重连亏。回退到{HALF_K}在数学上是必须的。',q:'你的资金能承受随机假突破引发的止损连串吗？'}
+    }},
+    {n:'Grok',i:'⚡',t:'趋势现实派',schools:{
+      value:{comment:'你从{TRADES}笔交易得出的{WIN_RATE}胜率几乎肯定只是短期噪声。真实趋势系统的胜率活在40-50%。高估的胜率加上{RATIO}盈亏比把全凯利推到{FULL_K}，这个仓位的大幅回撤会让你放弃系统。半凯利{HALF_K}才是你实际能执行完整亏损期的选择。',q:'连续三个月亏损后，你还会用全凯利下注吗？'},
+      growth:{comment:'成长投资押注少数大赢家。你的{WIN_RATE}和{RATIO}来自{TRADES}笔，可能只反映了一个良好周期，而非持久优势。在{FULL_K}上，单次成长纠错就会清账。在样本翻倍之前，用{HALF_K}作为上限。',q:'你的{TRADES}笔数据是真实能力还是一个顺风周期？'},
+      trend:{comment:'趋势跟踪全凯利{FULL_K}需要在连亏期保持钢铁纪律。大多数交易者在凯利数学发挥作用前就放弃系统。{HALF_K}的回撤是可以承受的。{TRADES}笔样本量仍然偏小——在优势被跨周期验证之前，保守sizing。',q:'你的{WIN_RATE}胜率有没有在完整牛熊周期中而非仅最近趋势中回测过？'}
+    }},
+    {n:'DeepSeek',i:'🌊',t:'系统量化',schools:{
+      value:{comment:'{FULL_K}全凯利理论上最大化几何增长率，但回撤让人崩溃。半凯利{HALF_K}仅减少约25%增长率却削减约50%波动率，风险调整后更优。用{TRADES}笔交易估算{WIN_RATE}胜率，95%置信区间约±1/√{TRADES}，真实凯利值可能远更低。',q:'{TRADES}笔数据估算的{WIN_RATE}，足够支撑{FULL_K}的押注吗？'},
+      growth:{comment:'成长股宽幅结果分布放大了所需的凯利折扣。{FULL_K}基于{WIN_RATE}和{RATIO}，忽略肥尾；一次3σ损失就能让组合毁于一旦。{HALF_K}是{TRADES}笔嘈杂成长观察所允许的最大安全下注。',q:'对这个策略押注{FULL_K}，第95百分位最坏情况的损失是多少？'},
+      trend:{comment:'拥有{TRADES}笔数据、{WIN_RATE}胜率和{RATIO}盈亏比的趋势系统可以直接应用凯利。全凯利{FULL_K}最大化增长，但回撤极为惨烈。半凯利{HALF_K}是标准做法：50%更低波动率换来25%更少增长。需要考虑连胜相关性。',q:'{WIN_RATE}的连胜是否呈现聚簇性，这是否提高了{FULL_K}下的破产风险？'}
+    }},
+    {n:'Kimi',i:'🌙',t:'A股相关性',schools:{
+      value:{comment:'凯利假设独立，A股板块联动极强。{WIN_RATE}胜率、{RATIO}盈亏比得{FULL_K}与{HALF_K}，多仓同板块各自加总，组合风险远超单笔。{TRADES}笔历史掩盖相关性黑洞。',q:'你的Kelly仓位，考虑过板块相关性吗？'},
+      growth:{comment:'A股板块联动摧毁凯利独立性。{TRADES}次历史样本不足，{HALF_K}在A股可能仍然太重，{RATIO}失真。',q:'样本独立吗？'},
+      trend:{comment:'A股涨跌停让{RATIO}严重失真。凯利适合趋势但{FULL_K}是找死，{HALF_K}也要配合{TRADES}次铁纪律。',q:'盈亏比失真了吗？'}
+    }},
+    {n:'通义',i:'☁️',t:'破产风险',schools:{
+      value:{comment:'胜率{WIN_RATE}与盈亏比{RATIO}虽优，但{FULL_K}易致破产。{TRADES}笔样本难扛回撤，散户应守{HALF_K}上限。',q:'你能承受{FULL_K}的破产风险吗？'},
+      growth:{comment:'{WIN_RATE}%和{RATIO}基于历史，若基本面变，{FULL_K}将放大风险。价值派应保守用{HALF_K}，因{TRADES}难覆盖长期误判。',q:'基本面变化影响{WIN_RATE}了吗？'},
+      trend:{comment:'{FULL_K}要求精准止损纪律，散户情绪使这几乎无法执行。{TRADES}笔样本不足时，破产风险被严重低估，必须以{HALF_K}为绝对上限。',q:'趋势系统里你能百分百遵守止损纪律吗？'}
+    }},
+    {n:'豆包',i:'🫧',t:'行为心理',schools:{
+      value:{comment:'过度自信是凯利公式的最大杀手，你大概率高估了{WIN_RATE}的真实水平，若实际胜率仅45%，{FULL_K}将由正转负，{TRADES}笔战绩多是运气而非真本事。',q:'你的高胜率是真本事还是运气？'},
+      growth:{comment:'成长派被故事冲昏头脑，高估{RATIO}盈亏比和{WIN_RATE}，FOMO驱动下用{FULL_K}重仓押注，忽视{TRADES}样本不足。',q:'你押注的是数据还是故事？'},
+      trend:{comment:'趋势派连亏后过度谨慎，仓位远低于{HALF_K}错失行情；频繁交易又侵蚀利润，{WIN_RATE}再高也抵不过摩擦成本。',q:'连亏后你敢按信号开仓吗？'}
+    }},
+  ];
+  document.getElementById('ai-grid').innerHTML=ais.map(a=>{
+    const sd=a.schools[school]||a.schools.value;
+    const c=interpolate(sd.comment,vars);
+    const q=interpolate(sd.q,vars);
+    const id=N2ID[a.n]||a.n.toLowerCase();
+    return `<div class="ai-c"><button class="ai-star${selAIs.has(id)?' starred':''}" data-id="${id}" onclick="toggleAI('${id}')" title="标记为我的AI">★</button><div class="ai-head"><div class="ai-n">${a.i} ${a.n}</div><div class="ai-t">${a.t}</div></div><div style="flex:1;min-width:0"><div class="ai-txt">${c}</div><div class="ai-q">❓ ${q}</div></div></div>`;
+  }).join('');
+}
+
+const selAIs=new Set(['claude','chatgpt']);
+const N2ID={Claude:'claude',ChatGPT:'chatgpt',Gemini:'gemini',Grok:'grok',DeepSeek:'deepseek',Kimi:'kimi',Tongyi:'tongyi',Doubao:'doubao','通义':'tongyi','豆包':'doubao'};
+function toggleAI(id){
+  selAIs.has(id)?selAIs.delete(id):selAIs.add(id);
+  document.querySelectorAll('.ai-star').forEach(b=>b.classList.toggle('starred',selAIs.has(b.dataset.id)));
+  document.querySelectorAll('.ai-lnk').forEach(b=>b.classList.toggle('active',selAIs.has(b.dataset.id)));
+}
+function copyPrompt(){
+  navigator.clipboard.writeText(document.getElementById('prompt-txt').textContent).then(()=>{
+    const b=document.querySelector('.cp-btn');b.textContent='✓ 已复制';b.classList.add('ok');
+    setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},2000);
+  });
+}
+</script>
+</body>
+</html>
