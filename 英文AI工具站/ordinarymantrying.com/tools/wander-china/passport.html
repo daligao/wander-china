@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>China Travel Passport — Wander China</title>
+<meta name="description" content="Collect virtual stamps from all 31 Chinese provincial capitals. Tap each city to stamp it — saved in your browser, no account needed.">
+<meta name="keywords" content="China city stamps, China travel passport, China 31 cities, China provincial capitals, China travel game, collect China stamps">
+<style>
+:root{--ink:#1a1a2e;--muted:#7c7a8a;--paper:#f5f0e8;--gold:#c9a227;--red:#e11d48;--cover:#1a1a2e}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--paper);color:var(--ink);min-height:100vh}
+a{color:var(--red);text-decoration:none}
+
+/* cover */
+.cover{background:var(--cover);color:#fff;padding:36px 20px 30px;text-align:center;border-bottom:4px solid var(--gold)}
+.cover-logo{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.cover-seal{font-size:50px;margin:10px 0}
+.cover-title{font-size:clamp(26px,5vw,42px);font-weight:900;letter-spacing:.06em;line-height:1.1}
+.cover-sub{font-size:13px;color:#9a94aa;letter-spacing:.12em;margin-top:8px;text-transform:uppercase}
+
+/* progress strip */
+.prog-strip{background:#fff;border-bottom:1px solid #e9e6df}
+.prog-inner{max-width:900px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;gap:14px}
+.prog-count{font-weight:800;font-size:20px;white-space:nowrap}
+.prog-count em{color:var(--red);font-style:normal}
+.bar-track{flex:1;height:8px;background:#e9e6df;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--gold));border-radius:4px;transition:width .4s ease;width:0%}
+.share-btn{background:var(--cover);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.share-btn:hover{background:#0f3460}
+
+/* layout */
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+.region{padding:26px 0 6px}
+.region-title{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);border-left:3px solid var(--gold);padding-left:10px;margin-bottom:14px}
+
+/* stamp grid */
+.stamp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:6px}
+
+/* stamp card */
+.stamp-card{position:relative;border:2.5px dashed #c9c3b0;border-radius:12px;padding:16px 10px 14px;text-align:center;cursor:pointer;transition:all .18s ease;background:#fff;user-select:none;-webkit-tap-highlight-color:transparent}
+.stamp-card:hover{border-color:var(--red);transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.stamp-emoji{font-size:28px;line-height:1;margin-bottom:6px;display:block}
+.stamp-city{font-weight:700;font-size:12.5px;line-height:1.3}
+.stamp-cn{font-size:11px;color:var(--muted);margin-top:2px}
+.stamp-link{display:block;font-size:10px;margin-top:7px;color:#bbb;padding:3px 0}
+.stamp-link:hover{color:var(--red)}
+
+/* visited state */
+.stamp-card.visited{background:linear-gradient(135deg,#0f3460,#1a1a2e);border:2.5px solid var(--gold)}
+.stamp-card.visited .stamp-city{color:#fff}
+.stamp-card.visited .stamp-cn{color:#9a94aa}
+.stamp-card.visited .stamp-link{color:var(--gold)}
+.stamp-card.visited .stamp-link:hover{color:#fff}
+.stamp-card.visited::after{content:'✓ VISITED';position:absolute;top:6px;right:7px;font-size:8px;font-weight:800;letter-spacing:.1em;color:var(--gold);opacity:.85}
+
+/* bottom */
+.footer-actions{padding:22px 0 40px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.reset-btn{background:transparent;border:1px solid #ddd;border-radius:8px;padding:8px 14px;font-size:12px;color:var(--muted);cursor:pointer}
+.reset-btn:hover{border-color:var(--red);color:var(--red)}
+.footer-note{font-size:12px;color:#bbb}
+
+footer{border-top:1px solid #e9e6df;padding:20px;text-align:center;font-size:13px;color:var(--muted)}
+
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:#1a1a2e;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;z-index:99}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:480px){
+  .stamp-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .stamp-card{padding:12px 6px 10px}
+  .stamp-emoji{font-size:22px}
+  .stamp-city{font-size:10.5px}
+  .stamp-link{font-size:9px}
+  .prog-inner{gap:10px}
+  .prog-count{font-size:16px}
+}
+</style>
+<meta property="og:image" content="https://ordinarymantrying.com/wp-content/uploads/2026/07/wander-china-landing-page.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Wander China — free AI trip planner for 31 Chinese cities">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ordinarymantrying.com/wp-content/uploads/2026/07/wander-china-landing-page.jpg">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/wander-china/passport.html">
+<meta property="og:title" content="China Travel Passport — Wander China">
+<meta property="og:description" content="Collect virtual stamps from all 31 Chinese provincial capitals. Tap each city to stamp it — saved in your browser, no account needed.">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-logo">Wander China · Foreigner's Edition</div>
+  <div class="cover-seal">🇨🇳</div>
+  <div class="cover-title">CHINA TRAVEL<br>PASSPORT</div>
+  <div class="cover-sub">31 Provincial Capitals · Tap to Stamp</div>
+</div>
+
+<div class="prog-strip">
+  <div class="prog-inner">
+    <div class="prog-count"><em id="cnt">0</em> / 31</div>
+    <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
+    <button class="share-btn" onclick="share()">Share 📤</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- NORTH 华北 -->
+<div class="region">
+  <div class="region-title">🧭 North · 华北</div>
+  <div class="stamp-grid">
+    <div class="stamp-card" data-id="beijing" onclick="toggle(this)">
+      <span class="stamp-emoji">🏯</span>
+      <div class="stamp-city">Beijing</div>
+      <div class="stamp-cn">北京</div>
+      <a class="stamp-link" href="cities/beijing.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+    <div class="stamp-card" data-id="tianjin" onclick="toggle(this)">
+      <span class="stamp-emoji">🎡</span>
+      <div class="stamp-city">Tianjin</div>
+      <div class="stamp-cn">天津</div>
+      <a class="stamp-link" href="planner.html?city=tianjin" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+    <div class="stamp-card" data-id="shijiazhuang" onclick="toggle(this)">
+      <span class="stamp-emoji">🌾</span>
+      <div class="stamp-city">Shijiazhuang</div>
+      <div class="stamp-cn">石家庄</div>
+      <a class="stamp-link" href="planner.html?city=shijiazhuang" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+    <div class="stamp-card" data-id="taiyuan" onclick="toggle(this)">
+      <span class="stamp-emoji">🏺</span>
+      <div class="stamp-city">Taiyuan</div>
+      <div class="stamp-cn">太原</div>
+      <a class="stamp-link" href="planner.html?city=taiyuan" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+    <div class="stamp-card" data-id="hohhot" onclick="toggle(this)">
+      <span class="stamp-emoji">🐑</span>
+      <div class="stamp-city">Hohhot</div>
+      <div class="stamp-cn">呼和浩特</div>
+      <a class="stamp-link" href="cities/hohhot.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+  </div>
+</div>
+
+<!-- NORTHEAST 东北 -->
+<div class="region">
+  <div class="region-title">🌨 Northeast · 东北</div>
+  <div class="stamp-grid">
+    <div class="stamp-card" data-id="shenyang" onclick="toggle(this)">
+      <span class="stamp-emoji">🦅</span>
+      <div class="stamp-city">Shenyang</div>
+      <div class="stamp-cn">沈阳</div>
+      <a class="stamp-link" href="planner.html?city=shenyang" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+    <div class="stamp-card" data-id="changchun" onclick="toggle(this)">
+      <span class="stamp-emoji">🎬</span>
+      <div class="stamp-city">Changchun</div>
+      <div class="stamp-cn">长春</div>
+      <a class="stamp-link" href="cities/changchun.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+    <div class="stamp-card" data-id="harbin" onclick="toggle(this)">
+      <span class="stamp-emoji">❄️</span>
+      <div class="stamp-city">Harbin</div>
+      <div class="stamp-cn">哈尔滨</div>
+      <a class="stamp-link" href="cities/harbin.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+  </div>
+</div>
+
+<!-- EAST 华东 -->
+<div class="region">
+  <div class="region-title">🌊 East · 华东</div>
+  <div class="stamp-grid">
+    <div class="stamp-card" data-id="shanghai" onclick="toggle(this)">
+      <span class="stamp-emoji">🏙️</span>
+      <div class="stamp-city">Shanghai</div>
+      <div class="stamp-cn">上海</div>
+      <a class="stamp-link" href="planner.html?city=shanghai" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+    <div class="stamp-card" data-id="nanjing" onclick="toggle(this)">
+      <span class="stamp-emoji">🏛️</span>
+      <div class="stamp-city">Nanjing</div>
+      <div class="stamp-cn">南京</div>
+      <a class="stamp-link" href="planner.html?city=nanjing" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+    <div class="stamp-card" data-id="hangzhou" onclick="toggle(this)">
+      <span class="stamp-emoji">🌸</span>
+      <div class="stamp-city">Hangzhou</div>
+      <div class="stamp-cn">杭州</div>
+      <a class="stamp-link" href="cities/hangzhou.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+    <div class="stamp-card" data-id="hefei" onclick="toggle(this)">
+      <span class="stamp-emoji">🌿</span>
+      <div class="stamp-city">Hefei</div>
+      <div class="stamp-cn">合肥</div>
+      <a class="stamp-link" href="cities/hefei.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+    <div class="stamp-card" data-id="fuzhou" onclick="toggle(this)">
+      <span class="stamp-emoji">🌳</span>
+      <div class="stamp-city">Fuzhou</div>
+      <div class="stamp-cn">福州</div>
+      <a class="stamp-link" href="cities/fuzhou.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+    <div class="stamp-card" data-id="jinan" onclick="toggle(this)">
+      <span class="stamp-emoji">⛲</span>
+      <div class="stamp-city">Jinan</div>
+      <div class="stamp-cn">济南</div>
+      <a class="stamp-link" href="cities/jinan.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+    <div class="stamp-card" data-id="nanchang" onclick="toggle(this)">
+      <span class="stamp-emoji">🦩</span>
+      <div class="stamp-city">Nanchang</div>
+      <div class="stamp-cn">南昌</div>
+      <a class="stamp-link" href="planner.html?city=nanchang" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+  </div>
+</div>
+
+<!-- CENTRAL 华中 -->
+<div class="region">
+  <div class="region-title">⚡ Central · 华中</div>
+  <div class="stamp-grid">
+    <div class="stamp-card" data-id="zhengzhou" onclick="toggle(this)">
+      <span class="stamp-emoji">⚡</span>
+      <div class="stamp-city">Zhengzhou</div>
+      <div class="stamp-cn">郑州</div>
+      <a class="stamp-link" href="planner.html?city=zhengzhou" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+    <div class="stamp-card" data-id="wuhan" onclick="toggle(this)">
+      <span class="stamp-emoji">🌉</span>
+      <div class="stamp-city">Wuhan</div>
+      <div class="stamp-cn">武汉</div>
+      <a class="stamp-link" href="planner.html?city=wuhan" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+    <div class="stamp-card" data-id="changsha" onclick="toggle(this)">
+      <span class="stamp-emoji">🌶️</span>
+      <div class="stamp-city">Changsha</div>
+      <div class="stamp-cn">长沙</div>
+      <a class="stamp-link" href="cities/changsha.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+  </div>
+</div>
+
+<!-- SOUTH 华南 -->
+<div class="region">
+  <div class="region-title">🌴 South · 华南</div>
+  <div class="stamp-grid">
+    <div class="stamp-card" data-id="guangzhou" onclick="toggle(this)">
+      <span class="stamp-emoji">🍤</span>
+      <div class="stamp-city">Guangzhou</div>
+      <div class="stamp-cn">广州</div>
+      <a class="stamp-link" href="cities/guangzhou.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+    <div class="stamp-card" data-id="nanning" onclick="toggle(this)">
+      <span class="stamp-emoji">🌴</span>
+      <div class="stamp-city">Nanning</div>
+      <div class="stamp-cn">南宁</div>
+      <a class="stamp-link" href="planner.html?city=nanning" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+    <div class="stamp-card" data-id="haikou" onclick="toggle(this)">
+      <span class="stamp-emoji">🥥</span>
+      <div class="stamp-city">Haikou</div>
+      <div class="stamp-cn">海口</div>
+      <a class="stamp-link" href="cities/haikou.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+    <div class="stamp-card" data-id="guiyang" onclick="toggle(this)">
+      <span class="stamp-emoji">🏞️</span>
+      <div class="stamp-city">Guiyang</div>
+      <div class="stamp-cn">贵阳</div>
+      <a class="stamp-link" href="cities/guiyang.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+  </div>
+</div>
+
+<!-- SOUTHWEST 西南 -->
+<div class="region">
+  <div class="region-title">🏔️ Southwest · 西南</div>
+  <div class="stamp-grid">
+    <div class="stamp-card" data-id="chongqing" onclick="toggle(this)">
+      <span class="stamp-emoji">🌆</span>
+      <div class="stamp-city">Chongqing</div>
+      <div class="stamp-cn">重庆</div>
+      <a class="stamp-link" href="cities/chongqing.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+    <div class="stamp-card" data-id="chengdu" onclick="toggle(this)">
+      <span class="stamp-emoji">🐼</span>
+      <div class="stamp-city">Chengdu</div>
+      <div class="stamp-cn">成都</div>
+      <a class="stamp-link" href="cities/chengdu.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+    <div class="stamp-card" data-id="kunming" onclick="toggle(this)">
+      <span class="stamp-emoji">🌸</span>
+      <div class="stamp-city">Kunming</div>
+      <div class="stamp-cn">昆明</div>
+      <a class="stamp-link" href="cities/kunming.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+    <div class="stamp-card" data-id="lhasa" onclick="toggle(this)">
+      <span class="stamp-emoji">🏔️</span>
+      <div class="stamp-city">Lhasa</div>
+      <div class="stamp-cn">拉萨</div>
+      <a class="stamp-link" href="planner.html?city=lhasa" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+  </div>
+</div>
+
+<!-- NORTHWEST 西北 -->
+<div class="region">
+  <div class="region-title">🕌 Northwest · 西北</div>
+  <div class="stamp-grid">
+    <div class="stamp-card" data-id="xian" onclick="toggle(this)">
+      <span class="stamp-emoji">⚔️</span>
+      <div class="stamp-city">Xi'an</div>
+      <div class="stamp-cn">西安</div>
+      <a class="stamp-link" href="planner.html?city=xian" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+    <div class="stamp-card" data-id="lanzhou" onclick="toggle(this)">
+      <span class="stamp-emoji">🌊</span>
+      <div class="stamp-city">Lanzhou</div>
+      <div class="stamp-cn">兰州</div>
+      <a class="stamp-link" href="cities/lanzhou.html" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+    <div class="stamp-card" data-id="xining" onclick="toggle(this)">
+      <span class="stamp-emoji">🦅</span>
+      <div class="stamp-city">Xining</div>
+      <div class="stamp-cn">西宁</div>
+      <a class="stamp-link" href="planner.html?city=xining" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+    <div class="stamp-card" data-id="yinchuan" onclick="toggle(this)">
+      <span class="stamp-emoji">🏜️</span>
+      <div class="stamp-city">Yinchuan</div>
+      <div class="stamp-cn">银川</div>
+      <a class="stamp-link" href="planner.html?city=yinchuan" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+    <div class="stamp-card" data-id="urumqi" onclick="toggle(this)">
+      <span class="stamp-emoji">🕌</span>
+      <div class="stamp-city">Urumqi</div>
+      <div class="stamp-cn">乌鲁木齐</div>
+      <a class="stamp-link" href="planner.html?city=urumqi" onclick="event.stopPropagation()">Plan trip →</a>
+    </div>
+  </div>
+</div>
+
+<div class="footer-actions">
+  <button class="reset-btn" onclick="resetAll()">Reset all stamps</button>
+  <span class="footer-note">Stamps save in your browser — no account needed</span>
+</div>
+
+</div><!-- /wrap -->
+
+<footer>
+  <div class="wrap">
+    <p><a href="index.html">← Wander China</a> &nbsp;·&nbsp; <a href="cities/">City Guides</a> &nbsp;·&nbsp; <a href="planner.html">Trip Planner</a></p>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY = 'wander-china-passport';
+
+function load() {
+  try { return new Set(JSON.parse(localStorage.getItem(KEY) || '[]')); }
+  catch(e) { return new Set(); }
+}
+function save(s) { localStorage.setItem(KEY, JSON.stringify([...s])); }
+
+let visited = load();
+
+function updateProgress() {
+  document.getElementById('cnt').textContent = visited.size;
+  document.getElementById('barFill').style.width = (visited.size / 31 * 100) + '%';
+}
+
+function toggle(card) {
+  const id = card.dataset.id;
+  if (visited.has(id)) {
+    visited.delete(id);
+    card.classList.remove('visited');
+    showToast('Stamp removed');
+  } else {
+    visited.add(id);
+    card.classList.add('visited');
+    const city = card.querySelector('.stamp-city').textContent;
+    showToast(city + ' stamped! ✓');
+  }
+  save(visited);
+  updateProgress();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+function share() {
+  const emojis = [...document.querySelectorAll('.stamp-card.visited')]
+    .map(c => c.querySelector('.stamp-emoji').textContent).join('');
+  const text = `I've explored ${visited.size}/31 Chinese cities! ${emojis}\n\nhttps://ordinarymantrying.com/tools/wander-china/passport.html`;
+  if (navigator.share) {
+    navigator.share({title:'My China Travel Passport', text}).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(() => showToast('Copied to clipboard!'))
+      .catch(() => showToast('Copy: ' + text.slice(0, 40)));
+  }
+}
+
+function resetAll() {
+  if (!confirm('Reset all stamps? This cannot be undone.')) return;
+  visited.clear();
+  save(visited);
+  document.querySelectorAll('.stamp-card.visited').forEach(c => c.classList.remove('visited'));
+  updateProgress();
+  showToast('All stamps cleared');
+}
+
+// restore saved state
+visited.forEach(id => {
+  const el = document.querySelector(`[data-id="${id}"]`);
+  if (el) el.classList.add('visited');
+});
+updateProgress();
+</script>
+</body>
+</html>

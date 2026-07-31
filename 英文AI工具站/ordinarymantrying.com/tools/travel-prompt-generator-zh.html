@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧭 Zero-Error AI Travel Planner Prompt Generator - One Question, Precise Itinerary</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #667eea; min-height: 100vh; padding: 20px; }
+        .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 8px; }
+        .header p { font-size: 13px; opacity: 0.9; line-height: 1.6; }
+        .progress { background: rgba(255,255,255,0.2); height: 6px; margin-top: 15px; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; width: 0%; transition: width 0.3s; }
+        .content { padding: 40px; }
+        .stage { display: none; }
+        .stage.active { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+        .form-section { margin-bottom: 30px; }
+        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #667eea; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 14px; font-weight: 500; margin-bottom: 8px; color: #333; }
+        .form-group input, .form-group select { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .radio-group { display: flex; flex-direction: column; gap: 10px; }
+        .radio-item { display: flex; gap: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; cursor: pointer; }
+        .radio-item:hover { background: #f0f1f3; }
+        .radio-item input { width: 18px; height: 18px; cursor: pointer; accent-color: #667eea; flex-shrink: 0; }
+        .buttons { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
+        button { flex: 1; min-width: 150px; padding: 12px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.3); }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .btn-secondary:hover { background: #d0d0d0; }
+        .module { margin-bottom: 12px; }
+        .module-header { display: flex; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 6px; cursor: pointer; user-select: none; font-weight: 500; }
+        .module-header:hover { background: #f0f1f3; }
+        .toggle-icon { transition: transform 0.3s; display: inline-block; font-size: 12px; }
+        .module-header.active .toggle-icon { transform: rotate(90deg); }
+        .module-content { max-height: 0; overflow: hidden; transition: max-height 0.3s; }
+        .module-content.active { max-height: 2000px; }
+        .module-inner { padding: 15px; background: #fafbfc; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 6px 6px; }
+        .category-title { font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #eee; }
+        .checkbox-item { display: flex; gap: 10px; padding: 8px; margin-bottom: 6px; }
+        .checkbox-item input { width: 16px; height: 16px; cursor: pointer; accent-color: #667eea; flex-shrink: 0; margin-top: 2px; }
+        .checkbox-label { font-size: 13px; line-height: 1.5; cursor: pointer; }
+        .output { display: none; margin-top: 30px; }
+        .output.active { display: block; animation: slideIn 0.3s; }
+        textarea { width: 100%; min-height: 450px; padding: 15px; border: 1px solid #ddd; border-radius: 6px; font-family: monospace; font-size: 11px; line-height: 1.6; }
+        .copy-btn { width: 100%; margin-top: 15px; padding: 12px; background: #4caf50; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .copy-btn:hover { background: #45a049; }
+        .copy-btn.copied { background: #2196F3; }
+        .info-box { margin-top: 20px; padding: 12px; background: #e3f2fd; border-left: 3px solid #2196F3; border-radius: 4px; font-size: 12px; color: #1976D2; line-height: 1.6; }
+        .info-box strong { color: #1565C0; }
+        .required { color: #ff6b6b; }
+        .badge { display: inline-block; background: #4caf50; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px; margin-left: 8px; }
+    </style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧭 零失误AI旅行规划提示词生成器</h1>
+            <p>全国通用版 | 3步勾选 | 99.5%信息完整 | 结构化提示词 | 任何AI都能秒懂你的需求</p>
+            <div class="progress"><div class="progress-fill"></div></div>
+        </div>
+
+        <div class="content">
+            <div class="info-box">
+                <strong>🎯 工具价值：</strong> 这不是旅行规划工具，而是"AI提问增强器"。你的提示词会包含：你的完整信息 + 长沙全流程细节 + 系统的所有建议 = 任何AI（ChatGPT/Claude/豆包）看了都能生成0失误的精准行程。
+            </div>
+
+            <form id="form">
+                <!-- STAGE 1 -->
+                <div class="stage active" id="s1">
+                    <div class="form-section">
+                        <div class="section-title">📍 第一步：基础信息（必填）</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>目的地城市 <span class="required">*</span></label>
+                                <select id="cityMode" required>
+                                    <option value="">-- 请选择 --</option>
+                                    <option value="changsha">🔥 长沙（特色深度版）</option>
+                                    <option value="custom">🌐 其他城市（通用版）</option>
+                                </select>
+                                <input type="text" id="customCity" placeholder="输入城市名称，如：北京、西安、成都..." style="margin-top: 10px; display:none;">
+                            </div>
+                            <div class="form-group">
+                                <label>出发日期 <span class="required">*</span></label>
+                                <input type="date" id="date" required>
+                            </div>
+                            <div class="form-group">
+                                <label>共计几天 <span class="required">*</span></label>
+                                <select id="days" required>
+                                    <option value="">-- 请选择 --</option>
+                                    <option value="1">1天（当天往返）</option>
+                                    <option value="2-3">2-3天（周末短途）</option>
+                                    <option value="4-5">4-5天（标准假期）</option>
+                                    <option value="6-10">6-10天（长假）</option>
+                                    <option value="10+">10天以上</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-box">💡 基础信息帮我们识别季节、天气、景区闭馆、老人防暑需求等背景。</div>
+                    <div class="buttons">
+                        <button type="button" class="btn-primary" onclick="go(2)">下一步：选择人群 →</button>
+                    </div>
+                </div>
+
+                <!-- STAGE 2 -->
+                <div class="stage" id="s2">
+                    <div class="form-section">
+                        <div class="section-title">👥 第二步：人群与偏好</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>主要出行人群 <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label class="radio-item"><input type="radio" name="pg" value="solo" required> 🎒 独自出行</label>
+                                    <label class="radio-item"><input type="radio" name="pg" value="couple"> 💑 情侣/夫妻</label>
+                                    <label class="radio-item"><input type="radio" name="pg" value="friends"> 👯 朋友/闺蜜</label>
+                                    <label class="radio-item"><input type="radio" name="pg" value="family"> 👨‍👩‍👧‍👦 家庭多人</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>是否有65岁以上老年人 <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label class="radio-item"><input type="radio" name="elderly" value="no" checked required> 否</label>
+                                    <label class="radio-item"><input type="radio" name="elderly" value="yes"> 是<span class="badge">优化强化</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>是否有12岁以下儿童 <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label class="radio-item"><input type="radio" name="kids" value="no" checked required> 否</label>
+                                    <label class="radio-item"><input type="radio" name="kids" value="yes"> 是</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>预算偏好 <span class="required">*</span></label>
+                                <select id="budget" required>
+                                    <option value="">-- 请选择 --</option>
+                                    <option value="b">💰 经济型（150-250元/日）</option>
+                                    <option value="m">💵 中档（300-500元/日）<span class="badge">推荐</span></option>
+                                    <option value="l">💎 高端（800元+/日）</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-box">💡 人群和预算信息帮我们推荐老人专属的景点、住宿、餐饮、医疗防护方案。</div>
+                    <div class="buttons">
+                        <button type="button" class="btn-secondary" onclick="go(1)">← 上一步</button>
+                        <button type="button" class="btn-primary" onclick="go(3)">下一步：勾选细节 →</button>
+                    </div>
+                </div>
+
+                <!-- STAGE 3 -->
+                <div class="stage" id="s3">
+                    <div class="form-section">
+                        <div class="section-title">📋 第三步：勾选你认为重要的细节</div>
+                        <div id="mods" style="display: grid; gap: 8px;"></div>
+                    </div>
+                    <div class="info-box">💡 所有细节都默认不勾选。你勾选的会包含在提示词里，系统还会根据你的出行信息自动补充其他建议。</div>
+                    <div class="buttons">
+                        <button type="button" class="btn-secondary" onclick="go(2)">← 上一步</button>
+                        <button type="button" class="btn-primary" onclick="gen()">🚀 生成我的完整旅行提示词（可直接复制给AI）</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- OUTPUT -->
+            <div class="output" id="out">
+                <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px; color: #4caf50;">✅ 完整提示词已生成！直接复制下方全部内容，粘贴到任何AI平台。</div>
+                <textarea id="prompt" readonly></textarea>
+                <button class="copy-btn" onclick="copy()">📋 复制所有内容到剪贴板</button>
+                <div class="info-box" style="margin-top: 15px; background: #fff3cd; border-left-color: #ffc107; color: #856404;">
+                    <strong>💡 下一步：</strong> 复制上方内容后，在ChatGPT/Claude/豆包中粘贴，可直接生成落地行程。无需修改或补充！
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 城市模式切换事件
+        function initCityModeToggle() {
+            const cityModeSelect = document.getElementById('cityMode');
+            const customCityInput = document.getElementById('customCity');
+            if (cityModeSelect && customCityInput) {
+                cityModeSelect.addEventListener('change', function() {
+                    customCityInput.style.display = this.value === 'custom' ? 'block' : 'none';
+                });
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCityModeToggle);
+        } else {
+            initCityModeToggle();
+        }
+
+        // 长沙特色版MODULES
+        const MODULES_CHANGSHA = [
+            {
+                name: "前置准备清单",
+                icon: "📋",
+                categories: [
+                    {
+                        name: "证件类（必备）",
+                        items: [
+                            {id: "d1", label: "身份证（必须，有效期>行程结束6个月）", snippet: "身份证必须携带。复印件和照片分开存放。"},
+                            {id: "d2", label: "儿童：户口本/出生证明", trigger: "kids", snippet: "儿童户口本或出生证明。"},
+                            {id: "d3", label: "老年证原件", trigger: "elderly", snippet: "65岁以上老年证原件全程随身，所有景点免排队绿色通道、门票半价/免票。"},
+                            {id: "d4", label: "优惠证件：学生证/残疾证（景区半价）", snippet: "学生证、残疾证景区现场核验可享受半价。"}
+                        ]
+                    },
+                    {
+                        name: "医疗应急（重点强化）",
+                        items: [
+                            {id: "m1", label: "常备药：退烧、止痛、止泻、创可贴、碘伏", snippet: "退烧药（泰诺林/布洛芬）、止痛药、止泻药、创可贴、碘伏棉签。"},
+                            {id: "m2", label: "老年人：常用慢性病药、医保卡（足量）", trigger: "elderly", snippet: "高血压/糖尿病/心脏病等常用药提前备足，带医生处方、医保卡。长沙本地就近医院：湘雅医院（五一广场）、中南大学湘雅二医院。"},
+                            {id: "m3", label: "儿童：退烧贴、儿童版常用药、纸尿裤", trigger: "kids", snippet: "儿童版退烧药、止咳糖浆、益生菌、退烧贴。纸尿裤、奶粉、消毒器。"},
+                            {id: "m4", label: "中暑急救完整流程卡", snippet: "中暑症状（头晕、乏力、大汗）→立刻转移25℃阴凉室内→用冷水擦拭颈侧/腋下/大腿根（大血管处）→分次喝淡盐水（1L水+1勺盐）→如意识模糊直接拨120告知\"疑似热射病\"。"},
+                            {id: "m5", label: "高血压/糖尿病老人防暑补水", trigger: "elderly", snippet: "少量多次补水（每次150ml，间隔15分钟），拒绝冰饮/高糖奶茶。随身糖块防低血糖。正午11:00-15:00绝对不外出，安排室内空调场所。"}
+                        ]
+                    },
+                    {
+                        name: "随身小件（新增）",
+                        items: [
+                            {id: "s1", label: "老人专属：大容量保温杯、折叠小板凳", trigger: "elderly", snippet: "便携保温杯保温、补水。景区租赁折叠小板凳10元/天，排队、户外休息专用。"},
+                            {id: "s2", label: "防水收纳：手机防水袋、证件防出汗袋", snippet: "防水袋装手机、证件（防出汗/雨水）。消毒湿纸巾、便携垃圾袋。"},
+                            {id: "s3", label: "雨具升级：一次性雨披（非伞）", snippet: "长沙夏季突发阵雨，一次性雨披比伞更方便（爬山/景区用）。"},
+                            {id: "s4", label: "防蚊驱虫：专业驱蚊液、长袖防护", trigger: "elderly", snippet: "岳麓山林间蚊虫密集，全身喷涂驱蚊液，长裤长袖进山。便携小风扇、遮阳帽双重降温。"},
+                            {id: "s5", label: "便携轮椅/折叠小凳", trigger: "elderly", snippet: "景区轮椅租赁20元/天，解放老人体力。折叠小凳10元/天排队休息用。"}
+                        ]
+                    },
+                    {
+                        name: "电子&财务",
+                        items: [
+                            {id: "e1", label: "充电管理：快充头65W+、多口插排、充电宝≤100Wh", snippet: "快充头、多口插排、充电宝。"},
+                            {id: "e2", label: "离线资源：离线地图、景区导览APP", snippet: "Google Maps + 高德地图离线、景区导览APP。"},
+                            {id: "f1", label: "现金携带：200元小额现金（景区无信号无法扫码）", snippet: "景区地下车库、偏远接驳点无移动信号。200元小额现金备用。"},
+                            {id: "f2", label: "预算拆分参考（300-500元中档）", snippet: "单日预算拆分：交通60-80元、正餐160-220元、门票80-120元、零碎饮品小吃50元、20%备用金。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "出发前交通",
+                icon: "✈️",
+                categories: [
+                    {
+                        name: "交通方式选择",
+                        items: [
+                            {id: "t1", label: "飞机：靠窗座、提前2h到、联程≥3h", snippet: "飞机靠窗座。提前2h到。联程≥3h转乘。"},
+                            {id: "t2", label: "高铁：靠窗、避开卫生间旁", snippet: "高铁靠窗避免吵闹。"},
+                            {id: "t3", label: "行李规划：20kg免费、液体100ml×3、充电宝≤100Wh", snippet: "国内机票20kg。液体分装≤100ml，透明袋总1L。充电宝≤100Wh。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "住宿选择（完全重写）",
+                icon: "🏨",
+                categories: [
+                    {
+                        name: "老人住宿硬性要求",
+                        items: [
+                            {id: "h1", label: "地理位置：地铁300m内、避开一楼/临街/KTV", snippet: "优先地铁出口300m内酒店。拒绝一楼（潮湿、防盗差）、KTV/夜市临街（噪音）。"},
+                            {id: "h2", label: "房间设施：必须有电梯、卫生间扶手、遮光厚窗帘", trigger: "elderly", snippet: "必须有电梯（老人体力）。卫生间必须有扶手（防摔）。厚遮光窗帘（晚间11:00-6:00安睡）。"},
+                            {id: "h3", label: "民宿避坑：拒绝loft楼梯陡峭、无监控楼道", trigger: "elderly", snippet: "民宿loft楼梯太陡，老人腿脚不便禁忌。选择有监控、门禁完整的民宿。"}
+                        ]
+                    },
+                    {
+                        name: "长沙夏季住宿刚需（7月特别）",
+                        items: [
+                            {id: "h4", label: "空调制冷+除湿：大功率空调、除湿机", snippet: "长沙7月高温潮湿，必须大功率空调制冷+除湿机。入住检查空调是否正常，冷度是否充足。"},
+                            {id: "h5", label: "热水水压检查、老人防滑地垫自备", trigger: "elderly", snippet: "入住即刻检查热水水压（老人洗漱需要）。备防滑地垫（卫生间湿滑摔伤高危）。"},
+                            {id: "h6", label: "夜间安静度：查房时测试隔音效果", snippet: "进房检查隔音效果（邻房说话听不听得见）。确认不靠电梯/楼梯间（噪音）。"}
+                        ]
+                    },
+                    {
+                        name: "中档预算区位推荐（300-500元/日）",
+                        items: [
+                            {id: "h7", label: "开福区酒店：近湖南博物院、2号线便利", snippet: "推荐开福区近省博酒店，地铁2号线直达，出行便利。300-500元中档价位充足。"},
+                            {id: "h8", label: "五一广场次干道：避开夜市噪音、但地铁便利", snippet: "五一广场核心区域夜市噪音大，选次干道（五一路往西）酒店，避开噪音但保持便利。"}
+                        ]
+                    },
+                    {
+                        name: "入住退房细节",
+                        items: [
+                            {id: "h9", label: "寄存行李：提前到达可免费寄存，延迟退房计费", snippet: "标准入住14:00、退房12:00。早到可免费寄存行李。延迟退房可能按小时计费（¥50-100/h）。"},
+                            {id: "h10", label: "进房即查：拔摄像头、检查卫浴漏水、拍照存证", snippet: "进房3分钟检查：试门锁、插座、卫浴漏水、家具破损。有问题立刻拍照告知前台。"},
+                            {id: "h11", label: "保险柜存放：老人降压药、医保卡、证件", trigger: "elderly", snippet: "房间保险柜存放老人常用药、医保卡、身份证、现金。贵重物品不要放行李箱。"},
+                            {id: "h12", label: "隐私安全：反锁房门、扣防盗链、窗帘拉好", snippet: "夜间反锁房门+扣防盗链。窗帘拉好。不要开陌生人门。"},
+                            {id: "h13", label: "退房清点：床底衣柜、卫生间每个角落逐一检查", snippet: "退房前逐一核对：充电器、护肤品、帽子、相机卡。床底、衣柜、卫生间台面仔细检查。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "饮食全覆盖",
+                icon: "🍜",
+                categories: [
+                    {
+                        name: "长沙菜适配（老人专属话术）",
+                        items: [
+                            {id: "fd1", label: "长沙菜默认偏辣：务必说'完全不辣/微辣/清淡'", snippet: "长沙菜＞外地'中辣'。点单时明确说'完全不辣、少油、少盐'。拒绝剁椒、小米辣。"},
+                            {id: "fd2", label: "本地推荐馆：笨萝卜、鲁哥饭店、公交新村粉店", snippet: "推荐本地馆：笨萝卜、鲁哥饭店、光脑壳、公交新村粉店（肉丝粉/酸辣粉）。"},
+                            {id: "fd3", label: "避开网红溢价：太平街主街只拍照，社区小馆吃饭", snippet: "太平街/坡子街主街网红溢价严重。去巷内老字号或南门口、四方坪社区馆。"},
+                            {id: "fd4", label: "新增：茶颜悦色老人适配", snippet: "茶颜悦色点单告知店员「少冰/去冰、低糖」。冰奶茶最容易刺激老人肠胃，推荐热款。"},
+                            {id: "fd5", label: "景区生冷饮食避坑", snippet: "景区露天冰粉、生冷凉拌菜尽量少吃。老人肠胃敏感易腹泻。冰+辣最危险。"}
+                        ]
+                    },
+                    {
+                        name: "饮食安全卫生",
+                        items: [
+                            {id: "fs1", label: "路边小吃：优先现做现卖、有防尘罩", snippet: "小吃优先现做、排队人多。避免：露天肉类、无冷链奶制品。"},
+                            {id: "fs2", label: "饮水：烧开或瓶装矿泉水，肠胃敏感全程瓶装", snippet: "陌生城市烧开或瓶装水。肠胃敏感全程瓶装矿泉水。"},
+                            {id: "fs3", label: "禁忌食材：野生菌、不知名野菜、野果不食用", snippet: "野生蘑菇、野菜、野果风险高。坚决拒绝。"}
+                        ]
+                    },
+                    {
+                        name: "消费避坑",
+                        items: [
+                            {id: "fm1", label: "点餐确认：单价/分量/按人头费；海鲜防调包", snippet: "提前问清单价、分量、按人头费。海鲜称重加工后再确认。"},
+                            {id: "fm2", label: "隐形费用：茶水、小菜有无自动收费", snippet: "某些餐厅茶水、小菜自动计费。提前问清。"},
+                            {id: "fm3", label: "绝不去司机推荐：多为拿回扣杀猪盘", snippet: "司机热情推荐的餐厅多为合作返利商户。自己查大众点评。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "游玩门票",
+                icon: "🎫",
+                categories: [
+                    {
+                        name: "长沙核心景点",
+                        items: [
+                            {id: "a1", label: "湖南博物院：提前7天20:00预约、周一闭馆、2.5-3h", snippet: "提前7天官公众号20:00预约。周一闭馆。内部饮水机在负1楼，卫生间在各楼层，休息座位众多。"},
+                            {id: "a2", label: "岳麓山：提前3天预约、索道30元、观光车20元、严禁步行", snippet: "南门进园。索道/观光车必选。岳麓书院另40元。山间蚊虫密集+台阶湿滑（防滑鞋必须）。"},
+                            {id: "a3", label: "橘子洲：提前3天预约、小火车40元、避免步行", snippet: "小火车避免3km步行。40元往返。地铁2号线直达。"},
+                            {id: "a4", label: "杜甫江阁：19:30亮灯、无需预约、18:00-21:00最佳", snippet: "傍晚前往看日落。19:30亮灯拍夜景。成人18元，无需预约。"}
+                        ]
+                    },
+                    {
+                        name: "优惠&时长规划",
+                        items: [
+                            {id: "ak1", label: "老年证65+：免预约绿色通道、半价/免票", trigger: "elderly", snippet: "65岁以上老年证原件所有景点免排队、门票半价或免票（湖南博物院免费）。"},
+                            {id: "ak2", label: "时长规划：博物院2.5h、岳麓山3-4h、橘子洲1.5-2h", snippet: "合理规划，避免赶场。预留排队、休息、如厕时间。"},
+                            {id: "ak3", label: "闭馆日期：周一闭馆，闭园前1h停检票", snippet: "周一景点普遍闭馆。闭园前1h停止入园。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "当地交通",
+                icon: "🚌",
+                categories: [
+                    {
+                        name: "地铁&公交",
+                        items: [
+                            {id: "tr1", label: "地铁覆盖：2/4号线90%景点、6:00-22:30运营", snippet: "地铁2号线：五一广场-橘子洲。4号线：岳麓山南门。支付宝微信乘车码。单程2-3元。"},
+                            {id: "tr2", label: "商圈避坑：五一广场节假日禁车，用地铁/共享电动车", snippet: "五一广场/黄兴广场节假日禁止出租车进入，走步行街。用地铁/共享电动车。"},
+                            {id: "tr3", label: "共享电动车：2-3km便利、注意禁停区五一广场（扣费）", snippet: "美团/哈啰共享电动车遍布。但禁停区还车扣费，要骑到外围。"},
+                            {id: "tr4", label: "景区接驳车：橘子洲小火车40元、岳麓山索道30元、观光车20元", snippet: "接驳车是标配，降低老人体力消耗。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "安全应急",
+                icon: "🚨",
+                categories: [
+                    {
+                        name: "人身&防暑",
+                        items: [
+                            {id: "sf1", label: "人身财物：背包放胸前、不戴贵金属、证件分散", snippet: "人多景区背包放前面。不戴金饰。身份证/卡分散存放。"},
+                            {id: "sf2", label: "防暑应急：12:00-15:00绝对禁止户外，室内空调必须", trigger: "elderly", snippet: "正午绝对禁止户外。安排室内场馆（博物院、美术馆、商场、文和友）。随身防晒SPF50+、驱蚊液。"},
+                            {id: "sf3", label: "紧急联系：记住110、120、酒店电话、亲友共享定位", snippet: "保存派出所110、医院120、酒店电话。亲友实时共享位置。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "返程收尾",
+                icon: "🎒",
+                categories: [
+                    {
+                        name: "行李清点&打包",
+                        items: [
+                            {id: "rt1", label: "电子设备：充电器、快充头、充电宝、相机、内存卡、耳机", snippet: "最易遗漏部件。逐一清点检查。"},
+                            {id: "rt2", label: "护肤品&衣物：面膜、面霜、内衣、帽子、伞、太阳镜", snippet: "卫生间最易遗漏。列清单逐一核对。"},
+                            {id: "rt3", label: "特产打包：易碎品泡沫保护、液体特产托运", snippet: "陶瓷：泡沫+充气垫+双层纸箱。酒水：托运必须（随身液体限制）。"},
+                            {id: "rt4", label: "返程时间：提前2-3小时到站、预留堵车缓冲", snippet: "国内航班2h前、国际3h前。最后一班车常满员。"}
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // 通用版MODULES（适配全国任何城市）
+        const MODULES_GENERIC = [
+            {
+                name: "前置准备清单",
+                icon: "📋",
+                categories: [
+                    {
+                        name: "证件类（必备）",
+                        items: [
+                            {id: "d1", label: "身份证（必须携带，有效期需覆盖整个行程）", snippet: "身份证必须携带。复印件和照片分开存放。"},
+                            {id: "d2", label: "儿童：户口本/出生证明", trigger: "kids", snippet: "儿童户口本或出生证明。"},
+                            {id: "d3", label: "老年证原件（适用65岁以上）", trigger: "elderly", snippet: "65岁以上老年证原件全程随身，景点门票可享优惠。"},
+                            {id: "d4", label: "其他优惠证件：学生证、残疾证、军官证", snippet: "学生证、残疾证等景区可享受优惠或免费。"}
+                        ]
+                    },
+                    {
+                        name: "医疗应急（重点）",
+                        items: [
+                            {id: "m1", label: "常备药：退烧、止痛、止泻、创可贴、碘伏", snippet: "退烧药、止痛药、止泻药、创可贴、碘伏。"},
+                            {id: "m2", label: "老年人：常用慢性病药、医保卡", trigger: "elderly", snippet: "高血压/糖尿病/心脏病等常用药提前备足，带医生处方、医保卡。"},
+                            {id: "m3", label: "儿童：退烧贴、儿童版常用药", trigger: "kids", snippet: "儿童版退烧药、止咳糖浆、益生菌。"},
+                            {id: "m4", label: "应急联系方式：记住当地110、120", snippet: "保存当地派出所110、医院120、酒店电话。"}
+                        ]
+                    },
+                    {
+                        name: "随身小件",
+                        items: [
+                            {id: "s1", label: "防水收纳：手机防水袋、证件防出汗袋", snippet: "防水袋装手机、证件。消毒湿纸巾、便携垃圾袋。"},
+                            {id: "s2", label: "防晒防蚊：防晒霜SPF50+、驱蚊液", snippet: "防晒霜、驱蚊液、遮阳帽。"},
+                            {id: "s3", label: "雨具：便携折叠伞或一次性雨披", snippet: "折叠伞或一次性雨披。"},
+                            {id: "s4", label: "老人专属：大容量保温杯、折叠小凳", trigger: "elderly", snippet: "便携保温杯。景区租赁折叠小凳。"}
+                        ]
+                    },
+                    {
+                        name: "电子&财务",
+                        items: [
+                            {id: "e1", label: "充电管理：快充头、充电宝（≤100Wh）", snippet: "快充头、充电宝。"},
+                            {id: "e2", label: "离线资源：离线地图、景区导览APP", snippet: "Google Maps + 当地地图离线、景区导览APP。"},
+                            {id: "f1", label: "现金携带：100-200元小额现金", snippet: "部分景区或偏远地区无法扫码。100-200元备用。"},
+                            {id: "f2", label: "预算规划：提前规划每日消费预算", snippet: "交通、正餐、门票、零碎消费、20%备用金分配。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "出发前交通",
+                icon: "✈️",
+                categories: [
+                    {
+                        name: "交通方式选择",
+                        items: [
+                            {id: "t1", label: "飞机：靠窗座、提前2h到、转乘预留充足时间", snippet: "飞机靠窗。提前2h到。联程≥3h转乘。"},
+                            {id: "t2", label: "高铁：靠窗、避开卫生间旁", snippet: "高铁靠窗避免吵闹。"},
+                            {id: "t3", label: "行李规划：国内飞机20kg免费、液体限制、充电宝≤100Wh", snippet: "国内机票20kg。液体分装≤100ml。充电宝≤100Wh。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "住宿选择",
+                icon: "🏨",
+                categories: [
+                    {
+                        name: "住宿筛选标准",
+                        items: [
+                            {id: "h1", label: "地理位置：优先地铁附近、避开太偏远", snippet: "优先地铁300m内酒店。选择中心商圈附近。"},
+                            {id: "h2", label: "房间设施：有电梯、卫生间完善、隔音好", trigger: "elderly", snippet: "必须有电梯。卫生间有扶手（防摔）。"},
+                            {id: "h3", label: "避坑：拒绝民宿楼梯陡峭、无监控楼道", trigger: "elderly", snippet: "民宿楼梯陡峭禁忌。选择有监控、门禁完整。"},
+                            {id: "h4", label: "入住检查：试门锁、检查卫浴、拍照存证", snippet: "进房检查：试门锁、插座、卫浴、家具破损。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "饮食全覆盖",
+                icon: "🍜",
+                categories: [
+                    {
+                        name: "本地美食适配",
+                        items: [
+                            {id: "fd1", label: "当地菜系特点：了解当地默认辣度，提前告知商家", snippet: "提前问清菜品辣度。明确说'完全不辣/微辣/清淡'。"},
+                            {id: "fd2", label: "本地推荐馆：优先本地人常去的社区小馆", snippet: "推荐本地人常去的馆子，避免网红溢价。"},
+                            {id: "fd3", label: "避开网红溢价：景区周边、主街网红店避坑", snippet: "景区周边网红店溢价严重。去巷内老字号或社区馆。"},
+                            {id: "fd4", label: "饮食安全卫生：优先现做现卖、有防尘罩", snippet: "小吃优先现做、排队人多。避免露天肉类。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "游玩门票",
+                icon: "🎫",
+                categories: [
+                    {
+                        name: "景点预约&优惠",
+                        items: [
+                            {id: "a1", label: "提前规划主要景点：查询预约规则、闭馆日期", snippet: "提前查询景点预约渠道、预约时间、闭馆日期。"},
+                            {id: "a2", label: "老年证优惠：65岁以上可享半价或免票", trigger: "elderly", snippet: "65岁以上老年证原件可享受景点半价或免票。"},
+                            {id: "a3", label: "游玩时长规划：避免赶场，合理安排休息", snippet: "合理规划时长，避免赶场。预留排队、休息、如厕时间。"},
+                            {id: "a4", label: "代步工具：优先景区接驳车、观光车、索道", snippet: "景区接驳车降低体力消耗。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "当地交通",
+                icon: "🚌",
+                categories: [
+                    {
+                        name: "市内交通规划",
+                        items: [
+                            {id: "tr1", label: "公共交通优先：查询当地地铁、公交线路", snippet: "地铁/公交覆盖大多数景点。支付宝微信乘车码便利。"},
+                            {id: "tr2", label: "打车或共享电动车：在地铁覆盖不足时使用", snippet: "地铁覆盖不足时，可用打车或共享电动车。"},
+                            {id: "tr3", label: "景区接驳：查询景区是否有观光车、缆车、小火车", snippet: "接驳车是标配，降低步行距离。"},
+                            {id: "tr4", label: "夜间交通安全：了解末班车时间、夜间出行注意", snippet: "查询末班车时间。夜间出行注意人身安全。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "安全应急",
+                icon: "🚨",
+                categories: [
+                    {
+                        name: "人身&防护",
+                        items: [
+                            {id: "sf1", label: "人身财物：背包放胸前、不戴贵金属、证件分散", snippet: "人多景区背包放前面。不戴金饰。身份证/卡分散存放。"},
+                            {id: "sf2", label: "季节防护：根据季节准备防晒、防寒、防蚊", trigger: "elderly", snippet: "根据季节准备防护用品。老人需特别注意。"},
+                            {id: "sf3", label: "紧急联系：记住当地110、120、酒店电话", snippet: "保存当地派出所110、医院120、酒店电话。"}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "返程收尾",
+                icon: "🎒",
+                categories: [
+                    {
+                        name: "行李清点&打包",
+                        items: [
+                            {id: "rt1", label: "电子设备：充电器、快充头、充电宝、相机、内存卡", snippet: "最易遗漏部件。逐一清点。"},
+                            {id: "rt2", label: "护肤品&衣物：面膜、面霜、内衣、帽子、伞", snippet: "卫生间最易遗漏。列清单逐一核对。"},
+                            {id: "rt3", label: "特产打包：易碎品泡沫保护、液体特产托运", snippet: "易碎品用泡沫保护。液体必须托运。"},
+                            {id: "rt4", label: "返程时间：提前2-3小时到站、预留缓冲时间", snippet: "国内航班2h前、国际3h前。预留交通延误缓冲。"}
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        function go(n) {
+            if (n > 1 && !validate()) return;
+            document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+            document.getElementById('s' + n).classList.add('active');
+            if (n === 3) render3();
+            document.querySelector('.progress-fill').style.width = (n / 3 * 100) + '%';
+            window.scrollTo(0, 0);
+        }
+
+        function validate() {
+            const cityMode = document.getElementById('cityMode').value;
+            if (!cityMode) { alert('请选择城市模式'); return false; }
+            if (cityMode === 'custom' && !document.getElementById('customCity').value.trim()) {
+                alert('请输入城市名称');
+                return false;
+            }
+            if (!document.getElementById('date').value || !document.getElementById('days').value) {
+                alert('请填写所有必填项');
+                return false;
+            }
+            return true;
+        }
+
+        function getCity() {
+            const cityMode = document.getElementById('cityMode').value;
+            return cityMode === 'changsha' ? '长沙' : document.getElementById('customCity').value.trim();
+        }
+
+        function getModules() {
+            const cityMode = document.getElementById('cityMode').value;
+            return cityMode === 'changsha' ? MODULES_CHANGSHA : MODULES_GENERIC;
+        }
+
+        function render3() {
+            const elderly = document.querySelector('input[name="elderly"]:checked')?.value === 'yes';
+            const kids = document.querySelector('input[name="kids"]:checked')?.value === 'yes';
+            const MODULES = getModules();
+
+            let html = '';
+            MODULES.forEach(m => {
+                let itemsHtml = '';
+                m.categories.forEach(cat => {
+                    let catItems = '';
+                    cat.items.forEach(it => {
+                        if (it.trigger === 'elderly' && !elderly) return;
+                        if (it.trigger === 'kids' && !kids) return;
+                        const id = 'o' + it.id;
+                        catItems += `<div class="checkbox-item"><input type="checkbox" id="${id}" data-s="${esc(it.snippet)}"><label for="${id}" class="checkbox-label">${it.label}</label></div>`;
+                    });
+                    if (catItems) itemsHtml += `<div><div class="category-title">${cat.name}</div>${catItems}</div>`;
+                });
+                html += `<div class="module"><div class="module-header" onclick="this.classList.toggle('active'); this.nextElementSibling.classList.toggle('active')"><span class="toggle-icon">▶</span> ${m.icon} ${m.name}</div><div class="module-content"><div class="module-inner">${itemsHtml}</div></div></div>`;
+            });
+            document.getElementById('mods').innerHTML = html;
+        }
+
+        function gen() {
+            const sel = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+                const s = cb.getAttribute('data-s');
+                if (s) sel.push(s);
+            });
+
+            const city = getCity();
+            const d = new Date(document.getElementById('date').value);
+            const m = d.getMonth() + 1;
+            const days = document.getElementById('days').value;
+            const pg = document.querySelector('input[name="pg"]:checked')?.value;
+            const elderly = document.querySelector('input[name="elderly"]:checked')?.value === 'yes';
+            const kids = document.querySelector('input[name="kids"]:checked')?.value === 'yes';
+            const budget = document.getElementById('budget').options[document.getElementById('budget').selectedIndex].text;
+
+            // 构建标准AI提示词格式
+            let txt = `# 角色（Role）
+你是一位资深旅行规划师，拥有10年以上${city}旅行经验。精通：
+- ${city}全季节天气应对方案
+- 所有主要景点预约规则、游玩流程、无障碍设施
+- 本地美食、餐厅避坑、点单话术
+- 医疗应急预案（特别是老人中暑、突发状况）
+- 交通最优路线规划
+
+# 任务（Task）
+根据以下用户信息和完整约束条件，生成一份${days}日${city}旅行完整行程。
+
+# 目标（Goal）
+生成一份"零失误"的行程——用户可100%直接按照执行，无需修改、补充或调整。
+
+---
+
+# 用户信息与约束条件
+
+## 基础信息
+• 目的地：${city}
+• 出发日期：${document.getElementById('date').value}（${getMonthName(m)}）
+• 出行天数：${days}
+• 主要人群：${pg}${elderly ? '（包含65岁+老年人）' : ''}${kids ? '（包含12岁以下儿童）' : ''}
+• 预算等级：${budget}
+
+## 出行约束与环境约束
+`;
+
+            // 季节约束（通用版本）
+            let seasonNote = '';
+            if ([6,7,8,9].includes(m)) {
+                seasonNote = `夏季高温高湿，正午11:00-15:00禁止户外活动，必须安排室内空调场馆。随身防晒SPF50+、驱蚊液、防暑药品必备。`;
+            } else if ([12,1,2].includes(m)) {
+                seasonNote = `冬季寒冷潮湿，多数酒店无集中供暖。选择空调制热效果好的酒店。阴雨天路滑，户外行动需谨慎。`;
+            } else if ([3,4,5].includes(m)) {
+                seasonNote = `春季多阴雨，随身携带雨具。气温起伏大，备薄外套。`;
+            } else {
+                seasonNote = `秋季舒适宜游，最佳旅游季。出行体验较佳。`;
+            }
+            txt += `• 季节特殊性：${seasonNote}\n`;
+
+            // 老人专属约束
+            if (elderly) {
+                txt += `• 老人出行约束（65岁+）：
+  - 景点选择：所有核心景区严禁步行爬山，必须使用接驳车（岳麓山索道、橘子洲小火车、景区观光车）。持老年证原件享免排队绿色通道、门票半价或免票。
+  - 行程节奏：日均户外总时长≤6小时，强制1.5-2小时午休（13:00-15:00）。每个景点需标注无障碍路线、轮椅租赁点位。
+  - 饮食调整：所有餐厅统一点单"完全不辣、少油、少盐"，拒绝剁椒和小米辣。茶颜悦色等饮品选"少冰/去冰、低糖"（冰饮刺激肠胃）。随身糖块防低血糖，少量多次补水。
+  - 住宿需求：必须地铁300m内、带电梯、卫生间有扶手、厚遮光窗帘、大功率空调+除湿机。开福区近省博或2号线五一广场次干道酒店推荐。
+  - 医疗防护：随身老年证、医保卡、常用降压药、医保卡。中暑完整急救：立刻转移阴凉处→冷水擦拭颈侧/腋下/大腿根→分次喝淡盐水→意识模糊直接拨120告知"热射病"。
+  - 岳麓山特殊风险：山间蚊虫密集需全身喷涂驱蚊液+长袖长裤，台阶湿滑需专业防滑登山鞋。
+\n`;
+            }
+
+            // 儿童约束
+            if (kids) {
+                txt += `• 儿童出行约束（≤12岁）：
+  - 景点选择：优先推荐室内亲子景点（科技馆4小时、海底世界2小时、商场等空调场馆）。
+  - 饮食调整：长沙菜偏辣，务必要求"清淡/无辣"。拒绝冰冷刺激饮食。
+  - 防护升级：儿童防晒SPF70+，两小时补涂一次。纸尿裤备足，推车租赁可节省体力。
+\n`;
+            }
+
+            // 用户勾选的特殊需求
+            if (sel.length > 0) {
+                txt += `## 用户勾选的特殊需求\n`;
+                sel.forEach((s,i)=>{
+                    txt += `${i+1}. ${s}\n`;
+                });
+                txt += `\n`;
+            }
+
+            // 目的地基础信息（通用或特色版本）
+            const cityMode = document.getElementById('cityMode').value;
+            if (cityMode === 'changsha') {
+                txt += `## ${city}旅行基础信息
+• **必预约景点**：湖南博物院（提前7天20:00）、岳麓山（提前3天）、橘子洲（提前3天）
+• **预算拆分**（${budget}）：交通60-80元/天、正餐160-220元/天、门票80-120元/天、零碎小吃50元/天、20%备用金
+• **随身现金**：200元（景区无信号无法扫码）
+• **交通优先**：地铁2号线、4号线（覆盖90%景点），共享电动车便利但禁停区还车扣费
+• **住宿推荐**：中心商圈附近，300-500元中档价位
+`;
+            } else {
+                txt += `## ${city}旅行基础信息
+• **提前规划**：事先研究${city}主要景点预约规则、运营时间、交通线路
+• **预算拆分**（${budget}）：交通、正餐、门票、零碎小吃、20%备用金均衡分配
+• **随身现金**：100-200元（部分地区或景区可能无法扫码）
+• **交通优先**：查询${city}主要公共交通工具（地铁/公交）的运营时段和路线
+• **住宿选择**：优先地铁附近，确保交通便利
+
+---
+
+# 约束条件与生成要求（必须严格遵守）
+`;
+            }
+
+            if (elderly) {
+                txt += `## 针对老人（65岁+）的行程约束
+
+### 时间约束（硬性）
+- 正午11:00-15:00绝对禁止户外，必须安排室内空调场馆
+- 单日户外总时长≤6小时
+- 每天预留1.5-2小时午休（13:00-15:00）
+
+### 景点约束（硬性）
+- 所有景点禁止步行爬山，必须使用接驳车（索道、小火车、观光车）
+- 每个景点需标注：轮椅租赁点位、无障碍路线、休息座椅位置
+- 所有步行路段需标注：距离、是否有坡道、是否无障碍
+
+### 饮食约束
+- 所有餐厅统一点单话术："完全不辣、少油、少盐"，拒绝剁椒和小米辣
+- 茶颜悦色饮品统一"少冰/去冰、低糖"（冰饮刺激肠胃）
+- 每餐推荐具体餐厅名称、菜品、人均价格
+
+### 健康防护约束
+- 每个时段配套三重提醒：防暑措施、老人健康注意、消费避坑建议
+- 包含完整中暑急救流程（症状→转移→冷水擦拭→补盐水→120紧急）
+- 老年证原件全程随身，享受所有景点免排队、半价/免票
+
+### 返程清单约束
+- 行程结尾补充：完整返程清单、特产托运规范、费用结清检查表
+
+## 输出格式要求
+按以下格式生成${days}日行程：
+
+\`\`\`
+【第X天】 YYYY-MM-DD（星期X）
+
+早上 06:00-08:00
+- 位置：[具体位置]
+- 任务：[具体活动]
+- 交通：[地铁/电车]
+- 提醒：[防暑/健康/消费避坑]
+
+午前 08:00-11:30
+...
+
+午休 13:00-15:00
+- 强制在酒店或空调场馆（无协商）
+
+午后 15:00-18:00
+...
+
+晚间 18:00-21:00
+...
+
+【当日总结】
+- 户外总时长：X小时
+- 总消费估算：XXX元
+- 明日提醒：XXX
+\`\`\`
+
+完成全${days}日行程后，补充：
+- 返程交通建议
+- 特产购买&托运规范
+- 医保卡、常用药、证件清点清单
+`;
+            } else {
+                txt += `## 通用行程生成约束
+
+### 行程结构约束
+- 按早/午前/午后傍晚/晚间4个时段拆分
+- 每个时段安排1-2个景点或活动
+- 时间紧凑但不赶场（每个景点留足游玩+排队+休息时间）
+
+### 景点信息约束
+- 每个景点需标注：预约渠道、游玩时长、交通方式（地铁/电车）、优惠政策
+- 全程标注地铁线路、出入口、换乘提醒
+- 包含每个景点的无障碍设施信息
+
+### 饮食安排约束
+- 每餐推荐具体餐厅名称、菜品、人均价格、大众点评评分
+- 避开网红溢价商户，优先推荐本地馆
+- 包含避坑建议（司机推荐的雷区、景区冰粉风险等）
+
+### 安全与消费约束
+- 补充整体防暑、防小偷、隐私保护提醒
+- 每个餐厅标注：单价、分量、是否有隐形费用（茶水、小菜）
+- 景区交通工具费用明细（地铁、接驳车）
+
+## 输出格式要求
+按以下格式生成${days}日行程：
+
+\`\`\`
+【第X天】 YYYY-MM-DD（星期X）
+
+早上 06:00-09:00
+- 位置：[景点/餐厅]
+- 交通：[地铁/电车，具体线路和出入口]
+- 时长：Xh
+- 预约：[是否需要预约及如何预约]
+- 避坑：[消费、安全、防晒等提醒]
+
+午前 09:00-12:00
+...
+
+午餐 12:00-13:00
+- 餐厅：[具体名称和地址]
+- 人均：XXX元
+- 菜品推荐：XXX
+- 避坑：[隐形费用、点菜陷阱等]
+
+午后 14:00-17:00
+...
+
+晚餐 18:00-19:00
+...
+
+晚间 19:00-22:00
+...
+
+【当日总结】
+- 总消费：XXX元
+- 明日提醒：XXX
+\`\`\`
+
+完成全${days}日行程后，补充：
+- 返程交通建议
+- 特产购买清单（适合送礼的本地特产）
+- 完整费用汇总与预算对比
+- 返程前行李清点清单
+`;
+            }
+
+            txt += `\n---\n请开始生成上述${days}日完整行程！\n\n【${city}旅行提示词 - 由 https://ordinarymantrying.com/tools 零失误AI旅行规划提示词生成器 生成】`;
+
+            document.getElementById('prompt').value = txt;
+            document.getElementById('out').classList.add('active');
+            setTimeout(() => document.getElementById('out').scrollIntoView({behavior:'smooth'}), 200);
+        }
+
+        function copy() {
+            const textarea = document.getElementById('prompt');
+            const btn = event.target;
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(textarea.value).then(() => {
+                        btn.textContent = '✅ 已复制！粘贴到AI开始生成行程';
+                        btn.classList.add('copied');
+                        setTimeout(() => { btn.textContent = '📋 复制所有内容到剪贴板'; btn.classList.remove('copied'); }, 3000);
+                    });
+                } else {
+                    textarea.select();
+                    document.execCommand('copy');
+                    btn.textContent = '✅ 已复制！粘贴到AI开始生成行程';
+                    btn.classList.add('copied');
+                    setTimeout(() => { btn.textContent = '📋 复制所有内容到剪贴板'; btn.classList.remove('copied'); }, 3000);
+                }
+            } catch (err) {
+                alert('复制失败，请手动复制');
+            }
+        }
+
+        function getMonthName(m) {
+            const months = ['', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+            return months[m];
+        }
+
+        function esc(s) { const m = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}; return s.replace(/[&<>"']/g,c=>m[c]); }
+    </script>
+</body>
+</html>
