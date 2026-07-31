@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- Google tag (gtag.js) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-DBR2PMLR61");
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LevelUp 打卡墙</title>
+    <style>
+        /* 核心布局：强制撑满屏幕高度 */
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f6f8fa; 
+            color: #24292e; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 20px; 
+            min-height: 600px; 
+        }
+
+        /* 顶部控制栏 */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 15px; 
+            flex-shrink: 0; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+        }
+        .controls { display: flex; gap: 10px; align-items: center; }
+        button { 
+            padding: 8px 16px; 
+            cursor: pointer; 
+            border: 1px solid #e1e4e8; 
+            border-radius: 8px; 
+            background-color: #ffffff; 
+            font-weight: 600; 
+            color: #24292e; 
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+        button:hover { background-color: #f3f4f6; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .btn-backup { font-size: 0.9em; padding: 6px 12px; background-color: #f6f8fa; }
+        #month-display { margin: 0; min-width: 160px; text-align: center; font-size: 1.6rem; font-weight: 700; color: #1b1f24;}
+
+        /* 日历表头 */
+        .calendar-header {
+            display: grid; 
+            grid-template-columns: repeat(7, 1fr); 
+            gap: 12px; 
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+        .day-name { 
+            text-align: center; 
+            font-weight: bold; 
+            color: #586069; 
+            font-size: 1.1em; 
+            letter-spacing: 2px;
+        }
+
+        /* 日历主体：弹性拉伸，填满剩余所有高度 */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(7, 1fr); 
+            gap: 12px; 
+            flex-grow: 1; 
+            grid-auto-rows: 1fr; 
+        }
+        
+        /* --- 核心优化区：文字环绕排版 --- */
+        .day-cell { 
+            background: white; 
+            border: 1px solid #d0d7de; 
+            border-radius: 10px; 
+            padding: 12px; 
+            cursor: pointer; 
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            /* display: block 让内部元素可以使用浮动排版 */
+            display: block; 
+            /* overflow-y: auto 既能提供滚动条，又能包裹内部的浮动元素(BFC) */
+            overflow-y: auto; 
+        }
+        .day-cell:hover { 
+            box-shadow: 0 8px 24px rgba(140,149,159,0.2); 
+            transform: translateY(-2px); 
+            border-color: #0969da;
+        }
+        
+        .date-num { 
+            /* float: left 是魔法：它让数字靠左，同时允许后面的文字环绕在它的右侧和下方 */
+            float: left; 
+            font-size: 1.4em; 
+            font-weight: 800; 
+            margin-right: 8px; /* 右侧留出空隙，防止文字贴太紧 */
+            margin-bottom: 2px; /* 底部留出一点空隙 */
+            color: #57606a; 
+            line-height: 1; /* 缩紧行高，和文字对齐得更完美 */
+        }
+        
+        .content { 
+            font-size: 1.05em; 
+            line-height: 1.4; 
+            color: #24292e; 
+            white-space: pre-wrap; 
+            word-break: break-word; 
+            /* display: inline 让它作为普通文本，填满日期右侧的红框区域 */
+            display: inline; 
+        }
+        /* ------------------------------ */
+
+        /* 优雅的细体滚动条 */
+        .day-cell::-webkit-scrollbar { width: 4px; }
+        .day-cell::-webkit-scrollbar-thumb { background: #d0d7de; border-radius: 4px; }
+        
+        /* 打卡成功状态（护眼极客绿） */
+        .completed { background-color: #e6ffed; border-color: #34d058; border-width: 2px;}
+        .completed .date-num { color: #1a7f37; }
+        .completed .content { color: #144620; font-weight: 500; }
+        
+        /* 编辑弹窗 */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(36,41,46,0.6); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 25px; border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .modal-content h3 { margin-top: 0; color: #24292e; font-size: 1.5rem;}
+        textarea { width: 100%; height: 180px; margin: 15px 0; padding: 12px; border: 1px solid #d0d7de; border-radius: 8px; resize: vertical; font-family: inherit; font-size: 1.1em; line-height: 1.5; box-sizing: border-box; background-color: #f6f8fa; transition: all 0.2s;}
+        textarea:focus { outline: none; background-color: #ffffff; border-color: #0969da; box-shadow: 0 0 0 3px rgba(9,105,218,0.3); }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 15px;}
+        .btn-primary { background-color: #1f883d; color: white; border: none; font-size: 1.1em; padding: 10px 20px;}
+        .btn-primary:hover { background-color: #1a7f37; }
+
+        /* 移动端特殊优化 */
+        @media (max-width: 600px) {
+            body { height: auto; display: block; }
+            .grid { grid-auto-rows: minmax(100px, auto); gap: 6px; }
+            .calendar-header { gap: 6px; }
+            .day-cell { padding: 8px; min-height: 100px;}
+            .date-num { font-size: 1.2em; margin-right: 6px;}
+            .content { font-size: 0.95em; }
+        }
+    </style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+
+    <div class="header">
+        <div class="controls">
+            <button onclick="changeMonth(-1)">◀ 上个月</button>
+            <h2 id="month-display">2026年 5月</h2>
+            <button onclick="changeMonth(1)">下个月 ▶</button>
+        </div>
+        <div class="controls">
+            <button class="btn-backup" onclick="exportData()">💾 备份数据</button>
+            <button class="btn-backup" onclick="document.getElementById('importFile').click()">📂 恢复备份</button>
+            <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+        </div>
+    </div>
+
+    <!-- 独立的表头 -->
+    <div class="calendar-header">
+        <div class="day-name">日</div><div class="day-name">一</div><div class="day-name">二</div>
+        <div class="day-name">三</div><div class="day-name">四</div><div class="day-name">五</div><div class="day-name">六</div>
+    </div>
+
+    <!-- 弹性拉伸的日历网格 -->
+    <div class="grid" id="calendar">
+        <!-- 格子由 JS 动态生成 -->
+    </div>
+
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h3 id="modal-date">编辑打卡</h3>
+            <textarea id="modal-input" placeholder="输入每日战况...&#10;例如：&#10;跳绳 1000&#10;引体向上 80&#10;物理错题本整理完成"></textarea>
+            <div class="modal-actions">
+                <button onclick="closeModal()" style="font-size: 1.1em; padding: 10px 20px;">取消</button>
+                <button class="btn-primary" onclick="saveData()">保存战果</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'levelup_tracker_data';
+        let currentDate = new Date();
+        let trackerData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        let editingDateStr = '';
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            document.getElementById('month-display').innerText = `${year}年 ${month + 1}月`;
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const grid = document.getElementById('calendar');
+            grid.innerHTML = ''; 
+
+            // 填充月初空白格子
+            for (let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div class="day-cell" style="background: transparent; border: none; cursor: default; box-shadow: none;"></div>`;
+            }
+
+            // 填充真实日期
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const content = trackerData[dateStr] || '';
+                const isCompleted = content.trim().length > 0 ? 'completed' : '';
+
+                // 注意：这里用 span 标签包裹内容，确保作为内联元素跟随在日期后面
+                grid.innerHTML += `
+                    <div class="day-cell ${isCompleted}" onclick="openModal('${dateStr}')">
+                        <span class="date-num">${i}</span><span class="content">${content}</span>
+                    </div>
+                `;
+            }
+        }
+
+        function changeMonth(delta) {
+            currentDate.setMonth(currentDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function openModal(dateStr) {
+            editingDateStr = dateStr;
+            document.getElementById('modal-date').innerText = `${dateStr} 战况记录`;
+            document.getElementById('modal-input').value = trackerData[dateStr] || '';
+            document.getElementById('editModal').style.display = 'flex';
+            document.getElementById('modal-input').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function saveData() {
+            const newContent = document.getElementById('modal-input').value.trim();
+            if (newContent) {
+                trackerData[editingDateStr] = newContent;
+            } else {
+                delete trackerData[editingDateStr];
+            }
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(trackerData));
+            closeModal();
+            renderCalendar(); 
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(trackerData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `LevelUp打卡备份_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    trackerData = importedData;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(trackerData));
+                    renderCalendar();
+                    alert("数据恢复成功！满血复活！");
+                } catch (err) {
+                    alert("文件格式错误，恢复失败！");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; 
+        }
+
+        renderCalendar();
+        
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('editModal')) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
