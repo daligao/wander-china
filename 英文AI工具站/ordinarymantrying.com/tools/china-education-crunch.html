@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>China's Education Crunch: Birth Rate Wave & Gaokao Competition 2027–2043</title>
+    <meta name="description" content="Interactive tool showing how China's 2016 baby boom (17.86M births) is driving record Gaokao competition in 2034. Track any birth year's education timeline and competition outlook.">
+    <meta name="keywords" content="China education, Gaokao competition, China birth rate, China demographics, Chinese college entrance exam, gaokao 2034, China baby boom, education pipeline China">
+    <meta name="author" content="ordinarymantrying.com">
+    <link rel="canonical" href="https://ordinarymantrying.com/tools/china-education-crunch.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="China's Education Crunch: Birth Rate Wave & Gaokao Competition 2027–2043">
+    <meta property="og:description" content="17.86 million babies were born in China in 2016. They all take the Gaokao in 2034. Interactive visualization of the peak generation effect.">
+    <meta property="og:url" content="https://ordinarymantrying.com/tools/china-education-crunch.html">
+    <meta property="og:site_name" content="Ordinary Man Trying">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="China's Education Crunch: The Peak Generation Effect">
+    <meta name="twitter:description" content="17.86M babies born in 2016 → record Gaokao competition in 2034. Interactive chart of China's education demographic wave.">
+
+    <!-- Schema.org WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "China Education Crunch: Peak Generation Tracker",
+      "url": "https://ordinarymantrying.com/tools/china-education-crunch.html",
+      "description": "Interactive visualization of how China's birth rate wave drives Gaokao competition from 2027 to 2043. Enter any birth year to see education milestones and competition outlook.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "author": { "@type": "Person", "url": "https://ordinarymantrying.com" },
+      "inLanguage": "en",
+      "keywords": "China education, Gaokao, birth rate, demographics, peak generation"
+    }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --red: #dc2626; --orange: #f97316; --yellow: #ca8a04;
+            --green: #16a34a; --blue: #2563eb; --purple: #7c3aed;
+            --dark: #0f172a; --card: #1e293b; --border: #334155;
+            --text: #e2e8f0; --muted: #94a3b8;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); line-height: 1.6; }
+
+        /* Hero */
+        .hero { background: linear-gradient(135deg, #0f172a 0%, #1a1040 50%, #0f172a 100%); padding: 56px 20px 48px; text-align: center; border-bottom: 1px solid var(--border); }
+        .hero-tag { display: inline-block; background: var(--red); color: white; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 4px 14px; border-radius: 3px; margin-bottom: 20px; }
+        .hero h1 { font-size: clamp(28px, 5vw, 54px); font-weight: 800; line-height: 1.1; margin-bottom: 16px; color: white; }
+        .hero h1 .red { color: var(--red); }
+        .hero h1 .gold { color: #facc15; }
+        .hero-sub { max-width: 620px; margin: 0 auto 36px; color: var(--muted); font-size: 17px; }
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; max-width: 860px; margin: 0 auto; }
+        .stat-card { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; text-align: center; }
+        .stat-number { font-size: 38px; font-weight: 800; line-height: 1; margin-bottom: 6px; }
+        .stat-label { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+        /* Sections */
+        .section { max-width: 960px; margin: 0 auto; padding: 48px 20px; }
+        .section + .section { border-top: 1px solid var(--border); }
+        .section-tag { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+        .section h2 { font-size: clamp(20px, 3vw, 30px); font-weight: 700; margin-bottom: 10px; color: white; }
+        .section > p { color: var(--muted); margin-bottom: 20px; max-width: 700px; font-size: 15px; }
+
+        /* Charts */
+        .chart-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+        .chart-box canvas { max-height: 300px; }
+
+        /* Now banner */
+        .now-banner { background: rgba(37,99,235,0.12); border: 1px solid rgba(59,130,246,0.4); border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; }
+        .pulse { width: 9px; height: 9px; background: #3b82f6; border-radius: 50%; flex-shrink: 0; margin-top: 6px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(1.5); } }
+        .now-banner p { font-size: 14px; color: var(--text); margin: 0; }
+        .now-banner strong { color: #93c5fd; }
+
+        /* Pipeline */
+        .pipeline-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px 24px; }
+        .pipeline { display: flex; align-items: flex-start; gap: 0; overflow-x: auto; }
+        .p-stage { flex: 1; min-width: 110px; text-align: center; position: relative; padding: 0 8px; }
+        .p-stage:not(:last-child)::after { content: '→'; position: absolute; right: -6px; top: 18px; font-size: 18px; color: var(--muted); }
+        .p-icon { font-size: 30px; margin-bottom: 8px; }
+        .p-name { font-size: 13px; font-weight: 700; color: white; margin-bottom: 3px; }
+        .p-meta { font-size: 11px; color: var(--muted); }
+        .pipeline-note { font-size: 13px; color: var(--muted); text-align: center; margin-top: 18px; border-top: 1px solid var(--border); padding-top: 14px; }
+
+        /* Explorer */
+        .explorer { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+        .explorer h3 { font-size: 18px; font-weight: 700; color: white; margin-bottom: 6px; }
+        .explorer > p { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+        .input-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 24px; }
+        .input-label { font-size: 14px; color: var(--muted); }
+        .year-input { background: var(--dark); border: 1px solid var(--border); color: white; padding: 11px 18px; border-radius: 8px; font-size: 18px; font-weight: 700; width: 130px; outline: none; }
+        .year-input:focus { border-color: var(--blue); }
+        .btn { background: var(--blue); color: white; border: none; padding: 11px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background .2s; }
+        .btn:hover { background: #1d4ed8; }
+        .result-grid { display: none; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 10px; }
+        .result-grid.show { display: grid; }
+        .r-card { background: var(--dark); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; transition: border-color .2s; }
+        .r-year { font-size: 22px; font-weight: 800; color: white; }
+        .r-label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+        .r-desc { font-size: 11px; color: #64748b; }
+        .r-badge { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-top: 7px; }
+        .result-summary { margin-top: 14px; display: none; background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px 16px; border: 1px solid var(--border); font-size: 14px; color: var(--muted); }
+        .result-summary strong { color: var(--text); }
+
+        /* Diff colors */
+        .hardest { background: #7f1d1d44; color: #fca5a5; border-color: #7f1d1d; }
+        .very-hard { background: #9a341244; color: #fdba74; border-color: #9a3412; }
+        .hard { background: #78350f44; color: #fde68a; border-color: #78350f; }
+        .moderate { background: #1e3a5f44; color: #93c5fd; border-color: #1e3a5f; }
+        .easing { background: #14532d44; color: #86efac; border-color: #14532d; }
+        .easiest { background: #065f4644; color: #6ee7b7; border-color: #065f46; }
+
+        /* Table */
+        .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .data-table th { padding: 9px 14px; text-align: left; background: rgba(255,255,255,0.04); color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        .data-table td { padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr.peak td { background: rgba(220,38,38,0.08); }
+        .data-table tr.low td { background: rgba(22,163,74,0.06); }
+        .diff-chip { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+
+        /* Context */
+        .context-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+        .ctx-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .ctx-icon { font-size: 26px; margin-bottom: 10px; }
+        .ctx-card h4 { font-size: 15px; font-weight: 700; color: white; margin-bottom: 7px; }
+        .ctx-card p { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+        /* Footer */
+        .tool-footer { background: var(--card); border-top: 1px solid var(--border); padding: 36px 20px; text-align: center; }
+        .tool-footer p { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+        .cta-btn { display: inline-block; background: var(--red); color: white; text-decoration: none; padding: 11px 26px; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background .2s; margin: 0 6px 8px; }
+        .cta-btn:hover { background: #b91c1c; }
+        .cta-btn.sec { background: #1e3a5f; }
+        .cta-btn.sec:hover { background: #1e40af; }
+        .source-note { font-size: 12px; color: #475569; margin-top: 14px; }
+
+        /* Chart legend */
+        .legend-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 14px; }
+        .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
+        .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+        @media (max-width: 600px) {
+            .pipeline { flex-direction: column; gap: 12px; }
+            .p-stage:not(:last-child)::after { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="hero-tag">China Demographics</div>
+    <h1>The <span class="red">Peak Generation</span><br>Effect</h1>
+    <p class="hero-sub">China's 2016 baby boom is marching through the education pipeline. When it reaches the Gaokao in 2034, it will be the most competitive college exam in modern history.</p>
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-number" style="color:#dc2626;">17.86M</div>
+            <div class="stat-label">Babies born in 2016<br>China's single biggest cohort</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" style="color:#facc15;">2034</div>
+            <div class="stat-label">Year the peak generation<br>takes the Gaokao</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" style="color:#16a34a;">7.92M</div>
+            <div class="stat-label">Babies born in 2025<br>56% fewer than 2016</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" style="color:#7c3aed;">18 yrs</div>
+            <div class="stat-label">The pipeline is perfectly<br>predictable: birth → Gaokao</div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-tag">Birth Rate Trend</div>
+    <h2>China's Baby Wave: 2009–2025</h2>
+    <p>After the one-child policy era ended, China saw a brief surge in births between 2012–2017 — a mini baby boom before the long demographic decline. These children are now moving through school.</p>
+
+    <div class="now-banner">
+        <div class="pulse"></div>
+        <p><strong>Right now (2026):</strong> The giant 2017 cohort (17.23M) is entering middle school this fall. The 2011 cohort (16M) is sitting high school entrance exams this summer. The 2014 cohort (16.87M) just completed primary school.</p>
+    </div>
+
+    <div class="chart-box">
+        <canvas id="birthChart"></canvas>
+        <div class="legend-row">
+            <div class="legend-item"><div class="legend-dot" style="background:#dc2626;"></div> Peak birth years (2016–2017)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f97316;"></div> High birth years (2012–2015)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#3b82f6;"></div> Post-decline era (2020+)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#64748b;"></div> Pre-surge baseline</div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-tag">Education Pipeline</div>
+    <h2>From Birth to Gaokao: 18 Years</h2>
+    <p>China's education system is highly structured. A child born today will enter primary school at 6, transition to middle school at 12, and face the national college exam at 18. The pressure wave is completely foreseeable.</p>
+
+    <div class="pipeline-wrap">
+        <div class="pipeline">
+            <div class="p-stage">
+                <div class="p-icon">👶</div>
+                <div class="p-name">Birth</div>
+                <div class="p-meta">Age 0</div>
+            </div>
+            <div class="p-stage">
+                <div class="p-icon">🏫</div>
+                <div class="p-name">Primary School</div>
+                <div class="p-meta">Age 6–12<br>6 years</div>
+            </div>
+            <div class="p-stage">
+                <div class="p-icon">📖</div>
+                <div class="p-name">Middle School</div>
+                <div class="p-meta">Age 12–15<br>3 years</div>
+            </div>
+            <div class="p-stage">
+                <div class="p-icon">📝</div>
+                <div class="p-name">Zhongkao</div>
+                <div class="p-meta">Age 15<br>High school exam</div>
+            </div>
+            <div class="p-stage">
+                <div class="p-icon">🎓</div>
+                <div class="p-name">High School</div>
+                <div class="p-meta">Age 15–18<br>3 years</div>
+            </div>
+            <div class="p-stage">
+                <div class="p-icon">⚡</div>
+                <div class="p-name">Gaokao</div>
+                <div class="p-meta">Age 18<br>College entrance</div>
+            </div>
+            <div class="p-stage">
+                <div class="p-icon">🏛️</div>
+                <div class="p-name">University</div>
+                <div class="p-meta">Age 18+<br>4–5 years</div>
+            </div>
+        </div>
+        <p class="pipeline-note">
+            The <strong>Gaokao (高考)</strong> is China's national college entrance exam — taken by millions of 18-year-olds on the same two days each June. A single score determines which university you attend, making it arguably the world's highest-stakes exam.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-tag">Competition Forecast</div>
+    <h2>Gaokao Applicant Wave: 2027–2043</h2>
+    <p>As each birth cohort turns 18, the number of Gaokao candidates shifts dramatically. The peak hits in 2034, then rapidly eases as the much smaller post-2018 generations reach exam age.</p>
+
+    <div class="chart-box">
+        <canvas id="gaokaoChart"></canvas>
+        <div class="legend-row">
+            <div class="legend-item"><div class="legend-dot" style="background:#dc2626;"></div> Hardest ever (2034–2035)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f97316;"></div> Very competitive</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ca8a04;"></div> Competitive</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#64748b;"></div> Baseline</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#16a34a;"></div> Easing / Easy</div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-tag">Generation Explorer</div>
+    <h2>Look Up Any Birth Year</h2>
+    <p>Enter any birth year from 2009 to 2025. See their entire education timeline and how competitive their Gaokao will be.</p>
+
+    <div class="explorer">
+        <h3>Find a Cohort</h3>
+        <p>Enter a birth year to see all education milestones and competition outlook.</p>
+        <div class="input-row">
+            <span class="input-label">Born in:</span>
+            <input type="number" class="year-input" id="birthInput" min="2009" max="2025" placeholder="e.g. 2016" />
+            <button class="btn" onclick="explore()">Explore →</button>
+        </div>
+        <div class="result-grid" id="rGrid"></div>
+        <div class="result-summary" id="rSummary"></div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-tag">Full Data</div>
+    <h2>Complete Birth-to-Gaokao Pipeline</h2>
+    <p>Every cohort from 2009 to 2025, showing birth population and projected Gaokao year with competition assessment.</p>
+
+    <div class="chart-box" style="overflow-x:auto; padding: 0;">
+        <table class="data-table" id="dataTable">
+            <thead>
+                <tr>
+                    <th>Birth Year</th>
+                    <th>Births</th>
+                    <th>Enter Primary</th>
+                    <th>Enter Middle</th>
+                    <th>Zhongkao</th>
+                    <th>Gaokao</th>
+                    <th>Competition</th>
+                </tr>
+            </thead>
+            <tbody id="dataBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-tag">Context</div>
+    <h2>Why This Matters</h2>
+    <div class="context-grid">
+        <div class="ctx-card">
+            <div class="ctx-icon">🌀</div>
+            <h4>The "Involution" Peak</h4>
+            <p>China's term <em>内卷 (nèijuǎn)</em> — where everyone works harder but outcomes don't improve — will intensify as 17.86M students compete for the same university spots in 2034. Schools cannot expand fast enough.</p>
+        </div>
+        <div class="ctx-card">
+            <div class="ctx-icon">📐</div>
+            <h4>Perfectly Predictable</h4>
+            <p>Unlike economic forecasts, this wave has zero uncertainty. Every child born in 2016 is 18 years old in 2034. Policymakers, schools, and parents can all see it coming — the question is whether they can respond.</p>
+        </div>
+        <div class="ctx-card">
+            <div class="ctx-icon">📉</div>
+            <h4>The Cliff After 2035</h4>
+            <p>After peak competition, China faces the opposite crisis: universities designed for 17M students/year will compete for just 8M. School closures, faculty layoffs, and enrollment collapses are coming after 2040.</p>
+        </div>
+        <div class="ctx-card">
+            <div class="ctx-icon">👨‍👩‍👧</div>
+            <h4>Why Parents Are Anxious</h4>
+            <p>Parents of children born 2013–2017 know their kids face peak competition. This explains extreme tutoring spending, relocation decisions, and the emotional intensity of Chinese education culture.</p>
+        </div>
+        <div class="ctx-card">
+            <div class="ctx-icon">🏫</div>
+            <h4>School Pressure Now</h4>
+            <p>Even today (2026), the large 2014–2017 cohorts are filling middle and high schools. Teachers, facilities, and exam slots are all under strain — this isn't a future problem, it's a current one.</p>
+        </div>
+        <div class="ctx-card">
+            <div class="ctx-icon">🌏</div>
+            <h4>Global Comparison</h4>
+            <p>China's 2034 Gaokao cohort (~17.86M) is larger than the entire population of the Netherlands. By contrast, the entire 2025 Gaokao sits at ~13M. The scale of this exam is unlike anything else in the world.</p>
+        </div>
+    </div>
+</div>
+
+<div class="tool-footer">
+    <p>The bigger demographic picture behind these numbers:</p>
+    <a href="china-population-dashboard.html" class="cta-btn" style="background:#7c3aed;">🧬 China Population Dashboard →</a>
+    <p style="margin-top:18px; margin-bottom:8px;">Understand the Gaokao itself — how it works, what scores mean, and how majors are chosen:</p>
+    <a href="gaokao-2026-english-exam.html" class="cta-btn">2026 Gaokao English Paper →</a>
+    <a href="major-vote.html" class="cta-btn sec">Gaokao Major Selector →</a>
+    <a href="index.html" class="cta-btn sec" style="margin-top:8px;display:inline-block;">Browse All 150+ Free Tools →</a>
+    <p class="source-note">Data: China National Bureau of Statistics. Birth figures 2009–2024 official; 2025 preliminary estimate.<br>
+    This tool is part of <a href="/" style="color:#475569;">ordinarymantrying.com</a> — Foreigners Understanding China series.</p>
+</div>
+
+<script>
+const data = [
+    { y:2009, pop:15.87, pri:2015, mid:2021, zk:2024, gk:2027, d:'moderate',  dl:'Moderate' },
+    { y:2010, pop:15.88, pri:2016, mid:2022, zk:2025, gk:2028, d:'moderate',  dl:'Moderate' },
+    { y:2011, pop:16.00, pri:2017, mid:2023, zk:2026, gk:2029, d:'moderate',  dl:'Moderate' },
+    { y:2012, pop:16.35, pri:2018, mid:2024, zk:2027, gk:2030, d:'hard',      dl:'Hard' },
+    { y:2013, pop:16.40, pri:2019, mid:2025, zk:2028, gk:2031, d:'hard',      dl:'Hard' },
+    { y:2014, pop:16.87, pri:2020, mid:2026, zk:2029, gk:2032, d:'hard',      dl:'Hard' },
+    { y:2015, pop:16.55, pri:2021, mid:2027, zk:2030, gk:2033, d:'very-hard', dl:'Very Hard' },
+    { y:2016, pop:17.86, pri:2022, mid:2028, zk:2031, gk:2034, d:'hardest',   dl:'Hardest Ever' },
+    { y:2017, pop:17.23, pri:2023, mid:2029, zk:2032, gk:2035, d:'very-hard', dl:'Extremely Hard' },
+    { y:2018, pop:15.25, pri:2024, mid:2030, zk:2033, gk:2036, d:'easing',    dl:'Gradually Easing' },
+    { y:2019, pop:14.65, pri:2025, mid:2031, zk:2034, gk:2037, d:'easing',    dl:'Easing' },
+    { y:2020, pop:12.63, pri:2026, mid:2032, zk:2035, gk:2038, d:'easing',    dl:'Much Easier' },
+    { y:2021, pop:10.62, pri:2027, mid:2033, zk:2036, gk:2039, d:'easiest',   dl:'Easy' },
+    { y:2022, pop: 9.56, pri:2028, mid:2034, zk:2037, gk:2040, d:'easiest',   dl:'Easy' },
+    { y:2023, pop: 9.02, pri:2029, mid:2035, zk:2038, gk:2041, d:'easiest',   dl:'Very Easy' },
+    { y:2024, pop: 9.54, pri:2030, mid:2036, zk:2039, gk:2042, d:'easiest',   dl:'Very Easy' },
+    { y:2025, pop: 7.92, pri:2031, mid:2037, zk:2040, gk:2043, d:'easiest',   dl:'Easiest Ever' },
+];
+
+const dColors = {
+    'hardest':  '#dc2626',
+    'very-hard':'#f97316',
+    'hard':     '#ca8a04',
+    'moderate': '#64748b',
+    'easing':   '#22c55e',
+    'easiest':  '#16a34a',
+};
+
+function barColor(d) {
+    if (d.y === 2016 || d.y === 2017) return '#dc2626';
+    if (d.y >= 2012 && d.y <= 2015) return '#f97316';
+    if (d.y >= 2018 && d.y <= 2019) return '#ca8a04';
+    if (d.y >= 2020) return '#3b82f6';
+    return '#64748b';
+}
+
+// Birth Chart
+const bCtx = document.getElementById('birthChart').getContext('2d');
+new Chart(bCtx, {
+    type: 'bar',
+    data: {
+        labels: data.map(d => d.y),
+        datasets: [{
+            label: 'Births',
+            data: data.map(d => d.pop),
+            backgroundColor: data.map(d => barColor(d)),
+            borderRadius: 4,
+            borderSkipped: false,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: '#1e293b', titleColor: '#e2e8f0', bodyColor: '#94a3b8',
+                borderColor: '#334155', borderWidth: 1,
+                callbacks: {
+                    label: ctx => `${ctx.raw.toFixed(2)}M babies`,
+                    afterLabel: ctx => `→ Gaokao year: ${data[ctx.dataIndex].gk} (${data[ctx.dataIndex].dl})`
+                }
+            }
+        },
+        scales: {
+            x: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+            y: {
+                min: 6, max: 19,
+                ticks: { color: '#94a3b8', callback: v => `${v}M` },
+                grid: { color: 'rgba(255,255,255,0.04)' }
+            }
+        }
+    }
+});
+
+// Gaokao Chart
+const gCtx = document.getElementById('gaokaoChart').getContext('2d');
+const gkData = [...data].sort((a,b) => a.gk - b.gk);
+new Chart(gCtx, {
+    type: 'line',
+    data: {
+        labels: gkData.map(d => d.gk),
+        datasets: [{
+            label: 'Cohort Size',
+            data: gkData.map(d => d.pop),
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59,130,246,0.08)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: gkData.map(d => dColors[d.d]),
+            pointBorderColor: gkData.map(d => dColors[d.d]),
+            pointRadius: 7,
+            pointHoverRadius: 10,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: '#1e293b', titleColor: '#e2e8f0', bodyColor: '#94a3b8',
+                borderColor: '#334155', borderWidth: 1,
+                callbacks: {
+                    label: ctx => `${ctx.raw.toFixed(2)}M Gaokao applicants`,
+                    afterLabel: ctx => `Born ${gkData[ctx.dataIndex].y} · Competition: ${gkData[ctx.dataIndex].dl}`
+                }
+            }
+        },
+        scales: {
+            x: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+            y: {
+                min: 6, max: 19,
+                ticks: { color: '#94a3b8', callback: v => `${v}M` },
+                grid: { color: 'rgba(255,255,255,0.04)' }
+            }
+        }
+    }
+});
+
+// Data Table
+const tbody = document.getElementById('dataBody');
+data.forEach(d => {
+    const tr = document.createElement('tr');
+    if (d.y === 2016 || d.y === 2017) tr.className = 'peak';
+    else if (d.y >= 2023) tr.className = 'low';
+    const c = dColors[d.d];
+    tr.innerHTML = `
+        <td style="font-weight:700;">${d.y}${d.y===2016?' 🔴':d.y===2025?' 🟢':''}</td>
+        <td>${d.pop.toFixed(2)}M</td>
+        <td>${d.pri}</td>
+        <td>${d.mid}</td>
+        <td>${d.zk}</td>
+        <td style="font-weight:700;">${d.gk}</td>
+        <td><span class="diff-chip" style="background:${c}22;color:${c};">${d.dl}</span></td>
+    `;
+    tbody.appendChild(tr);
+});
+
+// Explorer
+function explore() {
+    const yr = parseInt(document.getElementById('birthInput').value);
+    const d = data.find(x => x.y === yr);
+    if (!d) { alert('Please enter a year between 2009 and 2025.'); return; }
+
+    const NOW = 2026;
+    const c = dColors[d.d];
+    const stages = [
+        { icon:'👶', name:'Born', year:d.y,   desc:`${d.pop.toFixed(2)}M babies this year` },
+        { icon:'🏫', name:'Primary School', year:d.pri, desc:'Enters age 6' },
+        { icon:'📖', name:'Middle School', year:d.mid, desc:'Transitions age 12' },
+        { icon:'📝', name:'Zhongkao', year:d.zk, desc:'High school entrance, age 15' },
+        { icon:'⚡', name:'Gaokao', year:d.gk, desc:'College entrance, age 18' },
+    ];
+
+    const grid = document.getElementById('rGrid');
+    grid.innerHTML = '';
+    stages.forEach(s => {
+        const past = s.year < NOW;
+        const now = s.year === NOW;
+        const diff = s.year - NOW;
+        const card = document.createElement('div');
+        card.className = 'r-card';
+        if (now) card.style.borderColor = '#3b82f6';
+        if (s.name === 'Gaokao') card.style.borderColor = c;
+
+        let extra = '';
+        if (s.name === 'Gaokao') extra = `<div class="r-badge ${d.d}">${d.dl}</div>`;
+        if (now) extra += `<div style="font-size:10px;color:#3b82f6;font-weight:700;margin-top:5px;">● NOW</div>`;
+        else if (past) extra += `<div style="font-size:10px;color:#475569;margin-top:5px;">✓ Done</div>`;
+        else extra += `<div style="font-size:10px;color:#475569;margin-top:5px;">in ${diff}yr${diff>1?'s':''}</div>`;
+
+        card.innerHTML = `
+            <div style="font-size:22px;margin-bottom:5px;">${s.icon}</div>
+            <div class="r-year">${s.year}</div>
+            <div class="r-label">${s.name}</div>
+            <div class="r-desc">${s.desc}</div>
+            ${extra}
+        `;
+        grid.appendChild(card);
+    });
+
+    const sum = document.getElementById('rSummary');
+    let extra = '';
+    if (d.y === 2016) extra = ' <strong style="color:#dc2626;">This is China\'s largest birth cohort — they will face the most competitive Gaokao in modern history.</strong>';
+    else if (d.y >= 2023) extra = ' <strong style="color:#16a34a;">By the time this cohort reaches university, competition pressure will be dramatically lower.</strong>';
+    sum.innerHTML = `The <strong>${d.y} cohort</strong> (${d.pop.toFixed(2)} million babies) takes the Gaokao in <strong>${d.gk}</strong>. Projected competition: <strong style="color:${c};">${d.dl}</strong>.${extra}`;
+
+    grid.className = 'result-grid show';
+    sum.style.display = 'block';
+}
+document.getElementById('birthInput').addEventListener('keypress', e => { if(e.key==='Enter') explore(); });
+</script>
+</body>
+</html>

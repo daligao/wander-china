@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>China Cost of Living vs USA, Singapore, Japan & Korea — Real Prices 2025</title>
+<meta name="description" content="How cheap is China, really? Interactive price comparison: China vs USA, Singapore, Japan and Korea across food, housing, transport. Plus 55-city rent ranking. All prices in CNY with USD toggle.">
+<meta name="keywords" content="China cost of living, China vs USA prices, how cheap is China, China rent, Beijing rent, China food prices, expat China cost, China vs Japan prices 2025">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/china-cost-of-living.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="China Cost of Living: Real Prices vs USA, Singapore, Japan & Korea">
+<meta property="og:description" content="A meal in China costs ¥25 ($3.50). The same meal in the USA costs ¥145 ($20) — 5.8× more expensive. But buying an apartment in Beijing? More expensive per m² than in a US city.">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/china-cost-of-living.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"China Cost of Living Comparison","url":"https://ordinarymantrying.com/tools/china-cost-of-living.html","description":"Interactive price comparison tool: China vs USA, Singapore, Japan and Korea, plus 55-city rent ranking.","applicationCategory":"EducationalApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080d18;--card:#0f1829;--card2:#162035;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#e2e8f0;--muted:#8892a4;--dim:#334155;--green:#10b981;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+
+.nav{background:rgba(8,13,24,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 20px;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.nav-brand{font-size:13px;font-weight:700;color:var(--amber);text-decoration:none}
+.nav-link{font-size:12px;color:var(--muted);text-decoration:none;padding:4px 10px;border:1px solid var(--border);border-radius:5px}
+
+.hero{background:linear-gradient(160deg,#080d18,#0d1830,#080d18);padding:56px 20px 44px;text-align:center;border-bottom:1px solid var(--border)}
+.hero-tag{display:inline-block;background:#e11d48;color:#fff;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:2px;margin-bottom:18px}
+.hero h1{font-size:clamp(22px,4vw,44px);font-weight:900;line-height:1.1;margin-bottom:12px;color:#fff}
+.hero h1 em{color:#10b981;font-style:normal}
+.hero-sub{max-width:560px;margin:0 auto 32px;color:var(--muted);font-size:15px}
+.hero-facts{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.hfact{background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;text-align:left;max-width:200px}
+.hfact-n{font-size:24px;font-weight:900;line-height:1.1;margin-bottom:3px}
+.hfact-l{font-size:11px;color:var(--muted);line-height:1.4}
+
+.wrap{max-width:900px;margin:0 auto;padding:44px 16px}
+.sec-tag{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.wrap h2{font-size:clamp(18px,3vw,26px);font-weight:800;color:#fff;margin-bottom:8px}
+.wrap>p,.wrap>div>p{color:var(--muted);font-size:14px;margin-bottom:20px}
+
+/* CURRENCY TOGGLE */
+.controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.toggle-label{font-size:12px;color:var(--muted);font-weight:600}
+.toggle-wrap{display:flex;background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.toggle-btn{padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);background:transparent;border:none}
+.toggle-btn.active{background:#1e293b;color:var(--text)}
+
+/* COUNTRY TABS */
+.ctabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.ctab{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;color:var(--muted);transition:.15s}
+.ctab:hover{border-color:rgba(255,255,255,.2);color:var(--text)}
+.ctab.active{border-color:var(--blue);background:rgba(59,130,246,.12);color:#93c5fd}
+
+/* CATEGORY TABS */
+.cattabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:12px}
+.cattab{padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);border-radius:6px;border:1px solid transparent;transition:.15s}
+.cattab:hover{color:var(--text)}
+.cattab.active{background:rgba(255,255,255,.06);border-color:var(--border2);color:var(--text)}
+
+/* SALARY BAR */
+.salary-card{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:18px;margin-bottom:20px;display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+.salary-block{flex:1;min-width:140px}
+.salary-country{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}
+.salary-val{font-size:22px;font-weight:900;color:#fff}
+.salary-usd{font-size:12px;color:var(--muted);margin-top:2px}
+.salary-bar-wrap{flex:2;min-width:200px}
+.salary-bar-track{height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden;margin-bottom:6px;display:flex}
+.salary-bar-cn{height:100%;background:#3b82f6;border-radius:5px}
+.salary-bar-other{height:100%;background:#f59e0b;border-radius:5px}
+.salary-badge{display:inline-block;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#fcd34d;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+
+/* COMPARISON ROWS */
+.compare-list{display:flex;flex-direction:column;gap:10px}
+.compare-row{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.compare-row-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+.compare-item{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.ratio-badge{font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.ratio-cheap{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#6ee7b7}
+.ratio-expensive{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+.ratio-same{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted)}
+.bars{display:flex;flex-direction:column;gap:5px}
+.bar-row{display:flex;align-items:center;gap:8px}
+.bar-country{font-size:10px;font-weight:700;color:var(--muted);width:60px;flex-shrink:0;text-align:right}
+.bar-track{flex:1;height:8px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:.3s}
+.bar-val{font-size:11px;font-weight:700;width:80px;flex-shrink:0;color:var(--text)}
+.bar-cn .bar-fill{background:#3b82f6}
+.bar-other .bar-fill{background:#f59e0b}
+.bar-other-cheap .bar-fill{background:#10b981}
+.bar-cn-expensive .bar-fill{background:#ef4444}
+
+/* 3-WAY COMPARISON (Japan/Korea) */
+.bar-jp .bar-fill{background:#7c3aed}
+.bar-kr .bar-fill{background:#059669}
+
+/* PYRAMID */
+.pyramid-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;margin:20px 0}
+.tier-row{display:flex;align-items:center;gap:10px;width:100%}
+.tier-bar{height:38px;border-radius:4px;display:flex;align-items:center;justify-content:center;gap:6px;transition:.3s;flex-shrink:0}
+.tier-label{font-size:12px;font-weight:800;color:#fff;white-space:nowrap}
+.tier-pct{font-size:10px;font-weight:700;opacity:.7}
+.tier-info{display:flex;flex-direction:column;gap:1px}
+.tier-income{font-size:12px;font-weight:700;color:var(--text)}
+.tier-freedom{font-size:11px;color:var(--muted)}
+.tier-freedom span{display:inline-block;background:rgba(255,255,255,.06);border-radius:12px;padding:1px 8px;font-size:10px;font-weight:700}
+.tier-group-label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--dim);text-align:right;min-width:80px;flex-shrink:0}
+
+/* 55 CITY RENT */
+.rent-search{width:100%;padding:10px 14px;background:var(--card);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;margin-bottom:14px;outline:none}
+.rent-search::placeholder{color:var(--muted)}
+.rent-search:focus{border-color:rgba(59,130,246,.4)}
+.rent-table{width:100%;border-collapse:collapse;font-size:13px}
+.rent-table th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border2);color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+.rent-table td{padding:8px 10px;border-bottom:1px solid var(--border)}
+.rent-table tr:last-child td{border:none}
+.rent-rank{color:var(--dim);font-weight:700;width:32px}
+.rent-rank.top3{color:var(--amber)}
+.city-name{font-weight:700;color:var(--text)}
+.city-prov{font-size:11px;color:var(--muted)}
+.rent-bar-cell{min-width:120px}
+.rent-bar-mini{height:6px;background:var(--blue);border-radius:3px;min-width:3px}
+.rent-num{font-weight:700;color:#fff;white-space:nowrap}
+.rent-usd{font-size:11px;color:var(--muted)}
+.sort-btn{cursor:pointer;padding:0 4px;color:var(--muted)}
+.sort-btn.active{color:var(--text)}
+
+/* INSIGHT CARDS */
+.insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:20px}
+.insight{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;border-left:3px solid}
+.insight.green{border-left-color:#10b981}
+.insight.red{border-left-color:#ef4444}
+.insight.amber{border-left-color:#f59e0b}
+.insight-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
+.insight-body{font-size:12px;color:var(--muted);line-height:1.5}
+
+.source-note{font-size:11px;color:var(--dim);margin-top:14px}
+.section-divider{border:none;border-top:1px solid var(--border);margin:40px 0}
+
+.footer{background:var(--card);border-top:1px solid var(--border);padding:32px 20px;text-align:center}
+.footer p{color:var(--muted);font-size:13px;margin-bottom:8px}
+.footer-links{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.flink{display:inline-block;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;text-decoration:none;border:1px solid var(--border2);color:var(--text)}
+.flink:hover{background:rgba(255,255,255,.05)}
+.flink.pri{background:#e11d48;border-color:#e11d48;color:#fff}
+
+.hidden{display:none}
+@media(max-width:580px){.bar-country{width:44px;font-size:9px}.bar-val{width:64px;font-size:10px}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="nav-brand" href="https://ordinarymantrying.com/">◼ Ordinary Man Trying</a>
+  <a class="nav-link" href="index.html">All Tools</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">China Life 2025</div>
+  <h1>China Is <em>Very</em> Cheap — Except<br>When It Isn't</h1>
+  <p class="hero-sub">A restaurant meal costs $3.50. A bowl of rice costs $1. But a Beijing apartment can cost more per square meter than in New York. Here's what China actually costs.</p>
+  <div class="hero-facts">
+    <div class="hfact"><div class="hfact-n" style="color:#10b981;">5.8×</div><div class="hfact-l">Cheaper: a meal in China vs USA on average</div></div>
+    <div class="hfact"><div class="hfact-n" style="color:#ef4444;">0.6×</div><div class="hfact-l">Beijing city apartments cost MORE per m² than US cities</div></div>
+    <div class="hfact"><div class="hfact-n" style="color:#f59e0b;">4.8×</div><div class="hfact-l">Gap between US and China average monthly salary</div></div>
+    <div class="hfact"><div class="hfact-n" style="color:#8b5cf6;">¥934</div><div class="hfact-l">Cheapest rent in 55-city ranking: Baoding, Hebei</div></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- CONTROLS -->
+  <div class="controls">
+    <span class="toggle-label">Show prices in:</span>
+    <div class="toggle-wrap">
+      <button class="toggle-btn active" id="btnCny" onclick="setCurrency('cny')">¥ CNY</button>
+      <button class="toggle-btn" id="btnUsd" onclick="setCurrency('usd')">$ USD</button>
+    </div>
+    <span style="font-size:11px;color:var(--dim);">Exchange rate: ¥7.2 = $1</span>
+  </div>
+
+  <!-- COUNTRY SELECTOR -->
+  <div class="sec-tag">Country Comparison</div>
+  <h2>China vs the World: Price by Price</h2>
+  <div class="ctabs">
+    <button class="ctab active" onclick="setCountry('usa',this)">🇺🇸 vs USA</button>
+    <button class="ctab" onclick="setCountry('sgp',this)">🇸🇬 vs Singapore</button>
+    <button class="ctab" onclick="setCountry('jpkr',this)">🇯🇵🇰🇷 vs Japan & Korea</button>
+  </div>
+
+  <!-- SALARY CARD -->
+  <div class="salary-card" id="salaryCard"></div>
+
+  <!-- CATEGORY TABS (hidden for jpkr) -->
+  <div class="cattabs" id="cattabsWrap">
+    <button class="cattab active" onclick="setCategory('food',this)">🍜 Food & Drink</button>
+    <button class="cattab" onclick="setCategory('groceries',this)">🛒 Groceries</button>
+    <button class="cattab" onclick="setCategory('clothing',this)">👕 Clothing</button>
+    <button class="cattab" onclick="setCategory('housing',this)">🏠 Housing</button>
+    <button class="cattab" onclick="setCategory('transport',this)">🚇 Transport</button>
+  </div>
+
+  <!-- COMPARE LIST -->
+  <div class="compare-list" id="compareList"></div>
+
+  <p class="source-note">📕 Data source: 小红书 Xiaohongshu / RedNote, 数据世界. Data as of June 2026. All prices converted to CNY. National averages — individual cities vary significantly.</p>
+
+  <hr class="section-divider">
+
+  <!-- INSIGHTS -->
+  <div class="sec-tag">Key Takeaways</div>
+  <h2>What the Numbers Actually Mean</h2>
+  <div class="insights">
+    <div class="insight green">
+      <div class="insight-title">Street food is unbeatable value</div>
+      <div class="insight-body">A basic restaurant meal (¥25, ~$3.50) is 5.8× cheaper than the US equivalent. Eating local in China on ¥300/month is entirely realistic.</div>
+    </div>
+    <div class="insight red">
+      <div class="insight-title">Property in Tier-1 cities is expensive</div>
+      <div class="insight-body">Beijing's per-m² price (¥50,888) exceeds the US city-center average (¥32,488). Home ownership is harder in Shanghai/Beijing than in most US cities.</div>
+    </div>
+    <div class="insight amber">
+      <div class="insight-title">The salary gap explains everything</div>
+      <div class="insight-body">China's average salary (¥6,711/mo) is 4.8× lower than the US (¥32,381/mo). Most things ARE cheaper — but so is income. The real gap is in housing and cars.</div>
+    </div>
+    <div class="insight green">
+      <div class="insight-title">Rent outside Tier-1 is very affordable</div>
+      <div class="insight-body">A single room in Chengdu averages ¥643/month ($89). In Baoding (4th largest city in Hebei), it's ¥233/month. Tier-2/3 cities offer striking value.</div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- INCOME PYRAMID -->
+  <div class="sec-tag">China Income Pyramid</div>
+  <h2>Where Do Chinese Families Stand? The 10-Tier Income Scale</h2>
+  <p>China uses informal income tiers with memorable "freedom" labels — what can you afford at each level? Data as of June 2026, source: 小红书 Xiaohongshu.</p>
+
+  <div class="pyramid-wrap" id="pyramidWrap"></div>
+  <p class="source-note">📕 Source: 小红书 Xiaohongshu (@宁宁妈生活). Figures are annual household income in CNY. June 2026 data.</p>
+
+  <hr class="section-divider">
+
+  <!-- 55-CITY RENT -->
+  <div class="sec-tag">China Domestic</div>
+  <h2>55-City Rent Ranking (Oct 2024)</h2>
+  <p>Individual landlord listings, 60m² whole apartment vs 15m² single room. Source: 克尔瑞长租 Kerui.</p>
+
+  <div class="controls">
+    <span class="toggle-label">Sort by:</span>
+    <div class="toggle-wrap">
+      <button class="toggle-btn active" id="sortRent" onclick="sortRentBy('perSqm',this)">Per m²</button>
+      <button class="toggle-btn" id="sortRoom" onclick="sortRentBy('room',this)">Room price</button>
+      <button class="toggle-btn" id="sortApt" onclick="sortRentBy('apt',this)">60m² apt</button>
+    </div>
+  </div>
+
+  <input class="rent-search" type="text" placeholder="Search city or province..." id="rentSearch" oninput="filterRent()">
+  <table class="rent-table" id="rentTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>City</th>
+        <th>¥/m²/mo</th>
+        <th>Scale</th>
+        <th>60m² apt</th>
+        <th>Single room (15m²)</th>
+      </tr>
+    </thead>
+    <tbody id="rentBody"></tbody>
+  </table>
+  <p class="source-note">📕 Data source: 克尔瑞长租 Oct 2024 public data, cited via 小红书 Xiaohongshu. Data as of June 2026.</p>
+</div>
+
+<div class="footer">
+  <p>More China tools:</p>
+  <div class="footer-links">
+    <a href="china-social-media-guide.html" class="flink pri">📱 Social Media Guide →</a>
+    <a href="china-population-dashboard.html" class="flink">🧬 Population Dashboard →</a>
+    <a href="china-education-crunch.html" class="flink">📊 Education Crunch →</a>
+    <a href="index.html" class="flink">All 150+ Tools →</a>
+  </div>
+  <p style="margin-top:14px;font-size:11px;color:#334155;">
+    <span style="background:rgba(255,0,68,.1);border:1px solid rgba(255,0,68,.25);color:#fca5a5;padding:2px 10px;border-radius:20px;font-weight:700;font-size:10px;letter-spacing:1px;">📕 DATA SOURCE: 小红书 Xiaohongshu / RedNote</span><br><br>
+    <a href="https://ordinarymantrying.com/" style="color:#475569;">ordinarymantrying.com</a> — Foreigners Understanding China series
+  </p>
+</div>
+
+<script>
+const CNY_USD = 7.2;
+let currency = 'cny';
+let currentCountry = 'usa';
+let currentCategory = 'food';
+let rentSortKey = 'perSqm';
+
+function fmt(v) {
+  const val = currency === 'usd' ? v / CNY_USD : v;
+  const sym = currency === 'usd' ? '$' : '¥';
+  if (val >= 10000) return sym + (val/10000).toFixed(1) + (currency==='cny'?'万':'k');
+  if (val >= 1000)  return sym + val.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  if (val >= 10)    return sym + val.toFixed(0);
+  return sym + val.toFixed(1);
+}
+function fmtRaw(v) {
+  const val = currency === 'usd' ? v / CNY_USD : v;
+  return currency === 'usd' ? '$' + val.toFixed(0) : '¥' + val.toFixed(0);
+}
+function setCurrency(c) {
+  currency = c;
+  document.getElementById('btnCny').classList.toggle('active', c==='cny');
+  document.getElementById('btnUsd').classList.toggle('active', c==='usd');
+  render();
+  renderRent();
+  renderPyramid();
+}
+function setCountry(c, btn) {
+  currentCountry = c;
+  document.querySelectorAll('.ctab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const isJpKr = c === 'jpkr';
+  document.getElementById('cattabsWrap').style.display = isJpKr ? 'none' : 'flex';
+  if (isJpKr) currentCategory = 'groceries';
+  else if (currentCategory === 'groceries' && c !== 'jpkr') { /* keep */ }
+  render();
+}
+function setCategory(cat, btn) {
+  currentCategory = cat;
+  document.querySelectorAll('.cattab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+const SALARY = {
+  usa:  { cn: 6711, other: 32381, otherLabel: 'USA' },
+  sgp:  { cn: 6711, other: 32216, otherLabel: 'Singapore' },
+  jpkr: { cn: 6711, jp: 14621, kr: 17464 }
+};
+
+const DATA = {
+  usa: {
+    food: [
+      { item:'Meal, inexpensive restaurant (1 person)', cn:25, other:145, ratio:5.8 },
+      { item:'Meal for 2, mid-range (3 courses)', cn:200, other:545, ratio:2.7 },
+      { item:"McDonald's combo meal", cn:38, other:80, ratio:2.1 },
+      { item:'Domestic beer (500ml, restaurant)', cn:7, other:43, ratio:6.1 },
+      { item:'Imported beer (330ml, restaurant)', cn:15, other:51, ratio:3.4 },
+      { item:'Cappuccino (café)', cn:23.4, other:37.4, ratio:1.6 },
+      { item:'Coke / Pepsi (330ml)', cn:3.4, other:18.2, ratio:5.4 },
+      { item:'Water (500ml, bottle)', cn:2.1, other:15, ratio:7.1 },
+    ],
+    groceries: [
+      { item:'Milk (1 litre)', cn:14, other:7.7, ratio:0.6 },
+      { item:'Bread (500g loaf)', cn:12, other:26, ratio:2.2 },
+      { item:'White rice (1kg)', cn:7, other:33, ratio:4.7 },
+      { item:'Eggs (12)', cn:12.2, other:26.6, ratio:2.2 },
+      { item:'Chicken breast (1kg)', cn:25, other:87.6, ratio:3.5 },
+      { item:'Beef, rear cut (1kg)', cn:83.3, other:116.5, ratio:1.4 },
+      { item:'Apple (1kg)', cn:13.2, other:38.4, ratio:2.9 },
+      { item:'Banana (1kg)', cn:9.7, other:12.2, ratio:1.3 },
+      { item:'Orange (1kg)', cn:11.4, other:32.7, ratio:2.9 },
+      { item:'Tomato (1kg)', cn:8.7, other:35.7, ratio:4.1 },
+      { item:'Potato (1kg)', cn:5.6, other:21.6, ratio:3.9 },
+      { item:'Onion (1kg)', cn:6.8, other:22.2, ratio:3.3 },
+      { item:'Lettuce (1 head)', cn:4.6, other:15.8, ratio:3.4 },
+      { item:'Wine, mid-range (750ml bottle)', cn:80, other:109, ratio:1.4 },
+      { item:'Cigarettes (1 pack)', cn:25, other:72.7, ratio:2.9 },
+    ],
+    clothing: [
+      { item:"Jeans (Levi's 501 or equivalent)", cn:363, other:381, ratio:1.0 },
+      { item:'Summer dress (Zara / H&M)', cn:240, other:314, ratio:1.3 },
+      { item:'Nike running shoes (mid-range)', cn:545, other:647, ratio:1.2 },
+      { item:"Men's leather shoes", cn:591, other:832, ratio:1.4 },
+    ],
+    housing: [
+      { item:'1-bedroom apt, city centre (rent/mo)', cn:3787, other:13120, ratio:3.5 },
+      { item:'1-bedroom apt, suburbs (rent/mo)', cn:2084, other:10803, ratio:5.2 },
+      { item:'3-bedroom apt, city centre (rent/mo)', cn:8126, other:22183, ratio:2.7 },
+      { item:'3-bedroom apt, suburbs (rent/mo)', cn:4254, other:17941, ratio:4.2 },
+      { item:'Buy: city centre (per m²) ⚠️', cn:50888, other:32488, ratio:0.6 },
+      { item:'Buy: suburbs (per m²)', cn:26893, other:25677, ratio:1.0 },
+    ],
+    transport: [
+      { item:'Public transport, single ticket', cn:3, other:18, ratio:6.0 },
+      { item:'Taxi, start fare', cn:10, other:25, ratio:2.5 },
+      { item:'Taxi, per km', cn:2.5, other:12.6, ratio:5.0 },
+      { item:'Gasoline (1 litre)', cn:8.5, other:7, ratio:0.8 },
+      { item:'New car: VW Golf (base)', cn:148880, other:244747, ratio:1.6 },
+      { item:'New car: Toyota Camry', cn:129268, other:190075, ratio:1.5 },
+    ],
+  },
+  sgp: {
+    food: [
+      { item:'Meal, inexpensive restaurant (1 person)', cn:25, other:71, ratio:2.8 },
+      { item:'Meal for 2, mid-range (3 courses)', cn:200, other:489, ratio:2.4 },
+      { item:"McDonald's combo meal", cn:38, other:54, ratio:1.4 },
+      { item:'Domestic beer (500ml, restaurant)', cn:7, other:54, ratio:7.7 },
+      { item:'Imported beer (330ml, restaurant)', cn:15, other:54, ratio:3.6 },
+      { item:'Cappuccino (café)', cn:23.4, other:34, ratio:1.5 },
+      { item:'Coke / Pepsi (330ml)', cn:3.4, other:11, ratio:3.2 },
+      { item:'Water (500ml, bottle)', cn:2.1, other:8.6, ratio:4.1 },
+    ],
+  },
+  jpkr: {
+    groceries: [
+      { item:'Milk (1 litre)', cn:14, jp:10, kr:15 },
+      { item:'Bread (500g loaf)', cn:12, jp:10.6, kr:21.6 },
+      { item:'White rice (1kg)', cn:7, jp:24.8, kr:22.2 },
+      { item:'Eggs (12)', cn:12.2, jp:15.1, kr:22.6 },
+      { item:'Chicken breast (1kg)', cn:25, jp:44, kr:64 },
+      { item:'Beef, rear cut (1kg)', cn:83.3, jp:115.9, kr:219 },
+      { item:'Apple (1kg)', cn:13.2, jp:33, kr:50.4 },
+      { item:'Banana (1kg)', cn:9.7, jp:16.4, kr:24.3 },
+      { item:'Orange (1kg)', cn:11.4, jp:29.8, kr:41.2 },
+      { item:'Tomato (1kg)', cn:8.7, jp:30.6, kr:38.4 },
+      { item:'Potato (1kg)', cn:5.6, jp:18.7, kr:26.9 },
+      { item:'Lettuce (1 head)', cn:4.6, jp:8.9, kr:17.3 },
+    ],
+  }
+};
+
+const CITIES = [
+  {rank:1, city:'Beijing', zh:'北京', prov:'Beijing', perSqm:116.1, apt:6966, room:1741.5},
+  {rank:2, city:'Shanghai', zh:'上海', prov:'Shanghai', perSqm:104.6, apt:6275.4, room:1568.9},
+  {rank:3, city:'Shenzhen', zh:'深圳', prov:'Guangdong', perSqm:94.7, apt:5682, room:1420.5},
+  {rank:4, city:'Hangzhou', zh:'杭州', prov:'Zhejiang', perSqm:62.9, apt:3771, room:942.8},
+  {rank:5, city:'Guangzhou', zh:'广州', prov:'Guangdong', perSqm:60.3, apt:3615, room:903.8},
+  {rank:6, city:'Nanjing', zh:'南京', prov:'Jiangsu', perSqm:54, apt:3242.4, room:810.6},
+  {rank:7, city:'Xiamen', zh:'厦门', prov:'Fujian', perSqm:46.5, apt:2790.6, room:697.7},
+  {rank:8, city:'Wuhan', zh:'武汉', prov:'Hubei', perSqm:44.6, apt:2673, room:668.3},
+  {rank:9, city:'Chengdu', zh:'成都', prov:'Sichuan', perSqm:42.9, apt:2571.6, room:642.9},
+  {rank:10, city:'Tianjin', zh:'天津', prov:'Tianjin', perSqm:38.8, apt:2325, room:581.3},
+  {rank:11, city:'Zhuhai', zh:'珠海', prov:'Guangdong', perSqm:36.5, apt:2189.4, room:547.4},
+  {rank:12, city:'Fuzhou', zh:'福州', prov:'Fujian', perSqm:35.8, apt:2150.4, room:537.6},
+  {rank:13, city:'Suzhou', zh:'苏州', prov:'Jiangsu', perSqm:34.6, apt:2074.2, room:518.6},
+  {rank:14, city:'Ningbo', zh:'宁波', prov:'Zhejiang', perSqm:33.6, apt:2017.8, room:504.5},
+  {rank:15, city:'Dalian', zh:'大连', prov:'Liaoning', perSqm:30.9, apt:1854.6, room:463.7},
+  {rank:16, city:'Haikou', zh:'海口', prov:'Hainan', perSqm:30.5, apt:1829.4, room:457.4},
+  {rank:17, city:"Xi'an", zh:'西安', prov:'Shaanxi', perSqm:30, apt:1800.6, room:450.2},
+  {rank:18, city:'Changsha', zh:'长沙', prov:'Hunan', perSqm:29.4, apt:1766.4, room:441.6},
+  {rank:19, city:'Hefei', zh:'合肥', prov:'Anhui', perSqm:28.6, apt:1718.4, room:429.6},
+  {rank:20, city:'Wuxi', zh:'无锡', prov:'Jiangsu', perSqm:27.6, apt:1654.2, room:413.6},
+  {rank:21, city:'Qingdao', zh:'青岛', prov:'Shandong', perSqm:27.3, apt:1638.6, room:409.7},
+  {rank:22, city:'Jinan', zh:'济南', prov:'Shandong', perSqm:27.3, apt:1636.2, room:409.1},
+  {rank:23, city:'Dongguan', zh:'东莞', prov:'Guangdong', perSqm:26.6, apt:1594.8, room:398.7},
+  {rank:24, city:'Chongqing', zh:'重庆', prov:'Chongqing', perSqm:26.1, apt:1567.2, room:391.8},
+  {rank:25, city:'Foshan', zh:'佛山', prov:'Guangdong', perSqm:26, apt:1558.8, room:389.7},
+  {rank:26, city:'Lanzhou', zh:'兰州', prov:'Gansu', perSqm:25.7, apt:1539, room:384.8},
+  {rank:27, city:'Harbin', zh:'哈尔滨', prov:'Heilongjiang', perSqm:25, apt:1497.6, room:374.4},
+  {rank:28, city:'Shenyang', zh:'沈阳', prov:'Liaoning', perSqm:24.8, apt:1488, room:372},
+  {rank:29, city:'Urumqi', zh:'乌鲁木齐', prov:'Xinjiang', perSqm:24.8, apt:1487.4, room:371.9},
+  {rank:30, city:'Shaoxing', zh:'绍兴', prov:'Zhejiang', perSqm:24.6, apt:1474.2, room:368.6},
+  {rank:31, city:'Jiaxing', zh:'嘉兴', prov:'Zhejiang', perSqm:24.3, apt:1460.4, room:365.1},
+  {rank:32, city:'Changchun', zh:'长春', prov:'Jilin', perSqm:24.2, apt:1451.4, room:362.9},
+  {rank:33, city:'Kunming', zh:'昆明', prov:'Yunnan', perSqm:24.1, apt:1446, room:361.5},
+  {rank:34, city:'Quanzhou', zh:'泉州', prov:'Fujian', perSqm:24.1, apt:1445.4, room:361.4},
+  {rank:35, city:'Nanning', zh:'南宁', prov:'Guangxi', perSqm:23.6, apt:1414.8, room:353.7},
+  {rank:36, city:'Changzhou', zh:'常州', prov:'Jiangsu', perSqm:23.6, apt:1413.6, room:353.4},
+  {rank:37, city:'Zhengzhou', zh:'郑州', prov:'Henan', perSqm:22.6, apt:1355.4, room:338.9},
+  {rank:38, city:'Nanchang', zh:'南昌', prov:'Jiangxi', perSqm:22.2, apt:1330.8, room:332.7},
+  {rank:39, city:'Yangzhou', zh:'扬州', prov:'Jiangsu', perSqm:22.2, apt:1330.8, room:332.7},
+  {rank:40, city:'Guiyang', zh:'贵阳', prov:'Guizhou', perSqm:21.8, apt:1306.8, room:326.7},
+  {rank:41, city:'Shijiazhuang', zh:'石家庄', prov:'Hebei', perSqm:21.6, apt:1293, room:323.3},
+  {rank:42, city:'Zhongshan', zh:'中山', prov:'Guangdong', perSqm:21.3, apt:1276.8, room:319.2},
+  {rank:43, city:'Huizhou', zh:'惠州', prov:'Guangdong', perSqm:21.2, apt:1269, room:317.3},
+  {rank:44, city:'Zhaoqing', zh:'肇庆', prov:'Guangdong', perSqm:20.8, apt:1246.2, room:311.6},
+  {rank:45, city:'Nantong', zh:'南通', prov:'Jiangsu', perSqm:20.6, apt:1234.8, room:308.7},
+  {rank:46, city:'Yichang', zh:'宜昌', prov:'Hubei', perSqm:20.3, apt:1220.4, room:305.1},
+  {rank:47, city:'Taiyuan', zh:'太原', prov:'Shanxi', perSqm:20, apt:1198.2, room:299.6},
+  {rank:48, city:'Wuhu', zh:'芜湖', prov:'Anhui', perSqm:19.6, apt:1175.4, room:293.9},
+  {rank:49, city:'Daqing', zh:'大庆', prov:'Heilongjiang', perSqm:19.5, apt:1172.4, room:293.1},
+  {rank:50, city:'Yantai', zh:'烟台', prov:'Shandong', perSqm:19.2, apt:1149.6, room:287.4},
+  {rank:51, city:'Taizhou (JS)', zh:'泰州', prov:'Jiangsu', perSqm:18.7, apt:1124.8, room:281.1},
+  {rank:52, city:'Chaoyang (LN)', zh:'朝阳', prov:'Liaoning', perSqm:18.4, apt:1102.2, room:275.6},
+  {rank:53, city:'Zhenjiang', zh:'镇江', prov:'Jiangsu', perSqm:17.5, apt:1048.8, room:262.3},
+  {rank:54, city:'Xuzhou', zh:'徐州', prov:'Jiangsu', perSqm:17.2, apt:1030.2, room:257.6},
+  {rank:55, city:'Baoding', zh:'保定', prov:'Hebei', perSqm:15.6, apt:933.6, room:233.4},
+];
+
+// ─── RENDER SALARY ─────────────────────────────────────────────────────────
+function renderSalary() {
+  const el = document.getElementById('salaryCard');
+  const s = SALARY[currentCountry];
+  if (currentCountry === 'jpkr') {
+    const maxSal = Math.max(s.cn, s.jp, s.kr);
+    el.innerHTML = `
+      <div style="width:100%">
+        <div style="font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Monthly Average Salary (CNY equivalent)</div>
+        ${[['🇨🇳 China','#3b82f6',s.cn],['🇯🇵 Japan','#7c3aed',s.jp],['🇰🇷 Korea','#059669',s.kr]].map(([label,color,val])=>`
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="font-size:12px;color:var(--muted);width:80px;flex-shrink:0">${label}</div>
+            <div style="flex:1;height:10px;background:rgba(255,255,255,.05);border-radius:5px;overflow:hidden">
+              <div style="width:${(val/maxSal*100).toFixed(1)}%;height:100%;background:${color};border-radius:5px"></div>
+            </div>
+            <div style="font-size:13px;font-weight:800;color:#fff;width:80px">${fmtRaw(val)}</div>
+            <div style="font-size:11px;color:var(--muted);width:60px">${currency==='cny'?('$'+(val/CNY_USD).toFixed(0)):('¥'+val)}</div>
+          </div>`).join('')}
+      </div>`;
+  } else {
+    const max = Math.max(s.cn, s.other);
+    el.innerHTML = `
+      <div class="salary-block">
+        <div class="salary-country">🇨🇳 China avg salary</div>
+        <div class="salary-val">${fmtRaw(s.cn)}</div>
+        <div class="salary-usd">${currency==='cny'?('≈ $'+(s.cn/CNY_USD).toFixed(0)+'/mo'):('≈ ¥'+s.cn+'/mo')}</div>
+      </div>
+      <div class="salary-bar-wrap">
+        <div class="salary-bar-track">
+          <div class="salary-bar-cn" style="width:${(s.cn/max*100).toFixed(1)}%"></div>
+        </div>
+        <div class="salary-bar-track">
+          <div class="salary-bar-other" style="width:${(s.other/max*100).toFixed(1)}%"></div>
+        </div>
+        <div class="salary-badge">${s.otherLabel} salary is ${(s.other/s.cn).toFixed(1)}× higher</div>
+      </div>
+      <div class="salary-block">
+        <div class="salary-country">🏳️ ${s.otherLabel} avg salary</div>
+        <div class="salary-val">${fmtRaw(s.other)}</div>
+        <div class="salary-usd">${currency==='cny'?('≈ $'+(s.other/CNY_USD).toFixed(0)+'/mo'):('≈ ¥'+s.other+'/mo')}</div>
+      </div>`;
+  }
+}
+
+// ─── RENDER COMPARISON LIST ────────────────────────────────────────────────
+function renderCompare() {
+  const el = document.getElementById('compareList');
+  if (currentCountry === 'jpkr') {
+    const items = DATA.jpkr.groceries;
+    const maxVal = Math.max(...items.map(d=>Math.max(d.cn, d.jp, d.kr)));
+    el.innerHTML = items.map(d => {
+      const maxItem = Math.max(d.cn, d.jp, d.kr);
+      return `<div class="compare-row">
+        <div class="compare-row-header">
+          <div class="compare-item">${d.item}</div>
+        </div>
+        <div class="bars">
+          <div class="bar-row bar-cn">
+            <div class="bar-country">🇨🇳 China</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${(d.cn/maxItem*100).toFixed(1)}%"></div></div>
+            <div class="bar-val">${fmtRaw(d.cn)}</div>
+          </div>
+          <div class="bar-row bar-jp">
+            <div class="bar-country">🇯🇵 Japan</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${(d.jp/maxItem*100).toFixed(1)}%"></div></div>
+            <div class="bar-val">${fmtRaw(d.jp)}</div>
+          </div>
+          <div class="bar-row bar-kr">
+            <div class="bar-country">🇰🇷 Korea</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${(d.kr/maxItem*100).toFixed(1)}%"></div></div>
+            <div class="bar-val">${fmtRaw(d.kr)}</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  const items = DATA[currentCountry][currentCategory];
+  if (!items) {
+    el.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;color:var(--muted);font-size:13px;">Data not yet available for this category. See China vs USA for full comparison.</div>';
+    return;
+  }
+  const countryLabel = currentCountry === 'usa' ? '🇺🇸 USA' : '🇸🇬 Singapore';
+
+  el.innerHTML = items.map(d => {
+    const cnCheaper = d.ratio >= 1.05;
+    const cnExpensive = d.ratio < 0.95;
+    const ratioClass = cnCheaper ? 'ratio-cheap' : (cnExpensive ? 'ratio-expensive' : 'ratio-same');
+    let ratioText;
+    if (cnCheaper)    ratioText = `${d.ratio}× more expensive in ${currentCountry==='usa'?'USA':'Singapore'}`;
+    else if (cnExpensive) ratioText = `China is ${(1/d.ratio).toFixed(1)}× more expensive`;
+    else              ratioText = 'Similar price';
+    const maxItem = Math.max(d.cn, d.other);
+    const cnClass = cnExpensive ? 'bar-cn-expensive' : 'bar-cn';
+    const otherClass = cnCheaper ? 'bar-other' : 'bar-other-cheap';
+    return `<div class="compare-row">
+      <div class="compare-row-header">
+        <div class="compare-item">${d.item}</div>
+        <div class="ratio-badge ${ratioClass}">${ratioText}</div>
+      </div>
+      <div class="bars">
+        <div class="bar-row ${cnClass}">
+          <div class="bar-country">🇨🇳 China</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(d.cn/maxItem*100).toFixed(1)}%"></div></div>
+          <div class="bar-val">${fmtRaw(d.cn)}</div>
+        </div>
+        <div class="bar-row ${otherClass}">
+          <div class="bar-country">${countryLabel}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(d.other/maxItem*100).toFixed(1)}%"></div></div>
+          <div class="bar-val">${fmtRaw(d.other)}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function render() {
+  renderSalary();
+  renderCompare();
+}
+
+// ─── RENT TABLE ─────────────────────────────────────────────────────────────
+let rentData = [...CITIES];
+function sortRentBy(key, btn) {
+  rentSortKey = key;
+  document.querySelectorAll('#sortRent,#sortRoom,#sortApt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderRent();
+}
+function filterRent() {
+  const q = document.getElementById('rentSearch').value.toLowerCase();
+  rentData = q ? CITIES.filter(c => c.city.toLowerCase().includes(q) || c.zh.includes(q) || c.prov.toLowerCase().includes(q)) : [...CITIES];
+  renderRent();
+}
+function renderRent() {
+  const sortKey = rentSortKey === 'perSqm' ? 'perSqm' : (rentSortKey === 'room' ? 'room' : 'apt');
+  const sorted = [...rentData].sort((a,b) => b[sortKey] - a[sortKey]);
+  const maxVal = Math.max(...sorted.map(c => c[sortKey]));
+  const tbody = document.getElementById('rentBody');
+  tbody.innerHTML = sorted.map((c,i) => {
+    const barW = (c[sortKey]/maxVal*100).toFixed(1);
+    const aptVal = currency==='usd' ? '$'+(c.apt/CNY_USD).toFixed(0) : '¥'+c.apt.toFixed(0);
+    const roomVal = currency==='usd' ? '$'+(c.room/CNY_USD).toFixed(0) : '¥'+c.room.toFixed(0);
+    const sqmVal = currency==='usd' ? '$'+(c.perSqm/CNY_USD).toFixed(1)+'/m²' : '¥'+c.perSqm+'/m²';
+    const rankClass = c.rank <= 3 ? 'rent-rank top3' : 'rent-rank';
+    return `<tr>
+      <td class="${rankClass}">${c.rank}</td>
+      <td><div class="city-name">${c.city} ${c.zh}</div><div class="city-prov">${c.prov}</div></td>
+      <td class="rent-num">${sqmVal}</td>
+      <td class="rent-bar-cell"><div class="rent-bar-mini" style="width:${barW}%"></div></td>
+      <td><div class="rent-num">${aptVal}</div><div class="rent-usd">/month</div></td>
+      <td><div class="rent-num">${roomVal}</div><div class="rent-usd">/month</div></td>
+    </tr>`;
+  }).join('');
+}
+
+render();
+renderRent();
+renderPyramid();
+
+// ─── INCOME PYRAMID ──────────────────────────────────────────────────────────
+const TIERS = [
+  { name:'超级富豪', en:'Ultra Rich',    pct:'0.03%', annualMin:80000000, annualMax:null,      freedom:'🌍 Citizenship freedom',  color:'#92400e', width:8  },
+  { name:'豪富',     en:'Super Wealthy', pct:'0.09%', annualMin:15000000, annualMax:80000000,  freedom:'🎓 Education freedom',    color:'#b45309', width:14 },
+  { name:'中富',     en:'Well-Off',      pct:'0.18%', annualMin:5000000,  annualMax:15000000,  freedom:'🏡 Property freedom',     color:'#d97706', width:20 },
+  { name:'小富',     en:'Comfortable',   pct:'0.9%',  annualMin:1000000,  annualMax:5000000,   freedom:'🚗 Car freedom',          color:'#ca8a04', width:30 },
+  { name:'高产',     en:'High Income',   pct:'1.8%',  annualMin:500000,   annualMax:1000000,   freedom:'👜 Luxury bag freedom',   color:'#4f46e5', width:40 },
+  { name:'中产',     en:'Middle Class',  pct:'11%',   annualMin:200000,   annualMax:500000,    freedom:'✈️ Travel freedom',       color:'#2563eb', width:54 },
+  { name:'小康',     en:'Lower-Middle',  pct:'15%',   annualMin:100000,   annualMax:200000,    freedom:'🛍️ Online shopping freedom', color:'#0891b2', width:66 },
+  { name:'温饱',     en:'Basic Needs',   pct:'38%',   annualMin:70000,    annualMax:100000,    freedom:'🛵 Food delivery freedom', color:'#0369a1', width:78 },
+  { name:'贫困',     en:'Below Poverty', pct:'24%',   annualMin:30000,    annualMax:70000,     freedom:'🥬 Grocery freedom',      color:'#1e40af', width:88 },
+  { name:'赤贫',     en:'Extreme Poor',  pct:'9%',    annualMin:0,        annualMax:30000,     freedom:'🥐 Steamed bun freedom',  color:'#1e3a8a', width:100 },
+];
+
+function fmtAnnual(v) {
+  if (!v) return currency==='usd'?'$11M+':'¥8000万+';
+  const val = currency==='usd' ? v/CNY_USD : v;
+  const sym = currency==='usd' ? '$' : '¥';
+  if (val >= 10000000) return sym+(val/10000000).toFixed(0)+'千万';
+  if (val >= 1000000)  return sym+(val/1000000).toFixed(1)+(currency==='cny'?'百万':'M');
+  if (val >= 10000)    return sym+(val/10000).toFixed(0)+(currency==='cny'?'万':'k');
+  return sym+val.toFixed(0);
+}
+
+function renderPyramid() {
+  const el = document.getElementById('pyramidWrap');
+  const maxW = 560;
+  el.innerHTML = TIERS.map((t,i) => {
+    const barW = Math.round(maxW * t.width / 100);
+    const incomeStr = t.annualMax
+      ? `${fmtAnnual(t.annualMin)} – ${fmtAnnual(t.annualMax)}/yr`
+      : `${fmtAnnual(t.annualMin)}/yr+`;
+    return `<div class="tier-row">
+      <div style="width:${barW}px;max-width:100%;height:36px;background:${t.color};border-radius:4px;display:flex;align-items:center;padding:0 10px;gap:6px;flex-shrink:0">
+        <span style="font-size:12px;font-weight:800;color:#fff;white-space:nowrap">${t.name} ${t.pct}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+        <div style="font-size:12px;font-weight:700;color:var(--text)">${t.en} · <span class="tier-income-val" data-min="${t.annualMin}" data-max="${t.annualMax||''}">${incomeStr}</span></div>
+        <div style="font-size:11px;color:var(--muted)">${t.freedom}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
