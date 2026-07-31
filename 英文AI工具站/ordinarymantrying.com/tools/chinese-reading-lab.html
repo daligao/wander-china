@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chinese Reading Lab — 10 Historical Decisions in Chinese</title>
+<meta name="description" content="Practice Chinese reading comprehension with 10 gripping real stories: Mandela, Curie, Jobs, Musk, Rowling, Buffett, Zhang Yiming, Tu Youyou, Ren Zhengfei, Jack Ma. HSK4-6. Free, no login.">
+<meta property="og:title" content="Chinese Reading Lab — 历史阅读理解">
+<meta property="og:description" content="10 real historical decisions told in Chinese. Click vocab for pinyin. Answer comprehension questions. HSK4-6 level.">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/chinese-reading-lab.html">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f0a0a;--bg2:#1a0f0f;--bg3:#220f0f;
+  --red:#cc2200;--red2:#e63946;--gold:#f5a623;
+  --ink:#f0e6e6;--dim:#a08080;--line:rgba(200,80,60,.18);
+  --glass:rgba(200,60,40,.08);--popup:#1d1010;
+}
+body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:linear-gradient(135deg,var(--bg) 0%,var(--bg2) 60%,var(--bg3) 100%);
+  min-height:100vh;color:var(--ink)}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+
+/* Header */
+.masthead{text-align:center;padding:16px 0 8px}
+.masthead h1{font-size:1.8em;letter-spacing:3px;font-weight:700;
+  background:linear-gradient(90deg,var(--red2),var(--gold));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.masthead .sub{color:var(--dim);font-size:.85em;margin-top:6px;letter-spacing:2px}
+
+/* Home */
+.home-intro{text-align:center;max-width:580px;margin:18px auto 24px;
+  color:#c8a0a0;font-size:.93em;line-height:1.75}
+.home-intro strong{color:var(--red2)}
+.progress-bar{display:flex;justify-content:center;gap:8px;margin-bottom:22px;flex-wrap:wrap}
+.pb-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--line);
+  transition:.25s;cursor:default}
+.pb-dot.done{background:var(--red2);border-color:var(--red2)}
+
+/* Story grid */
+.story-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+.story-card{background:var(--glass);border:1px solid var(--line);border-radius:14px;
+  padding:16px 12px;cursor:pointer;transition:.25s;text-align:center;position:relative}
+.story-card:hover{transform:translateY(-4px);border-color:rgba(230,57,70,.45);
+  box-shadow:0 10px 28px rgba(0,0,0,.4)}
+.story-card.done{border-color:rgba(230,57,70,.3)}
+.story-card.done::after{content:'✓';position:absolute;top:8px;right:10px;
+  color:var(--red2);font-size:.8em;font-weight:700}
+.card-emoji{font-size:2.2em;margin-bottom:8px}
+.card-name{font-size:1.05em;font-weight:700;color:var(--ink)}
+.card-name-en{font-size:.72em;color:var(--dim);margin-top:2px}
+.card-year{font-size:.72em;color:var(--gold);margin-top:4px;letter-spacing:1px}
+.card-level{display:inline-block;font-size:.65em;padding:2px 7px;border-radius:8px;
+  margin-top:6px;background:rgba(200,60,40,.2);color:#ffb3a0;border:1px solid var(--line)}
+
+/* Story view */
+.back-btn{background:var(--glass);border:1px solid var(--line);color:var(--dim);
+  border-radius:9px;padding:7px 14px;cursor:pointer;font-size:.88em;margin-bottom:18px;
+  transition:.2s}
+.back-btn:hover{color:var(--ink);border-color:rgba(230,57,70,.4)}
+.story-header{display:flex;gap:14px;align-items:center;margin-bottom:20px;
+  background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+.story-header-emoji{font-size:2.6em;flex-shrink:0}
+.story-header h2{font-size:1.4em;font-weight:700;
+  background:linear-gradient(90deg,var(--red2),var(--gold));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.story-header .meta{color:var(--dim);font-size:.8em;margin-top:4px;letter-spacing:1px}
+.story-header .level-badge{display:inline-block;font-size:.7em;padding:2px 8px;
+  border-radius:8px;background:rgba(200,60,40,.2);color:#ffb3a0;
+  border:1px solid var(--line);margin-left:8px}
+
+/* Story text */
+.story-text{background:var(--glass);border:1px solid var(--line);border-radius:14px;
+  padding:20px 22px;font-size:1.05em;line-height:2;margin-bottom:16px;
+  color:#f0e0e0}
+.story-text p{margin-bottom:14px}
+.story-text p:last-child{margin-bottom:0}
+.moment-text{color:var(--gold);font-weight:600;font-size:1.05em;
+  border-left:3px solid var(--gold);padding-left:14px;margin:14px 0}
+
+/* Vocab word highlight */
+.vw{color:var(--red2);border-bottom:1px dotted var(--red2);cursor:pointer;
+  transition:.15s}
+.vw:hover{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* Decision */
+.decision-section{margin-bottom:18px}
+.decision-q{color:var(--gold);font-size:1em;font-weight:600;
+  letter-spacing:1px;margin-bottom:12px}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice-btn{background:var(--glass);border:2px solid var(--line);color:var(--ink);
+  border-radius:12px;padding:12px 16px;cursor:pointer;font-size:.92em;
+  line-height:1.5;transition:.25s;text-align:left}
+.choice-btn:hover{border-color:rgba(230,57,70,.6);background:rgba(200,60,40,.15)}
+.choice-btn.selected{border-color:var(--red2);background:rgba(200,60,40,.2);
+  color:var(--red2)}
+
+/* Result */
+.result-box{background:rgba(20,40,20,.5);border:1px solid rgba(60,180,60,.3);
+  border-radius:14px;padding:18px 22px;margin-bottom:16px;display:none}
+.result-box h3{color:#7ee8bb;font-size:.95em;letter-spacing:2px;margin-bottom:10px}
+.result-box p{color:#c8e8d0;line-height:1.85;font-size:.95em}
+.result-box p+p{margin-top:10px}
+
+/* Quiz */
+.quiz-section{background:var(--glass);border:1px solid var(--line);
+  border-radius:14px;padding:18px 22px;margin-bottom:16px;display:none}
+.quiz-section h3{color:var(--red2);font-size:.95em;letter-spacing:2px;margin-bottom:16px}
+.question{margin-bottom:20px}
+.question:last-child{margin-bottom:0}
+.q-text{font-size:.93em;color:#f0d8d8;margin-bottom:10px;line-height:1.6}
+.q-num{color:var(--red2);font-weight:700;margin-right:6px}
+.q-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.q-opt{background:rgba(0,0,0,.2);border:1px solid var(--line);
+  border-radius:9px;padding:8px 12px;cursor:pointer;font-size:.85em;
+  color:#d0b8b8;transition:.2s}
+.q-opt:hover{border-color:rgba(230,57,70,.4);color:var(--ink)}
+.q-opt.correct{background:rgba(60,180,60,.2);border-color:rgba(60,180,60,.6);color:#7ee8bb}
+.q-opt.wrong{background:rgba(200,40,40,.2);border-color:rgba(200,40,40,.6);color:#ffb3a0}
+.q-opt.reveal{background:rgba(60,180,60,.1);border-color:rgba(60,180,60,.3);color:#7ee8bb}
+.q-opt.disabled{pointer-events:none}
+
+/* Vocab list */
+.vocab-section{background:var(--glass);border:1px solid var(--line);
+  border-radius:14px;padding:16px 20px;margin-bottom:16px}
+.vocab-section h3{color:var(--red2);font-size:.95em;letter-spacing:2px;margin-bottom:14px}
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.vocab-item{background:rgba(0,0,0,.2);border:1px solid var(--line);
+  border-radius:10px;padding:10px 13px}
+.vi-word{font-size:1.2em;font-weight:700;color:var(--red2)}
+.vi-pinyin{font-size:.8em;color:var(--gold);margin-top:2px;letter-spacing:.5px}
+.vi-meaning{font-size:.8em;color:var(--dim);margin-top:3px;line-height:1.45}
+.vi-hsk{display:inline-block;font-size:.65em;padding:1px 6px;border-radius:6px;
+  margin-top:5px;background:rgba(200,60,40,.2);color:#ffb3a0;border:1px solid var(--line)}
+
+/* Popup */
+.popup{position:fixed;z-index:200;background:var(--popup);border:1px solid var(--red);
+  border-radius:12px;padding:12px 16px;display:none;pointer-events:none;
+  box-shadow:0 8px 24px rgba(0,0,0,.6);max-width:220px}
+.popup-word{font-size:1.4em;font-weight:700;color:var(--red2)}
+.popup-pinyin{font-size:.85em;color:var(--gold);margin-top:3px}
+.popup-meaning{font-size:.82em;color:#d0b8b8;margin-top:4px;line-height:1.5}
+.popup-hsk{font-size:.7em;color:var(--dim);margin-top:5px}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--popup);border:1px solid rgba(230,57,70,.5);color:var(--ink);
+  padding:11px 20px;border-radius:11px;opacity:0;transition:.3s;z-index:300;
+  pointer-events:none;font-size:.9em}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Complete banner */
+.complete-banner{text-align:center;padding:12px;background:rgba(60,180,60,.1);
+  border:1px solid rgba(60,180,60,.3);border-radius:12px;margin-top:10px;
+  color:#7ee8bb;font-size:.88em;display:none}
+
+@media(max-width:600px){
+  .masthead h1{font-size:1.35em;letter-spacing:2px}
+  .story-grid{grid-template-columns:repeat(2,1fr)}
+  .choice-grid{grid-template-columns:1fr}
+  .q-options{grid-template-columns:1fr}
+  .story-text{padding:14px 16px;font-size:.97em}
+}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="wrap">
+  <div class="masthead">
+    <h1>Chinese Reading Lab</h1>
+    <div class="sub">历史阅读理解 · 10 Real Decisions · HSK4–6</div>
+  </div>
+
+  <!-- HOME -->
+  <div id="homeView">
+    <div class="home-intro">
+      十个真实的历史时刻。十个改变世界的决定。<br>
+      用中文读故事，<strong>点击红色词汇</strong>查看拼音和释义，<br>
+      然后回答阅读理解题。<em style="color:var(--dim);font-size:.9em">Free · No login · Works offline</em>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="story-grid" id="storyGrid"></div>
+  </div>
+
+  <!-- STORY VIEW -->
+  <div id="storyView" style="display:none">
+    <button class="back-btn" onclick="goHome()">← 返回 Back</button>
+    <div class="story-header">
+      <div class="story-header-emoji" id="svEmoji"></div>
+      <div>
+        <h2 id="svName"></h2>
+        <div class="meta" id="svMeta"></div>
+      </div>
+    </div>
+    <div class="story-text" id="svText"></div>
+    <div class="decision-section">
+      <div class="decision-q">你来决定 — What would you do?</div>
+      <div class="choice-grid" id="choiceGrid"></div>
+    </div>
+    <div class="result-box" id="resultBox">
+      <h3>📜 历史结果 Historical Result</h3>
+      <div id="resultText"></div>
+    </div>
+    <div class="quiz-section" id="quizSection">
+      <h3>📝 阅读理解 Comprehension</h3>
+      <div id="quizContent"></div>
+    </div>
+    <div class="vocab-section">
+      <h3>📚 重点词汇 Key Vocabulary</h3>
+      <div class="vocab-grid" id="vocabGrid"></div>
+    </div>
+    <div class="complete-banner" id="completeBanner">
+      ✓ 完成！Story complete — well done! <span id="doneCount"></span>/10 finished
+    </div>
+  </div>
+</div>
+
+<div class="popup" id="popup">
+  <div class="popup-word" id="pwWord"></div>
+  <div class="popup-pinyin" id="pwPinyin"></div>
+  <div class="popup-meaning" id="pwMeaning"></div>
+  <div class="popup-hsk" id="pwHsk"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const STORIES = [
+  {
+    id:'mandela', emoji:'✊', name:'曼德拉', nameEn:'Nelson Mandela',
+    year:'1985年', level:'HSK4',
+    text:[
+      '1985年，纳尔逊·曼德拉在南非监狱已经服刑21年。南非的种族隔离制度使黑人失去了基本权利——他们不能投票，不能自由出行，不能享有平等教育。曼德拉作为非洲人国民大会的领袖，因领导反抗运动而被判处终身监禁。',
+      '那一年，南非总统博塔向曼德拉提出了一个条件：如果他公开放弃武装斗争，政府将立即释放他。监狱外，成千上万的人举行示威，要求释放他。他的支持者都在等待他的答复。',
+    ],
+    moment:'条件很诱人：自由，立刻，无需等待。但代价是公开承认政府的权威，放弃武装斗争。',
+    choices:['接受条件，立即重获自由','拒绝条件，继续留在监狱'],
+    result:[
+      '曼德拉拒绝了。他让女儿宣读了他的声明："只有自由人才能进行谈判，囚犯不能签订契约。"',
+      '他又在监狱里等待了五年。1990年，新总统德克勒克宣布无条件释放曼德拉。1994年，曼德拉成为南非第一位民选总统，南非种族隔离制度正式终结。',
+    ],
+    questions:[
+      {q:'曼德拉在监狱里服刑了多少年？',opts:['11年','21年','31年','41年'],ans:1},
+      {q:'政府提出的条件是什么？',opts:['交出同伴姓名','公开放弃武装斗争','离开南非','缴纳罚款'],ans:1},
+      {q:'曼德拉最终何时无条件获释？',opts:['1985年','1987年','1990年','1994年'],ans:2},
+    ],
+    vocab:[
+      {word:'种族隔离',pinyin:'zhǒngzú gélí',meaning:'racial segregation — a system that separates people by race',hsk:6},
+      {word:'监禁',pinyin:'jiānjìn',meaning:'imprisonment; being locked in prison',hsk:6},
+      {word:'武装斗争',pinyin:'wǔzhuāng dòuzhēng',meaning:'armed struggle; fighting with weapons',hsk:5},
+      {word:'示威',pinyin:'shìwēi',meaning:'protest; demonstration',hsk:6},
+      {word:'无条件',pinyin:'wú tiáojiàn',meaning:'unconditional; without any conditions',hsk:5},
+      {word:'服刑',pinyin:'fú xíng',meaning:'to serve a prison sentence',hsk:6},
+    ]
+  },
+  {
+    id:'curie', emoji:'⚗️', name:'居里夫人', nameEn:'Marie Curie',
+    year:'1898年', level:'HSK5',
+    text:[
+      '1898年，玛丽·居里在巴黎的一个简陋实验室里工作。她和丈夫皮埃尔发现了一种神秘的现象：某些矿石能持续发出能量，与所有已知的物理规律都不符。他们把这种现象称为"放射性"。',
+      '然而，研究这种物质非常危险。实验室的工人开始生病，手指变黑，头发脱落。居里夫人的笔记本至今仍有放射性，必须存放在铅盒里才能安全查阅。她知道继续研究可能对健康造成严重损害，甚至危及生命。',
+    ],
+    moment:'如果停下来，关于物质本质的重大秘密将无法揭开。如果继续，她的身体将长期暴露在危险的射线之中。',
+    choices:['继续研究，揭开放射性的秘密','停止研究，保护自己的健康'],
+    result:[
+      '居里夫人选择继续。她和丈夫发现了钋和镭两种新元素，彻底改变了人类对物质的认识。',
+      '1903年，她成为历史上第一位获得诺贝尔奖的女性。1911年，她再次获奖，成为第一位两次获诺贝尔奖的人。1934年，她因长期接触放射性物质导致的再生障碍性贫血去世，享年66岁。',
+    ],
+    questions:[
+      {q:'"放射性"是指什么现象？',opts:['物质会发光','某些物质能持续发出能量','物质会变色','物质会爆炸'],ans:1},
+      {q:'居里夫人的笔记本为什么要放在铅盒里？',opts:['非常珍贵','有历史价值','至今仍有放射性','怕潮湿'],ans:2},
+      {q:'居里夫人一生共获得几次诺贝尔奖？',opts:['1次','2次','3次','4次'],ans:1},
+    ],
+    vocab:[
+      {word:'放射性',pinyin:'fàngshèxìng',meaning:'radioactivity — the property of emitting radiation',hsk:6},
+      {word:'实验室',pinyin:'shíyànshì',meaning:'laboratory; a place for scientific experiments',hsk:4},
+      {word:'矿石',pinyin:'kuàngshí',meaning:'ore; rock containing valuable minerals',hsk:5},
+      {word:'元素',pinyin:'yuánsù',meaning:'element (chemical); a basic substance',hsk:5},
+      {word:'再生障碍性贫血',pinyin:'zàishēng zhàng\'àixìng pínxuè',meaning:'aplastic anemia — a serious blood disease',hsk:6},
+      {word:'危及生命',pinyin:'wēijí shēngmìng',meaning:'to endanger one\'s life; life-threatening',hsk:5},
+    ]
+  },
+  {
+    id:'jobs', emoji:'🍎', name:'乔布斯', nameEn:'Steve Jobs',
+    year:'1997年', level:'HSK4',
+    text:[
+      '1997年，史蒂夫·乔布斯离开苹果公司已经12年。那时的苹果濒临破产，市值不足20亿美元，距离倒闭只有90天。公司刚以4.29亿美元收购了乔布斯创办的NeXT公司。',
+      '苹果董事会邀请乔布斯回来担任临时CEO。但条件并不诱人：年薪只有1美元，公司负债累累，产品线混乱，员工士气低落。许多业内人士认为苹果已无可救药，劝他不要趟这趟浑水。',
+    ],
+    moment:'乔布斯拥有皮克斯动画公司，生活无忧。他完全可以选择不回去，坐看苹果沉没。',
+    choices:['以1美元年薪回到苹果，尝试救活它','放弃，专注于皮克斯的成功'],
+    result:[
+      '乔布斯以1美元年薪接受了职位。他砍掉了70%的产品，将苹果聚焦于少数核心产品。',
+      '此后，苹果相继推出iMac、iPod、iPhone和iPad，彻底改变了音乐、手机和平板电脑行业。2011年乔布斯去世时，苹果市值已超过3500亿美元，成为世界上最有价值的公司。',
+    ],
+    questions:[
+      {q:'乔布斯的年薪是多少？',opts:['0元','1美元','1万美元','100万美元'],ans:1},
+      {q:'苹果当时距离倒闭还有多少天？',opts:['30天','60天','90天','180天'],ans:2},
+      {q:'乔布斯回到苹果后砍掉了多少比例的产品？',opts:['30%','50%','70%','90%'],ans:2},
+    ],
+    vocab:[
+      {word:'濒临破产',pinyin:'bīnlín pòchǎn',meaning:'on the verge of bankruptcy; almost bankrupt',hsk:5},
+      {word:'市值',pinyin:'shìzhí',meaning:'market capitalization; the total value of a company\'s shares',hsk:5},
+      {word:'收购',pinyin:'shōugòu',meaning:'to acquire; to buy a company',hsk:5},
+      {word:'临时',pinyin:'línshí',meaning:'temporary; acting (as in acting CEO)',hsk:4},
+      {word:'士气',pinyin:'shìqì',meaning:'morale; the confidence and enthusiasm of a group',hsk:5},
+      {word:'负债累累',pinyin:'fùzhài lěilěi',meaning:'deeply in debt; burdened with debts',hsk:5},
+    ]
+  },
+  {
+    id:'musk', emoji:'🚀', name:'马斯克', nameEn:'Elon Musk',
+    year:'2008年', level:'HSK4',
+    text:[
+      '2008年，埃隆·马斯克面临人生中最黑暗的时刻。他出售PayPal所得的1.8亿美元，已经几乎全部投入了两家公司：电动汽车公司特斯拉和航天公司SpaceX。',
+      'SpaceX前三次火箭发射全部失败，烧掉了大量资金。特斯拉也陷入危机，随时可能资金耗尽。银行账户里只剩最后一笔钱，只够救活一家公司。朋友们建议他放弃其中一家，止损离场。',
+    ],
+    moment:'选择救SpaceX，特斯拉可能倒闭；选择救特斯拉，SpaceX可能倒闭。或者把最后的钱分给两家——两家都可能撑不住。',
+    choices:['把最后的钱只押注一家公司','把最后的钱同时投给两家，赌一把'],
+    result:[
+      '马斯克把最后的钱同时投给了两家公司。2008年9月，SpaceX第四次发射成功，NASA随即签下16亿美元合同。特斯拉也在最后关头获得了投资。',
+      '今天，特斯拉市值超过5000亿美元，SpaceX估值超过1500亿美元，马斯克成为世界首富之一。',
+    ],
+    questions:[
+      {q:'SpaceX在成功前失败了几次？',opts:['1次','2次','3次','4次'],ans:2},
+      {q:'2008年第四次发射成功后，哪家机构与SpaceX签约？',opts:['欧洲航天局','NASA','波音','中国航天'],ans:1},
+      {q:'马斯克出售PayPal共获得多少钱？',opts:['1800万','1.8亿','18亿','180亿'],ans:1},
+    ],
+    vocab:[
+      {word:'航天',pinyin:'hángtiān',meaning:'aerospace; space travel/exploration',hsk:5},
+      {word:'资金耗尽',pinyin:'zījīn hào jìn',meaning:'to run out of funds; money completely depleted',hsk:5},
+      {word:'押注',pinyin:'yā zhù',meaning:'to bet on; to stake money on something',hsk:5},
+      {word:'止损',pinyin:'zhǐ sǔn',meaning:'to cut losses; to stop further losses',hsk:5},
+      {word:'估值',pinyin:'gū zhí',meaning:'valuation; estimated worth of a company',hsk:5},
+      {word:'危机',pinyin:'wēijī',meaning:'crisis; a difficult or dangerous situation',hsk:4},
+    ]
+  },
+  {
+    id:'rowling', emoji:'📖', name:'罗琳', nameEn:'J.K. Rowling',
+    year:'1995年', level:'HSK4',
+    text:[
+      '1995年，J.K.罗琳是英国爱丁堡的一位单身母亲。她靠政府救济金生活，常常无钱买食物，会带着女儿去咖啡馆坐着，因为那里比家里暖和。她的前夫有家庭暴力，她患有严重的抑郁症。',
+      '在这种情况下，她用了五年时间写完了《哈利·波特与魔法石》，然后把手稿寄给了12家出版社。12家全部拒绝了她。有的说"儿童书市场太小"，有的说"故事太长"，有的甚至没有回复。',
+    ],
+    moment:'第13家出版社的编辑把手稿带回家，他8岁的女儿读了第一章，要求看后面。这是最后一次机会。',
+    choices:['继续坚持，寄出第13次投稿','放弃写作，寻找其他出路'],
+    result:[
+      '罗琳坚持了。布卢姆斯伯里出版社出版了这本书，预付版税只有1500英镑——编辑建议她"找一份日常工作"。',
+      '这本书后来卖出超过5亿册，成为史上最畅销的系列小说。罗琳成为世界上第一位靠写书成为亿万富翁的作家，净资产超过10亿英镑。',
+    ],
+    questions:[
+      {q:'有多少家出版社拒绝了罗琳的手稿？',opts:['3家','7家','12家','20家'],ans:2},
+      {q:'第13家出版社是如何决定出版这本书的？',opts:['老板喜欢故事','编辑女儿读了要看后面','读者投票','书评人推荐'],ans:1},
+      {q:'哈利·波特系列共卖出多少册？',opts:['1亿册','2亿册','3亿册','5亿册'],ans:3},
+    ],
+    vocab:[
+      {word:'救济金',pinyin:'jiùjì jīn',meaning:'welfare/relief fund; government financial support',hsk:5},
+      {word:'家庭暴力',pinyin:'jiātíng bàolì',meaning:'domestic violence',hsk:5},
+      {word:'抑郁症',pinyin:'yìyù zhèng',meaning:'depression; a mental health condition',hsk:5},
+      {word:'手稿',pinyin:'shǒugǎo',meaning:'manuscript; a handwritten or typed document',hsk:5},
+      {word:'版税',pinyin:'bǎnshuì',meaning:'royalties; payment to author per book sold',hsk:6},
+      {word:'畅销',pinyin:'chàngxiāo',meaning:'best-selling; selling in large quantities',hsk:5},
+    ]
+  },
+  {
+    id:'buffett', emoji:'🥤', name:'巴菲特', nameEn:'Warren Buffett',
+    year:'1988年', level:'HSK5',
+    text:[
+      '1988年，美国股市刚刚经历了历史上最严重的单日崩盘。1987年10月，道琼斯指数一天内暴跌22%，全球损失超过1万亿美元，投资者人心惶惶，纷纷抛售股票。',
+      '在这种恐慌气氛中，沃伦·巴菲特却开始悄悄买入可口可乐的股票。他花了13亿美元，买下了可口可乐约7%的股份。当时许多人认为他疯了——可口可乐只是一家卖糖水的公司，没有什么技术壁垒。',
+    ],
+    moment:'巴菲特的理由只有一句话："在全世界每一个角落，每天都有人喝可口可乐。这是一个任何人都能理解的生意。"',
+    choices:['在市场恐慌时大量买入可口可乐','等市场稳定后再做决定'],
+    result:[
+      '巴菲特果断买入。这13亿美元的投资，到2022年已经增值到约250亿美元，涨了近20倍。',
+      '巴菲特至今持有可口可乐股票，从未卖出。每年收到的股息超过7亿美元，相当于当年总投资额的一半。他的名言：我们的理想持有期限是永远。',
+    ],
+    questions:[
+      {q:'1987年股市崩盘时，道琼斯指数单日暴跌了多少？',opts:['5%','12%','22%','35%'],ans:2},
+      {q:'巴菲特买入了可口可乐多少比例的股份？',opts:['1%','3%','5%','7%'],ans:3},
+      {q:'到2022年，巴菲特的可口可乐投资增值到多少？',opts:['50亿','100亿','250亿','500亿'],ans:2},
+    ],
+    vocab:[
+      {word:'崩盘',pinyin:'bēng pán',meaning:'market crash; a sudden sharp fall in prices',hsk:6},
+      {word:'暴跌',pinyin:'bào diē',meaning:'sharp drop; a sudden large decrease',hsk:5},
+      {word:'恐慌',pinyin:'kǒnghuāng',meaning:'panic; extreme fear causing chaotic behavior',hsk:5},
+      {word:'抛售',pinyin:'pāoshòu',meaning:'to sell off; to dump stocks in large quantities',hsk:5},
+      {word:'技术壁垒',pinyin:'jìshù bìlěi',meaning:'technical barrier; protection through technology',hsk:5},
+      {word:'股息',pinyin:'gǔxī',meaning:'dividend; profit paid to shareholders',hsk:5},
+    ]
+  },
+  {
+    id:'zhangyiming', emoji:'📱', name:'张一鸣', nameEn:'Zhang Yiming',
+    year:'2012年', level:'HSK5',
+    text:[
+      '2012年，张一鸣29岁，在北京有一份体面的工作。他已经创业过两次，两次都没有成功，还欠下了债务。身边的朋友开始买房、结婚、生孩子，走向稳定的人生轨道。',
+      '他观察到一个现象：中国人每天花大量时间刷新闻，但当时的新闻应用只会按时间顺序排列内容，没有任何个性化推荐。他想用人工智能来解决这个问题——让每个人看到最适合自己的内容。',
+    ],
+    moment:'但这需要从头开始，放弃现有的工作和收入，进行第三次创业。两次失败已经让家人非常担忧。',
+    choices:['放弃稳定工作，第三次创业','继续现在的工作，积累经验再说'],
+    result:[
+      '张一鸣辞职创办了字节跳动，先推出今日头条，后来推出抖音。抖音出海后以TikTok的名字席卷全球。',
+      '2021年，字节跳动估值达到4000亿美元，成为全球最有价值的初创公司。张一鸣成为第一个创造出全球现象级产品的中国创业者，也成为中国最年轻的超级富豪之一。',
+    ],
+    questions:[
+      {q:'张一鸣创办字节跳动时多少岁？',opts:['22岁','25岁','29岁','35岁'],ans:2},
+      {q:'他在创办字节跳动前已经失败了几次？',opts:['0次','1次','2次','3次'],ans:2},
+      {q:'字节跳动的最高估值是多少？',opts:['400亿','1000亿','2000亿','4000亿美元'],ans:3},
+    ],
+    vocab:[
+      {word:'个性化推荐',pinyin:'gèxìnghuà tuījiàn',meaning:'personalized recommendation; content tailored to each user',hsk:5},
+      {word:'人工智能',pinyin:'réngōng zhìnéng',meaning:'artificial intelligence; AI',hsk:5},
+      {word:'创业',pinyin:'chuàngyè',meaning:'to start a business; entrepreneurship',hsk:5},
+      {word:'估值',pinyin:'gū zhí',meaning:'valuation; the estimated market value of a company',hsk:5},
+      {word:'现象级',pinyin:'xiànxiàng jí',meaning:'phenomenon-level; achieving massive cultural impact',hsk:6},
+      {word:'初创公司',pinyin:'chūchuàng gōngsī',meaning:'startup; a newly established company',hsk:5},
+    ]
+  },
+  {
+    id:'tuyouyou', emoji:'🌿', name:'屠呦呦', nameEn:'Tu Youyou',
+    year:'1972年', level:'HSK5',
+    text:[
+      '1972年，中国科学家屠呦呦和她的团队已经研究了三年。她从中国古代医书中找到了青蒿这种植物，并成功提取出一种对抗疟疾的物质——青蒿素。动物实验显示它有效，但没有人知道对人类是否安全。',
+      '疟疾每年导致数百万人死亡，主要受害者是非洲和亚洲的儿童。如果青蒿素有效，可以拯救无数生命。但完整的临床试验需要数年时间，而疟疾患者等不了那么久。',
+    ],
+    moment:'屠呦呦面临一个选择：按照标准程序等待，或者用自己的身体测试青蒿素是否对人类安全。',
+    choices:['按标准程序等待，数年后才能用于人类','志愿在自己身上测试，加速研究进程'],
+    result:[
+      '屠呦呦和两名同事志愿在自己身上进行了测试。测试结果证明青蒿素对人类安全有效。',
+      '这个发现拯救了数百万人的生命，使全球疟疾死亡率下降超过30%。2015年，屠呦呦获得诺贝尔生理学或医学奖，成为第一位获得诺贝尔科学奖的中国科学家。',
+    ],
+    questions:[
+      {q:'屠呦呦从哪里找到了研究青蒿素的灵感？',opts:['西方医学文献','中国古代医书','同事建议','偶然发现'],ans:1},
+      {q:'她是如何测试青蒿素对人类的安全性的？',opts:['动物实验','找志愿者','在自己身上测试','电脑模拟'],ans:2},
+      {q:'青蒿素使全球疟疾死亡率下降了多少？',opts:['10%','20%','30%','50%'],ans:2},
+    ],
+    vocab:[
+      {word:'疟疾',pinyin:'nüèjì',meaning:'malaria; a serious mosquito-borne disease',hsk:6},
+      {word:'青蒿素',pinyin:'qīnghāosù',meaning:'artemisinin; an anti-malaria compound from the plant Artemisia',hsk:6},
+      {word:'提取',pinyin:'tíqǔ',meaning:'to extract; to take out a substance from something',hsk:5},
+      {word:'临床试验',pinyin:'línchuáng shìyàn',meaning:'clinical trial; testing a treatment on human patients',hsk:6},
+      {word:'志愿',pinyin:'zhìyuàn',meaning:'to volunteer; to do something willingly without being forced',hsk:4},
+      {word:'拯救',pinyin:'zhěngjiù',meaning:'to save; to rescue from danger',hsk:5},
+    ]
+  },
+  {
+    id:'renzhengfei', emoji:'📡', name:'任正非', nameEn:'Ren Zhengfei',
+    year:'1987年', level:'HSK5',
+    text:[
+      '1987年，任正非43岁。他刚刚在一场商业骗局中损失了200万元，被迫离开了工作多年的国营企业。他没有存款，没有技术背景，没有行业人脉，甚至连家庭都处于不稳定状态。',
+      '他用借来的2.1万元，在深圳一个简陋的小屋里创办了华为——最初只是一家代理销售进口电话交换机的小公司。第一批员工只有6人，其中一些是他的亲戚。周围的人都认为他在冒险。',
+    ],
+    moment:'43岁，身无分文，两手空空，在一个陌生的城市，用借来的钱开始创业。失败的代价将是一无所有。',
+    choices:['43岁再次出发，用借来的钱创业','重新找一份安稳的工作，先稳住生活'],
+    result:[
+      '任正非选择了再次出发。华为从代理进口产品，逐步转型为自主研发通信设备。',
+      '今天的华为是全球最大的电信设备制造商，员工超过20万人，年收入超过6000亿元人民币。在美国制裁的压力下，华为依然存活，并在芯片和操作系统领域实现了重大突破。任正非被认为是中国最伟大的企业家之一。',
+    ],
+    questions:[
+      {q:'任正非创办华为时多少岁？',opts:['25岁','33岁','43岁','55岁'],ans:2},
+      {q:'华为最初的初始资金是多少？',opts:['210元','2100元','2.1万元','21万元'],ans:2},
+      {q:'华为最初是做什么业务的？',opts:['手机制造','代理销售进口电话交换机','软件开发','芯片研发'],ans:1},
+    ],
+    vocab:[
+      {word:'骗局',pinyin:'piànjú',meaning:'scam; a dishonest scheme to cheat people',hsk:5},
+      {word:'国营企业',pinyin:'guóyíng qǐyè',meaning:'state-owned enterprise; company owned by the government',hsk:4},
+      {word:'电话交换机',pinyin:'diànhuà jiāohuànjī',meaning:'telephone exchange/switchboard',hsk:6},
+      {word:'电信',pinyin:'diànxìn',meaning:'telecommunications; communication using electronic signals',hsk:5},
+      {word:'制裁',pinyin:'zhìcái',meaning:'sanctions; penalties imposed by one country on another',hsk:5},
+      {word:'突破',pinyin:'túpò',meaning:'breakthrough; achieving something difficult for the first time',hsk:5},
+    ]
+  },
+  {
+    id:'majun', emoji:'🛒', name:'马云', nameEn:'Jack Ma',
+    year:'1999年', level:'HSK4',
+    text:[
+      '1999年，马云35岁，已经失败了很多次。他申请肯德基工作，没有被录用。他10次申请哈佛，全部被拒绝。他曾创办一家翻译公司，几乎倒闭。他去美国寻找投资，没有一个人愿意给他钱。',
+      '他回到杭州，在自己的公寓里召集了17个朋友和前同事。他告诉大家：他想做一个帮助中国中小企业在网上做生意的平台。他没有钱，不会写代码，也没有任何互联网技术背景。',
+    ],
+    moment:'他请在场的朋友们用自己的积蓄来支持他，每个人都可以选择相信他，也可以选择离开。',
+    choices:['如果你是他的朋友，你会把积蓄投给他','你会礼貌拒绝，保留自己的钱'],
+    result:[
+      '17个人全部选择留下来，凑了50万元人民币。他们创办了阿里巴巴。',
+      '2014年，阿里巴巴在纽约证券交易所上市，融资250亿美元，创下当时全球最大IPO记录。马云成为中国首富。今天的阿里巴巴年交易额超过1万亿美元。',
+    ],
+    questions:[
+      {q:'马云在公寓里召集了多少人？',opts:['5人','10人','17人','30人'],ans:2},
+      {q:'他们最初凑了多少钱来创业？',opts:['5万元','20万元','50万元','500万元'],ans:2},
+      {q:'阿里巴巴IPO时融资了多少？',opts:['50亿','100亿','250亿','500亿美元'],ans:2},
+    ],
+    vocab:[
+      {word:'积蓄',pinyin:'jīxù',meaning:'savings; money saved over a period of time',hsk:5},
+      {word:'平台',pinyin:'píngtái',meaning:'platform; a system or base for activities',hsk:5},
+      {word:'上市',pinyin:'shàngshì',meaning:'to go public; to list a company on a stock exchange (IPO)',hsk:5},
+      {word:'融资',pinyin:'róngzī',meaning:'financing; raising money for a company',hsk:5},
+      {word:'中小企业',pinyin:'zhōngxiǎo qǐyè',meaning:'SME; small and medium-sized enterprises',hsk:4},
+      {word:'录用',pinyin:'lùyòng',meaning:'to hire; to accept someone for a job',hsk:5},
+    ]
+  },
+];
+
+// ── State ──────────────────────────────────────────
+const DONE_KEY = 'crl_done_v1';
+function getDone(){ try{return JSON.parse(localStorage.getItem(DONE_KEY)||'[]');}catch{return[];} }
+function markDone(id){ const d=getDone(); if(!d.includes(id)){d.push(id);localStorage.setItem(DONE_KEY,JSON.stringify(d));} }
+
+let currentStory = null;
+let choiceMade = false;
+let quizAnswers = {};
+
+// ── Vocab highlight ────────────────────────────────
+function highlightVocab(text, vocab){
+  vocab.forEach(v=>{
+    const re = new RegExp(v.word,'g');
+    text = text.replace(re,
+      `<span class="vw" data-word="${v.word}" data-pinyin="${v.pinyin}" data-meaning="${v.meaning}" data-hsk="${v.hsk}">${v.word}</span>`);
+  });
+  return text;
+}
+
+function buildPara(text, vocab){
+  return '<p>' + highlightVocab(text, vocab) + '</p>';
+}
+
+// ── Popup ──────────────────────────────────────────
+const popup = document.getElementById('popup');
+document.addEventListener('click', e=>{
+  const vw = e.target.closest('.vw');
+  if(vw){
+    const r = vw.getBoundingClientRect();
+    document.getElementById('pwWord').textContent = vw.dataset.word;
+    document.getElementById('pwPinyin').textContent = vw.dataset.pinyin;
+    document.getElementById('pwMeaning').textContent = vw.dataset.meaning;
+    document.getElementById('pwHsk').textContent = 'HSK ' + vw.dataset.hsk;
+    popup.style.display='block';
+    let top = r.bottom + window.scrollY + 8;
+    let left = r.left + window.scrollX;
+    if(left + 220 > window.innerWidth) left = window.innerWidth - 230;
+    popup.style.top = top+'px';
+    popup.style.left = left+'px';
+    e.stopPropagation();
+  } else {
+    popup.style.display='none';
+  }
+});
+
+// ── Toast ──────────────────────────────────────────
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3000); }
+
+// ── Home ───────────────────────────────────────────
+function renderHome(){
+  const done = getDone();
+  // progress dots
+  const pb = document.getElementById('progressBar');
+  pb.innerHTML = STORIES.map(s=>`<div class="pb-dot${done.includes(s.id)?' done':''}" title="${s.name}"></div>`).join('');
+  // story grid
+  const grid = document.getElementById('storyGrid');
+  grid.innerHTML = STORIES.map(s=>`
+    <div class="story-card${done.includes(s.id)?' done':''}" onclick="openStory('${s.id}')">
+      <div class="card-emoji">${s.emoji}</div>
+      <div class="card-name">${s.name}</div>
+      <div class="card-name-en">${s.nameEn}</div>
+      <div class="card-year">${s.year}</div>
+      <div class="card-level">${s.level}</div>
+    </div>`).join('');
+}
+
+function goHome(){
+  document.getElementById('homeView').style.display='';
+  document.getElementById('storyView').style.display='none';
+  renderHome();
+}
+
+// ── Story ──────────────────────────────────────────
+function openStory(id){
+  currentStory = STORIES.find(s=>s.id===id);
+  choiceMade = false;
+  quizAnswers = {};
+  const s = currentStory;
+  document.getElementById('homeView').style.display='none';
+  document.getElementById('storyView').style.display='';
+
+  document.getElementById('svEmoji').textContent = s.emoji;
+  document.getElementById('svName').textContent = s.name + ' · ' + s.nameEn;
+  document.getElementById('svMeta').innerHTML = s.year +
+    `<span class="level-badge">${s.level}</span>
+    <span style="color:var(--dim);margin-left:8px;font-size:.8em">点击红色词汇 → 拼音+释义</span>`;
+
+  // Story text
+  const textEl = document.getElementById('svText');
+  textEl.innerHTML =
+    s.text.map(p => buildPara(p, s.vocab)).join('') +
+    `<div class="moment-text">${highlightVocab(s.moment, s.vocab)}</div>`;
+
+  // Choices
+  const cg = document.getElementById('choiceGrid');
+  cg.innerHTML = s.choices.map((c,i)=>
+    `<button class="choice-btn" onclick="makeChoice(${i})">${['A','B'][i]}. ${c}</button>`
+  ).join('');
+
+  // Reset result + quiz
+  const rb = document.getElementById('resultBox');
+  rb.style.display='none'; rb.style.opacity='0';
+  document.getElementById('quizSection').style.display='none';
+  document.getElementById('completeBanner').style.display='none';
+
+  // Vocab grid
+  document.getElementById('vocabGrid').innerHTML = s.vocab.map(v=>`
+    <div class="vocab-item">
+      <div class="vi-word">${v.word}</div>
+      <div class="vi-pinyin">${v.pinyin}</div>
+      <div class="vi-meaning">${v.meaning}</div>
+      <div class="vi-hsk">HSK ${v.hsk}</div>
+    </div>`).join('');
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function makeChoice(idx){
+  if(choiceMade) return;
+  choiceMade = true;
+  // Highlight selected
+  document.querySelectorAll('.choice-btn').forEach((b,i)=>{
+    b.classList.toggle('selected', i===idx);
+    b.disabled = true;
+  });
+  // Show result with animation
+  const s = currentStory;
+  document.getElementById('resultText').innerHTML = s.result.map(p=>`<p>${highlightVocab(p,s.vocab)}</p>`).join('');
+  const rb = document.getElementById('resultBox');
+  rb.style.display='block';
+  setTimeout(()=>{ rb.style.transition='opacity .5s'; rb.style.opacity='1'; },50);
+  // Show quiz
+  renderQuiz();
+  setTimeout(()=>{
+    document.getElementById('quizSection').style.display='block';
+    document.getElementById('quizSection').scrollIntoView({behavior:'smooth',block:'nearest'});
+  },600);
+}
+
+// ── Quiz ───────────────────────────────────────────
+function renderQuiz(){
+  const s = currentStory;
+  document.getElementById('quizContent').innerHTML = s.questions.map((q,qi)=>`
+    <div class="question">
+      <div class="q-text"><span class="q-num">${qi+1}.</span>${q.q}</div>
+      <div class="q-options">
+        ${q.opts.map((o,oi)=>`
+          <div class="q-opt" onclick="answerQ(${qi},${oi})" id="qo_${qi}_${oi}">
+            ${['A','B','C','D'][oi]}. ${o}
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function answerQ(qi, oi){
+  const s = currentStory;
+  if(quizAnswers[qi]!==undefined) return;
+  quizAnswers[qi] = oi;
+  const correct = s.questions[qi].ans;
+  // Disable all options for this question
+  s.questions[qi].opts.forEach((_,i)=>{
+    const el = document.getElementById(`qo_${qi}_${i}`);
+    el.classList.add('disabled');
+    if(i===correct) el.classList.add(oi===correct?'correct':'reveal');
+    if(i===oi && oi!==correct) el.classList.add('wrong');
+  });
+  if(oi===correct){ toast('正确！✓ Correct!'); }
+  else { toast(`正确答案是 ${['A','B','C','D'][correct]}`); }
+  // Check if all answered
+  if(Object.keys(quizAnswers).length===s.questions.length){
+    markDone(s.id);
+    const done = getDone();
+    setTimeout(()=>{
+      const banner = document.getElementById('completeBanner');
+      document.getElementById('doneCount').textContent = done.length;
+      banner.style.display='block';
+      banner.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },500);
+  }
+}
+
+// ── Init ───────────────────────────────────────────
+renderHome();
+</script>
+<style>.nxt-link{display:block;text-align:center;font-size:13px;color:var(--muted,#6b7a8f);text-decoration:none;padding:20px 0 8px;letter-spacing:.01em;transition:color .2s}.nxt-link:hover{color:var(--accent,#f59e0b)}</style>
+<a class="nxt-link" href="https://ordinarymantrying.com/tools/chengyu-stories.html">Next → Learn Chinese Idioms — Chengyu Stories</a>
+</body>
+</html>

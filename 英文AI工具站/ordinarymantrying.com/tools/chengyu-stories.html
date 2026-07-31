@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chengyu Stories — 成语故事 | Learn Chinese Idioms</title>
+<meta name="description" content="Learn 20 classic Chinese chengyu (成语) through their original stories. Click characters for pinyin. Test yourself with modern usage scenarios. HSK5-6. Free, no login.">
+<meta property="og:title" content="Chengyu Stories — Learn Chinese Idioms Through Their Original Tales">
+<meta property="og:description" content="20 classic 成语 with origin stories in Chinese, pinyin popup, and modern usage scenarios. HSK5-6.">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/chengyu-stories.html">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0f0a;--bg2:#0f160f;--bg3:#121a12;
+  --green:#2d6a4f;--green2:#52b788;--gold:#f5a623;
+  --red:#cc2200;--ink:#e8f5e8;--dim:#7a9e7a;--line:rgba(82,183,136,.18);
+  --glass:rgba(82,183,136,.07);--popup:#0a160a;
+}
+body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:linear-gradient(135deg,var(--bg) 0%,var(--bg2) 60%,var(--bg3) 100%);
+  min-height:100vh;color:var(--ink)}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+
+.masthead{text-align:center;padding:16px 0 8px}
+.masthead h1{font-size:1.8em;letter-spacing:3px;font-weight:700;
+  background:linear-gradient(90deg,var(--green2),var(--gold));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.masthead .sub{color:var(--dim);font-size:.85em;margin-top:6px;letter-spacing:1px}
+.masthead .tag-line{color:#a8d5b5;font-size:.9em;margin-top:10px;line-height:1.6}
+
+.progress-bar{display:flex;justify-content:center;gap:8px;margin:14px 0 20px;flex-wrap:wrap}
+.pb-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--line);transition:.25s}
+.pb-dot.done{background:var(--green2);border-color:var(--green2)}
+
+.story-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.story-card{background:var(--glass);border:1px solid var(--line);border-radius:14px;
+  padding:14px 12px 12px;cursor:pointer;transition:.25s;text-align:center;position:relative}
+.story-card:hover{transform:translateY(-4px);border-color:rgba(82,183,136,.5);
+  box-shadow:0 10px 28px rgba(0,0,0,.4)}
+.story-card.done::after{content:'✓';position:absolute;top:8px;right:10px;
+  color:var(--green2);font-size:.8em;font-weight:700}
+.card-chars{font-size:1.4em;font-weight:700;letter-spacing:4px;color:#c8f0d0;margin-bottom:6px}
+.card-pinyin{font-size:.68em;color:var(--gold);margin-bottom:4px;letter-spacing:.5px}
+.card-meaning{font-size:.72em;color:var(--dim);line-height:1.4}
+.card-level{display:inline-block;font-size:.62em;padding:2px 7px;border-radius:8px;
+  margin-top:6px;background:rgba(82,183,136,.15);color:#a8d5b5;border:1px solid var(--line)}
+
+.back-btn{background:var(--glass);border:1px solid var(--line);color:var(--dim);
+  border-radius:9px;padding:7px 14px;cursor:pointer;font-size:.88em;margin-bottom:18px;transition:.2s}
+.back-btn:hover{color:var(--ink);border-color:rgba(82,183,136,.4)}
+
+.sv-header{display:flex;gap:16px;align-items:center;margin-bottom:20px;
+  background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+.big-chars{font-size:2.4em;font-weight:700;letter-spacing:6px;
+  background:linear-gradient(90deg,var(--green2),var(--gold));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sv-header h2{font-size:1.05em;color:var(--ink);margin-top:4px}
+.sv-pinyin{font-size:.85em;color:var(--gold);margin-top:2px;letter-spacing:1px}
+.sv-eng{font-size:.85em;color:var(--dim);margin-top:3px}
+.sv-level{display:inline-block;font-size:.68em;padding:2px 8px;border-radius:8px;
+  margin-top:6px;background:rgba(82,183,136,.15);color:#a8d5b5;border:1px solid var(--line)}
+
+.story-box{background:var(--glass);border:1px solid var(--line);border-radius:14px;
+  padding:20px 22px;margin-bottom:16px}
+.story-box h3{color:var(--green2);font-size:.88em;letter-spacing:2px;margin-bottom:12px}
+.story-text{font-size:1.02em;line-height:2;color:#d8f0d8}
+.story-text p{margin-bottom:12px}
+.story-text p:last-child{margin-bottom:0}
+.story-eng{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);
+  font-size:.88em;color:var(--dim);line-height:1.65;font-style:italic}
+
+.vw{color:var(--green2);border-bottom:1px dotted var(--green2);cursor:pointer;transition:.15s}
+.vw:hover{color:var(--gold);border-bottom-color:var(--gold)}
+
+.usage-box{background:rgba(45,106,79,.12);border:1px solid rgba(82,183,136,.25);
+  border-radius:14px;padding:16px 20px;margin-bottom:16px}
+.usage-box h3{color:var(--green2);font-size:.88em;letter-spacing:2px;margin-bottom:12px}
+.usage-item{margin-bottom:10px}
+.usage-item:last-child{margin-bottom:0}
+.usage-zh{font-size:1em;color:#d8f0d8;line-height:1.85}
+.usage-en{font-size:.82em;color:var(--dim);margin-top:2px}
+
+.quiz-box{background:var(--glass);border:1px solid var(--line);border-radius:14px;
+  padding:16px 20px;margin-bottom:16px}
+.quiz-box h3{color:var(--green2);font-size:.88em;letter-spacing:2px;margin-bottom:14px}
+.quiz-scenario{font-size:.92em;color:#c8e8c8;margin-bottom:12px;line-height:1.6;
+  padding:10px 14px;background:rgba(0,0,0,.2);border-radius:9px;border-left:3px solid var(--green2)}
+.quiz-q{font-size:.85em;color:var(--dim);margin-bottom:10px}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.quiz-opt{background:rgba(0,0,0,.2);border:1px solid var(--line);
+  border-radius:9px;padding:9px 12px;cursor:pointer;font-size:.85em;
+  color:#b8d8b8;transition:.2s;text-align:center}
+.quiz-opt:hover{border-color:rgba(82,183,136,.4);color:var(--ink)}
+.quiz-opt.correct{background:rgba(82,183,136,.2);border-color:var(--green2);color:var(--green2)}
+.quiz-opt.wrong{background:rgba(200,40,40,.15);border-color:rgba(200,40,40,.5);color:#ffb3a0}
+.quiz-opt.reveal{background:rgba(82,183,136,.1);border-color:rgba(82,183,136,.3);color:var(--green2)}
+.quiz-opt.disabled{pointer-events:none}
+
+.vocab-box{background:var(--glass);border:1px solid var(--line);border-radius:14px;
+  padding:16px 20px;margin-bottom:16px}
+.vocab-box h3{color:var(--green2);font-size:.88em;letter-spacing:2px;margin-bottom:12px}
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px}
+.vi{background:rgba(0,0,0,.2);border:1px solid var(--line);border-radius:10px;padding:10px 13px}
+.vi-word{font-size:1.15em;font-weight:700;color:var(--green2)}
+.vi-py{font-size:.78em;color:var(--gold);margin-top:2px}
+.vi-mean{font-size:.78em;color:var(--dim);margin-top:3px;line-height:1.45}
+
+.complete-banner{text-align:center;padding:12px;background:rgba(82,183,136,.1);
+  border:1px solid rgba(82,183,136,.3);border-radius:12px;margin-top:10px;
+  color:var(--green2);font-size:.88em;display:none}
+
+.popup{position:fixed;z-index:200;background:var(--popup);border:1px solid var(--green);
+  border-radius:12px;padding:12px 16px;display:none;pointer-events:none;
+  box-shadow:0 8px 24px rgba(0,0,0,.7);max-width:220px}
+.pw-word{font-size:1.3em;font-weight:700;color:var(--green2)}
+.pw-py{font-size:.83em;color:var(--gold);margin-top:3px}
+.pw-mean{font-size:.8em;color:#b8d8b8;margin-top:4px;line-height:1.5}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--popup);border:1px solid rgba(82,183,136,.5);color:var(--ink);
+  padding:11px 20px;border-radius:11px;opacity:0;transition:.3s;z-index:300;
+  pointer-events:none;font-size:.9em}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:600px){
+  .masthead h1{font-size:1.35em}
+  .story-grid{grid-template-columns:repeat(2,1fr)}
+  .quiz-opts{grid-template-columns:1fr}
+  .story-box{padding:14px 16px}
+  .big-chars{font-size:1.8em}
+}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="wrap">
+  <div class="masthead">
+    <h1>Chengyu Stories 成语故事</h1>
+    <div class="sub">20 Classic Chinese Idioms · Origin Stories · HSK5–6</div>
+    <div class="tag-line">每个成语背后都有一个故事。<br>
+    Read the original tale in Chinese · <strong>click words for pinyin</strong> · test how you'd use it today.</div>
+  </div>
+
+  <div id="homeView">
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="story-grid" id="storyGrid"></div>
+  </div>
+
+  <div id="storyView" style="display:none">
+    <button class="back-btn" onclick="goHome()">← 返回 Back</button>
+    <div class="sv-header">
+      <div>
+        <div class="big-chars" id="svChars"></div>
+        <div class="sv-pinyin" id="svPinyin"></div>
+        <div class="sv-eng" id="svEng"></div>
+        <div class="sv-level" id="svLevel"></div>
+      </div>
+    </div>
+
+    <div class="story-box">
+      <h3>📜 成语故事 Origin Story</h3>
+      <div class="story-text" id="svStoryText"></div>
+      <div class="story-eng" id="svStoryEng"></div>
+    </div>
+
+    <div class="usage-box">
+      <h3>💬 现代用法 Modern Usage</h3>
+      <div id="svUsage"></div>
+    </div>
+
+    <div class="quiz-box">
+      <h3>🧠 情境练习 Usage Quiz</h3>
+      <div class="quiz-scenario" id="quizScenario"></div>
+      <div class="quiz-q">Which chengyu fits this situation? 选择合适的成语：</div>
+      <div class="quiz-opts" id="quizOpts"></div>
+    </div>
+
+    <div class="vocab-box">
+      <h3>📚 字词解释 Key Characters</h3>
+      <div class="vocab-grid" id="svVocab"></div>
+    </div>
+
+    <div class="complete-banner" id="completeBanner">
+      ✓ 完成！<span id="doneCount"></span>/20 idioms learned
+    </div>
+  </div>
+</div>
+
+<div class="popup" id="popup">
+  <div class="pw-word" id="pwWord"></div>
+  <div class="pw-py" id="pwPy"></div>
+  <div class="pw-mean" id="pwMean"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const STORIES = [
+  {
+    id:'woxinchangdan',
+    chars:'卧薪尝胆',
+    pinyin:'wò xīn cháng dǎn',
+    meaning:'Sleep on brushwood, taste gall — endure hardship to achieve a long-term goal',
+    level:'HSK6',
+    story:[
+      '公元前494年，越王勾践被吴国打败，被迫向吴王夫差投降。为了表示臣服，勾践亲自到吴国做马夫，忍受了三年的屈辱。',
+      '回到越国后，勾践决心复仇。他在床边放了一捆柴草，每天睡在上面，提醒自己不要忘记耻辱。他还在房间里挂了一只苦胆，每天舔一下，告诉自己要记住苦味。',
+      '经过二十年的努力，勾践使越国变得富强，最终率军灭掉了吴国，完成了复仇。',
+    ],
+    storyEn:"King Goujian of Yue was defeated by Wu and forced into humiliating servitude. Returning home, he slept on rough brushwood and tasted a bitter gall bladder every day — reminders never to forget his humiliation. After 20 years of patient preparation, he destroyed Wu and had his revenge.",
+    usage:[
+      {zh:'他卧薪尝胆了三年，终于考上了北京大学。',en:"He endured three years of hardship and finally got into Peking University."},
+      {zh:'这家公司经历了几年的困难期，卧薪尝胆，如今终于成功上市。',en:"The company endured years of hardship and finally went public."},
+    ],
+    quiz:{
+      scenario:"After losing his job, your friend studies every night for 18 months, works part-time to survive, and finally lands his dream job at a top company.",
+      opts:['卧薪尝胆','三人成虎','守株待兔','对牛弹琴'],
+      ans:0
+    },
+    vocab:[
+      {word:'卧',pinyin:'wò',meaning:'to lie down; to sleep'},
+      {word:'薪',pinyin:'xīn',meaning:'firewood; brushwood'},
+      {word:'尝',pinyin:'cháng',meaning:'to taste; to try'},
+      {word:'胆',pinyin:'dǎn',meaning:'gall bladder; courage'},
+      {word:'屈辱',pinyin:'qūrǔ',meaning:'humiliation; indignity'},
+      {word:'复仇',pinyin:'fùchóu',meaning:'to take revenge'},
+    ]
+  },
+  {
+    id:'pofuchenzou',
+    chars:'破釜沉舟',
+    pinyin:'pò fǔ chén zhōu',
+    meaning:'Smash the cauldrons and sink the boats — commit fully, leave no way back',
+    level:'HSK6',
+    story:[
+      '公元前207年，秦朝末年，楚军将领项羽率军渡过漳河，准备与秦军决战。',
+      '过河之后，项羽命令士兵把所有的船都凿沉，把做饭用的锅全部打破，每人只带三天的粮食。他对士兵说："我们没有退路，只能向前！"',
+      '士兵们知道已经无路可退，个个奋勇拼杀。最终楚军以少胜多，大败秦军，创造了历史上著名的以少胜多的战役——巨鹿之战。',
+    ],
+    storyEn:"In 207 BC, the general Xiang Yu led his army across the Zhang River to face the Qin army. After crossing, he ordered all boats sunk and all cooking pots smashed, leaving only three days of rations. With no way back, his soldiers fought ferociously and defeated a vastly larger Qin force at the Battle of Julu.",
+    usage:[
+      {zh:'为了创业成功，他辞掉工作，卖掉房子，破釜沉舟，把所有积蓄都投了进去。',en:"To make his startup succeed, he quit his job, sold his house, and invested every last saving."},
+      {zh:'考试前一周，她决定破釜沉舟，停掉所有娱乐，专心备考。',en:"A week before the exam, she went all-in — stopped all entertainment and focused only on studying."},
+    ],
+    quiz:{
+      scenario:"An entrepreneur quits her stable job, withdraws her retirement savings, and bets everything on her new company — fully aware she cannot go back.",
+      opts:['破釜沉舟','亡羊补牢','叶公好龙','半途而废'],
+      ans:0
+    },
+    vocab:[
+      {word:'破',pinyin:'pò',meaning:'to break; to smash'},
+      {word:'釜',pinyin:'fǔ',meaning:'an ancient cooking pot'},
+      {word:'沉',pinyin:'chén',meaning:'to sink; to submerge'},
+      {word:'舟',pinyin:'zhōu',meaning:'a boat; a vessel'},
+      {word:'退路',pinyin:'tuìlù',meaning:'a way to retreat; a backup plan'},
+    ]
+  },
+  {
+    id:'wangyangbulao',
+    chars:'亡羊补牢',
+    pinyin:'wáng yáng bǔ láo',
+    meaning:'Mend the pen after the sheep are lost — better late than never; fix problems before they get worse',
+    level:'HSK5',
+    story:[
+      '从前，有一个牧羊人，他的羊圈破了一个洞。邻居看见了，劝他把洞补上，但他不在意，说："没事的，羊还没有丢。"',
+      '第二天早上，他发现少了几只羊，原来狼钻进羊圈把羊叼走了。',
+      '邻居再次劝他补洞，这次他听了。他认认真真地修好了羊圈。从此，再也没有羊被狼叼走了。',
+    ],
+    storyEn:"A shepherd's pen had a hole in it. A neighbor warned him to fix it, but he ignored the advice. The next morning, several sheep had been taken by wolves. This time he listened and repaired the pen carefully. Not a single sheep was lost after that. The moral: it's never too late to correct a mistake — but don't wait until you lose more sheep.",
+    usage:[
+      {zh:'虽然已经亏损了一些钱，但现在亡羊补牢，及时调整投资策略，还来得及。',en:"We've already lost some money, but it's not too late to fix the strategy now."},
+      {zh:'发现错误后，他马上亡羊补牢，向客户道歉并修正了合同。',en:"After finding the error, he immediately made it right — apologized to the client and corrected the contract."},
+    ],
+    quiz:{
+      scenario:"A company ignores customer complaints for months. Sales drop 30%. The CEO finally calls an emergency meeting to fix the product issues.",
+      opts:['亡羊补牢','破釜沉舟','画蛇添足','三人成虎'],
+      ans:0
+    },
+    vocab:[
+      {word:'亡',pinyin:'wáng',meaning:'lost; missing; gone'},
+      {word:'羊',pinyin:'yáng',meaning:'sheep; lamb'},
+      {word:'补',pinyin:'bǔ',meaning:'to repair; to mend; to fix'},
+      {word:'牢',pinyin:'láo',meaning:'pen; enclosure; prison'},
+      {word:'及时',pinyin:'jíshí',meaning:'in time; promptly; without delay'},
+    ]
+  },
+  {
+    id:'huashezhanzu',
+    chars:'画蛇添足',
+    pinyin:'huà shé tiān zú',
+    meaning:'Draw a snake and add feet — spoil something by adding unnecessary extras',
+    level:'HSK5',
+    story:[
+      '战国时期，某家祭祀活动结束后，主人拿出一壶酒赏给仆人们。因为酒少人多，仆人们商量：谁先在地上画完一条蛇，谁就得到这壶酒。',
+      '一个仆人画得很快，率先画完了蛇。他看着别人还没画好，心想时间还够，便继续给蛇画上了脚。',
+      '就在他画脚的时候，另一个仆人也画完了蛇，夺走了那壶酒。他说："蛇本来没有脚，你画的不是蛇！"第一个人因为多此一举，反而失去了本该属于他的奖励。',
+    ],
+    storyEn:"After a ceremony, servants competed to win a jug of wine by drawing a snake first. One servant finished first but, feeling overconfident, kept going and added feet to the snake. While he was drawing the feet, another servant finished a footless snake and claimed the wine: 'Snakes don't have feet — yours isn't a snake!' The first servant's unnecessary addition cost him his prize.",
+    usage:[
+      {zh:'这份报告写得很好，你再加几页介绍真的是画蛇添足，让人看不下去了。',en:"The report is already excellent — adding more pages would just be overdoing it."},
+      {zh:'产品功能已经很完整了，如果再加功能就是画蛇添足，反而让用户感到困惑。',en:"The product is complete — adding more features now would just confuse users."},
+    ],
+    quiz:{
+      scenario:"A chef creates a perfectly balanced dessert that gets rave reviews. He then adds 5 more toppings 'to make it even better.' Customers say it's too busy and sweet now.",
+      opts:['画蛇添足','亡羊补牢','塞翁失马','卧薪尝胆'],
+      ans:0
+    },
+    vocab:[
+      {word:'画',pinyin:'huà',meaning:'to draw; to paint'},
+      {word:'蛇',pinyin:'shé',meaning:'snake; serpent'},
+      {word:'添',pinyin:'tiān',meaning:'to add; to increase'},
+      {word:'足',pinyin:'zú',meaning:'foot; feet; sufficient'},
+      {word:'多此一举',pinyin:'duō cǐ yī jǔ',meaning:'an unnecessary move; doing more than needed'},
+    ]
+  },
+  {
+    id:'yanerdaolin',
+    chars:'掩耳盗铃',
+    pinyin:'yǎn ěr dào líng',
+    meaning:'Cover ears while stealing a bell — deceiving yourself; foolish self-deception',
+    level:'HSK5',
+    story:[
+      '春秋时期，有一个人看上了一家门口挂着的一口大铜铃。他想把铃偷走，但知道一碰铃就会响，被人发现。',
+      '他想了一个"聪明"的办法：用手捂住自己的耳朵，然后去偷铃。',
+      '他以为自己听不见铃声，别人也就听不见了。当然，他立刻被赶来的主人抓住了。',
+    ],
+    storyEn:"A man wanted to steal a bronze bell hanging outside a house. He knew that touching it would make it ring and alert the owner. His 'brilliant' solution: cover his own ears, then steal the bell. He figured that if he couldn't hear it, no one else could. He was caught immediately. The lesson: hiding from a problem doesn't make the problem disappear.",
+    usage:[
+      {zh:'明明账户已经亏损严重，他却不愿看账单，这不是掩耳盗铃吗？',en:"His account is deep in the red, but he refuses to look at the statements. Isn't that just self-deception?"},
+      {zh:'不去解决问题，只是删掉差评，这是掩耳盗铃的做法。',en:"Just deleting the negative reviews without fixing the problem is pure self-deception."},
+    ],
+    quiz:{
+      scenario:"A manager knows his team is behind schedule but avoids looking at the project tracker — telling himself 'if I don't check, it's not a problem.'",
+      opts:['掩耳盗铃','愚公移山','一鸣惊人','滥竽充数'],
+      ans:0
+    },
+    vocab:[
+      {word:'掩',pinyin:'yǎn',meaning:'to cover; to conceal; to close'},
+      {word:'耳',pinyin:'ěr',meaning:'ear'},
+      {word:'盗',pinyin:'dào',meaning:'to steal; a thief'},
+      {word:'铃',pinyin:'líng',meaning:'a bell; a chime'},
+      {word:'自欺欺人',pinyin:'zì qī qī rén',meaning:'to deceive oneself and others; self-delusion'},
+    ]
+  },
+  {
+    id:'shouzhudartu',
+    chars:'守株待兔',
+    pinyin:'shǒu zhū dài tù',
+    meaning:'Guard a tree stump and wait for rabbits — rely on luck instead of effort; missing the point',
+    level:'HSK5',
+    story:[
+      '宋国有一个农夫，每天辛苦耕田。有一天，他正在田里劳动，忽然看见一只兔子飞快地跑来，撞在树桩上，折断了脖子，死了。',
+      '农夫高兴极了，不费任何力气就得到了一只兔子。从那以后，他把锄头放下，整天坐在树桩旁边等待，希望再有兔子跑来撞死。',
+      '当然，兔子再也没有来过，他的农田也荒废了。',
+    ],
+    storyEn:"A farmer was working his field when a rabbit ran into a tree stump and died. Overjoyed, the farmer abandoned his work and spent every day sitting by the stump, waiting for another rabbit to appear. Of course, no more rabbits came, and his fields went to ruin. The lesson: you can't build a life on a lucky accident.",
+    usage:[
+      {zh:'你不能守株待兔，指望客户主动上门，你需要主动去开发市场。',en:"You can't just wait for customers to come to you — you need to go out and find them."},
+      {zh:'上次那个项目是运气好才成功的，这次不能再守株待兔了，要认真准备。',en:"Last time was just luck. We can't rely on luck this time — we need to prepare properly."},
+    ],
+    quiz:{
+      scenario:"A trader made a huge profit from a lucky crypto spike in 2021. Now in 2026, he keeps holding the same random coins, waiting for the same spike to happen again.",
+      opts:['守株待兔','破釜沉舟','卧薪尝胆','一鸣惊人'],
+      ans:0
+    },
+    vocab:[
+      {word:'守',pinyin:'shǒu',meaning:'to guard; to watch; to wait by'},
+      {word:'株',pinyin:'zhū',meaning:'tree stump; a tree trunk'},
+      {word:'待',pinyin:'dài',meaning:'to wait; to expect'},
+      {word:'兔',pinyin:'tù',meaning:'rabbit; hare'},
+      {word:'荒废',pinyin:'huāngfèi',meaning:'to waste; to let go to ruin; to neglect'},
+    ]
+  },
+  {
+    id:'jingdizhiwa',
+    chars:'井底之蛙',
+    pinyin:'jǐng dǐ zhī wā',
+    meaning:'Frog at the bottom of a well — narrow-minded; unaware of the wider world',
+    level:'HSK5',
+    story:[
+      '一只青蛙住在一口浅井里，它认为这口井就是整个世界。有一天，一只从大海来的鳖经过，向井里的青蛙描述大海的广阔。',
+      '"大海有多大？"青蛙问道，"是这口井的两倍吗？三倍吗？"',
+      '鳖无法向青蛙解释大海的宽广，就邀请青蛙出井来亲眼看看。青蛙爬出井口，第一次看到了外面的世界，才意识到自己的渺小和无知。',
+    ],
+    storyEn:"A frog lived in a shallow well and believed the well was the entire world. A sea turtle passing by tried to describe the ocean. 'Is the sea twice the size of this well? Three times?' The turtle couldn't explain. When the frog finally climbed out and saw the world for the first time, it understood how small and ignorant it had been. From Zhuangzi, ~4th century BC.",
+    usage:[
+      {zh:'从来没出过国的他，就像井底之蛙，对外面的世界一无所知。',en:"Having never left the country, he's like a frog in a well — completely unaware of the outside world."},
+      {zh:'不读书、不看新闻，你就会变成井底之蛙。',en:"If you don't read or follow the news, you'll become a frog in a well."},
+    ],
+    quiz:{
+      scenario:"A manager insists his company's approach is 'the only way' — but he has never visited competitors, attended conferences, or read industry reports.",
+      opts:['井底之蛙','破釜沉舟','卧薪尝胆','亡羊补牢'],
+      ans:0
+    },
+    vocab:[
+      {word:'井',pinyin:'jǐng',meaning:'a well; a water well'},
+      {word:'底',pinyin:'dǐ',meaning:'bottom; base; the lowest point'},
+      {word:'蛙',pinyin:'wā',meaning:'frog'},
+      {word:'渺小',pinyin:'miǎoxiǎo',meaning:'tiny; insignificant; trivial'},
+      {word:'无知',pinyin:'wúzhī',meaning:'ignorant; unaware; uninformed'},
+    ]
+  },
+  {
+    id:'hujiahuwei',
+    chars:'狐假虎威',
+    pinyin:'hú jiǎ hǔ wēi',
+    meaning:"Fox borrows the tiger's authority — bluffing with someone else's power; intimidating others through a powerful backer",
+    level:'HSK5',
+    story:[
+      '一只老虎抓住了一只狐狸，正要把它吃掉。狐狸灵机一动，说："你不能吃我！天帝任命我为百兽之王，你要是吃了我，就是违抗天命！"',
+      '老虎半信半疑。狐狸又说："你不信的话，跟我一起走，你看哪只动物敢不躲开我！"',
+      '老虎同意了。于是狐狸大摇大摆地走在前面，老虎跟在后面，森林里的动物看见老虎，都赶紧逃跑。老虎以为动物们真的是怕狐狸，却不知道它们是被自己吓跑的。',
+    ],
+    storyEn:"A tiger caught a fox and was about to eat it. The fox said: 'You can't eat me — Heaven appointed me King of All Beasts! If you don't believe me, follow me and watch.' The fox strutted ahead with the tiger behind. Every animal fled. The tiger thought they feared the fox, never realizing they were terrified of him.",
+    usage:[
+      {zh:'他只是老板的司机，却狐假虎威，对所有人指手画脚。',en:"He's just the boss's driver, but he throws his (borrowed) weight around like he owns the place."},
+      {zh:'那个销售员总是提到他认识很多大客户，实际上是在狐假虎威，吓唬竞争对手。',en:"That salesperson keeps dropping big names — just borrowing others' prestige to intimidate competitors."},
+    ],
+    quiz:{
+      scenario:"A junior employee tells suppliers 'The CEO personally told me to inform you that we need this price cut.' The CEO said no such thing — but the employee uses the CEO's name to pressure people.",
+      opts:['狐假虎威','愚公移山','一鸣惊人','对牛弹琴'],
+      ans:0
+    },
+    vocab:[
+      {word:'狐',pinyin:'hú',meaning:'fox'},
+      {word:'假',pinyin:'jiǎ',meaning:'to borrow; false; to pretend'},
+      {word:'虎',pinyin:'hǔ',meaning:'tiger'},
+      {word:'威',pinyin:'wēi',meaning:'power; authority; prestige'},
+      {word:'半信半疑',pinyin:'bàn xìn bàn yí',meaning:'half-believing, half-doubting; uncertain'},
+    ]
+  },
+  {
+    id:'yugongyishan',
+    chars:'愚公移山',
+    pinyin:'yú gōng yí shān',
+    meaning:"Foolish Old Man moves mountains — persistence and determination can achieve anything",
+    level:'HSK5',
+    story:[
+      '古代有一位老人，名叫愚公，他家门口有两座大山，出行非常不方便。愚公决定带领家人把这两座山挖掉。',
+      '邻居嘲笑他说："你已经这么老了，就算挖到死，也移不走这两座山！"愚公回答："我死了，还有我的儿子；儿子死了，还有孙子；子子孙孙无穷无尽，总有一天能把山移走！"',
+      '他的精神感动了天神，天神派遣两位神仙下凡，把这两座山搬走了。',
+    ],
+    storyEn:"An old man named Yugong was frustrated by two mountains blocking his village. He began digging them away with his family. A neighbor mocked him: 'You're so old — even if you dig until you die, you'll never move these mountains!' Yugong replied: 'When I die, my sons will continue. And their sons after that. Mountains don't grow. We will move them.' His determination moved Heaven itself — two gods descended and carried the mountains away. From Liezi, ~4th century BC.",
+    usage:[
+      {zh:'他用了十年的时间学会了钢琴，真是愚公移山的精神。',en:"It took him ten years to master piano. A true Yugong spirit — steady persistence wins."},
+      {zh:'创业就要有愚公移山的精神，不能因为困难就放弃。',en:"Starting a business requires a Yugong spirit — don't give up just because it's hard."},
+    ],
+    quiz:{
+      scenario:"A researcher spends 12 years trying to develop a drug. Every year someone suggests she give up. She keeps saying 'I'll find it eventually.' In year 13, she does.",
+      opts:['愚公移山','守株待兔','画蛇添足','掩耳盗铃'],
+      ans:0
+    },
+    vocab:[
+      {word:'愚公',pinyin:'yú gōng',meaning:'Yugong; "Foolish Old Man" — a legendary figure'},
+      {word:'移山',pinyin:'yí shān',meaning:'to move mountains'},
+      {word:'嘲笑',pinyin:'cháoxiào',meaning:'to mock; to ridicule; to laugh at'},
+      {word:'子孙',pinyin:'zǐsūn',meaning:'descendants; offspring; children and grandchildren'},
+      {word:'感动',pinyin:'gǎndòng',meaning:'to be moved; to be touched emotionally'},
+    ]
+  },
+  {
+    id:'saiwengshima',
+    chars:'塞翁失马',
+    pinyin:'sài wēng shī mǎ',
+    meaning:"Old Frontier Man loses a horse — a blessing in disguise; every setback may be a hidden gain",
+    level:'HSK6',
+    story:[
+      '古代边塞有一位老人，他的一匹马跑到了北方胡人的地界，大家都来安慰他。老人说："谁知道这不是福呢？"',
+      '过了几个月，那匹马带着一群胡人的骏马回来了。大家都来祝贺他。老人又说："谁知道这不是祸呢？"',
+      '老人的儿子喜欢骑马，骑那匹新马时摔断了腿。大家又来安慰他。老人说："谁知道这不是福呢？"果然，不久后爆发了战争，村里的年轻人大多战死，而老人的儿子因为腿伤留了下来，保住了性命。',
+    ],
+    storyEn:"An old man near the frontier lost a horse. Neighbors consoled him; he said 'Who knows if this is bad luck?' Months later the horse returned with a herd of fine horses. Neighbors congratulated him; he said 'Who knows if this is good luck?' His son broke his leg riding the new horses. Neighbors consoled him; he said 'Who knows if this is bad luck?' War broke out. All the young men were conscripted and killed. His son, lame, was spared.",
+    usage:[
+      {zh:'他丢了工作，却因此有时间陪伴生病的父亲——真是塞翁失马，焉知非福。',en:"He lost his job, but that gave him time to care for his sick father. A blessing in disguise."},
+      {zh:'塞翁失马，焉知非福。这次投资亏损也许会让你变得更谨慎。',en:"Who knows, this investment loss might make you more careful next time."},
+    ],
+    quiz:{
+      scenario:"A startup loses its biggest client — devastating at first. But this forces the team to diversify and find three smaller clients. A year later, the business is more stable than ever.",
+      opts:['塞翁失马','掩耳盗铃','画蛇添足','守株待兔'],
+      ans:0
+    },
+    vocab:[
+      {word:'塞翁',pinyin:'sài wēng',meaning:'old man at the frontier'},
+      {word:'失',pinyin:'shī',meaning:'to lose; to miss; failure'},
+      {word:'焉知非福',pinyin:'yān zhī fēi fú',meaning:'who knows it is not a blessing?'},
+      {word:'骏马',pinyin:'jùnmǎ',meaning:'a fine horse; a thoroughbred'},
+      {word:'征兵',pinyin:'zhēngbīng',meaning:'conscription; military draft'},
+    ]
+  },
+  {
+    id:'yimingjingren',
+    chars:'一鸣惊人',
+    pinyin:'yī míng jīng rén',
+    meaning:'One call shocks everyone — a stunning debut after a long silence; a person who suddenly reveals hidden talent',
+    level:'HSK5',
+    story:[
+      '楚庄王登上王位后的三年里，既不发布任何命令，也不处理国家大事，整天饮酒作乐。大臣们非常担心，其中一位叫伍举的大臣冒险进谏。',
+      '伍举说了一个谜语："南方有一只大鸟，停在王宫里三年，既不飞也不叫。这是什么鸟？"',
+      '楚庄王回答说："三年不飞，一飞冲天；三年不鸣，一鸣惊人！"此后，楚庄王励精图治，成为了春秋五霸之一。',
+    ],
+    storyEn:"King Zhuang of Chu spent three years on the throne doing nothing — drinking, ignoring state affairs. A worried minister posed a riddle: 'In the south there is a great bird. It has sat in the palace for three years, neither flying nor calling. What bird is this?' The king replied: 'Three years without flying — but when it flies, it soars to the sky. Three years without calling — but when it calls, it shocks everyone.' The king then ruled brilliantly, becoming one of the Five Hegemons of the Spring and Autumn period.",
+    usage:[
+      {zh:'他在公司默默工作了五年，然后提交了一个让所有人震惊的项目方案，真是一鸣惊人。',en:"He worked quietly for five years, then presented a plan that stunned everyone. A true one-call-shocks-all moment."},
+      {zh:'这位歌手参赛前没什么名气，比赛中一鸣惊人，直接拿了冠军。',en:"The singer was unknown before the competition, then came out of nowhere and won first place."},
+    ],
+    quiz:{
+      scenario:"After two years of quiet work behind the scenes, a junior employee presents a product concept at the annual meeting. The board is stunned — it becomes the company's biggest product.",
+      opts:['一鸣惊人','卧薪尝胆','狐假虎威','守株待兔'],
+      ans:0
+    },
+    vocab:[
+      {word:'鸣',pinyin:'míng',meaning:'to call; to cry (of birds); to make a sound'},
+      {word:'惊',pinyin:'jīng',meaning:'to shock; to startle; to alarm'},
+      {word:'一飞冲天',pinyin:'yī fēi chōng tiān',meaning:'to soar to the sky in one flight; sudden rise to fame'},
+      {word:'励精图治',pinyin:'lì jīng tú zhì',meaning:'to dedicate oneself to ruling the country well'},
+    ]
+  },
+  {
+    id:'duiniutanqin',
+    chars:'对牛弹琴',
+    pinyin:'duì niú tán qín',
+    meaning:'Play music for a cow — talking to the wrong audience; wasting effort on people who cannot appreciate it',
+    level:'HSK5',
+    story:[
+      '春秋时期，有一位著名的音乐家叫公明仪，他的琴技十分高超。有一天，他对着一头牛弹奏了一首优美的曲子。',
+      '那头牛低着头，继续吃草，一点反应都没有。公明仪换了一首曲子，弹出了蚊子嗡嗡的声音和小牛叫声。这次，牛抬起了头，竖起了耳朵，因为它听懂了。',
+      '公明仪这才明白：不是牛不好，而是他选错了对象。好东西也要面对合适的人，才能发挥作用。',
+    ],
+    storyEn:"The musician Gong Mingyi was renowned for his zither playing. One day he played a beautiful piece for a cow. The cow ignored him, head down, chewing grass. He switched to mimicking the sounds of mosquitoes and a calf. The cow's head lifted, ears perked. The lesson: the music wasn't bad, the audience was wrong. Even good things must be presented to the right people.",
+    usage:[
+      {zh:'你跟他解释价值投资，真是对牛弹琴，他只关心股票短期涨跌。',en:"Explaining value investing to him is playing music to a cow — he only cares about short-term price moves."},
+      {zh:'这个高级课程对初学者来说太难了，讲再多也是对牛弹琴。',en:"This advanced course is too hard for beginners — no matter how much you explain, it's music to cows."},
+    ],
+    quiz:{
+      scenario:"A data scientist gives a 2-hour deep technical presentation to a room of sales managers who have no coding background. They're confused and bored throughout.",
+      opts:['对牛弹琴','井底之蛙','一鸣惊人','亡羊补牢'],
+      ans:0
+    },
+    vocab:[
+      {word:'对',pinyin:'duì',meaning:'facing; toward; for (an audience)'},
+      {word:'牛',pinyin:'niú',meaning:'cow; ox; cattle'},
+      {word:'弹',pinyin:'tán',meaning:'to play (a stringed instrument); to flick'},
+      {word:'琴',pinyin:'qín',meaning:'zither; a string instrument; piano'},
+      {word:'竖起耳朵',pinyin:'shù qǐ ěrduo',meaning:'to prick up one\'s ears; to listen attentively'},
+    ]
+  },
+  {
+    id:'sanrenchenhu',
+    chars:'三人成虎',
+    pinyin:'sān rén chéng hǔ',
+    meaning:'Three men make a tiger — repeated rumors become accepted as truth; the danger of misinformation',
+    level:'HSK6',
+    story:[
+      '战国时期，魏国的庞葱要陪太子到赵国做人质。临走前，他问魏王："如果有人说街上出现了一只老虎，大王相信吗？"魏王说："不信。"',
+      '"如果有两个人这样说呢？"魏王说："我会有些怀疑。"',
+      '"如果三个人都这样说呢？"魏王说："那我就信了。"',
+      '庞葱说："街上肯定没有老虎，但三个人说有，就变成有了。我去了赵国，说我坏话的人不止三个。请大王明察。"果然，庞葱走后，有人在魏王面前说他的坏话，魏王后来真的疏远了他。',
+    ],
+    storyEn:"Before leaving to serve as a hostage in Zhao, the official Pang Cong asked the King of Wei: 'If one man says there's a tiger in the market, do you believe it?' 'No.' 'If two men say so?' 'I'd be doubtful.' 'If three men say so?' 'Then I'd believe it.' 'There is obviously no tiger in the market,' said Pang Cong, 'but if three men say there is, a tiger exists. More than three people will slander me while I'm gone.' He was right — the king believed the rumors and turned against him.",
+    usage:[
+      {zh:'关于那家公司的负面消息越来越多，三人成虎，现在大家都认为它要倒闭了。',en:"The negative reports about that company keep piling up. Three men make a tiger — now everyone believes it's going bankrupt."},
+      {zh:'网络上的谣言就是三人成虎，越传越像真的。',en:"Online rumors are a classic case of three men making a tiger — the more they spread, the more real they seem."},
+    ],
+    quiz:{
+      scenario:"Three separate coworkers each tell the manager they 'heard' a colleague is planning to quit. The manager didn't verify. Now he treats that colleague differently — even though she had no such plans.",
+      opts:['三人成虎','对牛弹琴','画蛇添足','亡羊补牢'],
+      ans:0
+    },
+    vocab:[
+      {word:'谣言',pinyin:'yáoyán',meaning:'rumor; false information spread widely'},
+      {word:'疏远',pinyin:'shūyuǎn',meaning:'to become distant from; to drift apart'},
+      {word:'人质',pinyin:'rénzhì',meaning:'hostage'},
+      {word:'明察',pinyin:'míngchá',meaning:'to observe clearly; to judge wisely'},
+    ]
+  },
+  {
+    id:'yegonghaolong',
+    chars:'叶公好龙',
+    pinyin:'yè gōng hào lóng',
+    meaning:'Lord She loves dragons — professing love for something you actually fear when faced with the real thing; empty enthusiasm',
+    level:'HSK6',
+    story:[
+      '春秋时期，楚国有一个贵族叫叶公，他非常喜欢龙，家里到处都是龙的画像和雕刻，衣服上、家具上、墙壁上全是龙的图案。',
+      '天上的真龙听说了叶公如此爱龙，非常感动，决定亲自下来拜访他。',
+      '真龙出现后，叶公吓得脸色苍白，转身就跑。原来，他喜欢的不是真正的龙，而只是龙的形象。',
+    ],
+    storyEn:"Lord She of Chu was obsessed with dragons — dragon paintings covered his walls, his clothes, his furniture. When Heaven's real dragon heard of this devotion and came to visit, Lord She turned white with terror and ran. He didn't actually love dragons. He loved the idea of dragons.",
+    usage:[
+      {zh:'他说最喜欢挑战，但真正有难度的项目来了，他就躲着走，真是叶公好龙。',en:"He claims to love challenges, but when a real tough one arrives, he disappears. Classic Lord She."},
+      {zh:'很多人说支持创新，但看到真正颠覆性的想法时却拒绝接受，这就是叶公好龙。',en:"Many people say they support innovation but reject truly disruptive ideas when they appear. That's loving dragons from a distance."},
+    ],
+    quiz:{
+      scenario:"An executive says he 'loves honest feedback.' When an employee gives him direct, critical feedback in a meeting, he gets defensive and later gives her a bad performance review.",
+      opts:['叶公好龙','破釜沉舟','一鸣惊人','愚公移山'],
+      ans:0
+    },
+    vocab:[
+      {word:'叶公',pinyin:'yè gōng',meaning:'Lord She; a title for a high-ranking noble'},
+      {word:'苍白',pinyin:'cāngbái',meaning:'pale; white (from fear)'},
+      {word:'拜访',pinyin:'bàifǎng',meaning:'to visit; to call on someone'},
+      {word:'颠覆',pinyin:'diānfù',meaning:'to overturn; to disrupt; to subvert'},
+    ]
+  },
+  {
+    id:'lanyuchongshu',
+    chars:'滥竽充数',
+    pinyin:'làn yú chōng shù',
+    meaning:'Pass oneself off as a flute player — pretending to know something you don\'t; being a fake among competent people',
+    level:'HSK5',
+    story:[
+      '战国时期，齐宣王喜欢听竽（一种乐器）的合奏，要求乐队里有三百人同时演奏。有一个叫南郭先生的人，根本不会吹竽，却混进了乐队，每次演奏时假装在吹，拿到了和真正乐手一样的薪水。',
+      '齐宣王去世后，他的儿子齐湣王继位。新王喜欢听每个人单独演奏，要求乐手一个一个地表演。',
+      '南郭先生知道自己无法蒙混过关，悄悄地连夜溜走了。',
+    ],
+    storyEn:"King Xuan of Qi loved large ensembles and demanded 300 musicians play simultaneously. A man named Nanguo, who couldn't play at all, joined the ensemble, faked it perfectly in the crowd, and collected the same salary as real musicians. When a new king took the throne and insisted on solo performances, Nanguo slipped away under cover of night.",
+    usage:[
+      {zh:'他在简历上说自己会Python，但其实只会用AI生成代码，完全是滥竽充数。',en:"He listed Python on his resume but can only generate code with AI — he's totally faking it."},
+      {zh:'这个团队里有几个人只是在滥竽充数，真正做事的就三四个人。',en:"Several people on this team are just going through the motions — only three or four are actually doing real work."},
+    ],
+    quiz:{
+      scenario:"At a large brainstorming meeting, several team members say 'yes' and nod enthusiastically at every idea without contributing anything — just blending in.",
+      opts:['滥竽充数','卧薪尝胆','对牛弹琴','破釜沉舟'],
+      ans:0
+    },
+    vocab:[
+      {word:'滥',pinyin:'làn',meaning:'excessive; indiscriminate; undeserving'},
+      {word:'竽',pinyin:'yú',meaning:'yu — an ancient Chinese woodwind instrument'},
+      {word:'充数',pinyin:'chōng shù',meaning:'to make up the numbers; to pass oneself off as'},
+      {word:'蒙混过关',pinyin:'méng hùn guò guān',meaning:'to bluff one\'s way through; to get by with deception'},
+    ]
+  },
+  {
+    id:'beigongshaying',
+    chars:'杯弓蛇影',
+    pinyin:'bēi gōng shé yǐng',
+    meaning:'Mistake the bow\'s reflection for a snake in the cup — extreme paranoia; seeing danger where there is none',
+    level:'HSK6',
+    story:[
+      '晋朝时，有一个官员叫杜宣，到上司应郴家里做客，喝酒时忽然在酒杯里看见一条小蛇。他害怕极了，但碍于面子，还是把酒喝下去了。',
+      '回家后，他一直感觉肚子里有蛇，全身不舒服，很快就病倒了。',
+      '应郴得知后，带杜宣再次来到了当时喝酒的地方，指着墙上挂的一张弓说："你杯子里的蛇，是这张弓的倒影！"杜宣恍然大悟，病立刻就好了。',
+    ],
+    storyEn:"An official named Du Xuan visited his superior's home and saw what looked like a small snake in his wine cup. Too polite to refuse, he drank it. He went home believing he'd swallowed a snake, fell terribly ill, and couldn't recover. His host finally brought him back and pointed to a bow hanging on the wall: 'That's what you saw — the reflection of the bow.' The moment Du Xuan understood, his illness disappeared.",
+    usage:[
+      {zh:'你根本没有证据说他要背刺你，不要杯弓蛇影，自己吓自己。',en:"You have no evidence he's plotting against you — don't let your own paranoia make you sick."},
+      {zh:'疫情后，很多人一咳嗽就以为自己得了大病，有点杯弓蛇影了。',en:"After the pandemic, many people assumed the worst from a simple cough. A little too paranoid."},
+    ],
+    quiz:{
+      scenario:"A new employee receives a brief 'Can we talk later?' message from his manager. He spends the whole day certain he's being fired, imagining reasons, and can't concentrate on work. The manager just wanted to discuss a small project update.",
+      opts:['杯弓蛇影','塞翁失马','一鸣惊人','滥竽充数'],
+      ans:0
+    },
+    vocab:[
+      {word:'杯',pinyin:'bēi',meaning:'cup; glass'},
+      {word:'弓',pinyin:'gōng',meaning:'bow (the weapon); an arc shape'},
+      {word:'蛇',pinyin:'shé',meaning:'snake; serpent'},
+      {word:'影',pinyin:'yǐng',meaning:'shadow; reflection; image'},
+      {word:'恍然大悟',pinyin:'huǎngrán dàwù',meaning:'to suddenly realize; to have an aha moment'},
+    ]
+  },
+  {
+    id:'bantuerfei',
+    chars:'半途而废',
+    pinyin:'bàn tú ér fèi',
+    meaning:'Give up halfway — to abandon something before it\'s finished; to quit when success was near',
+    level:'HSK4',
+    story:[
+      '战国时代，有一个叫乐羊子的人，他的妻子非常贤惠。乐羊子为了求学，离开家乡去远处拜师学艺。',
+      '但只过了一年，他就因为思念妻子，半途回家了。',
+      '妻子见他回来，没有高兴，反而拿起剪刀，把自己正在织的一匹布剪断了。她说："你的学问就像这布，积累了一年就放弃，和剪断这布有什么区别？"',
+      '乐羊子深受感动，重新出发，直到七年后学成归来。',
+    ],
+    storyEn:"The scholar Yue Yangzi left home to study under a master. After just one year, homesick for his wife, he returned early. Instead of welcoming him, his wife took scissors and cut the cloth she had spent months weaving. 'Your learning is like this cloth,' she said. 'I cut it halfway — all that work is wasted. What's the difference with what you did?' He returned to his studies and came home seven years later, fully educated.",
+    usage:[
+      {zh:'学外语最忌讳半途而废，很多人学了三个月就放弃了。',en:"The biggest mistake in language learning is giving up halfway — many people quit after just three months."},
+      {zh:'他已经坚持了一年，现在半途而废实在太可惜了。',en:"He's persisted for a whole year — quitting now would be such a waste."},
+    ],
+    quiz:{
+      scenario:"A runner trains for 8 months for a marathon. Two weeks before race day, feeling tired, she decides 'it's not worth it' and withdraws.",
+      opts:['半途而废','愚公移山','破釜沉舟','一鸣惊人'],
+      ans:0
+    },
+    vocab:[
+      {word:'半途',pinyin:'bàntú',meaning:'halfway; midway; in the middle'},
+      {word:'废',pinyin:'fèi',meaning:'to abandon; to give up; wasted'},
+      {word:'贤惠',pinyin:'xiánhuì',meaning:'virtuous and capable (of a wife); kind and sensible'},
+      {word:'积累',pinyin:'jīlěi',meaning:'to accumulate; to build up over time'},
+    ]
+  },
+  {
+    id:'kezhouqiujian',
+    chars:'刻舟求剑',
+    pinyin:'kè zhōu qiú jiàn',
+    meaning:'Mark the boat to find the sword — stubbornly clinging to outdated methods; ignoring that circumstances have changed',
+    level:'HSK5',
+    story:[
+      '战国时期，楚国有一个人乘船渡江，不小心把一把宝剑掉到了江里。旁边的人说："快跳下去找！"',
+      '但这个人不慌不忙，从腰间取出一把刀，在船舷上刻了一个记号，说："不急，我的剑是从这里掉下去的，等船靠岸了，我从这里下水找。"',
+      '船到了岸边，他从刻记号的地方跳入水中，当然什么都没找到。因为船已经移动了，但剑还在原来落水的地方。',
+    ],
+    storyEn:"A man dropped his sword overboard while crossing a river. He calmly carved a mark on the side of the boat where the sword fell. 'I'll dive for it when we reach the shore,' he said. At the shore he dived from the mark — but found nothing. The boat had moved; the sword hadn't. His mark recorded where the sword fell relative to the boat, not relative to the river.",
+    usage:[
+      {zh:'市场已经变了，你还在用十年前的营销方式，不是刻舟求剑吗？',en:"The market has changed completely — using decade-old marketing methods is like carving the boat."},
+      {zh:'教育方式要与时俱进，不能刻舟求剑，用五十年前的方法教今天的孩子。',en:"Teaching methods must evolve — you can't use 50-year-old approaches with today's children."},
+    ],
+    quiz:{
+      scenario:"A tech company keeps using the same product strategy from 2019, even though customer needs have completely changed. Management insists 'it worked before, it'll work again.'",
+      opts:['刻舟求剑','破釜沉舟','愚公移山','一鸣惊人'],
+      ans:0
+    },
+    vocab:[
+      {word:'刻',pinyin:'kè',meaning:'to carve; to engrave; to mark'},
+      {word:'舟',pinyin:'zhōu',meaning:'boat; vessel'},
+      {word:'剑',pinyin:'jiàn',meaning:'sword'},
+      {word:'船舷',pinyin:'chuánxián',meaning:'the side of a boat; gunwale'},
+      {word:'与时俱进',pinyin:'yǔ shí jùjìn',meaning:'to advance with the times; to keep up with the era'},
+    ]
+  },
+  {
+    id:'zhishantanbing',
+    chars:'纸上谈兵',
+    pinyin:'zhǐ shàng tán bīng',
+    meaning:'Discuss strategy on paper — armchair theorist; someone who knows the theory but has no practical experience',
+    level:'HSK5',
+    story:[
+      '战国末期，赵国名将赵奢有一个儿子叫赵括，他从小熟读兵书，说起军事理论来头头是道，连父亲都说不过他。',
+      '公元前260年，赵国与秦国交战，国王任命赵括为统帅，代替经验丰富的老将廉颇。廉颇认为秦国强大，应该坚守不出，但赵括一上任就主动进攻，完全按照兵书行事。',
+      '结果，赵括在长平之战中被秦将白起包围，赵军四十万士兵全部被歼灭。赵括本人也战死了。书本上的战略，在真实战场上毫无用处。',
+    ],
+    storyEn:"Zhao Kuo could quote every military text perfectly and always won arguments with his father, a great general. When he was appointed commander in the war against Qin, he replaced the experienced Lian Po and immediately attacked — exactly as the books said to do. He walked into a trap. At the Battle of Changping, Qin general Bai Qi encircled 400,000 Zhao soldiers. All were killed. Zhao Kuo died too. His strategy was perfect on paper.",
+    usage:[
+      {zh:'他没有任何工作经验，说的那些理论都是纸上谈兵，实际做起来完全不一样。',en:"He has zero work experience — all his theories are armchair strategy, useless in practice."},
+      {zh:'创业最怕纸上谈兵，商业计划书写得再好，市场不买账就没用。',en:"In entrepreneurship, armchair planning is the biggest danger — a brilliant business plan is worthless if customers don't buy."},
+    ],
+    quiz:{
+      scenario:"A new MBA graduate is put in charge of a factory. He reorganizes everything based on business school models. Productivity falls 40% — because the models didn't account for how the actual workers and machines behaved.",
+      opts:['纸上谈兵','卧薪尝胆','一鸣惊人','三人成虎'],
+      ans:0
+    },
+    vocab:[
+      {word:'纸上',pinyin:'zhǐ shàng',meaning:'on paper; in theory; theoretical'},
+      {word:'谈兵',pinyin:'tán bīng',meaning:'to discuss military strategy'},
+      {word:'统帅',pinyin:'tǒngshuài',meaning:'commander-in-chief; supreme commander'},
+      {word:'歼灭',pinyin:'jiānmiè',meaning:'to annihilate; to wipe out completely'},
+      {word:'实战',pinyin:'shízhàn',meaning:'actual combat; real-world practice'},
+    ]
+  },
+  {
+    id:'fujingqingzui',
+    chars:'负荆请罪',
+    pinyin:'fù jīng qǐng zuì',
+    meaning:'Carry thorns and beg forgiveness — make a humble, sincere apology; take full responsibility for wrongdoing',
+    level:'HSK6',
+    story:[
+      '战国时期，赵国有两位英雄：文臣蔺相如因机智保全了和氏璧，被封为上卿；武将廉颇战功赫赫。',
+      '廉颇不服气，认为自己武功盖世，凭什么要排在蔺相如之下？他公开说要羞辱蔺相如，蔺相如则处处回避，不与他争锋。',
+      '蔺相如解释说："我们两人是赵国的左右手，如果我们内讧，秦国就会趁机进攻。我忍让廉颇，是为了国家大局。"',
+      '廉颇听说后，深感惭愧，亲自背着一根荆条，光着上身，到蔺相如府上请罪。两人从此成为至交好友，合力保卫赵国。',
+    ],
+    storyEn:"In Zhao state, Lian Po the great general resented Lin Xiangru, a minister who outranked him despite never fighting in battle. Lian Po threatened to humiliate him publicly. Lin Xiangru avoided every confrontation. When asked why, he said: 'Lian Po and I are Zhao's two pillars. If we fight each other, Qin will destroy us both. I yield to him for the sake of the state.' Lian Po, hearing this, was overcome with shame. He stripped to the waist, put thorns on his back, and went to Lin Xiangru's house to beg forgiveness. They became lifelong allies.",
+    usage:[
+      {zh:'他意识到自己错怪了同事，主动负荆请罪，亲自登门道歉。',en:"Realizing he had wrongly blamed his colleague, he went to her home in person to offer a sincere apology."},
+      {zh:'领导者犯了错，应该负荆请罪，而不是找借口推卸责任。',en:"When leaders make mistakes, they should take full responsibility — not make excuses."},
+    ],
+    quiz:{
+      scenario:"After a heated argument where he accused a colleague unfairly, a manager realizes he was completely wrong. He calls a team meeting, admits his mistake publicly, and personally apologizes.",
+      opts:['负荆请罪','狐假虎威','叶公好龙','滥竽充数'],
+      ans:0
+    },
+    vocab:[
+      {word:'负',pinyin:'fù',meaning:'to carry on one\'s back; to bear'},
+      {word:'荆',pinyin:'jīng',meaning:'thorns; brambles'},
+      {word:'请罪',pinyin:'qǐng zuì',meaning:'to beg forgiveness; to plead guilty'},
+      {word:'惭愧',pinyin:'cánkuì',meaning:'ashamed; embarrassed; guilty'},
+      {word:'内讧',pinyin:'nèihòng',meaning:'internal conflict; infighting'},
+    ]
+  },
+];
+
+// ── State ──────────────────────────────────
+const DONE_KEY = 'cy_done_v1';
+function getDone(){ try{return JSON.parse(localStorage.getItem(DONE_KEY)||'[]');}catch{return[];} }
+function markDone(id){ const d=getDone(); if(!d.includes(id)){d.push(id);localStorage.setItem(DONE_KEY,JSON.stringify(d));} }
+
+let cur = null;
+let answered = false;
+
+// ── Vocab highlight ────────────────────────
+function hlVocab(text, vocab){
+  vocab.forEach(v=>{
+    const re = new RegExp(v.word,'g');
+    text = text.replace(re,`<span class="vw" data-word="${v.word}" data-py="${v.pinyin}" data-mean="${v.meaning}">${v.word}</span>`);
+  });
+  return text;
+}
+
+// ── Popup ──────────────────────────────────
+const popup = document.getElementById('popup');
+document.addEventListener('click', e=>{
+  const vw = e.target.closest('.vw');
+  if(vw){
+    const r = vw.getBoundingClientRect();
+    document.getElementById('pwWord').textContent = vw.dataset.word;
+    document.getElementById('pwPy').textContent   = vw.dataset.py;
+    document.getElementById('pwMean').textContent = vw.dataset.mean;
+    popup.style.display='block';
+    let top = r.bottom + window.scrollY + 8;
+    let left = r.left + window.scrollX;
+    if(left+220>window.innerWidth) left=window.innerWidth-230;
+    popup.style.top=top+'px';popup.style.left=left+'px';
+    e.stopPropagation();
+  } else { popup.style.display='none'; }
+});
+
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2800); }
+
+// ── Home ───────────────────────────────────
+function renderHome(){
+  const done = getDone();
+  const pb = document.getElementById('progressBar');
+  pb.innerHTML = STORIES.map(s=>`<div class="pb-dot${done.includes(s.id)?' done':''}" title="${s.chars}"></div>`).join('');
+  document.getElementById('storyGrid').innerHTML = STORIES.map(s=>`
+    <div class="story-card${done.includes(s.id)?' done':''}" onclick="openStory('${s.id}')">
+      <div class="card-chars">${s.chars}</div>
+      <div class="card-pinyin">${s.pinyin}</div>
+      <div class="card-meaning">${s.meaning.split('—')[0].trim()}</div>
+      <div class="card-level">${s.level}</div>
+    </div>`).join('');
+}
+
+function goHome(){
+  document.getElementById('homeView').style.display='';
+  document.getElementById('storyView').style.display='none';
+  renderHome();
+}
+
+// ── Story ──────────────────────────────────
+function openStory(id){
+  cur = STORIES.find(s=>s.id===id);
+  answered = false;
+  const s = cur;
+  document.getElementById('homeView').style.display='none';
+  document.getElementById('storyView').style.display='';
+
+  document.getElementById('svChars').textContent = s.chars;
+  document.getElementById('svPinyin').textContent = s.pinyin;
+  document.getElementById('svEng').textContent = '→ ' + s.meaning;
+  document.getElementById('svLevel').textContent = s.level;
+
+  // Story text with vocab highlights
+  document.getElementById('svStoryText').innerHTML =
+    s.story.map(p=>`<p>${hlVocab(p,s.vocab)}</p>`).join('');
+  document.getElementById('svStoryEng').innerHTML = s.storyEn;
+
+  // Usage
+  document.getElementById('svUsage').innerHTML = s.usage.map(u=>`
+    <div class="usage-item">
+      <div class="usage-zh">${hlVocab(u.zh,s.vocab)}</div>
+      <div class="usage-en">${u.en}</div>
+    </div>`).join('');
+
+  // Quiz
+  document.getElementById('quizScenario').textContent = s.quiz.scenario;
+  document.getElementById('quizOpts').innerHTML = s.quiz.opts.map((o,i)=>
+    `<div class="quiz-opt" onclick="answerQuiz(${i})" id="qo${i}">${o}</div>`
+  ).join('');
+
+  // Vocab
+  document.getElementById('svVocab').innerHTML = s.vocab.map(v=>`
+    <div class="vi">
+      <div class="vi-word">${v.word}</div>
+      <div class="vi-py">${v.pinyin}</div>
+      <div class="vi-mean">${v.meaning}</div>
+    </div>`).join('');
+
+  document.getElementById('completeBanner').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function answerQuiz(idx){
+  if(answered) return;
+  answered = true;
+  const s = cur;
+  const correct = s.quiz.ans;
+  s.quiz.opts.forEach((_,i)=>{
+    const el = document.getElementById(`qo${i}`);
+    el.classList.add('disabled');
+    if(i===correct) el.classList.add(idx===correct?'correct':'reveal');
+    if(i===idx && idx!==correct) el.classList.add('wrong');
+  });
+  if(idx===correct){ toast('正确！✓ That\'s the right chengyu!'); }
+  else { toast(`正确答案是 ${s.quiz.opts[correct]}`); }
+  markDone(s.id);
+  setTimeout(()=>{
+    const done = getDone();
+    document.getElementById('doneCount').textContent = done.length;
+    document.getElementById('completeBanner').style.display='block';
+    document.getElementById('completeBanner').scrollIntoView({behavior:'smooth',block:'nearest'});
+  },600);
+}
+
+renderHome();
+</script>
+<style>.nxt-link{display:block;text-align:center;font-size:13px;color:var(--muted,#6b7a8f);text-decoration:none;padding:20px 0 8px;letter-spacing:.01em;transition:color .2s}.nxt-link:hover{color:var(--accent,#f59e0b)}</style>
+<a class="nxt-link" href="https://ordinarymantrying.com/tools/mandarin-flashcards.html">Next → Practice HSK Vocabulary — Mandarin Flashcards</a>
+</body>
+</html>

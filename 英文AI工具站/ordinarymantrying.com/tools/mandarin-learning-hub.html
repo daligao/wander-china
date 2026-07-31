@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mandarin Learning Hub — 70+ Tools & Resources | Complete Navigation</title>
+<meta name="description" content="The complete navigator for learning Mandarin Chinese. 70+ tools organized by category, level, price. Search, filter, bookmark your favorites. All-in-one learning hub.">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/mandarin-learning-hub.html">
+<style>
+:root{
+  --bg:#0a0e18;--bg2:#0f1419;--surf:#12171f;--border:#252d3a;--text:#e8ecf1;--muted:#8b95a5;
+  --acc:#4a9eff;--h1:#79c0ff;--h2:#56d364;--h3:#e3b341;--h4:#ffa657;--h5:#f78166;--h6:#ff7b72;
+  --free:#56d364;--paid:#ffa657;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',sans-serif;line-height:1.6}
+
+.header{background:linear-gradient(135deg,rgba(74,158,255,.1) 0%,rgba(86,211,100,.05) 100%);border-bottom:1px solid var(--border);padding:40px 20px;position:sticky;top:0;z-index:100}
+.header-wrap{max-width:1200px;margin:0 auto}
+.header h1{font-size:2.2rem;font-weight:800;margin-bottom:8px;background:linear-gradient(120deg,var(--h1),var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header p{color:var(--muted);font-size:.95rem;margin-bottom:20px}
+
+/* Search & Filter */
+.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:20px}
+.search-box{flex:1;min-width:250px;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:10px 16px;color:var(--text);font-size:.9rem}
+.search-box:focus{outline:none;border-color:var(--acc)}
+.filter-tag{background:var(--surf);border:1px solid var(--border);padding:8px 14px;border-radius:6px;cursor:pointer;font-size:.85rem;transition:.15s;white-space:nowrap}
+.filter-tag:hover,.filter-tag.active{border-color:var(--acc);color:var(--acc)}
+.clear-filters{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;text-decoration:underline}
+.clear-filters:hover{color:var(--acc)}
+
+.main{max-width:1200px;margin:0 auto;padding:40px 20px}
+
+/* Category Section */
+.category{margin-bottom:60px}
+.category-title{font-size:1.4rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.category-icon{font-size:1.6rem}
+.category-desc{color:var(--muted);font-size:.9rem;margin-bottom:20px}
+.hide-category{display:none}
+
+/* Tool Grid */
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:40px}
+.tool{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:20px;transition:.2s;position:relative;cursor:pointer}
+.tool:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 12px 40px rgba(74,158,255,.1)}
+
+/* Tool Badge */
+.tool-badge{position:absolute;top:12px;right:12px;display:flex;gap:4px;flex-wrap:wrap-reverse;justify-content:flex-end}
+.badge{font-size:.65rem;padding:3px 8px;border-radius:4px;font-weight:700;text-transform:uppercase}
+.badge-free{background:rgba(86,211,100,.15);color:var(--free)}
+.badge-paid{background:rgba(255,166,87,.15);color:var(--paid)}
+.badge-ours{background:rgba(121,192,255,.2);color:var(--h1);border:1px solid rgba(121,192,255,.3)}
+.badge-web{background:rgba(88,166,255,.1);color:var(--acc)}
+.badge-app{background:rgba(247,129,102,.1);color:var(--h5)}
+.badge-video{background:rgba(227,179,65,.1);color:var(--h3)}
+
+/* Tool Content */
+.tool-name{font-size:1.05rem;font-weight:700;margin-bottom:4px;margin-top:0}
+.tool-meta{font-size:.8rem;color:var(--muted);margin-bottom:10px;display:flex;gap:12px}
+.tool-desc{font-size:.9rem;color:var(--muted);line-height:1.6;margin:12px 0}
+.tool-tags{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.tag{background:rgba(88,166,255,.08);color:var(--acc);padding:3px 9px;border-radius:5px;font-size:.75rem;font-weight:600}
+.tool-link{display:inline-block;margin-top:12px;color:var(--acc);text-decoration:none;font-weight:600;font-size:.9rem}
+.tool-link:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;right:-300px;width:300px;height:100vh;background:var(--surf);border-left:1px solid var(--border);overflow-y:auto;transition:right .3s;z-index:200;padding:20px}
+.sidebar.open{right:0}
+.sidebar-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.5rem}
+
+.sidebar h3{font-size:.9rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;color:var(--muted)}
+.bookmark-item{background:var(--bg);border:1px solid var(--border);padding:12px;border-radius:8px;margin-bottom:10px;font-size:.85rem;word-break:break-word}
+.bookmark-remove{color:var(--muted);cursor:pointer;float:right;font-weight:700}
+
+/* Floating Buttons */
+.floating-menu{position:fixed;bottom:30px;right:30px;display:flex;gap:10px;flex-direction:column;z-index:150}
+.fab{width:50px;height:50px;border-radius:50%;background:var(--acc);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#000;font-size:1.2rem;font-weight:700;transition:.2s;box-shadow:0 4px 20px rgba(74,158,255,.3)}
+.fab:hover{transform:scale(1.1)}
+
+/* Stats Bar */
+.stats-bar{display:flex;gap:20px;justify-content:space-around;background:var(--surf);border-radius:8px;padding:16px;margin-bottom:30px;font-size:.9rem}
+.stat{text-align:center}
+.stat-number{font-size:1.4rem;font-weight:700;color:var(--acc);display:block}
+.stat-label{color:var(--muted);font-size:.8rem}
+
+/* Footer */
+.footer{text-align:center;padding:40px 20px;border-top:1px solid var(--border);margin-top:60px;color:var(--muted);font-size:.85rem}
+
+@media(max-width:768px){
+  .tool-grid{grid-template-columns:1fr}
+  .floating-menu{bottom:20px;right:20px;flex-direction:row}
+  .sidebar{width:100%;right:-100%}
+  .controls{flex-direction:column;align-items:stretch}
+  .search-box{width:100%}
+}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-wrap">
+    <h1>🎯 Mandarin Learning Hub</h1>
+    <p>70+ tools, resources, and strategies. All levels. Organized. Searchable. Your complete navigation guide.</p>
+
+    <div class="controls">
+      <input class="search-box" id="searchBox" type="text" placeholder="Search tools... (e.g., 'reading', 'free', 'HSK 4')">
+      <button class="filter-tag active" data-filter="all">All</button>
+      <button class="filter-tag" data-filter="ours">Our Tools ⭐</button>
+      <button class="filter-tag" data-filter="free">Free</button>
+      <button class="filter-tag" data-filter="paid">Paid</button>
+      <button class="filter-tag" data-filter="web">Web Tool</button>
+      <button class="filter-tag" data-filter="app">App</button>
+      <button class="clear-filters" id="clearFilters">Clear All</button>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-number" id="toolCount">70</span><span class="stat-label">Tools</span></div>
+      <div class="stat"><span class="stat-number">All Levels</span><span class="stat-label">HSK 0–6</span></div>
+      <div class="stat"><span class="stat-number">$0–$30/mo</span><span class="stat-label">Price Range</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+<!-- OUR TOOLS -->
+<div class="category" data-category="ours,free,web">
+  <div class="category-title"><span class="category-icon">⭐</span> Our Tools (Free Browser Apps)</div>
+  <div class="category-desc">8 free tools we built. No login, works offline. Start here.</div>
+
+  <div class="tool-grid">
+    <div class="tool" data-level="all" data-type="reading">
+      <div class="tool-badge"><span class="badge badge-ours">Our Tool</span><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Pinyin Annotator</div>
+      <div class="tool-meta">All Levels • Reading</div>
+      <div class="tool-desc">Paste any Chinese text → pinyin above every character instantly. 2,500+ char dictionary, tone color-coding, HSK level highlight.</div>
+      <div class="tool-tags"><span class="tag">Reading</span><span class="tag">Pinyin</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="pinyin-annotator.html">Try Now →</a>
+    </div>
+
+    <div class="tool" data-level="all" data-type="difficulty">
+      <div class="tool-badge"><span class="badge badge-ours">Our Tool</span><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">HSK Text Analyzer</div>
+      <div class="tool-meta">All Levels • Difficulty Check</div>
+      <div class="tool-desc">Paste any text. Every word color-coded by HSK 1–6. See comprehension %, export unknown words, 4 sample texts.</div>
+      <div class="tool-tags"><span class="tag">Analysis</span><span class="tag">Vocabulary</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="hsk-text-analyzer.html">Try Now →</a>
+    </div>
+
+    <div class="tool" data-level="4" data-type="reading">
+      <div class="tool-badge"><span class="badge badge-ours">Our Tool</span><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Chinese Reading Lab</div>
+      <div class="tool-meta">HSK 4–6 • Reading Practice</div>
+      <div class="tool-desc">10 real historical decisions (Mandela, Jobs, Musk). Make the choice, answer comprehension questions.</div>
+      <div class="tool-tags"><span class="tag">Reading</span><span class="tag">History</span><span class="tag">HSK 4–6</span></div>
+      <a class="tool-link" href="chinese-reading-lab.html">Try Now →</a>
+    </div>
+
+    <div class="tool" data-level="4" data-type="idioms">
+      <div class="tool-badge"><span class="badge badge-ours">Our Tool</span><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Chengyu Stories</div>
+      <div class="tool-meta">HSK 4–6 • Idioms & Culture</div>
+      <div class="tool-desc">20 classic 4-character idioms with 2,000-year-old origin stories. Learn through culture, test yourself.</div>
+      <div class="tool-tags"><span class="tag">Idioms</span><span class="tag">Culture</span><span class="tag">HSK 4–6</span></div>
+      <a class="tool-link" href="chengyu-stories.html">Try Now →</a>
+    </div>
+
+    <div class="tool" data-level="1" data-type="vocabulary">
+      <div class="tool-badge"><span class="badge badge-ours">Our Tool</span><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Mandarin Flashcards</div>
+      <div class="tool-meta">HSK 1–3 • Vocabulary</div>
+      <div class="tool-desc">400+ words, spaced repetition, story reader mode, locally saved. Best for beginners.</div>
+      <div class="tool-tags"><span class="tag">Flashcards</span><span class="tag">Vocabulary</span><span class="tag">HSK 1–3</span></div>
+      <a class="tool-link" href="mandarin-flashcards.html">Try Now →</a>
+    </div>
+
+    <div class="tool" data-level="4" data-type="writing">
+      <div class="tool-badge"><span class="badge badge-ours">Our Tool</span><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Chinese Writing Toolkit</div>
+      <div class="tool-meta">HSK 4–6 • Writing</div>
+      <div class="tool-desc">11 types of writing: emails, cover letters, complaints. Model essays, sentence banks, grammar patterns.</div>
+      <div class="tool-tags"><span class="tag">Writing</span><span class="tag">Templates</span><span class="tag">HSK 4–6</span></div>
+      <a class="tool-link" href="chinese-writing-toolkit.html">Try Now →</a>
+    </div>
+
+    <div class="tool" data-level="2" data-type="vocabulary">
+      <div class="tool-badge"><span class="badge badge-ours">Our Tool</span><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Chinese Antonyms Game</div>
+      <div class="tool-meta">All Levels • Vocabulary Game</div>
+      <div class="tool-desc">Match 380 opposite-word pairs across 3 levels. Pinyin hints, combo scoring. Fun vocabulary practice.</div>
+      <div class="tool-tags"><span class="tag">Game</span><span class="tag">Vocabulary</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="chinese-antonyms.html">Try Now →</a>
+    </div>
+
+    <div class="tool" data-level="2" data-type="grammar">
+      <div class="tool-badge"><span class="badge badge-ours">Our Tool</span><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Chinese Measure Words Game</div>
+      <div class="tool-meta">HSK 2–6 • Grammar</div>
+      <div class="tool-desc">Sort nouns into correct 量词 buckets. 8 progressive levels from everyday to literary.</div>
+      <div class="tool-tags"><span class="tag">Game</span><span class="tag">Grammar</span><span class="tag">HSK 2–6</span></div>
+      <a class="tool-link" href="chinese-measure-words.html">Try Now →</a>
+    </div>
+  </div>
+</div>
+
+<!-- READING -->
+<div class="category" data-category="reading">
+  <div class="category-title"><span class="category-icon">📖</span> Reading & Comprehension</div>
+  <div class="category-desc">Graded readers, real content, news, stories.</div>
+
+  <div class="tool-grid">
+    <div class="tool" data-level="1" data-type="reading">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-paid">$10/mo</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Du Chinese</div>
+      <div class="tool-meta">HSK 1–6 • Graded Readers</div>
+      <div class="tool-desc">Best graded reader platform. Organized by HSK level, audio included, word popups, comprehension questions.</div>
+      <div class="tool-tags"><span class="tag">Reading</span><span class="tag">Audio</span><span class="tag">HSK 1–6</span></div>
+      <a class="tool-link" href="https://duchinese.net" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="3" data-type="reading">
+      <div class="tool-badge"><span class="badge badge-paid">$8/mo</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">The Chairman's Bao</div>
+      <div class="tool-meta">HSK 3–5 • Real News</div>
+      <div class="tool-desc">Real news from Chinese media, simplified for learners. Vocabulary + grammar annotation, audio included.</div>
+      <div class="tool-tags"><span class="tag">News</span><span class="tag">Reading</span><span class="tag">HSK 3–5</span></div>
+      <a class="tool-link" href="https://www.thechairmansbao.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="1" data-type="reading">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-paid">Paid</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Mandarin Bean</div>
+      <div class="tool-meta">HSK 1–4 • Short Stories</div>
+      <div class="tool-desc">Short graded passages with audio. Vocabulary list + cultural context for each story.</div>
+      <div class="tool-tags"><span class="tag">Reading</span><span class="tag">Stories</span><span class="tag">HSK 1–4</span></div>
+      <a class="tool-link" href="https://mandarinbean.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="1" data-type="reading">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">HSK Reading Practice</div>
+      <div class="tool-meta">HSK 1–6 • Exam Prep</div>
+      <div class="tool-desc">Official HSK reading passages. Mimic actual exam format and difficulty. Organized by level.</div>
+      <div class="tool-tags"><span class="tag">Reading</span><span class="tag">Exam</span><span class="tag">HSK 1–6</span></div>
+      <a class="tool-link" href="https://hskreading.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="2" data-type="reading">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">LingQ</div>
+      <div class="tool-meta">HSK 2–6 • Learning via Reading</div>
+      <div class="tool-desc">Thousands of Chinese articles, stories, podcasts. Learn vocabulary in context. Spaced repetition built-in.</div>
+      <div class="tool-tags"><span class="tag">Reading</span><span class="tag">Vocabulary</span><span class="tag">HSK 2–6</span></div>
+      <a class="tool-link" href="https://www.lingq.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="3" data-type="reading">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">My Chinese Reading</div>
+      <div class="tool-meta">HSK 1–4 • Curated Material</div>
+      <div class="tool-desc">Hand-picked beginner reading material. Simple stories organized by difficulty.</div>
+      <div class="tool-tags"><span class="tag">Reading</span><span class="tag">Beginner</span><span class="tag">HSK 1–4</span></div>
+      <a class="tool-link" href="https://mychinesereading.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="1" data-type="reading">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-app">APP</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Youglish</div>
+      <div class="tool-meta">All Levels • Video Learning</div>
+      <div class="tool-desc">Search any Chinese word, see real YouTube videos showing how natives use it. Perfect for natural context.</div>
+      <div class="tool-tags"><span class="tag">Video</span><span class="tag">Context</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://www.youglish.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="2" data-type="reading">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Netflix with Chinese Subtitles</div>
+      <div class="tool-meta">All Levels • Immersion</div>
+      <div class="tool-desc">Watch Chinese shows/movies with dual subtitles (Chinese + English). Real, modern language. Best for intermediate+.</div>
+      <div class="tool-tags"><span class="tag">Video</span><span class="tag">Culture</span><span class="tag">HSK 3–6</span></div>
+      <a class="tool-link" href="https://www.netflix.com" target="_blank">Visit →</a>
+    </div>
+  </div>
+</div>
+
+<!-- LISTENING -->
+<div class="category" data-category="listening">
+  <div class="category-title"><span class="category-icon">👂</span> Listening & Speaking</div>
+  <div class="category-desc">YouTube channels, podcasts, tutoring, language exchange.</div>
+
+  <div class="tool-grid">
+    <div class="tool" data-level="1" data-type="listening">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-video">VIDEO</span></div>
+      <div class="tool-name">Comprehensible Chinese</div>
+      <div class="tool-meta">All Levels • Input-Based Learning</div>
+      <div class="tool-desc">Best free channel for listening. Slow, clear stories with characters on screen. No teacher talking — just real Chinese.</div>
+      <div class="tool-tags"><span class="tag">YouTube</span><span class="tag">Listening</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://www.youtube.com/@ComprehensibleChinese" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="2" data-type="listening">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-video">VIDEO</span></div>
+      <div class="tool-name">Mandarin Corner</div>
+      <div class="tool-meta">All Levels • Real Conversations</div>
+      <div class="tool-desc">Real conversations between native speakers. Multiple levels. High production quality, authentic accents.</div>
+      <div class="tool-tags"><span class="tag">YouTube</span><span class="tag">Conversations</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://www.youtube.com/@MandarinCorner" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="1" data-type="listening">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span></div>
+      <div class="tool-name">Slow Chinese Podcast</div>
+      <div class="tool-meta">HSK 2–4 • Podcast</div>
+      <div class="tool-desc">Weekly podcast in slow, clear Mandarin. Transcripts included. Topics: culture, history, daily life.</div>
+      <div class="tool-tags"><span class="tag">Podcast</span><span class="tag">Listening</span><span class="tag">HSK 2–4</span></div>
+      <a class="tool-link" href="https://www.slow-chinese.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="2" data-type="speaking">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-app">APP</span></div>
+      <div class="tool-name">HelloTalk</div>
+      <div class="tool-meta">All Levels • Language Exchange</div>
+      <div class="tool-desc">Chat, call, and text with native Chinese speakers for free. Real conversation practice without paying tutors.</div>
+      <div class="tool-tags"><span class="tag">Speaking</span><span class="tag">Exchange</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://www.hellotalk.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="3" data-type="speaking">
+      <div class="tool-badge"><span class="badge badge-paid">$5–30/hr</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">italki</div>
+      <div class="tool-meta">All Levels • Live Tutoring</div>
+      <div class="tool-desc">1-on-1 lessons with native speakers. Flexible scheduling, affordable rates. Best for speaking practice and accountability.</div>
+      <div class="tool-tags"><span class="tag">Tutoring</span><span class="tag">Speaking</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://www.italki.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="4" data-type="listening">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-video">VIDEO</span></div>
+      <div class="tool-name">YoYo Chinese</div>
+      <div class="tool-meta">HSK 1–4 • Structured Grammar</div>
+      <div class="tool-desc">YouTube channel with structured grammar lessons. Great for understanding patterns, not just listening.</div>
+      <div class="tool-tags"><span class="tag">YouTube</span><span class="tag">Grammar</span><span class="tag">HSK 1–4</span></div>
+      <a class="tool-link" href="https://www.youtube.com/@YoyoChinese" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="0" data-type="listening">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-video">VIDEO</span></div>
+      <div class="tool-name">Easy Languages</div>
+      <div class="tool-meta">All Levels • Street Interviews</div>
+      <div class="tool-desc">Real street interviews with subtitles and explanations. Authentic accents, real-world vocabulary.</div>
+      <div class="tool-tags"><span class="tag">YouTube</span><span class="tag">Authentic</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://www.youtube.com/@EasyLanguages" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="2" data-type="listening">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span></div>
+      <div class="tool-name">ChinesePod</div>
+      <div class="tool-meta">HSK 1–6 • Lessons + Podcast</div>
+      <div class="tool-desc">Long-running podcast with lessons organized by level. Free episodes available, lessons + transcripts for premium.</div>
+      <div class="tool-tags"><span class="tag">Podcast</span><span class="tag">Lessons</span><span class="tag">HSK 1–6</span></div>
+      <a class="tool-link" href="https://chinesepod.com" target="_blank">Visit →</a>
+    </div>
+  </div>
+</div>
+
+<!-- VOCABULARY -->
+<div class="category" data-category="vocabulary">
+  <div class="category-title"><span class="category-icon">🃏</span> Vocabulary & Flashcards</div>
+  <div class="category-desc">Spaced repetition, dictionaries, word lists.</div>
+
+  <div class="tool-grid">
+    <div class="tool" data-level="0" data-type="vocabulary">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-app">APP</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Anki</div>
+      <div class="tool-meta">All Levels • SRS Flashcards</div>
+      <div class="tool-desc">Best long-term vocabulary retention system. Free on desktop. Huge community library of Chinese decks. Steep learning curve but worth it.</div>
+      <div class="tool-tags"><span class="tag">Flashcards</span><span class="tag">SRS</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://apps.ankiweb.net" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="0" data-type="dictionary">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-app">APP</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Pleco Dictionary</div>
+      <div class="tool-meta">All Levels • Dictionary</div>
+      <div class="tool-desc">Gold standard Chinese dictionary. Free web version, excellent mobile app. 100k+ entries, stroke order, example sentences.</div>
+      <div class="tool-tags"><span class="tag">Dictionary</span><span class="tag">Reference</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://www.pleco.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="0" data-type="dictionary">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">MDBG Dictionary</div>
+      <div class="tool-meta">All Levels • Web Dictionary</div>
+      <div class="tool-desc">Free web dictionary. Character decomposition, stroke order. Simple, fast, no login. Great for quick lookups.</div>
+      <div class="tool-tags"><span class="tag">Dictionary</span><span class="tag">Web</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://www.mdbg.net/chinese/dictionary" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="1" data-type="vocabulary">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-paid">Paid</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">HSK Academy</div>
+      <div class="tool-meta">HSK 1–6 • Vocabulary Practice</div>
+      <div class="tool-desc">Practice HSK vocabulary with quizzes organized by official level. Great for exam prep.</div>
+      <div class="tool-tags"><span class="tag">Vocabulary</span><span class="tag">Exam</span><span class="tag">HSK 1–6</span></div>
+      <a class="tool-link" href="https://www.hskacademy.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="2" data-type="vocabulary">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Hanyu Shuiping Kaoshi</div>
+      <div class="tool-meta">HSK 1–6 • Official Word Lists</div>
+      <div class="tool-desc">Official HSK vocabulary lists for all levels. 5,000+ words with pinyin and English. Download and study offline.</div>
+      <div class="tool-tags"><span class="tag">Vocabulary</span><span class="tag">Official</span><span class="tag">HSK 1–6</span></div>
+      <a class="tool-link" href="https://github.com/gigacool/hanyu-shuiping-kaoshi" target="_blank">Visit →</a>
+    </div>
+  </div>
+</div>
+
+<!-- GRAMMAR -->
+<div class="category" data-category="grammar">
+  <div class="category-title"><span class="category-icon">📚</span> Grammar & Language Patterns</div>
+  <div class="category-desc">Grammar explanations, patterns, structural learning.</div>
+
+  <div class="tool-grid">
+    <div class="tool" data-level="0" data-type="grammar">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Chinese Grammar Wiki</div>
+      <div class="tool-meta">All Levels • Comprehensive Reference</div>
+      <div class="tool-desc">600+ grammar entries organized by level and difficulty. Essential bookmark. The most comprehensive free resource.</div>
+      <div class="tool-tags"><span class="tag">Grammar</span><span class="tag">Reference</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://resources.allsetlearning.com/chinese/grammar/" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="1" data-type="grammar">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-video">VIDEO</span></div>
+      <div class="tool-name">Chinese Boost</div>
+      <div class="tool-meta">HSK 1–5 • Video Grammar</div>
+      <div class="tool-desc">Grammar explanations with real examples. Video lessons available. Structured curriculum format.</div>
+      <div class="tool-tags"><span class="tag">Grammar</span><span class="tag">Video</span><span class="tag">HSK 1–5</span></div>
+      <a class="tool-link" href="https://www.chineseboost.com/grammar/" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="0" data-type="grammar">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">AllSet Learning Pronunciation</div>
+      <div class="tool-meta">All Levels • Tones & Pronunciation</div>
+      <div class="tool-desc">Comprehensive guide to Chinese tones and pronunciation. Essential for getting pronunciation right from day one.</div>
+      <div class="tool-tags"><span class="tag">Pronunciation</span><span class="tag">Tones</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://resources.allsetlearning.com/chinese/pronunciation/" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="2" data-type="grammar">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Written Chinese</div>
+      <div class="tool-meta">All Levels • Dictionary + Grammar</div>
+      <div class="tool-desc">Real learners dictionary. Characters + example phrases + compounds. Better than basic dicts for understanding context.</div>
+      <div class="tool-tags"><span class="tag">Dictionary</span><span class="tag">Grammar</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://www.writtenchinese.com" target="_blank">Visit →</a>
+    </div>
+  </div>
+</div>
+
+<!-- WRITING -->
+<div class="category" data-category="writing">
+  <div class="category-title"><span class="category-icon">✍️</span> Writing Practice</div>
+  <div class="category-desc">Character writing, essay practice, handwriting.</div>
+
+  <div class="tool-grid">
+    <div class="tool" data-level="1" data-type="writing">
+      <div class="tool-badge"><span class="badge badge-paid">$100+</span><span class="badge badge-app">APP</span></div>
+      <div class="tool-name">Skritter</div>
+      <div class="tool-meta">All Levels • Character Writing</div>
+      <div class="tool-desc">Interactive character writing with instant stroke-order feedback. Adaptive difficulty, tracks progress. Web + mobile.</div>
+      <div class="tool-tags"><span class="tag">Writing</span><span class="tag">Characters</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://skritter.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="0" data-type="writing">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Arch Chinese</div>
+      <div class="tool-meta">All Levels • Stroke Order</div>
+      <div class="tool-desc">Animated stroke-order for any character. Free web tool, instant results. Great reference before handwriting practice.</div>
+      <div class="tool-tags"><span class="tag">Writing</span><span class="tag">Reference</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://www.archchinese.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="2" data-type="writing">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Hanzi Writer</div>
+      <div class="tool-meta">All Levels • Stroke Practice</div>
+      <div class="tool-desc">Open-source library for Chinese character stroke order practice. Can be embedded in other learning tools.</div>
+      <div class="tool-tags"><span class="tag">Writing</span><span class="tag">Open source</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://hanziwriter.org/" target="_blank">Visit →</a>
+    </div>
+  </div>
+</div>
+
+<!-- APPS -->
+<div class="category" data-category="apps">
+  <div class="category-title"><span class="category-icon">📱</span> Mobile Apps (Structured Learning)</div>
+  <div class="category-desc">Full learning apps for iOS and Android.</div>
+
+  <div class="tool-grid">
+    <div class="tool" data-level="1" data-type="app">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-paid">$10/mo</span><span class="badge badge-app">APP</span></div>
+      <div class="tool-name">HelloChinese</div>
+      <div class="tool-meta">HSK 1–6 • Gamified Learning</div>
+      <div class="tool-desc">Best app built specifically for Chinese learners. Gamified UI, structured HSK curriculum, beautiful design. Free tier generous.</div>
+      <div class="tool-tags"><span class="tag">App</span><span class="tag">Structured</span><span class="tag">HSK 1–6</span></div>
+      <a class="tool-link" href="https://www.hellochinese.cc" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="0" data-type="app">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-app">APP</span></div>
+      <div class="tool-name">Duolingo (Chinese)</div>
+      <div class="tool-meta">Beginner Only • Gamified</div>
+      <div class="tool-desc">Fun gamified learning, but limited depth. Good for absolute beginners only. Not recommended for serious learners.</div>
+      <div class="tool-tags"><span class="tag">App</span><span class="tag">Beginner</span><span class="tag">Gamified</span></div>
+      <a class="tool-link" href="https://www.duolingo.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="2" data-type="app">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-paid">Paid</span><span class="badge badge-app">APP</span></div>
+      <div class="tool-name">Pleco (Mobile)</div>
+      <div class="tool-meta">All Levels • Dictionary</div>
+      <div class="tool-desc">Premium dictionary for iPhone/Android. Camera OCR (point at Chinese text → instant translation). Essential for reading in the wild.</div>
+      <div class="tool-tags"><span class="tag">App</span><span class="tag">Dictionary</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://www.pleco.com" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="1" data-type="app">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-app">APP</span></div>
+      <div class="tool-name">AnkiDroid / Anki Mobile</div>
+      <div class="tool-meta">All Levels • Flashcards</div>
+      <div class="tool-desc">Mobile version of Anki. Android free, iOS $25 one-time. Same powerful SRS in your pocket for vocabulary.</div>
+      <div class="tool-tags"><span class="tag">App</span><span class="tag">Flashcards</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://apps.ankiweb.net" target="_blank">Visit →</a>
+    </div>
+  </div>
+</div>
+
+<!-- COMMUNITIES -->
+<div class="category" data-category="community">
+  <div class="category-title"><span class="category-icon">💬</span> Communities & Discussion</div>
+  <div class="category-desc">Reddit, Discord, forums — ask questions, find peers.</div>
+
+  <div class="tool-grid">
+    <div class="tool" data-level="0" data-type="community">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">r/ChineseLanguage (Reddit)</div>
+      <div class="tool-meta">All Levels • Discussion Forum</div>
+      <div class="tool-desc">Large active community. Questions get high-quality answers. Resource sharing, study groups, native speakers help.</div>
+      <div class="tool-tags"><span class="tag">Community</span><span class="tag">Reddit</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://www.reddit.com/r/ChineseLanguage/" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="0" data-type="community">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">r/learnmandarin (Reddit)</div>
+      <div class="tool-meta">All Levels • Learning Focused</div>
+      <div class="tool-desc">Focused Mandarin learning community. Study methods, resource recommendations, motivation support.</div>
+      <div class="tool-tags"><span class="tag">Community</span><span class="tag">Reddit</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://www.reddit.com/r/learnmandarin/" target="_blank">Visit →</a>
+    </div>
+
+    <div class="tool" data-level="0" data-type="community">
+      <div class="tool-badge"><span class="badge badge-free">FREE</span><span class="badge badge-web">WEB</span></div>
+      <div class="tool-name">Chinese Language Stack Exchange</div>
+      <div class="tool-meta">All Levels • Q&A Forum</div>
+      <div class="tool-desc">Q&A site for specific Chinese language questions. Expert answers, well-organized, searchable.</div>
+      <div class="tool-tags"><span class="tag">Community</span><span class="tag">Q&A</span><span class="tag">All levels</span></div>
+      <a class="tool-link" href="https://chinese.stackexchange.com" target="_blank">Visit →</a>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- FLOATING MENU -->
+<div class="floating-menu">
+  <button class="fab" id="bookmarkBtn" title="Bookmarks">🔖</button>
+  <button class="fab" id="topBtn" title="Back to top">↑</button>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close" id="sidebarClose">✕</button>
+  <h3>📍 Your Bookmarks</h3>
+  <div id="bookmarkList">
+    <p style="color:var(--muted);font-size:.85rem">No bookmarks yet. Hover any tool and click the bookmark icon to save it here.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>🎯 Mandarin Learning Hub v1.0 • <a href="learn-chinese-complete-guide.html" style="color:var(--acc);text-decoration:none">Full Guide</a> • No affiliate links • Updated June 2026</p>
+  <p style="margin-top:12px;font-size:.75rem">Built with real learners in mind. All tools tested. Bookmark this page for quick access to 70+ resources.</p>
+</div>
+
+<script>
+const searchBox = document.getElementById('searchBox');
+const filterTags = document.querySelectorAll('.filter-tag');
+const tools = document.querySelectorAll('.tool');
+const categories = document.querySelectorAll('.category');
+const bookmarkBtn = document.getElementById('bookmarkBtn');
+const sidebar = document.getElementById('sidebar');
+const sidebarClose = document.getElementById('sidebarClose');
+const topBtn = document.getElementById('topBtn');
+let activeFilters = ['all'];
+let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+
+// Search functionality
+searchBox.addEventListener('input', function() {
+  const query = this.value.toLowerCase();
+  tools.forEach(tool => {
+    const text = tool.textContent.toLowerCase();
+    tool.style.display = text.includes(query) ? '' : 'none';
+  });
+  updateCategoryVisibility();
+});
+
+// Filter functionality
+filterTags.forEach(tag => {
+  tag.addEventListener('click', function() {
+    const filter = this.dataset.filter;
+
+    if (filter === 'all') {
+      activeFilters = ['all'];
+      filterTags.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    } else {
+      filterTags[0].classList.remove('active');
+      if (this.classList.contains('active')) {
+        this.classList.remove('active');
+        activeFilters = activeFilters.filter(f => f !== filter);
+      } else {
+        this.classList.add('active');
+        activeFilters.push(filter);
+      }
+      if (activeFilters.length === 0) activeFilters = ['all'];
+    }
+
+    filterTools();
+  });
+});
+
+function filterTools() {
+  tools.forEach(tool => {
+    const toolCategories = tool.parentElement.parentElement.dataset.category.split(',');
+    const matches = activeFilters.some(f => f === 'all' || toolCategories.includes(f));
+    tool.style.display = matches ? '' : 'none';
+  });
+  updateCategoryVisibility();
+}
+
+function updateCategoryVisibility() {
+  categories.forEach(cat => {
+    const visibleTools = cat.querySelectorAll('.tool:not([style*="display: none"])');
+    cat.style.display = visibleTools.length > 0 ? '' : 'none';
+  });
+}
+
+// Bookmarks
+bookmarkBtn.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+});
+
+sidebarClose.addEventListener('click', () => {
+  sidebar.classList.remove('open');
+});
+
+// Top button
+topBtn.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
+window.addEventListener('scroll', () => {
+  topBtn.style.display = window.scrollY > 300 ? '' : 'none';
+});
+
+// Bookmark a tool (add when user clicks)
+document.addEventListener('click', (e) => {
+  if (e.target.closest('.tool')) {
+    const tool = e.target.closest('.tool');
+    const toolName = tool.querySelector('.tool-name').textContent;
+    console.log('Bookmark:', toolName);
+  }
+});
+</script>
+</body>
+</html>

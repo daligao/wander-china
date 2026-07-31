@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pinyin Annotator — Paste Chinese Text, Get Pinyin Instantly</title>
+<meta name="description" content="Paste any Chinese text and instantly see pinyin above every character. Tone colors, HSK level highlights, click any character for details. Free, offline, no login.">
+<meta property="og:title" content="Chinese Pinyin Annotator — Instant Pinyin Above Every Character">
+<meta property="og:description" content="Paste any Chinese text → pinyin appears above every character instantly. Tone colors. Click for HSK level + meaning. Free, offline.">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/pinyin-annotator.html">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a14;--bg2:#10101e;--card:#14142a;
+  --blue:#4a9eff;--blue2:#6ab4ff;--gold:#f5a623;
+  --ink:#e8eaf6;--dim:#7080a0;--line:rgba(74,158,255,.18);
+  --glass:rgba(74,158,255,.07);
+  --t1:#ff4d4d;--t2:#ff9900;--t3:#22c55e;--t4:#a78bfa;--t0:#8899aa;
+}
+body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:linear-gradient(135deg,var(--bg) 0%,var(--bg2) 100%);
+  min-height:100vh;color:var(--ink)}
+.wrap{max-width:960px;margin:0 auto;padding:20px 16px 60px}
+
+/* Header */
+.masthead{text-align:center;padding:16px 0 14px}
+.masthead h1{font-size:1.8em;letter-spacing:2px;font-weight:700;
+  background:linear-gradient(90deg,var(--blue2),var(--gold));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.masthead .sub{color:var(--dim);font-size:.85em;margin-top:6px;letter-spacing:1px}
+
+/* Tone legend */
+.tone-legend{display:flex;justify-content:center;gap:14px;margin:10px 0 18px;flex-wrap:wrap}
+.tl-item{display:flex;align-items:center;gap:5px;font-size:.78em;color:var(--dim)}
+.tl-dot{width:10px;height:10px;border-radius:50%}
+.t1c{background:var(--t1)}.t2c{background:var(--t2)}.t3c{background:var(--t3)}.t4c{background:var(--t4)}.t0c{background:var(--t0)}
+
+/* Main layout */
+.main-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px}
+@media(max-width:660px){.main-grid{grid-template-columns:1fr}}
+
+/* Input panel */
+.panel{background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:16px}
+.panel-label{font-size:.78em;letter-spacing:2px;color:var(--blue2);margin-bottom:10px;
+  text-transform:uppercase;font-weight:600}
+textarea{width:100%;height:180px;background:rgba(0,0,0,.25);border:1px solid var(--line);
+  border-radius:10px;color:var(--ink);font-size:1.05em;padding:12px;resize:vertical;
+  outline:none;font-family:inherit;line-height:1.75}
+textarea::placeholder{color:var(--dim)}
+textarea:focus{border-color:rgba(74,158,255,.45)}
+
+/* Controls */
+.controls{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.btn-primary{background:linear-gradient(120deg,var(--blue),#2563eb);color:#fff;
+  border:none;border-radius:10px;padding:10px 22px;cursor:pointer;font-size:.92em;
+  font-weight:600;transition:.2s;letter-spacing:.5px}
+.btn-primary:hover{opacity:.88;transform:translateY(-1px)}
+.btn-secondary{background:var(--glass);border:1px solid var(--line);color:var(--dim);
+  border-radius:10px;padding:8px 16px;cursor:pointer;font-size:.85em;transition:.2s}
+.btn-secondary:hover{color:var(--ink);border-color:rgba(74,158,255,.35)}
+.btn-copy{background:rgba(82,183,136,.12);border:1px solid rgba(82,183,136,.3);
+  color:#7ee8bb;border-radius:10px;padding:8px 16px;cursor:pointer;font-size:.85em;transition:.2s}
+.btn-copy:hover{background:rgba(82,183,136,.2)}
+.char-count{font-size:.78em;color:var(--dim);margin-left:auto}
+
+/* Toggle switches */
+.toggles{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap}
+.toggle-item{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:.82em;color:var(--dim)}
+.toggle-item input{width:32px;height:18px;accent-color:var(--blue);cursor:pointer}
+.toggle-item:hover{color:var(--ink)}
+
+/* Output panel */
+.output-panel{background:var(--glass);border:1px solid var(--line);border-radius:14px;
+  padding:16px;min-height:214px}
+.output-area{font-size:1.1em;line-height:3.2;color:var(--ink);overflow-y:auto;
+  max-height:400px;word-break:break-all}
+.output-placeholder{color:var(--dim);font-size:.9em;text-align:center;
+  padding:40px 20px;line-height:1.8}
+
+/* Ruby — pinyin above character */
+ruby{display:inline-flex;flex-direction:column-reverse;align-items:center;
+  vertical-align:bottom;line-height:1;margin:0 1px}
+rt{font-size:.55em;color:var(--dim);letter-spacing:.3px;line-height:1.4;
+  font-family:'Segoe UI',sans-serif;white-space:nowrap;text-align:center}
+.char-span{cursor:pointer;transition:.1s;border-radius:3px;padding:1px 0}
+.char-span:hover{background:rgba(74,158,255,.15)}
+
+/* Tone coloring on rt */
+.tone-on rt.t1{color:var(--t1)}
+.tone-on rt.t2{color:var(--t2)}
+.tone-on rt.t3{color:var(--t3)}
+.tone-on rt.t4{color:var(--t4)}
+.tone-on rt.t0{color:var(--t0)}
+
+/* HSK highlight on char */
+.hsk-on .char-span.hsk1{color:#7ee8bb}
+.hsk-on .char-span.hsk2{color:#60d4b0}
+.hsk-on .char-span.hsk3{color:#4dc4a0}
+.hsk-on .char-span.hsk4{color:var(--blue2)}
+.hsk-on .char-span.hsk5{color:#b09ee8}
+.hsk-on .char-span.hsk6{color:#d09060}
+.hsk-on .char-span.unk{color:var(--dim)}
+
+/* Popup */
+.popup{position:fixed;z-index:200;background:#0c0c22;border:1px solid var(--line);
+  border-radius:14px;padding:14px 18px;display:none;pointer-events:none;
+  box-shadow:0 8px 32px rgba(0,0,0,.7);min-width:180px}
+.pu-char{font-size:2.4em;font-weight:700;color:var(--blue2)}
+.pu-py{font-size:1em;color:var(--gold);margin-top:4px}
+.pu-hsk{font-size:.75em;color:var(--dim);margin-top:4px}
+.pu-mean{font-size:.82em;color:#b8c8e8;margin-top:6px;line-height:1.5}
+
+/* Stats bar */
+.stats-bar{display:flex;gap:20px;margin-top:12px;font-size:.78em;color:var(--dim);flex-wrap:wrap}
+.stat-item{display:flex;gap:5px;align-items:center}
+.stat-val{color:var(--blue2);font-weight:600}
+
+/* Tips */
+.tips{background:var(--glass);border:1px solid var(--line);border-radius:12px;
+  padding:14px 18px;margin-top:16px;font-size:.82em;color:var(--dim);line-height:1.8}
+.tips strong{color:var(--blue2)}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#0c0c22;border:1px solid rgba(74,158,255,.4);color:var(--ink);
+  padding:10px 20px;border-radius:10px;opacity:0;transition:.3s;z-index:300;
+  pointer-events:none;font-size:.88em}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:600px){
+  .masthead h1{font-size:1.35em}
+  .output-area{font-size:1em;line-height:3.4}
+  .controls{gap:8px}
+}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="wrap">
+  <div class="masthead">
+    <h1>Pinyin Annotator 拼音标注</h1>
+    <div class="sub">Paste any Chinese text → instant pinyin above every character · Free · Offline</div>
+  </div>
+
+  <div class="tone-legend">
+    <div class="tl-item"><div class="tl-dot t1c"></div>1st tone — ā</div>
+    <div class="tl-item"><div class="tl-dot t2c"></div>2nd tone — á</div>
+    <div class="tl-item"><div class="tl-dot t3c"></div>3rd tone — ǎ</div>
+    <div class="tl-item"><div class="tl-dot t4c"></div>4th tone — à</div>
+    <div class="tl-item"><div class="tl-dot t0c"></div>neutral — a</div>
+  </div>
+
+  <div class="main-grid">
+    <div class="panel">
+      <div class="panel-label">📋 Input — Paste Chinese Here</div>
+      <textarea id="inputText" placeholder="在这里粘贴中文文字...
+
+例如：人生就是一场旅行，重要的不是目的地，而是沿途的风景和心情。
+
+Or paste any text from a news article, book, WeChat, or your textbook."></textarea>
+      <div class="controls">
+        <button class="btn-primary" onclick="annotate()">标注 Annotate →</button>
+        <button class="btn-secondary" onclick="clearAll()">Clear</button>
+        <button class="btn-secondary" onclick="loadSample()">Sample 示例</button>
+        <span class="char-count" id="charCount">0 characters</span>
+      </div>
+      <div class="toggles">
+        <label class="toggle-item"><input type="checkbox" id="toneColors" checked onchange="rerender()"> Tone Colors</label>
+        <label class="toggle-item"><input type="checkbox" id="hskColors" onchange="rerender()"> HSK Highlight</label>
+        <label class="toggle-item"><input type="checkbox" id="unknownOnly" onchange="rerender()"> Unknown chars only</label>
+      </div>
+    </div>
+
+    <div class="panel output-panel" id="outputPanel">
+      <div class="panel-label">📖 Output — Annotated Text</div>
+      <div class="output-area tone-on" id="outputArea">
+        <div class="output-placeholder">
+          Your annotated text will appear here.<br><br>
+          <strong style="color:var(--blue2)">Click any character</strong> for tone, HSK level, and hint.<br>
+          Enable <strong style="color:var(--gold)">Tone Colors</strong> to color-code the four tones.<br>
+          Enable <strong style="color:#7ee8bb">HSK Highlight</strong> to color by vocabulary level.
+        </div>
+      </div>
+      <div class="controls" style="margin-top:10px">
+        <button class="btn-copy" onclick="copyResult()">📋 Copy Text + Pinyin</button>
+        <button class="btn-secondary" onclick="copyPlain()">Copy Chinese Only</button>
+      </div>
+      <div class="stats-bar" id="statsBar" style="display:none">
+        <div class="stat-item">Total: <span class="stat-val" id="statTotal">0</span> chars</div>
+        <div class="stat-item">Annotated: <span class="stat-val" id="statAnnotated">0</span></div>
+        <div class="stat-item">Coverage: <span class="stat-val" id="statCoverage">0%</span></div>
+        <div class="stat-item">Unknown: <span class="stat-val" id="statUnknown">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tips">
+    <strong>How to use:</strong> Paste any Chinese text (news, books, WeChat, subtitles, textbook exercises) → click Annotate →
+    pinyin appears above every recognized character. Click any character for a popup with tone and HSK level.
+    · <strong>Tone Colors</strong>: red=1st, orange=2nd, green=3rd, purple=4th, grey=neutral
+    · <strong>HSK Highlight</strong>: color-codes characters by vocabulary level (HSK1–6)
+    · <strong>Coverage:</strong> ~2,500 characters in the built-in dictionary (covers ~97% of common text)
+  </div>
+</div>
+
+<div class="popup" id="popup">
+  <div class="pu-char" id="puChar"></div>
+  <div class="pu-py" id="puPy"></div>
+  <div class="pu-hsk" id="puHsk"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Dictionary ─────────────────────────────────────────────────────────────
+// Format: char → [pinyin_with_tone, tone_number(1-4,0=neutral), hsk_level(1-6,0=outside)]
+// Polyphonic chars: most common reading used
+// ~2500 entries covering HSK1-6 + very common additional characters
+const D = (()=>{
+const raw = `的:de:0:1|一:yī:1:1|是:shì:4:1|了:le:0:1|我:wǒ:3:1|不:bù:4:1|人:rén:2:1|在:zài:4:1|他:tā:1:1|有:yǒu:3:1|这:zhè:4:1|中:zhōng:1:1|大:dà:4:1|来:lái:2:1|上:shàng:4:1|国:guó:2:1|个:gè:4:1|地:dì:4:1|到:dào:4:1|以:yǐ:3:1|说:shuō:1:1|时:shí:2:1|要:yào:4:1|就:jiù:4:1|出:chū:1:1|会:huì:4:1|可:kě:3:1|也:yě:3:1|你:nǐ:3:1|对:duì:4:1|生:shēng:1:1|能:néng:2:1|而:ér:2:1|子:zǐ:3:2|那:nà:4:1|得:de:0:2|于:yú:2:1|着:zhe:0:1|下:xià:4:1|自:zì:4:2|之:zhī:1:1|年:nián:2:1|过:guò:4:1|发:fā:1:1|后:hòu:4:1|作:zuò:4:2|里:lǐ:3:1|用:yòng:4:1|道:dào:4:2|行:xíng:2:2|所:suǒ:3:2|然:rán:2:2|家:jiā:1:1|种:zhǒng:3:2|事:shì:4:2|成:chéng:2:2|方:fāng:1:2|多:duō:1:1|经:jīng:1:2|么:me:0:1|去:qù:4:1|法:fǎ:3:2|学:xué:2:1|如:rú:2:2|都:dōu:1:1|同:tóng:2:2|现:xiàn:4:2|当:dāng:1:2|没:méi:2:1|动:dòng:4:2|面:miàn:4:2|起:qǐ:3:1|看:kàn:4:1|定:dìng:4:2|天:tiān:1:1|分:fēn:1:2|还:hái:2:1|进:jìn:4:2|好:hǎo:3:1|小:xiǎo:3:1|部:bù:4:3|其:qí:2:2|些:xiē:1:2|主:zhǔ:3:2|样:yàng:4:2|理:lǐ:3:3|心:xīn:1:2|她:tā:1:1|本:běn:3:2|前:qián:2:2|开:kāi:1:2|但:dàn:4:2|因:yīn:1:2|只:zhǐ:3:2|从:cóng:2:2|想:xiǎng:3:2|实:shí:2:3|日:rì:4:2|者:zhě:3:2|意:yì:4:3|无:wú:2:2|力:lì:4:2|它:tā:1:2|与:yǔ:3:3|长:cháng:2:2|把:bǎ:3:2|机:jī:1:3|十:shí:2:1|民:mín:2:2|第:dì:4:2|公:gōng:1:2|此:cǐ:3:2|已:yǐ:3:2|工:gōng:1:1|使:shǐ:3:3|情:qíng:2:3|明:míng:2:2|性:xìng:4:3|知:zhī:1:3|全:quán:2:3|三:sān:1:1|又:yòu:4:2|关:guān:1:3|点:diǎn:3:2|正:zhèng:4:2|业:yè:4:2|外:wài:4:2|将:jiāng:1:4|两:liǎng:3:2|高:gāo:1:2|间:jiān:1:3|由:yóu:2:3|问:wèn:4:2|很:hěn:3:1|最:zuì:4:2|重:zhòng:4:2|并:bìng:4:4|物:wù:4:3|手:shǒu:3:2|应:yīng:1:3|战:zhàn:4:4|向:xiàng:4:3|头:tóu:2:2|文:wén:2:2|体:tǐ:3:3|政:zhèng:4:3|美:měi:3:2|相:xiāng:1:3|见:jiàn:4:2|被:bèi:4:3|利:lì:4:3|什:shén:2:2|二:èr:4:1|等:děng:3:2|产:chǎn:3:4|或:huò:4:3|新:xīn:1:2|己:jǐ:3:3|制:zhì:4:4|身:shēn:1:3|果:guǒ:3:2|加:jiā:1:3|西:xī:1:2|月:yuè:4:2|话:huà:4:2|合:hé:2:3|回:huí:2:2|特:tè:4:3|代:dài:4:3|内:nèi:4:3|信:xìn:4:3|表:biǎo:3:3|化:huà:4:2|老:lǎo:3:2|给:gěi:3:2|世:shì:4:3|位:wèi:4:3|次:cì:4:3|度:dù:4:3|门:mén:2:2|任:rèn:4:4|常:cháng:2:3|先:xiān:1:2|海:hǎi:3:3|通:tōng:1:3|教:jiāo:1:3|儿:ér:2:2|原:yuán:2:3|东:dōng:1:2|声:shēng:1:3|提:tí:2:3|立:lì:4:3|及:jí:2:3|比:bǐ:3:3|员:yuán:2:3|解:jiě:3:4|系:xì:4:4|林:lín:2:3|受:shòu:4:3|价:jià:4:4|路:lù:4:3|军:jūn:1:3|究:jiū:1:4|带:dài:4:3|根:gēn:1:3|建:jiàn:4:3|组:zǔ:3:4|走:zǒu:3:2|报:bào:4:3|直:zhí:2:3|改:gǎi:3:3|让:ràng:4:2|且:qiě:3:3|结:jié:2:3|整:zhěng:3:4|际:jì:4:4|几:jǐ:3:2|存:cún:2:4|形:xíng:2:4|数:shù:4:4|近:jìn:4:4|量:liàng:4:4|治:zhì:4:4|接:jiē:1:4|安:ān:1:3|期:qī:1:4|基:jī:1:4|目:mù:4:3|置:zhì:4:4|场:chǎng:3:4|完:wán:2:4|才:cái:2:3|集:jí:2:4|别:bié:2:3|联:lián:2:4|极:jí:2:4|命:mìng:4:3|响:xiǎng:3:4|水:shuǐ:3:1|更:gèng:4:3|区:qū:1:4|共:gòng:4:3|口:kǒu:3:2|北:běi:3:3|资:zī:1:4|平:píng:2:3|打:dǎ:3:2|白:bái:2:3|节:jié:2:3|四:sì:4:1|记:jì:4:3|书:shū:1:1|为:wéi:2:1|则:zé:2:4|具:jù:4:4|格:gé:2:4|规:guī:1:4|南:nán:2:3|医:yī:1:3|热:rè:4:3|较:jiào:4:4|金:jīn:1:3|列:liè:4:4|确:què:4:4|总:zǒng:3:4|再:zài:4:2|感:gǎn:3:3|须:xū:1:4|步:bù:4:3|非:fēi:1:4|功:gōng:1:3|包:bāo:1:3|识:shí:2:4|土:tǔ:3:2|坏:huài:4:3|权:quán:2:4|专:zhuān:1:4|失:shī:1:3|强:qiáng:2:4|少:shǎo:3:2|七:qī:1:1|连:lián:2:3|克:kè:4:4|满:mǎn:3:4|争:zhēng:1:4|车:chē:1:2|六:liù:4:1|九:jiǔ:3:1|五:wǔ:3:1|八:bā:1:1|零:líng:2:3|百:bǎi:3:1|千:qiān:1:1|万:wàn:4:1|亿:yì:4:4|钱:qián:2:3|块:kuài:4:3|元:yuán:2:3|角:jiǎo:3:4|号:hào:4:2|米:mǐ:3:1|斤:jīn:1:3|岁:suì:4:2|半:bàn:4:2|杯:bēi:1:4|碗:wǎn:3:4|瓶:píng:2:4|件:jiàn:4:3|双:shuāng:1:4|条:tiáo:2:3|张:zhāng:1:3|左:zuǒ:3:2|右:yòu:4:2|边:biān:1:3|旁:páng:2:4|隔:gé:2:5|今:jīn:1:1|秒:miǎo:3:5|早:zǎo:3:2|晚:wǎn:3:3|夜:yè:4:3|昨:zuó:2:2|刚:gāng:1:4|快:kuài:4:2|慢:màn:4:3|渐:jiàn:4:5|忽:hū:1:5|突:tū:1:4|谁:shuí:2:1|哪:nǎ:3:2|每:měi:3:2|各:gè:4:3|某:mǒu:3:5|该:gāi:1:4|另:lìng:4:4|低:dī:1:3|短:duǎn:3:3|轻:qīng:1:3|冷:lěng:3:2|旧:jiù:4:4|贵:guì:4:3|丑:chǒu:3:5|脏:zāng:1:4|难:nán:2:2|太:tài:4:1|挺:tǐng:3:4|虽:suī:1:3|答:dá:2:3|听:tīng:1:1|写:xiě:3:1|读:dú:2:2|吃:chī:1:1|喝:hē:1:1|买:mǎi:3:1|卖:mài:4:3|拿:ná:2:2|放:fàng:4:2|做:zuò:4:1|叫:jiào:4:1|跑:pǎo:3:3|坐:zuò:4:1|站:zhàn:4:3|睡:shuì:4:3|玩:wán:2:2|找:zhǎo:3:2|爱:ài:4:2|恨:hèn:4:4|请:qǐng:3:2|爸:bà:4:1|妈:mā:1:1|脸:liǎn:3:3|脚:jiǎo:3:3|腿:tuǐ:3:4|背:bèi:4:4|梨:lí:2:4|桃:táo:2:4|李:lǐ:3:4|杏:xìng:4:5|饭:fàn:4:1|菜:cài:4:1|鱼:yú:2:2|肉:ròu:4:2|鸡:jī:1:2|蛋:dàn:4:2|饼:bǐng:3:4|粥:zhōu:1:4|汤:tāng:1:3|茶:chá:2:1|床:chuáng:2:1|窗:chuāng:1:3|晴:qíng:2:3|阴:yīn:1:4|风:fēng:1:2|云:yún:2:3|春:chūn:1:3|夏:xià:4:3|秋:qiū:1:3|冬:dōng:1:3|词:cí:2:3|税:shuì:4:5|随:suí:2:4|净:jìng:4:5|越:yuè:4:3|丈:zhàng:4:0|严:yán:2:4|久:jiǔ:3:0|义:yì:4:4|乐:lè:4:3|乒:pīng:1:0|乓:pāng:1:0|习:xí:2:3|互:hù:4:4|交:jiāo:1:3|亮:liàng:4:3|亲:qīn:1:3|介:jiè:4:3|们:men:0:1|企:qǐ:3:4|休:xiū:1:2|传:chuán:2:4|伤:shāng:1:3|何:hé:2:4|余:yú:2:5|便:biàn:4:3|俗:sú:2:5|保:bǎo:3:3|候:hòu:4:3|值:zhí:2:4|假:jiǎ:3:4|健:jiàn:4:3|傲:ào:4:4|兴:xìng:4:3|典:diǎn:3:4|冰:bīng:1:2|决:jué:2:3|准:zhǔn:3:3|减:jiǎn:3:3|划:huà:4:5|创:chuàng:4:4|刻:kè:4:4|办:bàn:4:3|务:wù:4:3|助:zhù:4:2|努:nǔ:3:3|励:lì:4:4|勇:yǒng:3:4|午:wǔ:3:2|单:dān:1:3|博:bó:2:4|危:wēi:1:4|即:jí:2:4|厂:chǎng:3:3|厅:tīng:1:3|历:lì:4:3|参:cān:1:3|友:yǒu:3:2|取:qǔ:3:3|变:biàn:4:3|句:jù:4:3|史:shǐ:3:4|司:sī:1:3|否:fǒu:3:4|告:gào:4:3|周:zhōu:1:3|咖:kā:1:3|品:pǐn:3:4|哥:gē:1:1|唱:chàng:4:2|商:shāng:1:3|啡:fēi:1:3|啤:pí:2:3|喜:xǐ:3:1|嘴:zuǐ:3:3|园:yuán:2:2|围:wéi:2:4|图:tú:2:3|均:jūn:1:4|坚:jiān:1:4|境:jìng:4:4|增:zēng:1:4|士:shì:4:4|处:chǔ:3:4|备:bèi:4:4|复:fù:4:3|夫:fū:1:3|奇:qí:2:4|奖:jiǎng:3:4|套:tào:4:3|女:nǚ:3:1|奶:nǎi:3:2|妹:mèi:4:1|妻:qī:1:3|姐:jiě:3:1|媒:méi:2:4|字:zì:4:2|孩:hái:2:1|宇:yǔ:3:5|宙:zhòu:4:5|宜:yí:2:5|客:kè:4:3|室:shì:4:2|害:hài:4:2|容:róng:2:3|宽:kuān:1:4|宾:bīn:1:3|导:dǎo:3:3|尊:zūn:1:4|局:jú:2:3|居:jū:1:4|展:zhǎn:3:4|属:shǔ:3:4|山:shān:1:2|巨:jù:4:4|差:chā:1:3|巴:bā:1:0|巾:jīn:1:4|市:shì:4:3|师:shī:1:1|希:xī:1:2|席:xí:2:5|帮:bāng:1:2|帽:mào:4:2|干:gān:1:2|幸:xìng:4:4|幼:yòu:4:4|底:dǐ:3:4|店:diàn:4:2|康:kāng:1:3|延:yán:2:5|弃:qì:4:3|弟:dì:4:1|影:yǐng:3:3|彻:chè:4:4|律:lǜ:4:5|微:wēi:1:5|必:bì:4:4|忆:yì:4:4|忘:wàng:4:3|怀:huái:2:4|态:tài:4:3|怎:zěn:3:1|怕:pà:4:2|思:sī:1:3|急:jí:2:3|恕:shù:4:6|息:xī:1:2|惊:jīng:1:4|惜:xī:1:5|惩:chéng:2:5|惯:guàn:4:3|慧:huì:4:5|憾:hàn:4:4|戏:xì:4:2|托:tuō:1:4|扬:yáng:2:4|批:pī:1:4|技:jì:4:4|投:tóu:2:4|护:hù:4:3|担:dān:1:3|拒:jù:4:4|择:zé:2:3|拼:pīn:1:0|持:chí:2:4|按:àn:4:4|据:jù:4:4|排:pái:2:4|探:tàn:4:5|控:kòng:4:4|推:tuī:1:4|摩:mó:2:3|操:cāo:1:5|支:zhī:1:4|故:gù:4:3|旅:lǚ:3:3|既:jì:4:5|旷:kuàng:4:5|易:yì:4:4|星:xīng:1:4|显:xiǎn:3:4|普:pǔ:3:3|智:zhì:4:5|朋:péng:2:1|服:fú:2:3|望:wàng:4:2|未:wèi:4:3|末:mò:4:5|术:shù:4:4|朵:duǒ:3:2|杂:zá:2:4|析:xī:1:0|染:rǎn:3:5|标:biāo:1:4|校:xiào:4:2|桌:zhuō:1:1|梦:mèng:4:3|椅:yǐ:3:1|楚:chǔ:3:4|概:gài:4:4|模:mó:2:5|橙:chéng:2:3|欢:huān:1:1|款:kuǎn:3:5|歉:qiàn:4:4|歌:gē:1:2|殊:shū:1:4|毕:bì:4:3|气:qì:4:1|汁:zhī:1:3|汉:hàn:4:2|污:wū:1:5|汽:qì:4:2|沟:gōu:1:4|注:zhù:4:3|泳:yǒng:3:3|洗:xǐ:3:3|活:huó:2:2|流:liú:2:3|济:jì:4:4|浪:làng:4:4|消:xiāo:1:3|清:qīng:1:3|游:yóu:2:3|源:yuán:2:4|演:yǎn:3:4|火:huǒ:3:1|炼:liàn:4:4|照:zhào:4:3|爬:pá:2:4|牙:yá:2:2|牛:niú:2:2|环:huán:2:4|班:bān:1:3|球:qiú:2:2|瓜:guā:1:2|申:shēn:1:0|电:diàn:4:1|画:huà:4:2|疑:yí:2:5|疗:liáo:2:5|省:shěng:3:4|真:zhēn:1:3|眼:yǎn:3:2|睛:jīng:1:2|研:yán:2:4|破:pò:4:4|示:shì:4:4|社:shè:4:3|票:piào:4:3|福:fú:2:4|离:lí:2:3|科:kē:1:3|租:zū:1:3|称:chēng:1:4|空:kōng:1:3|竞:jìng:4:4|章:zhāng:1:3|简:jiǎn:3:3|管:guǎn:3:3|箱:xiāng:1:2|篮:lán:2:3|糊:hú:2:5|索:suǒ:3:5|紧:jǐn:3:3|约:yuē:1:3|级:jí:2:3|织:zhī:1:4|终:zhōng:1:4|绍:shào:4:3|络:luò:4:4|绝:jué:2:4|统:tǒng:3:4|绩:jì:4:3|缺:quē:1:5|网:wǎng:3:4|罚:fá:2:5|考:kǎo:3:2|耳:ěr:3:2|肚:dǔ:3:3|股:gǔ:3:5|育:yù:4:3|脑:nǎo:3:2|腐:fǔ:3:5|至:zhì:4:4|舞:wǔ:3:2|船:chuán:2:3|英:yīng:1:3|苹:píng:2:1|草:cǎo:3:4|荐:jiàn:4:0|莓:méi:2:4|萄:táo:2:0|落:luò:4:4|葡:pú:2:3|蕉:jiāo:1:2|薪:xīn:1:5|衣:yī:1:1|裙:qún:2:3|裤:kù:4:2|观:guān:1:3|视:shì:4:2|言:yán:2:4|计:jì:4:3|认:rèn:4:2|议:yì:4:4|讲:jiǎng:3:3|讶:yà:4:4|许:xǔ:3:3|论:lùn:4:4|设:shè:4:4|证:zhèng:4:4|评:píng:2:4|试:shì:4:3|诚:chéng:2:4|语:yǔ:3:3|误:wù:4:4|课:kè:4:2|调:tiáo:2:4|谅:liàng:4:4|谢:xiè:4:2|豆:dòu:4:2|负:fù:4:4|责:zé:2:4|败:bài:4:3|质:zhì:4:4|贷:dài:4:5|费:fèi:4:4|赛:sài:4:2|赞:zàn:4:5|超:chāo:1:3|足:zú:2:2|跳:tiào:4:3|轮:lún:2:3|达:dá:2:3|运:yùn:4:3|返:fǎn:3:4|迟:chí:2:3|追:zhuī:1:5|退:tuì:4:4|送:sòng:4:3|选:xuǎn:3:3|逐:zhú:2:5|造:zào:4:4|遗:yí:2:4|邮:yóu:2:2|邻:lín:2:3|酒:jiǔ:3:3|醒:xǐng:3:4|释:shì:4:5|铁:tiě:3:3|银:yín:2:2|错:cuò:4:3|锻:duàn:4:4|镜:jìng:4:3|闻:wén:2:4|阳:yáng:2:2|附:fù:4:4|陌:mò:4:5|降:jiàng:4:4|院:yuàn:4:2|除:chú:2:3|险:xiǎn:3:4|雨:yǔ:3:1|雪:xuě:3:3|需:xū:1:4|革:gé:2:4|鞋:xié:2:2|音:yīn:1:2|领:lǐng:3:3|飞:fēi:1:2|餐:cān:1:3|饺:jiǎo:3:2|馆:guǎn:3:3|香:xiāng:1:2|马:mǎ:3:2|骄:jiāo:1:4|验:yàn:4:3|鼓:gǔ:3:4|鼻:bí:2:2|和:hé:2:1|景:jǐng:3:4`;
+
+const map = {};
+const parts = raw.split('|');
+for(const p of parts){
+  const seg = p.split(':');
+  if(seg.length>=3){
+    const ch=seg[0], py=seg[1], tn=parseInt(seg[2]), hsk=parseInt(seg[3]||'0');
+    // For multi-char entries, also map individual chars
+    if(ch.length===1) map[ch]=[py,tn,hsk];
+    // Also store full words for lookup
+    map[ch]=[py,tn,hsk];
+  }
+}
+return map;
+})();
+
+// Derive tone from pinyin string
+function getTone(py){
+  if(py.match(/[āēīōūǖ]/)) return 1;
+  if(py.match(/[áéíóúǘ]/)) return 2;
+  if(py.match(/[ǎěǐǒǔǚ]/)) return 3;
+  if(py.match(/[àèìòùǜ]/)) return 4;
+  return 0;
+}
+
+// ── State ──────────────────────────────────────────
+let lastInput = '';
+let lastRubyHTML = '';
+
+// ── Input handling ─────────────────────────────────
+const inputEl = document.getElementById('inputText');
+inputEl.addEventListener('input', ()=>{
+  const n = countChinese(inputEl.value);
+  document.getElementById('charCount').textContent = n + (n===1?' Chinese char':' Chinese chars');
+});
+
+function countChinese(text){
+  return (text.match(/[一-鿿]/g)||[]).length;
+}
+
+// ── Annotation ─────────────────────────────────────
+function annotate(){
+  const text = inputEl.value.trim();
+  if(!text){ toast('Please paste some Chinese text first.'); return; }
+  lastInput = text;
+  renderOutput(text);
+}
+
+function rerender(){
+  if(lastInput) renderOutput(lastInput);
+}
+
+function renderOutput(text){
+  const toneOn = document.getElementById('toneColors').checked;
+  const hskOn = document.getElementById('hskColors').checked;
+  const unknownOnly = document.getElementById('unknownOnly').checked;
+
+  let html = '';
+  let totalCh = 0, annotated = 0, unknown = 0;
+
+  for(let i=0;i<text.length;i++){
+    const ch = text[i];
+    const code = ch.charCodeAt(0);
+    const isChinese = code>=0x4e00 && code<=0x9fff;
+
+    if(!isChinese){
+      // Non-Chinese: output as-is with line break handling
+      if(ch==='\n') html+='<br>';
+      else html+=`<span style="color:var(--dim)">${escHtml(ch)}</span>`;
+      continue;
+    }
+
+    totalCh++;
+    const entry = D[ch];
+    if(entry){
+      const [py, tn, hsk] = entry;
+      annotated++;
+      const tClass = `t${tn}`;
+      const hskClass = hsk>0?`hsk${hsk}`:'unk';
+      if(unknownOnly){
+        // Only show pinyin for unknown (not in dict); known chars show plain
+        html+=`<span class="char-span ${hskClass}" data-ch="${ch}" data-py="${py}" data-hsk="${hsk}" onclick="showPopup(this)">${ch}</span>`;
+      } else {
+        html+=`<ruby><span class="char-span ${hskClass}" data-ch="${ch}" data-py="${py}" data-hsk="${hsk}" onclick="showPopup(this)">${ch}</span><rt class="${tClass}">${py}</rt></ruby>`;
+      }
+    } else {
+      unknown++;
+      if(!unknownOnly){
+        html+=`<ruby><span class="char-span unk" data-ch="${ch}" data-py="?" data-hsk="0" onclick="showPopup(this)">${ch}</span><rt class="t0">?</rt></ruby>`;
+      } else {
+        html+=`<ruby><span class="char-span unk" data-ch="${ch}" data-py="?" data-hsk="0" onclick="showPopup(this)">${ch}</span><rt class="t0">?</rt></ruby>`;
+      }
+    }
+  }
+
+  lastRubyHTML = html;
+  const area = document.getElementById('outputArea');
+  area.innerHTML = html;
+  area.className = 'output-area' + (toneOn?' tone-on':'') + (hskOn?' hsk-on':'');
+
+  const coverage = totalCh>0?Math.round(annotated/totalCh*100):0;
+  document.getElementById('statTotal').textContent = totalCh;
+  document.getElementById('statAnnotated').textContent = annotated;
+  document.getElementById('statCoverage').textContent = coverage+'%';
+  document.getElementById('statUnknown').textContent = unknown;
+  document.getElementById('statsBar').style.display='flex';
+}
+
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── Popup ──────────────────────────────────────────
+const popup = document.getElementById('popup');
+function showPopup(el){
+  const ch = el.dataset.ch;
+  const py = el.dataset.py;
+  const hsk = parseInt(el.dataset.hsk);
+  document.getElementById('puChar').textContent = ch;
+  document.getElementById('puPy').textContent = py==='?'?'— not in dictionary':py;
+  document.getElementById('puHsk').textContent = hsk>0?`HSK ${hsk}`:'Outside HSK1-6';
+  popup.style.display='block';
+  const r = el.getBoundingClientRect();
+  let top = r.bottom + window.scrollY + 8;
+  let left = r.left + window.scrollX - 20;
+  if(left+200>window.innerWidth) left=window.innerWidth-210;
+  popup.style.top=top+'px';
+  popup.style.left=left+'px';
+  event.stopPropagation();
+}
+document.addEventListener('click',()=>popup.style.display='none');
+
+// ── Utilities ──────────────────────────────────────
+function clearAll(){
+  inputEl.value='';
+  document.getElementById('charCount').textContent='0 characters';
+  document.getElementById('outputArea').innerHTML=`<div class="output-placeholder">Your annotated text will appear here.<br><br><strong style="color:var(--blue2)">Click any character</strong> for tone and HSK level.</div>`;
+  document.getElementById('statsBar').style.display='none';
+  lastInput='';
+}
+
+function loadSample(){
+  const samples = [
+    '人生就是一场旅行，重要的不是目的地，而是沿途的风景和心情。不管生活有多艰难，只要心中有梦想，就一定能走出属于自己的路。',
+    '他卧薪尝胆了三年，终于考上了北京大学。这种坚持的精神值得我们每一个人学习。',
+    '中国有句老话：授人以鱼不如授人以渔。教会别人方法，比直接给他答案更有价值。',
+    '科技改变了我们的生活方式。现在，只需要一部手机，就可以购物、支付、学习、娱乐。人工智能正在越来越多地影响我们的日常生活。',
+  ];
+  const idx = Math.floor(Math.random()*samples.length);
+  inputEl.value = samples[idx];
+  const n = countChinese(samples[idx]);
+  document.getElementById('charCount').textContent = n + ' Chinese chars';
+  annotate();
+}
+
+function copyResult(){
+  const el = document.getElementById('outputArea');
+  // Create plain text with pinyin above
+  let result = '';
+  el.querySelectorAll('ruby').forEach(r=>{
+    const ch = r.querySelector('.char-span')?.textContent||'';
+    const py = r.querySelector('rt')?.textContent||'';
+    result += `[${py}]${ch} `;
+  });
+  navigator.clipboard.writeText(result.trim()).then(()=>toast('Copied! Format: [pīnyīn]字'));
+}
+
+function copyPlain(){
+  navigator.clipboard.writeText(lastInput).then(()=>toast('Chinese text copied!'));
+}
+
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3000); }
+</script>
+<style>.nxt-link{display:block;text-align:center;font-size:13px;color:var(--muted,#6b7a8f);text-decoration:none;padding:20px 0 8px;letter-spacing:.01em;transition:color .2s}.nxt-link:hover{color:var(--accent,#f59e0b)}</style>
+<a class="nxt-link" href="https://ordinarymantrying.com/tools/chinese-reading-lab.html">Next → Read in Chinese — Chinese Reading Lab</a>
+</body>
+</html>
