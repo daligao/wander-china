@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧭 Zero-Error AI Travel Planner Prompt Generator - One Question, Precise Itinerary</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #667eea; min-height: 100vh; padding: 20px; }
+        .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 8px; }
+        .header p { font-size: 13px; opacity: 0.9; line-height: 1.6; }
+        .progress { background: rgba(255,255,255,0.2); height: 6px; margin-top: 15px; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; width: 0%; transition: width 0.3s; }
+        .content { padding: 40px; }
+        .stage { display: none; }
+        .stage.active { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+        .form-section { margin-bottom: 30px; }
+        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #667eea; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 14px; font-weight: 500; margin-bottom: 8px; color: #333; }
+        .form-group input, .form-group select { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .radio-group { display: flex; flex-direction: column; gap: 10px; }
+        .radio-item { display: flex; gap: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; cursor: pointer; }
+        .radio-item:hover { background: #f0f1f3; }
+        .radio-item input { width: 18px; height: 18px; cursor: pointer; accent-color: #667eea; flex-shrink: 0; }
+        .buttons { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
+        button { flex: 1; min-width: 150px; padding: 12px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.3); }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .btn-secondary:hover { background: #d0d0d0; }
+        .module { margin-bottom: 12px; }
+        .module-header { display: flex; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 6px; cursor: pointer; user-select: none; font-weight: 500; }
+        .module-header:hover { background: #f0f1f3; }
+        .toggle-icon { transition: transform 0.3s; display: inline-block; font-size: 12px; }
+        .module-header.active .toggle-icon { transform: rotate(90deg); }
+        .module-content { max-height: 0; overflow: hidden; transition: max-height 0.3s; }
+        .module-content.active { max-height: 2000px; }
+        .module-inner { padding: 15px; background: #fafbfc; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 6px 6px; }
+        .category-title { font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #eee; }
+        .checkbox-item { display: flex; gap: 10px; padding: 8px; margin-bottom: 6px; }
+        .checkbox-item input { width: 16px; height: 16px; cursor: pointer; accent-color: #667eea; flex-shrink: 0; margin-top: 2px; }
+        .checkbox-label { font-size: 13px; line-height: 1.5; cursor: pointer; }
+        .output { display: none; margin-top: 30px; }
+        .output.active { display: block; animation: slideIn 0.3s; }
+        textarea { width: 100%; min-height: 450px; padding: 15px; border: 1px solid #ddd; border-radius: 6px; font-family: monospace; font-size: 11px; line-height: 1.6; }
+        .copy-btn { width: 100%; margin-top: 15px; padding: 12px; background: #4caf50; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .copy-btn:hover { background: #45a049; }
+        .copy-btn.copied { background: #2196F3; }
+        .info-box { margin-top: 20px; padding: 12px; background: #e3f2fd; border-left: 3px solid #2196F3; border-radius: 4px; font-size: 12px; color: #1976D2; line-height: 1.6; }
+        .info-box strong { color: #1565C0; }
+        .required { color: #ff6b6b; }
+        .badge { display: inline-block; background: #4caf50; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px; margin-left: 8px; }
+        .checkbox-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; }
+        .checkbox-grid-item { display: flex; gap: 10px; padding: 8px; background: #f8f9fa; border-radius: 6px; cursor: pointer; }
+        .checkbox-grid-item:hover { background: #f0f1f3; }
+        .checkbox-grid-item input { width: 16px; height: 16px; cursor: pointer; accent-color: #667eea; flex-shrink: 0; margin-top: 2px; }
+        .checkbox-grid-item label { font-size: 13px; line-height: 1.5; cursor: pointer; margin: 0; }
+    </style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧭 Zero-Error AI Travel Planner Prompt Generator</h1>
+            <p>Universal Edition | 4-Step Checklist | Expert Mode | 99.5% Complete Info | Structured Prompts | Any AI Understands Your Needs Instantly</p>
+            <div class="progress"><div class="progress-fill"></div></div>
+        </div>
+
+        <div class="content">
+            <div class="info-box">
+                <strong>🎯 Tool Value:</strong> This is not a travel planning tool, but an 'AI Question Amplifier'. Your prompt will include: your complete information + Beijing full-process details + system suggestions = any AI (ChatGPT/Claude/Doubao) will generate a 100% error-free precise itinerary.
+            </div>
+
+            <form id="form">
+                <!-- STAGE 1 -->
+                <div class="stage active" id="s1">
+                    <div class="form-section">
+                        <div class="section-title">📍 Step 1: Basic Information (Required)</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Destination City <span class="required">*</span></label>
+                                <select id="cityMode" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="beijing">🔥 Beijing (Specialized Deep Version)</option>
+                                    <option value="custom">🌐 Other Cities (Universal Version)</option>
+                                </select>
+                                <input type="text" id="customCity" placeholder="Enter city name, e.g.: Shanghai, Xi'an, Chengdu..." style="margin-top: 10px; display:none;">
+                            </div>
+                            <div class="form-group">
+                                <label>Start Date <span class="required">*</span></label>
+                                <input type="date" id="date" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Total Days <span class="required">*</span></label>
+                                <select id="days" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="1">1 day (Same-day round trip)</option>
+                                    <option value="2-3">2-3 days (Weekend getaway)</option>
+                                    <option value="4-5">4-5 days (Standard holiday)</option>
+                                    <option value="6-10">6-10 days (Extended break)</option>
+                                    <option value="10+">10+ days</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-box">💡 Basic information helps us identify seasonal factors, weather, attraction closures, elderly heat prevention needs, and other background context.</div>
+                    <div class="buttons">
+                        <button type="button" class="btn-primary" onclick="go(2)">Next Step: Choose Mode →</button>
+                    </div>
+                </div>
+
+                <!-- STAGE 1B (MODE SELECTION) -->
+                <div class="stage" id="s2">
+                    <div class="form-section">
+                        <div class="section-title">⚙️ Step 2: Select Prompt Mode</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Prompt Generation Mode <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label class="radio-item">
+                                        <input type="radio" name="mode" value="quick" checked required>
+                                        <div>
+                                            <strong>Quick Mode</strong><br>
+                                            <small>Standard prompt format, great for general planning</small>
+                                        </div>
+                                    </label>
+                                    <label class="radio-item">
+                                        <input type="radio" name="mode" value="expert">
+                                        <div>
+                                            <strong>Expert Mode</strong><span class="badge">Pro</span><br>
+                                            <small>AI-optimized prompt with advanced constraints and formatting for top-tier results</small>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-box">💡 <strong>Quick Mode:</strong> Standard itinerary format. <strong>Expert Mode:</strong> Includes role-based reasoning, model-specific formatting, and advanced travel parameters for precision results.</div>
+                    <div class="buttons">
+                        <button type="button" class="btn-secondary" onclick="go(1)">← Previous Step</button>
+                        <button type="button" class="btn-primary" onclick="go(3)">Next Step: Preferences →</button>
+                    </div>
+                </div>
+
+                <!-- STAGE 3 (formerly Stage 2) -->
+                <div class="stage" id="s3">
+                    <div class="form-section">
+                        <div class="section-title">👥 Step 3: Group & Preferences</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Primary Travel Group <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label class="radio-item"><input type="radio" name="pg" value="solo" required> 🎒 Solo traveler</label>
+                                    <label class="radio-item"><input type="radio" name="pg" value="couple"> 💑 Couple/Spouse</label>
+                                    <label class="radio-item"><input type="radio" name="pg" value="friends"> 👯 Friends/Girlfriends</label>
+                                    <label class="radio-item"><input type="radio" name="pg" value="family"> 👨‍👩‍👧‍👦 Family group</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Any seniors (65+)? <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label class="radio-item"><input type="radio" name="elderly" value="no" checked required> No</label>
+                                    <label class="radio-item"><input type="radio" name="elderly" value="yes"> Yes<span class="badge">Enhanced</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Any children (under 12)? <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label class="radio-item"><input type="radio" name="kids" value="no" checked required> No</label>
+                                    <label class="radio-item"><input type="radio" name="kids" value="yes"> Yes</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Budget Preference <span class="required">*</span></label>
+                                <select id="budget" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="b">💰 Budget ($20-35/day)</option>
+                                    <option value="m">💵 Mid-range ($40-70/day)<span class="badge">Recommended</span></option>
+                                    <option value="l">💎 Luxury ($110+/day)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">🎒 Travel Styles (Optional - Multiple Select)</div>
+                        <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Select all that apply to personalize your itinerary:</p>
+                        <div class="checkbox-group">
+                            <label class="checkbox-grid-item"><input type="checkbox" name="travelStyle" value="solo"> Solo Adventurer</label>
+                            <label class="checkbox-grid-item"><input type="checkbox" name="travelStyle" value="senior"> Senior/Elderly-focused</label>
+                            <label class="checkbox-grid-item"><input type="checkbox" name="travelStyle" value="family"> Family with Kids</label>
+                            <label class="checkbox-grid-item"><input type="checkbox" name="travelStyle" value="luxury"> Luxury/Comfort</label>
+                            <label class="checkbox-grid-item"><input type="checkbox" name="travelStyle" value="budget"> Budget Backpacker</label>
+                            <label class="checkbox-grid-item"><input type="checkbox" name="travelStyle" value="food"> Food Explorer</label>
+                            <label class="checkbox-grid-item"><input type="checkbox" name="travelStyle" value="photography"> Photography/Visual</label>
+                            <label class="checkbox-grid-item"><input type="checkbox" name="travelStyle" value="culture"> Cultural Deep-dive</label>
+                            <label class="checkbox-grid-item"><input type="checkbox" name="travelStyle" value="eco"> Eco-travel</label>
+                            <label class="checkbox-grid-item"><input type="checkbox" name="travelStyle" value="wellness"> Wellness/Retreat</label>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">🤖 AI Model Optimization</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Generate Prompt For <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label class="radio-item">
+                                        <input type="radio" name="aiModel" value="chatgpt" checked required>
+                                        <div>
+                                            <strong>ChatGPT (GPT-4)</strong><br>
+                                            <small>Step-by-step breakdowns, structured output, timeline + checklist</small>
+                                        </div>
+                                    </label>
+                                    <label class="radio-item">
+                                        <input type="radio" name="aiModel" value="claude">
+                                        <div>
+                                            <strong>Claude (3 Opus)</strong><br>
+                                            <small>Nuanced analysis, tradeoffs, decision frameworks + reasoning</small>
+                                        </div>
+                                    </label>
+                                    <label class="radio-item">
+                                        <input type="radio" name="aiModel" value="gemini">
+                                        <div>
+                                            <strong>Gemini (Google)</strong><br>
+                                            <small>Multi-modal + real-time search, image suggestions, search queries</small>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box">💡 Group and budget information helps us recommend senior-specific attractions, accommodations, dining, and medical protection plans. Travel styles and AI model selection optimize your prompt for personalization and precision.</div>
+                    <div class="buttons">
+                        <button type="button" class="btn-secondary" onclick="go(2)">← Previous Step</button>
+                        <button type="button" class="btn-primary" onclick="go(4)">Next Step: Check Details →</button>
+                    </div>
+                </div>
+
+                <!-- STAGE 4 (formerly Stage 3) -->
+                <div class="stage" id="s4">
+                    <div class="form-section">
+                        <div class="section-title">📋 Step 4: Check Important Details</div>
+                        <div id="mods" style="display: grid; gap: 8px;"></div>
+                    </div>
+                    <div class="info-box">💡 All details are unchecked by default. Checked items will be included in your prompt, and the system will automatically add other suggestions based on your travel information.</div>
+                    <div class="buttons">
+                        <button type="button" class="btn-secondary" onclick="go(3)">← Previous Step</button>
+                        <button type="button" class="btn-primary" onclick="gen()">🚀 Generate Complete Travel Prompt (Ready to Copy to AI)</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- OUTPUT -->
+            <div class="output" id="out">
+                <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px; color: #4caf50;">✅ Complete prompt generated! Copy all content below and paste into any AI platform.</div>
+                <textarea id="prompt" readonly></textarea>
+                <button class="copy-btn" onclick="copy()">📋 Copy All Content to Clipboard</button>
+                <div class="info-box" style="margin-top: 15px; background: #fff3cd; border-left-color: #ffc107; color: #856404;">
+                    <strong>💡 Next Step:</strong> After copying, paste the content into ChatGPT/Claude/Doubao to directly generate your itinerary. No need to modify or add anything!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // City mode toggle event
+        function initCityModeToggle() {
+            const cityModeSelect = document.getElementById('cityMode');
+            const customCityInput = document.getElementById('customCity');
+            if (cityModeSelect && customCityInput) {
+                cityModeSelect.addEventListener('change', function() {
+                    customCityInput.style.display = this.value === 'custom' ? 'block' : 'none';
+                });
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCityModeToggle);
+        } else {
+            initCityModeToggle();
+        }
+
+        // Beijing Specialized Version MODULES
+        const MODULES_BEIJING = [
+            {
+                name: "Pre-trip Checklist",
+                icon: "📋",
+                categories: [
+                    {
+                        name: "Documents (Essential)",
+                        items: [
+                            {id: "d1", label: "ID card (required, valid for 6+ months after trip)", snippet: "ID card must be carried. Keep copies and photos separately."},
+                            {id: "d2", label: "Children: Household registration/birth certificate", trigger: "kids", snippet: "Child's household registration or birth certificate."},
+                            {id: "d3", label: "Senior citizen card (age 65+)", trigger: "elderly", snippet: "Original senior citizen card required at all times. Enjoy green lane bypass, 50% discount or free admission at all attractions."},
+                            {id: "d4", label: "Other discount cards: Student/Disability/Military ID", snippet: "Student, disability, military IDs eligible for attraction discounts."}
+                        ]
+                    },
+                    {
+                        name: "Medical Emergency (Critical)",
+                        items: [
+                            {id: "m1", label: "Essential meds: Fever reducer, pain reliever, anti-diarrheal, bandages, antiseptic", snippet: "Fever reducer (Tylenol/ibuprofen), pain reliever, anti-diarrheal, bandages, antiseptic cotton swabs."},
+                            {id: "m2", label: "Seniors: Chronic disease meds, medical insurance card (extra supply)", trigger: "elderly", snippet: "Extra supply of hypertension/diabetes/heart medications with prescriptions and medical insurance card. Nearby hospitals: Union Hospital (Xidan), Fuwai Hospital."},
+                            {id: "m3", label: "Children: Fever patches, children's meds, diapers", trigger: "kids", snippet: "Children's fever reducer, cough syrup, probiotics, fever patches. Diapers, formula, sterilizer."},
+                            {id: "m4", label: "Heat stroke emergency protocol card", snippet: "Heat stroke symptoms (dizziness, fatigue, heavy sweating) → immediately move to 25°C shaded room → wipe neck/armpits/groin with cold water (major blood vessel areas) → drink dilute salt water (1L water + 1 tsp salt) in portions → if consciousness unclear, call 120 and state 'suspected heat stroke'."},
+                            {id: "m5", label: "Elderly hypertension/diabetes heat prevention hydration", trigger: "elderly", snippet: "Small frequent water intake (150ml each, 15-min intervals), avoid ice drinks/sugary milk tea. Carry sugar cubes to prevent hypoglycemia. Absolutely no outdoor activity 11am-3pm, arrange air-conditioned indoor venues."}
+                        ]
+                    },
+                    {
+                        name: "Portable Essentials (New)",
+                        items: [
+                            {id: "s1", label: "Elderly: Large thermos, foldable stool", trigger: "elderly", snippet: "Portable thermos for hydration. Foldable stool rental 10RMB/day for queuing and outdoor rest."},
+                            {id: "s2", label: "Waterproof storage: Phone waterproof bag, document sweat-proof bag", snippet: "Waterproof bags for phone and documents (protect from sweat/rain). Sanitizing wipes, portable trash bag."},
+                            {id: "s3", label: "Rain gear upgrade: Disposable rain poncho (not umbrella)", snippet: "Beijing's summer sudden showers - disposable rain ponchos more convenient than umbrellas (hiking/attractions)."},
+                            {id: "s4", label: "Mosquito repellent: Professional mosquito spray, long sleeves", trigger: "elderly", snippet: "Fragrant Hills has dense mosquitoes. Apply repellent to entire body, wear long pants/sleeves in forested areas. Portable fan and sun hat for dual cooling."},
+                            {id: "s5", label: "Portable wheelchair/folding stool", trigger: "elderly", snippet: "Attraction wheelchair rental 20RMB/day to conserve elderly energy. Folding stool 10RMB/day for queue rest."}
+                        ]
+                    },
+                    {
+                        name: "Electronics & Finance",
+                        items: [
+                            {id: "e1", label: "Charging: 65W fast charger, multi-port power strip, power bank ≤100Wh", snippet: "Fast charger, multi-port strip, power bank."},
+                            {id: "e2", label: "Offline resources: Offline maps, attraction navigation app", snippet: "Google Maps + Amap offline, attraction guide app."},
+                            {id: "f1", label: "Cash: 200RMB small bills (attractions may have no signal)", snippet: "Underground parking, remote pickup points may lose signal. Keep 200RMB small bills backup."},
+                            {id: "f2", label: "Budget breakdown reference (300-500 mid-range)", snippet: "Daily budget breakdown: Transportation 60-80RMB, main meals 160-220RMB, tickets 80-120RMB, snacks 50RMB, 20% contingency."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Pre-trip Transportation",
+                icon: "✈️",
+                categories: [
+                    {
+                        name: "Transportation Mode Selection",
+                        items: [
+                            {id: "t1", label: "Flight: Window seat, arrive 2h early, connecting flight ≥3h", snippet: "Book window seats. Arrive 2h early. Connecting flights need ≥3h layover."},
+                            {id: "t2", label: "High-speed rail: Window seat, avoid bathroom area", snippet: "Book window seats away from bathroom noise."},
+                            {id: "t3", label: "Luggage: 20kg free domestic, liquid 100ml×3, power bank ≤100Wh", snippet: "Domestic flight 20kg free. Liquid ≤100ml each, transparent bag total 1L. Power bank ≤100Wh."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Accommodation Selection (Complete Revision)",
+                icon: "🏨",
+                categories: [
+                    {
+                        name: "Elderly Accommodation Requirements",
+                        items: [
+                            {id: "h1", label: "Location: Within 300m of metro, avoid ground floor/street-facing/KTV", snippet: "Prioritize hotels within 300m of metro exit. Avoid ground floor (damp, poor security), KTV/night market areas (noise)."},
+                            {id: "h2", label: "Facilities: Must have elevator, bathroom handrails, blackout curtains", trigger: "elderly", snippet: "Elevator required (elderly stamina). Bathroom must have handrails (fall prevention). Thick blackout curtains (11pm-6am quality sleep)."},
+                            {id: "h3", label: "Avoid guesthouses: Reject steep loft stairs, no-monitoring corridors", trigger: "elderly", snippet: "Guesthouses with steep loft stairs unsuitable for elderly mobility. Choose properties with surveillance and complete security."}
+                        ]
+                    },
+                    {
+                        name: "Beijing Summer Accommodation Essentials (July Special)",
+                        items: [
+                            {id: "h4", label: "AC + dehumidifier: High-power AC, dehumidifier essential", snippet: "Beijing July heat and humidity require high-power AC and dehumidifier. Check AC cooling capacity on check-in."},
+                            {id: "h5", label: "Hot water pressure check, elderly prepare anti-slip mats", trigger: "elderly", snippet: "Check hot water pressure (elderly need good flow). Bring non-slip bathroom mat (bathroom slip injury risk)."},
+                            {id: "h6", label: "Nighttime quiet: Test soundproofing on check-in", snippet: "Test soundproofing (can you hear neighbors?). Confirm not adjacent to elevator/stairs (noise)."}
+                        ]
+                    },
+                    {
+                        name: "Mid-range Budget District Recommendations (300-500RMB/night)",
+                        items: [
+                            {id: "h7", label: "Chaoyang District hotels: Near China National Museum, easy metro access", snippet: "Recommend Chaoyang District near museum, direct metro line access, convenient transportation. 300-500RMB mid-range sufficient."},
+                            {id: "h8", label: "Xuanwumen secondary streets: Avoid night market noise, maintain convenience", snippet: "Xuanwumen core area has night market noise. Choose secondary street hotels to avoid noise while maintaining convenience."}
+                        ]
+                    },
+                    {
+                        name: "Check-in/Check-out Details",
+                        items: [
+                            {id: "h9", label: "Luggage storage: Early arrival free storage, late checkout charged per hour", snippet: "Standard check-in 2pm, check-out 12pm. Early arrival gets free luggage storage. Late checkout possibly charged 50-100RMB/hour."},
+                            {id: "h10", label: "Room inspection immediately: Remove cameras, check for leaks, document with photos", snippet: "3-minute room inspection: test lock, outlets, bathroom leaks, furniture damage. Document issues and photo evidence immediately."},
+                            {id: "h11", label: "Safe deposit: Store elderly meds, medical card, documents", trigger: "elderly", snippet: "Room safe stores elderly meds, medical insurance card, ID, cash. Never leave valuables in luggage."},
+                            {id: "h12", label: "Security: Lock door, bolt lock, close curtains completely", snippet: "Lock door + bolt at night. Close curtains completely. Never open to strangers."},
+                            {id: "h13", label: "Check-out inventory: Inspect bed, wardrobe, bathroom corners", snippet: "Before check-out: verify chargers, skincare, hats, camera cards. Thoroughly check bed, wardrobe, bathroom counters."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Complete Dining Guide",
+                icon: "🍜",
+                categories: [
+                    {
+                        name: "Beijing Cuisine Adaptation (Elderly-specific)",
+                        items: [
+                            {id: "fd1", label: "Beijing food can be greasy: MUST specify 'no oil/low salt/mild'", snippet: "Beijing cuisine is oilier than 'medium spicy' elsewhere. Specify 'completely non-spicy, less oil, less salt' when ordering. Reject chopped peppers and bird's eye chilis."},
+                            {id: "fd2", label: "Local recommendations: Juyitang, Beijing Duck, Zhengyangmen Hotpot", snippet: "Recommended local: Juyitang, traditional duck restaurants, Zhengyangmen hotpot, local noodle shops."},
+                            {id: "fd3", label: "Avoid tourist markup: Skip main streets, go to alley old shops", snippet: "Qianmen/Dashilan main streets have heavy tourist markup. Visit alley old shops or neighborhood eateries."},
+                            {id: "fd4", label: "New: Nayuki Tea elderly adaptation", snippet: "Nayuki Tea - tell shop 'less ice/no ice, low sugar'. Ice tea easily triggers elderly GI issues; recommend hot beverages."},
+                            {id: "fd5", label: "Attraction cold food pitfalls", snippet: "Outdoor frozen desserts and cold salads risky. Elderly sensitive GI easily causes diarrhea. Ice + spicy most dangerous combination."}
+                        ]
+                    },
+                    {
+                        name: "Food Safety & Hygiene",
+                        items: [
+                            {id: "fs1", label: "Street food: Prioritize made-to-order, with dust covers", snippet: "Prioritize made-to-order, high turnover. Avoid exposed meat, non-cold-chain dairy."},
+                            {id: "fs2", label: "Drinking water: Boiled or bottled mineral, sensitive GI go all bottled", snippet: "Boiled or bottled water. Sensitive stomach stick with bottled mineral water."},
+                            {id: "fs3", label: "Forbidden ingredients: Wild mushrooms, unidentified wild greens, wild fruit - no consumption", snippet: "Wild mushrooms, wild vegetables, wild fruit high-risk. Absolutely refuse."}
+                        ]
+                    },
+                    {
+                        name: "Spending Pitfalls",
+                        items: [
+                            {id: "fm1", label: "Confirm order: Unit price/portion/per-person charge, seafood verify weight after processing", snippet: "Confirm unit price, portion size, per-person charges. Verify seafood weight after processing."},
+                            {id: "fm2", label: "Hidden fees: Tea and small plates auto-charged at some restaurants", snippet: "Some restaurants auto-charge for tea and small dishes. Confirm in advance."},
+                            {id: "fm3", label: "Never go to driver recommendations: Usually commission-based scam restaurants", snippet: "Driver-recommended restaurants usually rebate-hunting merchants. Research on Dianping yourself."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Attraction Tickets",
+                icon: "🎫",
+                categories: [
+                    {
+                        name: "Beijing Key Attractions",
+                        items: [
+                            {id: "a1", label: "Capital Museum: Reserve 7 days in advance at 8pm, closed Mondays, 2.5-3h visit", snippet: "Reserve 7 days ahead on official WeChat. Closed Mondays. Drinking fountains on basement, restrooms each level, plenty of rest seating."},
+                            {id: "a2", label: "Fragrant Hills: Reserve 3 days ahead, cable car 30RMB, shuttle bus 20RMB, no walking", snippet: "South entrance. Cable car/shuttle bus required. Fragrant Hills Scenic Garden separate 40RMB. Dense mosquitoes + wet stairs (non-slip shoes essential)."},
+                            {id: "a3", label: "Qianmen Street: Reserve 3 days ahead, sightseeing train 40RMB, avoid walking", snippet: "Sightseeing train avoids 3km walking. 40RMB round trip. Direct metro line access."},
+                            {id: "a4", label: "Yongding Gate: Lights up 7:30pm, no reservation, 6pm-9pm optimal", snippet: "Visit at dusk for sunset. Lights at 7:30pm for night photography. Adult 18RMB, no reservation needed."}
+                        ]
+                    },
+                    {
+                        name: "Discounts & Time Planning",
+                        items: [
+                            {id: "ak1", label: "Senior card 65+: Green lane bypass, half price/free admission", trigger: "elderly", snippet: "65+ senior card original: all attractions green lane, tickets half-price or free (Capital Museum free)."},
+                            {id: "ak2", label: "Time planning: Museum 2.5h, Fragrant Hills 3-4h, Qianmen 1.5-2h", snippet: "Reasonable pacing prevents rushing. Allow for queuing, rest, restroom breaks."},
+                            {id: "ak3", label: "Closure dates: Mondays common closure, ticket sales stop 1h before close", snippet: "Most attractions closed Mondays. Ticket sales stop 1h before closing."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Local Transportation",
+                icon: "🚌",
+                categories: [
+                    {
+                        name: "Metro & Public Transport",
+                        items: [
+                            {id: "tr1", label: "Metro coverage: Lines 1/2/6/10 cover 90% attractions, 6am-11:30pm operation", snippet: "Metro Line 2: Xuanwumen-Qianmen. Line 1: Fragrant Hills. Support Alipay/WeChat pay. Single fare 2-3RMB."},
+                            {id: "tr2", label: "Commercial district pitfalls: Xuanwumen/Wangfujing holiday traffic banned, use metro/e-bike", snippet: "Holiday vehicle bans at Xuanwumen/Wangfujing. Use pedestrian streets. Avoid taxis, use metro/shared e-bikes."},
+                            {id: "tr3", label: "Shared e-bikes: 2-3km convenient, watch no-parking zone Xuanwumen (fees charged)", snippet: "Meituan/Hellobike e-bikes ubiquitous. No-parking zone return charges, return to outer area."},
+                            {id: "tr4", label: "Attraction shuttle: Qianmen train 40RMB, Fragrant Hills cable car 30RMB, shuttle bus 20RMB", snippet: "Shuttle standard configuration reduces elderly physical load."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Safety & Emergency",
+                icon: "🚨",
+                categories: [
+                    {
+                        name: "Personal & Heat Safety",
+                        items: [
+                            {id: "sf1", label: "Personal items: Wear backpack front-facing, no jewelry, separate document storage", snippet: "Crowded areas wear backpack in front. No gold jewelry. Separate document storage."},
+                            {id: "sf2", label: "Heat prevention emergency: 12pm-3pm absolutely no outdoors, indoor AC required", trigger: "elderly", snippet: "Noon absolutely indoors. Arrange indoor venues (museums, galleries, malls, restaurants). Carry SPF50+ sunscreen, mosquito spray."},
+                            {id: "sf3", label: "Emergency contacts: Memorize 110, 120, hotel phone, share location with family", snippet: "Save police 110, hospital 120, hotel phone. Real-time location share with family."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Return Completion",
+                icon: "🎒",
+                categories: [
+                    {
+                        name: "Luggage Inventory & Packing",
+                        items: [
+                            {id: "rt1", label: "Electronics: Charger, fast charger, power bank, camera, memory card, earbuds", snippet: "Most easily forgotten components. Verify one by one."},
+                            {id: "rt2", label: "Skincare & clothing: Masks, moisturizer, underwear, hat, umbrella, sunglasses", snippet: "Bathroom most easily forgotten. Checklist verification each item."},
+                            {id: "rt3", label: "Souvenir packing: Fragile items foam protection, liquid souvenirs check-in luggage", snippet: "Ceramics: foam + air cushion + double cardboard. Alcohol: must check-in (carry-on liquid limits)."},
+                            {id: "rt4", label: "Return timing: Arrive 2-3 hours early, reserve traffic buffer", snippet: "Domestic flight 2h before, international 3h before. Last bus often full."}
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // Universal Version MODULES (adapted for any city worldwide)
+        const MODULES_GENERIC = [
+            {
+                name: "Pre-trip Checklist",
+                icon: "📋",
+                categories: [
+                    {
+                        name: "Documents (Essential)",
+                        items: [
+                            {id: "d1", label: "ID card (required, valid for entire trip)", snippet: "ID card must be carried. Keep copies and photos separately."},
+                            {id: "d2", label: "Children: Household registration/birth certificate", trigger: "kids", snippet: "Child's household registration or birth certificate."},
+                            {id: "d3", label: "Senior citizen card (age 65+)", trigger: "elderly", snippet: "65+ senior card original for attraction discounts."},
+                            {id: "d4", label: "Other discount cards: Student/Disability/Military ID", snippet: "Student, disability, military IDs may qualify for discounts."}
+                        ]
+                    },
+                    {
+                        name: "Medical Emergency (Critical)",
+                        items: [
+                            {id: "m1", label: "Essential meds: Fever reducer, pain reliever, anti-diarrheal, bandages, antiseptic", snippet: "Fever reducer, pain reliever, anti-diarrheal, bandages, antiseptic."},
+                            {id: "m2", label: "Seniors: Chronic disease meds, medical insurance card", trigger: "elderly", snippet: "Hypertension/diabetes/heart medications with prescriptions and medical card."},
+                            {id: "m3", label: "Children: Fever patches, children's meds", trigger: "kids", snippet: "Children's fever reducer, cough syrup, probiotics."},
+                            {id: "m4", label: "Emergency contacts: Local 110, 120", snippet: "Save local police 110, hospital 120, hotel phone."}
+                        ]
+                    },
+                    {
+                        name: "Portable Essentials",
+                        items: [
+                            {id: "s1", label: "Waterproof storage: Phone waterproof bag, document sweat-proof bag", snippet: "Waterproof bags for phone and documents. Sanitizing wipes, trash bag."},
+                            {id: "s2", label: "Sun & mosquito: Sunscreen SPF50+, mosquito repellent", snippet: "Sunscreen, repellent, sun hat."},
+                            {id: "s3", label: "Rain gear: Compact umbrella or disposable rain poncho", snippet: "Compact umbrella or rain poncho."},
+                            {id: "s4", label: "Elderly: Large thermos, foldable stool", trigger: "elderly", snippet: "Portable thermos. Foldable stool rental for queues."}
+                        ]
+                    },
+                    {
+                        name: "Electronics & Finance",
+                        items: [
+                            {id: "e1", label: "Charging: Fast charger, power bank (≤100Wh)", snippet: "Fast charger, power bank."},
+                            {id: "e2", label: "Offline resources: Offline maps, attraction guide app", snippet: "Google Maps + local maps offline, attraction app."},
+                            {id: "f1", label: "Cash: 100-200 RMB small bills", snippet: "Backup cash for no-signal areas. 100-200 RMB."},
+                            {id: "f2", label: "Budget planning: Allocate daily consumption budget", snippet: "Transport, meals, tickets, snacks, 20% contingency allocation."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Pre-trip Transportation",
+                icon: "✈️",
+                categories: [
+                    {
+                        name: "Transportation Mode Selection",
+                        items: [
+                            {id: "t1", label: "Flight: Window seat, arrive 2h early, connecting flight ≥3h", snippet: "Book window seats. Arrive 2h early. Connecting need ≥3h."},
+                            {id: "t2", label: "High-speed rail: Window seat, avoid bathroom", snippet: "Window seats away from bathroom."},
+                            {id: "t3", label: "Luggage: 20kg free, liquid 100ml each, power bank ≤100Wh", snippet: "Domestic 20kg free. Liquid ≤100ml each. Power bank ≤100Wh."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Accommodation Selection",
+                icon: "🏨",
+                categories: [
+                    {
+                        name: "Accommodation Screening",
+                        items: [
+                            {id: "h1", label: "Location: Near metro, avoid remote areas", snippet: "Prioritize 300m from metro. Central district proximity."},
+                            {id: "h2", label: "Facilities: Elevator, complete bathroom, good soundproofing", trigger: "elderly", snippet: "Elevator required. Bathroom handrails for fall prevention."},
+                            {id: "h3", label: "Avoid: Steep guesthouse stairs, unsecured corridors", trigger: "elderly", snippet: "Steep loft stairs unsuitable. Choose monitored, secure entry."},
+                            {id: "h4", label: "Check-in: Test lock, inspect bathroom, document photos", snippet: "Test lock, outlets, bathroom, furniture. Document issues with photos."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Complete Dining Guide",
+                icon: "🍜",
+                categories: [
+                    {
+                        name: "Local Cuisine Adaptation",
+                        items: [
+                            {id: "fd1", label: "Local default spice level: Confirm with vendor, specify preference", snippet: "Ask about local spice defaults. Specify 'non-spicy/mild/light'."},
+                            {id: "fd2", label: "Local recommendations: Prioritize frequent local venues", snippet: "Local-frequented restaurants, avoid tourist markup."},
+                            {id: "fd3", label: "Avoid tourist markup: Attractions/main streets overpriced, try alleys/neighborhoods", snippet: "Attraction periphery and main streets have heavy markup. Visit local eateries."},
+                            {id: "fd4", label: "Food safety: Prioritize made-to-order, established shops", snippet: "Made-to-order, high-turnover, covered items. Avoid exposed raw items."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Attraction Tickets",
+                icon: "🎫",
+                categories: [
+                    {
+                        name: "Attraction Booking & Discounts",
+                        items: [
+                            {id: "a1", label: "Advance planning: Research reservation rules, closure dates", snippet: "Research attraction booking channels, times, closure dates."},
+                            {id: "a2", label: "Senior discounts: 65+ cards eligible for half/free admission", trigger: "elderly", snippet: "65+ cards get attraction discounts or free entry."},
+                            {id: "a3", label: "Time planning: Avoid rushing, allow breaks and restroom time", snippet: "Reasonable pacing prevents rushing. Allow queuing and rest."},
+                            {id: "a4", label: "Shuttles: Prioritize attraction transportation, reduce walking", snippet: "Shuttle buses reduce physical load."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Local Transportation",
+                icon: "🚌",
+                categories: [
+                    {
+                        name: "City Transit Planning",
+                        items: [
+                            {id: "tr1", label: "Public transit priority: Research local metro/bus lines", snippet: "Metro/bus cover most attractions. Alipay/WeChat pay convenient."},
+                            {id: "tr2", label: "Taxis or shared e-bikes: Use when transit coverage insufficient", snippet: "Taxis or e-bikes for areas without transit."},
+                            {id: "tr3", label: "Attraction shuttles: Check for available transit, cable cars, sightseeing trains", snippet: "Shuttle availability varies. Check beforehand."},
+                            {id: "tr4", label: "Night transit safety: Learn last bus times, night travel precautions", snippet: "Verify last bus time. Night travel personal security awareness."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Safety & Emergency",
+                icon: "🚨",
+                categories: [
+                    {
+                        name: "Personal & Protective",
+                        items: [
+                            {id: "sf1", label: "Items: Front-facing backpack, no jewelry, separate documents", snippet: "Crowded areas wear backpack in front. No gold jewelry. Separate storage."},
+                            {id: "sf2", label: "Seasonal protection: Per season prepare sun/cold/mosquito protection", trigger: "elderly", snippet: "Season-appropriate protection. Elderly need special attention."},
+                            {id: "sf3", label: "Emergency: Save local 110, 120, hotel phone", snippet: "Save police, hospital, hotel. Document location with family."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Return Completion",
+                icon: "🎒",
+                categories: [
+                    {
+                        name: "Luggage Inventory & Packing",
+                        items: [
+                            {id: "rt1", label: "Electronics: Charger, fast charger, power bank, camera, memory card", snippet: "Most easily forgotten. Verify each item."},
+                            {id: "rt2", label: "Skincare & clothing: Masks, moisturizer, underwear, hat, umbrella", snippet: "Bathroom most forgotten. Checklist verify."},
+                            {id: "rt3", label: "Souvenirs: Fragile items foam protection, liquids check-in luggage", snippet: "Fragile items foam+air cushion+cardboard. Liquids check-in only."},
+                            {id: "rt4", label: "Return timing: Arrive 2-3 hours early, reserve transport buffer", snippet: "Domestic 2h before, international 3h before. Buffer transport delays."}
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        function go(n) {
+            if (n > 1 && !validate()) return;
+            document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+            document.getElementById('s' + n).classList.add('active');
+            if (n === 4) render4();
+            document.querySelector('.progress-fill').style.width = (n / 4 * 100) + '%';
+            window.scrollTo(0, 0);
+        }
+
+        function validate() {
+            const cityMode = document.getElementById('cityMode').value;
+            if (!cityMode) { alert('Please select a city mode'); return false; }
+            if (cityMode === 'custom' && !document.getElementById('customCity').value.trim()) {
+                alert('Please enter city name');
+                return false;
+            }
+            if (!document.getElementById('date').value || !document.getElementById('days').value) {
+                alert('Please fill in all required fields');
+                return false;
+            }
+            return true;
+        }
+
+        function getCity() {
+            const cityMode = document.getElementById('cityMode').value;
+            return cityMode === 'beijing' ? 'Beijing' : document.getElementById('customCity').value.trim();
+        }
+
+        function getModules() {
+            const cityMode = document.getElementById('cityMode').value;
+            return cityMode === 'beijing' ? MODULES_BEIJING : MODULES_GENERIC;
+        }
+
+        function render4() {
+            const elderly = document.querySelector('input[name="elderly"]:checked')?.value === 'yes';
+            const kids = document.querySelector('input[name="kids"]:checked')?.value === 'yes';
+            const MODULES = getModules();
+
+            let html = '';
+            MODULES.forEach(m => {
+                let itemsHtml = '';
+                m.categories.forEach(cat => {
+                    let catItems = '';
+                    cat.items.forEach(it => {
+                        if (it.trigger === 'elderly' && !elderly) return;
+                        if (it.trigger === 'kids' && !kids) return;
+                        const id = 'o' + it.id;
+                        catItems += `<div class="checkbox-item"><input type="checkbox" id="${id}" data-s="${esc(it.snippet)}"><label for="${id}" class="checkbox-label">${it.label}</label></div>`;
+                    });
+                    if (catItems) itemsHtml += `<div><div class="category-title">${cat.name}</div>${catItems}</div>`;
+                });
+                html += `<div class="module"><div class="module-header" onclick="this.classList.toggle('active'); this.nextElementSibling.classList.toggle('active')"><span class="toggle-icon">▶</span> ${m.icon} ${m.name}</div><div class="module-content"><div class="module-inner">${itemsHtml}</div></div></div>`;
+            });
+            document.getElementById('mods').innerHTML = html;
+        }
+
+        function gen() {
+            const sel = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+                const s = cb.getAttribute('data-s');
+                if (s) sel.push(s);
+            });
+
+            const city = getCity();
+            const d = new Date(document.getElementById('date').value);
+            const m = d.getMonth() + 1;
+            const days = document.getElementById('days').value;
+            const pg = document.querySelector('input[name="pg"]:checked')?.value;
+            const elderly = document.querySelector('input[name="elderly"]:checked')?.value === 'yes';
+            const kids = document.querySelector('input[name="kids"]:checked')?.value === 'yes';
+            const budget = document.getElementById('budget').options[document.getElementById('budget').selectedIndex].text;
+            const mode = document.querySelector('input[name="mode"]:checked')?.value || 'quick';
+            const travelStyles = Array.from(document.querySelectorAll('input[name="travelStyle"]:checked')).map(cb => cb.value);
+            const aiModel = document.querySelector('input[name="aiModel"]:checked')?.value || 'chatgpt';
+
+            // Build travel style descriptors
+            const styleDescriptors = {
+                'solo': 'solo traveler (safety + networking opportunities)',
+                'senior': 'senior/elderly-focused comfort and accessibility',
+                'family': 'family with children (kid-friendly venues)',
+                'luxury': 'luxury/comfort travel (upscale dining + hotels)',
+                'budget': 'budget backpacker (cost-effective options)',
+                'food': 'food explorer (culinary experiences + local dining)',
+                'photography': 'photography/visual artist (scenic viewpoints + timing)',
+                'culture': 'cultural deep-dive (historical + heritage sites)',
+                'eco': 'eco-travel (sustainable + green options)',
+                'wellness': 'wellness/retreat traveler (spas + yoga + mindfulness)'
+            };
+
+            // Construct AI prompt format based on mode
+            let txt = '';
+
+            if (mode === 'expert') {
+                // Expert Mode - AI-optimized prompt
+                txt = `# Role (Expert Mode)
+You are an elite ${city} travel planner with 15+ years of experience. Master of:
+- ${city} hidden gems and insider knowledge beyond typical guidebooks
+- Optimization algorithms for time, cost, and experience quality
+- Multi-constraint problem-solving (accessibility, dietary, budget, preferences)
+- AI-first reasoning: structured outputs, decision frameworks, tradeoff analysis
+
+# Context
+You are optimizing an itinerary for maximum user satisfaction while respecting all hard constraints. This is your ONLY task. Generate zero-error execution.
+
+# Task
+Generate a ${days}-day ${city} itinerary with:
+- Perfect constraint satisfaction (hard stops must be honored)
+- Seamless transitions between attractions
+- Expert-level restaurant selection + precise ordering notes
+- Foolproof transport routing (metro lines, exits, transfers)
+- Contingency plans for weather/closures`;
+                if (travelStyles.length > 0) {
+                    txt += `\n- Travel personalities: ${travelStyles.map(s => styleDescriptors[s]).join(', ')}`;
+                }
+                txt += `
+- AI optimized for ${aiModel === 'chatgpt' ? 'step-by-step structured breakdown' : aiModel === 'claude' ? 'nuanced analysis + decision frameworks' : 'multi-modal search integration'}
+
+# Goal
+'Zero-error' itinerary = user executes 100% as-is, zero modifications, zero backtracking, zero regrets.
+
+---
+
+# User Information & Constraints
+
+## Core Parameters
+• **Destination**: ${city}
+• **Dates**: ${document.getElementById('date').value} to ${addDays(document.getElementById('date').value, parseInt(days.split('-')[0]) - 1)} (${getMonthName(m)})
+• **Duration**: ${days} days
+• **Traveler Type**: ${pg}${elderly ? ' + 65+ elderly' : ''}${kids ? ' + under-12 children' : ''}
+• **Budget Tier**: ${budget}
+• **Travel Motivation**: ${travelStyles.length > 0 ? travelStyles.map(s => styleDescriptors[s]).join(' + ') : 'General sightseeing'}`;
+            } else {
+                // Quick Mode - Standard prompt (existing format)
+                txt = `# Role
+You are a senior travel planner with 10+ years of ${city} experience. Expert in:
+- ${city} seasonal weather management
+- All major attraction booking rules, procedures, accessibility
+- Local dining, restaurant traps, ordering tips
+- Medical emergency protocols (especially elderly heat stroke, emergencies)
+- Optimal transportation routing
+
+# Task
+Generate a complete ${days}-day ${city} itinerary based on user information and constraints below.
+
+# Goal
+Create a 'zero-error' itinerary — user can execute 100% as-is, no modifications or additions needed.
+
+---
+
+# User Information & Constraints
+
+## Basic Info
+• Destination: ${city}
+• Departure: ${document.getElementById('date').value} (${getMonthName(m)})
+• Duration: ${days} days
+• Group: ${pg}${elderly ? ' (includes 65+ elderly)' : ''}${kids ? ' (includes under-12 children)' : ''}
+• Budget: ${budget}`;
+            }
+
+## Travel & Environmental Constraints
+`;
+
+            // Seasonal constraints (universal version)
+            let seasonNote = '';
+            if ([6,7,8,9].includes(m)) {
+                seasonNote = `Summer high heat/humidity. Absolutely NO outdoor 11am-3pm, must arrange air-conditioned indoor venues. Carry SPF50+ sunscreen, mosquito spray, heat relief meds.`;
+            } else if ([12,1,2].includes(m)) {
+                seasonNote = `Winter cold/damp. Most hotels lack central heating. Choose hotels with effective AC heating. Rain/ice causes slippery outdoor hazards.`;
+            } else if ([3,4,5].includes(m)) {
+                seasonNote = `Spring rainy season. Carry rain gear. Temperature fluctuates widely, pack layering.`;
+            } else {
+                seasonNote = `Autumn comfortable season. Optimal travel conditions.`;
+            }
+            txt += `• Seasonal: ${seasonNote}\n`;
+
+            // Elderly-specific constraints
+            if (elderly) {
+                txt += `• Elderly (65+) constraints:
+  - Attractions: NO climbing hikes, MUST use shuttles (cable cars, trains, buses). Senior cards get green lane, 50% off/free tickets.
+  - Pace: Max 6 hours outdoor/day, 1.5-2 hour mandatory midday rest (1-3pm). Every attraction needs wheelchair rental, accessibility route, rest seating notes.
+  - Dining: ALL orders 'completely non-spicy, less oil, less salt', refuse hot peppers. Iced beverages 'no ice/minimal ice, low sugar' (ice irritates GI).
+  - Sleep: Metro 300m hotel, must have elevator, bathroom handrails, blackout curtains, powerful AC+dehumidifier.
+  - Health: Carry senior card, medical insurance, chronic meds. Heat stroke full protocol: symptoms→25°C shade→cold water on neck/armpits/groin→dilute salt water sips→120 call if unclear.
+  - Fragrant Hills: Dense mosquitoes-full repellent spray+long sleeves/pants, wet stairs need non-slip shoes.
+\n`;
+            }
+
+            // Children constraints
+            if (kids) {
+                txt += `• Children (≤12) constraints:
+  - Attractions: Prioritize indoor/AC venues (science centers 4h, aquariums 2h, malls). Avoid extreme heat outdoor.
+  - Dining: ${city} cuisine can be spicy, MUST request 'mild/non-spicy'. No ice-cold irritating food.
+  - Protection: SPF70+ sunscreen reapply every 2h. Diapers extra supply. Stroller rental conserves energy.
+\n`;
+            }
+
+            // Travel Style Modifiers
+            if (travelStyles.length > 0) {
+                txt += `## Travel Style Optimization\n`;
+                travelStyles.forEach((style, i) => {
+                    if (style === 'solo') {
+                        txt += `${i+1}. Solo traveler: Optimize for safety (avoid empty alleys, late returns), social opportunities (group activities, hostels, local meetups), solo-friendly restaurants (bar seating welcome).\n`;
+                    } else if (style === 'photography') {
+                        txt += `${i+1}. Photography focus: Include golden hour timing (6-7am, 5-6pm), best camera positions, lighting conditions, lens recommendations, permits required, local photography community events, 'gram-worthy' compositions.\n`;
+                    } else if (style === 'food') {
+                        txt += `${i+1}. Food explorer: Feature every meal venue detail - restaurant name, cuisine type, signature dishes, price, Dianping rating, ordering tips, street food stalls, local market exploration, food history for each dish.\n`;
+                    } else if (style === 'culture') {
+                        txt += `${i+1}. Cultural deep-dive: Prioritize museums, historical sites, temples, local traditions, artist studios, heritage performances, academic context for attractions, book/movie recommendations.\n`;
+                    } else if (style === 'wellness') {
+                        txt += `${i+1}. Wellness retreat: Include spa recommendations, yoga/meditation venues, mindfulness activities, healthy cuisine options, noise/disturbance minimization, rest time prioritization.\n`;
+                    } else if (style === 'eco') {
+                        txt += `${i+1}. Eco-travel: Prioritize sustainable transport, green hotels, local/organic restaurants, waste-conscious activities, park entry, environmental impact notes.\n`;
+                    } else if (style === 'luxury') {
+                        txt += `${i+1}. Luxury travel: Recommend 5-star hotels, Michelin restaurants, premium experiences, concierge services, private transportation, exclusive access, VIP booking channels.\n`;
+                    } else if (style === 'budget') {
+                        txt += `${i+1}. Budget backpacker: Hostel options, cheap eats (under 15 RMB), free attractions, transport passes, discount cards, co-working spaces, friendly traveler hotspots.\n`;
+                    } else if (style === 'family') {
+                        txt += `${i+1}. Family with kids: Kid-friendly hours, stroller accessibility, high chair availability, children's menus, babysitting services, family discounts, quiet rest areas, bathroom facilities.\n`;
+                    } else if (style === 'senior') {
+                        txt += `${i+1}. Senior-focused: Elevator access, rest areas every 30min, no long walking, wheelchair rentals, medical facilities nearby, quiet environments, slower pace options.\n`;
+                    }
+                });
+                txt += `\n`;
+            }
+
+            // User-selected specific needs
+            if (sel.length > 0) {
+                txt += `## User-Checked Specific Needs\n`;
+                sel.forEach((s,i)=>{
+                    txt += `${i+1}. ${s}\n`;
+                });
+                txt += `\n`;
+            }
+
+            // Destination basic info (specialized or generic)
+            const cityMode = document.getElementById('cityMode').value;
+            if (cityMode === 'beijing') {
+                txt += `## ${city} Travel Basics
+• **Must-book attractions**: Capital Museum (7 days ahead 8pm), Fragrant Hills (3 days), Qianmen Street (3 days)
+• **Budget breakdown** (${budget}): Transport 60-80/day, meals 160-220/day, tickets 80-120/day, snacks 50/day, 20% contingency
+• **Cash on hand**: 200 RMB (attractions may lack signal)
+• **Transport**: Metro lines 1/2/6/10 (90% coverage), shared e-bikes available but no-parking zone charges
+• **Accommodation**: Central location, 300-500 RMB mid-range sufficient
+`;
+            } else {
+                txt += `## ${city} Travel Basics
+• **Advance research**: Study ${city} attraction booking rules, hours, transport routes
+• **Budget breakdown** (${budget}): Allocate transport, meals, tickets, snacks, 20% contingency
+• **Cash on hand**: 100-200 RMB backup for no-signal areas
+• **Transport**: Research ${city} metro/bus operation hours and routes
+• **Accommodation**: Prioritize metro proximity
+
+---
+
+# Constraint & Output Requirements (Must Follow)
+`;
+            }
+
+            if (elderly) {
+                txt += `## Elderly (65+) Itinerary Constraints
+
+### Time Constraints (Hard)
+- 11am-3pm absolute NO outdoor, must indoor air-conditioned venue
+- Max 6 outdoor hours/day
+- 1.5-2 hour mandatory midday rest (1-3pm)
+
+### Attraction Constraints (Hard)
+- NO hiking/climbing, MUST shuttle (cable car/train/bus)
+- Each attraction note: wheelchair rental location, accessibility route, rest seating
+- Each walking segment note: distance, ramp availability, accessibility
+
+### Dining Constraints
+- All restaurants: unified 'completely non-spicy, less oil, less salt', refuse hot peppers
+- Iced beverages: 'no ice/minimal ice, low sugar'
+- Each meal: specific restaurant name, dishes, per-person price
+
+### Health Protection Constraints
+- Each time period: heat prevention + elderly health notes + spending traps
+- Complete heat stroke protocol (symptoms→transfer→cold water→salt water→120)
+- Senior card full-time, enjoy green lane/discounts
+
+### Return Checklist Constraints
+- End: complete return transport, souvenir shipping rules, medicine/card/document inventory
+
+## Output Format
+
+\`\`\`
+【Day X】 YYYY-MM-DD (Weekday)
+
+Morning 06:00-08:00
+- Location: [Specific]
+- Activity: [Details]
+- Transport: [Metro line]
+- Alert: [Heat/health/spending]
+
+Late Morning 08:00-11:30
+...
+
+Midday Rest 1pm-3pm
+- Mandatory hotel/air-conditioned venue rest
+
+Afternoon 3pm-6pm
+...
+
+Evening 6pm-9pm
+...
+
+【Daily Summary】
+- Outdoor hours: X
+- Est. cost: X RMB
+- Tomorrow alert: X
+\`\`\`
+
+After all ${days} days, add:
+- Return transport
+- Souvenirs & shipping rules
+- Medicine/card/documents checklist
+`;
+            } else {
+                txt += `## Standard Itinerary Constraints
+
+### Structure Constraints
+- 4 periods: morning/late morning/afternoon/evening
+- 1-2 attractions per period
+- Tight but not rushed (include queuing, breaks, restroom time)
+
+### Attraction Constraints
+- Each: reservation channel, duration, transport (metro line/station), discounts
+- All walking routes: metro lines, exits, transfers, accessibility info
+- Include wheelchair accessibility
+
+### Dining Constraints
+- Each meal: restaurant name, dishes, per-person price, Dianping rating
+- Avoid tourist-markup chains, prioritize local
+- Include spending traps (driver kickback scams, overpricing)
+
+### Safety Constraints
+- Overall: heat, pickpocket, privacy alerts
+- Each restaurant: unit price, portion size, hidden charges
+- Transport cost breakdown
+
+## Output Format
+
+\`\`\`
+【Day X】 YYYY-MM-DD (Weekday)
+
+Morning 6am-9am
+- Location: [Attraction/Restaurant]
+- Transport: [Metro line, exit]
+- Duration: Xh
+- Booking: [Reservation needed?]
+- Alert: [Spending/safety/heat]
+
+Late Morning 9am-12pm
+...
+
+Lunch 12pm-1pm
+- Restaurant: [Name, address]
+- Per-person: X RMB
+- Recommend: [Dishes]
+- Alert: [Traps/hidden fees]
+
+Afternoon 2pm-5pm
+...
+
+Dinner 6pm-7pm
+...
+
+Evening 7pm-10pm
+...
+
+【Daily Summary】
+- Total cost: X RMB
+- Tomorrow alert: X
+\`\`\`
+
+Complete all ${days} days, then add:
+- Return transport suggestions
+- Souvenir shopping list (giftable local items)
+- Full cost summary & budget comparison
+- Pre-departure luggage checklist
+`;
+            }
+
+            // AI Model-specific format optimization
+            txt += `\n---\n\n# AI Model Optimization (${aiModel.toUpperCase()})
+`;
+            if (aiModel === 'chatgpt') {
+                txt += `## For ChatGPT (GPT-4)
+- Loves: Step-by-step breakdowns, clear hierarchies, structured lists
+- Format: Use markdown bullets, numbered lists, \`\`\` code blocks for itinerary
+- Include: Exact timeline blocks, checklist-style restaurant recommendations, clear transport routing
+- Structure: Break each day into discrete time blocks with clear START-END times
+- Deliverable: Step-by-step itinerary user can copy-paste into calendar`;
+            } else if (aiModel === 'claude') {
+                txt += `## For Claude (3 Opus)
+- Loves: Nuanced analysis, decision frameworks, tradeoff explanations
+- Format: Rich prose with analysis + structured sections, explain WHY each choice
+- Include: Decision rationale (why this restaurant over that one), tradeoff framework (time vs. cost vs. experience)
+- Structure: Narrative itinerary with reasoning boxes, constraint-solving explanation
+- Deliverable: Expert analysis + itinerary with reasoning`;
+            } else if (aiModel === 'gemini') {
+                txt += `## For Gemini (Google)
+- Loves: Multi-modal integration, search queries, real-time info, image recommendations
+- Format: Include "[SEARCH]" markers for image/video queries, JSON data fields
+- Include: Image search suggestions for landmarks, related video/article links, real-time weather queries
+- Add: "For ${travelStyles.includes('photography') ? 'photography locations, search: "[attraction name] sunset photography location guide"' : 'each attraction, search: "[attraction name] visit guide 2024"'}"
+- Deliverable: Itinerary + integrated search commands user can execute`;
+            }
+
+            txt += `\n---\nGenerate the complete ${days}-day itinerary above!\n\n【${city} Travel Prompt - Generated by https://ordinarymantrying.com/tools Zero-Error AI Travel Planner Generator | Mode: ${mode} | AI: ${aiModel}】`;
+
+            document.getElementById('prompt').value = txt;
+            document.getElementById('out').classList.add('active');
+            setTimeout(() => document.getElementById('out').scrollIntoView({behavior:'smooth'}), 200);
+        }
+
+        function copy() {
+            const textarea = document.getElementById('prompt');
+            const btn = event.target;
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(textarea.value).then(() => {
+                        btn.textContent = '✅ Copied! Paste into AI to generate itinerary';
+                        btn.classList.add('copied');
+                        setTimeout(() => { btn.textContent = '📋 Copy All Content to Clipboard'; btn.classList.remove('copied'); }, 3000);
+                    });
+                } else {
+                    textarea.select();
+                    document.execCommand('copy');
+                    btn.textContent = '✅ Copied! Paste into AI to generate itinerary';
+                    btn.classList.add('copied');
+                    setTimeout(() => { btn.textContent = '📋 Copy All Content to Clipboard'; btn.classList.remove('copied'); }, 3000);
+                }
+            } catch (err) {
+                alert('Copy failed, please copy manually');
+            }
+        }
+
+        function getMonthName(m) {
+            const months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            return months[m];
+        }
+
+        function addDays(dateStr, days) {
+            const d = new Date(dateStr);
+            d.setDate(d.getDate() + days);
+            return d.toISOString().split('T')[0];
+        }
+
+        function esc(s) { const m = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}; return s.replace(/[&<>"']/g,c=>m[c]); }
+    </script>
+</body>
+</html>

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Which Chinese City Are You? — Wander China Quiz</title>
+<meta name="description" content="A 60-second quiz that matches your personality to one of China's 31 provincial capitals. Get your city stamp, collect all 31, and turn your match into a real trip. No Chinese needed.">
+<meta name="keywords" content="which Chinese city am I, China city quiz, China travel quiz, Chinese city personality match, best Chinese city for me, China destination quiz">
+<style>
+  :root{
+    --ink:#1a1a2e; --muted:#5b6472; --line:#e9e6df;
+    --red:#e11d48; --red-d:#be123c; --gold:#f59e0b;
+    --paper:#fbf7f0; --card:#ffffff;
+    --shadow:0 6px 24px rgba(30,20,10,.08);
+    --shadow-lg:0 18px 50px rgba(30,20,10,.16);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px}
+
+  /* NAV */
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(251,247,240,.86);
+    backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+  .nav .row{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px;letter-spacing:-.02em}
+  .logo .mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--red),var(--gold));
+    display:grid;place-items:center;color:#fff;font-size:16px}
+  .prog{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted);font-weight:600}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes stampIn{0%{transform:scale(2.2) rotate(22deg);opacity:0}100%{transform:scale(1) rotate(-11deg);opacity:1}}
+  .fade{animation:fadeUp .45s ease-out both}
+
+  .hero{text-align:center;padding:48px 0 8px}
+  .kicker{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+    border-radius:999px;padding:6px 15px;font-size:12.5px;font-weight:700;color:var(--red-d);box-shadow:var(--shadow)}
+  h1{font-size:clamp(30px,5vw,46px);line-height:1.08;letter-spacing:-.03em;margin:18px auto 0;max-width:16ch;font-weight:850}
+  h1 .hl{background:linear-gradient(120deg,var(--red),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{color:var(--muted);font-size:17px;margin:14px auto 0;max-width:44ch}
+
+  /* QUIZ CARD */
+  .qcard{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:30px 28px;
+    box-shadow:var(--shadow-lg);margin-top:26px}
+  .qtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+  .qnum{font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .bars{display:flex;gap:6px}
+  .bars i{height:6px;border-radius:99px;background:#e6e2da;width:16px;transition:.3s}
+  .bars i.on{width:30px;background:var(--red)}
+  .qq{font-size:22px;font-weight:800;letter-spacing:-.01em;margin-bottom:20px}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:520px){.opts{grid-template-columns:1fr}}
+  .opt{display:flex;align-items:center;gap:13px;text-align:left;background:#fff;border:2px solid var(--line);
+    border-radius:14px;padding:16px 16px;cursor:pointer;font-size:15.5px;font-weight:600;color:var(--ink);transition:.16s}
+  .opt:hover{border-color:var(--red);background:#fff5f6;transform:translateY(-2px);box-shadow:0 10px 22px rgba(225,29,72,.10)}
+  .opt .e{font-size:26px;flex:0 0 auto}
+
+  /* RESULT */
+  .result{margin-top:26px}
+  .stampcard{background:var(--card);border-radius:24px;box-shadow:var(--shadow-lg);overflow:hidden;border:1px solid var(--line)}
+  .sc-top{background:linear-gradient(135deg,var(--red-d),var(--red) 55%,var(--gold));color:#fff;text-align:center;
+    padding:34px 26px 30px;position:relative}
+  .sc-top .lbl{font-size:12px;letter-spacing:.24em;text-transform:uppercase;opacity:.82;font-weight:700}
+  .sc-top .emoji{font-size:52px;margin:6px 0 2px}
+  .sc-top .city{font-size:clamp(38px,8vw,54px);font-weight:850;letter-spacing:-.02em;line-height:1}
+  .sc-top .cn{font-size:18px;opacity:.9;margin-top:2px}
+  .sc-top .tagline{font-size:16px;opacity:.95;margin-top:8px;font-weight:500}
+  .seal{position:absolute;top:18px;right:20px;width:78px;height:78px;border-radius:50%;
+    background:rgba(255,255,255,.14);border:2.5px solid #fff;display:grid;place-items:center;
+    color:#fff;font-weight:850;font-size:11px;text-align:center;line-height:1.15;
+    transform:rotate(-11deg);animation:stampIn .5s cubic-bezier(.18,.9,.32,1.28) .2s both;backdrop-filter:blur(2px)}
+  .sc-body{padding:26px 26px 28px}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tag{background:#fff5f6;color:var(--red-d);border:1px solid #f6d5dc;border-radius:99px;
+    padding:4px 12px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+  .desc{color:#3d4453;font-size:16.5px;line-height:1.55}
+  .traits{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-top:18px}
+  .traits h4{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .traits .g{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .traits .t{display:flex;align-items:center;gap:9px;font-size:14.5px;color:#3d4453;font-weight:600}
+  .traits .t i{width:6px;height:6px;border-radius:50%;background:var(--red);flex:0 0 auto}
+  .btns{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+  .btn{flex:1;min-width:150px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    font-weight:800;border-radius:14px;padding:15px 18px;cursor:pointer;border:0;font-size:15.5px;transition:.16s}
+  .btn-primary{background:var(--red);color:#fff;box-shadow:0 8px 20px rgba(225,29,72,.28)}
+  .btn-primary:hover{background:var(--red-d);transform:translateY(-1px)}
+  .btn-ghost{background:#fff;color:var(--ink);border:1.6px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--ink)}
+
+  /* passport strip */
+  .pass{margin-top:22px;background:linear-gradient(135deg,#1a1a2e,#2d1b3d);color:#fff;border-radius:20px;padding:22px 22px}
+  .pass .h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .pass .h b{font-size:16px;font-weight:800}
+  .pass .h span{font-size:13px;color:#c9c3d6}
+  .pass .grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-top:14px}
+  @media(max-width:520px){.pass .grid{grid-template-columns:repeat(6,1fr)}}
+  .pass .st{aspect-ratio:1;border-radius:10px;display:grid;place-items:center;font-size:17px;
+    background:rgba(255,255,255,.06);border:1.4px dashed rgba(255,255,255,.16)}
+  .pass .st.on{background:rgba(245,158,11,.16);border:1.4px solid var(--gold)}
+  .pass a{display:inline-block;margin-top:14px;color:var(--gold);font-weight:800;font-size:14px}
+
+  .foot{text-align:center;color:var(--muted);font-size:13px;padding:34px 0 40px}
+  .retake{text-align:center;margin-top:18px}
+  .retake button{background:none;border:0;color:var(--muted);font-weight:700;font-size:14px;cursor:pointer;text-decoration:underline}
+  .disc{font-size:12px;color:#9a94aa;text-align:center;margin-top:10px}
+</style>
+<meta property="og:image" content="https://ordinarymantrying.com/wp-content/uploads/2026/07/wander-china-landing-page.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Wander China — free AI trip planner for 31 Chinese cities">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ordinarymantrying.com/wp-content/uploads/2026/07/wander-china-landing-page.jpg">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/wander-china/quiz.html">
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<meta property="og:title" content="Which Chinese City Are You? — Wander China Quiz">
+<meta property="og:description" content="A 60-second quiz that matches your personality to one of China's 31 provincial capitals. Get your city stamp, collect all 31, and turn your match into a real trip. No Chinese needed.">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<header class="nav">
+  <div class="row">
+    <a class="logo" href="index.html"><span class="mark">游</span>Wander China</a>
+    <div class="prog" id="prog">🧭 City Quiz</div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO + QUIZ -->
+  <section id="stage" class="fade">
+    <div class="hero">
+      <span class="kicker">🐼 60 seconds · 31 cities · 1 soulmatch</span>
+      <h1>Which Chinese city <span class="hl">are you</span>?</h1>
+      <p>Answer 5 quick questions. We'll match your vibe to one of China's 31 capitals — then you can turn it into a real trip.</p>
+    </div>
+    <div id="quizbox"></div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" class="result" style="display:none"></section>
+
+  <div class="foot">Just for fun · geography-based personality match · not a scientific test 🙂</div>
+</main>
+
+<section style="background:#0d0b1a;padding:52px 24px 56px;margin-top:0">
+  <div style="max-width:720px;margin:0 auto;color:#c4c0d4;font-size:15px;line-height:1.8">
+    <h2 style="color:#fff;font-size:22px;font-weight:800;margin:0 0 18px">How to choose the best Chinese city for your first trip</h2>
+    <p>Not sure where to start your China trip? China has 31 provincial capitals — each with a completely different vibe, cuisine, climate, and pace. This quiz analyzes your travel preferences to match you with the Chinese city that fits your personality, not just a "Top 10" list.</p>
+    <p style="margin-top:14px">Whether you're a <strong style="color:#f59e0b">foodie</strong> chasing street snacks and Michelin-worthy dumplings, a <strong style="color:#f59e0b">history buff</strong> drawn to ancient walls and dynasty museums, a <strong style="color:#f59e0b">nature lover</strong> who wants karst mountains and rice terraces, or a <strong style="color:#f59e0b">city person</strong> who lives for rooftop bars and night markets — there is a Chinese city that feels tailor-made for you.</p>
+    <h3 style="color:#fff;font-size:16px;font-weight:700;margin:22px 0 10px">What this China travel style quiz covers</h3>
+    <ul style="padding-left:18px;margin:0">
+      <li>Best Chinese city for foodies — Chengdu, Chongqing, Changsha, Guangzhou</li>
+      <li>Best city for history lovers — Xi'an, Beijing, Nanjing, Luoyang</li>
+      <li>Best city for nature and outdoor travel — Kunming, Guiyang, Haikou</li>
+      <li>Best city for first-time visitors to China — Shanghai, Beijing, Chengdu</li>
+      <li>How to choose your first China trip destination based on your travel style</li>
+      <li>Which Chinese city matches your personality in 60 seconds</li>
+    </ul>
+    <p style="margin-top:18px;font-size:13px;color:#6b6d85">After the quiz, you can build a full day-by-day itinerary with real opening hours, metro stops, and ticket prices — no Chinese needed. Powered by <a href="planner.html" style="color:#f59e0b;text-decoration:none">Wander China Planner</a>.</p>
+  </div>
+</section>
+
+<script>
+/* ============ 31-CITY DATA (English, built from personality research) ============ */
+/* tag vocabulary shared with questions:
+   pace: adventure/relaxed/food/culture · weather: cold/mild/tropical/dry
+   scenery: nature/history/modern/quirky · social: lively/quiet/local/international
+   flavor: spicy/sweet/savory/light  */
+const CITIES = {
+  Beijing:{cn:"北京",e:"🏯",tagline:"The Imperial Capital",tags:["culture","history","cold","modern","lively","savory","international"],
+    traits:["History buff","Speaks their mind","Big-picture thinker","Early riser"],
+    desc:"You carry natural authority and love the weight of history. Like Beijing, you bridge ancient grandeur and modern ambition."},
+  Tianjin:{cn:"天津",e:"🥠",tagline:"The Comedian by the River",tags:["relaxed","savory","quirky","local","lively","mild"],
+    traits:["Quick-witted","Easygoing","Warm to strangers","Anti-hustle"],
+    desc:"Crosstalk, street food and zero pretension. Like Tianjin, you turn everyday life into a punchline and never take yourself too seriously."},
+  Shijiazhuang:{cn:"石家庄",e:"🚂",tagline:"The Train-Built City",tags:["relaxed","local","quiet","savory","mild"],
+    traits:["Down-to-earth","Unpretentious","Adaptable","Easy to be around"],
+    desc:"No baggage, no ego. Like Shijiazhuang, your 'no strong flavor' is exactly the flavor — grounded, tolerant, refreshingly normal."},
+  Taiyuan:{cn:"太原",e:"⛏️",tagline:"The Dragon City",tags:["history","savory","local","cold","quiet"],
+    traits:["Thrifty & shrewd","Steady","Values trust","Quietly stubborn"],
+    desc:"Coal-country grit meets 2,500 years of history. Like Taiyuan, you're rugged, reliable and playing a longer game than you let on."},
+  Hohhot:{cn:"呼和浩特",e:"🐎",tagline:"The Grassland Gateway",tags:["nature","savory","local","cold","lively","adventure"],
+    traits:["Open-hearted","Generous host","Big appetite","Free-spirited"],
+    desc:"Open skies, strong liquor, even warmer welcomes. Like Hohhot, your heart is as wide as the steppe."},
+  Shenyang:{cn:"沈阳",e:"🏭",tagline:"The Northeastern Big Brother",tags:["history","savory","cold","lively","local"],
+    traits:["Loyal","Loud & warm","No games","Loves a gathering"],
+    desc:"Loud, loyal and warm like a radiator in winter. Like Shenyang, you show up direct and heat up fast."},
+  Changchun:{cn:"长春",e:"🌲",tagline:"The Forest Auto City",tags:["modern","quiet","cold","nature","local"],
+    traits:["Quiet doer","Steady","Slow to warm, built to last","Modest"],
+    desc:"Industrial backbone, soft green heart. Like Changchun, you say little, work hard and stay dependable."},
+  Harbin:{cn:"哈尔滨",e:"❄️",tagline:"The Ice City",tags:["cold","adventure","history","lively","savory","nature"],
+    traits:["Winter-lover","Bold & dramatic","Party animal","Romantic"],
+    desc:"You don't endure winter — you throw a festival for it. Like Harbin, you turn harsh into spectacular."},
+  Shanghai:{cn:"上海",e:"🏙️",tagline:"The Pearl of the Orient",tags:["modern","international","mild","culture","lively","sweet"],
+    traits:["Cosmopolitan","Efficiency-obsessed","Trendsetter","Sharp boundaries"],
+    desc:"You thrive on energy, polish and global culture. Like Shanghai, you know how to make an entrance and keep your word."},
+  Nanjing:{cn:"南京",e:"🍂",tagline:"Ancient Capital of Six Dynasties",tags:["history","culture","mild","quiet","savory"],
+    traits:["Scholarly","Gentle","Well-mannered","Quietly deep"],
+    desc:"Ten dynasties of history bred calm, not arrogance. Like Nanjing, you're bookish, kind and comfortable letting others win the small stuff."},
+  Hangzhou:{cn:"杭州",e:"🌿",tagline:"Paradise on Earth",tags:["mild","nature","culture","quiet","sweet","relaxed"],
+    traits:["Nature lover","Tea connoisseur","Tech-curious","Peace seeker"],
+    desc:"You blend innovation with tradition effortlessly. Like Hangzhou, you chase quiet excellence over noise."},
+  Hefei:{cn:"合肥",e:"🔬",tagline:"The Rising Dark Horse",tags:["modern","quiet","mild","local","nature"],
+    traits:["Understated","Patient","Long-game player","Down-to-earth"],
+    desc:"Once the 'invisible' capital, now a science powerhouse. Like Hefei, you build quietly and surprise everyone later."},
+  Fuzhou:{cn:"福州",e:"🍵",tagline:"The Banyan City",tags:["mild","quiet","local","light","relaxed"],
+    traits:["Warm","Low-key","Values family","Content"],
+    desc:"Overshadowed by flashier neighbors, and fine with it. Like Fuzhou, you're gentle, grounded and quietly self-assured — like a warm cup of oolong."},
+  Nanchang:{cn:"南昌",e:"🍲",tagline:"The Heroic City",tags:["history","local","lively","savory","mild"],
+    traits:["Genuine","Optimistic","Loves comfort food","Quietly proud"],
+    desc:"Long called the 'invisible' capital, now shaking off the label. Like Nanchang, you're unpretentious, warm and stubbornly hopeful."},
+  Jinan:{cn:"济南",e:"💧",tagline:"The City of Springs",tags:["history","quiet","local","savory","mild"],
+    traits:["Honest","Traditional","Reliable","Warm-hearted"],
+    desc:"Spring-fed and unhurried. Like Jinan, you're sincere, a little old-school, and the friend everyone trusts."},
+  Zhengzhou:{cn:"郑州",e:"🚄",tagline:"The Central Plains Hub",tags:["history","local","savory","modern","lively"],
+    traits:["Resilient","Practical","Adaptable","Hardworking"],
+    desc:"The railway heart of China. Like Zhengzhou, you're tough, no-nonsense and quietly central to everything."},
+  Wuhan:{cn:"武汉",e:"🔥",tagline:"The River City",tags:["food","history","lively","spicy","savory","nature"],
+    traits:["Blunt & bold","Fiery","Fiercely loyal","Loves life loudly"],
+    desc:"Where three towns and two rivers collide. Like Wuhan, you say it straight, feel it strong and refuse to back down."},
+  Changsha:{cn:"长沙",e:"🌶️",tagline:"The Neon Night City",tags:["spicy","food","lively","quirky","adventure","local"],
+    traits:["Party animal","Fearless foodie","Trend-maker","Full of energy"],
+    desc:"Where the night never ends and the food burns twice. Like Changsha, you're bold, playful and impossible to ignore — the internet's favorite city for a reason."},
+  Guangzhou:{cn:"广州",e:"🍤",tagline:"The City of Rams",tags:["food","tropical","modern","lively","light","international"],
+    traits:["Serious foodie","Business-minded","Early riser","Low-key wealthy"],
+    desc:"You work hard and eat harder. Like Guangzhou, you're practical, worldly and deeply serious about your pleasures — in flip-flops."},
+  Nanning:{cn:"南宁",e:"🌴",tagline:"The Green City",tags:["tropical","nature","relaxed","quiet","light","local"],
+    traits:["Gentle","Content","Nature-loving","Easygoing"],
+    desc:"Half city, half forest. Like Nanning, you're mild, affordable and never in a hurry — the good-tempered friend everyone likes."},
+  Chongqing:{cn:"重庆",e:"🌶️",tagline:"The 8D Magic City",tags:["quirky","food","spicy","nature","lively","adventure","mild"],
+    traits:["Thrill seeker","Spice-proof","Night owl","Fiercely loyal"],
+    desc:"A cyberpunk maze of bridges and hills. Like Chongqing, you're fiery, straight-talking and thrive in glorious chaos."},
+  Chengdu:{cn:"成都",e:"🐼",tagline:"The Land of Abundance",tags:["relaxed","mild","food","nature","lively","spicy","local"],
+    traits:["Foodie","Easygoing","Tea lover","Panda fan"],
+    desc:"You know the best things shouldn't be rushed. Like Chengdu, you value comfort, flavor and real human connection."},
+  Guiyang:{cn:"贵阳",e:"🌲",tagline:"The Forest City",tags:["mild","nature","relaxed","quiet","spicy","local"],
+    traits:["Mellow","Content","Nature-loving","Quietly tough"],
+    desc:"Cool summers, sour-spicy food, mountains all around. Like Guiyang, you keep a slow, clean, unbothered pace."},
+  Kunming:{cn:"昆明",e:"🌸",tagline:"City of Eternal Spring",tags:["mild","nature","relaxed","quiet","light","local"],
+    traits:["Flower lover","Slow traveler","Open-minded","Peaceful"],
+    desc:"Perfect weather, flowers year-round. Like Kunming, you're gentle, healing and refreshingly free of drama."},
+  Lhasa:{cn:"拉萨",e:"🏔️",tagline:"The Roof of the World",tags:["cold","nature","culture","quiet","light","adventure"],
+    traits:["Spiritual seeker","Patient soul","Photographer","Awe-struck by nature"],
+    desc:"You seek meaning over convenience. Like Lhasa, you're calm, devout and run on your own timeline."},
+  Xian:{en:"Xi'an",cn:"西安",e:"⚔️",tagline:"The Eternal City",tags:["culture","history","cold","food","lively","savory","local"],
+    traits:["History buff","Street-food hunter","Night owl","Tough as nails"],
+    desc:"Dig anywhere and you hit a relic. Like Xi'an, you're rugged, proud and layered with more history than you show."},
+  Lanzhou:{cn:"兰州",e:"🍜",tagline:"The Yellow River City",tags:["dry","savory","local","adventure","nature"],
+    traits:["Rugged","Frank","Hardy","Soulful"],
+    desc:"One bowl of beef noodles, one long river. Like Lanzhou, you're honest, weathered and quietly poetic."},
+  Xining:{cn:"西宁",e:"🏞️",tagline:"Summer Capital of the Plateau",tags:["cold","nature","quiet","local","adventure"],
+    traits:["Open-minded","Sincere","Calm","Unhurried"],
+    desc:"Cool, clean and multi-ethnic. Like Xining, you're pure-hearted, welcoming and never rush the moment."},
+  Yinchuan:{cn:"银川",e:"🌾",tagline:"Jiangnan Beyond the Wall",tags:["dry","nature","quiet","local","mild"],
+    traits:["Mild","Steady","Resilient","Down-to-earth"],
+    desc:"Where desert and river shake hands. Like Yinchuan, you're low-key, tough and quietly refined."},
+  Urumqi:{cn:"乌鲁木齐",e:"🕌",tagline:"The Heart of Asia",tags:["dry","adventure","culture","local","savory","nature"],
+    traits:["Silk Road dreamer","Desert explorer","Generous host","Cultural bridge"],
+    desc:"The city farthest from any ocean. Like Urumqi, you live at the crossroads — multicultural, rugged, with horizons for days."},
+  Haikou:{cn:"海口",e:"🥥",tagline:"The Coconut City",tags:["tropical","relaxed","quiet","light","nature"],
+    traits:["Laid-back","Sun-lover","Unbothered","Healing presence"],
+    desc:"Sun, sea and slow living. Like Haikou, you're the most relaxed capital in China — palm trees and no rush."}
+};
+/* fill english display name (defaults to the key) */
+for(const k in CITIES){ if(!CITIES[k].en) CITIES[k].en=k; }
+
+/* ============ QUESTIONS (5) ============ */
+const QUESTIONS=[
+  {q:"What's your ideal travel pace?",o:[
+    {t:"Packed with adventure",e:"🏃",tag:"adventure"},{t:"Slow and immersive",e:"🧘",tag:"relaxed"},
+    {t:"Eating my way through",e:"🍜",tag:"food"},{t:"Deep cultural dive",e:"🏛️",tag:"culture"}]},
+  {q:"Pick your perfect weather.",o:[
+    {t:"Snow and ice",e:"❄️",tag:"cold"},{t:"Mild and spring-like",e:"🌸",tag:"mild"},
+    {t:"Warm and tropical",e:"🌴",tag:"tropical"},{t:"Dry and sunny",e:"☀️",tag:"dry"}]},
+  {q:"What scenery pulls you in?",o:[
+    {t:"Epic mountains & rivers",e:"⛰️",tag:"nature"},{t:"Ancient temples & ruins",e:"🏯",tag:"history"},
+    {t:"Futuristic skylines",e:"🏙️",tag:"modern"},{t:"Quirky, surreal cityscapes",e:"🌉",tag:"quirky"}]},
+  {q:"Your ideal evening vibe?",o:[
+    {t:"Buzzing night markets",e:"🌃",tag:"lively"},{t:"Quiet tea houses",e:"🍵",tag:"quiet"},
+    {t:"Wandering local lanes",e:"🚶",tag:"local"},{t:"Global & cosmopolitan",e:"🌍",tag:"international"}]},
+  {q:"Choose a flavor to live by.",o:[
+    {t:"Numbing & spicy",e:"🌶️",tag:"spicy"},{t:"Sweet & delicate",e:"🍰",tag:"sweet"},
+    {t:"Savory & hearty",e:"🍖",tag:"savory"},{t:"Light & fresh",e:"🥗",tag:"light"}]}
+];
+
+/* ============ STATE ============ */
+let qi=0, picked=[], matched=null;
+const box=document.getElementById('quizbox');
+const PASS_KEY='wc_passport';
+function getPassport(){try{return JSON.parse(localStorage.getItem(PASS_KEY))||[]}catch(e){return[]}}
+function addStamp(k){const p=getPassport();if(!p.includes(k)){p.push(k);localStorage.setItem(PASS_KEY,JSON.stringify(p))}return getPassport()}
+
+function renderQ(){
+  const q=QUESTIONS[qi];
+  box.innerHTML=`<div class="qcard fade">
+    <div class="qtop">
+      <span class="qnum">Question ${qi+1} of ${QUESTIONS.length}</span>
+      <div class="bars">${QUESTIONS.map((_,i)=>`<i class="${i<=qi?'on':''}"></i>`).join('')}</div>
+    </div>
+    <div class="qq">${q.q}</div>
+    <div class="opts">
+      ${q.o.map((o,i)=>`<button class="opt" data-tag="${o.tag}"><span class="e">${o.e}</span>${o.t}</button>`).join('')}
+    </div>
+  </div>`;
+  box.querySelectorAll('.opt').forEach(b=>b.onclick=()=>answer(b.dataset.tag));
+  document.getElementById('prog').textContent=`🧭 ${qi+1}/${QUESTIONS.length}`;
+}
+function answer(tag){
+  picked.push(tag); qi++;
+  if(qi<QUESTIONS.length) renderQ(); else match();
+}
+function match(){
+  let best=null,bs=-1;
+  for(const k in CITIES){
+    let s=CITIES[k].tags.filter(t=>picked.includes(t)).length;
+    s+=Math.random()*0.4; // tie-break variety across 31 cities
+    if(s>bs){bs=s;best=k}
+  }
+  matched=best; showResult();
+}
+
+function showResult(){
+  document.getElementById('stage').style.display='none';
+  const c=CITIES[matched];
+  const pass=addStamp(matched);
+  const stampTxt=c.en.toUpperCase().replace(/[^A-Z]/g,'').slice(0,8);
+  const r=document.getElementById('result');
+  r.style.display='block';
+  r.innerHTML=`
+  <div class="stampcard fade">
+    <div class="sc-top">
+      <div class="seal">${stampTxt}<br>✦ CN ✦</div>
+      <div class="lbl">Your Chinese Soul City</div>
+      <div class="emoji">${c.e}</div>
+      <div class="city">${c.en}</div>
+      <div class="cn">${c.cn}</div>
+      <div class="tagline">${c.tagline}</div>
+    </div>
+    <div class="sc-body">
+      <div class="tags">${c.tags.slice(0,5).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <div class="desc">${c.desc}</div>
+      <div class="traits">
+        <h4>Your city personality</h4>
+        <div class="g">${c.traits.map(t=>`<div class="t"><i></i>${t}</div>`).join('')}</div>
+      </div>
+      <div class="btns">
+        <button class="btn btn-primary" id="planBtn">🗺️ Plan a real ${c.en} trip</button>
+        <button class="btn btn-ghost" id="saveBtn">💾 Save stamp</button>
+        <button class="btn btn-ghost" id="shareBtn">📤 Share</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pass fade">
+    <div class="h"><b>🛂 Your China passport</b><span>${pass.length} / 31 unlocked</span></div>
+    <div class="grid">${passportGrid(pass)}</div>
+    <a href="passport.html">Open full passport →</a>
+  </div>
+
+  <div class="retake"><button id="retakeBtn">↺ Retake &amp; collect another city</button></div>
+  <div class="disc">Tip: different answers unlock different cities — collect all 31 stamps.</div>`;
+
+  document.getElementById('prog').textContent='✅ Matched!';
+  document.getElementById('planBtn').onclick=()=>goPlan(matched);
+  document.getElementById('saveBtn').onclick=()=>drawStampPNG(c);
+  document.getElementById('shareBtn').onclick=()=>shareResult(c);
+  document.getElementById('retakeBtn').onclick=()=>retake();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function passportGrid(pass){
+  // show up to 16 slots: unlocked cities first, then locked placeholders
+  const keys=Object.keys(CITIES);
+  let cells=[];
+  pass.slice(0,16).forEach(k=>cells.push(`<div class="st on" title="${CITIES[k]?.en||k}">${CITIES[k]?.e||'✦'}</div>`));
+  const remain=Math.max(0,16-cells.length);
+  for(let i=0;i<remain;i++) cells.push(`<div class="st">·</div>`);
+  return cells.join('');
+}
+
+function goPlan(k){
+  // hand the chosen city to the planner via localStorage + query param
+  try{localStorage.setItem('wc_city',k)}catch(e){}
+  // Changsha has full real data in the planner today; others route through the same page.
+  location.href='planner.html?city='+encodeURIComponent(k.toLowerCase())+'&from=quiz';
+}
+
+/* ---- draw a shareable PNG stamp card with QR code ---- */
+async function drawStampPNG(c){
+  const QUIZ_URL='https://ordinarymantrying.com/tools/wander-china/quiz.html';
+  const W=1080,H=1430,cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const x=cv.getContext('2d');
+  const rr=(a,b,w,h,r)=>{x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);
+    x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();};
+  // paper bg
+  x.fillStyle='#fbf7f0';x.fillRect(0,0,W,H);
+  // top gradient panel
+  const g=x.createLinearGradient(0,0,W,760);
+  g.addColorStop(0,'#be123c');g.addColorStop(.55,'#e11d48');g.addColorStop(1,'#f59e0b');
+  rr(60,60,W-120,700,44);x.fillStyle=g;x.fill();
+  // seal (top-right circle)
+  x.save();x.translate(W-190,210);x.rotate(-11*Math.PI/180);
+  x.beginPath();x.arc(0,0,80,0,7);x.lineWidth=6;x.strokeStyle='rgba(255,255,255,.9)';x.stroke();
+  x.fillStyle='#fff';x.font='800 30px -apple-system,Segoe UI,Arial';x.textAlign='center';
+  x.fillText(c.en.toUpperCase().replace(/[^A-Z]/g,'').slice(0,7),0,-4);
+  x.font='700 20px -apple-system,Arial';x.fillText('✦ CN ✦',0,26);x.restore();
+  // panel text
+  x.textAlign='center';x.fillStyle='rgba(255,255,255,.85)';
+  x.font='700 26px -apple-system,Segoe UI,Arial';
+  x.fillText('Y O U R   C H I N E S E   S O U L   C I T Y',W/2,190);
+  x.font='120px "Apple Color Emoji","Segoe UI Emoji",sans-serif';x.fillText(c.e,W/2,360);
+  x.fillStyle='#fff';x.font='800 100px -apple-system,Segoe UI,Arial';x.fillText(c.en,W/2,490);
+  x.font='400 40px "PingFang SC","Microsoft YaHei",sans-serif';x.fillText(c.cn,W/2,548);
+  x.font='500 38px -apple-system,Segoe UI,Arial';x.fillStyle='rgba(255,255,255,.95)';
+  x.fillText(c.tagline,W/2,630);
+  // tags
+  let tg=c.tags.slice(0,4);x.font='700 30px -apple-system,Arial';
+  let widths=tg.map(t=>x.measureText(t.toUpperCase()).width+56),tot=widths.reduce((a,b)=>a+b+16,-16);
+  let cx=(W-tot)/2;
+  tg.forEach((t,i)=>{rr(cx,690,widths[i],56,28);x.fillStyle='rgba(255,255,255,.18)';x.fill();
+    x.fillStyle='#fff';x.textAlign='center';x.fillText(t.toUpperCase(),cx+widths[i]/2,728);cx+=widths[i]+16;});
+  // desc on paper
+  x.fillStyle='#3d4453';x.textAlign='center';x.font='400 38px -apple-system,Segoe UI,Arial';
+  wrap(x,c.desc,W/2,880,W-200,52);
+  // traits row
+  x.fillStyle='#e11d48';x.font='800 30px -apple-system,Arial';
+  x.fillText(c.traits.slice(0,4).map(t=>t).join('   ·   '),W/2,1150);
+  // divider
+  x.strokeStyle='#e5e7eb';x.lineWidth=2;
+  x.beginPath();x.moveTo(60,1190);x.lineTo(W-60,1190);x.stroke();
+  // footer left: brand + url
+  x.textAlign='left';
+  x.fillStyle='#1a1a2e';x.font='800 40px -apple-system,Segoe UI,Arial';
+  x.fillText('游  Wander China',80,1260);
+  x.fillStyle='#5b6472';x.font='500 26px -apple-system,Arial';
+  x.fillText('Which Chinese city are you?',80,1302);
+  x.font='400 24px -apple-system,Arial';x.fillStyle='#9ca3af';
+  x.fillText('ordinarymantrying.com/tools/wander-china/quiz.html',80,1338);
+  // footer right: QR code
+  try{
+    const qrCv=document.createElement('canvas');
+    await new Promise((res,rej)=>QRCode.toCanvas(qrCv,QUIZ_URL,
+      {width:170,margin:1,color:{dark:'#1a1a2e',light:'#fbf7f0'}},e=>e?rej(e):res()));
+    x.drawImage(qrCv,W-250,1205,170,170);
+    x.fillStyle='#9ca3af';x.font='22px -apple-system,Arial';x.textAlign='center';
+    x.fillText('Scan to take quiz',W-165,1390);
+  }catch(e){}
+  // download
+  const a=document.createElement('a');a.download='my-china-city-'+c.en.toLowerCase().replace(/[^a-z]/g,'')+'.png';
+  a.href=cv.toDataURL('image/png');a.click();
+  const b=document.getElementById('saveBtn');if(b){b.textContent='✓ Saved!';setTimeout(()=>b.textContent='💾 Save stamp',1600);}
+}
+function wrap(x,text,cx,cy,maxW,lh){
+  const words=text.split(' ');let line='',y=cy;
+  for(const w of words){const test=line+w+' ';
+    if(x.measureText(test).width>maxW&&line){x.fillText(line.trim(),cx,y);line=w+' ';y+=lh;}else line=test;}
+  x.fillText(line.trim(),cx,y);
+}
+
+function shareResult(c){
+  const text=`My Chinese soul city is ${c.en} ${c.e} — ${c.tagline}. Which one are you?`;
+  const url=location.href;
+  if(navigator.share){navigator.share({title:'Wander China',text,url}).catch(()=>{});}
+  else{
+    navigator.clipboard?.writeText(text+' '+url);
+    const b=document.getElementById('shareBtn'); if(b){b.textContent='✓ Copied!';setTimeout(()=>b.textContent='📤 Share my stamp',1600);}
+  }
+}
+
+function retake(){
+  qi=0;picked=[];matched=null;
+  document.getElementById('result').style.display='none';
+  document.getElementById('stage').style.display='block';
+  renderQ();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+renderQ();
+</script>
+</body>
+</html>
