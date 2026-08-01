@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-DBR2PMLR61");</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mandarin Match — Free Chinese Character Game | 1743 Words, 217 Levels</title>
+<meta name="description" content="Free tile-matching game to learn Chinese characters. Match 1743 Mandarin words with their English meanings across 217 levels. Includes pinyin, combo scoring, badges, and offline play. No sign-up required.">
+<meta name="keywords" content="learn Chinese characters, Mandarin matching game, Chinese vocabulary game, learn Mandarin, Chinese character game, HSK vocabulary, pinyin practice, free Chinese game">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/mandarin-match.html">
+<meta property="og:title" content="Mandarin Match — Free Chinese Character Matching Game">
+<meta property="og:description" content="Match Chinese characters with English meanings. 1743 words, 217 levels, combo streaks, badge wall. Free and offline-capable.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/mandarin-match.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mandarin Match — Free Chinese Character Game">
+<meta name="twitter:description" content="1743 Mandarin words · 217 levels · combo streaks · badges · free & offline">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Mandarin Match",
+  "description": "Free tile-matching game to learn Chinese characters. 1743 Mandarin words with English meanings across 217 levels. Includes pinyin annotations, combo scoring, achievement badges, and LocalStorage progress saving.",
+  "applicationCategory": "EducationalGame",
+  "operatingSystem": "Any (Web Browser)",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "1743 Chinese words with English meanings",
+    "217 progressive levels (8 pairs each)",
+    "Pinyin pronunciation shown on tiles",
+    "Combo multiplier and streak system",
+    "Achievement badge wall",
+    "LocalStorage progress — resume anytime",
+    "Web Audio sound effects",
+    "Offline capable — no internet required",
+    "6 hidden Easter eggs"
+  ],
+  "url": "https://ordinarymantrying.com/tools/mandarin-match.html",
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "educationalAlignment": {
+    "@type": "AlignmentObject",
+    "alignmentType": "educationalLevel",
+    "targetName": "HSK 1-4 Chinese vocabulary"
+  }
+}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09101F;--surf:#111827;--surf2:#1A2436;--surf3:#212f47;
+  --acc:#DC2626;--accl:#F87171;--accd:rgba(220,38,38,.15);--accg:rgba(220,38,38,.3);
+  --ok:#059669;--okd:rgba(5,150,105,.15);--okg:rgba(5,150,105,.35);
+  --err:#EF4444;--errd:rgba(239,68,68,.1);
+  --gold:#F59E0B;--goldd:rgba(245,158,11,.12);
+  --wh:#F1F5F9;--mu:#64748B;--fa:#2D3A50;
+}
+body{background:var(--bg);color:var(--wh);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:50px 20px 60px;background:radial-gradient(ellipse at 50% 0%,rgba(220,38,38,.15) 0%,transparent 62%)}
+.htag{font-size:.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accl);margin-bottom:14px}
+#hero h1{font-size:clamp(2.4rem,9vw,5.5rem);font-weight:900;letter-spacing:-.04em;line-height:1;margin-bottom:6px}
+#hero h1 em{font-style:normal;color:var(--accl)}
+.hero-sub{font-size:clamp(.88rem,2.5vw,1.05rem);color:var(--mu);max-width:460px;margin:0 auto 32px;line-height:1.85}
+.resume-bar{background:var(--surf2);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 18px;max-width:440px;width:100%;margin:0 auto 18px;text-align:left;display:none}
+.resume-bar .rl{font-size:.75rem;color:var(--mu);margin-bottom:6px}
+.rpbar{height:6px;background:var(--fa);border-radius:99px;overflow:hidden;margin-bottom:6px}
+.rpfill{height:100%;background:linear-gradient(90deg,var(--acc),var(--accl));border-radius:99px}
+.rinfo{display:flex;justify-content:space-between;font-size:.78rem}
+.rinfo b{color:var(--accl)}.rinfo span{color:var(--mu)}
+.hero-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px}
+.btn-start{padding:16px;background:linear-gradient(120deg,var(--acc),var(--accl));border:none;border-radius:13px;color:#fff;font-size:1.05rem;font-weight:800;cursor:pointer;transition:filter .15s}
+.btn-start:hover{filter:brightness(1.12)}
+.btn-alt{padding:13px;background:transparent;border:1.5px solid rgba(255,255,255,.12);border-radius:13px;color:var(--mu);font-size:.95rem;cursor:pointer;transition:.15s}
+.btn-alt:hover{border-color:var(--gold);color:var(--gold)}
+.hero-meta{margin-top:12px;font-size:.76rem;color:var(--fa)}
+.badge-preview{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:20px auto 28px;max-width:440px}
+.bpv{background:var(--surf2);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:8px 12px;text-align:center;font-size:1.5rem;opacity:.35}
+.bpv.earned{opacity:1;box-shadow:0 0 14px rgba(245,158,11,.3)}
+.bpv .bvl{font-size:.58rem;color:var(--mu);margin-top:3px}
+
+/* GAME */
+#game{display:none;max-width:720px;margin:0 auto;padding:16px 14px 60px}
+.topbar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.btn-sm{padding:7px 13px;border:1px solid rgba(255,255,255,.1);border-radius:8px;background:transparent;color:var(--mu);font-size:.8rem;cursor:pointer;transition:.15s}
+.btn-sm:hover{border-color:var(--accl);color:var(--accl)}
+.topbar-r{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:.8rem;color:var(--mu)}
+.lv-badge{padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;background:var(--accd);color:var(--accl)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.st{background:var(--surf);border:1px solid rgba(255,255,255,.05);border-radius:11px;padding:9px;text-align:center}
+.st-v{display:block;font-size:1.25rem;font-weight:900;letter-spacing:-.03em;line-height:1}
+.st-v.ac{color:var(--accl)}.st-v.ok{color:var(--ok)}.st-v.gd{color:var(--gold)}
+.st-l{font-size:.58rem;color:var(--mu);text-transform:uppercase;letter-spacing:.08em;margin-top:3px;display:block}
+.prog-wrap{height:4px;background:var(--fa);border-radius:99px;overflow:hidden;margin-bottom:12px}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--acc),var(--accl));border-radius:99px;transition:width .5s ease}
+.status{text-align:center;min-height:24px;margin-bottom:10px;font-size:.88rem;color:var(--mu)}
+.status.good{color:var(--ok)}.status.bad{color:var(--err)}.status.hint{color:var(--accl)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px}
+@media(max-width:380px){.grid{grid-template-columns:repeat(2,1fr)}}
+.tile{background:var(--surf2);border:2px solid rgba(255,255,255,.07);border-radius:13px;padding:10px 6px 9px;text-align:center;cursor:pointer;user-select:none;position:relative;min-height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transition:border-color .13s,background .13s,transform .13s,opacity .3s}
+.tile:hover:not(.ok):not(.gone){border-color:rgba(220,38,38,.45);background:var(--surf3);transform:translateY(-2px)}
+.tile.sel{border-color:var(--acc);background:var(--accd);box-shadow:0 0 0 3px var(--accg);transform:translateY(-3px)}
+.tile.ok{border-color:var(--ok);background:var(--okd);box-shadow:0 0 0 3px var(--okg);animation:pop .3s ease}
+.tile.no{animation:shake .36s ease;border-color:var(--err);background:var(--errd)}
+.tile.gone{opacity:0;pointer-events:none}
+/* Chinese tile: red (Chinese cultural color) */
+.tile.type-zh{border-color:rgba(220,38,38,.6);background:rgba(220,38,38,.1)}
+/* English tile: blue */
+.tile.type-en{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.08)}
+@keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.tile-char{font-size:1.25rem;font-weight:800;line-height:1.2;color:#fff;letter-spacing:.02em}
+.tile-word{font-size:1rem;font-weight:800;line-height:1.1;color:#fff}
+.tile-ph{font-size:.6rem;color:rgba(255,255,255,.55);margin-top:2px}
+.tile-type{position:absolute;top:4px;right:6px;font-size:.55rem;font-weight:700;text-transform:uppercase;opacity:.6}
+.actions{display:flex;gap:8px;justify-content:center}
+.act-btn{padding:8px 18px;background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:9px;color:var(--mu);font-size:.8rem;cursor:pointer;transition:.14s}
+.act-btn:hover{border-color:var(--accl);color:var(--accl)}
+
+/* RESULT */
+#result{display:none;max-width:520px;margin:0 auto;padding:50px 20px;text-align:center}
+.res-tag{font-size:.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accl);margin-bottom:12px}
+.res-h{font-size:clamp(2rem,6vw,3rem);font-weight:900;letter-spacing:-.04em;margin-bottom:8px}
+.pct-box{background:linear-gradient(135deg,var(--accd),var(--goldd));border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px 20px;margin:14px 0 20px}
+.pct-big{font-size:2.2rem;font-weight:900;color:var(--gold);line-height:1}
+.pct-lbl{font-size:.82rem;color:var(--mu);margin-top:4px}
+.new-badge{background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(245,158,11,.05));border:1px solid rgba(245,158,11,.35);border-radius:14px;padding:14px 18px;margin-bottom:16px;display:none}
+.nb-icon{font-size:2.2rem;margin-bottom:6px}
+.nb-name{font-size:1.05rem;font-weight:800}
+.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:24px}
+.res-stat{background:var(--surf);border:1px solid rgba(255,255,255,.06);border-radius:13px;padding:16px 8px}
+.res-n{font-size:1.8rem;font-weight:900;letter-spacing:-.04em;color:var(--accl);line-height:1}
+.res-l{font-size:.62rem;color:var(--mu);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+.cs-strip{background:linear-gradient(120deg,rgba(5,150,105,.12),rgba(220,38,38,.08));border:1px solid rgba(5,150,105,.25);border-radius:13px;padding:14px 18px;margin:14px 0;display:none}
+.cs-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ok);margin-bottom:6px}
+.cs-msg{font-size:.92rem;color:var(--wh);line-height:1.5}
+.res-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-next{padding:14px 36px;background:linear-gradient(120deg,var(--acc),var(--accl));border:none;border-radius:12px;color:#fff;font-size:.97rem;font-weight:800;cursor:pointer}
+.btn-retry{padding:11px 24px;background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:12px;color:var(--mu);font-size:.88rem;cursor:pointer}
+.btn-retry:hover{border-color:var(--accl);color:var(--accl)}
+.foot{margin-top:22px;font-size:.78rem;color:var(--fa)}
+.foot a{color:var(--mu)}
+
+/* BADGES */
+#badges{display:none;max-width:680px;margin:0 auto;padding:20px 20px 60px}
+.bwall-h{font-size:1.6rem;font-weight:900;letter-spacing:-.03em;margin-bottom:6px;margin-top:16px}
+.bwall-sub{font-size:.85rem;color:var(--mu);margin-bottom:24px}
+.bwall-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.badge-card{background:var(--surf);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px 12px;text-align:center}
+.badge-card.earned{border-color:rgba(245,158,11,.4);background:var(--goldd);box-shadow:0 0 18px rgba(245,158,11,.15)}
+.badge-card.locked{opacity:.35}
+.bc-icon{font-size:2.5rem;margin-bottom:8px}
+.bc-name{font-size:.88rem;font-weight:700;color:var(--wh);margin-bottom:3px}
+.bc-cond{font-size:.7rem;color:var(--mu)}
+.bc-date{font-size:.65rem;color:var(--gold);margin-top:4px}
+.ctost{position:fixed;top:50%;left:50%;transform:translate(-50%,-60%) scale(0);background:linear-gradient(120deg,var(--acc),var(--accl));color:#fff;font-size:1.5rem;font-weight:900;padding:10px 22px;border-radius:13px;pointer-events:none;z-index:800;transition:transform .2s}
+.ctost.show{transform:translate(-50%,-60%) scale(1)}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="htag">1743 words · 217 levels · 8 pairs each</div>
+  <h1 onclick="titleClick()" style="cursor:default">Mandarin<em>Match</em></h1>
+  <p class="hero-sub">See a Chinese character — find its English meaning.<br>Build your reading vocabulary one level at a time.</p>
+  <div class="badge-preview" id="badge-preview"></div>
+  <div class="resume-bar" id="resume-bar">
+    <div class="rl">🔖 Continue from last session</div>
+    <div class="rpbar"><div class="rpfill" id="rpfill"></div></div>
+    <div class="rinfo"><b id="rinfo-lvl">Level 1</b><span id="rinfo-pct">0%</span></div>
+  </div>
+  <div class="hero-btns">
+    <button class="btn-start" onclick="startGame()">▶ Start Playing</button>
+    <button class="btn-alt" onclick="showBadges()">🏆 Badge Wall</button>
+  </div>
+  <div class="hero-meta">Learned <b id="hero-learned" style="color:var(--ok)"> 0 </b> words · Today <b id="hero-today" style="color:var(--gold)"> 0 </b> levels</div>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div class="topbar">
+    <button class="btn-sm" onclick="goHome()">← Home</button>
+    <div class="topbar-r">
+      <span class="lv-badge" id="lv-badge">Level 1</span>
+      <span id="t-pair" style="font-size:.78rem"></span>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="st"><span class="st-v ac" id="s-lv">1</span><span class="st-l">Level</span></div>
+    <div class="st"><span class="st-v gd" id="s-sc">0</span><span class="st-l">Score</span></div>
+    <div class="st"><span class="st-v" id="s-tm">0:00</span><span class="st-l">Time</span></div>
+    <div class="st"><span class="st-v ok" id="s-cb">x1</span><span class="st-l">Combo</span></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <div class="status" id="status">Click a Chinese tile, then click its English meaning</div>
+  <div class="grid" id="grid"></div>
+  <div class="actions">
+    <button class="act-btn" onclick="doHint()">Hint −20pts</button>
+    <button class="act-btn" onclick="skipLevel()">Skip</button>
+    <button class="act-btn" onclick="showBadges()">Badges</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <div class="res-tag" id="res-tag">Level 1 Complete!</div>
+  <h2 class="res-h" id="res-h">Well done!</h2>
+  <div class="pct-box">
+    <div class="pct-big" id="pct-big">TOP 50%</div>
+    <div class="pct-lbl" id="pct-lbl">Your speed beat half of all players</div>
+  </div>
+  <div class="new-badge" id="new-badge">
+    <div class="nb-icon" id="nb-icon">🎖️</div>
+    <div style="font-size:.82rem;font-weight:700;color:var(--gold)">New Badge Unlocked!</div>
+    <div class="nb-name" id="nb-name"></div>
+  </div>
+  <div class="cs-strip" id="cs-strip">
+    <div class="cs-title">Up Next</div>
+    <div class="cs-msg" id="cs-msg"></div>
+  </div>
+  <div class="res-grid">
+    <div class="res-stat"><div class="res-n" id="r-sc">0</div><div class="res-l">Score</div></div>
+    <div class="res-stat"><div class="res-n" id="r-tm">0:00</div><div class="res-l">Time</div></div>
+    <div class="res-stat"><div class="res-n" id="r-ac">100%</div><div class="res-l">Accuracy</div></div>
+  </div>
+  <div class="res-btns">
+    <button class="btn-next" id="btn-next" onclick="nextLevel()">Next Level</button>
+    <button class="btn-retry" onclick="retryLevel()">Retry</button>
+    <button class="btn-retry" onclick="goHome()">Home</button>
+  </div>
+  <div class="foot">Learned <b id="r-learned">0</b>/1743 words · <a href="/tools/">Back to Tools</a></div>
+</div>
+
+<!-- BADGES -->
+<div id="badges">
+  <button class="btn-sm" onclick="goHome()" style="margin:20px 0 0 16px;display:block">← Back</button>
+  <div style="padding:10px 20px 40px">
+    <div class="bwall-h">🏆 Badge Wall</div>
+    <div class="bwall-sub" id="bwall-sub">Unlock achievements as you master Chinese</div>
+    <div class="bwall-grid" id="bwall-grid"></div>
+  </div>
+</div>
+
+<div class="ctost" id="ctost"></div>
+
+<script src="gaokao/vocab-data.js"></script>
+<script>
+var TOTAL=1743,TOTAL_LV=217;
+var BADGES=[
+  {id:'b1',icon:'🌱',name:'First Steps',cond:'Complete level 1',lvl:1},
+  {id:'b5',icon:'⚡',name:'Getting Started',cond:'Complete level 5',lvl:5},
+  {id:'b10',icon:'⭐',name:'Beginner',cond:'Complete level 10',lvl:10},
+  {id:'b20',icon:'🔥',name:'Warmed Up',cond:'Complete level 20',lvl:20},
+  {id:'b30',icon:'🎯',name:'Focused',cond:'Complete level 30',lvl:30},
+  {id:'b50',icon:'🥈',name:'Steady Progress',cond:'Complete level 50',lvl:50},
+  {id:'b75',icon:'🏅',name:'Vocab Builder',cond:'Complete level 75',lvl:75},
+  {id:'b100',icon:'🥇',name:'Century Club',cond:'Complete level 100',lvl:100},
+  {id:'b125',icon:'💎',name:'Vocab Elite',cond:'Complete level 125',lvl:125},
+  {id:'b150',icon:'🚀',name:'Sprint Mode',cond:'Complete level 150',lvl:150},
+  {id:'b175',icon:'🌟',name:'Almost There',cond:'Complete level 175',lvl:175},
+  {id:'b200',icon:'🏆',name:'Vocab Master',cond:'Complete level 200',lvl:200},
+  {id:'b217',icon:'👑',name:'Dragon Scholar',cond:'Complete all 217 levels!',lvl:217},
+  {id:'fast',icon:'⚡',name:'Lightning',cond:'Finish a level in under 20s',lvl:0,special:'speed20'},
+  {id:'perfect',icon:'💯',name:'Perfectionist',cond:'Zero mistakes in a level',lvl:0,special:'perfect'},
+  {id:'streak3',icon:'🎪',name:'Hat Trick',cond:'3 consecutive perfect levels',lvl:0,special:'streak3'},
+];
+
+var LS='mn_v1';
+function getSt(){try{var d=JSON.parse(localStorage.getItem(LS))||{};return{lvl:d.lvl||1,learned:d.learned||0,badges:d.badges||[],times:d.times||[],streak:d.streak||0,tc:d.tc||0,td:d.td||''};}catch(e){return{lvl:1,learned:0,badges:[],times:[],streak:0,tc:0,td:''};}}
+function saveSt(d){try{localStorage.setItem(LS,JSON.stringify(d));}catch(e){}}
+
+var curLvl=1,pairs=[],selTile=null,matchedCount=0,score=0,combo=1,misses=0,timerID=null,elapsed=0,totalPairs=8,perfect=true,wrongStreak=0,legendaryShown=false;
+
+function cleanChinese(def){
+  // Strip part-of-speech prefix: "n. ", "v. ", "n. & v. " etc.
+  var s=def.replace(/^([a-zA-Z]+\.(\s*&\s*[a-zA-Z]+\.)?\s*)+/,'').trim();
+  s=s.split(/[；;]/)[0].trim();
+  return s.length>12?s.slice(0,12)+'…':s||def;
+}
+
+function hide(id){var e=document.getElementById(id);if(e)e.style.display='none';}
+function show(id,type){var e=document.getElementById(id);if(e)e.style.display=type||'block';}
+
+function goHome(){
+  clearInterval(timerID);timerID=null;
+  hide('game');hide('result');hide('badges');show('hero');
+  var s=getSt();
+  if(s.lvl>1){
+    show('resume-bar','block');
+    var pct=Math.min(100,Math.round((s.lvl-1)/TOTAL_LV*100));
+    document.getElementById('rpfill').style.width=pct+'%';
+    document.getElementById('rinfo-lvl').textContent='Level '+s.lvl;
+    document.getElementById('rinfo-pct').textContent=pct+'%';
+  }
+  document.getElementById('hero-learned').textContent=s.learned;
+  document.getElementById('hero-today').textContent=s.tc;
+  buildBadgePreview(s);
+}
+
+function buildBadgePreview(s){
+  var el=document.getElementById('badge-preview'),html='';
+  var lb=BADGES.filter(function(b){return b.lvl>0;}).slice(0,6);
+  for(var i=0;i<lb.length;i++){var b=lb[i],e=s.badges.indexOf(b.id)>=0;html+='<div class="bpv'+(e?' earned':'')+'">'+b.icon+'<div class="bvl">'+b.name+'</div></div>';}
+  el.innerHTML=html;
+}
+
+function startGame(){
+  var s=getSt();curLvl=s.lvl;
+  hide('hero');hide('result');hide('badges');show('game');
+  loadLevel(curLvl);
+}
+
+function loadLevel(lv){
+  var sl=VD.slice((lv-1)*8,(lv-1)*8+8);
+  totalPairs=sl.length;pairs=[];
+  for(var i=0;i<sl.length;i++)pairs.push({id:i,word:sl[i][0],ph:sl[i][1]||'',def:sl[i][2]});
+  selTile=null;matchedCount=0;score=0;combo=1;misses=0;elapsed=0;perfect=true;wrongStreak=0;legendaryShown=false;
+  document.getElementById('s-lv').textContent=lv;
+  document.getElementById('lv-badge').textContent='Level '+lv;
+  document.getElementById('s-sc').textContent='0';
+  document.getElementById('s-tm').textContent='0:00';
+  document.getElementById('s-cb').textContent='x1';
+  document.getElementById('t-pair').textContent=(totalPairs)+'/'+totalPairs+' left';
+  document.getElementById('status').textContent='Click a Chinese tile, then click its English meaning';
+  document.getElementById('status').className='status';
+  document.getElementById('prog').style.width='0%';
+  clearInterval(timerID);
+  timerID=setInterval(function(){elapsed++;var m=Math.floor(elapsed/60),s=elapsed%60;document.getElementById('s-tm').textContent=m+':'+(s<10?'0':'')+s;},1000);
+  renderGrid();
+}
+
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function renderGrid(){
+  var tiles=[];
+  for(var i=0;i<pairs.length;i++){
+    var p=pairs[i],zh=cleanChinese(p.def);
+    // ZH tile: shows Chinese characters (red)
+    tiles.push({tid:'zh_'+p.id,pair:p.id,type:'zh',char:zh});
+    // EN tile: shows English word + IPA (blue)
+    tiles.push({tid:'en_'+p.id,pair:p.id,type:'en',word:p.word,ph:p.ph});
+  }
+  shuffle(tiles);
+  var html='';
+  for(var i=0;i<tiles.length;i++){
+    var t=tiles[i];
+    if(t.type==='zh'){
+      html+='<div class="tile type-zh" id="t_'+t.tid+'" data-pair="'+t.pair+'" data-type="zh" onclick="clickTile(this)"><span class="tile-type">汉字</span><span class="tile-char">'+esc(t.char)+'</span></div>';
+    }else{
+      html+='<div class="tile type-en" id="t_'+t.tid+'" data-pair="'+t.pair+'" data-type="en" onclick="clickTile(this)"><span class="tile-type">EN</span><span class="tile-word">'+esc(t.word)+'</span><span class="tile-ph">'+esc(t.ph)+'</span></div>';
+    }
+  }
+  document.getElementById('grid').innerHTML=html;
+}
+
+function clickTile(el){
+  if(el.classList.contains('ok')||el.classList.contains('gone'))return;
+  if(!selTile){selTile=el;el.classList.add('sel');setSt2('Selected: '+(el.dataset.type==='zh'?el.querySelector('.tile-char').textContent:el.querySelector('.tile-word').textContent),'hint');return;}
+  if(selTile===el){selTile.classList.remove('sel');selTile=null;setSt2('Click a Chinese tile, then click its English meaning','');return;}
+  if(selTile.dataset.type===el.dataset.type){selTile.classList.remove('sel');selTile=el;el.classList.add('sel');setSt2('Selected: '+(el.dataset.type==='zh'?el.querySelector('.tile-char').textContent:el.querySelector('.tile-word').textContent),'hint');return;}
+  var match=selTile.dataset.pair===el.dataset.pair,a=selTile,b=el;
+  a.classList.remove('sel');
+  if(match){
+    snd('ok');wrongStreak=0;
+    score+=10*combo;combo=Math.min(combo+1,8);
+    document.getElementById('s-sc').textContent=score;
+    document.getElementById('s-cb').textContent='x'+combo;
+    a.classList.add('ok');b.classList.add('ok');
+    var mp=null;for(var i=0;i<pairs.length;i++){if(pairs[i].id==a.dataset.pair){mp=pairs[i];break;}}
+    setSt2('✓ '+(mp?mp.word+' = '+cleanChinese(mp.def):''),'good');
+    if(combo===8&&!legendaryShown){legendaryShown=true;showCombo('👑 Legendary! x8');snd('legendary');eggLegendary();}
+    else if(combo>=3){showCombo('x'+combo+' Combo!');snd('combo');}
+    setTimeout(function(){a.classList.add('gone');b.classList.add('gone');},420);
+    matchedCount++;
+    document.getElementById('t-pair').textContent=(totalPairs-matchedCount)+'/'+totalPairs+' left';
+    document.getElementById('prog').style.width=((curLvl-1+matchedCount/totalPairs)/TOTAL_LV*100)+'%';
+    if(matchedCount===totalPairs)setTimeout(doneLevel,500);
+  }else{
+    snd('no');misses++;perfect=false;combo=1;document.getElementById('s-cb').textContent='x1';
+    wrongStreak++;
+    if(wrongStreak>=5){setSt2('😅 Keyboard broken? Keep going!','bad');wrongStreak=0;}
+    else setSt2('✗ Not a match, try again','bad');
+    a.classList.add('no');b.classList.add('no');
+    setTimeout(function(){a.classList.remove('no');b.classList.remove('no');},400);
+  }
+  selTile=null;
+}
+
+function doHint(){
+  var um=null;for(var i=0;i<pairs.length;i++){var e=document.getElementById('t_zh_'+pairs[i].id);if(e&&!e.classList.contains('gone')){um=pairs[i];break;}}
+  if(!um)return;
+  var za=document.getElementById('t_zh_'+um.id),ea=document.getElementById('t_en_'+um.id);
+  if(!za||!ea)return;
+  za.classList.add('sel');ea.classList.add('sel');
+  score=Math.max(0,score-20);document.getElementById('s-sc').textContent=score;
+  setSt2('💡 '+cleanChinese(um.def)+' = '+um.word,'hint');
+  setTimeout(function(){za.classList.remove('sel');ea.classList.remove('sel');},1500);
+}
+
+function skipLevel(){
+  clearInterval(timerID);timerID=null;
+  var s=getSt();s.lvl=Math.max(s.lvl,curLvl+1);s.learned=Math.min(s.lvl*8,TOTAL);saveSt(s);
+  curLvl++;if(curLvl>TOTAL_LV){goHome();return;}
+  hide('hero');hide('result');hide('badges');show('game');loadLevel(curLvl);
+}
+
+function retryLevel(){hide('result');show('game');loadLevel(curLvl);}
+
+function doneLevel(){
+  clearInterval(timerID);timerID=null;
+  var s=getSt();
+  s.lvl=Math.max(s.lvl,curLvl+1);s.learned=Math.min(s.lvl*8,TOTAL);
+  s.times=s.times.slice(-99).concat([elapsed]);
+  var today=new Date().toDateString();
+  if(s.td===today)s.tc++;else{s.tc=1;s.td=today;}
+  if(perfect)s.streak=(s.streak||0)+1;else s.streak=0;
+  var nb=[];
+  for(var i=0;i<BADGES.length;i++){
+    var b=BADGES[i];if(s.badges.indexOf(b.id)>=0)continue;
+    var earn=false;
+    if(b.lvl>0&&curLvl>=b.lvl)earn=true;
+    if(b.special==='speed20'&&elapsed<=20)earn=true;
+    if(b.special==='perfect'&&perfect)earn=true;
+    if(b.special==='streak3'&&s.streak>=3)earn=true;
+    if(earn){s.badges.push(b.id);nb.push(b);}
+  }
+  saveSt(s);
+  var faster=0;for(var j=0;j<s.times.length;j++){if(s.times[j]>elapsed)faster++;}
+  var pct=s.times.length>1?Math.round(faster/s.times.length*100):estPct(elapsed);
+  document.getElementById('res-tag').textContent='Level '+curLvl+' Complete!';
+  var tt=['Well done!','Excellent!','Unstoppable!','Character Hunter!','Amazing!','Perfect!'];
+  document.getElementById('res-h').textContent=tt[Math.min(Math.floor(score/60),5)];
+  document.getElementById('pct-big').textContent='TOP '+(100-pct)+'%';
+  document.getElementById('pct-lbl').textContent='Your speed beat '+pct+'% of all players!';
+  var mm=Math.floor(elapsed/60),ss=elapsed%60;
+  document.getElementById('r-sc').textContent=score;
+  document.getElementById('r-tm').textContent=mm+':'+(ss<10?'0':'')+ss;
+  document.getElementById('r-ac').textContent=Math.round(totalPairs/(totalPairs+misses)*100)+'%';
+  document.getElementById('r-learned').textContent=s.learned;
+  var nbe=document.getElementById('new-badge');
+  if(nb.length>0){nbe.style.display='';document.getElementById('nb-icon').textContent=nb[0].icon;document.getElementById('nb-name').textContent=nb[0].icon+' '+nb[0].name;}
+  else nbe.style.display='none';
+  var cs=document.getElementById('cs-strip'),csm=document.getElementById('cs-msg');
+  if(curLvl<TOTAL_LV){
+    cs.style.display='';
+    var nw=VD.slice(curLvl*8,curLvl*8+3).map(function(w){return cleanChinese(w[2]);}).join(' · ');
+    csm.innerHTML=(pct>=70?'You beat '+pct+'% of players! <b style="color:var(--gold)">Try Level '+(curLvl+1)+'?</b>':'Keep going! <b style="color:var(--ok)">You can do it!</b>')+'<br><small style="color:var(--mu)">Next: '+nw+' …</small>';
+  }else{cs.style.display='';csm.innerHTML='<b style="color:var(--gold)">🎉 All 217 levels complete! You know all 1743 words!</b>';}
+  var bn=document.getElementById('btn-next');
+  if(curLvl<TOTAL_LV){bn.textContent='Level '+(curLvl+1);bn.style.display='';}else bn.style.display='none';
+  hide('game');hide('hero');hide('badges');show('result');
+  snd(nb.length>0?'badge':'done');
+  if(elapsed<=10)setTimeout(function(){showCombo('⚡ Lightning speed!');},200);
+  if(curLvl===TOTAL_LV)setTimeout(eggMegaCelebration,1200);
+}
+
+function estPct(s){if(s<=15)return 95;if(s<=25)return 82;if(s<=40)return 65;if(s<=60)return 48;if(s<=90)return 30;return 18;}
+function nextLevel(){curLvl++;if(curLvl>TOTAL_LV){goHome();return;}hide('result');show('game');loadLevel(curLvl);}
+
+function showBadges(){
+  var s=getSt(),html='';
+  for(var i=0;i<BADGES.length;i++){var b=BADGES[i],e=s.badges.indexOf(b.id)>=0;html+='<div class="badge-card '+(e?'earned':'locked')+'"><div class="bc-icon">'+b.icon+'</div><div class="bc-name">'+b.name+'</div><div class="bc-cond">'+b.cond+'</div>'+(e?'<div class="bc-date">Unlocked ✓</div>':'')+'</div>';}
+  document.getElementById('bwall-grid').innerHTML=html;
+  document.getElementById('bwall-sub').textContent='Unlocked '+s.badges.length+'/'+BADGES.length+' badges · Learned '+s.learned+'/'+TOTAL+' words';
+  hide('hero');hide('game');hide('result');show('badges');
+}
+
+function setSt2(txt,cls){var el=document.getElementById('status');el.textContent=txt;el.className='status'+(cls?' '+cls:'');}
+function showCombo(txt){var el=document.getElementById('ctost');el.textContent=txt;el.classList.add('show');setTimeout(function(){el.classList.remove('show');},900);}
+
+// ── SOUND ENGINE ──
+var _ac=null;
+function snd(type){
+  try{
+    if(!_ac)_ac=new(window.AudioContext||window.webkitAudioContext)();
+    var ctx=_ac,t=ctx.currentTime;
+    function tone(f,s,d,v,wt){var o=ctx.createOscillator(),g=ctx.createGain();o.type=wt||'sine';o.frequency.value=f;o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(v||.22,t+s);g.gain.exponentialRampToValueAtTime(.001,t+s+d);o.start(t+s);o.stop(t+s+d+.05);}
+    if(type==='ok'){tone(880,0,.07);tone(1320,.06,.1,.18);}
+    else if(type==='no'){tone(200,0,.08,.2,'sawtooth');tone(160,.06,.1,.15,'sawtooth');}
+    else if(type==='combo'){[880,1108,1320,1760].forEach(function(f,i){tone(f,i*.07,.08,.18);});}
+    else if(type==='done'){[523,659,784,1047].forEach(function(f,i){tone(f,i*.1,.12,.22);});}
+    else if(type==='badge'){[1047,1319,1568,2093].forEach(function(f,i){tone(f,i*.08,.1,.22);});}
+    else if(type==='legendary'){[523,659,784,1047,1319,1568,2093].forEach(function(f,i){tone(f,i*.055,.09,.22);});}
+  }catch(e){}
+}
+
+// ── EASTER EGGS ──
+var _kSeq=[38,38,40,40,37,39,37,39,66,65],_kIdx=0;
+document.addEventListener('keydown',function(e){
+  if(e.keyCode===_kSeq[_kIdx])_kIdx++;else _kIdx=0;
+  if(_kIdx===_kSeq.length){_kIdx=0;eggRainbow();}
+});
+var _tc=0,_tt=null;
+function titleClick(){
+  _tc++;clearTimeout(_tt);_tt=setTimeout(function(){_tc=0;},2000);
+  if(_tc>=5){_tc=0;eggConfetti();}
+}
+function eggRainbow(){
+  var tiles=document.querySelectorAll('.tile:not(.gone)');
+  tiles.forEach(function(t,i){t.style.background='hsl('+(i*55%360)+',75%,35%)';t.style.borderColor='hsl('+(i*55%360)+',90%,55%)';});
+  showCombo('🌈 Rainbow Mode!');snd('legendary');
+  setTimeout(function(){tiles.forEach(function(t){t.style.background='';t.style.borderColor='';});},3000);
+}
+function eggLegendary(){
+  var tiles=document.querySelectorAll('.tile');
+  tiles.forEach(function(t){t.style.boxShadow='0 0 22px rgba(245,158,11,.9)';});
+  setTimeout(function(){tiles.forEach(function(t){t.style.boxShadow='';});},900);
+}
+function spawnParticles(n){
+  for(var i=0;i<n;i++){(function(){
+    var p=document.createElement('div');
+    p.style.cssText='position:fixed;width:8px;height:8px;border-radius:50%;z-index:9998;pointer-events:none;top:-10px;left:'+(Math.random()*100)+'vw;background:hsl('+(Math.random()*360)+',80%,60%);animation:fall '+(1+Math.random()*2)+'s ease-in forwards;animation-delay:'+(Math.random()*.6)+'s';
+    document.body.appendChild(p);setTimeout(function(){p.remove();},3500);
+  })();}
+}
+function eggConfetti(){
+  spawnParticles(40);snd('legendary');
+  var msg=document.createElement('div');
+  msg.textContent='🎉 Easter egg found! You\'re a Mandarin Match legend!';
+  msg.style.cssText='position:fixed;top:38%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(120deg,#DC2626,#F59E0B);color:#fff;font-size:1.1rem;font-weight:900;padding:16px 28px;border-radius:16px;z-index:9999;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5)';
+  document.body.appendChild(msg);setTimeout(function(){msg.remove();},3000);
+}
+function eggMegaCelebration(){
+  spawnParticles(80);snd('legendary');
+  var ov=document.createElement('div');
+  ov.innerHTML='<div style="font-size:3rem;margin-bottom:12px">🐉</div><div style="font-size:1.6rem;font-weight:900;line-height:1.6">Congratulations!<br>You matched all 1743<br>Chinese words!</div><div style="font-size:.95rem;color:rgba(255,255,255,.7);margin-top:12px">Dragon Scholar status achieved 👑</div><div style="font-size:.8rem;color:rgba(255,255,255,.4);margin-top:18px">Tap anywhere to continue</div>';
+  ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(9,16,31,.96);color:#fff;z-index:9999;text-align:center;padding:20px;cursor:pointer';
+  ov.onclick=function(){ov.remove();};
+  document.body.appendChild(ov);
+}
+
+// Init hero
+(function(){
+  var s=getSt();
+  if(s.lvl>1){
+    show('resume-bar','block');
+    var pct=Math.min(100,Math.round((s.lvl-1)/TOTAL_LV*100));
+    document.getElementById('rpfill').style.width=pct+'%';
+    document.getElementById('rinfo-lvl').textContent='Level '+s.lvl;
+    document.getElementById('rinfo-pct').textContent=pct+'%';
+  }
+  document.getElementById('hero-learned').textContent=s.learned;
+  document.getElementById('hero-today').textContent=s.tc;
+  buildBadgePreview(s);
+})();
+</script>
+<section style="max-width:680px;margin:0 auto;padding:40px 20px 60px;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#94a3b8" aria-label="Frequently asked questions">
+<h2 style="font-size:1.1rem;font-weight:800;color:#f1f5f9;margin-bottom:20px">Frequently Asked Questions</h2>
+<details style="border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:2px 16px;margin-bottom:8px;background:#111827">
+<summary style="cursor:pointer;padding:13px 0;font-weight:700;font-size:.92rem;color:#f1f5f9;list-style:none">Is Mandarin Match free?</summary>
+<p style="padding:0 0 14px;font-size:.85rem;line-height:1.7">Yes — completely free. No account, no payment, no ads. Open the page and start playing immediately.</p>
+</details>
+<details style="border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:2px 16px;margin-bottom:8px;background:#111827">
+<summary style="cursor:pointer;padding:13px 0;font-weight:700;font-size:.92rem;color:#f1f5f9;list-style:none">What Chinese words does it cover?</summary>
+<p style="padding:0 0 14px;font-size:.85rem;line-height:1.7">1743 Mandarin words spanning everyday vocabulary, HSK 1–4 core words, verbs, adjectives, nouns, and common phrases. Each tile shows the Chinese character plus pinyin so you learn pronunciation while matching.</p>
+</details>
+<details style="border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:2px 16px;margin-bottom:8px;background:#111827">
+<summary style="cursor:pointer;padding:13px 0;font-weight:700;font-size:.92rem;color:#f1f5f9;list-style:none">Can I use it offline?</summary>
+<p style="padding:0 0 14px;font-size:.85rem;line-height:1.7">Yes. Once the page loads, it works without an internet connection. Progress is saved in your browser's LocalStorage so you can resume from where you left off — even after closing the tab.</p>
+</details>
+<details style="border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:2px 16px;margin-bottom:8px;background:#111827">
+<summary style="cursor:pointer;padding:13px 0;font-weight:700;font-size:.92rem;color:#f1f5f9;list-style:none">How does the matching game work?</summary>
+<p style="padding:0 0 14px;font-size:.85rem;line-height:1.7">Each level shows 8 Chinese tiles and 8 English tiles (16 total). Tap a Chinese character, then tap its English meaning. A correct match removes both tiles and builds your combo streak. Clear all 8 pairs to advance to the next level.</p>
+</details>
+<details style="border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:2px 16px;margin-bottom:8px;background:#111827">
+<summary style="cursor:pointer;padding:13px 0;font-weight:700;font-size:.92rem;color:#f1f5f9;list-style:none">Is it good for beginners learning Chinese?</summary>
+<p style="padding:0 0 14px;font-size:.85rem;line-height:1.7">Yes. The game starts with basic vocabulary and gradually introduces more complex words. Pinyin is always visible so you can learn pronunciation as you go. It works best alongside structured lessons — use it to reinforce and test vocabulary you're studying.</p>
+</details>
+<details style="border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:2px 16px;margin-bottom:8px;background:#111827">
+<summary style="cursor:pointer;padding:13px 0;font-weight:700;font-size:.92rem;color:#f1f5f9;list-style:none">What are the badges and achievements?</summary>
+<p style="padding:0 0 14px;font-size:.85rem;line-height:1.7">Badges unlock as you hit milestones — first match, first level complete, 10-level streak, 100 words learned, and more. All badge progress is saved locally so you can collect them over multiple sessions.</p>
+</details>
+<p style="font-size:.75rem;margin-top:20px;text-align:center">More free tools at <a href="/tools/" style="color:#64748b">ordinarymantrying.com/tools</a></p>
+</section>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Is Mandarin Match free?","acceptedAnswer":{"@type":"Answer","text":"Yes — completely free. No account, no payment, no ads. Open the page and start playing immediately."}},
+    {"@type":"Question","name":"What Chinese words does it cover?","acceptedAnswer":{"@type":"Answer","text":"1743 Mandarin words spanning everyday vocabulary, HSK 1–4 core words, verbs, adjectives, nouns, and common phrases. Each tile shows the Chinese character plus pinyin."}},
+    {"@type":"Question","name":"Can I use it offline?","acceptedAnswer":{"@type":"Answer","text":"Yes. Once the page loads, it works without an internet connection. Progress is saved in your browser's LocalStorage so you can resume from where you left off."}},
+    {"@type":"Question","name":"How does the matching game work?","acceptedAnswer":{"@type":"Answer","text":"Each level shows 8 Chinese tiles and 8 English tiles. Tap a Chinese character, then tap its English meaning. A correct match removes both tiles. Clear all 8 pairs to advance."}},
+    {"@type":"Question","name":"Is it good for beginners learning Chinese?","acceptedAnswer":{"@type":"Answer","text":"Yes. The game starts with basic vocabulary and gradually introduces more complex words. Pinyin is always visible so you learn pronunciation as you go."}},
+    {"@type":"Question","name":"What are the badges and achievements?","acceptedAnswer":{"@type":"Answer","text":"Badges unlock as you hit milestones — first match, first level complete, 10-level streak, 100 words learned, and more. All progress is saved locally."}}
+  ]
+}
+</script>
+</body>
+</html>
