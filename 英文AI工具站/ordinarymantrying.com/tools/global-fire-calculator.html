@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Much Money You Need to Never Work Again in 15 Countries (2026)</title>
+<meta name="description" content="Turkey needs only $140k. China needs $2.87M. Same $50k/year lifestyle. See how bond yields change everything. Interactive heatmap calculator for 15 countries including SE Asia.">
+<meta name="keywords" content="financial independence calculator, FIRE calculator by country, how much to retire, live off interest, global bond rates, never work again calculator, passive income by country, Southeast Asia FIRE, retire in Thailand calculator">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/global-fire-calculator.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How Much to Never Work Again — 15 Countries Compared (2026)">
+<meta property="og:description" content="Turkey: only $140k. Indonesia: $733k. USA: $1.08M. Japan: $1.83M. China: $2.87M. Same $50k/year lifestyle. Wildly different answers. Interactive calculator.">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/global-fire-calculator.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Global FIRE Calculator","url":"https://ordinarymantrying.com/tools/global-fire-calculator.html","description":"Interactive calculator: how much capital to live off interests forever in 15 countries. Based on government bond yields. Includes SE Asia.","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#060b14;--card:#0c1525;--card2:#121f35;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#e2e8f0;--muted:#8892a4;--dim:#2d3748;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+
+/* NAV */
+.nav{background:rgba(6,11,20,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 20px;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.nav-brand{font-size:13px;font-weight:700;color:#f59e0b;text-decoration:none}
+.nav-link{font-size:12px;color:var(--muted);text-decoration:none;padding:4px 10px;border:1px solid var(--border);border-radius:5px}
+
+/* HERO */
+.hero{padding:48px 20px 36px;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,0.12) 0%,transparent 70%)}
+.hero-tag{display:inline-block;background:#4f46e5;color:#fff;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:2px;margin-bottom:16px}
+.hero h1{font-size:clamp(22px,4.5vw,50px);font-weight:900;line-height:1.05;color:#fff;margin-bottom:10px}
+.hero-sub{max-width:560px;margin:0 auto 28px;color:var(--muted);font-size:15px}
+.hero-teaser{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.teaser-pill{background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700}
+
+/* COUNTRY SELECTOR */
+.country-wrap{max-width:960px;margin:0 auto;padding:32px 16px 0}
+.country-label{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.country-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:0}
+.cbtn{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.18s;position:relative;overflow:hidden}
+.cbtn:hover{border-color:rgba(255,255,255,.3);transform:translateY(-2px) scale(1.04)}
+.cbtn:hover .cbtn-flag{animation:flagShake .35s ease}
+.cbtn.active{transform:translateY(-3px) scale(1.05);box-shadow:0 10px 28px rgba(0,0,0,.5)}
+@keyframes flagShake{0%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}100%{transform:rotate(0)}}
+.cbtn-flag{font-size:26px;line-height:1;margin-bottom:4px}
+.cbtn-name{font-size:11px;font-weight:800;color:#fff;margin-bottom:2px}
+.cbtn-rate{font-size:13px;font-weight:900}
+.cbtn-bar{position:absolute;bottom:0;left:0;right:0;height:3px}
+
+/* MAIN PANEL */
+.main-wrap{max-width:960px;margin:0 auto;padding:24px 16px}
+
+/* HERO NUMBER */
+.hero-number-card{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.hn-flag{font-size:48px;line-height:1;flex-shrink:0}
+.hn-info{flex:1;min-width:200px}
+.hn-country{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}
+.hn-rate{font-size:14px;color:var(--text);margin-bottom:6px}
+.hn-number{font-size:clamp(28px,5vw,52px);font-weight:900;line-height:1;color:#fff;margin-bottom:4px}
+.hn-label{font-size:13px;color:var(--muted)}
+.hn-controls{display:flex;flex-direction:column;gap:8px;min-width:220px}
+.spend-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.spend-input{background:var(--card2);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:#fff;font-size:16px;font-weight:800;width:100%;outline:none}
+.spend-input:focus{border-color:rgba(99,102,241,.5)}
+.spend-presets{display:flex;gap:5px;flex-wrap:wrap}
+.spend-preset{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:16px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);transition:.12s}
+.spend-preset:hover,.spend-preset.active{color:#fff;background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.4)}
+
+/* LIFESTYLE PRESETS */
+.lifestyle-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.lifestyle-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.lbtn{padding:8px 18px;border-radius:20px;border:2px solid var(--border);background:var(--card);font-size:13px;font-weight:800;cursor:pointer;transition:.15s;color:var(--muted)}
+.lbtn:hover{color:var(--text);border-color:rgba(255,255,255,.25)}
+.lbtn.active{color:#fff}
+.lbtn.frugal.active{border-color:#10b981;background:rgba(16,185,129,.15);color:#6ee7b7}
+.lbtn.comfortable.active{border-color:#6366f1;background:rgba(99,102,241,.15);color:#a5b4fc}
+.lbtn.luxury.active{border-color:#f59e0b;background:rgba(245,158,11,.15);color:#fcd34d}
+
+/* SHARE BUTTON */
+.share-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.share-btn{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--border2);font-size:13px;font-weight:700;color:var(--text);cursor:pointer;transition:.15s}
+.share-btn:hover{background:rgba(255,255,255,.1)}
+.share-btn.img-btn{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.4);color:#a5b4fc}
+.share-btn.img-btn:hover{background:rgba(99,102,241,.22)}
+.share-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;border:1px solid #334155;color:#e2e8f0;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:.3s;pointer-events:none}
+.share-toast.show{opacity:1}
+
+/* SHARE CARD (screenshot target) */
+#shareCard{position:fixed;left:-9999px;top:0;width:600px;padding:40px;
+  background:linear-gradient(135deg,#060b14 0%,#0c1525 100%);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.sc-header{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#8892a4;margin-bottom:20px}
+.sc-flag{font-size:64px;line-height:1;margin-bottom:10px}
+.sc-country{font-size:18px;font-weight:700;color:#94a3b8;margin-bottom:4px}
+.sc-amount{font-size:56px;font-weight:900;line-height:1;margin-bottom:8px}
+.sc-label{font-size:15px;color:#8892a4;margin-bottom:28px}
+.sc-divider{height:1px;background:rgba(255,255,255,.1);margin-bottom:20px}
+.sc-compare{display:flex;gap:12px;flex-wrap:wrap}
+.sc-pill{background:rgba(255,255,255,.07);border-radius:8px;padding:8px 14px;font-size:13px;color:#e2e8f0;font-weight:600}
+.sc-footer{margin-top:24px;font-size:11px;color:#4a5568;font-weight:600;letter-spacing:1px}
+
+/* HERO CONTRAST */
+.hero-contrast{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin:20px 0 0}
+.hc-pill{background:rgba(255,255,255,.06);border:1px solid var(--border2);border-radius:12px;padding:12px 20px;text-align:center}
+.hc-flag{font-size:22px}
+.hc-country{font-size:11px;color:var(--muted);margin:2px 0}
+.hc-amount{font-size:22px;font-weight:900}
+.hc-label{font-size:10px;color:var(--muted)}
+
+/* HEATMAP GRID */
+.grid-section{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px}
+.grid-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.grid-header-text{flex:1;min-width:0}
+.grid-header h3{font-size:14px;font-weight:800;color:#fff;margin-bottom:2px}
+.grid-header p{font-size:12px;color:var(--muted)}
+.grid-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.heatmap{border-collapse:collapse;width:100%;min-width:640px}
+.heatmap th{padding:10px 12px;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);text-align:center;background:var(--card);white-space:nowrap}
+.heatmap th:first-child{text-align:left;min-width:100px}
+.heatmap td{padding:0;border:2px solid var(--bg)}
+.heatmap tr td:first-child{padding:10px 12px;font-size:13px;font-weight:800;color:var(--muted);background:var(--card);white-space:nowrap;border-left:none;border-top:none;border-bottom:none}
+.hcell{display:flex;flex-direction:column;align-items:center;justify-content:center;height:64px;min-width:84px;cursor:default;transition:.15s}
+.hcell:hover{filter:brightness(1.2)}
+.hcell-main{font-size:18px;font-weight:900;line-height:1}
+.hcell-sub{font-size:11px;font-weight:700;opacity:.85;margin-top:4px}
+
+/* COUNTRY COMPARE */
+.compare-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:20px}
+.compare-section h3{font-size:14px;font-weight:800;color:#fff;margin-bottom:4px}
+.compare-section p{font-size:12px;color:var(--muted);margin-bottom:16px}
+.compare-rows{display:flex;flex-direction:column;gap:8px}
+.compare-row{display:flex;align-items:center;gap:10px}
+.cr-flag{font-size:18px;flex-shrink:0;width:24px;text-align:center}
+.cr-name{font-size:12px;font-weight:700;color:var(--text);width:80px;flex-shrink:0}
+.cr-bar-wrap{flex:1;height:10px;background:rgba(255,255,255,.05);border-radius:5px;overflow:hidden}
+.cr-bar{height:100%;border-radius:5px;transition:.4s}
+.cr-val{font-size:12px;font-weight:800;color:#fff;min-width:80px;text-align:right}
+.cr-rate{font-size:10px;color:var(--muted);min-width:48px;text-align:right}
+
+/* DISCLAIMER */
+.disclaimer{background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.15);border-radius:10px;padding:14px 16px;margin-bottom:20px}
+.disclaimer p{font-size:12px;color:var(--muted);line-height:1.6}
+.disclaimer strong{color:#fcd34d}
+
+/* SOURCE */
+.source-note{font-size:11px;color:#2d3748;margin-top:10px}
+
+/* FOOTER */
+.footer{background:var(--card);border-top:1px solid var(--border);padding:28px 20px;text-align:center}
+.footer p{color:var(--muted);font-size:13px;margin-bottom:8px}
+.footer-links{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.flink{display:inline-block;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;text-decoration:none;border:1px solid var(--border2);color:var(--text)}
+.flink:hover{background:rgba(255,255,255,.05);text-decoration:none}
+.flink.pri{background:#4f46e5;border-color:#4f46e5;color:#fff}
+
+@media(max-width:600px){
+  .country-grid{grid-template-columns:repeat(5,1fr)}
+  .cbtn{padding:10px 4px}
+  .cbtn-name{font-size:9px}
+  .cbtn-rate{font-size:11px}
+  .hero-number-card{flex-direction:column;gap:16px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-brand" href="https://ordinarymantrying.com/">◼ Ordinary Man Trying</a>
+  <a class="nav-link" href="index.html">All Tools</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">Global FIRE Calculator</div>
+  <h1>How Much to<br>Never Work Again?</h1>
+  <p class="hero-sub">It depends entirely on where you live. The same $50,000/year lifestyle requires just $140k in Turkey — or $2.87M in China. Bond yields change everything.</p>
+  <div class="hero-teaser">
+    <div class="teaser-pill">🇹🇷 Turkey: <strong>$139k</strong></div>
+    <div class="teaser-pill">🇮🇩 Indonesia: <strong>$733k</strong></div>
+    <div class="teaser-pill">🇺🇸 USA: <strong>$1.08M</strong></div>
+    <div class="teaser-pill">🇯🇵 Japan: <strong>$1.83M</strong></div>
+    <div class="teaser-pill">🇨🇳 China: <strong>$2.87M</strong></div>
+  </div>
+  <p style="font-size:12px;color:rgba(255,255,255,.4);margin-top:8px">All for the same $50,000/year lifestyle. 15 countries compared.</p>
+</div>
+
+<!-- COUNTRY SELECTOR -->
+<div class="country-wrap">
+  <div class="country-label">Select a country</div>
+  <div class="country-grid" id="countryGrid"></div>
+</div>
+
+<div class="main-wrap">
+
+  <!-- HERO NUMBER CARD -->
+  <div class="hero-number-card" id="heroCard"></div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    <p><strong>How this works:</strong> We use each country's 10-year government bond yield as the reference "safe" return rate. Formula: <strong>Capital needed = Annual spending ÷ Bond yield</strong>. If your capital × rate ≥ annual spending, your interest covers costs forever — principal stays intact. <strong>Important:</strong> bond yields ≠ your actual savings rate. Real accessible rates are lower. Currency risk and inflation are not modeled. This is a theoretical framework, not financial advice.</p>
+    <p style="margin-top:10px;font-style:italic;color:var(--muted)">Personal note: I built this tool after staring at those insane Shanghai apartment prices and wondering — wait, if I just put this money in bonds instead of buying property, could I actually retire? Turns out in China, you'd need $2.87M at current yields. In Turkey? $139k. Geography is destiny for FIRE.</p>
+  </div>
+
+  <!-- HEATMAP -->
+  <div class="grid-section">
+    <div class="grid-header">
+      <div class="grid-header-text">
+        <h3 id="gridTitle">Capital vs. Annual Spending — How Long Does It Last?</h3>
+        <p>Green = lasts forever (interest covers spending). Red = runs out. Hover a cell for exact years.</p>
+      </div>
+      <button class="share-btn img-btn" onclick="shareHeatmap()" style="flex-shrink:0;margin-top:2px">📸 Save as image</button>
+    </div>
+    <div class="grid-scroll">
+      <table class="heatmap" id="heatmap"></table>
+    </div>
+    <div style="padding:10px 20px">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:11px;color:var(--muted)">
+        <span style="font-weight:700">Legend:</span>
+        <span><span style="display:inline-block;width:12px;height:12px;background:#14532d;border-radius:2px;vertical-align:middle;margin-right:4px"></span>∞ Forever</span>
+        <span><span style="display:inline-block;width:12px;height:12px;background:#166534;border-radius:2px;vertical-align:middle;margin-right:4px"></span>50+ yrs</span>
+        <span><span style="display:inline-block;width:12px;height:12px;background:#ca8a04;border-radius:2px;vertical-align:middle;margin-right:4px"></span>20–50 yrs</span>
+        <span><span style="display:inline-block;width:12px;height:12px;background:#9a3412;border-radius:2px;vertical-align:middle;margin-right:4px"></span>10–20 yrs</span>
+        <span><span style="display:inline-block;width:12px;height:12px;background:#450a0a;border-radius:2px;vertical-align:middle;margin-right:4px"></span>&lt;10 yrs</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CROSS-COUNTRY COMPARISON -->
+  <div class="compare-section">
+    <h3 id="compareTitle">Same Lifestyle, 15 Countries — Capital Required</h3>
+    <p id="compareSubtitle">How much you'd need to live off interest forever at your selected spending level</p>
+    <div class="compare-rows" id="compareRows"></div>
+    <p class="source-note">📊 Data: Wind Financial Terminal, 2026/5/19, via @望京博客 on 小红书 Xiaohongshu. 10-year government bond yields.</p>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>More China & money tools:</p>
+  <div class="footer-links">
+    <a href="china-cost-of-living.html" class="flink pri">💰 China Cost of Living →</a>
+    <a href="china-holiday-guide.html" class="flink">📅 Holiday Guide →</a>
+    <a href="china-population-dashboard.html" class="flink">🧬 Population Dashboard →</a>
+    <a href="index.html" class="flink">All 150+ Tools →</a>
+  </div>
+  <p style="margin-top:14px;font-size:11px;color:#2d3748;">
+    <span style="background:rgba(255,0,68,.1);border:1px solid rgba(255,0,68,.25);color:#fca5a5;padding:2px 10px;border-radius:20px;font-weight:700;font-size:10px;letter-spacing:1px;">📕 DATA SOURCE: 小红书 Xiaohongshu / 望京博客</span><br><br>
+    <a href="https://ordinarymantrying.com/" style="color:#475569;">ordinarymantrying.com</a>
+  </p>
+</div>
+
+<!-- HIDDEN SHARE CARD (screenshot target for html2canvas) -->
+<div id="shareCard">
+  <div class="sc-header">Global FIRE Calculator · ordinarymantrying.com</div>
+  <div id="sc-flag" class="sc-flag"></div>
+  <div id="sc-country" class="sc-country"></div>
+  <div id="sc-amount" class="sc-amount"></div>
+  <div id="sc-label" class="sc-label"></div>
+  <div class="sc-divider"></div>
+  <div class="sc-compare" id="sc-compare"></div>
+  <div class="sc-footer">ordinarymantrying.com/tools/global-fire-calculator.html</div>
+</div>
+
+<script>
+// ─── DATA ──────────────────────────────────────────────────────────────────────
+const COUNTRIES = [
+  { code:'TR', name:'Turkey',    flag:'🇹🇷', rate:0.3581, color:'#dc2626', note:'Extremely high due to inflation/political risk' },
+  { code:'BR', name:'Brazil',   flag:'🇧🇷', rate:0.1440, color:'#f97316', note:'High emerging-market risk premium' },
+  { code:'IN', name:'India',    flag:'🇮🇳', rate:0.0712, color:'#f59e0b', note:'Fast-growing economy, moderate risk' },
+  { code:'GB', name:'UK',       flag:'🇬🇧', rate:0.0513, color:'#3b82f6', note:'Post-Brexit gilt normalization' },
+  { code:'AU', name:'Australia',flag:'🇦🇺', rate:0.0507, color:'#06b6d4', note:'Commodity economy, stable' },
+  { code:'US', name:'USA',      flag:'🇺🇸', rate:0.0462, color:'#6366f1', note:'Global reserve currency benchmark' },
+  { code:'FR', name:'France',   flag:'🇫🇷', rate:0.0393, color:'#8b5cf6', note:'Eurozone sovereign bond' },
+  { code:'DE', name:'Germany',  flag:'🇩🇪', rate:0.0315, color:'#a78bfa', note:'Eurozone "safe haven" benchmark' },
+  { code:'JP', name:'Japan',    flag:'🇯🇵', rate:0.0273, color:'#ec4899', note:'Decades of yield curve control' },
+  { code:'CN', name:'China',    flag:'🇨🇳', rate:0.0174, color:'#ef4444', note:'Managed financial system, low yield' },
+  { code:'ID', name:'Indonesia',flag:'🇮🇩', rate:0.0682, color:'#16a34a', note:'SE Asia largest economy, emerging market' },
+  { code:'PH', name:'Philippines',flag:'🇵🇭', rate:0.0615, color:'#0ea5e9', note:'Strong remittance economy, SE Asia' },
+  { code:'MY', name:'Malaysia', flag:'🇲🇾', rate:0.0385, color:'#dc2626', note:'SE Asia middle income, ringgit-denominated' },
+  { code:'VN', name:'Vietnam',  flag:'🇻🇳', rate:0.0270, color:'#be123c', note:'Fast-growing SE Asia economy' },
+  { code:'TH', name:'Thailand', flag:'🇹🇭', rate:0.0248, color:'#7c3aed', note:'Tourism economy, low yield environment' },
+];
+
+const CAPITALS  = [50000, 100000, 200000, 500000, 1000000, 2000000, 5000000, 10000000];
+const SPENDINGS = [10000, 20000, 30000, 50000, 75000, 100000, 150000, 200000];
+const CAP_LABELS = ['$50k','$100k','$200k','$500k','$1M','$2M','$5M','$10M'];
+const SPD_LABELS = ['$10k/yr','$20k/yr','$30k/yr','$50k/yr','$75k/yr','$100k/yr','$150k/yr','$200k/yr'];
+
+let selectedIdx = 5; // USA default
+let annualSpend = 50000;
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function calcYears(capital, spend, rate) {
+  if (spend <= capital * rate) return Infinity;
+  if (rate < 0.0001) return capital / spend;
+  const n = Math.log(spend / (spend - rate * capital)) / Math.log(1 + rate);
+  return n;
+}
+
+function cellStyle(years) {
+  if (!isFinite(years)) return { bg:'#14532d', fg:'#86efac', main:'∞', sub:'Forever' };
+  const y = Math.round(years);
+  if (years >= 100) return { bg:'#166534', fg:'#86efac', main:'100+', sub:'years' };
+  if (years >= 60)  return { bg:'#15803d', fg:'#bbf7d0', main:y+'', sub:'years' };
+  if (years >= 40)  return { bg:'#16a34a', fg:'#dcfce7', main:y+'', sub:'years' };
+  if (years >= 25)  return { bg:'#4d7c0f', fg:'#d9f99d', main:y+'', sub:'years' };
+  if (years >= 18)  return { bg:'#ca8a04', fg:'#fef08a', main:y+'', sub:'years' };
+  if (years >= 12)  return { bg:'#b45309', fg:'#fde68a', main:y+'', sub:'years' };
+  if (years >= 7)   return { bg:'#9a3412', fg:'#fed7aa', main:y+'', sub:'years' };
+  if (years >= 3)   return { bg:'#7f1d1d', fg:'#fecaca', main:y+'', sub:'years' };
+  return { bg:'#450a0a', fg:'#fee2e2', main:(Math.round(years*10)/10)+'', sub:'yrs' };
+}
+
+function fmtMoney(v) {
+  if (v >= 1e9) return '$' + (v/1e9).toFixed(2) + 'B';
+  if (v >= 1e6) return '$' + (v/1e6).toFixed(2) + 'M';
+  if (v >= 1e3) return '$' + Math.round(v/1000) + 'k';
+  return '$' + Math.round(v);
+}
+
+function fmtSpend(v) {
+  if (v >= 1e6) return '$' + (v/1e6).toFixed(1) + 'M';
+  if (v >= 1e3) return '$' + (v/1000) + 'k';
+  return '$' + v;
+}
+
+// ─── RENDER COUNTRY BUTTONS ───────────────────────────────────────────────────
+function renderCountryGrid() {
+  const el = document.getElementById('countryGrid');
+  el.innerHTML = COUNTRIES.map((c,i) => `
+    <div class="cbtn ${i===selectedIdx?'active':''}" id="cbtn-${i}"
+         onclick="selectCountry(${i})"
+         style="${i===selectedIdx?`border-color:${c.color};background:${c.color}22`:''}">
+      <div class="cbtn-bar" style="background:${c.color};opacity:${i===selectedIdx?1:.4}"></div>
+      <div class="cbtn-flag">${c.flag}</div>
+      <div class="cbtn-name">${c.name}</div>
+      <div class="cbtn-rate" style="color:${c.color}">${(c.rate*100).toFixed(2)}%</div>
+    </div>`).join('');
+}
+
+function selectCountry(idx) {
+  selectedIdx = idx;
+  renderCountryGrid();
+  renderAll();
+}
+
+// ─── RENDER HERO CARD ─────────────────────────────────────────────────────────
+function renderHeroCard() {
+  const c = COUNTRIES[selectedIdx];
+  const needed = annualSpend / c.rate;
+  const interest = needed * c.rate;
+  document.getElementById('heroCard').innerHTML = `
+    <div class="hn-flag">${c.flag}</div>
+    <div class="hn-info">
+      <div class="hn-country">${c.name} · ${(c.rate*100).toFixed(2)}% 10-yr bond</div>
+      <div class="hn-rate" style="color:${c.color}">${c.note}</div>
+      <div class="hn-number" style="color:${c.color}">${fmtMoney(needed)}</div>
+      <div class="hn-label">needed to live on <strong>${fmtSpend(annualSpend)}/year</strong> forever — interest pays <strong>${fmtMoney(interest)}/yr</strong>, principal untouched</div>
+    </div>
+    <div class="hn-controls">
+      <div class="spend-label">Annual spending (USD)</div>
+      <input class="spend-input" type="number" value="${annualSpend}" min="1000" step="1000"
+             oninput="setSpend(this.value)" id="spendInput">
+      <div class="lifestyle-bar">
+        <span class="lifestyle-label">Lifestyle:</span>
+        <button class="lbtn frugal ${annualSpend===20000?'active':''}" onclick="setSpendPreset(20000)">🌿 Frugal $20k/yr</button>
+        <button class="lbtn comfortable ${annualSpend===50000?'active':''}" onclick="setSpendPreset(50000)">🏠 Comfortable $50k/yr</button>
+        <button class="lbtn luxury ${annualSpend===120000?'active':''}" onclick="setSpendPreset(120000)">🥂 Luxury $120k/yr</button>
+      </div>
+      <div class="spend-presets">
+        ${[10000,20000,30000,50000,75000,100000,150000,200000].map(v=>
+          `<div class="spend-preset ${v===annualSpend?'active':''}" onclick="setSpendPreset(${v})">${fmtSpend(v)}</div>`
+        ).join('')}
+      </div>
+      <div class="share-row">
+        <button class="share-btn" onclick="shareCalc()">🔗 Copy link</button>
+        <button class="share-btn img-btn" onclick="shareImage()">📸 Save as image</button>
+      </div>
+    </div>`;
+}
+
+function setSpend(v) {
+  annualSpend = Math.max(1000, parseInt(v) || 50000);
+  renderAll();
+}
+function setSpendPreset(v) {
+  annualSpend = v;
+  document.getElementById('spendInput').value = v;
+  renderAll();
+}
+
+// ─── RENDER HEATMAP ──────────────────────────────────────────────────────────
+function renderHeatmap() {
+  const c = COUNTRIES[selectedIdx];
+  document.getElementById('gridTitle').textContent =
+    `${c.flag} ${c.name} (${(c.rate*100).toFixed(2)}%) — How Long Does Your Capital Last?`;
+
+  let html = '<thead><tr><th>Spend / Capital</th>' +
+    CAP_LABELS.map(l=>`<th>${l}</th>`).join('') + '</tr></thead><tbody>';
+
+  SPENDINGS.forEach((spend, si) => {
+    const isHighlight = spend === annualSpend;
+    html += `<tr style="${isHighlight?`background:rgba(255,255,255,0.03)`:''}">`;
+    html += `<td style="${isHighlight?`color:#fff;font-size:12px`:''}">${SPD_LABELS[si]}${isHighlight?' ◀':''}</td>`;
+    CAPITALS.forEach((cap, ci) => {
+      const years = calcYears(cap, spend, c.rate);
+      const s = cellStyle(years);
+      const tooltip = isFinite(years)
+        ? `${Math.round(years)} years to depletion (interest: ${fmtMoney(cap*c.rate)}/yr, gap: ${fmtMoney(spend-cap*c.rate)}/yr)`
+        : `Forever — interest ${fmtMoney(cap*c.rate)}/yr covers ${fmtMoney(spend)}/yr spending`;
+      html += `<td title="${tooltip}"><div class="hcell" style="background:${s.bg}">
+        <div class="hcell-main" style="color:${s.fg}">${s.main}</div>
+        <div class="hcell-sub" style="color:${s.fg}">${s.sub}</div>
+      </div></td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  document.getElementById('heatmap').innerHTML = html;
+}
+
+// ─── RENDER COMPARISON ───────────────────────────────────────────────────────
+function renderComparison() {
+  document.getElementById('compareTitle').textContent =
+    `${fmtSpend(annualSpend)}/year lifestyle — Capital needed in each country`;
+  document.getElementById('compareSubtitle').textContent =
+    `Sorted by least capital needed. Based on 10-year government bond yields.`;
+
+  const sorted = COUNTRIES.map(c => ({
+    ...c, needed: annualSpend / c.rate
+  })).sort((a,b) => a.needed - b.needed);
+
+  const maxNeeded = sorted[sorted.length-1].needed;
+
+  document.getElementById('compareRows').innerHTML = sorted.map((c,i) => {
+    const barW = (c.needed / maxNeeded * 100).toFixed(1);
+    const isSelected = c.code === COUNTRIES[selectedIdx].code;
+    return `<div class="compare-row" style="${isSelected?'background:rgba(255,255,255,.03);border-radius:6px;padding:2px 4px;margin:-2px -4px':''}">
+      <div class="cr-flag">${c.flag}</div>
+      <div class="cr-name" style="color:${isSelected?'#fff':''}">${c.name}${isSelected?' ◀':''}</div>
+      <div class="cr-bar-wrap">
+        <div class="cr-bar" style="width:${barW}%;background:${c.color}"></div>
+      </div>
+      <div class="cr-val" style="color:${c.color}">${fmtMoney(c.needed)}</div>
+      <div class="cr-rate">${(c.rate*100).toFixed(2)}%</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── MAIN RENDER ─────────────────────────────────────────────────────────────
+function renderAll() {
+  renderHeroCard();
+  renderHeatmap();
+  renderComparison();
+}
+
+// ─── URL PARAMS ──────────────────────────────────────────────────────────────
+(function loadFromURL() {
+  const p = new URLSearchParams(location.search);
+  const code = p.get('country');
+  const spend = parseInt(p.get('spend'));
+  if (code) {
+    const idx = COUNTRIES.findIndex(c => c.code === code);
+    if (idx >= 0) selectedIdx = idx;
+  }
+  if (spend && spend >= 1000) annualSpend = spend;
+})();
+
+// ─── SHARE ────────────────────────────────────────────────────────────────────
+function shareHeatmap() {
+  if (typeof html2canvas === 'undefined') {
+    showToast('Still loading... try again in a second');
+    return;
+  }
+  const c = COUNTRIES[selectedIdx];
+  const section = document.querySelector('.grid-section');
+  // temporarily hide the save button so it doesn't appear in the screenshot
+  const btn = section.querySelector('button');
+  if (btn) btn.style.display = 'none';
+  html2canvas(section, { backgroundColor: '#0c1525', scale: 2, useCORS: true, logging: false })
+    .then(canvas => {
+      if (btn) btn.style.display = '';
+      const link = document.createElement('a');
+      link.download = `fire-heatmap-${c.code}-${fmtSpend(annualSpend).replace('$','')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('Heatmap saved! 📸 Ready to share');
+    })
+    .catch(() => {
+      if (btn) btn.style.display = '';
+      showToast('Screenshot failed — try Copy link instead');
+    });
+}
+
+function shareCalc() {
+  const c = COUNTRIES[selectedIdx];
+  const url = `${location.origin}${location.pathname}?country=${c.code}&spend=${annualSpend}`;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => showToast('Link copied! 🔗'));
+  } else {
+    prompt('Copy this link:', url);
+  }
+}
+function shareImage() {
+  if (typeof html2canvas === 'undefined') {
+    showToast('Still loading... try again in a second');
+    return;
+  }
+  const c = COUNTRIES[selectedIdx];
+  const needed = annualSpend / c.rate;
+  // fill the hidden card
+  document.getElementById('sc-flag').textContent = c.flag;
+  document.getElementById('sc-country').textContent = c.name + '  ·  ' + (c.rate*100).toFixed(2) + '% bond yield';
+  document.getElementById('sc-amount').textContent = fmtMoney(needed);
+  document.getElementById('sc-amount').style.color = c.color;
+  document.getElementById('sc-label').textContent =
+    'to live on ' + fmtSpend(annualSpend) + '/year forever — interest covers costs, principal untouched';
+  // compare pills: cheapest 4 + selected
+  const picks = COUNTRIES.map((x,i)=>({...x,i,needed:annualSpend/x.rate}))
+    .sort((a,b)=>a.needed-b.needed).slice(0,4);
+  if (!picks.find(p=>p.code===c.code)) picks.push({...c, needed});
+  document.getElementById('sc-compare').innerHTML = picks.map(p=>
+    `<div class="sc-pill" style="${p.code===c.code?`background:${p.color}22;color:${p.color}`:''}">
+      ${p.flag} ${p.name}: ${fmtMoney(p.needed)}
+    </div>`
+  ).join('');
+
+  const card = document.getElementById('shareCard');
+  card.style.left = '-9999px';
+  html2canvas(card, { backgroundColor: '#060b14', scale: 2, useCORS: true, logging: false })
+    .then(canvas => {
+      const link = document.createElement('a');
+      link.download = `fire-calc-${c.code}-${fmtSpend(annualSpend).replace('$','')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('Image saved! 📸 Ready to share');
+    })
+    .catch(() => showToast('Screenshot failed — try Copy link instead'));
+}
+
+function showToast(msg) {
+  let t = document.getElementById('shareToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'shareToast';
+    t.className = 'share-toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+renderCountryGrid();
+renderAll();
+</script>
+</body>
+</html>

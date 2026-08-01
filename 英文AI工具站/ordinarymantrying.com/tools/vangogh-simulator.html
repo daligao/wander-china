@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Van Gogh?</title>
+<meta name="description" content="Failed at 4 careers before picking up a brush at 27. Sold one painting in his lifetime. Now the most expensive artist in history. 8 decisions — would you have kept going?">
+<meta property="og:title" content="What Would You Do If You Were Van Gogh?">
+<meta property="og:description" content="8 decisions across the life of a man who sold one painting while alive and left 900 masterpieces behind. Would you have kept going?">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/vangogh-simulator.html">
+<style>
+:root {
+  --bg: #FFFCF0;
+  --card: #FEFCF5;
+  --ink: #1A1408;
+  --muted: #7A6A40;
+  --line: #E0D8BC;
+  --accent: #B8860B;
+  --accent-bg: #FDF8E8;
+  --right: #2A6B4B;
+  --right-bg: #E8F5EE;
+  --wrong: #8B2020;
+  --wrong-bg: #F8ECEC;
+  --blue: #1B3A8C;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Consolas, monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;-webkit-tap-highlight-color:transparent;}
+
+.topbar{position:sticky;top:0;z-index:100;background:rgba(255,252,240,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#3A2A10;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #E0C870;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#6B5000;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.12);}
+.start-btn:active{transform:scale(.99);}
+
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#3A2A10;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.letter{background:var(--accent-bg);border:1px solid #E0C870;border-radius:8px;padding:18px 20px;margin:20px 0;font-family:var(--serif);font-size:16px;font-style:italic;color:#3A2A10;line-height:1.85;}
+.letter-from{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;font-style:normal;}
+
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+
+.reveal-box{background:var(--accent-bg);border:1.5px solid #E0C870;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#3A2A10;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+
+.quote-block{background:var(--blue);color:#F5EFE3;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#A0B0D0;margin-top:12px;font-family:var(--mono);}
+
+.painting-note{background:var(--blue);color:#EEF3FC;border-radius:10px;padding:14px 18px;margin:20px 0;font-size:13px;line-height:1.6;}
+.painting-note strong{color:#FFE4A0;}
+
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#3A2A10;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#fff;}
+
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #E0C870;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+
+.cta-box{background:var(--blue);color:#fff;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#FFE4A0;text-decoration:underline;font-weight:600;}
+
+@media(max-width:480px){
+  .cover-title{font-size:28px;}
+  .year-banner{font-size:52px;}
+  .ending-score{font-size:36px;}
+}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Vincent van Gogh</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #13</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Van Gogh?</h1>
+  <p class="cover-sub">
+    He failed at being an art dealer, a teacher, a bookseller, and a preacher —
+    before picking up a paintbrush at 27 with no formal training.
+    He sold <strong>one painting</strong> in his lifetime, for a small sum, to his brother's friend.
+    He left behind 900 paintings and 1,100 drawings.
+    Today his work sells for over $100 million per canvas.
+    <strong>8 decisions. Would you have kept going?</strong>
+  </p>
+  <div class="cover-facts">
+    <p>
+      <strong>Vincent Willem van Gogh</strong> (1853–1890) · Dutch painter ·
+      Active for only <strong>10 years</strong> · Produced 900+ paintings ·
+      Sold approximately <strong>1 painting</strong> during his lifetime ·
+      Supported entirely by his brother <strong>Theo</strong>, an art dealer ·
+      Spent time in psychiatric care · Died of a gunshot wound at 37 ·
+      <em>Starry Night, Sunflowers, The Bedroom, Irises, Wheat Field with Crows</em>.
+    </p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1880, Belgium</button>
+</div>
+
+<div id="story">
+<div class="story-wrap">
+
+<!-- ══ CHAPTER 1 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Fourth Failure</span></div>
+<div class="year-banner">1880</div>
+<div class="timeline-dot">The Borinage, Belgium · Age 27</div>
+
+<div class="narrative">
+  <p>You are twenty-seven years old, and you have failed at everything you have tried.</p>
+  <p>You worked as an art dealer at Goupil &amp; Cie for six years — and were fired for being too honest with customers about which paintings were bad. You tried to teach at a school in England — the arrangement fell apart within months. You tried to work in a bookshop — you lasted three months before abandoning it to study theology. You tried to become a preacher — the church rejected your ordination application. You volunteered as a lay minister in the Borinage coal mining district of Belgium, living in poverty alongside the miners, giving away your clothes and food until your own health collapsed.</p>
+  <p>The church revoked even your lay preacher role, calling your methods "too extreme."</p>
+  <p>You are living in a single rented room. You are completely dependent on your younger brother Theo, who sends you money from his salary as an art dealer in Paris. You are a burden to your family. Your father has suggested you might be committed to an asylum.</p>
+  <p>You have been making drawings — rough sketches of the miners, their wives, their hands. You are not good at it. You know you are not good at it. But something about making marks on paper is the only thing that feels right.</p>
+  <div class="letter">
+    <div class="letter-from">Letter from Theo · 1880</div>
+    "Vincent, you must decide something. You cannot go on like this. What will you do with your life?"
+  </div>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 1 — The Fifth Try</span>
+    <span class="d-num">01 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">You have failed at four careers. You are 27, broke, and dependent on your brother. The drawings feel right but you have no training. What do you tell Theo?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Find stable work. You are a burden. Art is not a realistic path for someone with no training, no connections, and no money. Try commerce again.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,1,true)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Tell Theo you are going to become a painter. Ask him to keep sending money — not as charity, but as an investment. Promise him half of everything you ever make.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,1,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Enroll in formal art school first. Get credentials before you call yourself a painter. Do it properly or not at all.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Van Gogh actually did</div>
+      <p><strong>You start painting at 27 with no training and a brother who keeps sending money anyway — and you never sell more than one painting in your entire life.</strong> Vincent told Theo he was going to be a painter — and proposed exactly that arrangement: Theo would send money monthly, and Vincent would send paintings in return, as a kind of business partnership between brothers. Theo agreed and kept his side of that arrangement for the remaining ten years of Vincent's life, even when the paintings didn't sell, even when it strained his own finances. Vincent did eventually spend time studying briefly under Anton Mauve in The Hague, but he was largely self-taught, learning from copying prints and drawing obsessively. He started with pencil drawings of peasants and miners because, he said, "if one can draw a figure, one can draw anything."</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CHAPTER 2 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Woman</span></div>
+<div class="year-banner">1882</div>
+<div class="timeline-dot">The Hague, Netherlands · Age 28</div>
+
+<div class="narrative">
+  <p>You have been teaching yourself to draw for two years. You are living in The Hague, working obsessively, filling sketchbooks. You have a studio — a rented room with good light. Theo's money keeps arriving each month, just enough.</p>
+  <p>You meet Sien Hoornik in the street. She is a prostitute, five months pregnant, with a five-year-old daughter and a body showing the damage of poverty and hard use. She is not beautiful by any conventional measure. But she poses for your drawings, and you see in her face something you have been trying to put on paper since the miners of the Borinage — the weight that ordinary lives carry.</p>
+  <p>You take her in. She moves into your studio. You intend to marry her. You write to Theo with complete openness about who she is and what she does.</p>
+  <p>Theo is alarmed. Your parents are horrified. Anton Mauve, the established painter who has been mentoring you, ends the mentorship and refuses to see you. Your entire network of support is threatening to collapse over a woman who poses for your drawings and shares your bed.</p>
+  <p>Theo writes gently but clearly: this relationship will ruin you. It will end his ability to explain your situation to their family. It will cost you what little standing you have in the art world.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 2 — The Studio</span>
+    <span class="d-num">02 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">Staying with Sien costs you your mentor, your family's support, and Theo's patience. Leaving her means she returns to the street, pregnant. What do you do?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">End it. Your art requires Theo's support. You cannot build a career and a family at the same time — not like this, not now.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,2,true)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Stay. Write Theo that you will not abandon a woman and two children to the street to protect your reputation. Draw her every day.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,2,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Help Sien find other lodgings and support. Care for her from a distance. Keep the relationship private to protect your work.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Van Gogh actually did</div>
+      <p><strong>You stay. She poses. The best drawing you ever make is of a woman broken by poverty, naked and hunched, with the word "sorrow" written below. You leave anyway — and she dies by suicide fourteen years later.</strong> Vincent stayed with Sien for nearly two years. He drew her constantly — the most reproduced image from this period is <em>Sorrow</em> (1882), a drawing of Sien hunched naked, her face hidden, the word "sorrow" written below. He called it the best drawing he had ever made. The arrangement eventually broke down not because of external pressure but because Vincent and Sien wanted different things: she wanted conventional stability he couldn't provide. He left The Hague in 1883 to paint in the countryside. Sien later returned to prostitution and died by suicide in 1904. Vincent never forgot her and never fully recovered from the guilt of leaving.</p>
+    </div>
+  </div>
+</div>
+
+<div class="painting-note"><strong>Painting produced during this period:</strong> <em>Sorrow</em> (1882) — a drawing of Sien that Vincent called "the best figure I have drawn." He made 11 copies to send to people he thought should see it. None of them were impressed.</div>
+
+<!-- ══ CHAPTER 3 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Color</span></div>
+<div class="year-banner">1886</div>
+<div class="timeline-dot">Paris, France · Age 32</div>
+
+<div class="narrative">
+  <p>You have been painting for six years, mostly in the Netherlands. You have painted peasants, weavers, potato fields. Your palette is dark — earthy browns, ochres, heavy shadows. The Dutch masters are your reference: Rembrandt, Hals, the weight of ordinary life rendered in mud-colored oil.</p>
+  <p>You arrive in Paris to live with Theo, who has become a respected art dealer. You walk into a city in the middle of a revolution you knew nothing about. Monet, Renoir, Pissarro, Degas, Seurat, Signac — they are painting in colors you have never used. Bright yellows. Cobalt blues. Unmixed paint applied in short, directional strokes. They call it Impressionism, and it has broken every rule of the academy that trained them.</p>
+  <p>Pissarro sits with you and shows you pointillism — individual dots of pure color that the eye mixes together at a distance. It is completely different from everything you have taught yourself. You are thirty-two years old, already older than most of these painters were when they developed their styles.</p>
+  <p>You can keep painting the way you know. The dark Dutch method is what you are. Or you can start over, learn from these people, change everything, and risk never finding your way back to something that feels true.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 3 — The Color Revolution</span>
+    <span class="d-num">03 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">The Impressionists offer you a completely different way to see and paint. You are 32 and self-taught. Do you start over?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Stay with your method. The dark palette is you — it took years to develop. Chasing trends will make you a lesser version of Monet, not a better version of yourself.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,3,true)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Let Paris change you. Study the Impressionists, experiment with color, use pointillist techniques, paint self-portraits to practice. Absorb everything and see what comes out.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,3,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Combine both — keep the dark subjects but try brighter colors selectively. Don't abandon your identity, but evolve it gradually.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Van Gogh actually did</div>
+      <p><strong>Paris breaks your entire method and replaces it with something that doesn't exist yet. The swirling skies, the sunflower yellows, the vibrating colors — none of it existed before you let the city change you.</strong> Paris transformed Vincent completely. He painted 28 self-portraits in two years — partly because models cost money he didn't have, but partly as deliberate practice. He lightened his palette radically, painted flowers obsessively to train his color sense, and absorbed pointillism while developing something more turbulent: thick, directional brushstrokes that expressed emotion rather than just recording light. By the time he left Paris for Arles in 1888, he had invented something that wasn't quite Impressionism and wasn't quite anything else. The sunflower yellows, the swirling skies, the vibrating complementary colors — none of that existed before Paris. He had to let Paris break him first.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>I dream of painting and then I paint my dream.</q>
+  <div class="q-attr">— Vincent van Gogh, letter to Theo, 1888</div>
+</div>
+
+<!-- ══ CHAPTER 4 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Yellow House</span></div>
+<div class="year-banner">1888</div>
+<div class="timeline-dot">Arles, Southern France · Age 35</div>
+
+<div class="narrative">
+  <p>You have fled Paris — the city's pace was destroying your health, and Theo's small apartment was suffocating both of you. You have rented a house in Arles with yellow shutters, in the south of France where the light is different from anything you have ever painted.</p>
+  <p>The light here is Japanese, you write to Theo. Flat and clear and golden. You are working at a speed that frightens you — sometimes two or three paintings in a day, outdoors in the sun until your eyes ache. You paint the café at night, the orchards in spring, your bedroom, the postman Roulin's face, the sunflowers you put in vases to brighten the studio.</p>
+  <p>You are desperately lonely. You have not sold a single painting. No one in Arles knows what to make of you. You write to Paul Gauguin — a painter you admire profoundly, who is in financial trouble — and invite him to come live and work with you. You paint his bedroom in advance. You hang your sunflower paintings on the wall to welcome him.</p>
+  <p>Theo, who is funding everything, supports the plan. But people who know Gauguin warn you: he is arrogant, restless, domineering. He does not collaborate — he competes. He will not share your vision of a "Studio of the South." He is coming because he needs money, not because he needs you.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 4 — The Invitation</span>
+    <span class="d-num">04 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">You have invited Gauguin to live and paint with you. People warn the arrangement will fail. Do you still want him to come?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,true)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Yes. You need a fellow painter nearby. The isolation is worse than the risk of a difficult personality. Paint the bedroom. Hang the sunflowers. Let him come.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,4,false)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Withdraw the invitation. You are working well alone. A difficult guest could destroy what you have built here.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,4,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Invite someone else — a painter you know is more compatible. Gauguin specifically is too volatile.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What Van Gogh actually did</div>
+      <p><strong>Nine weeks with Gauguin produces some of your greatest paintings — and ends with you cutting off part of your own ear and delivering it to a stranger.</strong> Gauguin came in October 1888. For nine weeks they painted side by side, argued constantly about art, and pushed each other in ways that produced some of the most important work of both their careers. Gauguin believed in painting from memory and imagination. Vincent believed in painting directly from nature. Neither convinced the other. The tension was generative and then catastrophic. On December 23, after a final confrontation in which Gauguin threatened to leave, Vincent cut off part of his own left ear and delivered it to a woman at a local brothel. Gauguin left Arles the next morning and never saw Vincent again. The nine weeks with Gauguin produced some of Vincent's most celebrated paintings — and ended in the breakdown that would define the last eighteen months of his life.</p>
+    </div>
+  </div>
+</div>
+
+<div class="painting-note"><strong>Paintings produced during this period:</strong> <em>Sunflowers</em> (1888), <em>The Bedroom</em> (1888), <em>Café Terrace at Night</em> (1888), <em>The Night Café</em> (1888), <em>Portrait of the Postman Roulin</em> (1888). All of them while no one was buying.</div>
+
+<!-- ══ CHAPTER 5 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Asylum</span></div>
+<div class="year-banner">1889</div>
+<div class="timeline-dot">Arles → Saint-Rémy · Age 35</div>
+
+<div class="narrative">
+  <p>After the ear incident, you spent two weeks in the hospital in Arles. You returned to the Yellow House and painted — your own bandaged face, twice. You were calm, lucid, and frightened by what had happened.</p>
+  <p>Then another episode hit. And another. The people of Arles signed a petition — eighty-nine signatures — asking the mayor to have you removed. They called you "the madman" and said you frightened their children. The mayor obliged. You were taken back to the hospital.</p>
+  <p>The doctor, Felix Rey, liked you and respected your work. But he could not guarantee you stability. You have two options: stay in Arles under supervision, or voluntarily commit yourself to the asylum of Saint-Paul-de-Mausole in Saint-Rémy, a town about 25 kilometres away.</p>
+  <p>Voluntary commitment means surrendering your freedom. It means admitting that you cannot manage alone. It means living in an institution, among other patients, with a doctor who may restrict your painting.</p>
+  <p>But it also means a studio. It means structured meals. It means not being alone in the Yellow House waiting for the next episode to arrive without warning.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 5 — The Door You Walk Through</span>
+    <span class="d-num">05 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">The townspeople want you gone. You can fight for your right to stay in Arles, or voluntarily enter an asylum. What do you choose?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Fight to stay in Arles. You were not dangerous. The petition is the reaction of frightened people to something they don't understand. Do not let them define you.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,5,true)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Voluntarily check yourself into Saint-Paul-de-Mausole. You are afraid of yourself. The structure will let you keep painting. That is what matters.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,5,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Leave Arles for Paris. Return to Theo. Let the city's energy and your brother's presence stabilize you.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Van Gogh actually did</div>
+      <p><strong>You check yourself in voluntarily. Inside a locked institution, painting between episodes, you produce Starry Night.</strong> Vincent voluntarily checked himself into the asylum at Saint-Paul-de-Mausole on May 8, 1889. He was given a room and a second room to use as a studio. He was allowed to paint in the garden. The year he spent at Saint-Paul produced some of his most extraordinary work, including <em>The Starry Night</em>, <em>Irises</em>, <em>Olive Trees</em>, and over 150 paintings — all made while living in an institution, often while suffering episodes that could render him unable to work for weeks at a time. He painted between the episodes, urgently, as if he knew time was running out. He wrote to Theo that the asylum was "a cage, but one where I can paint."</p>
+    </div>
+  </div>
+</div>
+
+<div class="painting-note"><strong>Painted at the asylum:</strong> <em>The Starry Night</em> (June 1889) · <em>Irises</em> (May 1889) · <em>Olive Trees</em> (1889) · <em>Self-Portrait with Bandaged Ear</em> (1889). Combined auction value today: over $200 million.</div>
+
+<!-- ══ CHAPTER 6 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Review</span></div>
+<div class="year-banner">1890</div>
+<div class="timeline-dot">Saint-Rémy · Age 36</div>
+
+<div class="narrative">
+  <p>Something extraordinary has happened, and you don't quite know what to make of it.</p>
+  <p>In January 1890, the critic Albert Aurier published the first major article ever written about your work — a long, serious essay in the <em>Mercure de France</em>, calling you a genius, comparing you to the great masters, saying your painting reveals "the unspeakable soul of things."</p>
+  <p>Also in January: your painting <em>The Red Vineyard</em> was sold at an exhibition in Brussels. Four hundred francs — about $2,000 in today's money. The only painting you ever sold to a stranger who was not a friend or family member. You are thirty-six years old.</p>
+  <p>The review and the sale have drawn attention. Other artists are writing to you. Your name is being spoken in Paris. An artist named Anna Boch bought <em>The Red Vineyard</em>.</p>
+  <p>And yet you are still in the asylum. Another episode came in February, lasting weeks. Your hand shook. You could not paint. You could not read the letters people sent you.</p>
+  <p>The doctor says you may leave whenever you choose. Theo has arranged for you to move to Auvers-sur-Oise, north of Paris, where a doctor named Paul Gachet will watch over you — an art-loving doctor who treats artists.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 6 — Leave the Asylum</span>
+    <span class="d-num">06 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">You've had your first real critical recognition and your first real sale. You're also still having episodes. Do you leave the asylum?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,true)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Leave. Go to Auvers. The asylum has been a cage and a studio both. You have done what you could here. The world is beginning to notice — you need to be part of it again.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,6,false)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Stay at Saint-Paul another year. The review and the sale are encouraging, but you are not stable. Leaving now risks everything.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,6,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Go directly to Paris first to see Theo, his wife Jo, and their new baby — also named Vincent. Then decide about Auvers.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What Van Gogh actually did</div>
+      <p><strong>You leave. In Auvers you paint 80 canvases in 70 days — more than one per day. Then you write Theo that something is about to collapse.</strong> Vincent left the asylum on May 16, 1890 and went first to Paris for three days, meeting Theo's wife Jo and his namesake nephew for the first time. Then he went to Auvers-sur-Oise, where Dr. Paul Gachet took an interest in him — both medically and artistically. In Auvers, Vincent painted 80 canvases in 70 days: a rate of more than one painting per day. He painted the village church, the wheat fields, portraits of Gachet, farmers, people he passed on the street. He wrote to Theo that he felt calm and productive. He also wrote that he felt something was about to collapse.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CHAPTER 7 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Letter</span></div>
+<div class="year-banner">1890</div>
+<div class="timeline-dot">Auvers-sur-Oise · Age 37</div>
+
+<div class="narrative">
+  <p>You have been in Auvers for two months. You have painted 80 canvases. You have written to Theo almost every day.</p>
+  <p>Then a letter arrives that is different from the others. Theo is in financial trouble — the art business is slow, his own health is fragile, and supporting a wife, a baby, and a brother is more than his salary can comfortably carry. He writes with love but you read the strain underneath it.</p>
+  <p>You know what this letter means. Theo has never once asked you to stop. He has sent money every month for ten years without fail, turning your paintings into business correspondence, calling himself your partner. But now you can hear the weight of it.</p>
+  <p>You sit with the letter for a long time.</p>
+  <p>You have not sold another painting since <em>The Red Vineyard</em>. You have 80 new canvases in Auvers and nowhere to put them. Dr. Gachet has stopped returning your visits as regularly as he once did. The wheat fields outside the village are full of crows.</p>
+  <div class="letter">
+    <div class="letter-from">Your reply to Theo, found unsent after July 29, 1890</div>
+    "Well, my own work, I am risking my life for it and my reason has half foundered owing to it — that's all right... but you are not among the dealers in men as far as I know, and you can still choose your side, I think, acting with humanity, but what's the use?"
+  </div>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 7 — The Weight of Ten Years</span>
+    <span class="d-num">07 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">You have been a financial burden on your brother for ten years. The paintings aren't selling. What do you write back to Theo?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Tell him to stop sending money. You will find another way. You cannot justify the cost of your existence to people who love you.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,7,true)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Tell him the work is everything. That you are risking your life for it. That you believe in it still, even if no one is buying. Keep writing. Keep painting. Stay.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,7,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Reassure Theo that everything is fine. Protect him from the truth of how you are feeling. He has enough worry without yours.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Van Gogh actually did</div>
+      <p><strong>He went into the wheat fields on July 27 with a gun, walked back to the inn with the wound, and died two days later with Theo holding his hand. The unsent letter was in his pocket.</strong> Vincent went out into the wheat fields on July 27, 1890, and shot himself in the chest. He walked back to the inn where he was staying and made it to his room. Theo rushed from Paris when word came. Vincent died two days later, on July 29, with Theo holding his hand. His last words, by most accounts, were: "La tristesse durera toujours." The sadness will last forever. He was thirty-seven. He had been painting for ten years. Theo died six months later, grief having broken his already fragile health. They are buried side by side in Auvers. The unsent letter was found in Vincent's pocket.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CHAPTER 8 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · After</span></div>
+<div class="year-banner">1891</div>
+<div class="timeline-dot">Amsterdam · Six months after Vincent's death</div>
+
+<div class="narrative">
+  <p>You are Johanna Bonger van Gogh. You are twenty-eight years old. Your husband Theo died six months after his brother Vincent, leaving you with a year-old baby, a small apartment, and approximately 900 paintings, 1,100 drawings, and 800 letters that no one wants.</p>
+  <p>The paintings are stacked everywhere. They lean against walls, fill closets, sit in storage. One painting has sold in ten years. The art world believes Vincent was a curiosity, a madman, a minor footnote.</p>
+  <p>You are not an art dealer. You are not wealthy. You have no connections in the art world — only the connections your husband had, which are modest. You have a baby to feed.</p>
+  <p>You can sell the paintings for whatever they will fetch — some dealers have offered small sums — take the money, and build a stable life for yourself and your son. Or you can do what you have been quietly deciding to do since the day Theo died: organize, document, translate, exhibit, and refuse to let the world forget what these two brothers made together.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 8 — The Keeper</span>
+    <span class="d-num">08 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">You are Vincent's sister-in-law, left with 900 unsold paintings and no income. What do you do with the work?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Sell what you can, when you can, for what the market will give you. You have a child and a life to rebuild. The paintings are assets, not a mission.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,8,true)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Keep everything. Organize every letter and every canvas. Learn Dutch (you are French-speaking). Translate the letters yourself. Contact every artist, museum, and gallery in Europe. Do not stop until the world knows his name.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,8,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Donate the collection to a museum in exchange for a small income. Let professionals handle the legacy. It is too much for one person.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What Jo Bonger actually did</div>
+      <p><strong>A 28-year-old woman with no money and no art-world connections refuses to let 900 paintings disappear — and that is the entire reason you know who Van Gogh was.</strong> Jo Bonger kept everything. She learned Dutch — her first language was French — to translate Vincent's 800 letters to Theo. She organized exhibitions across Europe and in the United States. She loaned paintings to galleries, negotiated with critics and curators, and wrote introductions that shaped how the world would read Vincent's words. She never sold the core collection cheaply. By the time she died in 1925, Vincent van Gogh was recognized as one of the greatest painters in history. The collection eventually formed the basis of the Van Gogh Museum in Amsterdam. Without Jo Bonger, there would be no Van Gogh Museum, no "Starry Night" as a cultural touchstone, no sunflowers on every notebook and tote bag in the world. The reason you know who Van Gogh was is almost entirely because of a 28-year-old woman who refused to let 900 paintings disappear.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">correct decisions</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+
+<div class="cta-box">
+  <p>Van Gogh painted for ten years in poverty and obscurity, and produced work that is now worth billions. The question the simulator leaves you with: what do you do when you believe in something that no one else believes in yet? <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/index.html#simulators">→ All 13 Life Simulators — Einstein, Hawking, Jobs, Curie, Mandela, and more. Free, no login.</a></p>
+</div>
+
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/einstein-simulator.html" style="color:var(--accent)">Einstein Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+
+</div><!-- story-wrap -->
+</div><!-- story -->
+
+<script>
+let score=0,answered=0;
+const TOTAL=8;
+
+function startStory(){
+  document.querySelector('.cover').style.display='none';
+  document.getElementById('story').style.display='block';
+  document.querySelector('.topbar-score').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateProgress(0);
+}
+
+function choose(btn,num,correct){
+  const block=btn.closest('.decision-block');
+  const opts=block.querySelectorAll('.dopt');
+  opts.forEach(o=>o.classList.add('disabled'));
+  if(correct){
+    btn.classList.add('right');
+    score++;
+  } else {
+    btn.classList.add('wrong');
+    opts.forEach(o=>{
+      if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)')) o.classList.add('right');
+    });
+  }
+  document.getElementById('r'+num).classList.add('show');
+  answered++;
+  document.getElementById('score-display').textContent='Score: '+score+'/'+answered;
+  updateProgress(answered/TOTAL*100);
+  if(answered===TOTAL) setTimeout(showEnding,800);
+}
+
+function updateProgress(pct){
+  document.getElementById('prog').style.width=pct+'%';
+}
+
+function showEnding(){
+  document.getElementById('ending').style.display='block';
+  const pct=score/TOTAL;
+  let title,body;
+  if(pct>=0.875){
+    title="The Man Who Kept Going When Everything Said Stop";
+    body="You matched Van Gogh at every turn — the fifth try at 27, staying with Sien, letting Paris break and rebuild your palette, inviting Gauguin despite the warnings, checking yourself into the asylum voluntarily, leaving to paint 80 canvases in 70 days, keeping the letters honest even when they were breaking things. The hardest match is Decision 7: writing back to Theo that you were risking your life for the work. Van Gogh meant it literally. So did you.";
+  } else if(pct>=0.625){
+    title="The Person Who Mostly Kept Going";
+    body="You matched Van Gogh on most of the choices that required staying — staying with Sien, staying at the asylum, staying in the work when the sales weren't coming. The gap is in the moments where 'keep going' required something beyond stubbornness: it required not being able to imagine stopping. Van Gogh could not imagine stopping. He tried and couldn't. Most people who get this score chose right most of the time. Van Gogh never chose right — he just never chose anything else.";
+  } else if(pct>=0.375){
+    title="The Painter Who Would Have Sold the 900 Canvases";
+    body="You made the reasonable calls: find stable work, protect the arrangement with Theo, don't invite the difficult painter, sell the paintings for what they'll fetch. Each choice makes sense in isolation. The Van Gogh life requires all of them to go the other way, simultaneously, for ten years. He didn't do it because he thought it would work. He did it because he couldn't conceive of doing anything else. That specific inability is either the source of everything beautiful he made, or the cause of everything that destroyed him. Probably both.";
+  } else {
+    title="The One Who Went Back to Commerce";
+    body="You took the practical path at every turn — which is what the situation kept calling for, rationally. You were already 27. You had failed four times. You had no training. The brother funding you had his own family and his own finances. Every piece of evidence pointed toward stopping. Van Gogh stopped being able to see that evidence somewhere around 1880 and never recovered the ability. What he lost was the ability to choose the practical path. What he made with that loss are in museums on every continent.";
+  }
+  document.getElementById('final-score').textContent=score+'/'+TOTAL;
+  document.getElementById('final-title').textContent=title;
+  document.getElementById('final-body').textContent=body;
+  document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function restart(){
+  score=0;answered=0;
+  document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));
+  document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));
+  document.getElementById('ending').style.display='none';
+  document.getElementById('score-display').textContent='Score: 0';
+  updateProgress(0);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

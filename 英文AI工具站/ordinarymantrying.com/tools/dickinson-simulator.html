@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emily Dickinson Life Simulator — 1800 Poems Nobody Read | Ordinary Man Trying</title>
+<meta name="description" content="Step into Emily Dickinson's shoes across 8 pivotal decisions — from her white dress to the poems found in a box after her death. The poet who invented modern American verse while almost no one was watching.">
+<style>
+:root{
+  --bg:#F5F2F8;--card:#FAF8FC;--ink:#140A18;--muted:#403058;--line:#D0C8DC;
+  --accent:#3A2040;--accent-bg:#EAE0F4;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,242,248,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#140A18;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B8A8D0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#100818;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#EEE8F8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.3);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#EEE8F8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B8A8D0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B8A8D0;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Emily Dickinson</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #76 of 100</p>
+  <h1 class="cover-title">This Is My Letter<br>to the World</h1>
+  <p class="cover-sub">Emily Dickinson published fewer than twelve poems in her lifetime. The other 1,775 — written in a small bedroom in Amherst, Massachusetts, in a hand that grew progressively more private and difficult to read — were found in a locked box after her death. She wore white. She rarely left the house. She sent her poems to people by letter. She was, in the judgment of posterity, one of the three or four greatest poets America has ever produced. Her own century had no idea.</p>
+  <div class="cover-facts">
+    <p>✒️ ~1,800 poems written &nbsp;·&nbsp; 📰 Fewer than 12 published in her lifetime &nbsp;·&nbsp; 🏠 Rarely left Amherst after age 30 &nbsp;·&nbsp; 👗 Wore only white in her later years &nbsp;·&nbsp; Died May 15, 1886 &nbsp;·&nbsp; Age 55 &nbsp;·&nbsp; Posthumous publication began 1890 — with her dashes changed</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Dickinson's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1855</div>
+  <div class="timeline-dot">Amherst, Massachusetts · Age 24</div>
+  <div class="narrative">
+    <p>You are twenty-four years old, a daughter of Edward Dickinson — lawyer, treasurer of Amherst College, a man of local prominence — and you have begun to understand, with increasing clarity, what the life mapped out for you actually requires. Callers must be received. Church must be attended. Neighbors must be chatted with. Social performances must be performed, week after week, with a consistency that absorbs the hours when you might otherwise be writing.</p>
+    <p>Around this time, you begin to withdraw. Not all at once — the social withdrawal that will eventually become near-total reclusion happens gradually through your twenties and thirties. But the direction is set. You will give the daylight hours to the garden. You will give the letter writing to a small group of correspondents who understand you. You will give the poems to the fascicles — little hand-sewn booklets you make yourself and store in the chest in your bedroom. And you will give the social calendar to your sister Lavinia, who handles the world outside so you don't have to.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · Mid-1850s</div>
+    <p class="decision-q">You are withdrawing from social life with increasing deliberateness. What is the most accurate understanding of this choice?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Agoraphobia or social anxiety — a psychological condition that prevented her from functioning in normal social settings.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. A deliberate trade — she was giving up the social performances that consume women's time and energy in exchange for the absolute solitude that serious writing requires.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Grief — a series of losses (friends, mentors) caused a withdrawal that became permanent through inertia.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Eccentricity — she was simply unusual, and the withdrawal had no strategic dimension, just temperament.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You give up callers, church, and neighbors — the entire social calendar of a proper Amherst woman — in exchange for the hours you need. The white dress, the garden, the small bedroom: this is what a deliberate trade looks like.</strong> <strong>What scholars now argue:</strong> Dickinson's reclusion was, at minimum, not purely involuntary. Her letters from this period are precise and clear-eyed about the demands of social life and her desire to avoid them. She was not passive in her withdrawal — she constructed a specific environment for writing: a small room, a consistent schedule, a network of correspondents who could bring the world to her on paper rather than in person. The white dress, the garden walks, the baking (she was an excellent cook who rarely left the kitchen) — all of these were the shape of a chosen life, not a life that happened to her.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1862</div>
+  <div class="timeline-dot">Amherst, Massachusetts · Age 31</div>
+  <div class="narrative">
+    <p>You have read Thomas Wentworth Higginson's article "Letter to a Young Contributor" in <em>The Atlantic Monthly</em> — advice to aspiring writers — and something in it speaks to you directly. On April 15th, 1862, you send him four poems and the most disarming opening line in the history of literary correspondence: "Are you too deeply occupied to say if my Verse is alive?"</p>
+    <p>Higginson is a respected critic, abolitionist, and man of letters. He responds within days, genuinely interested and slightly puzzled by what he is reading. He asks questions. He suggests that your meter is "not smooth enough" and that the work would benefit from more conventional prosody. He encourages you to wait before publishing. You begin a correspondence with him that will last twenty-four years. You will call him your "preceptor." You will never do a single thing he advises regarding the poems themselves.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1862</div>
+    <p class="decision-q">Higginson — the most prominent literary critic you've ever reached out to — suggests your meter needs regularizing before publication. How do you respond?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Follow his advice carefully — he knows the literary marketplace, and smoother meter will make the poems more accessible to readers.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. Continue sending him poems for his response and his friendship, but never alter a line on his advice — the unconventional meter and dashes are not imperfections, they are the point.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. Thank him for his time but stop corresponding — a critic who doesn't understand what you're doing can't help you improve it.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. Agree to regularize the meter but retain your dashes and capitalization — compromise on the formal element he objects to while protecting what you consider essential.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>You write to the most prominent literary critic you know, show him your poems, and he tells you the meter needs smoothing. Over the next twenty-four years you send him nearly 100 poems and hundreds of letters — and you never alter a single line on his advice.</strong> <strong>What Dickinson actually did:</strong> She maintained the correspondence for the rest of her life — sending Higginson nearly 100 poems and hundreds of letters. She valued his friendship and his engagement, even when he misunderstood her work. But she altered nothing on his suggestion. Her meter became more unconventional over time, not less. Her dashes multiplied. When she finally met Higginson in person in 1870, he wrote to his wife: "I never was with anyone who drained my nerve power so much. Without touching her she drew from me. I am glad not to live near her." He had still not fully understood what he was reading.
+    </div>
+  </div>
+
+  <div class="year-banner">1858</div>
+  <div class="timeline-dot">Amherst, Massachusetts · Age 27</div>
+  <div class="narrative">
+    <p>Among your papers — found only after your death — are three drafts of letters to an unknown person you address as "Master." The letters are among the most intense emotional documents of the 19th century: expressions of devotion, longing, wounded pride, and a quality of self-exposure that has no parallel in your published or private correspondence. Scholars have argued for 150 years about who the Master was: the Reverend Charles Wadsworth, the publisher Samuel Bowles, a real person known, a composite, or a literary invention — a way of dramatizing interior emotional experience for which there was no other available form.</p>
+    <p>The letters were never sent. They were drafts. They remain unsent in a box in the bedroom. What they reveal about the inner life beneath the poems is undeniable, even if the identity of the Master remains permanently uncertain.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · Late 1850s</div>
+    <p class="decision-q">The "Master" letters — three drafts of intense correspondence never sent — reveal what about Dickinson's inner life and her creative method?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. A secret love affair she was forced to conceal due to the man's marriage and her social position — the drafts are evidence of suppressed biographical truth.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. The letters show that Dickinson used writing — even personal writing that might never be sent — as a primary mode of experiencing and processing her own interior life. The Master may be real, invented, or both; what matters is the emotional truth the act of writing produced.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. Psychological instability — the intensity of the letters, addressed to someone she barely knew, suggests a pattern of obsessive attachment that may explain her reclusion.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. Evidence of Dickinson's awareness that her poems would be discovered and analyzed posthumously — the letters are a deliberate mystery designed to provoke exactly this kind of scholarly debate.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>You write three of the most emotionally intense letters in 19th-century American literature — and never send them. They are found in a box after your death. Scholars have argued for 150 years about who they were written to.</strong> <strong>The ongoing debate:</strong> The identity of the "Master" remains one of American literature's most argued questions. What is agreed is that the letters demonstrate something important about how Dickinson worked: she used the formal act of writing — letters, poems, drafts — as a way of making experience real and examnable, whether or not it was ever communicated to anyone. The poems about death, love, immortality, and consciousness are not descriptions of experiences; they are the experiences themselves, happening in language. The Master letters show the same method operating in the emotional register.
+    </div>
+  </div>
+
+  <div class="year-banner">1866</div>
+  <div class="timeline-dot">Amherst, Massachusetts · Age 35</div>
+  <div class="narrative">
+    <p>The <em>Springfield Daily Republican</em> publishes "A Narrow Fellow in the Grass" — a poem about a snake — in its February 14th issue. The poem has been given to the editor Samuel Bowles, probably by your sister-in-law Susan, without your clear consent. It is published under the title "The Snake," which you did not give it. More troublingly, the editor has "corrected" a line break that you placed deliberately, changing the poem's grammar.</p>
+    <p>You write to Higginson: "I had told you I did not print — I feared you might think me ostensible. My barefoot-Rank is better." Later, discussing the unauthorized publication, you say what has been changed is not a small thing: "It was robbed of me — defeated too of the Rightful thing." You are not angry at the attention. You are angry at what was done to the poem in giving it that attention.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1866</div>
+    <p class="decision-q">Your poem has been published without full consent and with unauthorized changes. What does your response reveal about your attitude toward publication?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. She is primarily upset about the loss of control over her public image — she wanted to choose when and how to enter the literary market.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. She is upset because the poem was changed — the specific punctuation, line breaks, and grammatical choices are load-bearing, not decorative, and altering them damages the poem's meaning.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. She is simply shy — the exposure of publication is frightening to someone of her temperament, and the changes are a pretext for expressing that fear.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. She is performing modesty — her refusal to publish is a calculated strategy to build mystique, and the distress about the changes is an extension of that performance.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>Your sister-in-law gives one of your poems to a newspaper without asking you. They publish it under a title you didn't give it and change a line break you placed deliberately. You write to Higginson: "It was robbed of me."</strong> <strong>Why the dashes matter:</strong> Dickinson's dashes are not casual punctuation. They create rhythmic pauses, ambiguities of meaning, and syntactic possibilities that standard punctuation collapses. "I felt a Funeral, in my Brain — " with a dash is different from "I felt a Funeral, in my Brain," — the dash suspends the line, opens it toward something that the period closes. When editors changed her punctuation in the posthumous 1890 collection, they produced technically similar but semantically different poems. The definitive Johnson/Ward editions (1955, 1958) restored her original punctuation and revealed a poet substantially different from — and more radical than — what readers had known for sixty years.
+    </div>
+  </div>
+
+  <div class="year-banner">1874</div>
+  <div class="timeline-dot">Amherst, Massachusetts · Age 43</div>
+  <div class="narrative">
+    <p>Your father Edward Dickinson dies of a stroke in Boston on June 16th, 1874. He was at the State Legislature when it happened. You do not go to Boston for his death, nor to the Amherst church for his funeral — you observe the service from an open upstairs door, hearing the hymns and the words from above. It is the last major public moment of your life. After this, your reclusion becomes almost total.</p>
+    <p>The decade of the 1870s takes others: your mother becomes an invalid in 1875 and requires constant care. Benjamin Newton — the early mentor who first told you your poems were important — has long been dead. Your circle of close correspondents, which once included dozens, has narrowed to a few dozen letters and a small number of people who come to you, since you will not go to them. What sustains the poetry through all this loss is the belief, stated in several poems and implied in many more, that writing is itself a form of survival: "This is my letter to the World — That never wrote to Me."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1870s</div>
+    <p class="decision-q">As losses mount and the social world narrows, what sustains Dickinson's extraordinary productivity as a poet?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Defiance — she writes against death and loss out of anger, as a protest against her own mortality.</button>
+      <button class="dopt" onclick="choose(this,5,false)">B. Religious faith — the Calvinist tradition she was raised in gives her a framework within which death is not final.</button>
+      <button class="dopt" onclick="choose(this,5,true)">C. The conviction that the poem itself is a form of immortality — not of the person, but of the moment of consciousness captured in language. "This is my letter to the World" — and letters, unlike people, can wait.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. The routine — she had established such a disciplined writing practice that it continued through grief simply through the force of habit.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>Your father dies in Boston. You do not go. You hear his funeral hymns from an open upstairs door — and after that, your reclusion becomes nearly total.</strong> <strong>Death in Dickinson's work:</strong> Nearly 600 of her poems engage with death, dying, and what comes after — an obsession that scholars have found morbid, devout, philosophical, and (perhaps most convincingly) formal: death is the great subject because it is the thing that most clearly defines what it means to be alive. Her treatment of death is not fearful — it is extraordinarily curious. In "Because I could not stop for Death —", Death is courtly, even pleasant. The consciousness that narrates continues. Whether she believed this or was imagining it is, characteristically, left ambiguous.
+    </div>
+  </div>
+
+  <div class="year-banner">1882</div>
+  <div class="timeline-dot">Amherst, Massachusetts · Age 51</div>
+  <div class="narrative">
+    <p>The publisher Thomas Niles at Roberts Brothers has expressed interest in a collection. He knows about Dickinson through various channels — her work has been quietly admired in certain literary circles for years, passed hand to hand in manuscript, discussed in letters. He makes a direct approach. This is a real publisher with a real offer, not a polite brush-off from a critic who doesn't understand the work.</p>
+    <p>You decline. The reasons you give are characteristically oblique, but the core objection is consistent with everything you have said and done for twenty years: the poems as you have written them, with your punctuation, your capitalization, your line breaks, are the poems. A publisher who will change these things is not publishing your poems. He is publishing something that resembles your poems with its essential self removed.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1882</div>
+    <p class="decision-q">A serious publisher offers to publish a collection. You decline. What does this reveal about your relationship with publication?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. She was afraid of public rejection — the safety of unread manuscripts was preferable to the risk of critical dismissal.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. She was not opposed to publication in principle but refused to publish poems that had been altered to fit editorial conventions — the integrity of the text was not negotiable.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. She didn't need the money or the recognition — her family's financial security removed the practical incentives that drive most writers to publish.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. She thought the poems were too personal and too unfinished — she continued revising them throughout her life and never felt any collection was ready.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>A serious publisher — Thomas Niles at Roberts Brothers — makes you a direct offer to publish a collection. You decline. The reason is that they will change your punctuation.</strong> <strong>The publishing question:</strong> The evidence suggests Dickinson's objection was primarily textual. Every time her poems appeared in print — with or without her consent — they appeared in altered form. Editors standardized her meter, replaced her dashes with conventional punctuation, and corrected her unconventional capitalization. The result was poems that were recognizably hers but substantially different. Her refusal to publish under those conditions was not timidity; it was an aesthetic position that would eventually be vindicated when the Johnson editions showed what her actual texts looked like and critics recognized that the alterations had systematically diminished the work.
+    </div>
+  </div>
+
+  <div class="year-banner">1890</div>
+  <div class="timeline-dot">Amherst, Massachusetts · (Four years after her death)</div>
+  <div class="narrative">
+    <p>You died in May 1886, of Bright's disease — nephritis. You told your nephew you were "called back." Your sister Lavinia found approximately 1,775 poems in the locked box in your bedroom, along with more in drawers and in the forty hand-sewn fascicles. Lavinia, who had no literary agenda and simply believed her sister's work deserved to be read, convinced Mabel Loomis Todd — a neighbor who had never met you — and Thomas Wentworth Higginson to edit a selection for publication.</p>
+    <p>The collection, <em>Poems by Emily Dickinson</em>, appears in November 1890. It goes through eleven printings in two years. Readers are immediately electrified. Critics are uncertain — the work is strange, compressed, punctuated in ways they've never seen. It is recognizably great and recognizably unusual. What the readers are reading, they do not know, is a carefully altered version of what you actually wrote.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1890</div>
+    <p class="decision-q">Todd and Higginson change Dickinson's dashes, normalize her punctuation, and regularize her capitalization for the posthumous collection. What is the significance of this decision?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Minor — the poems are great enough to survive some editorial standardization, and the changes made them more accessible to the readers who needed them.</button>
+      <button class="dopt" onclick="choose(this,7,true)">B. Significant damage — the dashes create rhythmic and syntactic possibilities that standard punctuation forecloses, and the altered poems present a domesticated version of a much more radical poet.</button>
+      <button class="dopt" onclick="choose(this,7,false)">C. Necessary — without those changes, the unconventional punctuation would have been dismissed as error rather than read as meaning, and the poems would have been rejected by 1890 readers.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Irrelevant to posterity — what matters is the core verbal intelligence, which the editorial changes don't affect.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>The posthumous collection goes through eleven printings in two years and electrifies readers across America — and what those readers are reading is a carefully altered version of what you actually wrote, with your dashes smoothed and your radical formal experiment mostly erased.</strong> <strong>The Johnson edition, 1955:</strong> Thomas H. Johnson's critical edition of Dickinson's complete poems, restoring her original punctuation, was published in 1955 — sixty-five years after her death. Scholars immediately recognized that they had been reading a censored version of a more radical text. The poem that begins "I felt a Funeral, in my Brain —" is a different poem with the dashes than without them. The 1955 edition is now the standard; the Todd/Higginson editions are historical documents. Dickinson's insistence on her own punctuation — which cost her posthumous publication on her terms — was eventually vindicated in full.
+    </div>
+  </div>
+
+  <div class="year-banner">Today</div>
+  <div class="timeline-dot">The permanent present of the poem</div>
+  <div class="narrative">
+    <p>The poems are everywhere now. On refrigerator magnets. In high school textbooks. Set to music by a hundred composers. Referenced in novels, films, political speeches. "Hope is the thing with feathers." "After great pain, a formal feeling comes." "I'm Nobody! Who are you?" "Because I could not stop for Death —". Lines that have entered the language so completely that people who have never read Dickinson quote her without knowing they are quoting her.</p>
+    <p>The Amherst house is a museum. Scholars have produced hundreds of books. The question of what Emily Dickinson actually contributed to American poetry — beyond the specific poems — is a question that critics have been refining for sixty years without fully exhausting it. She was working in a form (the hymn meter, the quatrain) that is as old as English language poetry. What she did with it is almost entirely unprecedented.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection</div>
+    <p class="decision-q">What is Emily Dickinson's essential contribution to American poetry — the thing that makes her irreducible to other 19th-century poets?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. Her themes — death, nature, immortality, and the self — which she explored with more depth than any other poet of her era.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. Her productivity — 1,800 poems is simply more raw material than any other poet produced in the same period, and scale eventually produces masterpieces.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. A new syntax for consciousness — the dash, the slant rhyme, the compression, the way a poem can hold two contradictory things simultaneously without resolving them. She invented a way of writing that anticipated Modernism and contemporary poetry by fifty years.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. Her reclusion — the withdrawal from the world created a purity of observation that engagement with society would have diluted.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>For sixty-five years after your death, the world reads a domesticated version of your poems with the punctuation corrected. In 1955, Thomas H. Johnson restores your original texts — and scholars immediately recognize they have been reading a censored version of a far more radical poet.</strong> <strong>Dickinson's formal revolution:</strong> Her slant rhymes (off-rhymes that create friction rather than resolution), her dashes (which multiply possible meanings instead of fixing them), her compression (entire emotional worlds in four lines), and her willingness to leave poems genuinely unresolved — these are not eccentricities. They are a complete formal system, developed over thirty years in a small room in Amherst, that broke from every convention of her period and pointed toward everything poetry would do after her. Whitman invented free verse. Dickinson invented something harder to name: the poem as an act of consciousness, thinking in language rather than reporting thoughts through it.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Emily Dickinson · 1830–1886</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <div id="final-title" style="font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:14px;"></div>
+    <div id="final-body" style="font-size:15px;line-height:1.8;color:#140A18;margin-bottom:20px;text-align:left;"></div>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"This is my letter to the World — That never wrote to Me."<br><em style="font-size:13px;color:var(--muted);">— Emily Dickinson, c.1862</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="plath-simulator.html" class="next-card">
+        <div class="next-card-name">Sylvia Plath</div>
+        <div class="next-card-sub">The Bell Jar, the bees & the last poems</div>
+      </a>
+      <a href="woolf-simulator.html" class="next-card">
+        <div class="next-card-name">Virginia Woolf</div>
+        <div class="next-card-sub">Consciousness, the waves & the river</div>
+      </a>
+      <a href="austen-simulator.html" class="next-card">
+        <div class="next-card-name">Jane Austen</div>
+        <div class="next-card-sub">Marriage plots & the steel trap beneath the manners</div>
+      </a>
+      <a href="wilde-simulator.html" class="next-card">
+        <div class="next-card-name">Oscar Wilde</div>
+        <div class="next-card-sub">The wit, the prison & the devastated afterward</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="The Letter the World Couldn't Read";body="You matched Dickinson's choices at every turn — the withdrawal as deliberate trade, the refusal to smooth the meter on Higginson's advice, the Master letters as lived experience in language rather than suppressed confession, the dashes as load-bearing meaning, the refusal of Niles on textual grounds. This is what it looks like to spend a life in a room in Amherst inventing modern poetry: not a dramatic gesture, but 1,775 small insistences that the work is right as written. Johnson's 1955 edition proved her right. The world took sixty-five years to catch up, and she had already said everything it needed.";}else if(pct>=0.625){title="You Read Between the Dashes";body="You grasped the essential Dickinson: the withdrawal as trade not affliction, the dashes as meaning not error, the refusal of publication as aesthetic position not timidity. Where you diverged was in the finer textures — exactly what the Master letters reveal about her creative method, or the precise damage the Todd and Higginson editorial changes inflicted. You understood what she was doing without always seeing precisely how she was doing it.";}else if(pct>=0.375){title="You Heard the Hymn, Not the Slant";body="You read Dickinson the way the 1890 audience did — through the emotional surface, the nature imagery, the meditations on death and faith. That is not nothing; those are still great poems even with the dashes smoothed. But the radical formal experiment underneath — the new syntax for consciousness, the compression that holds two contradictory things at once, the deliberate ambiguity that refuses resolution — stayed mostly out of view. You encountered the domesticated version of a much stranger poet.";}else{title="You Would Have Regularized the Meter";body="You made the practical choices at nearly every turn — follow the editor's advice, publish on conventional terms, keep the social calendar, communicate directly. Dickinson refused every one of these, and spent her life in a small room making something that changed American literature. Higginson thought her meter was the problem. The Johnson edition in 1955 proved it was the point. The dashes were not errors. The withdrawal was not a symptom. You would have gotten her published in 1862 and forgotten by 1900."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

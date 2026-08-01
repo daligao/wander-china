@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Erik Satie Life Simulator — Gymnopédies, Furniture Music &amp; the Man Who Owned 12 Umbrellas | Ordinary Man Trying</title>
+<meta name="description" content="Live Erik Satie's life across 8 pivotal decisions — from the Gymnopédies to inventing ambient music, from living in a room no one else ever entered to launching the avant-garde with Parade and influencing Debussy, Ravel, and John Cage.">
+<style>
+:root{
+  --bg:#F2F0EE;--card:#F8F7F5;--ink:#100E0C;--muted:#3A3430;--line:#C8C0B8;
+  --accent:#2A2218;--accent-bg:#E4E0D8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(242,240,238,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#100E0C;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #A89880;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#0C0A08;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#E4E0D8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#E4E0D8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #A89880;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #A89880;border-radius:999px;margin-bottom:12px;gap:8px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Erik Satie</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #93 of 100</p>
+  <h1 class="cover-title">He Owned 12 Umbrellas.<br>He Invented Ambient Music. No One Was Allowed in His Room.</h1>
+  <p class="cover-sub">Erik Satie was the composer Debussy described as "a medieval musician who had wandered into the wrong century." He wrote the Gymnopédies at twenty-two, and nothing in Western music had sounded quite like them before. He coined the term "furniture music" — music designed to be heard without being listened to — sixty years before Brian Eno. He wore the same gray velvet suit for a decade. When he died, his friends entered his room in Arcueil for the first time: they found two pianos stacked on top of each other, twelve umbrellas, and thousands of papers, including compositions no one had known existed.</p>
+  <div class="cover-facts">
+    <p>🎹 Gymnopédies (1888) — three of the most distinctive pieces in piano literature &nbsp;·&nbsp; 🪑 Invented "furniture music" (musique d'ameublement): ambient sound without active listening &nbsp;·&nbsp; 🎪 Parade (1917): Cubist ballet with Cocteau/Picasso/Diaghilev — caused a riot &nbsp;·&nbsp; 📚 Enrolled at Paris Conservatoire at age 39 to prove his critics wrong &nbsp;·&nbsp; 🌂 Owned exactly 12 gray velvet suits and 12 umbrellas &nbsp;·&nbsp; 1866–1925 · Honfleur to Paris (via Arcueil)</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Satie's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1888</div>
+  <div class="timeline-dot">Paris · Age 22</div>
+  <div class="narrative">
+    <p>You are twenty-two, recently expelled from the Paris Conservatoire for lack of effort (your teachers said you had talent but refused to work), and living in Montmartre. You compose three pieces for piano: the Gymnopédies. They are unlike anything in the Western musical canon. They move slowly, without obvious development, their melodies hovering over ambiguous harmonies that don't resolve in the ways nineteenth-century music taught audiences to expect. They are not sad exactly, not dreamy exactly, but something that resists the usual emotional categories music criticism provides. They are about forty-five seconds each — barely pieces at all by the scale of the Romantic era. You title them with a word derived from ancient Greek dances. No one notices initially.</p>
+    <p>Debussy hears them. Debussy arranges two of them for orchestra in 1896. This is how the Gymnopédies enter the world — not through Satie's own efforts but through Debussy's orchestration making them audible to a wider audience. You are pleased. You say: "Debussy has orchestrated my Gymnopédies with a tact and understanding which I would not have shown." You are not possessive about the pieces. You are also not surprised that Debussy found them. You knew they were good.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1888</div>
+    <p class="decision-q">The Gymnopédies are now among the most recognized pieces in Western piano music. What made them so distinctive that nothing quite like them had been written before?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Their simplicity — the harmonic and melodic content is relatively simple, making them accessible to audiences who found complex Romantic music difficult, and the distinctiveness is the distinctiveness of reduction.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. Their relationship to time — Romantic music is goal-directed, moving through tension toward resolution. The Gymnopédies have no particular destination: the harmonies don't build toward release, the melodies don't develop, the pieces don't culminate. They inhabit time without moving through it toward anywhere. This is genuinely new in Western concert music — music that exists without narrative drive, that is present rather than progressing. This quality is what Satie would later theorize as "furniture music" and what Brian Eno would call "ambient music" a century later.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Their modal harmonies — Satie used harmonies drawn from medieval church modes rather than conventional tonal harmony, and the distinctiveness is primarily a technical consequence of this unusual harmonic language.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Their connection to ancient Greece — the evocation of classical antiquity through the title and the stately tempo created an aesthetic novelty by combining Greek references with modern piano writing in a way no contemporary had attempted.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <strong>In 1888, at twenty-two, you composed three piano pieces that moved through time without going anywhere — and nothing in Western music had done that before, though no one noticed for another eight years.</strong> <strong>The Gymnopédies and musical time:</strong> The musicologist Alan Gillmor has written the most comprehensive analysis of Satie's compositional method, noting that the fundamental innovation of the Gymnopédies is temporal: they remove the teleological drive that organizes Western music from the Baroque through Brahms. Music before Satie is typically "about" getting somewhere — a theme developing, a tension resolving, a climax reached. The Gymnopédies are about being somewhere. This is the innovation that John Cage would later credit as foundational for 20th-century American experimental music, and it is what Brian Eno cited when theorizing ambient music in 1978: Satie had identified, sixty years earlier, that music could exist without goal-directedness.
+    </div>
+  </div>
+
+  <div class="year-banner">1893</div>
+  <div class="timeline-dot">Montmartre, Paris · Age 27</div>
+  <div class="narrative">
+    <p>You have been playing piano at the Chat Noir cabaret in Montmartre, composing, and associating with the bohemian and Rosicrucian circles of Paris — you briefly joined the Rosicrucian movement and composed mystical pieces for their ceremonies. You meet Suzanne Valadon — the painter (and mother of Utrillo) — and have a six-month love affair that is the only romantic relationship of your life. She ends it. You are devastated. You write her letters she doesn't answer. You never pursue another relationship. You move to a tiny room in the suburb of Arcueil and remain there for the rest of your life — twenty-seven years — walking the five miles to Paris and back every day. You allow no one to enter your room. You keep twelve gray velvet suits — identical — and twelve umbrellas — identical. You eat primarily at the local dairy. You are, by most external measures, eccentric to the point of dysfunction.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1893</div>
+    <p class="decision-q">Satie's hermetic daily routine — the same suits, the same walk, the room no one entered — produced some of the most original music of the 20th century. Is the eccentricity causal?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Yes — the radical withdrawal from social life and the extreme regularity of routine produced the conditions for the deep, undistracted focus that original composition requires. The eccentricity was the productive environment.</button>
+      <button class="dopt" onclick="choose(this,2,false)">B. No — the originality came from his musical intelligence and his specific ideas about composition, which would have expressed themselves regardless of his living arrangements. The eccentricity was a lifestyle choice that didn't causally affect the musical output.</button>
+      <button class="dopt" onclick="choose(this,2,true)">C. Probably not causal in the simple sense, but the same underlying disposition — toward systematic simplification, reduction to essentials, and indifference to convention — expressed itself in both the music and the life. The same person who stripped music of unnecessary harmonic resolution also stripped his wardrobe of unnecessary variety. This is a consistent aesthetic orientation, not a productive eccentricity. Eccentricity per se doesn't produce art; but a genuine commitment to a particular set of values, applied consistently across all domains, might.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. The routine was a response to his limited income rather than an aesthetic choice — Arcueil was cheaper than Paris, the same suits were cheaper than variety, and what looks like eccentric simplicity was practical poverty management by someone who needed to spend his energy on music rather than logistics.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <strong>After Suzanne Valadon ended the only romantic relationship of your life in 1893, you moved to a suburb of Paris, closed the door to your room, and did not allow anyone to enter it for the next twenty-seven years.</strong> <strong>Satie's routine:</strong> The biographer Ornella Volta, who wrote the authoritative French biography, notes that Satie's extreme regularization of daily life was partly practical (limited income) and partly temperamental. The room in Arcueil that was entered for the first time after his death in 1925 contained: two pianos (one on top of the other, which he used as a desk), twelve identical gray velvet suits, twelve umbrellas, a bed, and thousands of sheets of manuscript paper — including works that had never been performed. The last point is significant: his productivity in the unvisited room was genuine, not merely eccentric. He was working, not just hiding.
+    </div>
+  </div>
+
+  <div class="year-banner">1905</div>
+  <div class="timeline-dot">Paris · Age 39</div>
+  <div class="narrative">
+    <p>You are thirty-nine. Critics have been dismissing your work as amateurish — technically inadequate, unserious, the product of insufficient training. The composer Vincent d'Indy says publicly that you are "a self-taught musician." This is intended as an insult. You decide to prove the point redundant. You enroll at the Schola Cantorum — a rigorous music school in Paris — and complete a full three-year course in counterpoint under Albert Roussel. You are a middle-aged student among students young enough to be your children. You are already the composer of the Gymnopédies, which Debussy has orchestrated to wide recognition. You are studying counterpoint to demonstrate that the criticism is irrelevant. You are awarded the certificate with honors. Your compositional style changes not at all. You continue writing exactly as you did before, because you were writing correctly before. But no one can call you untrained again.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1905</div>
+    <p class="decision-q">At 39, already famous, Satie enrolled in school to silence critics who called him untrained. Was this the right response?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,true)">A. Yes — by obtaining the credential that the critics said he lacked, he permanently removed a basis for dismissing his work as technically inadequate. He didn't change his musical language; he removed an objection to that language. This is a strategic response to a strategic criticism. The credential was not for his own development but for the argument.</button>
+      <button class="dopt" onclick="choose(this,3,false)">B. No — engaging with the critics' framework by seeking their credentialing system legitimized that framework. If the Gymnopédies and Sarabandes were good, the formal training was irrelevant. By enrolling, he implicitly acknowledged that the critics' criterion (formal training) mattered.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. It was psychologically unnecessary — the quality of his work was sufficient response to the critics, and the effort spent on three years of study could have been spent on new composition. His musical instincts were sound and didn't need institutional validation.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. The result was ambiguous — he completed the course, but the criticism of technical inadequacy continued from different quarters, suggesting the strategy didn't actually resolve the underlying dismissal.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <strong>In 1905, at thirty-nine — already the composer Debussy had chosen to orchestrate — you enrolled at the Schola Cantorum as a student among students young enough to be your children, to earn the certificate that would remove the one argument your critics had left.</strong> <strong>The Schola Cantorum:</strong> The three years at the Schola Cantorum (1905–1908) are documented in Satie's surviving correspondence and in accounts from Roussel, his counterpoint teacher, who described him as an ideal student — serious, diligent, technically capable. The resulting certificate is described by Satie in a letter as "proof that I know what I know." What he produced after the Schola (the Pieces in the Shape of a Pear — 1903, but the title illustrates the point; the Trois morceaux en forme de poire) is technically more complex than the early work but just as stylistically distinctive. The credential changed the argument; it did not change the music. This is the outcome he sought.
+    </div>
+  </div>
+
+  <div class="year-banner">1913</div>
+  <div class="timeline-dot">Paris · Age 47</div>
+  <div class="narrative">
+    <p>You have become a figure of influence among a generation of young composers who call themselves Les Six — Honegger, Milhaud, Poulenc, Tailleferre, Durey, Auric. They look to you as a model: anti-Romantic, anti-pretentious, committed to simplicity and wit, suspicious of the grandiose. You give lectures with titles like "Intelligence and the Appreciation of Music by Animals." You write pieces called "Three Pieces in the Shape of a Pear" (there are seven pieces). You add written instructions to your scores that are explicitly jokes: "Wonder about yourself," "Like a nightingale with a toothache," "Don't be afraid." You write the score for the ballet Parade in 1917 with a scenario by Jean Cocteau, sets by Picasso, and choreography for Diaghilev's Ballets Russes. It causes a scandal. You are sued for defamation by the critic Jean Poueigh. The judge awards Poueigh 1,000 francs. You spend two weeks in jail. You are fifty-one years old, in jail, still walking to Paris from Arcueil. This is a satisfying situation.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1913</div>
+    <p class="decision-q">Satie wrote instructions like "Wonder about yourself" into musical scores. What is the function of humor in serious artistic work?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. Distancing — humor allows the composer to maintain ironic distance from his own work, avoiding the earnest emotional investment that Romantic music required and that Satie considered dishonest or excessive.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. Deflation of pretension — the score instruction "Wonder about yourself" is not a joke about the music but a joke about the performance apparatus: the formal concert setting, the serious critical language, the reverence for classical music that Satie believed substituted mystification for genuine engagement. Humor punctures this mystification without dismissing the music. Satie's wit is serious; it is aimed at what he found dishonest in how music was presented, not at the music itself.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. Differentiation — the eccentric titles and instructions marked Satie's work as distinctively his own in a crowded marketplace, functioning as branding that distinguished his output from the Romantic mainstream and from other modernist composers.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. Self-protection — by writing humor into his scores, Satie made criticism of the music harder to land squarely, since any negative response could be dismissed as failing to understand the joke. The humor is a defense mechanism rather than a positive artistic choice.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <strong>At some point around 1913, you began writing performance instructions like "Wonder about yourself" into musical scores — not as jokes about the music, but as attacks on the entire apparatus of reverence that surrounded music's presentation.</strong> <strong>Satie's humor:</strong> The cultural historian Roger Shattuck, in "The Banquet Years" (1958), analyzed the function of humor in Satie alongside Alfred Jarry, Apollinaire, and Henri Rousseau — arguing that what distinguished the early 20th-century Parisian avant-garde was the use of humor as a tool of genuine aesthetic critique rather than as entertainment or self-deprecation. Satie's performance instructions are not jokes in the sense of things that make you laugh; they are disruptions of the concert music apparatus — the program notes, the reverential silence, the performer's serious demeanor — that Satie believed interfered with direct musical experience. The humor is polemical.
+    </div>
+  </div>
+
+  <div class="year-banner">1917</div>
+  <div class="timeline-dot">Paris Opéra · Age 51</div>
+  <div class="narrative">
+    <p>Parade premieres at the Théâtre du Châtelet on May 18, 1917. The ballet includes Cubist costumes by Picasso, a scenario involving circus performers, and your score — which uses, for the first time in a ballet score, typewriters, pistol shots, and a foghorn as musical instruments. The premiere audience responds with outrage. Jean Poueigh, a critic who had praised the rehearsals, writes a negative review after the premiere. You send him a series of postcards addressed to "Monsieur and Dear Madam" calling him an ass. He sues for defamation. You are convicted and sentenced to eight days in prison (the sentence is later suspended but the fine stands). Cocteau physically attacks Poueigh in the lobby. The critic Apollinaire coins the word "Surrealism" in the program notes for Parade. The Ballets Russes performs the piece 26 more times. The scandal is, on balance, excellent for everyone except Poueigh, who is largely forgotten.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1917</div>
+    <p class="decision-q">Parade used typewriters and pistol shots as musical instruments. What was Satie demonstrating about the definition of music?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,true)">A. That the distinction between "musical" and "non-musical" sounds is conventional rather than intrinsic — a typewriter produces organized sound in time; whether it is "music" depends on how it is framed and what context surrounds it. By placing a typewriter in an orchestral score, Satie was asserting that the frame (the concert hall, the score notation, the conductor) is what makes something music, not any intrinsic property of the sound source. This is the claim John Cage would develop into his full compositional philosophy forty years later.</p>
+      <button class="dopt" onclick="choose(this,5,false)">B. That Parisian audiences needed to be provoked — the typewriter and pistol shots were primarily theatrical provocations designed to create the scandal that made Parade famous, and the musical argument was secondary to the desired audience reaction.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. That modern life had to be represented in modern music — the sounds of 1917 Paris (typewriters, machinery, transportation) should appear in music that claimed to represent contemporary experience, and the instrument choices were documentary rather than philosophical.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. That the Romantic orchestra's instrument hierarchy (strings noble, percussion vulgar) was arbitrary and should be disrupted — the typewriter was a democratic gesture toward the sounds of working life that the concert hall had historically excluded.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <strong>On May 18, 1917, the premiere audience at the Théâtre du Châtelet heard a typewriter, a pistol shot, and a foghorn emerge from the orchestra pit — and responded with such fury that the critic you insulted afterward had you convicted and fined.</strong> <strong>Parade and musical boundaries:</strong> John Cage cited Satie's use of non-traditional sound sources as direct precedent for his own work, including "4'33"" (1952), which consists of a performer sitting at a piano for 4 minutes and 33 seconds without playing — during which time the ambient sounds of the concert hall constitute the "music." Cage's argument (that all sounds can be music within the right frame) is the direct elaboration of Satie's 1917 claim. The musicologist Michael Nyman's book "Experimental Music" (1974) traces this lineage explicitly: Parade → Cage → Minimalism → ambient music. The typewriter was not a provocation; it was a thesis statement.
+    </div>
+  </div>
+
+  <div class="year-banner">1920</div>
+  <div class="timeline-dot">Paris Exhibition · Age 54</div>
+  <div class="narrative">
+    <p>At an art exhibition in 1920, you present a new concept: "musique d'ameublement" — furniture music. You and a small ensemble perform short, repetitive musical pieces in the gallery between the paintings. The idea is that this music should function like furniture: present, part of the environment, not demanding to be listened to. During the performance, you walk around begging the audience to stop listening and resume their conversations — the music is background, it is not supposed to be the focus of attention. The audience, naturally, insists on sitting still and listening. You are furious. The concept has failed. It will be rediscovered by Brian Eno in 1978 as "ambient music" — which Eno describes as music that "can be either actively listened to with attention or as easily ignored, depending on the needs of the listener."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1920</div>
+    <p class="decision-q">Satie invented ambient music 60 years before Eno. Why did the concept fail in 1920 but succeed in 1978?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Technological difference — the ability to play recorded music at low volume in actual ambient settings (via audio equipment) made ambient music practically possible in 1978 in ways that live performance in a gallery could not achieve in 1920.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. Both technology and cultural context — ambient music requires both the technical infrastructure (recording, speakers, volume control) that 1920 lacked, and a cultural framework that has learned to have music as background. By 1978, recorded music in public and private spaces was ubiquitous; the distinction between foreground and background sound had been established. In 1920, concert music was still defined by active, focused listening, and asking an art gallery audience not to listen to performed music was asking them to violate the primary contract of musical experience. The concept needed not just technology but a changed relationship to sound.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. Eno's marketing — the "ambient" label and the theoretical framing Eno provided in the liner notes of "Ambient 1: Music for Airports" gave the concept a legibility and commercial vehicle that Satie's gallery experiment could not provide.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. Audience evolution — by 1978, the art world had absorbed minimalism, conceptual art, and avant-garde music to a degree that made an "ambient" concept comprehensible. In 1920, the conceptual framework for appreciating music designed not to be listened to simply did not exist in mainstream culture.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <strong>In 1920, at a Paris art exhibition, you walked around the gallery begging the audience to stop listening to your music — and the audience refused, listened with full attention, and you considered the experiment a complete failure.</strong> <strong>Furniture music and ambient music:</strong> Brian Eno's "Ambient 1: Music for Airports" (1978) credits Satie directly in its liner notes. Eno's account of the concept's origin — discovering that background music at low volume could produce a different kind of attentiveness than foreground music — maps exactly onto Satie's 1920 experiment. The difference is that Eno had tape loops, studio recording, and the ability to distribute the music for home listening, while Satie's furniture music required musicians playing in a gallery. The concept required technology it didn't yet have. This is not unusual: many ideas exist before the conditions that allow them to function. The idea is not wrong; the timing is premature.
+    </div>
+  </div>
+
+  <div class="year-banner">1925</div>
+  <div class="timeline-dot">Arcueil · Age 58</div>
+  <div class="narrative">
+    <p>You die on July 1, 1925, of cirrhosis of the liver, at the Saint-Joseph clinic in Paris. You are fifty-eight. You have refused visitors during the final months, as you had refused visitors for the preceding twenty-seven years. After your death, your friends — Milhaud, Auric, Braque, Cocteau — enter your room in Arcueil for the first time. They find: the two pianos (one serving as desk), the twelve identical gray velvet suits, the twelve identical umbrellas, and piles of manuscript paper including scores of works that had never been performed and that no one had known existed. There are newspaper clippings, letters, and the scores for pieces written in complete secrecy — "Vexations," a piece with the instruction that it should be performed 840 times consecutively (the first complete performance, in 1963, takes eighteen hours and forty minutes). The room is finally visible. It was always full.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1925</div>
+    <p class="decision-q">Satie's instruction that "Vexations" be performed 840 times makes it an 18-hour composition. What is this about?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. A joke — the instruction is not meant to be followed literally; it is a comment on musical convention and the expectation of reasonable performance lengths, and a 1963 performance lasting 18 hours is a category error about the work's intent.</button>
+      <button class="dopt" onclick="choose(this,7,true)">B. An experiment in the phenomenology of repetition — the 50-bar piece with the 840-repetition instruction is investigating what happens to a listener's (and performer's) experience when music is de-narrativized by extreme repetition. After the fiftieth repetition, the music is no longer experienced as music in the conventional sense; it becomes environment, meditation, duration experienced directly. This is the most radical extension of the non-teleological quality of the Gymnopédies: if the Gymnopédies have no destination, Vexations has no end. They are the same insight pushed to its limit.</button>
+      <button class="dopt" onclick="choose(this,7,false)">C. A punishment — "vexation" means annoyance, and the piece is designed to test the limits of the performer's and audience's patience. It is not about musical experience but about endurance as an aesthetic event.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Unfinished — the piece exists in a single manuscript with the instruction, and it is unclear whether Satie intended it to be performed at all; it may be a compositional experiment or notation of an idea rather than a performance score.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <strong>In your room in Arcueil, at some unknown date, you wrote a fifty-bar piece with the instruction that it be performed 840 consecutive times — a piece your friends did not know existed until they entered your room after your death in 1925.</strong> <strong>Vexations:</strong> The 1963 New York performance of Vexations, organized by John Cage, used twelve pianists rotating in shifts, and lasted 18 hours and 40 minutes. The audience could come and go. Cage said afterward that it was "one of the most important performances I have ever attended." The musicologist Ornella Volta notes that the relationship between "Vexations" and the ambient music concept is direct: if furniture music is music that doesn't demand to be listened to, "Vexations" is music that stops being music in the conventional sense through the mechanism of repetition — it becomes a condition of the space rather than an event within it. Satie had one underlying idea; "Vexations" is its extreme expression.
+    </div>
+  </div>
+
+  <div class="year-banner">Legacy</div>
+  <div class="timeline-dot">1925 and beyond</div>
+  <div class="narrative">
+    <p>The French musical world of the early 20th century divided into those influenced by Debussy's impressionism and those influenced by Satie's anti-romanticism. The composers who called themselves Les Six — Milhaud, Poulenc, Honegger — acknowledged Satie as their model. John Cage, who encountered the Gymnopédies in the 1940s and organized the first complete performance of Vexations in 1963, said Satie was the most important musical influence of his life. Brian Eno cited "furniture music" as the origin of ambient music. Minimalism — Glass, Reich, Riley — is directly descended from the temporal experiments of the Gymnopédies. The piano music that plays at the beginning of a film when everything is quiet, the music in airport lounges, the background textures of electronic music — all of it is, in some sense, Satie's room in Arcueil, still being heard, long after the door was finally opened.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · Legacy</div>
+    <p class="decision-q">Satie's influence extends across ambient music, minimalism, and experimental music — more than almost any composer of his era. Yet he was nearly unknown at his death. What does his story teach about influence that is not yet visible?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. That originality is usually recognized late — the most novel ideas take time to find audiences capable of appreciating them, and Satie is one example of a general pattern where the most significant work appears ahead of its moment.</button>
+      <button class="dopt" onclick="choose(this,8,true)">B. That influence travels through specific people rather than directly to audiences — Satie influenced Debussy (who orchestrated the Gymnopédies), Debussy influenced a generation, and Satie influenced Cage directly. The chain of influence requires specific individuals who can hear what is new and carry it forward. This is not the same as "originality is recognized late" — Satie was somewhat recognized in his lifetime; but his deepest influence required Cage in the 1940s and Eno in the 1970s to make it audible at scale. The ideas needed carriers who didn't exist yet.</button>
+      <button class="dopt" onclick="choose(this,8,false)">C. That the framework for understanding new work often arrives after the work does — minimalism and ambient music provided theoretical languages that made Satie's early experiments comprehensible retrospectively, and the influence is partly a retroactive construction by later musicians who needed ancestors.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. That working outside institutions — Satie's independence from academic musical life — is both what allowed his originality and what limited his immediate influence. The trade-off between independence and reach is always active.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <strong>After your death in 1925, your friends opened your room in Arcueil for the first time and found two pianos stacked on top of each other, twelve identical umbrellas, and compositions no one had known existed — including one that would take eighteen hours to perform in 1963.</strong> <strong>Influence and carriers:</strong> John Cage wrote: "More than anyone else, I am aware that we are indebted to Satie for showing us that music can exist without narrative, without development, as pure sound in time." The musicologist Robert Orledge notes that Cage's access to Satie came through specific channels — a Parisian musician named Darius Milhaud who had known Satie and who was teaching in the United States in the 1940s. The intellectual lineage is not abstract; it is a specific human chain. Brian Eno's discovery of Satie was through reading about early 20th-century French music while recovering from an accident in 1975. The ideas waited for the right recipients. The room was always full; it took time for the right people to open the door.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Erik Satie · 1866–1925</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"Before I compose a piece, I walk around it several times, accompanied by myself."<br><em style="font-size:13px;color:var(--muted);">— Erik Satie</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="schubert-simulator.html" class="next-card">
+        <div class="next-card-name">Franz Schubert</div>
+        <div class="next-card-sub">600 songs in 31 years — the winter journey</div>
+      </a>
+      <a href="gauguin-simulator.html" class="next-card">
+        <div class="next-card-name">Paul Gauguin</div>
+        <div class="next-card-sub">Left Paris for Tahiti — a desperate wager</div>
+      </a>
+      <a href="blake-simulator.html" class="next-card">
+        <div class="next-card-name">William Blake</div>
+        <div class="next-card-sub">The visionary who printed his own books</div>
+      </a>
+      <a href="keats-simulator.html" class="next-card">
+        <div class="next-card-name">John Keats</div>
+        <div class="next-card-sub">Negative capability &amp; truth in beauty</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understand Satie at the level his room understood him — the same disposition toward reduction and indifference to convention expressed across the music, the wardrobe, and the room that no one entered. You would have kept the twelve identical umbrellas.';else if(pct>=0.625)t.textContent='You grasped the core of what Satie was doing — the temporal innovation, the anti-pretension, the furniture music concept — but missed some of the harder edges of how consistently his single underlying idea expressed itself across every domain of his life.';else if(pct>=0.375)t.textContent='You felt the distinctiveness of Satie\'s project without fully tracing its logic. You recognize the Gymnopédies as something new; you\'re less sure what made them new, or why the twelve suits matter to the same answer.';else t.textContent='You encountered Satie\'s ideas the way his 1920 gallery audience encountered furniture music — by sitting down and listening carefully when you were supposed to look away. The concept required a different relationship to attention than you brought.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Leo Tolstoy?</title>
+<meta name="description" content="He wrote War and Peace and Anna Karenina, then rejected literature as immoral. At 82, he fled his estate in secret and died at a train station. 8 decisions from Tolstoy's life.">
+<meta property="og:title" content="What Would You Do If You Were Leo Tolstoy?">
+<meta property="og:description" content="The greatest novelist who renounced his own novels. 8 decisions from Tolstoy's life of genius and contradiction.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/tolstoy-simulator.html">
+<style>
+:root{
+  --bg:#EEF0EE;--card:#F7F8F6;--ink:#0E1208;--muted:#3A4030;--line:#B8C0B0;
+  --accent:#2A4018;--accent-bg:#E0E8D8;
+  --right:#1A5A28;--right-bg:#E4F0EA;--wrong:#6A1818;--wrong-bg:#F2E8E6;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,240,238,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#0E1208;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #A0B098;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#101808;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#E8F0E0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.6);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#101808;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#E8F0E0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #A0B098;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#101808;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#0E1208;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#E8F0E0;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #A0B098;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#E8F0E0;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#B0D090;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Leo Tolstoy</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #33</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Leo Tolstoy?</h1>
+  <p class="cover-sub">He wrote <em>War and Peace</em>. Then <em>Anna Karenina</em>. Then he decided that great literature was a moral failure and he should become a peasant. He gave away the rights to his books, tried to dress like a serf, cobbled his own shoes. At 82, he fled his estate in the middle of the night and died eleven days later at a railway station. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Leo Tolstoy</strong> (Count Lev Nikolayevich Tolstoy; 1828–1910) · Russian novelist · Born to aristocratic family on Yasnaya Polyana estate, Tula · Fought in Crimean War 1854-55 · <em>War and Peace</em> 1869 · <em>Anna Karenina</em> 1877 · Spiritual crisis 1878-1880 — described in <em>A Confession</em> · Developed "Tolstoyism": pacifism, nonviolent resistance, vegetarianism, renunciation of property and sex · Influenced: Gandhi, Martin Luther King Jr., Wittgenstein, Hemingway · Excommunicated from Russian Orthodox Church 1901 · Fled Yasnaya Polyana secretly, November 10, 1910 · Died November 20, 1910, at Astapovo railway station, surrounded by reporters · 82 years old. Considered by many critics the greatest novelist who ever lived.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1854, Crimea</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · Crimea</span></div>
+<div class="year-banner">1854</div>
+<div class="timeline-dot">Sevastopol · Age 26</div>
+<div class="narrative">
+  <p>You are 26, a young Russian nobleman-officer at the siege of Sevastopol during the Crimean War. You are watching men die badly — not heroically, not cleanly. They die screaming, confused, soiling themselves, calling for their mothers. The official dispatches describe the battles as glorious. You are writing something different.</p>
+  <p>Your <em>Sevastopol Sketches</em> show war without decoration: the smell, the fear, the gap between official language and what actually happens to flesh. You send them to a journal in St. Petersburg. Tsar Alexander II reads them and orders you transferred out of danger. Your literary career has begun by telling an uncomfortable truth.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — War as It Is</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tolstoy chose to describe war accurately when patriotic propaganda was expected. What made this possible?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Courage. He knew the truth was unwelcome and wrote it anyway. The simplest explanation is the right one: he was braver than most writers.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Aristocratic privilege. As a count, he had social protection that a middle-class writer couldn't afford. He could tell uncomfortable truths because his position insulated him from the consequences.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">A fundamental conviction that reality was more interesting than ideology. Throughout his life, Tolstoy kept returning to what he actually observed rather than what he was supposed to think. This epistemological stubbornness — more important than courage — is what produced his writing.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">Tolstoy's method</div>
+      <p><strong>You write dispatches from the Crimean War showing men dying in fear and confusion rather than glory — and the Tsar of Russia personally orders you transferred out of danger because the truth is too embarrassing to let you be killed writing it.</strong> Tolstoy described his method as "the most honest description of what I actually saw." The Sevastopol Sketches broke every convention of war writing in 1854-55: no heroic commanders, no glorious charges, just wounded men in field hospitals wondering if they would live, and the strange suspension of reality that combat produces. The technique — close observation without interpretive overlay — became the basis for everything he wrote afterward. Henry James called it "the Russian virus." Ernest Hemingway said: "All modern American literature comes from one book by Mark Twain called Huckleberry Finn ... but it also comes from Tolstoy, who showed us what honesty actually looks like." The method preceded the philosophy — Tolstoy was a realist before he was a moralist.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · Writing the Epic</span></div>
+<div class="year-banner">1863</div>
+<div class="timeline-dot">Yasnaya Polyana · Age 35</div>
+<div class="narrative">
+  <p>You are working on what will become <em>War and Peace</em>. It has been five years. You are writing about Napoleon's 1812 invasion of Russia through the lives of dozens of characters across 15 years of history. The novel will be 1,225 pages. You revise it seven times. Your wife Sonya copies it by hand multiple times — including after you've changed it again overnight.</p>
+  <p>You don't believe history is made by great men. Napoleon, in your novel, is a figure who thinks he controls events but is controlled by them. History, you argue, is the result of millions of individual decisions aggregated — not the will of commanders and emperors. You are writing a novel that contradicts the premise of the history books of your time.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — History Without Great Men</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tolstoy argued history is driven by millions of individual decisions, not great men. Is this view of history accurate?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Yes. The "great man" theory of history is a comfortable fiction. Counterfactuals show most historical events had structural causes that would have found expression regardless of who was in charge.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">No. Individuals matter enormously. Stalin, Hitler, Churchill — different people in those roles would have produced radically different 20th centuries. Tolstoy underestimated agency.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, depending on the scale and context. Tolstoy was right that structural forces shape history powerfully. Individual leaders matter most at decision points where structural forces are evenly balanced. His view was an overreaction to the "great man" myth, not a complete theory.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">Tolstoy's theory of history</div>
+      <p><strong>You revise the same 1,225-page manuscript seven times over five years, and your wife copies it by hand each time — including after you change it again overnight.</strong> War and Peace contains long philosophical essays (usually skipped by first-time readers) arguing that individual commanders have almost no real control over battles — that what appears afterward as "strategy" is retrospective rationalization of chaotic events. His target was historians like Thiers who described Napoleon as consciously directing events. Modern military historians have found Tolstoy closer to correct than wrong: in 19th-century battles, commanders truly had limited information and control over what was happening. His theory is less convincing at other scales: historians of the Holocaust largely agree that Hitler's personal ideology was causally necessary, not just structurally determined. The hedged answer — structural forces plus individual agency, weighting depending on context — is the mainstream position in modern historiography. Tolstoy was half right.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · Anna Karenina</span></div>
+<div class="year-banner">1873</div>
+<div class="timeline-dot">Yasnaya Polyana · Age 45</div>
+<div class="narrative">
+  <p>You are beginning <em>Anna Karenina</em>. The first line arrives complete: "Happy families are all alike; every unhappy family is unhappy in its own way." The novel will take four years and seven revisions. Sonya copies it again. You are writing about adultery, social convention, the gap between the life society expects and the life the body demands. You are, in many ways, writing about your own marriage, your own desires, your own failures.</p>
+  <p>When the novel is finished, Dostoyevsky writes that it is "a perfect work of art." Turgenev agrees. Henry James says Anna Karenina is "the finest novel ever written." You are, most critics agree, at this moment the greatest living novelist on earth. Then the crisis begins.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Literary Achievement</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Anna Karenina is widely considered the greatest novel ever written. What made Tolstoy capable of it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Moral complexity. He could hold multiple irreconcilable views simultaneously — not judging Anna while showing her destruction, seeing Levin's spiritual search as both ridiculous and true. He didn't simplify.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Empathy. Tolstoy could inhabit other consciousnesses completely — Anna's desire, Vronsky's self-deception, Karenin's wounded dignity. He felt everything from inside.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — plus something harder to name: he cared about getting human beings right more than he cared about any argument or ideology. This is what he eventually sacrificed when he became a moralist. The moralist needed to simplify what the novelist knew was irreducibly complex.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Anna Karenina does</div>
+      <p><strong>You complete what Dostoyevsky calls "a perfect work of art" and Henry James calls "the finest novel ever written" — and then you spend the next thirty years arguing it is a moral failure that should not be read.</strong> Anna Karenina's genius, according to critics like Matthew Arnold and Vladimir Nabokov, is that it refuses to judge Anna for what she does. The famous opening line establishes unhappiness as particular and complex — each case its own. Anna's destruction comes from real forces: social convention, the impossibility of divorce, Vronsky's shallowness, her own psychology. Tolstoy doesn't moralize. Levin's spiritual searching — often thought to represent Tolstoy himself — is presented with affectionate irony, not endorsement. The novel achieves what Keats called "negative capability": the ability to remain in uncertainty without irritable reaching after fact and reason. This is precisely what Tolstoy's later moral philosophy destroyed. His essays insist, didactically. His novels held open what the essays closed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Crisis</span></div>
+<div class="year-banner">1879</div>
+<div class="timeline-dot">Yasnaya Polyana · Age 51</div>
+<div class="narrative">
+  <p>You have written <em>War and Peace</em>. You have written <em>Anna Karenina</em>. You are 51, healthy, wealthy, famous, surrounded by your wife and children on your estate. And you cannot stop thinking about death. Not your death specifically — death as an idea. If everything ends, what is the point of anything?</p>
+  <p>You describe it in <em>A Confession</em>: "I could give no reasonable meaning to any single action or to my whole life. I was surprised that I could not have understood this from the very beginning. All this has been known to such a long time. Today or tomorrow sickness and death will come (they had come already) to those I love or to me; nothing will remain of all that I love — everything will disappear." You hide the ropes in your room to stop yourself from hanging from them. You avoid going near guns.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Existential Crisis</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tolstoy's crisis came at the peak of worldly success. Why did success not protect him?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">He had always known, at some level, that success was not the answer. The crisis arrived when he'd proved it — he had everything and it wasn't enough. The emptiness was always there; achievement just removed the distraction.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Mid-life biology. The existential crisis of one's 50s is a common psychological phenomenon — confrontation with mortality that success cannot prevent. Tolstoy's version was extreme but not qualitatively different from many people's experience.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">He was asking the question too honestly. He always refused to look away from what he actually observed. Turned on his own life, that habit produced an honest reckoning with mortality that most people manage through distraction, convention, and faith. Success had given him nothing to hide behind.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">A Confession and the crisis</div>
+      <p><strong>You are the most celebrated novelist alive, wealthy, healthy, surrounded by your family on your estate — and you hide the ropes in your room so you cannot hang yourself from them.</strong> A Confession (written 1879-80, published 1882) is one of the most direct accounts of existential crisis in literature. Tolstoy describes being overcome by the question of why — why do anything when everything ends in death and oblivion? He investigates how different kinds of people deal with this question: through ignorance (not facing it), through pleasure (Epicureanism, which he found dishonest), through strength (forcing oneself not to think about it), and through weakness (suicide). He eventually found his answer in the simple faith of Russian peasants, which he found more honest than the formal religion of the upper classes. The crisis produced "Tolstoyism" — his entire second philosophical career. Whether the resolution was genuine or a sophisticated form of self-deception is something his later life doesn't cleanly answer.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Peasant Life</span></div>
+<div class="year-banner">1885</div>
+<div class="timeline-dot">Yasnaya Polyana · Age 57</div>
+<div class="narrative">
+  <p>You have found your answer in the simple life. You have renounced your literary works. You are now dressing in peasant clothing — white peasant blouse, rough trousers, boots you cobble yourself. You work in the fields. You haul water. You chop wood. You have become, as much as a count can, a peasant.</p>
+  <p>Your wife Sonya controls the copyrights to your earlier works — she refuses to sign them over. There are 13 children. She is managing an estate, an income, a family. She finds your performance infuriating and says so. Your disciples come from across Europe and America to worship at your feet. You write essays about non-violence and simple living that influence a young lawyer in South Africa named Mohandas Gandhi.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Peasant Performance</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tolstoy dressed as a peasant while owning an estate. Was this authentic spiritual practice or aristocratic theater?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Authentic. The physical practice mattered regardless of his legal ownership of the estate. He was working on his own psychology, not just his financial arrangements. Embodied practice is real even if incomplete.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">Theater. He owned the estate. Sonya and the children lived from it. Actual peasants had no choice; Tolstoy chose his costume and could take it off. The gap between his practice and actual poverty was unbridgeable.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and he knew it, which is why he was never at peace with it. The gap between his ideals and his circumstances tormented him for 30 years until he finally fled. The performance was real, the torment was real, the inauthenticity was real. Tolstoy couldn't simplify himself any more than he simplified his characters.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">The Tolstoy household</div>
+      <p><strong>You give away the rights to your books, dress in peasant clothing, and learn to cobble your own shoes — while your wife controls the copyright to everything you ever wrote and refuses to hand it over.</strong> The last 30 years of Tolstoy's life at Yasnaya Polyana were a kind of sustained marital and spiritual crisis. Sonya managed the estate and the income from his early works (which she refused to surrender copyright of) while Tolstoy tried to live as a peasant. Her diaries describe him as a hypocrite; his describe her as materialistic and spiritually blind. Both were correct about each other. Tolstoy's disciple Vladimir Chertkov added to the tension — he encouraged Tolstoy to complete his break with property and family. In 1910, Tolstoy wrote a secret will leaving rights to all his works to the public domain, witnessed by Chertkov. When Sonya discovered it, the final crisis began. Tolstoy's later writing — including the beautiful novella Hadji Murat, written in secret — showed the novelist hadn't died, only gone underground.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Influence on Gandhi</span></div>
+<div class="year-banner">1900</div>
+<div class="timeline-dot">Yasnaya Polyana · Age 72</div>
+<div class="narrative">
+  <p>Letters have been arriving from a young Indian lawyer working in South Africa named Mohandas Gandhi. He has read your essays on non-violence and non-resistance. He finds in your thought the philosophical foundation for what he is trying to do: resist the British Empire without violence. You correspond directly. You call him "my dear friend." He calls your work his primary influence. A farm in South Africa is called "Tolstoy Farm." You will die not knowing that your ideas, filtered through Gandhi, will eventually help free India.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Idea Chain</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tolstoy's influence flowed: Tolstoy → Gandhi → Martin Luther King Jr. → American civil rights movement. Is this chain of influence a vindication of his ideas?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Yes. The proof of an idea is whether it works in the world. Non-violent resistance produced Indian independence and American civil rights victories. The chain of influence validates the idea at the source.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">No. Tolstoy was an anarchist who opposed all state power, including revolutionary violence. Gandhi adapted his ideas within political processes that Tolstoy would have rejected. The influence was real; the vindication of Tolstoy's specific ideas is less clear.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">Partial vindication. The core insight — that non-violent resistance can be more politically effective than violence, especially against democratic systems sensitive to moral pressure — was vindicated. Tolstoy's anarchist politics and renunciation of state power were not. Gandhi and King used what was useful and discarded the rest.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">The Tolstoy-Gandhi correspondence</div>
+      <p><strong>An Indian lawyer in South Africa reads your essays on non-violence, names a farm after you, and uses your ideas to help free 350 million people from British rule. You die in 1910 without knowing any of this will happen.</strong> Tolstoy and Gandhi exchanged letters between 1909 and Tolstoy's death in 1910. Gandhi had read The Kingdom of God Is Within You (1894), which argued that Christianity, properly understood, required absolute pacifism and non-resistance to evil by violence. Gandhi found this confirmed his own intuitions and gave them philosophical grounding. He visited Tolstoy Farm near Johannesburg, named in honor of Tolstoy, in 1910. Tolstoy wrote to Gandhi: "Your work in Transvaal, which seems far away from us, is the most important work now being done in the world." Martin Luther King Jr. said: "As I delved deeper into the philosophy of Gandhi, my skepticism concerning the power of love gradually diminished, and I came to see for the first time its potency in the area of social reform. Prior to reading Gandhi, I had about concluded that the ethics of Jesus were only effective in individual relationships. Gandhi was probably the first person in history to lift the love ethic of Jesus above mere interaction between individuals to a powerful and effective social force." The chain: Tolstoy → Gandhi → King.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Flight</span></div>
+<div class="year-banner">1910</div>
+<div class="timeline-dot">Yasnaya Polyana · Age 82</div>
+<div class="narrative">
+  <p>It is 3 in the morning, October 28, 1910. You are 82. You wake your doctor, leave a note for Sonya, take your coat and hat, and leave the estate in secret. You have finally done it — left the life that has contradicted your ideals for 30 years. You don't know where you're going. You take a train south.</p>
+  <p>Within days, you have pneumonia. The world's press follows your journey. Sonya tries to kill herself twice by throwing herself in the pond at Yasnaya Polyana. You are brought to the stationmaster's house at Astapovo station, too ill to continue. You die there eleven days later. The newspapers carry it on their front pages. Your last recorded words: "I do not understand what I am supposed to do."</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Escape</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tolstoy fled at 82 to finally live consistently with his principles. Was this an act of integrity or cruelty to Sonya?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Integrity. He had been trying to live his principles for 30 years and been prevented. The flight was the only act that was fully his own in all those years. He died as himself, not as the count and author he'd been imprisoned by.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">Cruelty. He abandoned a 67-year-old wife of 48 years without saying goodbye, triggering her suicide attempts. Whatever his philosophical reasons, the human consequences were inexcusable.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, simultaneously — which is the most honest answer and also the most Tolstoyan. His own novels would have refused to simplify this situation. It was an act of integrity that was also an act of cruelty. He knew it. That's why his last words were not triumphant.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">The last days</div>
+      <p><strong>You are 82 years old when you finally leave — in the middle of the night, without a clear destination — and you die at a railway station eleven days later, with your last recorded words being "I do not understand what I am supposed to do."</strong> Tolstoy's note to Sonya before leaving read: "I cannot continue to live in the luxury which I have always lived in, and I am doing what old men of my age usually do: leaving worldly life to spend the remaining days of my life in solitude and quiet." He was accompanied by his doctor and his youngest daughter Alexandra, who was a supporter of Chertkov and his father's Tolstoyan principles. Sonya was excluded from the Astapovo stationmaster's house during his final illness, though she was eventually allowed to be present at the end. She outlived him by nine years. Her diaries and memoirs present a different account of the marriage than his. Both accounts are partial. The question of who was right — Tolstoy pursuing his ideals or Sonya managing the real consequences — is the question Tolstoy's novels would have refused to answer, even though his personal conduct forced a choice.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Literary Rejection</span></div>
+<div class="year-banner">Legacy</div>
+<div class="timeline-dot">The Paradox · Literature vs. Moralism</div>
+<div class="narrative">
+  <p>In his final decades, Tolstoy rejected his own greatest novels. He wrote in <em>What Is Art?</em> (1897) that great art must be morally instructive to simple people — and by this criterion, <em>War and Peace</em> and <em>Anna Karenina</em> fail. They are too complex, too ambiguous, too available to immoral interpretation. He recommended instead simple folk tales. He wrote several of these himself. They are beautiful and also not <em>War and Peace</em>.</p>
+  <p>The paradox: the moralist who rejected the novelist produced the instructions that freed India. The novelist who resisted the moralist produced the books that still change how people understand being human. Both are Tolstoy. Which is the real one?</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Rejection of Literature</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tolstoy rejected his own greatest novels. Was this a self-betrayal or a consistent application of his principles?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Self-betrayal. War and Peace and Anna Karenina are more morally serious than anything the moralist Tolstoy produced. He destroyed what was best in him in service of a doctrine that was narrower than his genius.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Consistent application. If you genuinely believe that luxury is immoral and that art should serve the poor, then complex novels read only by the educated are exactly what you should reject. The position is internally consistent, even if we disagree with it.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and the tension is unresolvable. He wrote Hadji Murat in secret in his 70s, one of the best things he ever wrote, because the novelist couldn't fully die. The moralist rejected the novelist; the novelist kept writing in secret. Both were genuinely him. The rejection was consistent AND self-betraying AND he knew it.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">Hadji Murat and the hidden novelist</div>
+      <p><strong>You publicly condemn your two greatest novels as morally unfit to be read — then spend eight years secretly writing Hadji Murat, which Harold Bloom calls "the best story in the world," and keep it hidden in a drawer until after your death.</strong> Hadji Murat (written 1896-1904, published posthumously 1912) is one of the most perfect short novels in Russian literature — about a Chechen rebel warrior who defects to the Russians and is killed. It is full of violent energy, moral complexity, and pleasure in the physical world that contradicts everything the later Tolstoy publicly stood for. He kept it hidden. Harold Bloom called it "the best story in the world." Tolstoy wrote it while publicly denouncing literature of exactly its kind. When Isaiah Berlin analyzed Tolstoy in The Hedgehog and the Fox (1953), he argued that Tolstoy's tragedy was that he was constitutionally a fox — someone who knows many things and revels in multiplicity — who desperately wanted to be a hedgehog, knowing one great thing. The novels are the fox. The philosophy is the hedgehog. The fox was stronger.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Tolstoy's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="next-sims">
+  <p class="next-label">Explore More Lives</p>
+  <div class="next-grid">
+    <a href="dostoevsky-simulator.html" class="next-card">
+      <span class="next-name">Fyodor Dostoevsky</span>
+      <span class="next-desc">Faced a firing squad, was pardoned at the last second. Wrote Crime and Punishment at the gambling table.</span>
+    </a>
+    <a href="kafka-simulator.html" class="next-card">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">Asked his friend to burn all his manuscripts after his death. The friend didn't.</span>
+    </a>
+    <a href="nietzsche-simulator.html" class="next-card">
+      <span class="next-name">Friedrich Nietzsche</span>
+      <span class="next-desc">Went mad at 44 hugging a horse. "God is dead" was his diagnosis, not his wish.</span>
+    </a>
+    <a href="confucius-simulator.html" class="next-card">
+      <span class="next-name">Confucius</span>
+      <span class="next-desc">Spent 13 years traveling to find a ruler who would implement his ideas. None would.</span>
+    </a>
+  </div>
+</div>
+<div class="cta-box">
+  <p>Tolstoy wrote War and Peace, rejected it as immoral, and died at a train station at 82 saying "I do not understand what I am supposed to do." <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All Life Simulators — Dostoevsky, Kafka, Nietzsche and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/dostoevsky-simulator.html" style="color:var(--accent)">Dostoevsky Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Tolstoy";body="You held the tensions without resolving them: his realism came from epistemological stubbornness not just courage, both his history theory and the great man theory are partially right, his peasant performance was both real and theatrical, and the novelist and the moralist were both genuinely him. The refusal to simplify — that's the Tolstoyan move.";}else if(pct>=0.625){title="The Novelist";body="You understood the essential: his method came from observing reality rather than ideology, War and Peace's theory of history has real merit, the Tolstoy-Gandhi chain is a partial vindication of his ideas. Where you might dig deeper: his contradictions were the subject of his own fiction. He knew his life didn't add up. That's what makes his last words so moving.";}else if(pct>=0.375){title="The Moralist";body="You tended toward judgment — of his peasant theater, his flight from Sonya, his rejection of his novels. These are reasonable positions held by thoughtful people, including Sonya. The challenge: Tolstoy's novels specifically resist this kind of judgment. If he'd met you as a character in one of his books, he would have presented your certainty with gentle, devastating irony.";}else{title="The Reader";body="You disagreed with Tolstoy consistently — his history theory, his peasant performance, his rejection of literature. This puts you in good company: his wife disagreed with most of it too. The thing is, Tolstoy's genius was precisely his ability to present positions he didn't agree with as completely as positions he did. His novels are bigger than his opinions. That gap is why we still read him."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

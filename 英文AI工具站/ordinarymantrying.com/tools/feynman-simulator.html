@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Richard Feynman Life Simulator — Quantum Physics, the Bomb & the O-Ring | Ordinary Man Trying</title>
+<meta name="description" content="Step into Richard Feynman's shoes across 8 pivotal decisions — from Los Alamos to the Challenger investigation. The physicist who cracked safes, played bongo drums, and revolutionized how humans understand reality.">
+<style>
+:root{
+  --bg:#EEF2F8;--card:#F5F8FC;--ink:#060C18;--muted:#1A3060;--line:#B8C8DC;
+  --accent:#0A3060;--accent-bg:#D8E4F5;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,242,248,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#060C18;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #90A8C8;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#060A18;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#DCE8F8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.3);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#DCE8F8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #90A8C8;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #90A8C8;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Richard Feynman</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #75 of 100</p>
+  <h1 class="cover-title">The Man Who Couldn't<br>Stop Finding Out</h1>
+  <p class="cover-sub">Richard Feynman played bongo drums. He cracked safes at Los Alamos for fun. He painted under a pseudonym. He strip-club frequented while writing physics papers. He watched the first atomic bomb test without eye protection because he'd worked out that car glass absorbs UV rays. He told the truth to the Challenger commission when NASA wanted to suppress it. He was, by universal agreement, the most joyful physicist who ever lived — and also one of the most consequential.</p>
+  <div class="cover-facts">
+    <p>⚛️ Nobel Prize in Physics 1965 (quantum electrodynamics) &nbsp;·&nbsp; 💣 Manhattan Project at Los Alamos, age 24–27 &nbsp;·&nbsp; 📐 Invented Feynman diagrams &nbsp;·&nbsp; 🚀 Challenger investigation 1986 &nbsp;·&nbsp; Died February 15, 1988 &nbsp;·&nbsp; Age 69 &nbsp;·&nbsp; Last words: "I'd hate to die twice. It's so boring."</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Feynman's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1943</div>
+  <div class="timeline-dot">Los Alamos, New Mexico · Age 24</div>
+  <div class="narrative">
+    <p>You arrive at Los Alamos in March 1943 as the youngest theoretical physicist in J. Robert Oppenheimer's assembled team. You are twenty-four years old. The project you have joined is building a weapon that may end the war. The scientists around you include Hans Bethe, Niels Bohr, Enrico Fermi, and John von Neumann — arguably the greatest concentration of physics talent ever assembled. You are the youngest person in most rooms.</p>
+    <p>The environment is bizarre: a secret city on a mesa in the New Mexico desert, surrounded by chain-link fence and armed guards, where everyone has a fake name on their mail. The work is genuinely frightening. The security restrictions are oppressive. Several of the senior scientists are visibly suffering under the psychological weight of what they're building. Some cope with silence. Some cope with work. You choose a different method entirely: you find ways to make it interesting.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1943</div>
+    <p class="decision-q">You're the youngest physicist at Los Alamos working on the most destructive weapon in history. How do you maintain psychological equilibrium under the classified, isolated, high-pressure conditions?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Keep your head down and focus entirely on the calculations — the faster this project ends, the faster you can go home to real science.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. Treat every aspect of the environment as interesting — crack safes, probe the security system's absurdities, play bongo drums at night, and never stop being curious about the human situation around you.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Spend your free time reading and writing — maintain an inner intellectual life separate from the project's moral weight.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Bond closely with the senior physicists — proximity to Bohr and Fermi will deepen both your science and your ability to process what you're doing.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You turn the most classified facility in American history into your personal curiosity laboratory — cracking your colleagues' safes, mailing coded letters past the censors, and arguing cheerfully with Niels Bohr while everyone else trembles.</strong> <strong>What Feynman actually did:</strong> He cracked the combination safes of several senior physicists — including Hans Bethe — leaving notes inside: "I borrowed document no. LA4312 — Feynman the safecracker." He systematically found gaps in the classified mail censorship rules and exploited them by sending his wife codes. He learned bongo drums. He argued cheerfully with Niels Bohr while everyone else was terrified of the great man. Oppenheimer later said Feynman was the one person at Los Alamos who seemed genuinely immune to existential dread — because his curiosity was always slightly larger than his fear.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1945</div>
+  <div class="timeline-dot">Albuquerque, New Mexico · Age 26</div>
+  <div class="narrative">
+    <p>Arline Greenbaum Feynman dies on June 16th, 1945, of tuberculosis. You have been married for three years — she spent most of that time in a TB sanatorium in Albuquerque, forty-five minutes from Los Alamos, while you worked on the bomb. You visited every weekend you could get a pass. She was brilliant, funny, and dying the entire time you were married.</p>
+    <p>You drive back to Los Alamos after her death and return to work. Your colleagues don't understand how you can do this. A month later, the Trinity test happens. You are one of the few people who watches the first atomic bomb detonation without eye protection — you reason, correctly, that the windshield glass of the truck you're watching from will absorb UV radiation, leaving only visible light. The flash is brighter than anything in human experience. You describe it later as simply interesting. Then, some weeks after Trinity, you sit down in a cafeteria in Oak Ridge and cry for about two hours without knowing why.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · Summer 1945</div>
+    <p class="decision-q">Arline has died. The bomb works. You experience delayed grief in an Oak Ridge cafeteria weeks later. What does Feynman's response reveal about how he processed the enormous events of 1945?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. He had suppressed his grief through work and the breakdown was purely personal — the bomb's moral dimension didn't affect him.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. He processed both Arline's death and the reality of the bomb through physics — returning to intellectual work immediately is not avoidance but the only tool he had. The delayed grief came when the shield dropped.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. He regretted his participation in the Manhattan Project from the moment the bomb worked and spent the rest of his life dealing with that guilt.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. His emotional detachment was a character flaw — his famous joy was a defense mechanism rather than genuine engagement with life.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>You watched the Trinity test without protective goggles — you had calculated that car glass blocks UV — and told people it was simply interesting. It was six weeks before you cried, and then you spent a year sitting in restaurants calculating how the blast radius would destroy everything around you.</strong> <strong>What Feynman said about 1945:</strong> After the bombs fell on Hiroshima and Nagasaki, Feynman went through a year-long depression. He described sitting in restaurants and calculating how the bomb's blast radius would destroy everything around him. He had believed in the project because it might end the war with Germany — then Germany surrendered before the bomb was ready. He continued anyway. He later said this was a moral failure he never fully forgave himself for: not the work itself, but the failure to stop and reconsider once the original justification disappeared.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1948</div>
+  <div class="timeline-dot">Pocono Manor, Pennsylvania · Age 29</div>
+  <div class="narrative">
+    <p>You are at a conference of theoretical physicists that includes Julian Schwinger, Niels Bohr, and Paul Dirac — the architects of quantum mechanics. Schwinger has just given an immensely sophisticated three-hour presentation of his approach to quantum electrodynamics: the mathematics of how light interacts with electrons. It is correct, rigorous, and almost impossible to follow. Then it is your turn.</p>
+    <p>You present something completely different: a set of simple diagrams. Lines for particles. Wiggly lines for photons. Vertices where they interact. You can read off the probability of any particle interaction by following the rules of the diagram. Feynman diagrams — as they will come to be called — are to Schwinger's method what a map is to a GPS coordinate string. Dirac watches you draw them and says nothing. Bohr thinks you are missing the point of quantum mechanics entirely. The conference ends without consensus.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1948</div>
+    <p class="decision-q">The physics establishment doesn't understand your diagram method and some senior figures actively reject it. Do you continue pushing it?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. Translate your results into Schwinger's mathematical formalism — reach the same answers through methods the establishment respects.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. Continue with the diagrams and prove they give the right answers for increasingly complex calculations — let results speak for themselves regardless of theoretical objections.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. Wait for Freeman Dyson to establish the theoretical equivalence between your approach and Schwinger's before pushing further — his endorsement will legitimize the method.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. Drop the visual approach and develop the mathematical underpinning first — the diagram shorthand is pedagogically appealing but scientifically the rigor must come first.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>You presented particle physics as a set of simple line drawings, and the men who had built quantum mechanics — Dirac and Bohr — told you that you were missing the point entirely. Within two years, every physicist on Earth had abandoned their formalism for yours.</strong> <strong>What happened with Feynman diagrams:</strong> Freeman Dyson proved mathematically in 1949 that Feynman's diagram method and Schwinger's formalism were equivalent — both correct, just expressed differently. Once that was established, physicists immediately abandoned Schwinger's approach in favor of Feynman diagrams, which are vastly easier to use. Today, Feynman diagrams are the universal visual language of particle physics — used in every particle physics paper, every textbook, and every accelerator experiment worldwide. Dirac, who had dismissed them, used them routinely in his late work.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1961</div>
+  <div class="timeline-dot">Caltech, Pasadena · Age 42</div>
+  <div class="narrative">
+    <p>Caltech has asked you to redesign the introductory physics curriculum for freshman and sophomore students. The standard approach is to teach classical mechanics, then electromagnetism, then modern physics — in the historical order in which physics was discovered. It is orderly and logical and produces students who can solve textbook problems. It also, by general agreement, drains the excitement out of physics before students have seen anything truly surprising.</p>
+    <p>Your instinct is to start from the other direction: begin with what physics actually is — the fundamental laws as they are now understood — and work backward toward the classical approximations. Show freshmen the quantum nature of matter on the first day, before they've been trained to think of matter as billiard balls. The approach is pedagogically radical and will require you to essentially write new textbooks from scratch. You estimate it will take two years of your research time.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1961</div>
+    <p class="decision-q">How do you approach redesigning the Caltech introductory physics curriculum?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. Update the existing curriculum with better examples and clearer explanations — improvement, not revolution.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. Rebuild from the foundation — start with the actual laws of nature as currently understood, show students physics as it is rather than as it was discovered, and accept the two-year research cost.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. Make the course primarily historical — the way physics was discovered is more engaging than the finished edifice, and teaches scientific thinking better.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D) Focus on making the mathematics beautiful — a curriculum organized around elegant mathematical structures will excite the students who have the potential to actually become physicists.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You redesigned the freshman physics curriculum by pitching it at whatever level you personally found most exciting — which turned out to be too advanced for every single freshman it was designed for. Graduate students and working physicists immediately adopted it instead, and it became the most widely read physics textbook in history.</strong> <strong>What the Feynman Lectures became:</strong> The <em>Feynman Lectures on Physics</em> (3 volumes, 1963–65) are the most widely read physics textbooks in history. They were originally too hard for the Caltech freshmen they were designed for — Feynman kept pitching them at the level of understanding he found most exciting, which turned out to be too advanced for first-year students. But graduate students and working physicists immediately adopted them. They are still in print, freely available online, and cited by physicists today as the books that taught them to actually love physics.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1965</div>
+  <div class="timeline-dot">Pasadena, California · Age 46</div>
+  <div class="narrative">
+    <p>The Nobel Prize in Physics is awarded to you, Julian Schwinger, and Sin-Itiro Tomonaga for your work on quantum electrodynamics. You learn about it when a reporter calls at 3:45 in the morning and wakes you up. Your initial reaction is irritation at being woken, then genuine ambivalence about the prize itself. You think prizes are part of a system that emphasizes the wrong things about science — the ranking of individuals rather than the accumulation of knowledge. You briefly consider declining it.</p>
+    <p>Your Caltech colleagues point out that declining a Nobel Prize would generate more publicity than accepting it, which defeats the purpose. You recognize they are right. But the discomfort is real. The Nobel ceremony requires a formal tuxedo, a trip to Stockholm, a speech to the Swedish Academy, and a week of banquets. You would rather be playing bongo drums.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1965</div>
+    <p class="decision-q">You have serious reservations about the Nobel Prize as an institution. What do you do?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Decline the prize and the publicity — stand by your principles about the nature of scientific recognition.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. Accept it but be completely honest in interviews about why you almost didn't — use the platform to say what you actually think about prizes and scientific culture.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. Accept gracefully and say nothing critical — you earned it through your work and the institution itself doesn't deserve your criticism.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. Accept it and donate the entire prize money to a scholarship fund — convert the honor into something more useful than a ceremony.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>You tried to decline the Nobel Prize on the grounds that prize culture was antithetical to real science. When told that declining would generate more publicity than accepting, you accepted — then spent a week in Stockholm in a tuxedo, dancing with the Swedish princess at banquets you would rather have missed.</strong> <strong>What Feynman actually did:</strong> He accepted, went to Stockholm, and gave a lecture titled "The Development of the Space-Time View of Quantum Electrodynamics" that was widely considered one of the best Nobel lectures ever delivered. He also wore a tuxedo, attended the banquets, and was photographed dancing with the Swedish princess. In subsequent years, he spoke frequently in public about his discomfort with prizes, titles, and honorary degrees — refusing many — while not pretending he'd refused the one that mattered most. The honesty was the point.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1986</div>
+  <div class="timeline-dot">Washington D.C. · Age 67</div>
+  <div class="narrative">
+    <p>The Space Shuttle Challenger exploded 73 seconds after launch on January 28th, 1986, killing all seven crew members. President Reagan has appointed a commission to investigate. You are on it — reluctantly, with kidneys already failing from cancer. The other members of the Rogers Commission are largely administrators and former government officials. The NASA managers who brief the commission are methodical, credentialed, and not telling you everything you need to know.</p>
+    <p>You have been pursuing your own investigation, talking directly to engineers below the management level. They tell you about the O-ring seals in the solid rocket boosters — rubber rings that become brittle in cold temperatures. The launch temperature on January 28th was 28°F. The engineers had warned about cold-weather launches for years. Management had overruled them. You have a piece of O-ring material and a glass of ice water. The commission's public hearing is in two hours.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · February 11, 1986</div>
+    <p class="decision-q">You have the O-ring material and a glass of ice water. The NASA managers want the investigation to be handled through formal testimony and document review. What do you do?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Submit your findings in writing through the commission's formal process — the protocol exists for good reasons and circumventing it creates problems.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. Drop the O-ring material into the ice water during the live televised hearing and let the cameras show everyone in America what happens to rubber seals in cold temperatures.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. Confront the NASA managers directly in a private meeting before the hearing and give them a chance to disclose the O-ring issue themselves.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. Brief the commission chairman William Rogers and let him decide how to handle the disclosure in the hearing.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>You were already dying of cancer when you joined the Challenger commission. During the live televised hearing, you reached into your pocket, dropped a piece of O-ring rubber into your glass of ice water, waited a few minutes, removed it, squeezed it, and told the cameras: it doesn't stretch back.</strong> <strong>What Feynman actually did:</strong> During the February 11 televised hearing, Feynman removed the O-ring material he had obtained and placed it in the ice water in front of him. After a few minutes, he removed it and squeezed it: it had lost its resilience. He said simply: "I took this stuff that I got out of your seal and I put it in ice water, and I discovered that when you put some pressure on it for a while and then undo it, it doesn't stretch back. It's resilient for, I don't know, a few seconds." The demonstration appeared on every television news program that night. It is considered one of the most effective pieces of scientific communication in history.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1987</div>
+  <div class="timeline-dot">Pasadena, California · Age 69</div>
+  <div class="narrative">
+    <p>The kidney cancer has progressed. You have had two surgeries and a third is being discussed. The cancer is rare and aggressive — retroperitoneal sarcoma combined with clear-cell renal cell carcinoma. The doctors give you the statistics. You do the calculation. You know what the numbers mean better than most patients, because you understand probability, and because you have spent your entire career not lying to yourself about what calculations reveal.</p>
+    <p>You continue to go into your Caltech office when you can. You work on the theory of computation. You give a lecture titled "Cargo Cult Science" about the importance of scientific integrity — about how easy it is to fool yourself, and how a scientist's first job is to never fool himself. You write letters. You dictate stories about your life. You remain, in all the accounts of people who visited you in this period, completely yourself — curious, funny, direct. No one can tell whether this is courage or simply the continuation of a lifelong habit of engagement.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1987</div>
+    <p class="decision-q">Facing terminal cancer and knowing the statistics, what is the key principle Feynman embodied in his final years?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Stoic acceptance — a physicist understands that death is simply a physical process and treats it without emotion.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. The pursuit of legacy — he spent his final energy ensuring his ideas were properly documented and attributed.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. "The first principle is that you must not fool yourself — and you are the easiest person to fool." He applied the same rigorous honesty to his dying that he applied to everything else: no self-deception, no false comfort, and consequently no wasted time.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Reconnection — he spent his final years repairing relationships and resolving the interpersonal loose ends of a life spent mostly in the lab.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>You were diagnosed with two simultaneous rare cancers, did the probability calculation, and declined the experimental treatment that might add a few months at enormous cost and suffering. You continued going into your Caltech office to work on the theory of computation.</strong> <strong>Feynman in his final year:</strong> He continued working. He continued arguing. He continued finding things funny. When asked if he was afraid of dying, he said he was not afraid of death itself but was afraid of being afraid of it, which he was also not. He was offered an experimental treatment that might extend his life by a few months at enormous cost and suffering. He declined, saying the trade-off was not worth making. He died on February 15, 1988. His last words, spoken from his hospital bed, were reportedly: "I'd hate to die twice. It's so boring."</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1988</div>
+  <div class="timeline-dot">UCLA Medical Center · Age 69</div>
+  <div class="narrative">
+    <p>February 15th, 1988. The kidneys are failing. Your last lucid day was the day before. You have been in and out of consciousness. In one of the clearer moments, you tell your nurse that you have had a wonderful time — you have used that phrase before, in letters and lectures. "I have had a wonderful time." It is not a performance or a philosophical statement. It is simply what you think.</p>
+    <p>Outside UCLA Medical Center, California is cold and clear. The same temperature as the New Mexico desert in January. The same sky that was above Los Alamos when you were twenty-four, the same sky above Albuquerque where Arline was dying, the same sky above Stockholm when the King handed you the medal. The same atoms in different configurations, following the same quantum electrodynamic rules you spent your life working out. The particle lines reach their vertices. The diagram is complete.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · February 15, 1988</div>
+    <p class="decision-q">What is the core of what Richard Feynman contributed — beyond the specific physics?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. The Feynman diagrams and the Nobel Prize work — the specific technical contributions to quantum electrodynamics.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. The Challenger investigation — a single act of public scientific integrity at a moment when it mattered.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. A demonstration that curiosity, honesty, and the refusal to be impressed by authority or prestige are not just personality traits — they are the actual method of science, and any scientist who abandons them, for comfort or career or ideology, is no longer doing science.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. The Feynman Lectures — the most accessible gateway into physics ever written, which brought physics to a generation of readers who would otherwise have been excluded.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>The man who cracked classified safes for fun, did calculations on napkins in a Pasadena strip club, and dipped a rubber O-ring in ice water on live television while dying of cancer — what he left behind was not a personality but a method: the insistence on not fooling yourself about what the evidence actually shows.</strong> <strong>Feynman's lasting influence:</strong> His specific physics contributions — QED, Feynman diagrams, the parton model of hadrons, quantum computing's conceptual foundation — are enormous. But what physicists and non-physicists alike most frequently cite is the attitude: the insistence on not fooling yourself, the joy in not knowing rather than pretending to know, the willingness to say "I don't understand" as the beginning of inquiry rather than its failure. His lecture "Cargo Cult Science" is routinely cited as the clearest statement of scientific integrity ever given. He remains, thirty-five years after his death, the most referenced physicist when people try to explain what science actually is.</p>
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Richard Feynman · 1918–1988</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"I'd rather have questions that can't be answered than answers that can't be questioned."<br><em style="font-size:13px;color:var(--muted);">— Richard Feynman</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="einstein-simulator.html" class="next-card">
+        <div class="next-card-name">Albert Einstein</div>
+        <div class="next-card-sub">Relativity, the bomb letter & the final mystery</div>
+      </a>
+      <a href="curie-simulator.html" class="next-card">
+        <div class="next-card-name">Marie Curie</div>
+        <div class="next-card-sub">Radioactivity, Nobel ×2 & the weight of the work</div>
+      </a>
+      <a href="turing-simulator.html" class="next-card">
+        <div class="next-card-name">Alan Turing</div>
+        <div class="next-card-sub">The machine that thinks & the injustice that followed</div>
+      </a>
+      <a href="hawking-simulator.html" class="next-card">
+        <div class="next-card-name">Stephen Hawking</div>
+        <div class="next-card-sub">Black holes, motor neuron disease & Brief History of Time</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You lived it exactly as Feynman did — curious where others were cautious, honest where others performed, and genuinely unimpressed by the things most people spend their careers collecting. He would find this unsurprising.';else if(pct>=0.625)t.textContent='You understood the method even when you didn\'t always predict the man. Feynman\'s choices were rarely obvious — which is precisely why they worked.';else if(pct>=0.375)t.textContent='You caught the outline but missed some of the texture. The curiosity that drove every decision was more consistent than it looked from outside.';else t.textContent='Feynman was genuinely hard to predict, which is part of the point. Every wrong answer here reflects an expectation he deliberately refused to meet.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

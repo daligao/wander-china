@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Georgia O'Keeffe?</title>
+<meta name="description" content="She moved to the New Mexico desert alone at 62 and painted it for 40 years. She was 98 when she died, still working. 8 decisions from Georgia O'Keeffe's extraordinary life.">
+<meta property="og:title" content="What Would You Do If You Were Georgia O'Keeffe?">
+<meta property="og:description" content="She left New York for a desert at 62. She painted flowers, skulls, and sky for 40 years in New Mexico. 8 decisions from Georgia O'Keeffe's life.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/okeeffe-simulator.html">
+<style>
+:root{
+  --bg:#F5F0EA;--card:#FBF8F4;--ink:#1A1208;--muted:#4A3820;--line:#C8BAA8;
+  --accent:#8B4A10;--accent-bg:#EDE0D0;
+  --right:#1A5830;--right-bg:#E0EEE8;--wrong:#6A1A18;--wrong-bg:#EEE0DF;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,240,234,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#1A1208;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B8A088;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#201410;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0E4D4;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#1A1208;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0E4D4;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B8A088;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#201410;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#1A1208;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F0E4D4;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B8A088;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#F0E4D4;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#D4B090;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Georgia O'Keeffe</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #36</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Georgia O'Keeffe?</h1>
+  <p class="cover-sub">She was one of the most important American painters when she walked away from New York at 62 and moved alone to the New Mexico desert. She painted bones, flowers, and sky for the next 40 years. She lost her central vision in 1971 and kept painting with her hands and eventually with a young assistant who became her companion. She died in 1986, age 98, still working. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Georgia O'Keeffe</strong> (1887–1986) · Born Sun Prairie, Wisconsin · Studied at Art Institute of Chicago and Art Students League of New York · 1916: Alfred Stieglitz (famous photographer and art dealer, married to another woman) exhibited her drawings at his gallery 291 without asking permission · She demanded he remove them; he persuaded her to let them stay · They began a 25-year correspondence and eventually marriage (1924) · Her large-scale flower paintings, New York cityscapes, and New Mexico landscapes made her one of the most famous American painters · Stieglitz died 1946 · She moved permanently to New Mexico 1949, age 62 · Ghost Ranch and Abiquiú became her subject and her life · Lost central vision 1971 at 84 · Met Juan Hamilton (young potter, 27) in 1973 who became her companion and caretaker · Continued working with Hamilton's assistance until shortly before her death on March 6, 1986 · Age 98. Considered the "Mother of American Modernism."</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1916, New York</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · Stieglitz</span></div>
+<div class="year-banner">1916</div>
+<div class="timeline-dot">New York · Age 29</div>
+<div class="narrative">
+  <p>Your friend has shared your drawings with Alfred Stieglitz — the most powerful art dealer in New York, the man who introduced America to modern European art, who is 23 years older than you and married to someone else. He has displayed your drawings in his gallery 291 without asking you. You are furious. You travel to New York to demand he take them down.</p>
+  <p>He persuades you to let them stay. He says your drawings are "the purest, finest, sincerest things that had entered 291 in a long time." You stay in New York. A correspondence begins. Then a relationship. Stieglitz will spend the next decade photographing you — hundreds of photographs, including nudes. He will become the engine of your career. He will also be controlling, unfaithful, and eventually declining. The relationship will define and constrain you for 30 years.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Stieglitz Bargain</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">O'Keeffe's relationship with Stieglitz gave her career its launch and constrained her for 30 years. How should we understand this bargain?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Exploitation. Stieglitz exhibited her work without permission, controlled her public image, and benefited professionally from her talent. The power imbalance was clear and was used against her.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Partnership. Stieglitz genuinely believed in her work and used his network to make her famous at a time when female American painters were systematically ignored. The professional benefits were real even if the relationship was complex.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and O'Keeffe understood this clearly throughout. She accepted the bargain with open eyes, extracted what she needed from it (career launch, financial independence), and eventually left New York when she was ready. The constraint was real; so was her agency within it.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">The Stieglitz-O'Keeffe dynamic</div>
+      <p><strong>Stieglitz exhibits your drawings without asking you. You travel to New York to demand he remove them. He talks you not only into leaving them up, but into staying in New York, corresponding with him for years, and eventually letting him photograph you — including nudes — which he exhibits publicly. He is still married to someone else when this begins.</strong> Alfred Stieglitz (1864-1946) was 23 years older than O'Keeffe and had been the most influential figure in American art for 20 years when he first saw her drawings. Their relationship began while he was still married to Emmeline Obermeyer (they divorced in 1924; Stieglitz and O'Keeffe married the same year). Stieglitz's photographs of O'Keeffe — over 300 images, including intimate and nude portraits exhibited publicly — defined her public image in ways she later resented. He also promoted her paintings aggressively, organized solo shows, and ensured critical attention that established her reputation. O'Keeffe's letters show someone who loved Stieglitz and was simultaneously aware of and frustrated by the constraints the relationship placed on her work and her freedom. She spent summers in New Mexico throughout the 1930s-40s partly to escape his orbit. After his death she didn't return to the Lake George house where they'd spent summers; she moved west permanently.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Flower Paintings</span></div>
+<div class="year-banner">1924</div>
+<div class="timeline-dot">New York · Age 37</div>
+<div class="narrative">
+  <p>You have been painting flowers at enormous scale — irises, jimsonweed, red poppy, black iris — at sizes that force the viewer to see them as they've never seen flowers before. A two-inch iris occupies 30 inches of canvas. The details you see when you look closely at a flower — its architecture, its color gradations — are now visible at human scale.</p>
+  <p>Critics, following Stieglitz's lead, interpret the flowers as erotic imagery. You spend the rest of your life denying this interpretation. "The painters use words as if they knew how I felt," you say. "But I make the painting and that's all." The gap between how critics describe your work and what you intended to say in it becomes a defining irritation of your career.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Erotic Interpretation</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Critics interpreted O'Keeffe's flower paintings as erotic; she denied it throughout her life. Who decides what a painting means?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">The artist. If O'Keeffe said she was painting flowers and their formal qualities, that's what the paintings mean. The erotic interpretation was imposed by male critics following Stieglitz's framing, and should be rejected.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">The viewer. Once a painting is exhibited, the artist loses control of its meaning. Viewers respond to what they see, not to what the artist intended. If the paintings evoke something, they evoke it regardless of the artist's statement.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">C</span><span class="dopt-body">The question is unresolvable — and O'Keeffe's frustration with it points to something important. The paintings were interpreted erotically partly because of Stieglitz's framing and partly because of what viewers bring to them. The artist's intention is one valid input, not the only valid input. She was right to resist; the resistance didn't change what viewers saw.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">The flower paintings and their interpretation</div>
+      <p><strong>You say: "I hate flowers — I paint them because they're cheaper than models and they don't move." You spend the next 60 years denying the erotic interpretation of work you made to avoid paying models. In 2014, one of your flower paintings sells for $44 million — the highest price ever paid at auction for a painting by a female artist at that time. The interpretation you denied follows every sale.</strong> O'Keeffe said explicitly and repeatedly: "I hate flowers — I paint them because they're cheaper than models and they don't move." She also said: "When I paint a flower, I paint a flower — nothing more. But people persist in seeing something else." The erotic interpretation was promoted by Stieglitz, who framed her work in terms of female experience and sexuality in his gallery texts. O'Keeffe believed this framing was both wrong and condescending — reducing her formal innovations to biography and sexuality rather than engaging with her as a serious artist. Art historians have since argued both positions: some see the erotic interpretation as a critical imposition; others argue that the imagery does carry erotic charge regardless of intent, and that O'Keeffe's denials may have been partly a defense against the condescension of having her work permanently reduced to one reading. The debate continues. The paintings sell for record prices under either interpretation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · New Mexico</span></div>
+<div class="year-banner">1929</div>
+<div class="timeline-dot">Ghost Ranch, New Mexico · Age 42</div>
+<div class="narrative">
+  <p>You have come to New Mexico for the summer — Taos, then Ghost Ranch. The landscape is like nothing you've seen. The desert, the mesas, the light: clean, hard, enormous. No clutter. The sky is a different thing here than it is in New York. You find animal skulls bleaching in the desert — you begin painting them against the sky, against flowers, against the landscape. The bones fascinate you. "To me they are as beautiful as anything I know," you say. "To me they are strangely more living than the animals walking around."</p>
+  <p>New Mexico begins to pull at you. You spend most summers here. Stieglitz stays in New York; the distance is both physical and emotional. You know you want to stay.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Skull Paintings</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">O'Keeffe painted animal skulls "as living" — finding more vitality in bleached bones than in live animals. What does this tell us about her vision?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Morbidity. The skull paintings reflect a preoccupation with death — her own aging, Stieglitz's declining health, the austere landscape. The beauty she found in death was a way of managing its approach.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Formal interest. Skulls have extraordinary shapes — the holes, the curves, the texture. She was interested in form, and the skull is a superior formal object to a live animal that won't hold still.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and something more. She consistently found essential qualities in objects that others saw as peripheral. Flowers seen close become architecture; skulls become more alive than living things. Her vision consistently inverted the expected hierarchy of attention. That's a way of seeing, not just a subject matter.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">O'Keeffe's seeing</div>
+      <p><strong>You find animal skulls bleaching in the New Mexico desert and mail them to yourself in New York to paint. "To me they are as beautiful as anything I know," you say. "To me they are strangely more living than the animals walking around." Critics call the skull paintings morbid. You are not making a metaphor about death. You are describing how you see.</strong> Critics who knew O'Keeffe describe her as someone who genuinely saw differently — not as a technique but as a native quality of perception. She would look at a small flower for a long time and then paint it at 30 inches, having seen something in it that she wanted others to see. With the skulls, she saw past the death object to what she described as "the wideness and wonder of the world as I live in it" — the skull as a window to the sky behind it, as an object with its own internal logic and beauty. Her statement that the skulls were "more living" than live animals is probably her most precise description of how she saw: she was interested in the essential formal qualities of things, which in a skull are arrested and available in a way they aren't in a moving creature. The living animal is too full of life to see; the skull has been simplified to what endures.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Stieglitz's Death</span></div>
+<div class="year-banner">1946</div>
+<div class="timeline-dot">New York · Age 59</div>
+<div class="narrative">
+  <p>Alfred Stieglitz dies on July 13, 1946. You are called from New Mexico. You spend the next three years in New York settling his estate and donating his enormous collection to institutions. It is necessary work, boring and painful. He had dominated your professional life for 30 years — your career was entangled with his gallery, his collection, his name. Now you must disentangle.</p>
+  <p>In 1949, the work is done. You move to New Mexico permanently. You are 62. You have 37 years left.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — Moving at 62</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">O'Keeffe moved alone to a desert at 62. Is this the beginning of a second life or a retreat?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Retreat. After decades in the center of American art life, she withdrew to isolation. The New Mexico period is quieter, less connected, less influential. She traded engagement for peace.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Second life. Her most recognizable work — the New Mexico landscapes, the sky series, the Pelvis paintings — came from this period. Moving to the desert wasn't withdrawal; it was finding the environment where she could see most clearly.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">Neither retreat nor second life — it was the life she had wanted since 1929, finally available. The New York years were the constraint. New Mexico was what she'd been trying to get to. The move at 62 was not late; it was when the obstacles finally cleared.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">The New Mexico period</div>
+      <p><strong>You have been trying to move to New Mexico since 1929 — twenty years ago. Stieglitz refuses to leave New York. He dies in 1946. You spend three years settling his estate. In 1949, at 62, you finally move to the desert. You have 37 years left and approximately 200 more paintings ahead of you.</strong> O'Keeffe's New Mexico paintings — the Ghost Ranch cliffs, the Pedernal mesa, the Black Place, the series of clouds seen from above on airplane flights, the Sky Above Clouds canvases — are now among the most recognized images in American art. She lived in two houses: a renovated adobe in Abiquiú (her winter home) and a house at Ghost Ranch (her summer home). She grew her own vegetables, raised dogs, drove herself across the desert, entertained occasionally but sparingly. She described the landscape as providing exactly what she needed: "I have used these extraordinary shapes, and colors, and forms; they move me; and I am grateful." The New Mexico period produced over 40 years of work and is now considered the fullest expression of her vision. If it was a retreat, it was a retreat toward her subject matter.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Sky</span></div>
+<div class="year-banner">1965</div>
+<div class="timeline-dot">Abiquiú, New Mexico · Age 78</div>
+<div class="narrative">
+  <p>You have been flying. You began taking commercial flights in the 1950s and became fascinated with what you see from above — the rivers, the patterns, and especially the clouds. In 1965, you complete "Sky Above Clouds IV" — 24 feet wide, 8 feet tall. You are 78 and you painted it on the floor of your garage because your studio wasn't big enough. It is one of the largest canvases an American painter has made.</p>
+  <p>The sky. Bones. Flowers. The same impulse throughout: to see something ordinary until it becomes extraordinary. To look until the usual thing yields what you came for.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Looking Until You See</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">O'Keeffe's subjects — flowers, skulls, landscapes, sky — were ordinary objects seen until they became extraordinary. Is this a technique or a temperament?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Technique. The large-scale flower paintings are a specific formal decision: zoom in until the familiar becomes strange. This is learnable and teachable. Other artists can and do use the same approach.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">Temperament. She had a native quality of sustained attention — the ability to look at something ordinary for a long time without the mind wandering to what it already knows. This isn't a technique you can learn; it's a way of being.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and distinguishing them matters. The formal decision to paint flowers large is a technique. The quality of attention that makes her see something genuinely new in the flower after looking for an hour is temperament. The technique without the temperament produces imitation O'Keeffe. Both are necessary.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">O'Keeffe on looking</div>
+      <p><strong>You are 78. You want to paint a canvas 24 feet wide. Your studio isn't large enough. You paint it on the floor of your garage. It is one of the largest canvases an American painter has made. You are already losing your central vision while making it.</strong> O'Keeffe said: "Nobody sees a flower, really; it is so small, we haven't time — and to see takes time, like to have a friend takes time." This is the clearest statement of her method: she gave flowers time that other people didn't give them, and this was what allowed her to see them differently. Sky Above Clouds IV (1965) is 8 x 24 feet — larger than any previous painting in her career. She was 78. She painted it on the floor because she had no space large enough to work on it standing up. The painting shows a long horizon above clouds, seen from altitude, extending to infinity. The same impulse as the flower paintings: take something people have seen but not looked at — clouds from above — and look at it until it yields its essential character. The technique (large scale) serves the temperament (sustained attention). Apart, neither produces the result.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Losing Sight</span></div>
+<div class="year-banner">1971</div>
+<div class="timeline-dot">Abiquiú, New Mexico · Age 84</div>
+<div class="narrative">
+  <p>You are 84. Your central vision is failing — macular degeneration. You can see at the periphery but not at the center. A painter who has spent 60 years seeing more clearly than anyone around her is losing the ability to see. You stop painting for two years.</p>
+  <p>Then you begin again — working with your hands, feeling the clay first (you take up pottery), then eventually resuming painting, working with a young assistant who helps manage the paint and the canvas. In 1973, Juan Hamilton — 27 years old, a potter — comes to ask if you need help. You do. He becomes your assistant, companion, and eventually your close friend. You teach him, he helps you. The collaboration allows you to keep working for 13 more years, until 1984.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Continuing Without Sight</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">O'Keeffe continued making art for 13 years after losing her central vision. Was this remarkable persistence or a refusal to accept limitation?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Remarkable persistence. She found another way — clay, assisted painting, peripheral vision — and kept making work. The impulse to see and make didn't stop when the central vision did. She adapted.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Refusal to accept limitation. The work she made after 1973 is different from her earlier work in ways that macular degeneration explains. Continuing despite this may have produced work she wouldn't have made at full capacity.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">The distinction doesn't quite apply. For O'Keeffe, making art was not a professional activity that could be retired from — it was how she engaged with the world. Stopping because of a visual limitation would have been stopping being herself. The continuation wasn't willpower; it was continuity of self.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">The late work</div>
+      <p><strong>At 84, your central vision is gone. You stop painting for two years — then start again, first working clay by touch, then resuming painting with peripheral vision and a young assistant. Your last oil painting is completed at 90. Your last watercolors at 97. You don't stop because you decide to. Your hands eventually stop for you.</strong> O'Keeffe's late work — the watercolors and paintings done with Hamilton's assistance from roughly 1973-1984 — is assessed differently by different critics. Some see it as less significant than the New Mexico landscapes of the 1950s-60s; others see it as containing the same essential quality of attention, just expressed through different means. She took up pottery enthusiastically, finding that working with her hands at clay gave her a way to make things that didn't require the fine visual discrimination of oil painting. The watercolors from this period are notably simpler than her earlier work — but simplicity and limitation aren't the same thing. Her last oil painting was completed in 1977; she continued making watercolors until 1984, when she was 97. She stopped not because she decided to but because her hands could no longer manage it.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · Juan Hamilton</span></div>
+<div class="year-banner">1978</div>
+<div class="timeline-dot">Abiquiú, New Mexico · Age 91</div>
+<div class="narrative">
+  <p>Juan Hamilton has been with you for five years. He is 57 years younger than you. Your friends and Stieglitz's former associates are disturbed by the closeness. Questions are raised about your mental capacity, about whether Hamilton is exploiting you, about the estate and what will happen to it. The art world's rumor circuit runs hot. You find these concerns largely insulting. You are 91 and quite clear about your own preferences and decisions.</p>
+  <p>Hamilton will be named in your will. Stieglitz's former wife's family will contest it. There will be litigation. You will have been dead for years before it is resolved.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Late Companion</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">O'Keeffe's relationship with Hamilton — 57 years younger, in her home, named in her will — raised concerns. Were these concerns legitimate or ageist?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Legitimate. An elderly person with impaired vision, financially dependent on a young caretaker, changing her will — these are classic conditions for exploitation that responsible people should question.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">Ageist. O'Keeffe was mentally sharp throughout the Hamilton relationship. She chose her companion. The assumption that a 90-year-old woman cannot make her own choices about close relationships is condescending.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">Both concerns were real, and both can be right simultaneously. The conditions for exploitation existed AND O'Keeffe was competent and made her own choices AND the appropriate response is careful attention, not assumption either way. The concerns weren't wrong to raise; acting on them without evidence would have been ageist.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">O'Keeffe, Hamilton, and the estate</div>
+      <p><strong>Juan Hamilton arrives at your door in 1973, age 27, asking if you need help. You are 86 and nearly blind, living alone in the New Mexico desert. He becomes your assistant, companion, and close friend — 57 years younger than you. You revise your will with his assistance. Your friends raise concerns. In your letters, you describe the relationship as freely chosen.</strong> Hamilton arrived at O'Keeffe's door in 1973 at 27, asking if she needed help. She did — she was 86 and had lost her central vision. He became her assistant, then her companion, and eventually one of the most important people in her life. Her will, which she revised with Hamilton's help, left him significant assets. After her death in 1986, the Estate of Georgia O'Keeffe (managed by friends and former associates) contested portions of the will related to Hamilton. The litigation was eventually settled. O'Keeffe's competency throughout the Hamilton relationship is supported by her correspondence, her business decisions (she was involved in sale negotiations, major gifts, estate planning), and accounts from multiple people who knew her. Whether Hamilton behaved exploitatively is disputed and unresolved. O'Keeffe's own views, expressed in letters, were that she was grateful for his presence and chose it freely.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · 98 Years</span></div>
+<div class="year-banner">1986</div>
+<div class="timeline-dot">Santa Fe · Age 98</div>
+<div class="narrative">
+  <p>You die on March 6, 1986, in Santa Fe, New Mexico, at 98. You have been an artist for 80 years. You have painted flowers large enough to fill a wall, bones against sky, clouds from above, the desert in every season. You have been called erotic, American, modernist, romantic, feminist. You have denied most of these labels. "I have had to go to people who have nothing to do with art to find people who could see what I was doing," you said.</p>
+  <p>Your estate goes to the Georgia O'Keeffe Museum in Santa Fe. The museum opens in 1997. It is the only museum in the United States dedicated to a single female American artist. Your ashes are scattered on Pedernal — the flat-topped mesa you painted again and again. "It's my private mountain," you told people. "God told me if I painted it enough I could have it."</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Long Life</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">O'Keeffe lived to 98 and worked until 97. What made this possible?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Genetics and luck. Longevity runs in families and involves factors beyond an individual's control. She happened to have a constitution suited to a long life. The New Mexico desert, the simple food, and the physical work helped, but these are insufficient explanations.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Purpose. Having something to do — a project that genuinely engaged her, that she hadn't finished — is one of the best documented predictors of longevity. She was never done. There was always more to see in New Mexico, always another painting to make.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">Probably both — and their interaction. Biology sets the upper limit; purpose determines whether you approach it. O'Keeffe's constitution allowed the possibility of 98 years; her engagement with the landscape and the painting filled those years. Neither alone explains the outcome.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What the long life produced</div>
+      <p><strong>You die on March 6, 1986, at 98. Your ashes are scattered on Pedernal — the flat-topped mesa you painted dozens of times. "It's my private mountain," you said. "God told me if I painted it enough I could have it." The Georgia O'Keeffe Museum, which opens in 1997, holds over 3,000 of your works.</strong> O'Keeffe's 98-year life allowed her to paint across eight decades of American art history — from pre-WWI abstraction through the post-war era into the postmodern period. Her New Mexico work, which spans 1929-1984, is one of the most sustained engagements with a single landscape in art history. The Georgia O'Keeffe Museum in Santa Fe (opened 1997) holds over 3,000 works — paintings, drawings, sculpture — and receives approximately 200,000 visitors annually. She was awarded the Presidential Medal of Freedom in 1977 and the National Medal of Arts in 1985, the year before she died. Her paintings now sell at auction for $20-50 million. "Jimson Weed/White Flower No. 1" (1932) sold for $44.4 million in 2014, the highest price ever paid for a painting by a female artist at that time. The flowers paid well.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">O'Keeffe's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="next-sims">
+  <p class="next-label">Explore More Lives</p>
+  <div class="next-grid">
+    <a href="frida-simulator.html" class="next-card">
+      <span class="next-name">Frida Kahlo</span>
+      <span class="next-desc">Survived a devastating bus crash. Painted her pain into one of the 20th century's most recognized bodies of work.</span>
+    </a>
+    <a href="curie-simulator.html" class="next-card">
+      <span class="next-name">Marie Curie</span>
+      <span class="next-desc">First woman to win a Nobel Prize. Won two. Died from the radiation she discovered.</span>
+    </a>
+    <a href="vangogh-simulator.html" class="next-card">
+      <span class="next-name">Vincent van Gogh</span>
+      <span class="next-desc">Sold one painting in his lifetime. Painted 900 in 10 years. Recognized only after death.</span>
+    </a>
+    <a href="hokusai-simulator.html" class="next-card">
+      <span class="next-name">Katsushika Hokusai</span>
+      <span class="next-desc">Died at 88 saying he needed just 10 more years. Changed his name 30 times. Never stopped.</span>
+    </a>
+  </div>
+</div>
+<div class="cta-box">
+  <p>O'Keeffe moved alone to a desert at 62. Lost her central vision at 84. Kept working until 97. Died at 98. There was always more to see. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All Life Simulators — Frida Kahlo, Van Gogh, Marie Curie and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/frida-simulator.html" style="color:var(--accent)">Frida Kahlo Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You See Like O'Keeffe";body="You understood that the Stieglitz bargain involved both exploitation and agency, that technique and temperament are both required, that the New Mexico move was completion not retreat, and that the continued late-life work was continuity of self rather than mere persistence. You also saw that longevity requires both biology and purpose. That's the full O'Keeffe.";}else if(pct>=0.625){title="The Desert Painter";body="You grasped the essentials: the erotic interpretation question is genuinely unresolvable, the New Mexico move was toward rather than away, and her sustained vision across eight decades is what makes her significant. Where you might look deeper: her core insight — giving ordinary things the time they require to yield their essential character — applies far beyond painting.";}else if(pct>=0.375){title="The Art World Observer";body="You saw O'Keeffe through her relationships and circumstances — Stieglitz, the flower controversy, Hamilton — more than through her work's specific qualities. These contexts matter; they're also surface. The deeper question is what she actually saw in a flower or a skull or a cloud, and why most people don't see it. That question lives in the paintings, not in the biography.";}else{title="The Skeptic";body="You were skeptical of her choices throughout — the Stieglitz relationship, the flower denial, the New Mexico isolation, the late work. These positions are defensible. The thing O'Keeffe consistently asked of her critics: look at the painting, not at the context you brought to it. 'The painters use words as if they knew how I felt.' The work remains after the arguments about it fade."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

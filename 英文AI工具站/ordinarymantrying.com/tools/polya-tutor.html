@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polya Method — 20 Classic Math Problems (Western &amp; Ancient Chinese) + AI Tutor</title>
+<meta name="description" content="20 classic math problems — including 10 ancient Chinese classics (鸡兔同笼, 孙子算经, 洛书...) — solved step-by-step with Polya's 4-step method. Plus a free AI tutor that guides your thinking instead of giving you the answer.">
+<meta property="og:title" content="Polya Problem Solver — 20 Classics incl. Ancient Chinese Math">
+<meta property="og:description" content="Chickens &amp; Rabbits, Sun Tzu's CRT, Lo Shu Magic Square — and 17 more classics — all solved with Polya's 4-step method. AI tutor guides, never solves for you.">
+<style>
+:root{--c1:#3B82F6;--c2:#F59E0B;--c3:#10B981;--c4:#8B5CF6;--bg:#F1F5F9;--card:#fff;--text:#1E293B;--muted:#64748B;--border:#E2E8F0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+.hero{background:linear-gradient(135deg,#1E293B 0%,#312E81 100%);color:#fff;padding:32px 20px 28px;text-align:center}
+.hero-eyebrow{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;opacity:.6;margin-bottom:10px}
+.hero h1{font-size:24px;font-weight:800;line-height:1.25;margin-bottom:10px}
+.hero h1 span{color:#A5B4FC}
+.hero-sub{font-size:14px;opacity:.75;line-height:1.6;max-width:360px;margin:0 auto 16px}
+.hero-badges{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.badge-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:12px;color:rgba(255,255,255,.85)}
+.badge-pill.green{background:rgba(16,185,129,.2);border-color:rgba(16,185,129,.4);color:#6EE7B7}
+
+.card{margin:12px;background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.sh{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.sh.clk{cursor:pointer;user-select:none}
+.sh-title{font-size:15px;font-weight:600;flex:1}
+.chevron{font-size:11px;color:var(--muted);display:inline-block}
+.chevron.shut{transform:rotate(-90deg)}
+
+/* Framework */
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px}
+.step-card{border-radius:10px;overflow:hidden}
+.step-hd{padding:10px 12px 8px;color:#fff;cursor:pointer;user-select:none;position:relative}
+.step-hd[data-s="1"]{background:var(--c1)}.step-hd[data-s="2"]{background:var(--c2)}
+.step-hd[data-s="3"]{background:var(--c3)}.step-hd[data-s="4"]{background:var(--c4)}
+.step-num{font-size:10px;opacity:.8;font-weight:500}
+.step-name{font-size:12px;font-weight:700;margin-top:1px}
+.step-emoji{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:18px}
+.step-qs{background:#F8FAFC;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s}
+.step-qs.open{max-height:200px;padding:10px}
+.step-qs ul{list-style:none;font-size:12.5px;color:#475569;line-height:1.9}
+.step-qs li::before{content:"→ ";color:var(--muted)}
+
+/* Examples */
+.tabs{display:flex;padding:0 10px;border-bottom:1px solid var(--border);gap:2px;flex-wrap:wrap}
+.tab{padding:9px 11px;font-size:12.5px;font-weight:500;color:var(--muted);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .15s,border-color .15s;flex-shrink:0}
+.tab.on{color:#4F46E5;border-bottom-color:#4F46E5;font-weight:600}
+.tab-pane{display:none;padding:14px}
+.tab-pane.on{display:block}
+.ex-q{background:#EEF2FF;border-left:3px solid #4F46E5;border-radius:0 8px 8px 0;padding:10px 12px;font-size:13.5px;line-height:1.7;margin-bottom:12px}
+.ex-q strong{color:#4F46E5}
+.ex-steps{display:flex;flex-direction:column;gap:10px}
+.ex-step{display:flex;gap:10px;align-items:flex-start}
+.ex-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.ex-badge[data-s="1"]{background:var(--c1)}.ex-badge[data-s="2"]{background:var(--c2)}
+.ex-badge[data-s="3"]{background:var(--c3)}.ex-badge[data-s="4"]{background:var(--c4)}
+.ex-body{flex:1}
+.ex-label{font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:3px}
+.ex-txt{font-size:13px;line-height:1.75;background:#F8FAFC;border-radius:6px;padding:8px 10px;border:1px solid var(--border)}
+.ex-txt .ok{color:var(--c3);font-weight:600}
+.ex-txt .tip{color:var(--c4);font-style:italic}
+
+/* Workspace */
+.wb{padding:12px}
+.prob-input{width:100%;min-height:80px;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;resize:vertical;outline:none;color:var(--text);background:#FAFAFA;transition:border-color .2s}
+.prob-input:focus{border-color:#4F46E5;background:#fff}
+.step-rows{margin-top:10px}
+.step-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+.badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:5px}
+.badge[data-s="1"]{background:var(--c1)}.badge[data-s="2"]{background:var(--c2)}
+.badge[data-s="3"]{background:var(--c3)}.badge[data-s="4"]{background:var(--c4)}
+.step-ta{flex:1;min-height:48px;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;resize:vertical;outline:none;color:var(--text);background:#FAFAFA;transition:border-color .2s}
+.step-ta:focus{border-color:#4F46E5;background:#fff}
+.btn-send{width:100%;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .1s}
+.btn-send:active{opacity:.85;transform:scale(.99)}
+.btn-clear{background:#FEE2E2;color:#EF4444;border:none;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer}
+
+/* Chat */
+.chat-hd{background:#1E293B;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;background:linear-gradient(135deg,#4F46E5,#7C3AED);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+.chat-info{flex:1}
+.chat-name{color:#fff;font-size:15px;font-weight:600}
+.chat-sub{color:#94A3B8;font-size:12px;margin-top:1px}
+.limit-badge{background:rgba(16,185,129,.2);border:1px solid rgba(16,185,129,.35);color:#6EE7B7;border-radius:10px;padding:3px 9px;font-size:11px;font-weight:500;white-space:nowrap;flex-shrink:0}
+.msgs{padding:12px;min-height:180px;max-height:420px;overflow-y:auto;background:#F8FAFC;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:86%;padding:10px 13px;border-radius:14px;font-size:14px;line-height:1.65;word-break:break-word}
+.msg-ai{background:#fff;border:1px solid var(--border);border-bottom-left-radius:4px;align-self:flex-start;color:var(--text)}
+.msg-user{background:#4F46E5;color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.msg-think{background:#fff;border:1px solid var(--border);border-bottom-left-radius:4px;align-self:flex-start;color:var(--muted);font-style:italic;font-size:13px}
+.msg-limit{background:#FEF3C7;border:1px solid #FCD34D;border-radius:10px;padding:14px;align-self:center;text-align:center;max-width:95%;font-size:13px;color:#92400E;line-height:1.7}
+.msg-limit strong{display:block;font-size:15px;margin-bottom:6px;color:#78350F}
+.msg-ai b{font-weight:600}
+.msg-ai code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-family:monospace;font-size:12.5px}
+.quick-btns{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px 6px;border-top:1px solid var(--border)}
+.qbtn{background:#EEF2FF;color:#4F46E5;border:1px solid #C7D2FE;border-radius:16px;padding:5px 12px;font-size:12px;cursor:pointer;transition:background .15s;white-space:nowrap}
+.qbtn:hover{background:#E0E7FF}
+.qbtn:disabled{opacity:.4;cursor:not-allowed}
+.chat-input-area{display:flex;gap:8px;padding:10px 12px 12px}
+.chat-in{flex:1;border:1px solid var(--border);border-radius:20px;padding:10px 14px;font-size:14px;font-family:inherit;outline:none;resize:none;min-height:40px;max-height:100px;overflow-y:auto;transition:border-color .2s}
+.chat-in:focus{border-color:#4F46E5}
+.chat-in:disabled{background:#F8FAFC;color:var(--muted)}
+.btn-go{width:40px;height:40px;background:#4F46E5;color:#fff;border:none;border-radius:50%;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.btn-go:hover{background:#4338CA}
+.btn-go:disabled{background:#CBD5E1;cursor:not-allowed}
+.empty{text-align:center;color:var(--muted);font-size:13px;padding:28px 20px}
+.empty .icon{font-size:34px;margin-bottom:8px}
+/* About footer card */
+.about-card{margin:12px;background:#1E293B;border-radius:12px;padding:20px;color:#CBD5E1}
+.about-card h3{color:#fff;font-size:15px;font-weight:700;margin-bottom:6px}
+.about-card p{font-size:13px;line-height:1.7;margin-bottom:12px}
+.about-links{display:flex;flex-wrap:wrap;gap:8px}
+.about-link{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:6px 14px;font-size:12.5px;color:#A5B4FC;text-decoration:none;transition:background .15s}
+.about-link:hover{background:rgba(255,255,255,.14)}
+.about-foot{text-align:center;padding:12px 16px 24px;font-size:11.5px;color:var(--muted)}
+.about-foot a{color:#6366F1;text-decoration:none}
+/* Problem of the Day */
+.potd{margin:8px 12px 0;background:linear-gradient(135deg,#312E81,#4C1D95);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;color:#fff}
+.potd-day{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#A5B4FC;white-space:nowrap}
+.potd-name{flex:1;font-size:14px;font-weight:600;line-height:1.3}
+.potd-btn{flex-shrink:0;background:#6366F1;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s}
+.potd-btn:hover{background:#4F46E5}
+/* Share button */
+.btn-share{width:100%;background:#F1F5F9;color:#334155;border:1px solid var(--border);border-radius:10px;padding:11px;font-size:14px;font-weight:500;cursor:pointer;margin-top:8px;transition:background .15s}
+.btn-share:hover{background:#E2E8F0}
+/* Print button */
+.btn-print{background:#F1F5F9;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;margin-left:4px}
+/* Print styles */
+@media print{
+  .hero,.nav-bar,.card:has(.chat-hd),.card:has(.faq-q),.potd,.about-card,.about-foot,.btn-share,.btn-send,.btn-clear,.btn-print{display:none!important}
+  body{background:#fff}
+  .card{box-shadow:none;border:1px solid #ccc;margin:8px 0}
+  .step-ta,.prob-input{border:1px solid #999;background:#fff}
+}
+.ex-toggle{width:100%;background:#EEF2FF;color:#4F46E5;border:1px solid #C7D2FE;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:500;cursor:pointer;margin-top:10px;transition:background .15s;text-align:center}
+.ex-toggle:hover{background:#E0E7FF}
+.ex-steps-wrap{overflow:hidden;max-height:0;transition:max-height .4s ease}
+.ex-steps-wrap.open{max-height:3000px}
+@media(max-width:480px){.steps-grid{grid-template-columns:repeat(2,1fr)}}
+/* Tab groups */
+.tabs{display:flex;padding:0 10px;border-bottom:1px solid var(--border);gap:2px;flex-wrap:wrap}
+.tab-group-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:9px 8px 9px 10px;white-space:nowrap;align-self:flex-end;flex-shrink:0}
+.tab-group-sep{width:100%;height:0;flex-basis:100%}
+/* Historical note for Chinese classics */
+.ex-hist{font-size:12px;color:#6D28D9;background:#FAF5FF;border:1px solid #DDD6FE;border-radius:6px;padding:6px 10px;margin-bottom:10px;line-height:1.6}
+/* Try-this bar */
+.try-bar{padding:8px 10px 2px;border-bottom:1px solid var(--border)}
+.try-btn{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;width:100%;transition:opacity .15s}
+.try-btn:hover{opacity:.88}
+/* Workspace role label */
+.ws-role{background:#EEF2FF;border-left:3px solid #4F46E5;padding:8px 12px;margin:0 12px 0;font-size:12.5px;color:#4338CA;border-radius:0 6px 6px 0;line-height:1.5}
+/* Save indicator */
+.save-dot{font-size:11px;color:var(--c3);margin-left:6px;opacity:0;transition:opacity .3s}
+.save-dot.show{opacity:1}
+/* FAQ */
+.faq-wrap{padding:4px 12px 12px}
+.faq-item{border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+.faq-q{display:block;padding:12px 14px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--text);list-style:none;user-select:none}
+.faq-q::marker,.faq-q::-webkit-details-marker{display:none}
+.faq-q::after{content:" ▼";font-size:10px;color:var(--muted);float:right;margin-top:3px}
+details[open] .faq-q::after{content:" ▲"}
+.faq-a{padding:0 14px 12px;font-size:13px;line-height:1.75;color:#475569;border-top:1px solid var(--border)}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What is Polya's problem-solving method?","acceptedAnswer":{"@type":"Answer","text":"George Polya's method, from his 1945 book How to Solve It, breaks problem-solving into four steps: (1) Understand the Problem, (2) Devise a Plan, (3) Carry Out the Plan, and (4) Look Back. It works for any type of problem and emphasizes thinking process over memorizing procedures."}},
+{"@type":"Question","name":"What are the 4 steps of Polya's framework?","acceptedAnswer":{"@type":"Answer","text":"Step 1 – Understand the Problem: What is the unknown? What is given? Step 2 – Devise a Plan: Have you seen a similar problem? Can you solve a simpler version? Step 3 – Carry Out the Plan: Execute step by step, justifying each action. Step 4 – Look Back: Verify the result, check whether the method generalizes."}},
+{"@type":"Question","name":"What are classic Chinese math problems in English?","acceptedAnswer":{"@type":"Answer","text":"This tool features 10 ancient Chinese math problems with English explanations: Chickens and Rabbits (鸡兔同笼, ~300 CE), Hundred Fowls (百鸡问题, 475 CE), Sun Tzu's Mystery Number (origin of the Chinese Remainder Theorem), Lo Shu Magic Square (洛书, ~2000 BCE), Surplus-Deficit from Nine Chapters (盈不足, ~200 BCE), Well and the Rope, Hound and Hare pursuit, Han Xin's Troop Count (韩信点兵), Liu Hui's pi approximation (割圆术, 263 CE), and Three Grades of Grain (origin of Gaussian elimination)."}},
+{"@type":"Question","name":"What is the Chickens and Rabbits problem (鸡兔同笼)?","acceptedAnswer":{"@type":"Answer","text":"The Chickens and Rabbits problem (鸡兔同笼) appears in Sun Tzu's Mathematical Classic (~300 CE). A cage has chickens (2 legs) and rabbits (4 legs). Given the total head count and leg count, find how many of each type there are. The classic Chinese solution: assume all are one type, then adjust for the excess legs."}},
+{"@type":"Question","name":"What is the Chinese Remainder Theorem problem?","acceptedAnswer":{"@type":"Answer","text":"The Chinese Remainder Theorem originates from Sun Tzu's Mathematical Classic (~300 CE): find a number that gives specific remainders when divided by 3, 5, and 7. The general method was formalized by Gauss in 1801 and is now called the Chinese Remainder Theorem. It is fundamental to RSA encryption and modern computer science."}},
+{"@type":"Question","name":"What is the Lo Shu Magic Square?","acceptedAnswer":{"@type":"Answer","text":"The Lo Shu (洛书) is the world's oldest known magic square: a 3x3 grid of numbers 1 through 9 where every row, column, and diagonal sums to 15. Dating to ancient Chinese mythology (~2000 BCE), its arrangement (2-9-4 / 7-5-3 / 6-1-8) has only 8 valid forms and has influenced Chinese art, philosophy, and feng shui for 4,000 years."}},
+{"@type":"Question","name":"How do you solve the Locker Problem?","acceptedAnswer":{"@type":"Answer","text":"In the Locker Problem with 1,000 lockers, locker n ends open if and only if n is a perfect square. Perfect squares are the only numbers with an odd number of divisors — all other numbers have divisors in pairs. The open lockers are 1, 4, 9, 16, ..., 961 (= 31 squared). Total open: 31 lockers."}},
+{"@type":"Question","name":"Why does the Birthday Paradox work with only 23 people?","acceptedAnswer":{"@type":"Answer","text":"With 23 people there are C(23,2) = 253 pairs, each with roughly a 1/365 chance of sharing a birthday. The probability that ALL 253 pairs have different birthdays is only about 49.3%, so the probability of at least one match exceeds 50%. The key insight is counting pairs, not individuals."}},
+{"@type":"Question","name":"What were Nine Chapters on the Mathematical Art?","acceptedAnswer":{"@type":"Answer","text":"Nine Chapters on the Mathematical Art (九章算术) is China's most important classical math text, compiled around 200 BCE. It pioneered the Surplus-Deficit method (ancestor of algebra), Gaussian elimination for systems of equations (~2,000 years before Gauss), and many other techniques spanning commerce, geometry, and engineering. It was the standard Chinese math textbook for over 1,000 years."}}
+]}
+</script>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eyebrow">Based on Polya's "How to Solve It" (1945)</div>
+  <h1>Stuck on a math problem?<br><span>Think it through — don't just Google it.</span></h1>
+  <p class="hero-sub">An AI tutor that asks you guiding questions instead of handing you the answer. Works for any math problem.</p>
+  <div class="hero-badges">
+    <span class="badge-pill">📋 4-Step Framework — Always Free</span>
+    <span class="badge-pill green">✨ 10 Free AI Sessions / Day</span>
+  </div>
+</div>
+
+<!-- Problem of the Day -->
+<div class="potd">
+  <div class="potd-day">📅 Today's Problem</div>
+  <div class="potd-name" id="potdName">Loading…</div>
+  <button class="potd-btn" onclick="loadPotd()">Try it →</button>
+</div>
+
+<!-- 4-Step Framework — collapsed by default -->
+<div class="card">
+  <div class="sh clk" onclick="toggleSection('fw')">
+    <span>📋</span>
+    <span class="sh-title">The 4-Step Framework — expand for guiding prompts</span>
+    <span class="chevron" id="ic-fw">▼</span>
+  </div>
+  <div id="bd-fw" class="steps-grid">
+    <div class="step-card">
+      <div class="step-hd" data-s="1" onclick="toggleStep(1)">
+        <div class="step-num">STEP 1</div><div class="step-name">Understand the Problem</div>
+        <span class="step-emoji">🔍</span>
+      </div>
+      <div class="step-qs" id="sq1">
+        <ul><li>What is the unknown?</li><li>What is given?</li><li>What is the condition?</li><li>Can you draw a figure?</li><li>Restate it in your own words</li></ul>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-hd" data-s="2" onclick="toggleStep(2)">
+        <div class="step-num">STEP 2</div><div class="step-name">Devise a Plan</div>
+        <span class="step-emoji">🗺️</span>
+      </div>
+      <div class="step-qs" id="sq2">
+        <ul><li>Seen a similar problem?</li><li>Solve a simpler version?</li><li>Split the conditions?</li><li>Add an auxiliary element?</li><li>Work backwards from the answer?</li></ul>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-hd" data-s="3" onclick="toggleStep(3)">
+        <div class="step-num">STEP 3</div><div class="step-name">Carry Out the Plan</div>
+        <span class="step-emoji">✏️</span>
+      </div>
+      <div class="step-qs" id="sq3">
+        <ul><li>Can you justify each step?</li><li>Where exactly does it break?</li><li>Is the premise valid?</li><li>Algebra error or wrong plan?</li><li>Try a different variable?</li></ul>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-hd" data-s="4" onclick="toggleStep(4)">
+        <div class="step-num">STEP 4</div><div class="step-name">Look Back</div>
+        <span class="step-emoji">🔄</span>
+      </div>
+      <div class="step-qs" id="sq4">
+        <ul><li>Is the result reasonable?</li><li>Can you verify it another way?</li><li>Can you generalize it?</li><li>Is there a simpler solution?</li><li>Add it to your error log</li></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Worked Examples — collapsed by default -->
+<div class="card">
+  <div class="sh clk" onclick="toggleSection('ex')">
+    <span>📖</span>
+    <span class="sh-title">Classic Problems — see the 4 steps in action</span>
+    <span class="chevron" id="ic-ex">▼</span>
+  </div>
+  <div id="bd-ex">
+    <div class="try-bar">
+      <button class="try-btn" onclick="loadCurrentEx()">📝 Try this problem yourself — load into My Workspace ↓</button>
+    </div>
+    <div class="tabs">
+      <span class="tab-group-label">Western Classics</span>
+      <button class="tab on" onclick="switchTab(1)">Coins</button>
+      <button class="tab" onclick="switchTab(2)">Paint Job</button>
+      <button class="tab" onclick="switchTab(3)">Fence Opt.</button>
+      <button class="tab" onclick="switchTab(4)">Handshakes</button>
+      <button class="tab" onclick="switchTab(5)">Two Trains</button>
+      <button class="tab" onclick="switchTab(6)">Gauss Sum</button>
+      <button class="tab" onclick="switchTab(7)">Chessboard</button>
+      <button class="tab" onclick="switchTab(8)">1000 Lockers</button>
+      <button class="tab" onclick="switchTab(9)">Water Jugs</button>
+      <button class="tab" onclick="switchTab(10)">Birthday Paradox</button>
+      <span class="tab-group-sep"></span>
+      <span class="tab-group-label">Chinese Classics 🏮</span>
+      <button class="tab" onclick="switchTab(11)">Chickens &amp; Rabbits</button>
+      <button class="tab" onclick="switchTab(12)">Hundred Fowls</button>
+      <button class="tab" onclick="switchTab(13)">Sun Tzu's Number</button>
+      <button class="tab" onclick="switchTab(14)">Lo Shu Magic Square</button>
+      <button class="tab" onclick="switchTab(15)">Surplus-Deficit</button>
+      <button class="tab" onclick="switchTab(16)">Well &amp; Rope</button>
+      <button class="tab" onclick="switchTab(17)">Hound &amp; Hare</button>
+      <button class="tab" onclick="switchTab(18)">Han Xin's Troops</button>
+      <button class="tab" onclick="switchTab(19)">Liu Hui's π</button>
+      <button class="tab" onclick="switchTab(20)">Grain System</button>
+    </div>
+
+    <!-- 1: Coins -->
+    <div class="tab-pane on" id="ex1">
+      <div class="ex-q"><strong>Problem (US classic):</strong> You have <strong>30 coins</strong> made up of quarters ($0.25) and dimes ($0.10). The total value is <strong>$5.10</strong>. How many quarters and how many dimes do you have?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">Unknown: # quarters (q), # dimes (d).<br>Given: q + d = 30 coins; 0.25q + 0.10d = 5.10 dollars.<br>→ Two unknowns, two equations — this is a system.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Assume <b>all 30 are dimes</b>: 30 × $0.10 = $3.00.<br>Actual value is $5.10 — gap of <b>$2.10</b>.<br>Each swap (dime → quarter) adds $0.15.<br>→ # quarters = $2.10 ÷ $0.15.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">Quarters = $2.10 ÷ $0.15 = <b>14</b><br>Dimes = 30 − 14 = <b>16</b></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">Check: 14 × $0.25 + 16 × $0.10 = $3.50 + $1.60 = <span class="ok">$5.10 ✓</span>; 14 + 16 = <span class="ok">30 ✓</span><br><span class="tip">→ Same trick as any "two types, two constraints" mixture problem. The "assume all one type" strategy is a universal key.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 2: Paint Job -->
+    <div class="tab-pane" id="ex2">
+      <div class="ex-q"><strong>Problem (Work Rate — classic US/UK curriculum):</strong> Alice can paint a fence in <strong>4 hours</strong>. Bob can paint the same fence in <strong>6 hours</strong>. How long does it take them working together?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">Unknown: time t (hours) working together.<br>Given: Alice's rate = 1/4 fence per hour; Bob's rate = 1/6 fence per hour.<br>Condition: rates add when working simultaneously.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Think in rates, not time.<br>In 1 hour together they complete: 1/4 + 1/6 of the fence.<br>Time = Total work ÷ Combined rate = 1 ÷ (1/4 + 1/6).</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">1/4 + 1/6 = 3/12 + 2/12 = 5/12 per hour<br>t = 1 ÷ (5/12) = 12/5 = <b>2.4 hours</b> (= 2 hrs 24 min)</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">Is 2.4 hrs reasonable? Must be less than the faster worker (4 hrs). <span class="ok">2.4 &lt; 4 ✓</span><br>Verify: Alice paints 2.4/4 = 0.6; Bob paints 2.4/6 = 0.4. Total = <span class="ok">1.0 ✓</span><br><span class="tip">→ Works for pipes, printers, assembly lines — any "combined rate" scenario.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 3: Fence Optimization -->
+    <div class="tab-pane" id="ex3">
+      <div class="ex-q"><strong>Problem (Optimization — US Algebra / Pre-Calc standard):</strong> A farmer has <strong>120 feet of fencing</strong>. He wants to fence a rectangular garden against a barn wall (the barn forms one long side — no fence needed there). What dimensions give the <strong>maximum area</strong>?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">Unknown: width w and length l (parallel to barn).<br>Given: only 3 sides need fencing → 2w + l = 120.<br>Goal: maximize area A = l × w.<br>→ Draw the rectangle with barn as one side.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">From constraint: l = 120 − 2w.<br>Substitute into area: A = (120 − 2w) × w = 120w − 2w²<br>This is a downward parabola → max at the vertex.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">A = −2(w² − 60w) = −2(w − 30)² + 1800<br>Vertex at w = <b>30 ft</b><br>l = 120 − 2(30) = <b>60 ft</b><br>Max area = 30 × 60 = <b>1800 sq ft</b></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">Check: 2(30) + 60 = <span class="ok">120 ✓</span><br>Sanity: w = 20 → A = 1600; w = 40 → A = 1600. Both less than 1800. <span class="ok">✓</span><br><span class="tip">→ General rule: for a 3-sided rectangle, optimal is always w = L/4, l = L/2.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 4: Handshakes -->
+    <div class="tab-pane" id="ex4">
+      <div class="ex-q"><strong>Problem (Combinatorics — classic British maths puzzle):</strong> At a party, every person shakes hands with every other person exactly once. There are <strong>45 handshakes</strong> in total. How many people are at the party?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">Unknown: number of people n.<br>Given: total handshakes = 45.<br>Condition: each pair shakes once; no one shakes their own hand.<br>→ Try small cases: 2 people = 1 shake, 3 people = 3 shakes, 4 people = 6…</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Each person shakes hands with (n−1) others. With n people: n(n−1) total handshakes — but each shake is counted twice (A→B and B→A).<br>Formula: total = n(n−1)/2<br>Set equal to 45 and solve for n.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">n(n−1)/2 = 45<br>n(n−1) = 90<br>n² − n − 90 = 0<br>(n − 10)(n + 9) = 0<br>n = <b>10</b> (n = −9 rejected)</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">Check: 10 × 9 / 2 = <span class="ok">45 ✓</span><br>The "divide by 2" step is the insight — never double-count pairs.<br><span class="tip">→ n(n−1)/2 = C(n,2). This formula counts teams, matchups, connections — any "choose 2" situation.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 5: Two Trains -->
+    <div class="tab-pane" id="ex5">
+      <div class="ex-q"><strong>Problem (Distance — iconic US/UK word problem):</strong> Two trains start from cities <strong>300 miles apart</strong>, heading toward each other. Train A travels at <strong>70 mph</strong>, Train B at <strong>80 mph</strong>. How long before they meet? How far has each traveled?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">Unknown: time t until they meet; distances d_A and d_B.<br>Given: total gap = 300 mi; speeds 70 and 80 mph; moving toward each other.<br>→ Draw a number line with both trains closing in.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Key insight: their speeds <b>add</b> when moving toward each other.<br>Combined closing speed = 70 + 80 = 150 mph.<br>Time = distance ÷ closing speed.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">t = 300 ÷ 150 = <b>2 hours</b><br>Train A: 70 × 2 = <b>140 miles</b><br>Train B: 80 × 2 = <b>160 miles</b></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">Check: 140 + 160 = <span class="ok">300 ✓</span>; 140/70 = 160/80 = <span class="ok">2 hrs ✓</span><br>Faster train covered more distance — makes sense.<br><span class="tip">→ "Speeds add when approaching, subtract when chasing." Works for boats in rivers, planes with wind, etc.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+
+    <!-- 6: Gauss Sum -->
+    <div class="tab-pane" id="ex6">
+      <div class="ex-q"><strong>Problem (Arithmetic Series — Gauss's Schoolboy Trick):</strong> What is the sum of all integers from <strong>1 to 100</strong>? Young Carl Friedrich Gauss reportedly solved this in seconds as a 9-year-old. Can you find his shortcut?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">Unknown: S = 1 + 2 + 3 + ... + 100. Adding 100 terms directly is tedious — the challenge is to find the pattern that makes it instant.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Pair numbers from opposite ends: (1+100), (2+99), (3+98)...<br>Each pair sums to 101. There are 50 such pairs.<br>S = 50 × 101.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">S = 50 × 101 = <b>5,050</b></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">Formula: n(n+1)/2 = 100×101/2 = <span class="ok">5,050 ✓</span><br>Gauss's legend: his teacher set this to keep the class busy for an hour. Gauss finished in seconds by seeing the pairing structure.<br><span class="tip">→ The pairing strategy works for any arithmetic sequence. First + last always equals second + second-to-last = a constant.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 7: Rice on Chessboard -->
+    <div class="tab-pane" id="ex7">
+      <div class="ex-q"><strong>Problem (Geometric Series — The Wheat and Chessboard):</strong> A king promises a peasant: place <strong>1 grain of rice on square 1</strong>, <strong>2 on square 2</strong>, <strong>4 on square 3</strong> — doubling each time. A chessboard has 64 squares. How many grains total does the king owe?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">Sum = 1 + 2 + 4 + 8 + ... + 2<sup>63</sup> (64 terms). This is a geometric series with first term a=1 and ratio r=2.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Let S = 1 + 2 + 4 + ... + 2<sup>63</sup>. Then 2S = 2 + 4 + ... + 2<sup>64</sup>.<br>Subtract: 2S − S = 2<sup>64</sup> − 1.<br>Shortcut: the sum of all terms = 2 × (last term) − 1.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">S = 2<sup>64</sup> − 1 = <b>18,446,744,073,709,551,615</b><br>≈ 1.84 × 10<sup>19</sup> grains — more than 1,000 years of global rice production.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">The last term alone (2<sup>63</sup>) is larger than all previous terms combined. That's why doubling is so deceptive — each step overtakes everything before it.<br><span class="tip">→ For any geometric series with r=2: sum = 2×(last term) − 1. This is why compound interest, viral growth, and computing power all feel sudden — they're not linear, they're doubling.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 8: Locker Problem -->
+    <div class="tab-pane" id="ex8">
+      <div class="ex-q"><strong>Problem (Number Theory — The 1000 Locker Problem):</strong> A school has <strong>1,000 lockers</strong> (numbered 1–1000, all closed) and 1,000 students. Student 1 opens every locker. Student 2 <em>toggles</em> every 2nd locker. Student 3 toggles every 3rd locker. … Student 1000 toggles locker 1000. <strong>Which lockers are open at the end?</strong></div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">Locker n is toggled by student k exactly when k divides n evenly. So locker n is toggled once for each of its divisors. It ends <b>open</b> if and only if it is toggled an odd number of times.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Most integers have divisors in pairs (e.g., 12: 1×12, 2×6, 3×4 → 6 divisors, even → locker 12 ends closed).<br>Exception: <b>perfect squares</b> have one divisor that pairs with itself (e.g., 36: 6×6 → 6 appears once → odd total → locker 36 stays open).</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">Lockers that end open = perfect squares ≤ 1000:<br>1, 4, 9, 16, 25, 36 … 961 = 31²<br>Total open: <b>31 lockers</b></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">The answer has nothing to do with 1,000 — and everything to do with the structure of divisors.<br>Key question: "When does a number have an odd number of divisors?" Only perfect squares — because √n × √n counts once, not twice.<br><span class="tip">→ Locker problems appear in dozens of variants. The core insight is always: pair up the divisors and find what breaks the pairing.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 9: Water Jugs -->
+    <div class="tab-pane" id="ex9">
+      <div class="ex-q"><strong>Problem (State Search — The Water Jug Problem):</strong> You have a <strong>3-liter jug</strong> and a <strong>5-liter jug</strong>, both unmarked. You have unlimited water. Using only these two jugs, measure out <strong>exactly 4 liters</strong>. (This puzzle famously appears in the film <em>Die Hard With a Vengeance</em>.)</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">Allowed moves: fill a jug completely; empty a jug completely; pour from one to the other (stop when source empties or target fills).<br>State = (amount in 3L jug, amount in 5L jug). Start: (0,0). Goal: 4L in either jug.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Work backwards: 4 = 5 − 1. If the 5L jug is full and has 1L poured out, 4L remains.<br>How to get exactly 1L in the 3L jug? Fill 3L → pour into 5L (which needs only 2 more) → 1L left in 3L. Empty 5L. Pour the 1L in. Now fill 3L and pour into 5L → 4L.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">Fill 3L → (3,0) → pour into 5L → (0,3) → fill 3L → (3,3) → pour 2L into 5L → (1,5) → empty 5L → (1,0) → pour 1L into 5L → (0,1) → fill 3L → (3,1) → pour into 5L → <b>(0,4) ✓</b></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">Why is 4L reachable? GCD(3, 5) = 1, which divides 4. In general: you can measure x liters with an a-liter and b-liter jug iff GCD(a, b) divides x.<br><span class="tip">→ "Work backwards from the goal" is one of Polya's most powerful strategies. Here: 4 = 5−1 → get 1L in 3L jug → the rest falls into place.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 10: Birthday Paradox -->
+    <div class="tab-pane" id="ex10">
+      <div class="ex-q"><strong>Problem (Probability — The Birthday Paradox):</strong> In a room of <strong>23 people</strong>, what is the probability that at least two share the same birthday? Assume 365 days per year. Most people guess around 5–10% — the real answer will surprise you.</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">P(at least 2 share a birthday) is hard to compute directly. Use the complement:<br>P(at least one match) = 1 − P(all birthdays are different).</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">P(all different) = (365/365) × (364/365) × (363/365) × ... × (343/365)<br>Person 1 can be any day; person 2 must avoid 1 day; person 3 must avoid 2 days; and so on for 23 people.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">P(all different) = (365 × 364 × ... × 343) / 365<sup>23</sup> ≈ 0.4927<br>P(at least one match) = 1 − 0.4927 = <b>≈ 50.7%</b></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">23 people → over 50% chance! With 50 people → 97%.<br>Why so counterintuitive? 23 people create C(23,2) = <b>253 pairs</b>. Each pair has ~1/365 chance. 253 chances compound quickly.<br><span class="tip">→ "1 − P(complement)" is the universal tool for "at least one" probability problems. Always try the complement first when direct calculation is messy.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 11: Chickens & Rabbits (Chinese Classic) -->
+    <div class="tab-pane" id="ex11">
+      <div class="ex-hist">📜 Sun Tzu's Mathematical Classic (孙子算经), ~300 CE — one of China's oldest surviving math texts</div>
+      <div class="ex-q"><strong>Problem (鸡兔同笼 — Chickens and Rabbits in the Same Cage):</strong> A cage contains chickens and rabbits. Counting heads from above: <strong>35 heads</strong>. Counting legs from below: <strong>94 legs</strong>. How many chickens and how many rabbits?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">Chickens: 2 legs. Rabbits: 4 legs.<br>Total animals (heads): 35. Total legs: 94.<br>Unknown: c = chickens, r = rabbits.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Ancient Chinese method — "make all animals stand on two legs":<br>If all 35 are chickens: 35×2 = 70 legs. Actual = 94, gap = 94−70 = 24 "extra" legs.<br>Each rabbit contributes 2 extra legs (4 instead of 2). Rabbits = 24 ÷ 2 = 12.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">Rabbits = <b>12</b>, Chickens = 35 − 12 = <b>23</b>.<br>Check: 23+12 = <span class="ok">35 ✓</span>; 23×2 + 12×4 = 46+48 = <span class="ok">94 ✓</span></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">This is structurally identical to Problem 1 (Coins) — a "two types, two constraints" mixture, independently invented 1,700 years apart on opposite sides of the world. The "assume all one type, adjust for excess" strategy is universal.<br><span class="tip">→ The algebraic approach: c+r=35 and 2c+4r=94. The Chinese method is equivalent but requires no variables — it reasons geometrically with "excess legs."</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 12: Hundred Fowls -->
+    <div class="tab-pane" id="ex12">
+      <div class="ex-hist">📜 Zhang Qiu-jian's Mathematical Manual (张丘建算经), 475 CE — the first ancient problem known to have multiple valid solutions</div>
+      <div class="ex-q"><strong>Problem (百鸡问题 — The Hundred Fowls Problem):</strong> Roosters cost <strong>5 coins</strong> each. Hens cost <strong>3 coins</strong> each. Chicks cost <strong>1 coin for 3</strong>. Buy exactly <strong>100 birds</strong> for exactly <strong>100 coins</strong>. Find all possible combinations of roosters, hens, and chicks.</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">r = roosters, h = hens, c = chicks. Two constraints:<br>r + h + c = 100 (total birds)<br>5r + 3h + c/3 = 100 (total cost)<br>All must be non-negative integers; c divisible by 3.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Multiply cost equation by 3 → 15r + 9h + c = 300. Subtract bird equation: <b>14r + 8h = 200 → 7r + 4h = 100</b>.<br>This Diophantine equation has integer solutions only when (100−7r) is divisible by 4. Since 7r ≡ 3r (mod 4), need 3r ≡ 0 (mod 4) → r must be a multiple of 4.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">r=0: h=25, c=75 &nbsp;|&nbsp; r=4: h=18, c=78 &nbsp;|&nbsp; r=8: h=11, c=81 &nbsp;|&nbsp; r=12: h=4, c=84<br>(r=16: h&lt;0, invalid)<br><b>4 valid solutions</b></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">Zhang Qiu-jian was the first mathematician to systematically find and record all solutions — a radical idea when problems were expected to have exactly one answer. This is the earliest known Diophantine system documented with multiple solutions.<br><span class="tip">→ Pattern: valid values of r step by 4. Why? Because adding 4 roosters costs 28 extra coins and needs 4 fewer birds — exactly balanced by removing 4 hens×3 + adding chicks.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 13: Sun Tzu's Mystery Number -->
+    <div class="tab-pane" id="ex13">
+      <div class="ex-hist">📜 Sun Tzu's Mathematical Classic (孙子算经), ~300 CE — origin of the Chinese Remainder Theorem, now used in RSA encryption and distributed computing</div>
+      <div class="ex-q"><strong>Problem (孙子算经 — Sun Tzu's Mystery Number):</strong> I have a number. Divided by <strong>3</strong>, remainder <strong>2</strong>. Divided by <strong>5</strong>, remainder <strong>3</strong>. Divided by <strong>7</strong>, remainder <strong>2</strong>. What is the smallest positive number satisfying all three?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">Find the smallest n &gt; 0 satisfying: n ≡ 2 (mod 3), n ≡ 3 (mod 5), n ≡ 2 (mod 7).<br>This is a system of simultaneous congruences.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Start with the largest modulus: n ≡ 2 (mod 7) means n = 7k + 2 for integer k ≥ 0.<br>Try k = 0, 1, 2, 3... until n ≡ 3 (mod 5). Then check mod 3.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">k=0: n=2, mod 5 = 2 ✗ &nbsp; k=1: n=9, mod 5 = 4 ✗ &nbsp; k=2: n=16, mod 5 = 1 ✗ &nbsp; k=3: n=23, mod 5 = 3 ✓<br>Check mod 3: 23 = 7×3 + 2, remainder = 2 ✓ &nbsp; Answer: <b>n = 23</b></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">All solutions: 23, 128, 233... (repeating every 3×5×7 = 105).<br>Sun Tzu's formula: "70×2 + 21×3 + 15×2 = 233 ≡ 23 (mod 105)" — this was formalized 1,500 years later by Gauss as the Chinese Remainder Theorem.<br><span class="tip">→ Today the CRT powers RSA encryption, fast multiplication of large numbers, and distributed hash tables. A 1,700-year-old puzzle underpins the internet.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 14: Lo Shu Magic Square -->
+    <div class="tab-pane" id="ex14">
+      <div class="ex-hist">📜 The Lo Shu (洛书, "River Luo Writing"), legendary origin ~2000 BCE — the world's oldest known magic square, said to have appeared on a tortoise shell</div>
+      <div class="ex-q"><strong>Problem (洛书 — The Lo Shu Magic Square):</strong> Arrange the numbers <strong>1 through 9</strong> in a 3×3 grid so that every row, every column, and both main diagonals all add up to the <strong>same sum</strong>. What is that sum, and what arrangement works?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">9 distinct numbers in a 3×3 grid. All 8 "lines" (3 rows + 3 columns + 2 diagonals) must sum to the same value S. First determine S, then find a valid arrangement.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Total = 1+2+...+9 = 45. Three rows cover all 9 cells → S = 45/3 = <b>15</b>.<br>The center cell appears in 4 of the 8 lines (1 row, 1 col, 2 diagonals) — more than any other cell. Which number must go there?</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">Sum of all 8 lines = 8×15 = 120. Each corner contributes to 3 lines, each edge to 2, center to 4. Algebra shows center = 5. Opposite pairs always sum to 10: (1,9),(2,8),(3,7),(4,6).<br>Solution: <b>2 9 4 / 7 5 3 / 6 1 8</b> (all rows, cols, diagonals = <span class="ok">15 ✓</span>)</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">All 8 valid arrangements are rotations/reflections of this single pattern. Even numbers (2,4,6,8) always occupy corners; odd non-center numbers (1,3,7,9) always occupy edges. The Lo Shu has been studied across cultures for 4,000 years — influencing Islamic mathematics, European Renaissance art, and the game of tic-tac-toe.<br><span class="tip">→ The center-must-be-5 proof: 5 is the only number that appears in 4 "lines." The average of all 9 numbers is 5 — and 5 must be in the "average position."</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 15: Surplus-Deficit (Nine Chapters) -->
+    <div class="tab-pane" id="ex15">
+      <div class="ex-hist">📜 Nine Chapters on the Mathematical Art (九章算术), ~200 BCE — Chapter 7: 盈不足 (Surplus and Deficit). Ancestor of linear algebra.</div>
+      <div class="ex-q"><strong>Problem (盈不足 — The Surplus-Deficit Method):</strong> Students try to share exercise books equally. If each takes <strong>8 books</strong>, there are <strong>3 books left over</strong>. If each takes <strong>9 books</strong>, they are <strong>4 books short</strong>. How many students, and how many books?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">s = students, b = books.<br>8s + 3 = b (surplus of 3 books)<br>9s − 4 = b (deficit of 4 books)<br>Both expressions equal b.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">The 盈不足 formula from Nine Chapters:<br>Students = (surplus + deficit) ÷ (difference per student) = (3 + 4) ÷ (9 − 8)<br>Total imbalance divided by how much each student changes the balance.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">s = 7 ÷ 1 = <b>7 students</b>; b = 8×7 + 3 = <b>59 books</b>.<br>Check: 9×7 = 63; 63 − 59 = <span class="ok">4 short ✓</span></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">Nine Chapters generalized this formula for any "two-scenario surplus/deficit" problem. It is the ancestor of solving 8s+3 = 9s−4 algebraically — without variables, just reasoning about imbalance. This predates Al-Khwarizmi's <em>Algebra</em> (820 CE) by ~1,000 years.<br><span class="tip">→ Formula: n = (surplus + deficit) / (rate difference). Works whenever two different rates give one too many and one too few.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 16: Well and Rope (Nine Chapters) -->
+    <div class="tab-pane" id="ex16">
+      <div class="ex-hist">📜 Nine Chapters on the Mathematical Art (九章算术), ~200 BCE — a classic "two conditions, two unknowns" problem solved by elimination</div>
+      <div class="ex-q"><strong>Problem (绳量井深 — The Well and the Rope):</strong> A rope measures the depth of a well. Folded <strong>in half</strong> and dangled, it extends <strong>3 feet below the well's edge</strong>. Folded <strong>in thirds</strong>, it extends <strong>1 foot below the edge</strong>. What is the rope's length? What is the well's depth?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">L = rope length, D = well depth (both in feet).<br>Folded in half: L/2 = D + 3<br>Folded in thirds: L/3 = D + 1<br>Two equations, two unknowns.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Subtract the two equations to eliminate D — the depths cancel:<br>(L/2) − (L/3) = (D+3) − (D+1) = 2<br>L × (1/2 − 1/3) = 2 → L/6 = 2 → solve for L.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">L = <b>12 feet</b>. D = L/2 − 3 = 6 − 3 = <b>3 feet</b>.<br>Check: L/3 = 4; D + 1 = 4. <span class="ok">✓</span></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">"Subtract to eliminate" is the core technique of simultaneous equations — the same operation used in Gaussian elimination (see Problem 20) and every linear algebra textbook. Nine Chapters used it ~200 BCE, centuries before the technique appeared in European mathematics.<br><span class="tip">→ When two equations share an unwanted variable, subtract them. The shared variable vanishes, leaving only what you need.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 17: Hound and Hare (Nine Chapters) -->
+    <div class="tab-pane" id="ex17">
+      <div class="ex-hist">📜 Nine Chapters on the Mathematical Art (九章算术), ~200 BCE — China's oldest recorded pursuit problem</div>
+      <div class="ex-q"><strong>Problem (追及问题 — Hound and Hare Pursuit):</strong> A hare runs at <strong>50 paces per minute</strong> with a <strong>100-pace head start</strong>. A hound chases at <strong>125 paces per minute</strong>. How many minutes until the hound catches the hare? How far has the hound run?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">Both move in the same direction. Initial gap: 100 paces.<br>Hound gains on the hare at 125 − 50 = <b>75 paces per minute</b> (the closing rate).</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Key insight: for same-direction pursuit, effective closing speed = faster speed − slower speed.<br>Time to close gap = gap ÷ closing rate = 100 ÷ 75.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">t = 100/75 = <b>4/3 minutes</b> (≈ 1 min 20 sec)<br>Hound runs: 125 × 4/3 = <b>166⅔ paces</b><br>Verify: hare's final position = 100 (head start) + 50×4/3 = 166⅔ paces. Same position. <span class="ok">✓</span></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">Compare with Problem 5 (Two Trains): when moving toward each other, speeds add; chasing in the same direction, speeds subtract. The same formula, discovered independently across 2,000 years and multiple civilizations.<br><span class="tip">→ Closing rate = |v₁ − v₂| (same direction) or v₁ + v₂ (opposite). Time = gap ÷ closing rate. Universal for any pursuit or meet problem.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 18: Han Xin's Troops -->
+    <div class="tab-pane" id="ex18">
+      <div class="ex-hist">📜 Legend of General Han Xin (韩信点兵), Han Dynasty ~206 BCE — a Chinese Remainder Theorem problem with a beautiful hidden shortcut</div>
+      <div class="ex-q"><strong>Problem (韩信点兵 — Han Xin's Troop Count):</strong> General Han Xin counted his soldiers in rows. Rows of <strong>3</strong>: remainder <strong>2</strong>. Rows of <strong>5</strong>: remainder <strong>4</strong>. Rows of <strong>7</strong>: remainder <strong>6</strong>. Rows of <strong>11</strong>: remainder <strong>10</strong>. The army has fewer than <strong>2,000 soldiers</strong>. How many?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">Find n &lt; 2000 where n≡2(mod 3), n≡4(mod 5), n≡6(mod 7), n≡10(mod 11).<br>Look at the remainders carefully: each one equals its modulus minus 1.<br>That means n+1 ≡ 0 (mod 3), n+1 ≡ 0 (mod 5), n+1 ≡ 0 (mod 7), n+1 ≡ 0 (mod 11).</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Elegant shortcut: n+1 must be divisible by 3, 5, 7, AND 11 simultaneously.<br>So n+1 = LCM(3, 5, 7, 11) × k for some positive integer k.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">LCM(3,5,7,11) = 3×5×7×11 = <b>1,155</b> (all prime, so LCM = product).<br>k=1: n = 1155−1 = <b>1,154</b>. k=2: n = 2309 &gt; 2000. ✗<br>Answer: <b>1,154 soldiers</b>.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">Verify: 1154÷3=384r<span class="ok">2✓</span> &nbsp; 1154÷5=230r<span class="ok">4✓</span> &nbsp; 1154÷7=164r<span class="ok">6✓</span> &nbsp; 1154÷11=104r<span class="ok">10✓</span><br>The key Polya insight: <em>notice that all remainders = modulus−1.</em> That observation reduces a hard CRT problem to a trivial LCM calculation.<br><span class="tip">→ Always examine the structure of the remainders before applying brute-force CRT. Patterns in the data often reveal elegant shortcuts.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 19: Liu Hui's Pi -->
+    <div class="tab-pane" id="ex19">
+      <div class="ex-hist">📜 Liu Hui (刘徽), 263 CE — China's greatest classical mathematician. His 割圆术 (circle-cutting method) computed π to 5 decimal places, 1,200 years before European mathematicians reached the same precision.</div>
+      <div class="ex-q"><strong>Problem (割圆术 — Liu Hui's Circle-Cutting Method):</strong> A regular <strong>hexagon</strong> inscribed in a unit circle (radius = 1) has perimeter = 6. Liu Hui doubled the sides repeatedly: 12-gon, 24-gon, 48-gon, 96-gon. His 96-sided polygon had perimeter ≈ 3.14103. Why does this approximate π, and how does it work?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">The circumference of a unit circle = 2π. An inscribed polygon's perimeter is always less than the circumference, but approaches it as the number of sides increases.<br>So π ≈ (polygon perimeter) / 2 for a large-sided polygon in a unit circle.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Start with the hexagon (side = radius = 1, perimeter = 6). To double the sides: use the Pythagorean theorem on the triangle formed by the old side and the new shorter sides (no trigonometry needed — Liu Hui only had geometry).<br>Each doubling: new side² = r² − (r − h)², where h is the height from center to old side.</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">n=6: perimeter = 6.000 → π &gt; 3.000<br>n=12: perimeter ≈ 6.212 → π &gt; 3.106<br>n=24: perimeter ≈ 6.265 → π &gt; 3.133<br>n=48: perimeter ≈ 6.278 → π &gt; 3.139<br>n=96: perimeter ≈ 6.282 → π &gt; <b>3.14103</b><br>Liu Hui continued to 3,072 sides → π ≈ 3.14159</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">As n→∞, the polygon's perimeter → 2π (since n·sin(π/n) → π). Liu Hui also showed that a circumscribed polygon gives an upper bound — trapping π between two closing values. This "squeezing" idea is the basis of the squeeze theorem in calculus.<br><span class="tip">→ Computing π to arbitrary precision by polygon doubling was the state of the art for ~1,400 years. Liu Hui's method predates Archimedes' known Chinese translation by centuries.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- 20: Three Grades of Grain (Gaussian Elimination) -->
+    <div class="tab-pane" id="ex20">
+      <div class="ex-hist">📜 Nine Chapters on the Mathematical Art (九章算术), ~200 BCE — Chapter 8 (方程, "Rectangular Arrays") contains the world's first recorded use of Gaussian elimination, ~2,000 years before Gauss (1809 CE)</div>
+      <div class="ex-q"><strong>Problem (方程 — Three Grades of Grain):</strong> Three grain harvests are mixed in different ratios:<br>3 loads top-grade + 2 medium + 1 low = <strong>39 shi</strong><br>2 top + 3 medium + 1 low = <strong>34 shi</strong><br>1 top + 2 medium + 3 low = <strong>26 shi</strong><br>How much does each grade yield per load?</div>
+      <button class="ex-toggle" onclick="toggleExSteps(this)">💡 Try it first — then expand the solution ▶</button>
+      <div class="ex-steps-wrap"><div class="ex-steps">
+        <div class="ex-step"><div class="ex-badge" data-s="1">1</div><div class="ex-body"><div class="ex-label">Understand the Problem</div><div class="ex-txt">t = top, m = medium, l = low (yield in shi per load).<br>3t + 2m + l = 39 …(1)<br>2t + 3m + l = 34 …(2)<br>t + 2m + 3l = 26 …(3)</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="2">2</div><div class="ex-body"><div class="ex-label">Devise a Plan</div><div class="ex-txt">Nine Chapters used 方程术: write coefficients in a rectangular column array and eliminate variables one at a time — exactly what we now call <b>Gaussian elimination</b>, named after Gauss (1809 CE), 2,000 years later.<br>Eliminate t first: multiply equation (3) by 2, subtract (2); multiply (3) by 3, subtract (1).</div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="3">3</div><div class="ex-body"><div class="ex-label">Carry Out the Plan</div><div class="ex-txt">2×(3) − (2): m + 5l = 18 …(4)<br>3×(3) − (1): 4m + 8l = 39 …(5)<br>4×(4) − (5): 12l = 33 → l = <b>2¾</b><br>From (4): m = 18 − 5(11/4) = <b>4¼</b><br>From (3): t = 26 − 2(17/4) − 3(11/4) = <b>9¼</b></div></div></div>
+        <div class="ex-step"><div class="ex-badge" data-s="4">4</div><div class="ex-body"><div class="ex-label">Look Back</div><div class="ex-txt">Check (1): 3(9.25)+2(4.25)+2.75 = 27.75+8.5+2.75 = <span class="ok">39 ✓</span><br>Nine Chapters wrote coefficients in what was effectively the world's first matrix and performed column operations. The method is equivalent to the augmented-matrix approach taught in every linear algebra course today — first documented ~200 BCE.<br><span class="tip">→ This 3×3 technique scales to n×n. Every engineering, economics, and physics model with multiple unknowns ultimately uses Gaussian elimination.</span></div></div></div>
+      </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Problem Workspace -->
+<div class="card" id="ws-card">
+  <div class="sh">
+    <span>📝</span>
+    <span class="sh-title">My Workspace <span class="save-dot" id="saveDot">● saved</span></span>
+    <button class="btn-print" onclick="window.print()">🖨️</button>
+    <button class="btn-clear" onclick="clearWS()">Clear</button>
+  </div>
+  <p class="ws-role">Primary tool — fill as much as you can, then ask the AI when stuck. Auto-saved locally.</p>
+  <div class="wb">
+    <textarea class="prob-input" id="prob" placeholder="Paste or type your problem here…" oninput="saveWS()"></textarea>
+    <div class="step-rows">
+      <div class="step-row"><div class="badge" data-s="1">1</div><textarea class="step-ta" id="s1" placeholder="What am I looking for? What's given?" oninput="saveWS()"></textarea></div>
+      <div class="step-row"><div class="badge" data-s="2">2</div><textarea class="step-ta" id="s2" placeholder="My plan / approach is…" oninput="saveWS()"></textarea></div>
+      <div class="step-row"><div class="badge" data-s="3">3</div><textarea class="step-ta" id="s3" placeholder="Working it out (write as much as you can)…" oninput="saveWS()"></textarea></div>
+      <div class="step-row"><div class="badge" data-s="4">4</div><textarea class="step-ta" id="s4" placeholder="Verification or reflection…" oninput="saveWS()"></textarea></div>
+    </div>
+    <button class="btn-send" onclick="sendToTutor()">📤 Send to AI Tutor — guide me through it</button>
+    <button class="btn-share" onclick="shareWork()" id="shareBtn">📋 Copy my work to share</button>
+  </div>
+</div>
+
+<!-- AI Chat -->
+<div class="card">
+  <div class="chat-hd">
+    <div class="avatar">🦉</div>
+    <div class="chat-info">
+      <div class="chat-name">Polya Tutor</div>
+      <div class="chat-sub">Asks questions. Never gives the answer.</div>
+    </div>
+    <span class="limit-badge" id="limitBadge">✨ 10 free sessions / day</span>
+  </div>
+  <div class="msgs" id="msgs">
+    <div class="empty"><div class="icon">🦉</div><div>Use "Send to AI Tutor" above,</div><div>or type your question below to start.</div></div>
+  </div>
+  <div class="quick-btns">
+    <button class="qbtn" onclick="qMsg('Help me with Step 1 — I cannot fully understand what this problem is asking. What should I identify first?')">Step 1 — Help me understand</button>
+    <button class="qbtn" onclick="qMsg('Help me with Step 2 — I understand the problem but cannot find an approach or plan. What should I be thinking about?')">Step 2 — Help me find an approach</button>
+    <button class="qbtn" onclick="qMsg('Help me with Step 4 — I have an answer. Can you ask me questions to help me verify and reflect on my solution?')">Step 4 — Check my reasoning</button>
+  </div>
+  <div class="chat-input-area">
+    <textarea class="chat-in" id="cin" placeholder="Talk to the tutor…" rows="1"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doSend()}"
+      oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+    <button class="btn-go" id="goBtn" onclick="doSend()">↑</button>
+  </div>
+</div>
+
+<!-- FAQ Section -->
+<div class="card">
+  <div class="sh">
+    <span>❓</span>
+    <span class="sh-title">Frequently Asked Questions</span>
+  </div>
+  <div class="faq-wrap">
+    <details class="faq-item">
+      <summary class="faq-q">What is Polya's problem-solving method?</summary>
+      <div class="faq-a">George Polya's method, introduced in his 1945 book <em>How to Solve It</em>, breaks any problem into four steps: (1) Understand the Problem, (2) Devise a Plan, (3) Carry Out the Plan, and (4) Look Back. It works for any discipline — not just math — and emphasizes thinking process over memorizing procedures. The book has sold over one million copies and been translated into 20+ languages.</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">What are the 4 steps of Polya's framework?</summary>
+      <div class="faq-a"><strong>Step 1 — Understand the Problem:</strong> What is the unknown? What is given? What is the condition? Can you draw a figure or restate it in your own words?<br><strong>Step 2 — Devise a Plan:</strong> Have you seen a similar problem? Can you solve a simpler version first? Work backwards? Use an auxiliary element?<br><strong>Step 3 — Carry Out the Plan:</strong> Execute step by step, justifying each action. Where exactly does it break down?<br><strong>Step 4 — Look Back:</strong> Verify the result. Can you solve it another way? Can the method generalize? Add it to your mental toolkit.</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">What are classic Chinese math problems in English?</summary>
+      <div class="faq-a">This tool features 10 ancient Chinese math problems translated and solved in English: Chickens &amp; Rabbits (鸡兔同笼, ~300 CE), Hundred Fowls (百鸡问题, 475 CE), Sun Tzu's Mystery Number (origin of the Chinese Remainder Theorem), Lo Shu Magic Square (洛书, ~2000 BCE), the Surplus-Deficit method from Nine Chapters (盈不足, ~200 BCE), the Well and the Rope, Hound and Hare pursuit, Han Xin's Troop Count (韩信点兵), Liu Hui's π approximation (割圆术, 263 CE), and Three Grades of Grain — the world's first Gaussian elimination (~200 BCE).</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">What is the Chickens and Rabbits problem (鸡兔同笼)?</summary>
+      <div class="faq-a">The Chickens and Rabbits problem (鸡兔同笼, literally "chickens and rabbits in the same cage") is from Sun Tzu's Mathematical Classic (~300 CE), one of China's oldest math texts. A cage has chickens (2 legs) and rabbits (4 legs). Given the total number of heads and legs, find how many of each there are. The ancient Chinese solution — assume all are one type, then adjust for the excess legs — is identical in structure to classic Western mixture problems, independently discovered 1,700 years later.</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">What is the Chinese Remainder Theorem?</summary>
+      <div class="faq-a">The Chinese Remainder Theorem (CRT) originates from Sun Tzu's Mathematical Classic (~300 CE): given a number that leaves specific remainders when divided by 3, 5, and 7, find the number. Sun Tzu developed a method to solve this class of problem. The theorem was formalized by Gauss in 1801 and named in honor of its Chinese origin. Today it is a cornerstone of RSA encryption, fast large-number multiplication, distributed computing, and error-correcting codes.</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">What is the Lo Shu Magic Square (洛书)?</summary>
+      <div class="faq-a">The Lo Shu (洛书, "River Luo Writing") is the world's oldest known magic square: a 3×3 grid of digits 1–9 where every row, column, and diagonal sums to 15. According to Chinese legend it appeared on a tortoise shell around 2000 BCE. The unique arrangement (2-9-4 / 7-5-3 / 6-1-8) has only 8 valid forms (rotations and reflections). It influenced Chinese philosophy, feng shui, Islamic mathematics, and European Renaissance art.</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">How do you solve the Locker Problem?</summary>
+      <div class="faq-a">In the classic 1,000-locker problem, locker n ends open if and only if it has an odd number of divisors. Most integers have divisors in pairs (e.g., 12: 1×12, 2×6, 3×4 → 6 divisors, even → closed). Perfect squares are the exception — the square root pairs with itself, giving an odd count (e.g., 36: 1,2,3,4,6,9,12,18,36 → 9 divisors → open). So the open lockers are exactly the perfect squares: 1, 4, 9, ..., 961 = 31² — a total of 31 lockers.</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">Why does the Birthday Paradox work with only 23 people?</summary>
+      <div class="faq-a">With 23 people, there are C(23,2) = 253 distinct pairs, and each pair has roughly a 1/365 chance of sharing a birthday. The probability that all 253 pairs have different birthdays is only about 49.3%, so the chance of at least one shared birthday exceeds 50%. The paradox lies in pair-counting: 23 people create far more chances than intuition suggests. With 50 people the probability rises to 97%.</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">What were Nine Chapters on the Mathematical Art?</summary>
+      <div class="faq-a">Nine Chapters on the Mathematical Art (九章算术) is China's most important classical mathematics text, compiled around 200 BCE. It covers proportions, geometry, systems of equations, and much more. Key achievements: the Surplus-Deficit method (ancestor of algebra), the world's first matrix-based Gaussian elimination (Chapter 8, 方程), and systematic use of fractions and negative numbers. It served as the standard Chinese mathematics textbook for over 1,000 years.</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">What makes this AI math tutor different from ChatGPT or Wolfram Alpha?</summary>
+      <div class="faq-a">Most AI tools solve problems for you. This tutor uses Polya's method to guide your thinking: it asks questions instead of giving answers, so you do the reasoning and arrive at the insight yourself. Research consistently shows that productive struggle — working through difficulty — builds mathematical thinking far better than copying solutions. The AI acts like a patient senior student who asks "What do you know so far?" rather than doing your homework.</div>
+    </details>
+  </div>
+</div>
+
+<div class="about-card">
+  <h3>Who made this?</h3>
+  <p>I'm an ordinary person who finds math more interesting than the way it's usually taught. This tool is my attempt to make Polya's 4-step method — one of the most useful thinking frameworks ever written — actually interactive.<br>Built on <a href="https://en.wikipedia.org/wiki/How_to_Solve_It" target="_blank" style="color:#A5B4FC">Polya's <em>How to Solve It</em></a> (1945).</p>
+  <div class="about-links">
+    <a class="about-link" href="/tools/math-mindset.html">🧠 Math Mindsets Guide</a>
+    <a class="about-link" href="/">✍️ ordinarymantrying.com</a>
+    <a class="about-link" href="https://en.wikipedia.org/wiki/How_to_Solve_It" target="_blank">📖 Polya's Original Book</a>
+  </div>
+</div>
+<div class="about-foot">
+  Built with curiosity · <a href="/">ordinarymantrying.com</a>
+</div>
+
+<script>
+const PROXY='./polya-proxy.php';
+let history=[],busy=false,limitHit=false;
+
+/* ── Problem of the Day ── */
+const POTD_NAMES=[
+  'Coins & Quarters','Paint Job','Fence Optimization','Handshakes','Two Trains',
+  'Gauss Sum','Chessboard Rice','1000 Lockers','Water Jugs','Birthday Paradox',
+  'Chickens & Rabbits 🏮','Hundred Fowls 🏮','Sun Tzu\'s Number 🏮','Lo Shu Magic Square 🏮','Surplus-Deficit 🏮',
+  'Well & Rope 🏮','Hound & Hare 🏮','Han Xin\'s Troops 🏮','Liu Hui\'s π 🏮','Three Grades of Grain 🏮'
+];
+(function initPotd(){
+  const idx=Math.floor(Date.now()/86400000)%20;
+  document.getElementById('potdName').textContent=POTD_NAMES[idx];
+  document.getElementById('potdName').dataset.idx=idx+1;
+})();
+function loadPotd(){
+  const n=parseInt(document.getElementById('potdName').dataset.idx||'1');
+  // Open examples section if hidden
+  const bd=document.getElementById('bd-ex');
+  if(bd&&bd.style.display==='none'){toggleSection('ex');}
+  switchTab(n);
+  document.querySelector('.card:has(.tabs)').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ── Share work ── */
+function shareWork(){
+  const prob=document.getElementById('prob').value.trim();
+  if(!prob){alert('Add a problem first, then share!');return;}
+  const s1=document.getElementById('s1').value.trim();
+  const s2=document.getElementById('s2').value.trim();
+  const s3=document.getElementById('s3').value.trim();
+  const s4=document.getElementById('s4').value.trim();
+  let text='🧮 Solving with Polya\'s 4-Step Method\n';
+  text+='━━━━━━━━━━━━━━━━━━━━\n';
+  text+='📌 Problem:\n'+prob+'\n\n';
+  if(s1)text+='① Understand:\n'+s1+'\n\n';
+  if(s2)text+='② Plan:\n'+s2+'\n\n';
+  if(s3)text+='③ Execute:\n'+s3+'\n\n';
+  if(s4)text+='④ Look Back:\n'+s4+'\n\n';
+  text+='🔗 Try it: https://ordinarymantrying.com/tools/polya-tutor.html';
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('shareBtn');
+    btn.textContent='✓ Copied to clipboard!';
+    setTimeout(()=>{btn.textContent='📋 Copy my work to share';},2200);
+  }).catch(()=>{
+    prompt('Copy this:',text);
+  });
+}
+
+function toggleSection(id){
+  const bd=document.getElementById('bd-'+id),ic=document.getElementById('ic-'+id);
+  const hide=bd.style.display!=='none';
+  bd.style.display=hide?'none':'';
+  ic.textContent=hide?'▶':'▼';
+  ic.classList.toggle('shut',hide);
+}
+function toggleStep(n){document.getElementById('sq'+n).classList.toggle('open');}
+function toggleExSteps(btn){
+  const wrap=btn.nextElementSibling;
+  const open=wrap.classList.toggle('open');
+  btn.textContent=open?'▲ Hide solution':'💡 Try it first — then expand the solution ▶';
+}
+function switchTab(n){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('on',i===n-1));
+  document.querySelectorAll('.tab-pane').forEach((p,i)=>p.classList.toggle('on',i===n-1));
+}
+
+function clearWS(){
+  ['prob','s1','s2','s3','s4'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.value='';if(el.tagName==='TEXTAREA')el.style.height='auto';}
+  });
+  saveWS();
+}
+
+/* ── localStorage auto-save ── */
+const LS_KEY='polya_ws_v1';
+function saveWS(){
+  localStorage.setItem(LS_KEY,JSON.stringify({
+    prob:document.getElementById('prob')?.value||'',
+    s1:document.getElementById('s1')?.value||'',
+    s2:document.getElementById('s2')?.value||'',
+    s3:document.getElementById('s3')?.value||'',
+    s4:document.getElementById('s4')?.value||''
+  }));
+  const dot=document.getElementById('saveDot');
+  if(dot){dot.classList.add('show');clearTimeout(dot._t);dot._t=setTimeout(()=>dot.classList.remove('show'),1500);}
+}
+function loadWS(){
+  try{
+    const d=JSON.parse(localStorage.getItem(LS_KEY)||'{}');
+    ['prob','s1','s2','s3','s4'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el&&d[id]){el.value=d[id];if(el.tagName==='TEXTAREA'){el.style.height='auto';el.style.height=el.scrollHeight+'px';}}
+    });
+  }catch(e){}
+}
+document.addEventListener('DOMContentLoaded',loadWS);
+
+/* ── Load classic example into workspace ── */
+function loadCurrentEx(){
+  const active=document.querySelector('.tab-pane.on');
+  if(!active)return;
+  const qEl=active.querySelector('.ex-q');
+  if(!qEl)return;
+  const raw=qEl.innerText||qEl.textContent;
+  document.getElementById('prob').value=raw.trim();
+  ['s1','s2','s3','s4'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.style.height='auto';}});
+  saveWS();
+  document.getElementById('ws-card').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function sendToTutor(){
+  if(limitHit){document.getElementById('msgs').closest('.card').scrollIntoView({behavior:'smooth'});return;}
+  const prob=document.getElementById('prob').value.trim();
+  if(!prob){alert('Please enter the problem first.');return;}
+  const s1=document.getElementById('s1').value.trim(),s2=document.getElementById('s2').value.trim();
+  const s3=document.getElementById('s3').value.trim(),s4=document.getElementById('s4').value.trim();
+  let msg='I am working on this problem:\n'+prob;
+  if(s1) msg+='\n\n[Step 1 — Understand]\n'+s1;
+  if(s2) msg+='\n\n[Step 2 — Plan]\n'+s2;
+  if(s3) msg+='\n\n[Step 3 — Working]\n'+s3;
+  if(s4) msg+='\n\n[Step 4 — Check]\n'+s4;
+  const filled=[s1,s2,s3,s4].filter(Boolean).length;
+  if(filled===0) msg+='\n\nI have not started yet — please begin by asking me questions to help me understand the problem.';
+  else if(filled<=2) msg+='\n\nI have worked through the first '+filled+' step(s). Please ask me questions to help me move forward.';
+  document.getElementById('msgs').closest('.card').scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>go(msg),350);
+}
+
+function qMsg(t){if(!limitHit)go(t);}
+function doSend(){
+  const el=document.getElementById('cin'),t=el.value.trim();
+  if(!t||busy||limitHit)return;
+  el.value='';el.style.height='auto';go(t);
+}
+
+function lockChat(){
+  limitHit=true;
+  document.getElementById('cin').disabled=true;
+  document.getElementById('goBtn').disabled=true;
+  const lb=document.getElementById('limitBadge');
+  lb.textContent='Session used · resets tomorrow';
+  lb.style.background='rgba(239,68,68,.15)';
+  lb.style.borderColor='rgba(239,68,68,.3)';
+  lb.style.color='#FCA5A5';
+  document.querySelectorAll('.qbtn').forEach(b=>b.disabled=true);
+}
+
+function showLimitMsg(){
+  const el=document.createElement('div');
+  el.className='msg msg-limit';
+  el.innerHTML='<strong>You\'ve used all 10 free AI sessions for today 🦉</strong>'
+    +'The 4-step framework and worked examples above are always free.<br>'
+    +'Try working through the steps yourself — that\'s where the real learning is.<br><br>'
+    +'<em>Your sessions reset at midnight.</em>';
+  removeEmpty();document.getElementById('msgs').appendChild(el);scrollBot();
+}
+
+async function go(text){
+  if(busy||limitHit)return;
+  history.push({role:'user',content:text});
+  addMsg('user',text);
+  const thinking=addThinking();
+  busy=true;document.getElementById('goBtn').disabled=true;
+  try{
+    const res=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    thinking.remove();
+    const aiEl=document.createElement('div');aiEl.className='msg msg-ai';
+    document.getElementById('msgs').appendChild(aiEl);
+    let full='',reader=res.body.getReader(),dec=new TextDecoder(),buf='';
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      buf+=dec.decode(value,{stream:true});
+      const lines=buf.split('\n');buf=lines.pop();
+      for(const line of lines){
+        if(!line.startsWith('data: '))continue;
+        const d=line.slice(6).trim();if(d==='[DONE]')continue;
+        try{
+          const j=JSON.parse(d);
+          if(j.error==='LIMIT_REACHED'){aiEl.remove();showLimitMsg();lockChat();history.pop();return;}
+          const chunk=j.choices?.[0]?.delta?.content||'';
+          if(chunk){full+=chunk;aiEl.innerHTML=md(full);scrollBot();}
+        }catch(e){}
+      }
+    }
+    if(full)history.push({role:'assistant',content:full});
+  }catch(e){
+    thinking.remove();
+    addMsg('ai','⚠️ Connection error — please try again. ('+e.message+')');
+    history.pop();
+  }finally{
+    busy=false;
+    if(!limitHit)document.getElementById('goBtn').disabled=false;
+  }
+}
+
+function addMsg(role,text){
+  const el=document.createElement('div');
+  el.className='msg msg-'+(role==='user'?'user':'ai');
+  el.innerHTML=role==='user'?esc(text):md(text);
+  removeEmpty();document.getElementById('msgs').appendChild(el);scrollBot();return el;
+}
+function addThinking(){
+  const el=document.createElement('div');el.className='msg msg-think';el.textContent='Thinking…';
+  removeEmpty();document.getElementById('msgs').appendChild(el);scrollBot();return el;
+}
+function scrollBot(){const el=document.getElementById('msgs');el.scrollTop=el.scrollHeight;}
+function removeEmpty(){const e=document.getElementById('msgs').querySelector('.empty');if(e)e.remove();}
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+function md(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\n/g,'<br>');}
+</script>
+</body>
+</html>

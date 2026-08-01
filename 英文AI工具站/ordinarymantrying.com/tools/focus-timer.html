@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Office Focus Timer — Pomodoro+ with Silent Notifications</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f4f8;--card:#fff;--border:#e2e8f0;
+  --text:#1e293b;--muted:#64748b;--light:#94a3b8;
+  --blue:#3b82f6;--blue-light:#eff6ff;--blue-border:#bfdbfe;
+  --green:#10b981;--green-light:#ecfdf5;
+  --orange:#f59e0b;--orange-light:#fffbeb;
+  --red:#ef4444;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px 16px 60px}
+
+/* ── Layout ── */
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+
+/* ── Header ── */
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.hdr-title{font-size:.9rem;font-weight:700;color:var(--text)}
+.hdr-sub{font-size:.72rem;color:var(--muted)}
+.hdr-clock{font-size:1rem;font-weight:600;font-variant-numeric:tabular-nums;color:var(--blue)}
+
+/* ── Notif banner ── */
+.notif-bar{display:none;align-items:center;gap:10px;padding:10px 16px;background:var(--orange-light);border:1px solid #fde68a;border-radius:10px;font-size:.78rem;color:#92400e}
+.notif-bar.show{display:flex}
+.notif-bar button{margin-left:auto;padding:5px 14px;background:var(--orange);color:#fff;border:none;border-radius:7px;font-size:.75rem;font-weight:600;cursor:pointer}
+
+/* ── Main card ── */
+.main-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 24px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.main-row{display:flex;gap:20px;align-items:center}
+
+/* ── Side stats ── */
+.side-stats{flex:1;display:flex;flex-direction:column;gap:12px}
+.stat-item{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.stat-label{font-size:.65rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.stat-val{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)}
+.stat-sub{font-size:.68rem;color:var(--muted);margin-top:2px}
+
+/* ── Settings panel ── */
+.settings-panel{flex:1;display:flex;flex-direction:column;gap:12px}
+.dur-group{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.dur-label{font-size:.65rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.dur-row{display:flex;align-items:center;gap:8px}
+.dur-inp{width:64px;text-align:center;background:var(--card);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-size:1.1rem;font-weight:700;padding:6px 4px;outline:none;transition:border-color .2s}
+.dur-inp:focus{border-color:var(--blue)}
+.dur-inp:disabled{opacity:.4;cursor:not-allowed}
+.dur-unit{font-size:.72rem;color:var(--muted)}
+.sound-toggle{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 16px;cursor:pointer;user-select:none}
+.sound-toggle input{accent-color:var(--blue);width:15px;height:15px;cursor:pointer}
+.sound-toggle span{font-size:.78rem;color:var(--muted)}
+
+/* ── Center ring ── */
+.center{flex:1.5;display:flex;flex-direction:column;align-items:center;gap:12px}
+.phase-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:.68rem;font-weight:700;letter-spacing:.07em;border:1.5px solid transparent}
+.pb-idle  {border-color:var(--border);color:var(--muted)}
+.pb-focus {border-color:var(--blue-border);color:var(--blue);background:var(--blue-light)}
+.pb-break {border-color:#a7f3d0;color:var(--green);background:var(--green-light)}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+.blink{animation:blink .9s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.ring-wrap{position:relative;width:200px;height:200px}
+.ring-wrap svg{width:200px;height:200px;transform:rotate(-90deg)}
+.r-bg  {fill:none;stroke:#e2e8f0;stroke-width:10}
+.r-prog{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .5s}
+.ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.ri-time{font-size:2.4rem;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.03em;transition:color .4s}
+.ri-label{font-size:.65rem;color:var(--muted);letter-spacing:.09em;text-transform:uppercase}
+.ri-cycle{font-size:.65rem;color:var(--light)}
+
+/* ── Buttons ── */
+.action-area{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:4px}
+.btn-main{width:100%;max-width:320px;padding:13px 0;border:none;border-radius:10px;font-family:inherit;font-size:.9rem;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .15s}
+.btn-focus{background:var(--blue);color:#fff;box-shadow:0 2px 12px rgba(59,130,246,.3)}
+.btn-focus:hover{background:#2563eb;box-shadow:0 4px 18px rgba(59,130,246,.4)}
+.btn-break-early{background:#fff;color:var(--muted);border:1.5px solid var(--border)}
+.btn-break-early:hover{border-color:var(--orange);color:var(--orange)}
+.btn-wait{background:#f1f5f9;color:var(--light);cursor:not-allowed}
+.btn-skip{background:#fff;color:var(--blue);border:1.5px solid var(--blue-border);font-size:.8rem;padding:8px 24px;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:600}
+.btn-skip:hover{background:var(--blue-light)}
+.btn-hint{font-size:.68rem;color:var(--light);text-align:center}
+
+/* ── Divider ── */
+hr.div{border:none;border-top:1px solid var(--border);margin:20px 0}
+
+/* ── Session history ── */
+.section-hdr{font-size:.7rem;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.btn-clear{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:3px 10px;font-family:inherit;font-size:.65rem;cursor:pointer}
+.btn-clear:hover{border-color:var(--red);color:var(--red)}
+.hist-table{width:100%;border-collapse:collapse;font-size:.75rem}
+.hist-table th{text-align:left;padding:6px 10px;color:var(--light);font-weight:600;font-size:.65rem;letter-spacing:.07em;border-bottom:1px solid var(--border)}
+.hist-table td{padding:8px 10px;border-bottom:1px solid #f1f5f9;color:var(--muted)}
+.hist-table tr:last-child td{border-bottom:none}
+.hist-table td.hi{color:var(--text);font-weight:600}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:700}
+.tag-focus{background:var(--blue-light);color:var(--blue)}
+.tag-break{background:var(--green-light);color:var(--green)}
+.no-hist{font-size:.78rem;color:var(--light);padding:16px 0;text-align:center}
+
+/* ── How it works ── */
+.how-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.how-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px}
+.how-icon{font-size:1.5rem;margin-bottom:8px}
+.how-name{font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:5px}
+.how-desc{font-size:.7rem;color:var(--muted);line-height:1.65}
+.how-desc b{color:var(--blue)}
+
+/* ── Blog CTA ── */
+.blog-cta{text-align:center;padding:24px 20px;border-top:1px solid var(--border)}
+.blog-cta a{display:inline-block;color:var(--blue);font-size:.88rem;font-weight:600;text-decoration:none;border:1.5px solid var(--blue-border);border-radius:9px;padding:10px 24px;transition:all .2s}
+.blog-cta a:hover{background:var(--blue-light);border-color:var(--blue)}
+.blog-cta p{font-size:.7rem;color:var(--muted);margin-top:8px}
+
+/* ── Completion flash ── */
+.flash-bar{display:none;padding:10px 16px;border-radius:10px;font-size:.78rem;font-weight:600;text-align:center;animation:blink .7s ease-in-out 4}
+.flash-focus{background:var(--green-light);color:var(--green);border:1px solid #a7f3d0}
+.flash-break{background:var(--blue-light);color:var(--blue);border:1px solid var(--blue-border)}
+.flash-bar.show{display:block}
+
+/* ── Responsive ── */
+@media(max-width:640px){
+  .main-row{flex-direction:column}
+  .side-stats,.settings-panel{flex-direction:row;flex-wrap:wrap}
+  .side-stats .stat-item,.settings-panel .dur-group{flex:1;min-width:130px}
+  .ring-wrap{width:175px;height:175px}
+  .ring-wrap svg{width:175px;height:175px}
+  .ri-time{font-size:2rem}
+}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="wrap">
+
+<!-- Header -->
+<div class="hdr">
+  <div>
+    <div class="hdr-title">Office Focus Timer</div>
+    <div class="hdr-sub">Pomodoro+ · Silent notifications supported</div>
+  </div>
+  <div class="hdr-clock" id="hdrClock">--:--:--</div>
+</div>
+
+<!-- Main card -->
+<div class="main-card">
+  <div class="main-row">
+
+    <!-- Left: today stats -->
+    <div class="side-stats">
+      <div class="stat-item">
+        <div class="stat-label">Today's Focus</div>
+        <div class="stat-val" id="todayFocus">0:00</div>
+        <div class="stat-sub">total focus time</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Sessions Done</div>
+        <div class="stat-val" id="todaySess">0</div>
+        <div class="stat-sub">since midnight</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Breaks Taken</div>
+        <div class="stat-val" id="todayBreaks">0</div>
+        <div class="stat-sub">including short breaks</div>
+      </div>
+    </div>
+
+    <!-- Center: ring -->
+    <div class="center">
+      <div class="phase-badge pb-idle" id="pBadge">
+        <div class="dot" id="pDot"></div>
+        <span id="pText">READY</span>
+      </div>
+      <div class="ring-wrap">
+        <svg viewBox="0 0 200 200">
+          <circle class="r-bg" cx="100" cy="100" r="85"/>
+          <circle class="r-prog" id="rProg" cx="100" cy="100" r="85"
+            stroke-dasharray="534" stroke-dashoffset="0" stroke="var(--blue)"/>
+        </svg>
+        <div class="ring-inner">
+          <div class="ri-time" id="riTime" style="color:var(--blue)">25:00</div>
+          <div class="ri-label" id="riLabel">FOCUS SESSION</div>
+          <div class="ri-cycle" id="riCycle">Session #1</div>
+        </div>
+      </div>
+      <div class="flash-bar" id="flashBar">Time's up!</div>
+      <div class="action-area">
+        <button class="btn-main btn-focus" id="mainBtn" onclick="handleBtn()">▶  Start Focus</button>
+        <button class="btn-skip" id="skipBtn" style="display:none" onclick="skipToNext()">Skip →</button>
+        <div class="btn-hint" id="btnHint">Work · rest · repeat · stay sharp</div>
+      </div>
+    </div>
+
+    <!-- Right: settings -->
+    <div class="settings-panel">
+      <div class="dur-group">
+        <div class="dur-label">Focus Duration</div>
+        <div class="dur-row">
+          <input type="number" class="dur-inp" id="workMin" value="25" min="1" max="120" oninput="onDurChange()">
+          <span class="dur-unit">min</span>
+        </div>
+      </div>
+      <div class="dur-group">
+        <div class="dur-label">Short Break</div>
+        <div class="dur-row">
+          <input type="number" class="dur-inp" id="breakMin" value="5" min="1" max="30" oninput="onDurChange()">
+          <span class="dur-unit">min</span>
+        </div>
+      </div>
+      <div class="dur-group">
+        <div class="dur-label">Long Break (every 4)</div>
+        <div class="dur-row">
+          <input type="number" class="dur-inp" id="longBreakMin" value="15" min="5" max="60" oninput="onDurChange()">
+          <span class="dur-unit">min</span>
+        </div>
+      </div>
+      <label class="sound-toggle">
+        <input type="checkbox" id="soundOn" checked>
+        <span>🔊 Play short chime on completion</span>
+      </label>
+      <div class="dur-group" id="notifBox">
+        <div class="dur-label">Chrome Notification</div>
+        <div style="font-size:.7rem;color:var(--muted);margin-bottom:8px;line-height:1.5">Pops up in the corner even when you're on another tab — no sound needed.</div>
+        <button id="notifBtn" onclick="handleNotifBtn()" style="width:100%;padding:8px 0;border:none;border-radius:8px;font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s">Enable Notifications</button>
+        <div id="notifStatus" style="font-size:.68rem;margin-top:6px;text-align:center"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- History card -->
+<div class="main-card">
+  <div class="section-hdr">
+    Session History
+    <button class="btn-clear" onclick="clearHistory()">Clear</button>
+  </div>
+  <div id="histArea"><div class="no-hist">No sessions yet — start your first focus block.</div></div>
+</div>
+
+<!-- How it works -->
+<div class="main-card">
+  <div class="section-hdr" style="margin-bottom:16px">How It Works — Office Edition</div>
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-icon">⏱</div>
+      <div class="how-name">The Pomodoro Cycle</div>
+      <div class="how-desc">Work 25 min → short break 5 min → repeat × 4 → long break 15 min. After <b>4 focus blocks</b>, you earn a proper 15-min break. The cycle then restarts.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">🔔</div>
+      <div class="how-name">Silent Office Mode</div>
+      <div class="how-desc">Enable browser notifications once — Chrome shows a <b>pop-up in the bottom right corner</b> when time's up, no tab switch needed. Uncheck the sound box for completely silent operation.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">🧠</div>
+      <div class="how-name">Why 25-Minute Blocks</div>
+      <div class="how-desc">Research on cognitive load (Cirillo, 1992) shows the brain sustains peak attention for <b>20–30 minutes</b>. Forced micro-breaks prevent decision fatigue that compounds across the day.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">🚶</div>
+      <div class="how-name">What to Do on Breaks</div>
+      <div class="how-desc">Stand up, refill water, look at something >6m away (20-20-20 eye rule), or do 5 shoulder rolls. <b>Don't scroll your phone</b> — that's not a cognitive break, it's a context switch.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">📊</div>
+      <div class="how-name">Track Your Rhythm</div>
+      <div class="how-desc">History is saved locally in your browser. Use it to spot patterns — do you burn out after 3 sessions? Do afternoons feel harder? Adjust durations to match your actual energy curve.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">⚡</div>
+      <div class="how-name">Sitting Risk Is Real</div>
+      <div class="how-desc">The NHS recommends breaking up sitting every <b>30 minutes</b>. Prolonged sitting is linked to lower back pain, reduced circulation, and long-term metabolic risk. Standing up is non-negotiable.</div>
+    </div>
+  </div>
+  <div class="blog-cta">
+    <a href="https://ordinarymantrying.com/dangers-of-prolonged-sitting-pomodoro-timer-seatrisk/">Why I Quit Pomodoro Timers and Built This Instead →</a>
+    <p>The medical checkup, the dangers of prolonged sitting, and loss aversion.</p>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// ── Config ──────────────────────────────────────────────────────────────
+const CIRC = 2 * Math.PI * 85;
+
+let workSec, breakSec, longBreakSec;
+function readDur() {
+  workSec      = Math.max(1, parseInt(document.getElementById('workMin').value)      || 25) * 60;
+  breakSec     = Math.max(1, parseInt(document.getElementById('breakMin').value)     ||  5) * 60;
+  longBreakSec = Math.max(1, parseInt(document.getElementById('longBreakMin').value) || 15) * 60;
+}
+readDur();
+
+// ── State ────────────────────────────────────────────────────────────────
+let phase = 'idle';   // idle | focus | break | longbreak
+let remaining = 0;
+let totalDur = 0;
+let tickId = null;
+let sessionCount = 0;   // focus sessions completed
+let todayFocusSec = 0;
+let todayBreaks = 0;
+let todaySessions = 0;
+let history = [];
+let lastTick = 0;
+
+function onDurChange() {
+  if (phase !== 'idle') return;
+  readDur();
+  remaining = workSec; totalDur = workSec;
+  render();
+}
+
+// ── Audio ────────────────────────────────────────────────────────────────
+let audioCtx;
+function actx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function tone(f, dur, t0, type='sine', vol=0.22) {
+  const c=actx(), o=c.createOscillator(), g=c.createGain();
+  o.connect(g); g.connect(c.destination);
+  o.type=type; o.frequency.value=f;
+  g.gain.setValueAtTime(vol, t0);
+  g.gain.exponentialRampToValueAtTime(0.001, t0+dur);
+  o.start(t0); o.stop(t0+dur+.01);
+}
+function chimeWork() {  // gentle 3-note up: focus → break
+  if (!document.getElementById('soundOn').checked) return;
+  const t = actx().currentTime;
+  tone(523,.15,t); tone(659,.15,t+.18); tone(880,.3,t+.38,'sine',.2);
+}
+function chimeBreak() { // 2-note down: break → focus
+  if (!document.getElementById('soundOn').checked) return;
+  const t = actx().currentTime;
+  tone(880,.15,t); tone(523,.25,t+.18,'sine',.2);
+}
+
+// ── Service Worker + Notifications ───────────────────────────────────────
+let swReg = null;
+
+async function initSW() {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    swReg = await navigator.serviceWorker.register('/tools/focus-timer-sw.js');
+    await navigator.serviceWorker.ready;
+    swReg = await navigator.serviceWorker.getRegistration('/tools/focus-timer-sw.js');
+  } catch(e) { console.warn('SW reg failed', e); }
+}
+
+function swMsg(data) {
+  if (!swReg || !swReg.active) return;
+  swReg.active.postMessage(data);
+}
+
+// Schedule a SW notification at absolute time
+function scheduleNotif(endTime, title, body) {
+  swMsg({ type: 'SCHEDULE', endTime, title, body });
+}
+function cancelNotif() {
+  swMsg({ type: 'CANCEL' });
+}
+
+async function handleNotifBtn() {
+  if (!('Notification' in window)) { updateNotifUI(); return; }
+  if (Notification.permission === 'granted') {
+    // send a test notification via SW
+    if (swReg) swReg.showNotification('✅ Notifications working!', { body: 'You\'ll see this popup when the timer ends — even on other tabs.', tag:'focus-timer-test' });
+    else new Notification('✅ Notifications working!', { body: 'Timer end alerts are active.' });
+    return;
+  }
+  await Notification.requestPermission();
+  updateNotifUI();
+}
+
+function updateNotifUI() {
+  const btn = document.getElementById('notifBtn');
+  const status = document.getElementById('notifStatus');
+  if (!('Notification' in window)) {
+    btn.textContent='⚠ Not supported'; btn.style.cssText='background:#f1f5f9;color:var(--muted);width:100%;padding:8px 0;border:none;border-radius:8px;font-family:inherit;font-size:.78rem;font-weight:700;cursor:default';
+    status.textContent='Use Chrome or Edge.'; status.style.color='var(--muted)'; return;
+  }
+  const p = Notification.permission;
+  if (p === 'granted') {
+    btn.textContent='🔔 On — click to test'; btn.style.cssText='width:100%;padding:8px 0;border:1px solid #a7f3d0;border-radius:8px;font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer;background:var(--green-light);color:var(--green)';
+    status.textContent='✓ Works on other tabs'; status.style.color='var(--green)';
+  } else if (p === 'denied') {
+    btn.textContent='🚫 Blocked'; btn.style.cssText='width:100%;padding:8px 0;border:1px solid #fecaca;border-radius:8px;font-family:inherit;font-size:.78rem;font-weight:700;cursor:default;background:#fef2f2;color:var(--red)';
+    status.textContent='Go Chrome → Site Settings → Notifications → Allow'; status.style.color='var(--red)';
+  } else {
+    btn.textContent='🔔 Enable Notifications'; btn.style.cssText='width:100%;padding:8px 0;border:none;border-radius:8px;font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer;background:var(--blue);color:#fff';
+    status.textContent='Click → Chrome asks once → done'; status.style.color='var(--muted)';
+  }
+}
+
+// ── Timer Logic ──────────────────────────────────────────────────────────
+function tick() {
+  const now = Date.now();
+  const dt = Math.min((now - lastTick) / 1000, 10);
+  lastTick = now;
+
+  if (phase === 'focus') {
+    todayFocusSec += dt;
+    remaining -= dt;
+    if (remaining <= 0) { focusDone(); return; }
+  } else if (phase === 'break' || phase === 'longbreak') {
+    remaining -= dt;
+    if (remaining <= 0) { breakDone(); return; }
+  }
+  render();
+}
+
+function startFocus() {
+  readDur();
+  phase = 'focus';
+  remaining = workSec; totalDur = workSec;
+  lastTick = Date.now();
+  if (!tickId) tickId = setInterval(tick, 500);
+  lockInputs(true);
+  // schedule SW notification at the exact end time
+  const isLong = (sessionCount + 1) % 4 === 0;
+  scheduleNotif(
+    Date.now() + workSec * 1000,
+    isLong ? '🎉 4 sessions done! Long break time.' : '✅ Focus session done — take a break',
+    isLong ? `Great work! Take a ${longBreakSec/60}-min break.` : `Stand up and rest for ${breakSec/60} min.`
+  );
+  render();
+}
+
+function focusDone() {
+  sessionCount++;
+  todaySessions++;
+  addHistory('focus', workSec);
+  chimeWork();
+  cancelNotif(); // SW already fired; cancel any stale one
+  const isLong = sessionCount % 4 === 0;
+  showFlash(isLong ? 'Long break time! 🎉' : 'Break time — stand up! ✅', 'focus');
+  // schedule break-end notification
+  const bDur = isLong ? longBreakSec : breakSec;
+  scheduleNotif(Date.now() + bDur * 1000, '☕ Break over — back to focus!', `Session #${sessionCount + 1} starting now.`);
+  startBreak(isLong);
+}
+
+function startBreak(isLong) {
+  phase = isLong ? 'longbreak' : 'break';
+  const dur = isLong ? longBreakSec : breakSec;
+  remaining = dur; totalDur = dur;
+  todayBreaks++;
+  render();
+}
+
+function breakDone() {
+  addHistory(phase, totalDur);
+  chimeBreak();
+  cancelNotif();
+  showFlash('Break over — ready to focus! ☕', 'break');
+  phase = 'idle';
+  remaining = workSec; totalDur = workSec;
+  lockInputs(false);
+  render();
+}
+
+function skipToNext() {
+  if (phase === 'focus') {
+    sessionCount++;
+    todaySessions++;
+    addHistory('focus', workSec - remaining);
+    const isLong = sessionCount % 4 === 0;
+    startBreak(isLong);
+    todayBreaks++;
+  } else if (phase === 'break' || phase === 'longbreak') {
+    addHistory(phase, totalDur - remaining);
+    phase = 'idle'; remaining = workSec; totalDur = workSec;
+    lockInputs(false);
+  }
+  render();
+}
+
+function handleBtn() {
+  if (phase === 'idle') startFocus();
+  else if (phase === 'focus') {
+    // early break
+    clearInterval(tickId); tickId = null;
+    sessionCount++;
+    todaySessions++;
+    addHistory('focus', workSec - remaining);
+    const isLong = sessionCount % 4 === 0;
+    startBreak(isLong);
+    todayBreaks++;
+    if (!tickId) { lastTick = Date.now(); tickId = setInterval(tick, 500); }
+    render();
+  }
+}
+
+function stopAll() {
+  clearInterval(tickId); tickId = null;
+  cancelNotif();
+  phase = 'idle'; remaining = 0; totalDur = 0;
+  lockInputs(false);
+  render();
+}
+
+function lockInputs(on) {
+  ['workMin','breakMin','longBreakMin'].forEach(id =>
+    document.getElementById(id).disabled = on);
+}
+
+// ── Flash ────────────────────────────────────────────────────────────────
+let flashTimeout;
+function showFlash(msg, type) {
+  const el = document.getElementById('flashBar');
+  el.textContent = msg;
+  el.className = 'flash-bar show flash-' + type;
+  clearTimeout(flashTimeout);
+  flashTimeout = setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+// ── Render ───────────────────────────────────────────────────────────────
+function render() {
+  rRing(); rBadge(); rBtn(); rStats(); rHist();
+}
+
+function rRing() {
+  const prog = document.getElementById('rProg');
+  const time = document.getElementById('riTime');
+  const lbl  = document.getElementById('riLabel');
+  const cyc  = document.getElementById('riCycle');
+
+  let frac, color, timeStr, labelStr;
+
+  if (phase === 'idle') {
+    frac = 0; color = 'var(--blue)';
+    timeStr = fmt(workSec); labelStr = 'FOCUS SESSION';
+    cyc.textContent = 'Session #' + (sessionCount + 1);
+  } else if (phase === 'focus') {
+    frac = 1 - remaining / totalDur;
+    color = frac < 0.6 ? 'var(--blue)' : frac < 0.85 ? 'var(--orange)' : 'var(--red)';
+    timeStr = fmt(Math.max(0, remaining)); labelStr = 'FOCUS REMAINING';
+    cyc.textContent = 'Session #' + (sessionCount + 1);
+  } else {
+    frac = 1 - remaining / totalDur;
+    color = 'var(--green)';
+    timeStr = fmt(Math.max(0, remaining));
+    labelStr = phase === 'longbreak' ? 'LONG BREAK' : 'SHORT BREAK';
+    cyc.textContent = 'Next: Session #' + (sessionCount + 1);
+  }
+
+  prog.style.strokeDashoffset = CIRC * (1 - frac);
+  prog.style.stroke = color;
+  prog.style.filter = `drop-shadow(0 0 6px ${color})`;
+  time.style.color = color;
+  time.textContent = timeStr;
+  lbl.textContent  = labelStr;
+}
+
+function rBadge() {
+  const b = document.getElementById('pBadge');
+  const t = document.getElementById('pText');
+  const d = document.getElementById('pDot');
+  b.className = 'phase-badge';
+  d.className = 'dot';
+  if (phase === 'focus') {
+    b.classList.add('pb-focus'); t.textContent = 'FOCUS MODE'; d.classList.add('blink');
+  } else if (phase === 'break' || phase === 'longbreak') {
+    b.classList.add('pb-break');
+    t.textContent = phase === 'longbreak' ? 'LONG BREAK' : 'SHORT BREAK';
+    d.classList.add('blink');
+  } else {
+    b.classList.add('pb-idle'); t.textContent = 'READY';
+  }
+}
+
+function rBtn() {
+  const btn  = document.getElementById('mainBtn');
+  const skip = document.getElementById('skipBtn');
+  const hint = document.getElementById('btnHint');
+  if (phase === 'idle') {
+    btn.className='btn-main btn-focus'; btn.disabled=false;
+    btn.textContent='▶  Start Focus';
+    hint.textContent='Work · rest · repeat · stay sharp';
+    skip.style.display='none';
+  } else if (phase === 'focus') {
+    btn.className='btn-main btn-break-early'; btn.disabled=false;
+    btn.textContent='⏸  Take Early Break';
+    hint.textContent='Click to take a break now and start rest timer';
+    skip.style.display='inline-block'; skip.textContent='Skip break →';
+  } else {
+    btn.className='btn-main btn-wait'; btn.disabled=true;
+    btn.textContent='⟳  Resting ' + fmt(Math.max(0, remaining));
+    hint.textContent='Stand up, stretch, refill water — back soon';
+    skip.style.display='inline-block'; skip.textContent='Skip rest →';
+  }
+}
+
+function rStats() {
+  document.getElementById('todayFocus').textContent  = fmtMin(todayFocusSec);
+  document.getElementById('todaySess').textContent   = todaySessions;
+  document.getElementById('todayBreaks').textContent = todayBreaks;
+}
+
+// ── History ───────────────────────────────────────────────────────────────
+function addHistory(type, dur) {
+  history.unshift({ type, dur: Math.round(dur), ts: Date.now() });
+  if (history.length > 20) history.pop();
+  localStorage.setItem('ft_hist', JSON.stringify(history));
+  saveDay();
+}
+
+function rHist() {
+  const el = document.getElementById('histArea');
+  if (!history.length) {
+    el.innerHTML = '<div class="no-hist">No sessions yet — start your first focus block.</div>';
+    return;
+  }
+  const rows = history.map(h => {
+    const d = new Date(h.ts);
+    const time = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+    const tag = h.type === 'focus'
+      ? '<span class="tag tag-focus">Focus</span>'
+      : h.type === 'longbreak'
+        ? '<span class="tag tag-break">Long Break</span>'
+        : '<span class="tag tag-break">Break</span>';
+    return `<tr>
+      <td>${tag}</td>
+      <td class="hi">${fmtMin(h.dur)}</td>
+      <td>${time}</td>
+    </tr>`;
+  }).join('');
+  el.innerHTML = `<table class="hist-table">
+    <thead><tr><th>TYPE</th><th>DURATION</th><th>TIME</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function clearHistory() {
+  if (!confirm('Clear all session history?')) return;
+  history = []; localStorage.removeItem('ft_hist');
+  todayFocusSec = 0; todaySessions = 0; todayBreaks = 0; sessionCount = 0;
+  localStorage.removeItem('ft_day');
+  render();
+}
+
+// ── Day persistence ───────────────────────────────────────────────────────
+function saveDay() {
+  const today = new Date().toDateString();
+  localStorage.setItem('ft_day', JSON.stringify({ date:today, focusSec:todayFocusSec, sessions:todaySessions, breaks:todayBreaks }));
+}
+function loadDay() {
+  try {
+    const raw = localStorage.getItem('ft_day');
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d.date !== new Date().toDateString()) return; // new day, reset
+    todayFocusSec = d.focusSec || 0;
+    todaySessions = d.sessions || 0;
+    todayBreaks   = d.breaks   || 0;
+  } catch(e){}
+}
+
+// ── Utils ─────────────────────────────────────────────────────────────────
+function fmt(sec) {
+  sec = Math.max(0, Math.floor(sec));
+  return String(Math.floor(sec/60)).padStart(2,'0') + ':' + String(sec%60).padStart(2,'0');
+}
+function fmtMin(sec) {
+  const m = Math.floor(sec/60), s = Math.floor(sec%60);
+  return m > 0 ? m + ':' + String(s).padStart(2,'0') : '0:' + String(s).padStart(2,'0');
+}
+
+// ── Clock ─────────────────────────────────────────────────────────────────
+setInterval(() => {
+  const n = new Date();
+  document.getElementById('hdrClock').textContent =
+    [n.getHours(), n.getMinutes(), n.getSeconds()].map(v => String(v).padStart(2,'0')).join(':');
+  if (phase === 'focus') saveDay();
+}, 1000);
+
+// ── Init ──────────────────────────────────────────────────────────────────
+history = JSON.parse(localStorage.getItem('ft_hist') || '[]');
+loadDay();
+readDur();
+remaining = workSec; totalDur = workSec;
+initSW();
+updateNotifUI();
+render();
+
+window.addEventListener('beforeunload', saveDay);
+</script>
+</body>
+</html>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Plato?</title>
+<meta name="description" content="He watched his mentor Socrates die for asking questions. Then he spent 50 years building a philosophy that asked why reality itself might be a shadow. 8 decisions from the founder of Western philosophy.">
+<meta property="og:title" content="What Would You Do If You Were Plato?">
+<meta property="og:description" content="His teacher was executed. He tried to create a philosopher-king and was sold into slavery. Then he wrote the most influential philosophy in history. 8 decisions from Plato.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/plato-simulator.html">
+<style>
+:root{
+  --bg:#EEF0F5;--card:#F6F8FC;--ink:#06080E;--muted:#303858;--line:#B4BCE0;
+  --accent:#182870;--accent-bg:#DDE4F5;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,240,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#06080E;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #9AAAD8;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#04060C;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#E8EAF8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#04060C;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#E8EAF8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #9AAAD8;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#04060C;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#06080E;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#E8EAF8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #9AAAD8;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#E8EAF8;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#9AAAE0;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Plato</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #42</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Plato?</h1>
+  <p class="cover-sub">He watched his teacher Socrates drink hemlock rather than stop asking questions. He tried to turn a Sicilian tyrant into a philosopher-king and was sold into slavery. He founded the world's first university. He wrote 36 dialogues that are still read today — and put Socrates' voice in all of them, even after Socrates was dead. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Plato</strong> (c.427–347 BC) · Greek philosopher · Real name possibly Aristocles; "Plato" may be a nickname from his wrestling physique · Born Athens to aristocratic family · Student of Socrates; witnessed his trial and execution (399 BC) · Traveled to Italy, Sicily, Egypt · Founded the Academy in Athens c.387 BC — often called the first university · Major works: <em>Apology, Republic, Symposium, Phaedrus, Phaedo, Meno, Timaeus</em> · His student Aristotle attended the Academy for 20 years · Alfred North Whitehead wrote: "The safest general characterization of the European philosophical tradition is that it consists of a series of footnotes to Plato."</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 399 BC, Athens</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Death of Socrates</span></div>
+<div class="year-banner">399</div>
+<div class="timeline-dot">Athens · Age 28</div>
+<div class="narrative">
+  <p>The man who shaped your thinking — who showed you that asking "what is justice?" or "what is beauty?" was the most important thing a person could do — has been tried and condemned. The charges are impiety and corrupting the youth of Athens. The real reason is that his questions embarrassed powerful people.</p>
+  <p>Socrates could have escaped. Friends arranged it. He refused. He drank the hemlock in front of his students and went on discussing the immortality of the soul until he could no longer speak.</p>
+  <p>You were not there. You were ill that day, or so you later write. Whether you stayed away because of illness or because you couldn't bear to watch, no one can say.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — After the Execution</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">After Socrates' execution, Plato left Athens and traveled for roughly 12 years, eventually returning to found the Academy. What did the execution teach him?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">That democratic Athens was corrupt and unreliable — the majority could vote to kill the wisest man in the city. The execution made him a critic of democracy for life.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">That philosophy needed institutional protection — Socrates had no school, no writings, no institutional base. Philosophy conducted in the agora was vulnerable. The answer was the Academy: a protected space for inquiry.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">Both simultaneously — the execution proved that unreflective political power destroys wisdom, AND that wisdom needs institutional shelter if it is to survive. His anti-democratic politics and his institution-building were the same response: philosophy must be removed from the dangerous agora and placed somewhere it can be conducted safely across generations.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">Plato's response to Athens</div>
+      <p><strong>You leave Athens after watching Socrates drink hemlock — and return twelve years later with a plan to make sure philosophy can never be killed by a majority vote again.</strong> Plato's critique of democracy in <em>The Republic</em> is direct: democracy is mob rule, governed by appetite rather than reason, prone to electing demagogues who promise pleasure rather than truth. He proposes instead philosopher-kings — those trained in philosophy and mathematics to understand the Good — as the appropriate rulers. This was not an abstract position for him: it was a direct conclusion from what Athens had done to Socrates. His deep ambivalence about democracy shaped Western political thought for two millennia. The opposing reading — that Socrates' death shows the danger of philosopher-kings, not of democracy — was developed by Karl Popper in <em>The Open Society and Its Enemies</em> (1945), which reads Plato's political philosophy as proto-totalitarian. This debate is still live in political theory.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Theory of Forms</span></div>
+<div class="year-banner">380</div>
+<div class="timeline-dot">Athens · Age 47</div>
+<div class="narrative">
+  <p>You are developing the central idea of your philosophy: the Theory of Forms. Here in the physical world, things change, decay, and are imperfect. No circle drawn on paper is a perfect circle. No action is perfectly just. No beautiful thing remains beautiful forever.</p>
+  <p>But we know what a perfect circle would be. We recognize imperfect justice as <em>imperfect</em> because we have some reference to perfect justice. Where do these perfect standards come from, if not from this world?</p>
+  <p>Your answer: they come from the World of Forms — an eternal, unchanging realm where Perfect Circle, Perfect Justice, Perfect Beauty exist as real objects, more real than the physical things that imperfectly copy them.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Theory of Forms</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Plato's Theory of Forms claims that abstract concepts like Justice and Beauty have a more real existence than physical objects. Is this theory true?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">No — Forms are human concepts, not independent realities. We abstract "perfect circle" from imperfect circles we observe; the abstraction is in our minds, not in a separate realm of existence.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">Yes — mathematical objects like perfect circles are not in anyone's mind and are not physical; yet they are real and discoverable. Plato's Forms are at least right about mathematics, if not about Justice and Beauty.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">C</span><span class="dopt-body">The question matters less than what Plato was pointing at: that we operate with standards and ideals that transcend any particular case, and that these standards have a strange kind of authority over our judgments. Whether Forms "exist" in a separate realm, or are structures of mind, or are mathematical objects — Plato identified something real about how human reasoning works.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">Platonism in mathematics</div>
+      <p><strong>You claim that a perfect circle exists more truly than any circle ever drawn — and working mathematicians from Gödel to Penrose spend two millennia proving you cannot simply be dismissed.</strong> The debate over whether mathematical objects exist independently of minds — Platonism in mathematics — is one of the liveliest in contemporary philosophy of mathematics. Many working mathematicians are practical Platonists: they feel they are <em>discovering</em> mathematical truths, not inventing them. The number π existed before humans, will exist after us, and has the same value in every universe that has circles. If that's true, where does π live? Plato's answer — in a non-physical realm of Forms — remains one of the most coherent accounts. Alternatives (formalism, structuralism, nominalism) all have serious problems. Einstein, Hardy, Gödel, and Penrose have all expressed views close to mathematical Platonism. The Theory of Forms, in its mathematical version, is a live philosophical position held by serious thinkers — not a historical curiosity.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Allegory of the Cave</span></div>
+<div class="year-banner">375</div>
+<div class="timeline-dot">Athens · Age 52</div>
+<div class="narrative">
+  <p>In <em>The Republic</em>, you describe a cave. Prisoners are chained inside, facing the wall. Behind them, a fire; between the fire and the prisoners, objects pass — their shadows are cast on the wall. The prisoners see only shadows. They believe the shadows are reality.</p>
+  <p>One prisoner escapes, turns around, walks toward the fire, emerges into sunlight. He is temporarily blinded. His eyes adjust. He sees the world for the first time — real objects, the real sun. He returns to tell the others. They don't believe him. When he tries to free them, they kill him.</p>
+  <p>The cave is ordinary human existence. The sun is the Form of the Good — the highest object of philosophical knowledge. The escaped prisoner is the philosopher.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Cave</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Allegory of the Cave ends with the philosopher returning to tell others the truth — and being killed for it. Why did Plato end it that way?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">It's a biographical reference — Socrates left the cave, told Athens the truth, and was killed for it. The allegory is a coded account of what happened to his teacher.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">It's a warning — most people prefer comfortable illusions to painful truths. Anyone who brings the truth back to the cave should expect rejection, not gratitude. Philosophy is dangerous.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, and it's structurally necessary. Plato needs the killing to make the full argument: that the philosopher <em>should</em> return, even knowing the risk, because the city needs philosophy even if it doesn't want it. The killing doesn't prove philosophy is futile — it proves it is necessary. The philosopher who refuses to return and govern has failed their philosophical education.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">The philosopher's obligation</div>
+      <p><strong>The philosopher who escapes the cave is not supposed to stay in the sunlight — returning to the people who will eventually kill you is the required ending, and that is the point of the whole story.</strong> The part of the Allegory that is often forgotten: in <em>The Republic</em>, Plato insists that the philosopher who has escaped the cave and seen the sun must return. They don't want to — they would prefer to stay in the sunlight, contemplating the Good. But they have an obligation to the city that educated them. Plato's philosopher-kings are not people who want power; they are people who have transcended the desire for it, and precisely because of that, they are the only ones who should have it. The modern assumption is that people who want to govern should govern; Plato's is the opposite: only those who would prefer not to govern are trustworthy enough to do so. This is one of the most counterintuitive ideas in political philosophy, and it has never been implemented — partly because it requires selecting rulers by philosophical achievement, which no society has been able to do.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Syracuse</span></div>
+<div class="year-banner">367</div>
+<div class="timeline-dot">Syracuse, Sicily · Age 60</div>
+<div class="narrative">
+  <p>You have been invited to Syracuse — twice before, with bad results. The first time, the tyrant Dionysius I had you sold into slavery (you were ransomed by a friend). Now Dionysius II has come to power, and his relative Dion believes you can make him into a philosopher-king — the experiment you theorized in <em>The Republic</em>.</p>
+  <p>You go. You try. Dionysius II is suspicious, temperamental, and uninterested in mathematics, which Plato believes is the prerequisite for philosophical training. The experiment fails. Dion is exiled. You are trapped in Syracuse for a time, effectively imprisoned, before being allowed to leave.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Syracuse Experiment</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Plato went to Syracuse three times trying to create a philosopher-king, despite it going badly each time. Was this persistence wisdom or delusion?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Delusion — the philosopher-king idea doesn't work in practice. No tyrant has ever been trained into philosophical wisdom. Plato kept trying the same failed experiment because he couldn't accept that his theory was wrong.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Wisdom — if the theory was correct, the attempt had to be made. Failing twice doesn't disprove the theory; it means the conditions weren't right. His persistence was philosophical consistency, not stubbornness.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">The honest answer is that Plato knew the risk and went anyway, because the potential payoff — philosophy actually governing — was worth the risk of failure. The fact that it failed doesn't vindicate the critics; it reveals the gap between political theory and political reality, which Plato documented honestly in his Seventh Letter. He learned something from the failure; he just couldn't implement what he learned.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">The Seventh Letter</div>
+      <p><strong>You go to Syracuse to build a philosopher-king. On the first visit, the tyrant Dionysius I has you sold into slavery. A friend ransoms you. You go back twice more.</strong> Plato's Seventh Letter — if authentic, the most personal of his surviving writings — describes the Syracuse experience and his political disillusionment. He writes that after Socrates' execution and his own experiences in Athens and Syracuse, he concluded that no existing city was governed well, that the laws and customs were almost beyond repair, and that philosophy was the only way to discern genuine justice for cities and individuals. But he also writes that putting philosophy into practice required the right conditions — conditions that never existed in Athens or Syracuse. The letter is essentially an admission that the project he theorized didn't work, combined with a defense of the decision to attempt it. Whether the Seventh Letter is genuinely by Plato is debated; most scholars now believe it is, at least partly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Academy</span></div>
+<div class="year-banner">387</div>
+<div class="timeline-dot">Athens · Age 40</div>
+<div class="narrative">
+  <p>Over the entrance to the Academy, you inscribe: <em>Let no one ignorant of geometry enter here.</em> The Academy is a grove outside Athens — olive trees, walking paths, a gymnasium, lecture spaces. It is not a school in the modern sense; there are no fixed curricula, no examinations, no degrees. It is a community of people asking the same questions: What is justice? What is the soul? What is the Good?</p>
+  <p>The Academy will operate for 916 years — until the Emperor Justinian closes all pagan schools in 529 AD. It is the longest-running educational institution in Western history.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Academy</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Academy required mathematics as a prerequisite. Why mathematics for philosophers?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Practical utility — political and philosophical reasoning requires quantitative thinking. Mathematics trains the mind in precision that carries over to other domains.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">Metaphysical preparation — mathematical objects (perfect circles, numbers) are the easiest examples of Forms: they are clearly real, clearly non-physical, clearly eternal. Learning to think about mathematical Forms trains the mind to perceive other Forms — Justice, Beauty, Goodness. Mathematics is the ladder to the higher Forms.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">Elitism — requiring mathematics excluded people without leisure time for education, which was the point. Plato wanted philosopher-kings from the upper classes who had time for mathematics; the prerequisite was a social filter.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">916 years</div>
+      <p><strong>You inscribe "Let no one ignorant of geometry enter here" above your school's entrance — and the institution you plant in an olive grove runs continuously for 916 years, until the Emperor Justinian shuts it down in 529 AD.</strong> The Platonic Academy operated from roughly 387 BC to 529 AD — nearly a millennium. It wasn't always Platonic in the same sense: different heads of the Academy represented very different philosophical positions (the "Skeptical Academy" under Arcesilaus and Carneades, in the 3rd and 2nd centuries BC, took positions Plato would have rejected). But it was a continuous institution. When the Emperor Justinian closed the pagan schools of Athens in 529 AD, he ended a tradition that had run uninterrupted since Plato planted olive trees in the grove. The Academy's alumni include Aristotle, who attended for 20 years; various mathematicians; and several Athenian politicians. The word "academy" entered the English language to mean any school or learned institution from this one grove outside Athens.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Writing as Socrates</span></div>
+<div class="year-banner">390</div>
+<div class="timeline-dot">Athens · Age 37</div>
+<div class="narrative">
+  <p>In all your dialogues, the main character is Socrates. You put your ideas into Socrates' mouth. You write Socrates arguing for the Theory of Forms, the immortality of the soul, the philosopher-king — ideas that the historical Socrates may not have held. The later dialogues show "Socrates" arguing against positions "Socrates" held in earlier dialogues.</p>
+  <p>You never appear in the dialogues yourself. Plato as a character exists only in one moment: the <em>Apology</em> notes that "Plato was present" at the trial. Otherwise, you are invisible, speaking through your dead teacher's voice.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Writing in Socrates' Voice</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Why did Plato write all his philosophy as dialogues featuring a character called Socrates, rather than in his own name?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Intellectual humility — he genuinely saw himself as continuing Socrates' project, not originating his own. Using Socrates' name was a way of crediting the source.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Safety — arguing for ideas in your own name is risky. Putting them in a dead man's mouth provides some distance. Athens already knew what happened to philosophers who argued too directly.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">The dialogue form is the philosophical content. Plato thought philosophy couldn't be done in treatise form — it requires back-and-forth, challenge, revision, the moment where an argument fails and needs rethinking. By writing dialogues, he preserved the method of philosophy, not just its conclusions. Socrates is the character who embodies inquiry; using his voice means the inquiry never stops, even after the hemlock.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">The Seventh Letter on writing</div>
+      <p><strong>You write thirty-six dialogues over fifty years and never appear as a character in any of them. The most influential body of philosophical writing in Western history is published entirely in your dead teacher's voice.</strong> Plato's Seventh Letter contains a famous passage on the limitations of writing: "I have written nothing about these matters and there never will be a Platonic treatise on these subjects. For the knowledge is not something that can be put in words like other sciences. It must come to exist in the student as light is kindled by a leaping flame and, once born, nourishes itself." This is Plato — who wrote more than almost any ancient philosopher — saying that his deepest insights cannot be transmitted through writing. The dialogues, on this reading, are not the philosophy; they are spurs to philosophical activity in the reader. You don't learn philosophy from Plato; you are provoked into doing philosophy by reading him. Whether this is profound or convenient self-mystification is one of the oldest debates about his work.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · Aristotle Arrives</span></div>
+<div class="year-banner">367</div>
+<div class="timeline-dot">Athens · Age 60</div>
+<div class="narrative">
+  <p>A 17-year-old named Aristotle arrives at the Academy from Stagira, in Macedonia. He is immediately the most gifted student you have. He stays for 20 years. He argues with you. He tells you the Forms are wrong — why invent a separate realm of ideal objects when you can explain universals without it? He goes on to write more than Plato did, on more subjects, and his philosophy dominates the Middle Ages as Plato's dominated antiquity.</p>
+  <p>There is a famous painting by Raphael — <em>The School of Athens</em> — where Plato points upward and Aristotle points downward. Plato: toward the eternal Forms. Aristotle: toward this world, this ground, these actual things.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — Teaching Your Greatest Critic</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Plato trained Aristotle for 20 years — a student who spent much of his career refuting Plato. What does this say about what Plato was actually teaching?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">It reveals a failure — if Plato's best student spent his life arguing against him, either Plato failed to convince Aristotle, or the positions were genuinely wrong and Aristotle had the ability to see it.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">It reveals what Plato was actually teaching: not conclusions but the method of rigorous inquiry. A student who learned to think clearly and then disagreed is a better product of philosophical education than a student who agreed without understanding. Aristotle is Plato's greatest achievement precisely because he disagreed so powerfully.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">It reveals the limits of influence — even 20 years of contact with the greatest thinker of the age couldn't overcome Aristotle's different temperament and method. Some philosophical disagreements reflect personality as much as argument.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">Plato and Aristotle</div>
+      <p><strong>Your most gifted student stays at your Academy for twenty years, then spends the rest of his career arguing that your central theory is wrong. Aristotle's refutation of the Forms is the most famous philosophical critique in history.</strong> Aristotle's critique of Plato's Forms is among the most famous in philosophy. His main objection: the Theory of Forms multiplies entities unnecessarily. To explain why a beautiful thing is beautiful, you don't need to posit a separate Form of Beauty — you can explain it through the properties of the thing itself. But Aristotle also agreed with Plato on many things: that philosophy requires systematic inquiry, that ethics is about human flourishing, that knowledge is possible. Their split is real but often overstated. More significant: the history of Western philosophy oscillates between Platonic and Aristotelian approaches — top-down from ideals and principles vs. bottom-up from observation and classification. Almost every major philosopher aligns more with one than the other. Kant is more Platonic; Hume more Aristotelian. Rationalism is more Platonic; empiricism more Aristotelian. The argument between Plato and Aristotle is still being had.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Footnotes</span></div>
+<div class="year-banner">348</div>
+<div class="timeline-dot">Athens · Age 79</div>
+<div class="narrative">
+  <p>You die in Athens at roughly 80. According to one account, you die at a wedding feast, pen in hand, still revising a dialogue. Another says you die in your sleep. The dialogues are already in circulation — copied and recopied across the Mediterranean world.</p>
+  <p>They will shape Augustine's theology, which will shape medieval Christianity. They will influence Islamic philosophy through Al-Farabi and Avicenna. Neoplatonism will synthesize Plato with mysticism and persist for centuries. When Greek texts return to the West during the Renaissance, Plato and Aristotle will be the intellectual poles around which philosophy reorganizes itself.</p>
+  <p>Alfred North Whitehead will write that all of Western philosophy is footnotes to Plato. He means it as hyperbole. He is not entirely wrong.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — Footnotes to Plato</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Whitehead said Western philosophy is a series of footnotes to Plato. Is this accurate or an exaggeration?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Accurate — the core questions of Western philosophy (what is reality? what is knowledge? what is the good life? what is justice?) were all set by Plato, and 2,400 years of philosophy are responses to his answers.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Exaggerated — significant parts of Western philosophy — empiricism, pragmatism, philosophy of science, analytic philosophy — are explicitly rejections of Platonic assumptions, not footnotes to them. The tradition is more diverse than Whitehead suggests.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The point is not that everyone agrees with Plato, but that everyone is responding to problems Plato posed. Rejecting Platonism is still engaging with Plato. The questions that Western philosophers return to — the existence of abstract objects, the relation of mind to reality, the basis of ethics — are recognizably the questions Plato asked first. Footnotes include refutations.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">Why Plato endures</div>
+      <p><strong>You die at roughly eighty, still revising a dialogue. 2,400 years later, Alfred North Whitehead writes that all of Western philosophy is a series of footnotes to you. He intends it as hyperbole. He is not entirely wrong.</strong> The unusual thing about Plato is not just that he was influential, but that he is still read as a living thinker, not a historical artifact. His dialogues are taught in philosophy departments as active arguments to be engaged with, not as historical documents to be contextualized. Philosophers still take positions on whether mathematical objects exist, whether knowledge requires certainty, whether rulers should be selected by intelligence rather than popularity, whether eros (erotic desire) is connected to the pursuit of truth. Plato set these as live questions, and they remain live. This is partly because he wrote dialogues rather than treatises — the form invites engagement rather than commentary. The questions stay open because Plato designed them to stay open. He wrote arguments without sealing them. Two and a half millennia later, the seal is still unbroken.</p>
+    </div>
+  </div>
+</div>
+
+<div class="ending" id="ending">
+  <div class="ending-score" id="final-score">0/8</div>
+  <div class="ending-label">Your Plato Score</div>
+  <div class="ending-title" id="final-title"></div>
+  <div class="ending-body" id="final-body"></div>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue the Series</div>
+  <div class="next-grid">
+    <a class="next-card" href="socrates-simulator.html">
+      <span class="next-name">Socrates</span>
+      <span class="next-desc">The teacher who died rather than stop asking questions. Plato's entire philosophy is a response to his death.</span>
+    </a>
+    <a class="next-card" href="nietzsche-simulator.html">
+      <span class="next-name">Friedrich Nietzsche</span>
+      <span class="next-desc">Plato's most aggressive modern critic — saw Platonism as life-denying, the real source of Christianity's values.</span>
+    </a>
+    <a class="next-card" href="confucius-simulator.html">
+      <span class="next-name">Confucius</span>
+      <span class="next-desc">A near-contemporary who also tried to teach rulers to govern wisely — also failed, also became foundational.</span>
+    </a>
+    <a class="next-card" href="newton-simulator.html">
+      <span class="next-name">Isaac Newton</span>
+      <span class="next-desc">The mathematician who described physical laws in Platonic terms — mathematical equations governing a material world.</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <p>Plato's story is one of 100 historical life simulators on this site. Each one asks: given the same constraints, pressures, and information — what would you have chosen?</p>
+  <p><a href="simulators.html">Browse all simulators →</a></p>
+</div>
+
+</div>
+</div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You See the Sun";body="You escaped the cave. You understand that Plato's project wasn't to deliver answers but to pose questions so clearly that escape becomes possible. You see how the Forms, the Academy, the dialogues, and the Syracuse disasters are all one project: making philosophy a way of life rather than a set of doctrines.";}else if(pct>=0.625){title="Out of the Cave, Eyes Adjusting";body="You understand the core of Plato's philosophy — the Forms, the philosopher-king, the importance of mathematics as preparation. Where you diverge is in the details: the dialogue form as philosophical method, the exact nature of what the Academy was teaching, the significance of the Aristotle relationship.";}else if(pct>=0.375){title="Still Near the Cave Wall";body="You're reading Plato as a set of positions to agree or disagree with — which is one valid way to read him. But he designed the dialogues to be more than that: provocations to inquiry rather than conclusions to evaluate. The questions he poses are more important than the answers he suggests.";}else{title="You Would Have Stayed in Athens";body="After Socrates' death, Plato left for twelve years. You would have stayed — found another teacher, adjusted to the new political reality, worked within the system. That's a reasonable response to failure. Plato's response was to theorize the system itself as the problem and spend his life building a philosophical alternative to it."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

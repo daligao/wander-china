@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Charles Dickens?</title>
+<meta name="description" content="At 12, his father went to debtor's prison and he worked in a boot-blacking factory. He used that shame to fuel 15 novels that changed Victorian society. 8 decisions from the life of Dickens.">
+<meta property="og:title" content="What Would You Do If You Were Charles Dickens?">
+<meta property="og:description" content="The humiliation of the boot-blacking factory at 12. The fame at 24. The secret he kept his whole life. 8 decisions from Dickens.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/dickens-simulator.html">
+<style>
+:root{
+  --bg:#EEF2EE;--card:#F6FAF6;--ink:#080E08;--muted:#304030;--line:#A8C4A8;
+  --accent:#1A3A18;--accent-bg:#DFF0DC;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,242,238,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#080E08;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #88B488;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#060A06;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#E8F0E8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#060C06;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#E8F0E8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #88B488;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#060A06;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#080E08;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#E8F0E8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #88B488;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#E8F0E8;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#90D090;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Charles Dickens</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #41</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Charles Dickens?</h1>
+  <p class="cover-sub">When he was 12, his father was imprisoned for debt and Charles was sent to work in a boot-blacking factory, labeling bottles ten hours a day. He was ashamed of it for the rest of his life. He never told his children. He channeled that humiliation into novels that changed child labor laws, reformed the prison system, and made Christmas into what it is today. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Charles John Huffam Dickens</strong> (1812–1870) · English novelist · Born Portsmouth; childhood disrupted when father John Dickens was imprisoned in Marshalsea debtors' prison (1824) · Worked at Warren's Blacking Warehouse, age 12 · Became court reporter, then journalist, then novelist · Published 15 novels, hundreds of short stories, numerous essays · Major works: <em>Oliver Twist, A Christmas Carol, David Copperfield, Bleak House, A Tale of Two Cities, Great Expectations</em> · Separated from wife Catherine in 1858; secret relationship with actress Ellen Ternan · Died June 9, 1870, of a stroke, mid-sentence in a letter · Final novel <em>The Mystery of Edwin Drood</em> left unfinished.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1824, London</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Blacking Factory</span></div>
+<div class="year-banner">1824</div>
+<div class="timeline-dot">London · Age 12</div>
+<div class="narrative">
+  <p>Your father John Dickens has been imprisoned in the Marshalsea debtors' prison. The family moves in with him — Victorian law allows prisoners' families to live there. But you are put to work. Every morning you walk to Warren's Blacking Warehouse near the river, tie labels on pots of boot-blacking paste, and work for ten hours. Your coworkers are illiterate boys. You believe yourself destined for something else, and this belief makes the warehouse unbearable.</p>
+  <p>After a few months, your father is released and your grandmother dies, leaving enough money to clear the debt. Your mother wants you to stay in the factory. Your father insists you return to school. You remember that your mother wanted to keep you there for the rest of your life. You do not forgive her for it.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Wound That Drives</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Dickens never publicly spoke of the blacking factory — he told no one, not even his children. Yet it appears, transformed, in almost every novel he wrote. How did a secret shame become literary fuel?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">The factory gave him material — he saw poverty and child labor from the inside, and that direct experience gave his depictions of working-class life their authenticity and power.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">The shame created urgency — the terror of returning to that social position drove him to work at an intensity he might not otherwise have sustained. Fear of failure was the engine.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, plus the unprocessed nature of the secret. By never speaking of it directly, he was forced to speak of it obliquely — through Oliver, through David Copperfield, through Pip. The factory couldn't be discharged through confession, so it kept leaking out through fiction. Secrets that can't be spoken find other exits.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">The secret</div>
+      <p><strong>You carry the blacking factory in your bones for 46 years and never say a word to your children — but it pours out of every novel you write, disguised as Oliver, David Copperfield, and Pip.</strong> Dickens wrote about the blacking factory exactly once in his lifetime — in a fragment of autobiography he showed only to his friend and biographer John Forster, who published it after Dickens' death. The passage is raw with shame and rage. He writes of feeling "utterly neglected and hopeless" — a child who believed he was meant to be educated and who found himself instead labeling boot-blacking beside illiterate boys. He writes that he never lost the fear that any moment the bottom could fall out again. David Copperfield — his "favorite child" among his novels — is the closest to autobiography; David works in a bottling warehouse as a child, is humiliated by it, and rises to become a successful writer. Pip in <em>Great Expectations</em> is also ashamed of his origins and desperate to rise. The factory is everywhere in Dickens, invisible and omnipresent.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Serial Novel</span></div>
+<div class="year-banner">1836</div>
+<div class="timeline-dot">London · Age 24</div>
+<div class="narrative">
+  <p>You are 24, a successful court reporter and journalist, when the publisher Chapman and Hall asks you to write text to accompany a series of comic illustrations about a sporting club. You counter-propose: you will write the story, the illustrations will accompany it, and you'll publish it in monthly installments — 20 parts, each sold separately for a shilling.</p>
+  <p><em>The Pickwick Papers</em> begins with modest circulation — about 400 copies of Part I. By Part IV, where you introduce the character Sam Weller, circulation explodes to 40,000. You have invented a new form: the novel in monthly installments, each ending on a cliffhanger, consumed by an audience that waits impatiently for the next part. You have also made yourself the most famous writer in England at 24.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Serial Form</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Dickens published almost all his novels in monthly or weekly installments. How did this shape the novels themselves?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">It constrained them — each installment had to end with a hook, which created artificial plot structures and over-complicated storylines to sustain suspense across years of publication.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">It created his strengths. The need to hold an audience across months forced him to develop memorable characters over the long form, end each section with a payoff, and respond to reader reaction — he changed plotlines mid-stream based on what audiences loved or rejected. The serial form made Dickens the most responsive and dramatic major novelist in the language.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">The form is incidental. His talent was for character and social observation, and those would have emerged in any publication format. The serial structure was a commercial arrangement, not an artistic one.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">Serialization and audience</div>
+      <p><strong>You invent the cliffhanger as a publishing format — and crowds are shouting to ships arriving in New York docks, desperate to know if Little Nell is dead.</strong> Dickens' serialization model was genuinely interactive in ways no previous novelist had experienced. He read and responded to reader mail. When the death of Little Nell in <em>The Old Curiosity Shop</em> (1841) approached, readers wrote begging him not to kill her; he killed her anyway — the installment reportedly made men weep on the street who bought it. When he considered killing off a character in <em>Martin Chuzzlewit</em>, his sales numbers told him readers weren't engaged. He pivoted. His American readers received installments by ship — crowds waiting at the New York docks reportedly shouted to arriving ships: "Is Little Nell dead?" This was the 19th century's version of a TV cliffhanger. The serial form also made Dickens's work unusually accessible by price: a shilling per installment was affordable to people who couldn't buy a novel.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · America</span></div>
+<div class="year-banner">1842</div>
+<div class="timeline-dot">United States · Age 30</div>
+<div class="narrative">
+  <p>You visit America for the first time. You are already world-famous. American readers have idolized you from across the ocean. Crowds mob you in Boston, New York, Philadelphia. You have never experienced anything like it.</p>
+  <p>But you are disappointed. You expected to find the democratic republic — the land of liberty — that it claimed to be. Instead you find slavery in the South, aggressive newspaper coverage that feels invasive, and a complete absence of international copyright law, meaning American publishers pirate your books and you receive nothing. You say so publicly. The press turns on you. You go home and write <em>American Notes</em>, which is critical. America does not take it well.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — Criticizing Your Hosts</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Dickens criticized America publicly — slavery, copyright piracy, invasive press — after Americans had welcomed him with extraordinary warmth. Was this honest or ungrateful?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">A</span><span class="dopt-body">Honest — he saw things that were wrong, and his power as a writer was precisely his ability to name them. A man who spent his career calling out English injustice would have been a hypocrite to stay silent about American injustice because Americans had thrown him a party. The gratitude owed to hospitality doesn't extend to suppressing moral observation.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Ungrateful and strategically foolish — his American readers loved him and bought his books (even if without royalties). Publicly criticizing them turned potential allies into enemies for no practical gain, since American copyright law wasn't going to change because Dickens complained about it.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">Neither — the criticism of American newspapers was petty (he didn't like being followed by reporters), and the copyright complaint was commercial self-interest. Only the anti-slavery observations were genuinely principled, and he didn't push those hard enough.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">American Notes and Martin Chuzzlewit</div>
+      <p><strong>You bite the hand that welcomed you — and spend years at war with American readers, then return 25 years later to sell-out crowds anyway.</strong> Dickens's 1842 American visit and its aftermath produced two works: <em>American Notes for General Circulation</em> (1842), a travel book, and the American sections of <em>Martin Chuzzlewit</em> (1843–1844), where American characters are depicted as boastful, hypocritical, and addicted to tobacco-spitting. Both were received poorly in America. Dickens returned to America in 1867–1868 for a reading tour that was commercially triumphant — 76 readings, enormous profits, sold-out houses everywhere. By then, time and the Civil War had changed the context. American copyright protection for British authors didn't come until 1891, twenty years after his death — but it did eventually come, partly because major British authors including Dickens had made the issue impossible to ignore.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · A Christmas Carol</span></div>
+<div class="year-banner">1843</div>
+<div class="timeline-dot">London · Age 31</div>
+<div class="narrative">
+  <p>You have read a government report on child labor in English mines and factories. You are furious. You consider writing a political pamphlet. Instead you write a short story — 66 pages — in six weeks. You call it <em>A Christmas Carol</em>. You publish it on December 19, 1843. It sells out by Christmas Eve.</p>
+  <p>Scrooge, Tiny Tim, the three ghosts, Bob Cratchit — the entire modern Christmas is substantially Dickens's invention. Before him, Christmas was a minor religious holiday. After him, it became a festival of family, charity, and gift-giving. He didn't mean to invent Christmas; he meant to shame rich men into feeling something about poor children.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — Fiction vs. Pamphlet</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Dickens chose fiction over a political pamphlet to respond to the child labor report. What does this reveal about literature's power?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Literature reaches more people — Dickens knew his fiction would be read by far more people than any pamphlet, so the choice was fundamentally about distribution and audience.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Literature is more persuasive — data about child labor statistics can be argued with; Tiny Tim cannot. Narrative creates emotional identification that rational argument can't achieve.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, and something more: literature outlives its occasion. The pamphlet would have been read in 1843 and forgotten. <em>A Christmas Carol</em> is still read 180 years later, still producing the emotional response he intended, still making people feel that cruelty to the poor is Scrooge's sin. Fiction that embeds a moral truth in unforgettable characters recycles the argument indefinitely across generations.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">Dickens and Christmas</div>
+      <p><strong>You accidentally invent Christmas. You set out to shame wealthy men into caring about poor children; instead you redesign an entire holiday that 180 years of civilization will not shake off.</strong> The claim that Dickens "invented Christmas" is overstated but contains something true. The Victorian middle-class Christmas with its emphasis on family gathering, gift-giving, charitable feeling, and specific foods was substantially shaped by Dickens's work — not just <em>A Christmas Carol</em> but the Christmas chapters of <em>The Pickwick Papers</em> (1836) and his other Christmas stories. The decorated tree had just been popularized by Prince Albert; Dickens provided the emotional and narrative template for what the holiday meant. Historian Ronald Hutton documented that over a dozen Christmas customs commonly believed to be ancient actually date from the Victorian period and can be traced partly to Dickens's influence. Thomas Carlyle reportedly burned his copy of coal in celebration. At least five businessmen read it and spontaneously closed their factories on Christmas Day and gave their workers turkeys. A Carol is still read, still performed, still adapted — and Scrooge is still a living adjective in English.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Marriage</span></div>
+<div class="year-banner">1858</div>
+<div class="timeline-dot">London · Age 46</div>
+<div class="narrative">
+  <p>You have been married to Catherine Hogarth for 22 years. You have ten children together. You have also fallen in love with Ellen Ternan, an actress 27 years younger than you who appears in a play you are involved with. You separate from Catherine — a highly public scandal in Victorian England, where separation was unusual and the subject of enormous gossip.</p>
+  <p>You publish a "personal statement" in your own journal <em>Household Words</em> defending the separation and attacking your wife's mental state. You send it to newspapers. You cut off Catherine's family from contact with your children. You maintain the relationship with Ellen Ternan for the rest of your life — secretly, at great effort. Almost none of your friends know.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Public Separation</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Dickens publicly attacked his wife's character during their separation while privately conducting a secret affair. How does this square with his novels' moral vision?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">It's pure hypocrisy — the man who spent his career championing the vulnerable was crushing his wife's reputation to protect his own, while hiding an affair. The contradiction is indefensible.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">It's psychologically consistent — people who are most attuned to injustice in general are often blind to their own capacity for it. Dickens's moral sensitivity was about structures and classes, not intimate personal conduct.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">The contradiction is real but not unusual. Creative moral vision doesn't protect against personal moral failure. Dickens genuinely felt what he wrote about the poor and the wronged. He also genuinely mistreated Catherine. Both are true. The novels are not diminished by the biography; they are complicated by it.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">Catherine and Ellen</div>
+      <p><strong>You publicly attack your wife's sanity to protect a secret affair — and she spends her widowhood donating your letters to the British Museum specifically so future generations will know she was real.</strong> Catherine Dickens lived until 1879 — nine years after Charles — largely separated from her children, who mostly sided with their father. She gave her collection of his letters to the British Museum specifically so future generations would know their relationship had been real. Ellen Ternan's existence was not publicly confirmed until 1934, when her grandson revealed the truth. Dickens maintained an extraordinary level of secrecy — he had a secret door installed between his study and the bedroom so visitors wouldn't know he and Catherine slept separately. His biographer Claire Tomalin's book <em>The Invisible Woman</em> (1990) reconstructed Ellen's story from fragmentary evidence. She married after his death, never spoke of him publicly, and told her son she was "not proud" of the relationship. The hiding of the affair was successful: the Victorian public never knew.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Readings</span></div>
+<div class="year-banner">1858</div>
+<div class="timeline-dot">Across Britain · Age 46</div>
+<div class="narrative">
+  <p>You begin performing public readings of your own work. Not lectures about the work — performances of it. You play all the parts. Scrooge. Bob Cratchit. Fagin. Bill Sikes. Nancy. You perform the murder of Nancy, dragging your audience through the violence so completely that women faint. You perform up to 80 times a year. You perform even when you are ill. You perform on doctor's orders not to perform. You perform until you have a stroke on stage, which you survive for two more years.</p>
+  <p>The performances are brilliantly successful. They are also killing you.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Readings</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Dickens's public readings were physically destroying him, his doctor told him so, and he continued until near-death. Why?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Financial need — he needed the income from readings to support the large household costs, Ellen Ternan, and his various commitments. The money was more important than the health risk.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Addiction to the audience — the immediate emotional response of a live crowd was something novels couldn't give him. The intensity of the murder of Nancy, the audience's reactions, was a drug he couldn't give up.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">Both, and something darker — the exhaustion may have been intentional. After the separation, the secret of Ellen, the public attacks on Catherine, Dickens drove himself at a pace that looks like self-destruction. The readings gave purpose and money and audience, but they also burned through whatever time he had left in a way he seemed willing to accept.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">The Sikes and Nancy reading</div>
+      <p><strong>Your doctor takes your pulse before and after one performance: 72, then 112. He tells you the readings are shortening your life. You perform them 28 more times anyway, and die three months after the last one.</strong> Dickens's dramatic performance of the murder of Nancy from <em>Oliver Twist</em> was the centerpiece of his final reading tour. His friends begged him not to perform it — they thought it was too violent and emotionally exhausting. He performed it 28 times in his final years. Contemporary accounts describe audiences in tears, women fainting, men white with shock. Dickens would emerge from the performance drenched in sweat, pulse elevated, nearly collapsed. His doctor took his pulse before and after one performance and recorded the before as 72 and the after as 112. The doctor told him the readings were shortening his life. "I will do them," Dickens said. He performed his final public reading on March 15, 1870. He died June 9, 1870.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · Social Reform</span></div>
+<div class="year-banner">1850</div>
+<div class="timeline-dot">London · Age 38</div>
+<div class="narrative">
+  <p>Your novels have made people feel things about poverty, child labor, debtor's prisons, the legal system, and the workhouse. The question is whether feeling is enough. The reform record is mixed: the New Poor Law you depicted in <em>Oliver Twist</em> was not abolished for decades. The legal system in <em>Bleak House</em> continued its grinding inefficiency. But the Ragged Schools got funding. Public opinion on children's conditions shifted. The phrase "as if from a Dickens novel" entered the language to describe any case of extreme institutional cruelty.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — Did the Novels Change Anything?</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Dickens spent his career depicting social injustice. Did the fiction actually change things?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Yes, directly — his depictions changed public opinion, which created political pressure, which led to reforms in poor law, child labor, and the legal system. The novels were a primary cause of Victorian reform legislation.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">No — reform happened because of political organizing, economic change, and working-class pressure. The middle-class audience for Dickens's novels felt bad about the poor but didn't change policy. Literature affects feeling, not legislation.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">He changed what was thinkable. The reforms didn't follow directly from any novel, but Dickens made certain conditions — child in a workhouse, family in a debtors' prison — emotionally real to people who had never encountered them. This cultural shift in what felt morally intolerable created the preconditions for reform. Literature doesn't pass laws; it changes the conditions in which laws become possible.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Dickens actually changed</div>
+      <p><strong>The Yorkshire schools you depicted in Nicholas Nickleby close within a year of publication. The legal reforms Bleak House demanded arrive in the 1870s. Nothing follows directly from any single novel — but the moral floor of what England can tolerate rises.</strong> The historical record on Dickens's direct legislative impact is complicated. <em>Nicholas Nickleby</em> (1839) depicted the brutal Yorkshire schools — cheap boarding schools where problem children were warehoused; within a year, the schools had largely closed as public outrage made them untenable. The Ragged School movement received significant publicity and funding partly through Dickens's support. His attacks on the Court of Chancery in <em>Bleak House</em> contributed to the pressure that eventually led to court reforms in the 1870s. His depiction of debtors' prisons drew on personal experience and helped build the case for their abolition (completed 1869). The cases where fiction directly preceded legislation are fewer than his admirers claim; the cases where fiction contributed to a cultural shift that made reform possible are more numerous and harder to measure.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Unfinished Novel</span></div>
+<div class="year-banner">1870</div>
+<div class="timeline-dot">Gad's Hill, Kent · Age 58</div>
+<div class="narrative">
+  <p>You are writing <em>The Mystery of Edwin Drood</em> — a murder mystery, the first you've attempted. You have published six of the planned 12 installments when, on June 8, 1870, you collapse at the dinner table with a stroke. You are moved to a sofa. You never regain consciousness. You die the following day, June 9. You are 58 years old.</p>
+  <p>Edwin Drood is never finished. No one has ever definitively solved the mystery you set up. It remains, 150 years later, one of literature's most famous unanswered questions.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Unresolved Mystery</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Dickens died mid-sentence in a letter, mid-plot in a novel. What does the incomplete Edwin Drood reveal about his working method and legacy?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">It shows he didn't plan — if he had a clear plan for the novel's resolution, he would have written it down or told someone. The unfinished ending reflects a method of discovery-as-writing rather than outlining.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">It's simply tragic — a great novelist cut off before completion. There's nothing instructive in it; it's just bad luck applied to literature.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The unfinished novel has become part of the legacy. That the mystery was never solved means generations of readers have engaged with it as a puzzle — hundreds of completions, stage adaptations, films, critical arguments. Drood is unresolved and therefore endlessly revisited. Dickens finished his other novels completely; this one escapes the containment of conclusion and stays alive differently.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">Who killed Edwin Drood?</div>
+      <p><strong>You die mid-sentence in a letter, mid-plot in a murder mystery, and 150 years later no one has solved it — including a 1985 Broadway audience that voted on the killer every single night.</strong> The central question of <em>The Mystery of Edwin Drood</em> — whether Edwin Drood was actually murdered, and if so, by whom — has generated 150 years of speculation. The prime suspect is John Jasper, Edwin's uncle and a choirmaster who is secretly addicted to opium and obsessed with Edwin's fiancée Rosa Bud. But Dickens left no notes indicating the solution. Wilkie Collins, his close friend and fellow sensation novelist, said he didn't know the ending. His illustrator Luke Fildes later claimed to know a key detail. There have been over 200 stage, film, and television adaptations; at least a dozen "completions" by other authors; and at least one academic conference dedicated entirely to solving it. A 1985 Broadway musical let the audience vote each night on the killer. No consensus has emerged. The only person who knew is Dickens, and he died mid-sentence.</p>
+    </div>
+  </div>
+</div>
+
+<div class="ending" id="ending">
+  <div class="ending-score" id="final-score">0/8</div>
+  <div class="ending-label">Your Dickens Score</div>
+  <div class="ending-title" id="final-title"></div>
+  <div class="ending-body" id="final-body"></div>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue the Series</div>
+  <div class="next-grid">
+    <a class="next-card" href="twain-simulator.html">
+      <span class="next-name">Mark Twain</span>
+      <span class="next-desc">The American Dickens — serialized, socially sharp, personally contradictory, died in debt despite fame.</span>
+    </a>
+    <a class="next-card" href="tolstoy-simulator.html">
+      <span class="next-name">Leo Tolstoy</span>
+      <span class="next-desc">Also used fiction to argue about society — then renounced his greatest fiction as immoral. Opposite arc.</span>
+    </a>
+    <a class="next-card" href="kafka-simulator.html">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">Dickens's shadow: institutions that grind down the individual, but with no social reform solution — only absurdity.</span>
+    </a>
+    <a class="next-card" href="shakespeare-simulator.html">
+      <span class="next-name">William Shakespeare</span>
+      <span class="next-desc">The other writer who defined English literature — also worked in commercial popular entertainment, not "high art."</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <p>Dickens's story is one of 100 historical life simulators on this site. Each one asks: given the same constraints, pressures, and information — what would you have chosen?</p>
+  <p><a href="simulators.html">Browse all simulators →</a></p>
+</div>
+
+</div>
+</div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="The Blacking Factory Never Left You";body="You matched Dickens's choices almost exactly — the secret shame channeled into fiction rather than confession, the serial form embraced as artistic constraint, the criticism of American hypocrisy offered without apology, Scrooge chosen over a pamphlet. This is what Dickens understood about himself: that unspoken wounds don't disappear, they find exits. His factory leaked out through 15 novels across 35 years and changed a century's understanding of poverty. You chose the oblique path at every turn — the one that outlasts its occasion.";}else if(pct>=0.625){title="You Held Both Dickenses";body="You grasped the essential contradictions: the man who championed the wronged while publicly destroying his wife; the novelist who wrote moral fiction while conducting a secret affair he maintained for 12 years; the performer who let his doctor record a pulse of 112 after Nancy's murder and kept doing it anyway. Where you diverged was in the precise mechanics — how the serial form shaped the art, or exactly what Nicholas Nickleby accomplished in a single year. The biography and the work are both real. You held them together.";}else if(pct>=0.375){title="You Would Have Signed the Petition";body="You read Dickens the way his Victorian audience did — through the moral surface, through Tiny Tim and Oliver Twist, through the feeling that poverty is wrong and the workhouse is cruel. That emotional response is exactly what he was engineering, and it is not nothing. But the factory behind every novel, the death-by-readings, the way Catherine Dickens preserved his letters so history would know she was real — those layers stayed mostly out of view.";}else{title="You Would Have Written the Pamphlet";body="You made the practical choice at nearly every turn — the direct argument over the story, the pamphlet over the fiction, the caution over the public criticism. Dickens considered those options and rejected them every time. Three generations of readers who wept over Tiny Tim and forgot every pamphlet they ever read are his answer. He understood that a child you can name outlasts a statistic you can argue with. The blacking factory ran as a secret for 46 years; the novels ran forever."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

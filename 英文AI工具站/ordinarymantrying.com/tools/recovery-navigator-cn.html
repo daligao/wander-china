@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>解套路径分析 — 持、加、割三条路 | AI投资OS</title>
+<meta name="description" content="被套了？三条路：继续持有、逢低加仓、止损换仓。沉没成本计算器+机会成本对比+五大门派+8大AI「持还是割」点评。">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/recovery-navigator-cn.html">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09101F;--surf:#111827;--surf2:#1A2436;--surf3:#0d1526;--accent:#6366F1;--accent-l:#818CF8;--gold:#F59E0B;--green:#10B981;--red:#EF4444;--white:#F1F5F9;--muted:#64748B;--bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.12)}
+body{background:var(--bg);color:var(--white);font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif;line-height:1.7;font-size:17px;overflow-x:hidden}
+a{color:var(--accent-l);text-decoration:none}
+.nav{padding:13px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:.84em}.nav a{color:var(--muted)}.nav a:hover{color:var(--white)}.nav-cur{color:var(--white);font-weight:600}
+.hero{text-align:center;padding:46px 20px 26px;background:radial-gradient(ellipse at 50% 0%,rgba(239,68,68,.1) 0%,rgba(99,102,241,.07) 40%,transparent 70%)}
+.badge{display:inline-block;font-size:.68em;font-weight:700;letter-spacing:.06em;color:#f87171;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:30px;padding:4px 13px;margin-bottom:12px}
+.hero h1{font-size:clamp(1.8rem,5vw,2.9rem);font-weight:900;letter-spacing:-.02em;line-height:1.1;margin-bottom:10px}
+.hero h1 em{font-style:normal;color:#f87171}.hero p{font-size:.92em;color:var(--muted);max-width:520px;margin:0 auto}
+.wrap{max-width:700px;margin:0 auto;padding:26px 18px 60px}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:20px 18px;margin-bottom:12px}
+.sl{font-size:.62em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-l);margin-bottom:13px}
+.school-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px}
+@media(min-width:500px){.school-row{grid-template-columns:repeat(4,1fr)}}
+.sb{background:var(--surf2);border:2px solid var(--bd);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:.2s;font-size:.79em;font-weight:700;color:var(--muted);line-height:1.3}
+.sb:hover{border-color:var(--bd2);color:var(--white)}.sb.on{border-color:var(--accent);background:rgba(99,102,241,.12);color:var(--white)}
+.sb i{font-style:normal;font-size:1.3em;display:block;margin-bottom:2px}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+@media(min-width:480px){.input-grid{grid-template-columns:repeat(4,1fr)}}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:.72em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.fg input{background:var(--surf2);border:1px solid var(--bd);border-radius:9px;padding:9px 12px;color:var(--white);font-size:.95em;font-weight:600;outline:none;transition:.2s}
+.fg input:focus{border-color:var(--accent);background:var(--surf3)}
+.sunk-q{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:13px;margin-bottom:14px}
+.sunk-q p{font-size:.84em;color:#fde68a;margin-bottom:8px}
+.btn-go{width:100%;padding:13px;background:linear-gradient(120deg,var(--accent),var(--accent-l));border:none;border-radius:12px;color:#fff;font-size:1em;font-weight:800;cursor:pointer;transition:.2s}
+.btn-go:hover{filter:brightness(1.12)}
+#results{display:none}
+.loss-hero{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:14px;text-align:center;margin-bottom:14px}
+.lh-val{font-size:1.6em;font-weight:900;color:var(--red)}
+.lh-sub{font-size:.8em;color:#fca5a5;margin-top:4px}
+.path-grid{display:grid;grid-template-columns:1fr;gap:9px;margin-bottom:14px}
+@media(min-width:500px){.path-grid{grid-template-columns:repeat(3,1fr)}}
+.path-card{background:var(--surf2);border:2px solid var(--bd);border-radius:12px;padding:14px}
+.path-card.best{border-color:var(--accent)}
+.pc-letter{font-size:.65em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.pc-name{font-size:1em;font-weight:800;color:var(--white);margin-bottom:8px}
+.pc-item{font-size:.8em;color:var(--muted);margin-bottom:3px}
+.pc-item strong{color:var(--white)}
+.opp-cost{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2);border-radius:10px;padding:13px;margin-bottom:12px}
+.school5{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+@media(min-width:500px){.school5{grid-template-columns:repeat(4,1fr)}}
+.s5c{background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:10px}
+.s5c.active{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.s5c-name{font-size:.72em;font-weight:800;color:var(--white);margin-bottom:4px}
+.s5c-txt{font-size:.73em;color:var(--muted);line-height:1.5}
+.ai-grid{display:flex;flex-direction:column;gap:7px}
+.ai-c{display:flex;gap:14px;align-items:flex-start;background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:12px 15px;position:relative}
+.ai-head{min-width:108px;flex-shrink:0}
+.ai-n{font-size:.92em;font-weight:800;color:var(--white);margin-bottom:2px}
+.ai-t{font-size:.72em;color:var(--accent-l)}
+.ai-txt{font-size:.92em;color:var(--muted);line-height:1.55}
+.ai-q{font-size:.78em;color:#818CF8;border-top:1px solid var(--bd);margin-top:7px;padding-top:6px;font-style:italic;line-height:1.45}
+.ai-star{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:1.1em;opacity:.35;transition:.2s;padding:0;line-height:1}
+.ai-star.starred{opacity:1;filter:drop-shadow(0 0 4px gold)}
+.ai-links-row{display:flex;flex-wrap:wrap;gap:6px}
+.ai-links-label{font-size:.62em;color:var(--muted);margin-bottom:5px}
+.ai-hint{font-size:.67em;color:var(--muted);margin-bottom:8px;font-style:italic}
+.ai-lnk{display:inline-flex;align-items:center;gap:3px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:5px 10px;font-size:.74em;font-weight:600;color:var(--muted);text-decoration:none;transition:.2s;opacity:.55}
+.ai-lnk.active{background:rgba(99,102,241,.18);border-color:var(--accent);color:var(--accent-l);opacity:1;box-shadow:0 0 0 2px rgba(99,102,241,.2);font-weight:700}
+.ai-lnk:hover{color:var(--white);border-color:var(--accent);opacity:1}
+.bias{background:rgba(99,102,241,.06);border:1px solid rgba(129,140,248,.2);border-radius:10px;padding:13px}
+.bias-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-l);margin-bottom:6px}
+.bias-t{font-size:.83em;color:#c7d2fe;line-height:1.6}
+.next-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nt-btn{display:block;background:var(--surf2);border:1px solid var(--bd2);border-radius:10px;padding:11px 13px;text-decoration:none;transition:.2s}
+.nt-btn:hover{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.nt-lbl{font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+.nt-name{font-size:.84em;font-weight:700;color:var(--white)}
+.nt-desc{font-size:.72em;color:var(--muted)}
+.pb{background:var(--surf3);border:1px solid var(--bd2);border-radius:10px;padding:13px;position:relative}
+.pb-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.pb-txt{font-size:.79em;color:var(--muted);line-height:1.6;white-space:pre-wrap;word-break:break-word;padding-right:58px}
+.cp-btn{position:absolute;top:11px;right:11px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 10px;font-size:.7em;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
+.cp-btn:hover{color:var(--white);border-color:var(--accent)}.cp-btn.ok{color:var(--green);border-color:var(--green)}
+.footer{text-align:center;padding:20px;font-size:.8em;color:var(--muted);border-top:1px solid var(--bd)}
+.footer a{color:var(--accent-l);margin:0 7px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="ai-invest-os.html">← AI投资OS</a>
+  <span style="color:var(--bd2)">›</span>
+  <span class="nav-cur">解套分析</span>
+</nav>
+<div class="hero">
+  <div class="badge">决策工具 #2 — 解套</div>
+  <h1>被套了？<em>三条路</em></h1>
+  <p>持有、加仓、还是止损换仓？沉没成本计算器 + 机会成本测算 + 五大门派 + 8大AI「持还是割」。</p>
+</div>
+<div class="wrap">
+  <div class="card">
+    <div class="sl">第一步 — 投资门派</div>
+    <div class="school-row">
+      <button class="sb" id="sb-index" onclick="setSchool('index',this)"><i>📊</i>指数派</button>
+      <button class="sb" id="sb-value" onclick="setSchool('value',this)"><i>🦅</i>价值派</button>
+      <button class="sb" id="sb-growth" onclick="setSchool('growth',this)"><i>🌱</i>成长派</button>
+      <button class="sb" id="sb-trend" onclick="setSchool('trend',this)"><i>📈</i>趋势派</button>
+    </div>
+    <div class="sl">第二步 — 你的持仓情况</div>
+    <div class="input-grid">
+      <div class="fg"><label>买入均价（元）</label><input type="number" id="cost" value="50" step="0.01" min="0.01"></div>
+      <div class="fg"><label>当前价格（元）</label><input type="number" id="price" value="35" step="0.01" min="0.01"></div>
+      <div class="fg"><label>持有股数</label><input type="number" id="shares" value="1000" min="1"></div>
+      <div class="fg"><label>可追加资金（元）</label><input type="number" id="extra" value="10000" min="0"></div>
+    </div>
+    <div class="sunk-q">
+      <p>⚠️ 沉没成本重置提问：如果你手里拿的是等额现金，你今天还会买这只股票吗？</p>
+      <div style="display:flex;gap:10px">
+        <button onclick="setSunk(true,this)" id="sunk-yes" style="flex:1;padding:8px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;color:#34d399;font-size:.84em;font-weight:700;cursor:pointer">✅ 会，基本面没变</button>
+        <button onclick="setSunk(false,this)" id="sunk-no" style="flex:1;padding:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;color:#f87171;font-size:.84em;font-weight:700;cursor:pointer">❌ 不会，只是不甘心</button>
+      </div>
+    </div>
+    <button class="btn-go" onclick="calculate()">开始解套分析 →</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="loss-hero">
+        <div class="lh-val" id="r-loss">—</div>
+        <div class="lh-sub" id="r-loss-sub">—</div>
+      </div>
+      <div class="sl">三条解套路径对比</div>
+      <div class="path-grid" id="path-grid"></div>
+      <div class="opp-cost" id="opp-cost"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">五大门派观点</div>
+      <div class="school5" id="school5-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">8大AI「持？还是割？」</div>
+      <div class="ai-hint">★ 点卡片上的星选出你最信任的AI，下方链接亮起来才有意义</div>
+      <div class="ai-grid" id="ai-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">⚠️ 认知偏差提醒</div>
+      <div class="bias">
+        <div class="bias-l">📌 损失厌恶 (Loss Aversion)</div>
+        <div class="bias-t" id="bias-txt"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sl">继续分析 →</div>
+      <div class="next-tools" id="next-tools"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">一键生成AI分析提示词</div>
+      <div class="pb">
+        <div class="pb-l">复制 · 然后直接向你喜欢的AI提问</div>
+        <div class="pb-txt" id="prompt-txt"></div>
+        <button class="cp-btn" onclick="copyPrompt()">复制</button>
+        <div class="ai-links-label" style="margin-top:12px">★ 给上方AI卡片点星 · 点击下方链接直达</div>
+        <div class="ai-links-row">
+          <a class="ai-lnk active" data-id="claude" href="https://claude.ai/new" target="_blank" rel="noopener">🔵 Claude</a>
+          <a class="ai-lnk active" data-id="chatgpt" href="https://chatgpt.com" target="_blank" rel="noopener">🟢 ChatGPT</a>
+          <a class="ai-lnk" data-id="gemini" href="https://gemini.google.com" target="_blank" rel="noopener">🔴 Gemini</a>
+          <a class="ai-lnk" data-id="grok" href="https://grok.com" target="_blank" rel="noopener">⚡ Grok</a>
+          <a class="ai-lnk" data-id="deepseek" href="https://chat.deepseek.com" target="_blank" rel="noopener">🌊 DeepSeek</a>
+          <a class="ai-lnk" data-id="kimi" href="https://kimi.moonshot.cn" target="_blank" rel="noopener">🌙 Kimi</a>
+          <a class="ai-lnk" data-id="tongyi" href="https://tongyi.aliyun.com" target="_blank" rel="noopener">☁️ 通义</a>
+          <a class="ai-lnk" data-id="doubao" href="https://www.doubao.com" target="_blank" rel="noopener">🫧 豆包</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="ai-invest-os.html">← AI投资OS</a>
+    <a href="dca-simulator-cn.html">定投实验室</a>
+    <a href="kelly-master-cn.html">凯利实验室</a>
+    <a href="pyramid-builder-cn.html">建仓金字塔</a>
+    <a href="portfolio-clarity-cn.html">持仓体检</a>
+  </div>
+</div>
+<script>
+function gp(){try{return JSON.parse(sessionStorage.getItem('ios_profile')||'{}')}catch(e){return{}}}
+function sp(u){sessionStorage.setItem('ios_profile',JSON.stringify({...gp(),...u}))}
+function qp(k){return new URLSearchParams(location.search).get(k)}
+let school=qp('school')||gp().school||'value';
+let sunkAnswer=null;
+const SCHOOLS={index:{icon:'📊',name:'指数派'},value:{icon:'🦅',name:'价值派'},growth:{icon:'🌱',name:'成长派'},trend:{icon:'📈',name:'趋势派'}};
+function setSchool(s,el){school=s;document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');sp({school:s})}
+function setSunk(v,el){sunkAnswer=v;document.getElementById('sunk-yes').style.opacity=v?1:.4;document.getElementById('sunk-no').style.opacity=v?0.4:1;}
+(function(){
+  const btn=document.getElementById('sb-'+school);if(btn)btn.classList.add('on');
+  const prof=gp();const pp=qp('price');const pc=qp('cost');const pex=qp('capital');
+  if(pp)document.getElementById('price').value=pp;
+  else if(prof.lossPrice)document.getElementById('price').value=prof.lossPrice;
+  if(pc)document.getElementById('cost').value=pc;
+  else if(prof.lossCost)document.getElementById('cost').value=prof.lossCost;
+  if(pex)document.getElementById('extra').value=pex;
+})();
+function fmt(n){if(Math.abs(n)>=1e8)return(n/1e8).toFixed(2)+'亿';if(Math.abs(n)>=1e4)return(n/1e4).toFixed(1)+'万';return'¥'+Math.abs(n).toFixed(0)}
+function calculate(){
+  const cost=parseFloat(document.getElementById('cost').value)||50;
+  const price=parseFloat(document.getElementById('price').value)||35;
+  const shares=parseFloat(document.getElementById('shares').value)||1000;
+  const extra=parseFloat(document.getElementById('extra').value)||0;
+  const currVal=price*shares;
+  const invested=cost*shares;
+  const lossAmt=invested-currVal;
+  const lossPct=((cost-price)/cost*100).toFixed(1);
+  sp({school,lossPrice:price,lossCost:cost,kellyCapital:extra});
+
+  document.getElementById('r-loss').textContent=`-${fmt(lossAmt)} (${lossPct}%)`;
+  document.getElementById('r-loss-sub').textContent=`持仓市值：${fmt(currVal)} · 原始投入：${fmt(invested)} · 浮亏：${fmt(lossAmt)}`;
+
+  // Path A: 持有到解套
+  const needReturn=(cost-price)/price*100;
+  const yrs5=price*Math.pow(1.05,Math.ceil(Math.log(cost/price)/Math.log(1.05)));
+  const yrsToBe5=Math.ceil(Math.log(cost/price)/Math.log(1.05));
+  const yrsToBe10=Math.ceil(Math.log(cost/price)/Math.log(1.10));
+
+  // Path B: 逢低加仓
+  const extraShares=extra/price;
+  const totalShares=shares+extraShares;
+  const totalInvest=invested+extra;
+  const newAvg=totalInvest/totalShares;
+  const newNeedPct=(newAvg-price)/price*100;
+
+  // Path C: 止损换仓（转投指数 年化8%对比）
+  const pivotFV5=currVal*Math.pow(1.08,5);
+  const pivotFV10=currVal*Math.pow(1.10,10);
+
+  // 机会成本
+  const oppCost5=currVal*(Math.pow(1.10,5)-1);
+  const oppCost10=currVal*(Math.pow(1.10,10)-1);
+
+  document.getElementById('path-grid').innerHTML=`
+    <div class="path-card">
+      <div class="pc-letter">路径 A — 持有</div>
+      <div class="pc-name">等待解套</div>
+      <div class="pc-item">需要反弹：<strong style="color:var(--gold)">${needReturn.toFixed(1)}%</strong></div>
+      <div class="pc-item">年化5%解套需：<strong>${yrsToBe5}年</strong></div>
+      <div class="pc-item">年化10%解套需：<strong>${yrsToBe10}年</strong></div>
+      <div class="pc-item" style="margin-top:6px;color:${sunkAnswer===false?'var(--red)':'var(--muted)'}">
+        ${sunkAnswer===false?'⚠️ 你说不会再买入了，持有是否只是沉没成本？':'适合：基本面未变，等待价值回归'}</div>
+    </div>
+    <div class="path-card${extra>0?' best':''}">
+      <div class="pc-letter">路径 B — 加仓</div>
+      <div class="pc-name">摊薄成本</div>
+      <div class="pc-item">追加：<strong>¥${extra.toLocaleString()}</strong></div>
+      <div class="pc-item">新均价：<strong style="color:var(--accent-l)">¥${newAvg.toFixed(2)}</strong></div>
+      <div class="pc-item">新解套还需涨：<strong style="color:var(--green)">${newNeedPct.toFixed(1)}%</strong></div>
+      <div class="pc-item" style="margin-top:6px;color:var(--muted)">风险：持仓集中度更高，下跌损失加大</div>
+    </div>
+    <div class="path-card">
+      <div class="pc-letter">路径 C — 止损换仓</div>
+      <div class="pc-name">认亏，转投</div>
+      <div class="pc-item">现值：<strong>¥${currVal.toLocaleString()}</strong>转投指数</div>
+      <div class="pc-item">5年后（年化10%）：<strong style="color:var(--green)">${fmt(pivotFV5)}</strong></div>
+      <div class="pc-item">10年后：<strong style="color:var(--green)">${fmt(pivotFV10)}</strong></div>
+      <div class="pc-item" style="margin-top:6px;color:var(--muted)">核心问题：原股票能否跑赢指数？</div>
+    </div>`;
+
+  document.getElementById('opp-cost').innerHTML=`
+    <div style="font-size:.7em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent-l);margin-bottom:7px">💡 机会成本视角</div>
+    <div style="font-size:.84em;color:var(--white)">你的 <strong>${fmt(currVal)}</strong> 现值，如果转投其他资产：</div>
+    <div style="font-size:.82em;color:var(--muted);margin-top:5px">· 5年后（年化10%）：可增值 <strong style="color:var(--green)">${fmt(oppCost5)}</strong></div>
+    <div style="font-size:.82em;color:var(--muted)">· 10年后（年化10%）：可增值 <strong style="color:var(--green)">${fmt(oppCost10)}</strong></div>
+    <div style="font-size:.79em;color:var(--muted);margin-top:6px">真正的问题不是「何时解套」，而是「继续持有的预期收益是否高于放弃后的最佳替代方案」。</div>`;
+
+  buildSchool5(cost,price,shares,extra,newAvg);
+  buildAiGrid(cost,price,shares,extra,currVal,lossAmt,lossPct,newAvg,yrsToBe5);
+  document.getElementById('bias-txt').textContent=`人类对损失的痛苦是获得同等收益快乐的2-2.5倍（卡尼曼实验）。这意味着你看待被套的账户时，理性已经失效。"不甘心"不是投资逻辑，是情绪。最危险的一句话是"等解套了就卖"——这让你把亏损股当成了人质，用现在的好钱追赔过去的坏钱。`;
+
+  const s=school;
+  document.getElementById('next-tools').innerHTML=`
+    <a class="nt-btn" href="pyramid-builder-cn.html?school=${s}&price=${price}&cost=${cost}&capital=${extra}">
+      <div class="nt-lbl">想逐步加仓？</div>
+      <div class="nt-name">金字塔建仓器</div>
+      <div class="nt-desc">计算多批加仓的均价和风险预算</div>
+    </a>
+    <a class="nt-btn" href="kelly-master-cn.html?school=${s}&capital=${extra}">
+      <div class="nt-lbl">加仓多少合适？</div>
+      <div class="nt-name">凯利仓位计算</div>
+      <div class="nt-desc">用胜率和赔率科学确定追加金额</div>
+    </a>`;
+
+  document.getElementById('prompt-txt').textContent=`我是${SCHOOLS[school].name}投资者，目前被套，需要分析三条路径。
+
+持仓情况：
+- 买入均价：¥${cost}，当前价格：¥${price}，浮亏：${lossPct}%
+- 持有股数：${shares}股，市值：¥${currVal.toLocaleString()}，浮亏金额：¥${lossAmt.toLocaleString()}
+- 可追加资金：¥${extra.toLocaleString()}
+- 我的判断：${sunkAnswer===null?'未填写':(sunkAnswer?'如果手里是现金，我仍然会买入（基本面没变）':'如果手里是现金，我不会再买入（只是不甘心）')}
+
+路径分析：
+- 路径A（持有）：需要反弹${needReturn.toFixed(1)}%，年化10%需${yrsToBe5}年解套
+- 路径B（加仓至¥${extra.toLocaleString()}）：新均价¥${newAvg.toFixed(2)}，需涨${newNeedPct.toFixed(1)}%
+- 路径C（止损换仓）：现值转投，5年后约${fmt(pivotFV5)}
+
+请帮我分析：
+1. 对于${SCHOOLS[school].name}，哪条路径最符合该投资哲学？
+2. 我的"如果手里是现金还会不会买"的判断说明什么？
+3. 我应该关注哪3个指标来决定是否加仓？
+4. 你的明确建议：持、加、还是割？给出理由。`;
+
+  document.getElementById('results').style.display='block';
+  setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function buildSchool5(cost,price,shares,extra,newAvg){
+  const lossPct=(cost-price)/cost*100;
+  const views={
+    index:{verdict:lossPct>30?'⚠️ 考虑止损换指数':'📊 视品种而定',txt:`指数派不持有个股。如果你是因为股票被套来看这个工具，指数派的答案是：止损卖出，转投宽基指数，停止个股赌注。`},
+    value:{verdict:lossPct<30?'✅ 价值买入机会':'⚠️ 需重估基本面',txt:`价值派在低估时买入，而非因为被套才买。关键问题：股票在买入价时是否被低估？现在是否更低估？如果基本面未变，继续持有甚至加仓是价值派正确选择。`},
+    growth:{verdict:'🌱 盈利预期是关键',txt:`成长派关注成长性是否持续。如果营收/利润增速未变，被套是市场情绪而非基本面问题，持有或加仓合理。如果成长预期下调，立即止损。`},
+    trend:{verdict:'📈 趋势向下，不加仓',txt:`趋势派规则清晰：下跌趋势中不逆势加仓。价格跌破买入均价就是止损信号。等待趋势反转确认后重新建仓，而非摊薄成本等解套。`}
+  };
+  let h='';
+  Object.entries(views).forEach(([k,v])=>{
+    const s=SCHOOLS[k];const isActive=k===school;
+    const col=v.verdict.startsWith('✅')?'var(--green)':v.verdict.startsWith('⚠️')?'#fbbf24':'var(--muted)';
+    h+=`<div class="s5c${isActive?' active':''}"><div class="s5c-name">${s.icon} ${s.name}</div><div style="font-size:.66em;font-weight:700;margin-bottom:4px;color:${col}">${v.verdict}</div><div class="s5c-txt">${v.txt}</div></div>`;
+  });
+  document.getElementById('school5-grid').innerHTML=h;
+}
+
+function interpolate(tpl,vars){
+  let s=String(tpl).replace(/\{([^}]+)\}/g,(m,k)=>k in vars?vars[k]:m);
+  return s.replace(/%%/g,'%');
+}
+function buildAiGrid(cost,price,shares,extra,currVal,lossAmt,lossPct,newAvg,yrsToBe5){
+  const vars={
+    COST:fmt(cost),PRICE:fmt(price),
+    LOSS_PCT:Math.abs(lossPct).toFixed(1)+'%',
+    CAPITAL:fmt(currVal),
+    MONTHLY:extra>0?fmt(extra):'¥0'
+  };
+  const ais=[
+    {n:'Claude',i:'🔵',t:'理性框架',schools:{
+      value:{comment:'{LOSS_PCT}的亏损不能告诉你该怎么做——只有公司质量才能。如果基本面变差了，割。如果基本面完好，今天愿意以{PRICE}重新建仓，可以持有或追加{MONTHLY}。',q:'如果你手里拿的是{CAPITAL}现金，你今天会以{PRICE}买入这只股票吗？'},
+      growth:{comment:'{LOSS_PCT}的亏损只问一个问题：增速是否还在加速？如果没有，与其用{MONTHLY}守卫原始决策，不如把{CAPITAL}重新配置。只有在未来盈利能力明显增强时才补仓。',q:'增速放缓时，你还会继续追加吗？'},
+      trend:{comment:'从{COST}跌到{PRICE}是市场的裁决，不是噪音。亏损的仓位是反对假设的证据，直到被证伪为止。严守出口来保住{CAPITAL}。无论确信度多高，绝不在下行趋势中用{MONTHLY}摊低。',q:'为什么要对抗趋势而非顺势而为？'}
+    }},
+    {n:'ChatGPT',i:'🟢',t:'理性仲裁',schools:{
+      value:{comment:'从{COST}跌到{PRICE}的{LOSS_PCT}浮亏与你该怎么做无关。市场不会因为你坚守就给补偿。追加只有一个理由：未来回报值得这笔钱；持有只有一个理由：原始逻辑加强了；当更好的机会比这只股更配得上你的{CAPITAL}时，就割。',q:'如果你现在没有这个仓位，你还会买入吗？'},
+      growth:{comment:'{LOSS_PCT}亏损前先做增速审计。若营收与盈利增长在{PRICE}与{COST}对比下依然完好，逻辑仍成立。若增速已断裂，立刻割仓——在破损的成长股上追加{MONTHLY}是在加速犯错。',q:'你在{COST}建仓以来，增速有没有改善？'},
+      trend:{comment:'价格是唯一诚实的信号。{PRICE}低于{COST}、{LOSS_PCT}亏损，说明趋势对你不利。向趋势不利的仓位追加{MONTHLY}不是纪律——那是自尊心不肯接受市场裁决。先割，后复盘。',q:'如果没有先前的亏损锚定，你会在{PRICE}新建仓位吗？'}
+    }},
+    {n:'Gemini',i:'🔴',t:'量化风控',schools:{
+      value:{comment:'统计上，从{COST}摊低到{PRICE}会加速财富毁灭——超过40%的个股遭受灾难性亏损后永远无法恢复。只有当核心业务真正能复合增长时，追加{MONTHLY}才有意义；否则，你只是在加速销毁{CAPITAL}。',q:'如果你没有持仓，你愿意在{PRICE}把{CAPITAL}全押进来吗？'},
+      growth:{comment:'成长股{LOSS_PCT}跌幅往往是永久性估值倒退的先兆——这是成长类资产的经典肥尾基准失败案例。把{MONTHLY}补进收缩中的{CAPITAL}，若营收增速已决定性放缓，无异于自杀。成长股在核心采用逻辑彻底破裂后很少能真正恢复。',q:'原始高增速逻辑是否已被永久性竞争格局变化或技术落后所颠覆？'},
+      trend:{comment:'把{MONTHLY}扔进从{COST}流血到{PRICE}的资产，是统计意义上的自杀。{CAPITAL}上的{LOSS_PCT}跌幅已经明确触发了趋势跟踪止损线，你却还在考虑摊低。喂亏损仓位只会加速账户归零。割仓，尊重市场的裁决。',q:'为什么向持续显现明确负动量的资产投入新资金？'}
+    }},
+    {n:'Grok',i:'⚡',t:'直言不讳',schools:{
+      value:{comment:'拿{MONTHLY}去摊一个已跌{LOSS_PCT}的仓位——从{COST}跌到{PRICE}——不是纪律，是自尊心不肯认错。利弗莫尔用惨痛教训换来这条铁律：永远不要在亏损仓位上加仓。割。你的{CAPITAL}已经在用真金白银对你投反对票了。',q:'你能带着零情绪、零成本锚定，重新审视这笔投资吗？'},
+      growth:{comment:'从{COST}跌了{LOSS_PCT}，不能靠这个数字本身做决策。检查增速是否还在。如果营收、利润率或单位经济指标仍在加速，跌幅是噪音，持有甚至用{MONTHLY}加仓都对。如果增速断裂，立刻割——价格只是在确认损伤。',q:'增速还在上升吗？还是你只是盯着股价不动？'},
+      trend:{comment:'你已经从{COST}跌了{LOSS_PCT}到{PRICE}，你还在谈要补仓{MONTHLY}？那不是摊低——那是在输家身上平均。价格已经投票了。趋势对你不利时还称之为确信度，是自我欺骗。趋势铁律就这么简单：先停，后问。',q:'你会在{PRICE}无前期亏损的情况下今天新建这个仓位吗？'}
+    }},
+    {n:'DeepSeek',i:'🌊',t:'沉没成本量化',schools:{
+      value:{comment:'你在{COST}建仓所产生的{LOSS_PCT}亏损是无关信息。真正重要的是：在{PRICE}追加{MONTHLY}的预期回报，是否高于其他选择？沉没成本谬误诱使你摊低均价，但数学告诉你：止损并重配才能最大化终值。',q:'如果你今天没有这个仓位，还会在{PRICE}买入吗？'},
+      growth:{comment:'成长股的{LOSS_PCT}跌幅往往反映逻辑已断。在{PRICE}追加{MONTHLY}放大了对负偏斜的敞口。若原始增速轨迹已失败，预期收益大概率为负。割掉亏损仓位，重新配置。',q:'这只成长股从{PRICE}再跌50%的概率是多少？'},
+      trend:{comment:'趋势系统从不摊低均价。{CAPITAL}上的{LOSS_PCT}亏损在{COST}买入时就是退出信号。追加{MONTHLY}违反了核心铁律：斩断亏损。把资金重配到正动量资产才能最大化预期值，而非刀口舔血。',q:'这笔{LOSS_PCT}的亏损仓位为什么还没触发趋势规则要求的早期止损？'}
+    }},
+    {n:'Kimi',i:'🌙',t:'A股锤',schools:{
+      value:{comment:'A股退市常态化。{LOSS_PCT}只是开始，{MONTHLY}补仓等于给退市股送钱。{COST}到{PRICE}无底，只有退市公告。摊低成本是陷阱，你的{CAPITAL}在注册制坟场燃烧。',q:'你是在给退市股陪葬吗？'},
+      growth:{comment:'A股{LOSS_PCT}说明成长逻辑可能已断。{COST}是沉没成本，{MONTHLY}该留着找新标的，{CAPITAL}不要加仓。',q:'成长逻辑断了吗？'},
+      trend:{comment:'A股{PRICE}低于{COST}就是趋势走坏。趋势派绝不补仓，{LOSS_PCT}死扛会让{CAPITAL}腰斩，{MONTHLY}留着等新趋势。',q:'趋势反转了吗？'}
+    }},
+    {n:'通义',i:'☁️',t:'风控',schools:{
+      value:{comment:'基本面恶化或高位反转时，止损是最优解。越跌越加需严守金字塔分批铁律。散户常犯死扛错股与无计划满仓补仓的致命错误。',q:'当前亏损是基本面恶化吗？'},
+      growth:{comment:'若{PRICE}下跌反映成长逻辑断裂，用{MONTHLY}补仓将扩大损失。季报确认增速未降才可加码，否则应止损。',q:'季报显示增速下滑了吗？'},
+      trend:{comment:'{PRICE}低于{COST}时加仓，若趋势未反转，{CAPITAL}可能归零。必须等突破信号再动用{MONTHLY}，严守止损。',q:'趋势反转信号出现了吗？'}
+    }},
+    {n:'豆包',i:'🫧',t:'心理师',schools:{
+      value:{comment:'沉没成本谬误叠加损失厌恶，让你死盯{COST}成本价不肯止损，哪怕{PRICE}走弱、{LOSS_PCT}扩大，也侥幸加仓摊薄，任由{CAPITAL}持续缩水，最终小亏拖成深度套牢。',q:'你敢承认判断错误果断止损吗？'},
+      growth:{comment:'你坚信成长故事不肯接受{PRICE}下跌现实，季报利空也不愿离场，{LOSS_PCT}持续扩大，还想用{MONTHLY}加仓摊薄。',q:'利空出来你肯果断离场吗？'},
+      trend:{comment:'趋势破位后损失厌恶让你不肯止损，硬扛到{LOSS_PCT}深度套牢，连亏后过度谨慎，连{MONTHLY}纠错资金都不敢动用。',q:'破位时你能严格执行止损吗？'}
+    }},
+  ];
+  document.getElementById('ai-grid').innerHTML=ais.map(a=>{
+    const sd=a.schools[school]||a.schools.value;
+    const c=interpolate(sd.comment,vars);
+    const q=interpolate(sd.q,vars);
+    const id=N2ID[a.n]||a.n.toLowerCase();
+    return `<div class="ai-c"><button class="ai-star${selAIs.has(id)?' starred':''}" data-id="${id}" onclick="toggleAI('${id}')" title="标记为我的AI">★</button><div class="ai-head"><div class="ai-n">${a.i} ${a.n}</div><div class="ai-t">${a.t}</div></div><div style="flex:1;min-width:0"><div class="ai-txt">${c}</div><div class="ai-q">❓ ${q}</div></div></div>`;
+  }).join('');
+}
+
+const selAIs=new Set(['claude','chatgpt']);
+const N2ID={Claude:'claude',ChatGPT:'chatgpt',Gemini:'gemini',Grok:'grok',DeepSeek:'deepseek',Kimi:'kimi',Tongyi:'tongyi',Doubao:'doubao','通义':'tongyi','豆包':'doubao'};
+function toggleAI(id){
+  selAIs.has(id)?selAIs.delete(id):selAIs.add(id);
+  document.querySelectorAll('.ai-star').forEach(b=>b.classList.toggle('starred',selAIs.has(b.dataset.id)));
+  document.querySelectorAll('.ai-lnk').forEach(b=>b.classList.toggle('active',selAIs.has(b.dataset.id)));
+}
+function copyPrompt(){
+  navigator.clipboard.writeText(document.getElementById('prompt-txt').textContent).then(()=>{
+    const b=document.querySelector('.cp-btn');b.textContent='✓ 已复制';b.classList.add('ok');
+    setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},2000);
+  });
+}
+</script>
+</body>
+</html>

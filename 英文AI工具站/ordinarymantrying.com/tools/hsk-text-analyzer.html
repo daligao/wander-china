@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HSK Text Analyzer — Chinese Reading Level Checker | Free Tool</title>
+<meta name="description" content="Paste any Chinese text to instantly see which words are HSK 1–6 and which are beyond. Color-coded by level, click any word for pinyin and English meaning. Free, no login.">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/hsk-text-analyzer.html">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How do I check the HSK level of a Chinese text?","acceptedAnswer":{"@type":"Answer","text":"Paste the text into this free HSK Text Analyzer. Every word is instantly color-coded by HSK level (1–6). Words beyond HSK 6 appear in grey as unknown. You also get a cumulative comprehension percentage for each HSK level."}},
+{"@type":"Question","name":"What is HSK?","acceptedAnswer":{"@type":"Answer","text":"HSK (汉语水平考试) is China's standardized Mandarin proficiency test. HSK 1 covers ~150 basic words; HSK 6 covers ~5,000 words and represents advanced fluency. Passing HSK 6 is typically required for working or studying in Chinese."}},
+{"@type":"Question","name":"What comprehension percentage do I need to read comfortably?","acceptedAnswer":{"@type":"Answer","text":"Research on reading comprehension suggests 95%+ known words for comfortable independent reading, 90% for reading with occasional dictionary use, and below 80% requires constant look-up and is considered an intensive reading situation."}},
+{"@type":"Question","name":"Why are some characters not colored?","acceptedAnswer":{"@type":"Answer","text":"Words not on the HSK 1–6 vocabulary list appear in grey. They may be proper nouns, domain-specific terms, informal slang, classical Chinese expressions, or new words coined after the HSK lists were published."}},
+{"@type":"Question","name":"Is this tool free?","acceptedAnswer":{"@type":"Answer","text":"Yes. Completely free, no login, no data sent anywhere. Works in any browser and runs entirely offline after the first load."}}
+]}
+</script>
+<style>
+:root{
+  --bg:#0d1117;--surf:#161b22;--surf2:#1c2128;--border:#30363d;--text:#e6edf3;--muted:#8b949e;
+  --h1:#79c0ff;--h2:#56d364;--h3:#e3b341;--h4:#ffa657;--h5:#f78166;--h6:#ff7b72;
+  --acc:#58a6ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+.wrap{max-width:920px;margin:0 auto;padding:20px 16px 60px}
+
+.hdr{text-align:center;padding:28px 0 18px}
+.hdr h1{font-size:clamp(1.4rem,4.5vw,2.1rem);font-weight:800;letter-spacing:-.03em;margin-bottom:10px}
+.hdr h1 span{color:var(--acc)}
+.hdr p{color:var(--muted);font-size:.92rem;line-height:1.65;max-width:560px;margin:0 auto}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:18px 0 14px}
+.leg{padding:4px 13px;border-radius:20px;font-size:.78rem;font-weight:700;border:2px solid transparent;cursor:default;user-select:none}
+.leg-1{background:rgba(121,192,255,.15);color:var(--h1);border-color:rgba(121,192,255,.3)}
+.leg-2{background:rgba(86,211,100,.12);color:var(--h2);border-color:rgba(86,211,100,.25)}
+.leg-3{background:rgba(227,179,65,.12);color:var(--h3);border-color:rgba(227,179,65,.25)}
+.leg-4{background:rgba(255,166,87,.12);color:var(--h4);border-color:rgba(255,166,87,.25)}
+.leg-5{background:rgba(247,129,102,.12);color:var(--h5);border-color:rgba(247,129,102,.25)}
+.leg-6{background:rgba(255,123,114,.12);color:var(--h6);border-color:rgba(255,123,114,.25)}
+.leg-unk{background:rgba(139,148,158,.1);color:var(--muted);border-color:rgba(139,148,158,.2)}
+
+/* Sample buttons */
+.samples{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.sample-lbl{font-size:.75rem;color:var(--muted);font-weight:600;margin-right:4px;align-self:center}
+.sbtn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:.78rem;transition:.15s}
+.sbtn:hover{border-color:var(--acc);color:var(--acc)}
+
+/* Input */
+.input-box{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:16px;margin:0 0 14px}
+textarea{width:100%;background:transparent;border:none;color:var(--text);font-size:1.05rem;line-height:1.8;resize:vertical;min-height:130px;outline:none;font-family:inherit}
+textarea::placeholder{color:var(--muted)}
+.input-footer{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.btn{padding:8px 20px;border-radius:8px;border:none;cursor:pointer;font-size:.88rem;font-weight:700;transition:.15s}
+.btn-main{background:var(--acc);color:#000}
+.btn-main:hover{opacity:.88}
+.btn-sec{background:transparent;border:1px solid var(--border);color:var(--muted);padding:7px 14px}
+.btn-sec:hover{border-color:var(--muted);color:var(--text)}
+.char-count{font-size:.78rem;color:var(--muted);margin-left:auto}
+
+/* Stats */
+.stats-box{display:none;background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px}
+.stats-box.show{display:block}
+.stats-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.stats-title{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.export-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:.75rem;transition:.15s}
+.export-btn:hover{border-color:var(--acc);color:var(--acc)}
+.stat-rows{display:flex;flex-direction:column;gap:9px}
+.stat-row{display:grid;grid-template-columns:58px 1fr 48px 64px;gap:8px;align-items:center;font-size:.82rem}
+.stat-lbl{font-weight:700}
+.bar-track{height:9px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden}
+.bar-fill{height:100%;border-radius:5px;transition:width .7s cubic-bezier(.25,.46,.45,.94)}
+.stat-pct{text-align:right;font-weight:700}
+.stat-n{color:var(--muted);font-size:.74rem}
+.summary{margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:.87rem;color:var(--muted);line-height:1.65}
+.summary strong{color:var(--text)}
+
+/* Advice box */
+.advice{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:.82rem;line-height:1.55;display:none}
+.advice.show{display:block}
+.advice-easy{background:rgba(86,211,100,.08);border:1px solid rgba(86,211,100,.2);color:#56d364}
+.advice-mid{background:rgba(227,179,65,.08);border:1px solid rgba(227,179,65,.2);color:#e3b341}
+.advice-hard{background:rgba(255,123,114,.08);border:1px solid rgba(255,123,114,.2);color:#ff7b72}
+
+/* Output */
+.output-box{display:none;background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:14px}
+.output-box.show{display:block}
+.output-text{line-height:2.4;font-size:1.05rem;word-break:break-all}
+.w{border-radius:3px;padding:1px 1px;cursor:pointer;transition:filter .1s}
+.w:hover{filter:brightness(1.35);text-decoration:underline}
+.w1{background:rgba(121,192,255,.18);color:var(--h1)}
+.w2{background:rgba(86,211,100,.15);color:var(--h2)}
+.w3{background:rgba(227,179,65,.15);color:var(--h3)}
+.w4{background:rgba(255,166,87,.15);color:var(--h4)}
+.w5{background:rgba(247,129,102,.15);color:var(--h5)}
+.w6{background:rgba(255,123,114,.15);color:var(--h6)}
+.wu{color:var(--muted)}
+.wp{color:var(--muted)}
+
+/* Unknown panel */
+.unk-box{display:none;background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+.unk-box.show{display:block}
+.unk-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.unk-title{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.unk-chips{display:flex;flex-wrap:wrap;gap:6px}
+.unk-chip{background:rgba(139,148,158,.1);border:1px solid rgba(139,148,158,.25);border-radius:6px;padding:4px 10px;font-size:.88rem;cursor:pointer;transition:.12s}
+.unk-chip:hover{border-color:var(--muted);color:var(--text)}
+.unk-sub{font-size:.74rem;color:var(--muted);margin-top:8px}
+
+/* Popup */
+.popup{position:fixed;background:#21262d;border:1px solid #444c56;border-radius:10px;padding:13px 16px;font-size:.85rem;z-index:999;opacity:0;pointer-events:none;transition:opacity .12s;max-width:250px;box-shadow:0 8px 28px rgba(0,0,0,.5)}
+.popup.show{opacity:1}
+.pop-hanzi{font-size:1.6rem;font-weight:700;margin-bottom:3px}
+.pop-py{color:var(--muted);font-size:.82rem;margin-bottom:5px}
+.pop-badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.7rem;font-weight:700;margin-bottom:7px}
+.pop-def{color:#c9d1d9;font-size:.83rem;line-height:1.55}
+
+/* SEO section */
+.seo{margin:32px 0 16px;padding:22px;background:var(--surf);border:1px solid var(--border);border-radius:12px}
+.seo h2{font-size:1.05rem;font-weight:700;margin-bottom:10px}
+.seo p{color:var(--muted);line-height:1.65;font-size:.86rem;margin-bottom:12px}
+.hsk-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-bottom:14px}
+.hsk-table th{text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
+.hsk-table td{padding:7px 10px;border-bottom:1px solid rgba(48,54,61,.5)}
+.hsk-table tr:last-child td{border:none}
+.faq{list-style:none;margin-top:14px}
+.fi{border-top:1px solid var(--border);padding:10px 0}
+.fq{font-weight:600;margin-bottom:4px;font-size:.86rem}
+.fa{color:var(--muted);font-size:.81rem;line-height:1.55}
+.nxt{display:block;text-align:center;color:var(--muted);font-size:.82rem;margin:10px 0 3px;text-decoration:none}
+.nxt:hover{color:var(--text)}
+.kofi-block{text-align:center;margin:28px 0 18px;padding:18px;background:var(--surf);border:1px solid var(--border);border-radius:12px}
+.kofi-msg{color:var(--muted);font-size:.83rem;margin-bottom:12px}
+.kofi-btn{display:inline-flex;align-items:center;padding:9px 22px;background:#ff5e5b;color:#fff;border-radius:8px;text-decoration:none;font-size:.88rem;font-weight:700;transition:opacity .15s}
+.kofi-btn:hover{opacity:.85}
+
+@media(max-width:520px){
+  .stat-row{grid-template-columns:48px 1fr 40px 52px;font-size:.78rem}
+}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hdr">
+  <h1>HSK Text <span>Analyzer</span></h1>
+  <p>Paste any Chinese text. Every word is instantly color-coded by HSK level. See exactly what you know — and what's beyond your level.</p>
+</div>
+
+<div class="legend">
+  <span class="leg leg-1">HSK 1 · 150 words</span>
+  <span class="leg leg-2">HSK 2 · +150 words</span>
+  <span class="leg leg-3">HSK 3 · +300 words</span>
+  <span class="leg leg-4">HSK 4 · +600 words</span>
+  <span class="leg leg-5">HSK 5 · +1,300 words</span>
+  <span class="leg leg-6">HSK 6 · +2,500 words</span>
+  <span class="leg leg-unk">Beyond HSK 6</span>
+</div>
+
+<!-- Sample texts -->
+<div class="samples">
+  <span class="sample-lbl">Load sample:</span>
+  <button class="sbtn" onclick="loadSample(1)">HSK 2 Story</button>
+  <button class="sbtn" onclick="loadSample(2)">HSK 3–4 Article</button>
+  <button class="sbtn" onclick="loadSample(3)">HSK 5 News</button>
+  <button class="sbtn" onclick="loadSample(4)">HSK 6 Essay</button>
+</div>
+
+<!-- Input -->
+<div class="input-box">
+  <textarea id="txt" placeholder="把中文文字粘贴到这里… Paste Chinese text here"></textarea>
+  <div class="input-footer">
+    <button class="btn btn-main" onclick="analyze()">Analyze 分析 →</button>
+    <button class="btn btn-sec" onclick="clearAll()">Clear</button>
+    <span class="char-count" id="cc">0 characters</span>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-box" id="stats-box">
+  <div class="stats-head">
+    <span class="stats-title">Comprehension by HSK Level</span>
+    <button class="export-btn" onclick="exportUnknown()">Export unknown words ↓</button>
+  </div>
+  <div class="stat-rows" id="stat-rows"></div>
+  <div class="summary" id="summary"></div>
+  <div class="advice" id="advice"></div>
+</div>
+
+<!-- Annotated text -->
+<div class="output-box" id="output-box">
+  <div class="output-text" id="output-text"></div>
+</div>
+
+<!-- Unknown words -->
+<div class="unk-box" id="unk-box">
+  <div class="unk-head">
+    <span class="unk-title">Words Beyond HSK 6 — 超纲词汇</span>
+    <button class="export-btn" onclick="copyUnknown()">Copy list</button>
+  </div>
+  <div class="unk-chips" id="unk-chips"></div>
+  <div class="unk-sub" id="unk-sub"></div>
+</div>
+
+<!-- Popup -->
+<div class="popup" id="popup">
+  <div class="pop-hanzi" id="pop-hanzi"></div>
+  <div class="pop-py" id="pop-py"></div>
+  <div class="pop-badge" id="pop-badge"></div>
+  <div class="pop-def" id="pop-def"></div>
+</div>
+
+<!-- SEO content -->
+<div class="seo">
+  <h2>HSK Level Reference — 汉语水平考试词汇表</h2>
+  <p>The HSK (汉语水平考试) is China's official Mandarin proficiency test. Each level builds on the previous, and knowing which level a text targets helps you choose appropriate reading material.</p>
+  <table class="hsk-table">
+    <tr><th>Level</th><th>Total Words</th><th>Equivalent</th><th>Typical texts</th></tr>
+    <tr><td style="color:var(--h1)">HSK 1</td><td>150</td><td>Complete beginner</td><td>Children's picture books, basic menus</td></tr>
+    <tr><td style="color:var(--h2)">HSK 2</td><td>300</td><td>Elementary</td><td>Simple dialogues, tourist phrasebooks</td></tr>
+    <tr><td style="color:var(--h3)">HSK 3</td><td>600</td><td>Pre-intermediate</td><td>Short news items, simple emails</td></tr>
+    <tr><td style="color:var(--h4)">HSK 4</td><td>1,200</td><td>Intermediate</td><td>WeChat articles, textbook passages</td></tr>
+    <tr><td style="color:var(--h5)">HSK 5</td><td>2,500</td><td>Upper-intermediate</td><td>Mainstream news, novels, films</td></tr>
+    <tr><td style="color:var(--h6)">HSK 6</td><td>5,000</td><td>Advanced / C1</td><td>Academic papers, editorials, classic literature</td></tr>
+  </table>
+  <p><strong>How to use your comprehension score:</strong> 95%+ = comfortable reading. 90–95% = occasional dictionary needed. 80–90% = intensive reading. Below 80% = challenging even with a dictionary.</p>
+  <ul class="faq">
+    <li class="fi"><div class="fq">Why are some words highlighted but others not?</div><div class="fa">The tool uses a ~4,500-word dictionary built from the official HSK 2.0 wordlist. Single Chinese characters as well as multi-character words are checked. Proper nouns, regional dialects, and words added after 2020 may not appear in the database.</div></li>
+    <li class="fi"><div class="fq">What should I read at my current HSK level?</div><div class="fa">HSK 2 learners: graded readers and simple news on VOA Slow Chinese. HSK 3–4: The Chairman's Bao (graded news). HSK 5: standard Chinese news sites (人民日报, 新华社). HSK 6+: academic journals, contemporary novels, official documents.</div></li>
+    <li class="fi"><div class="fq">Why doesn't this tool play audio?</div><div class="fa">Hover over (or click) any colored word to see its pinyin romanization and English meaning. Audio is planned for a future update.</div></li>
+    <li class="fi"><div class="fq">Does this support Traditional Chinese?</div><div class="fa">The word database uses Simplified Chinese. Traditional Chinese characters will mostly appear as "unknown" (grey). A Traditional Chinese version is planned.</div></li>
+  </ul>
+</div>
+
+<div class="kofi-block">
+  <p class="kofi-msg">This tool is free, offline, and always will be. If it helped you study, a coffee keeps it going.</p>
+  <a class="kofi-btn" href="https://ko-fi.com/vantuanle43758" target="_blank" rel="noopener">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:6px"><path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z"/></svg>
+    Support on Ko-fi
+  </a>
+</div>
+
+<a class="nxt" href="mandarin-flashcards.html">🃏 Mandarin Flashcards — HSK 1–3 (400 words, spaced repetition)</a>
+<a class="nxt" href="chinese-antonyms.html">🀄 Chinese Antonyms Game — 380 opposite-word pairs (反义词连连看)</a>
+<a class="nxt" href="chinese-measure-words.html">🧺 Chinese Measure Words Game — 量词分类, 8 levels</a>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   HSK DICTIONARY  (HSK 2.0)
+   Format: { word: [level, pinyin, english] }
+   ~4,500 entries covering HSK 1–6
+   ══════════════════════════════════════════════════════════════ */
+const D = {};
+function a(lv,arr){arr.forEach(([w,p,e])=>{if(!D[w])D[w]=[lv,p,e];})}
+
+// ─── HSK 1 ───────────────────────────────────────────────────
+a(1,[
+["爱","ài","love"],["八","bā","eight"],["爸爸","bàba","dad"],["杯子","bēizi","cup"],
+["北京","Běijīng","Beijing"],["本","běn","MW:books"],["不","bù","not"],
+["不客气","bùkèqi","you're welcome"],["菜","cài","dish/food"],["茶","chá","tea"],
+["吃","chī","eat"],["出租车","chūzūchē","taxi"],["打电话","dǎ diànhuà","make a call"],
+["大","dà","big"],["的","de","particle(possessive)"],["地铁","dìtiě","subway"],
+["弟弟","dìdi","younger brother"],["点","diǎn","o'clock/point"],
+["电脑","diànnǎo","computer"],["电视","diànshì","TV"],["电影","diànyǐng","movie"],
+["东西","dōngxi","thing"],["都","dōu","all/both"],["读","dú","read"],
+["对不起","duìbuqǐ","sorry"],["多","duō","many/much"],["多少","duōshao","how many"],
+["儿子","érzi","son"],["二","èr","two"],["饭店","fàndiàn","restaurant/hotel"],
+["飞机","fēijī","airplane"],["分钟","fēnzhōng","minute"],["高兴","gāoxìng","happy"],
+["个","gè","MW:general"],["工作","gōngzuò","work"],["狗","gǒu","dog"],
+["汉语","Hànyǔ","Chinese language"],["好","hǎo","good"],["好吃","hǎochī","tasty"],
+["号","hào","number/date"],["喝","hē","drink"],["和","hé","and"],["很","hěn","very"],
+["后面","hòumiàn","behind"],["回","huí","return"],["会","huì","can/will"],
+["机场","jīchǎng","airport"],["鸡蛋","jīdàn","egg"],["几","jǐ","how many/several"],
+["家","jiā","home/family"],["叫","jiào","be called"],["今天","jīntiān","today"],
+["九","jiǔ","nine"],["开","kāi","open/drive"],["看","kàn","look/watch"],
+["看见","kànjiàn","see"],["块","kuài","yuan/piece/MW"],["来","lái","come"],
+["老师","lǎoshī","teacher"],["了","le","particle(completion)"],["冷","lěng","cold"],
+["里","lǐ","inside"],["六","liù","six"],["妈妈","māma","mom"],
+["买","mǎi","buy"],["猫","māo","cat"],["没","méi","not have"],
+["没关系","méiguānxi","never mind"],["米饭","mǐfàn","cooked rice"],
+["名字","míngzi","name"],["明天","míngtiān","tomorrow"],["哪","nǎ","which"],
+["哪儿","nǎr","where"],["那","nà","that"],["呢","ne","particle(question)"],
+["能","néng","can/able"],["你","nǐ","you"],["你好","nǐhǎo","hello"],
+["年","nián","year"],["女儿","nǚér","daughter"],["朋友","péngyou","friend"],
+["漂亮","piàoliang","pretty"],["苹果","píngguǒ","apple"],["七","qī","seven"],
+["前面","qiánmiàn","in front"],["钱","qián","money"],["请","qǐng","please/invite"],
+["去","qù","go"],["热","rè","hot"],["人","rén","person"],
+["认识","rènshi","know(person)"],["日","rì","day/sun"],["三","sān","three"],
+["商店","shāngdiàn","shop"],["上","shàng","on/up"],["上午","shàngwǔ","morning"],
+["少","shǎo","few/less"],["谁","shéi","who"],["什么","shénme","what"],
+["生日","shēngrì","birthday"],["时候","shíhou","time/moment"],["是","shì","is/be"],
+["书","shū","book"],["水","shuǐ","water"],["水果","shuǐguǒ","fruit"],
+["睡觉","shuìjiào","sleep"],["说","shuō","speak"],["四","sì","four"],
+["岁","suì","years old"],["他","tā","he"],["她","tā","she"],["太","tài","too"],
+["天气","tiānqì","weather"],["听","tīng","listen"],["同学","tóngxué","classmate"],
+["喂","wèi","hello(phone)"],["我","wǒ","I/me"],["我们","wǒmen","we/us"],
+["五","wǔ","five"],["下","xià","below/next"],["下午","xiàwǔ","afternoon"],
+["下雨","xià yǔ","rain"],["先生","xiānsheng","Mr./husband"],
+["现在","xiànzài","now"],["想","xiǎng","want/think"],["小","xiǎo","small"],
+["小姐","xiǎojiě","Miss"],["些","xiē","some"],["写","xiě","write"],
+["谢谢","xièxie","thank you"],["星期","xīngqī","week"],["学生","xuésheng","student"],
+["学习","xuéxí","study"],["学校","xuéxiào","school"],["一","yī","one"],
+["医生","yīshēng","doctor"],["医院","yīyuàn","hospital"],["椅子","yǐzi","chair"],
+["有","yǒu","have"],["月","yuè","month"],["在","zài","at/in"],
+["再见","zàijiàn","goodbye"],["怎么","zěnme","how"],["怎么样","zěnmeyàng","how about"],
+["这","zhè","this"],["中国","Zhōngguó","China"],["中午","zhōngwǔ","noon"],
+["住","zhù","live/stay"],["桌子","zhuōzi","table"],["字","zì","character"],
+["昨天","zuótiān","yesterday"],["坐","zuò","sit/take(transport)"],["做","zuò","do/make"]
+]);
+
+// ─── HSK 2 ───────────────────────────────────────────────────
+a(2,[
+["吧","ba","particle(suggestion)"],["白","bái","white"],["百","bǎi","hundred"],
+["帮助","bāngzhù","help"],["报纸","bàozhǐ","newspaper"],["比","bǐ","compare"],
+["别","bié","don't/other"],["宾馆","bīnguǎn","hotel"],["长","cháng","long"],
+["唱歌","chàng gē","sing"],["出","chū","exit/out"],["穿","chuān","wear"],
+["次","cì","time(occurrence)"],["从","cóng","from"],["错","cuò","wrong"],
+["打","dǎ","hit/play"],["大家","dàjiā","everyone"],["到","dào","arrive/to"],
+["得","de","particle(manner)"],["等","děng","wait"],["弟","dì","younger brother"],
+["懂","dǒng","understand"],["对","duì","correct/toward"],["房间","fángjiān","room"],
+["非常","fēicháng","extremely"],["服务员","fúwùyuán","waiter"],["高","gāo","tall"],
+["告诉","gàosu","tell"],["哥哥","gēge","older brother"],["给","gěi","give/for"],
+["公共汽车","gōnggòng qìchē","bus"],["公司","gōngsī","company"],
+["贵","guì","expensive"],["过","guò","pass/experience"],["还","hái","still/also"],
+["害怕","hàipà","afraid"],["黑","hēi","black"],["红","hóng","red"],
+["护照","hùzhào","passport"],["花","huā","flower/spend"],["欢迎","huānyíng","welcome"],
+["还是","háishi","or(question)/still"],["回答","huídá","answer"],
+["姐姐","jiějie","older sister"],["介绍","jièshào","introduce"],
+["进","jìn","enter"],["近","jìn","near"],["就","jiù","then/just"],
+["觉得","juéde","feel/think"],["开始","kāishǐ","begin"],["考试","kǎoshì","exam"],
+["可以","kěyǐ","can/may"],["快","kuài","fast"],["快乐","kuàilè","happy"],
+["累","lèi","tired"],["离","lí","away from"],["两","liǎng","two(MW)"],
+["路","lù","road"],["旅游","lǚyóu","travel"],["卖","mài","sell"],
+["忙","máng","busy"],["每","měi","every"],["妹妹","mèimei","younger sister"],
+["门","mén","door"],["男","nán","male"],["南","nán","south"],
+["难","nán","difficult"],["您","nín","you(respectful)"],
+["旁边","pángbiān","beside"],["跑步","pǎobù","run"],["票","piào","ticket"],
+["妻子","qīzi","wife"],["起床","qǐchuáng","get up"],["铅笔","qiānbǐ","pencil"],
+["骑","qí","ride"],["千","qiān","thousand"],["清楚","qīngchǔ","clear"],
+["去年","qùnián","last year"],["让","ràng","let/allow"],["如果","rúguǒ","if"],
+["上班","shàngbān","go to work"],["身体","shēntǐ","body/health"],
+["生病","shēng bìng","be sick"],["时间","shíjiān","time"],
+["事情","shìqing","matter/thing"],["手表","shǒubiǎo","watch"],
+["手机","shǒujī","mobile phone"],["送","sòng","send/give(gift)"],
+["虽然","suīrán","although"],["所以","suǒyǐ","so/therefore"],
+["题","tí","question/topic"],["跳舞","tiàowǔ","dance"],["外","wài","outside"],
+["完","wán","finish"],["玩","wán","play"],["晚上","wǎnshang","evening"],
+["往","wǎng","toward"],["为什么","wèishénme","why"],["问","wèn","ask"],
+["问题","wèntí","question/problem"],["西","xī","west"],["洗","xǐ","wash"],
+["喜欢","xǐhuān","like"],["小时","xiǎoshí","hour"],["笑","xiào","laugh/smile"],
+["新","xīn","new"],["姓","xìng","surname"],["休息","xiūxi","rest"],
+["雪","xuě","snow"],["颜色","yánsè","color"],["眼睛","yǎnjing","eyes"],
+["羊肉","yángròu","lamb"],["药","yào","medicine"],["要","yào","want/need"],
+["也","yě","also"],["一起","yīqǐ","together"],["已经","yǐjīng","already"],
+["阴","yīn","cloudy"],["因为","yīnwèi","because"],["游泳","yóuyǒng","swim"],
+["右边","yòubiān","right side"],["鱼","yú","fish"],["远","yuǎn","far"],
+["运动","yùndòng","sport/exercise"],["再","zài","again"],
+["早上","zǎoshang","morning"],["丈夫","zhàngfu","husband"],
+["找","zhǎo","look for"],["着","zhe","particle(ongoing)"],["只","zhǐ","only/MW:animals"],
+["中间","zhōngjiān","middle"],["重要","zhòngyào","important"],
+["自行车","zìxíngchē","bicycle"],["走","zǒu","walk/go"],
+["最","zuì","most"],["左边","zuǒbiān","left side"]
+]);
+
+// ─── HSK 3 ───────────────────────────────────────────────────
+a(3,[
+["阿姨","āyí","aunt/auntie"],["啊","a","particle(exclaim)"],["矮","ǎi","short(height)"],
+["爱好","àihào","hobby"],["安静","ānjìng","quiet"],["把","bǎ","BA-construction/handle"],
+["搬","bān","move(object/home)"],["办法","bànfǎ","method/way"],
+["办公室","bàngōngshì","office"],["半","bàn","half"],["帮","bāng","help"],
+["包","bāo","bag/wrap"],["饱","bǎo","full(after eating)"],["北","běi","north"],
+["被","bèi","passive marker"],["鼻子","bízi","nose"],["必须","bìxū","must"],
+["变化","biànhuà","change"],["表示","biǎoshì","express/indicate"],
+["别人","biérén","others"],["冰箱","bīngxiāng","fridge"],
+["不但","búdàn","not only"],["不过","búguò","but/however"],
+["才","cái","only then/just"],["参加","cānjia","participate"],
+["草","cǎo","grass"],["层","céng","floor/layer"],
+["差","chà","differ/bad quality"],["超市","chāoshì","supermarket"],
+["成绩","chéngjì","grade/result"],["城市","chéngshì","city"],
+["迟到","chídào","be late"],["除了","chúle","besides/except"],
+["春","chūn","spring(season)"],["词典","cídiǎn","dictionary"],
+["从来","cónglái","always/never(with neg)"],["打扫","dǎsǎo","clean/sweep"],
+["打算","dǎsuàn","plan to"],["带","dài","bring/wear/take"],
+["当然","dāngrán","of course"],["刀","dāo","knife"],
+["地方","dìfāng","place/area"],["地图","dìtú","map"],["冬","dōng","winter"],
+["动物","dòngwù","animal"],["短","duǎn","short(length)"],
+["锻炼","duànliàn","exercise/train"],["饿","è","hungry"],
+["耳朵","ěrduo","ear"],["发现","fāxiàn","discover/find"],
+["方便","fāngbiàn","convenient"],["放","fàng","put/place/release"],
+["放心","fàng xīn","set mind at ease"],["分","fēn","cent/minute/divide"],
+["复习","fùxí","review(study)"],["附近","fùjìn","nearby"],
+["改变","gǎibiàn","change"],["感冒","gǎnmào","cold(illness)"],
+["感谢","gǎnxiè","grateful/thank"],["刚才","gāngcái","just now"],
+["跟","gēn","with/follow"],["根据","gēnjù","according to"],
+["公斤","gōngjīn","kilogram"],["公里","gōnglǐ","kilometer"],
+["故事","gùshi","story"],["刮风","guā fēng","windy"],
+["关","guān","close/turn off"],["关心","guānxīn","care about"],
+["国","guó","country"],["过去","guòqù","past/go over"],
+["黑板","hēibǎn","blackboard"],["后来","hòulái","later on/afterwards"],
+["护士","hùshi","nurse"],["画","huà","draw/painting"],
+["坏","huài","bad/broken"],["环境","huánjìng","environment"],
+["换","huàn","exchange/change"],["黄","huáng","yellow"],
+["或者","huòzhě","or(statement)"],["几乎","jīhū","almost/nearly"],
+["机会","jīhuì","opportunity"],["计划","jìhuà","plan"],
+["季节","jìjié","season"],["加","jiā","add/join"],
+["检查","jiǎnchá","check/examine"],["健康","jiànkāng","healthy/health"],
+["件","jiàn","MW:matters/clothing"],["教","jiāo","teach"],
+["脚","jiǎo","foot"],["接","jiē","receive/pick up/connect"],
+["结婚","jié hūn","marry"],["节目","jiémù","program/show"],
+["节日","jiérì","holiday/festival"],["借","jiè","borrow/lend"],
+["经常","jīngcháng","often"],["经过","jīngguò","pass by/go through"],
+["景色","jǐngsè","scenery"],["久","jiǔ","long time"],
+["句子","jùzi","sentence"],["决定","juédìng","decide"],
+["渴","kě","thirsty"],["可能","kěnéng","possible/maybe"],
+["可是","kěshì","but"],["空气","kōngqì","air"],
+["口","kǒu","mouth/MW:people(family)"],["哭","kū","cry"],
+["裤子","kùzi","pants"],["筷子","kuàizi","chopsticks"],
+["蓝","lán","blue"],["老","lǎo","old"],
+["历史","lìshǐ","history"],["礼物","lǐwù","gift"],
+["练习","liànxí","practice"],["脸","liǎn","face"],
+["楼","lóu","building/floor"],["绿","lǜ","green"],
+["马","mǎ","horse"],["马上","mǎshàng","immediately"],
+["满意","mǎnyì","satisfied"],["帽子","màozi","hat"],
+["每天","měitiān","every day"],["面条","miàntiáo","noodles"],
+["明白","míngbai","understand"],["拿","ná","take/hold"],
+["奶奶","nǎinai","grandma(paternal)"],["难过","nánguò","sad"],
+["年级","niánjí","grade(school year)"],["年轻","niánqīng","young"],
+["牛奶","niúnǎi","milk"],["努力","nǔlì","work hard/effort"],
+["爬山","pá shān","climb mountain"],["盘子","pánzi","plate"],
+["胖","pàng","fat/chubby"],["皮肤","pífū","skin"],
+["便宜","piányí","cheap/inexpensive"],["瓶子","píngzi","bottle"],
+["其实","qíshí","actually/in fact"],["其他","qítā","other/others"],
+["奇怪","qíguài","strange"],["起来","qǐlái","rise up/start"],
+["情况","qíngkuàng","situation/condition"],["请假","qǐngjià","ask for leave"],
+["秋","qiū","autumn"],["然后","ránhòu","then/after that"],
+["热情","rèqíng","enthusiastic/warm"],["认为","rènwéi","think/believe"],
+["容易","róngyì","easy"],["商量","shāngliang","discuss/consult"],
+["上网","shàng wǎng","go online"],["声音","shēngyīn","sound/voice"],
+["师傅","shīfu","master/driver"],["试","shì","try/test"],
+["手","shǒu","hand"],["叔叔","shūshu","uncle"],
+["舒服","shūfu","comfortable"],["数学","shùxué","math"],
+["树","shù","tree"],["刷牙","shuā yá","brush teeth"],
+["双","shuāng","pair/both"],["死","sǐ","die/dead"],
+["速度","sùdù","speed"],["随便","suíbiàn","casually/as you like"],
+["它","tā","it"],["太阳","tàiyáng","sun"],
+["特别","tèbié","special/especially"],["疼","téng","hurt/ache"],
+["体育","tǐyù","sports/physical education"],["天","tiān","sky/day"],
+["甜","tián","sweet"],["条","tiáo","MW:long flexible things"],
+["同事","tóngshì","colleague"],["同意","tóngyì","agree"],
+["头","tóu","head"],["突然","tūrán","suddenly"],
+["图书馆","túshūguǎn","library"],["腿","tuǐ","leg"],
+["外国","wàiguó","foreign country"],["完成","wánchéng","complete/finish"],
+["碗","wǎn","bowl"],["万","wàn","ten thousand"],
+["为","wèi","for/because of"],["文化","wénhuà","culture"],
+["闻","wén","smell"],["午饭","wǔfàn","lunch"],
+["西瓜","xīguā","watermelon"],["洗手间","xǐshǒujiān","restroom"],
+["先","xiān","first"],["相信","xiāngxìn","believe/trust"],
+["向","xiàng","toward/direction"],["小心","xiǎoxīn","careful/watch out"],
+["校长","xiàozhǎng","principal/president(school)"],
+["鞋","xié","shoe"],["信","xìn","letter/trust"],
+["兴趣","xìngqù","interest"],["行","xíng","OK/walk"],
+["需要","xūyào","need"],["选择","xuǎnzé","choose/select"],
+["压力","yālì","pressure/stress"],["有名","yǒumíng","famous"],
+["又","yòu","again/both...and"],["遇到","yùdào","meet/encounter"],
+["月亮","yuèliang","moon"],["越来越","yuèláiyuè","more and more"],
+["正在","zhèngzài","in the process of"],["知道","zhīdào","know"],
+["只有","zhǐyǒu","only if/only when"],["重","zhòng","heavy/important"],
+["种","zhǒng","type/kind/MW:types"],["注意","zhùyì","pay attention"],
+["自己","zìjǐ","oneself"],["总是","zǒngshì","always"],
+["嘴","zuǐ","mouth"],["作业","zuòyè","homework"]
+]);
+
+// ─── HSK 4 ───────────────────────────────────────────────────
+a(4,[
+["按照","ànzhào","according to"],["百分之","bǎifēnzhī","percent of"],
+["保护","bǎohù","protect"],["报告","bàogào","report"],
+["抱","bào","hug/hold in arms"],["比较","bǐjiào","compare/relatively"],
+["毕业","bìyè","graduate"],["必要","bìyào","necessary"],
+["表格","biǎogé","form/table"],["不得不","bùdébù","have no choice but"],
+["不管","bùguǎn","no matter/regardless"],["不仅","bùjǐn","not only"],
+["产品","chǎnpǐn","product"],["成功","chénggōng","succeed/success"],
+["成为","chéngwéi","become"],["尝","cháng","taste/try"],
+["诚实","chéngshí","honest/honesty"],["传说","chuánshuō","legend"],
+["聪明","cōngming","clever/smart"],["大概","dàgài","probably/approximately"],
+["代表","dàibiǎo","represent/representative"],["担心","dānxīn","worry"],
+["当","dāng","act as/when"],["导游","dǎoyóu","tour guide"],
+["到处","dàochù","everywhere"],["低","dī","low"],
+["地球","dìqiú","Earth"],["调查","diàochá","investigate/survey"],
+["丢","diū","lose/throw away"],["独自","dúzì","alone/by oneself"],
+["对话","duìhuà","dialogue/conversation"],["对于","duìyú","regarding/as for"],
+["发展","fāzhǎn","develop/development"],["方向","fāngxiàng","direction"],
+["放弃","fàngqì","give up/abandon"],["符合","fúhé","conform to/meet"],
+["复杂","fùzá","complex/complicated"],["感情","gǎnqíng","feeling/emotion"],
+["刚","gāng","just(recently)/steel"],["各","gè","each/every"],
+["根","gēn","root/MW:stick-shaped"],["公平","gōngpíng","fair/equal"],
+["功夫","gōngfu","effort/time/kungfu"],["够","gòu","enough/sufficient"],
+["顾客","gùkè","customer/client"],["关于","guānyú","about/concerning"],
+["广告","guǎnggào","advertisement"],["规定","guīdìng","regulation/stipulate"],
+["害羞","hàixiū","shy"],["号码","hàomǎ","number(phone/ID)"],
+["合适","héshì","suitable/appropriate"],["厚","hòu","thick"],
+["忽然","hūrán","suddenly"],["互相","hùxiāng","mutually/each other"],
+["化学","huàxué","chemistry"],["坏处","huàichù","disadvantage/harm"],
+["回忆","huíyì","recall/memory"],["活动","huódòng","activity/event"],
+["获得","huòdé","obtain/gain"],["积极","jījí","positive/active/enthusiastic"],
+["及时","jíshí","timely/promptly"],["即使","jíshǐ","even if"],
+["既然","jìrán","since/now that"],["继续","jìxù","continue"],
+["价格","jiàgé","price"],["坚持","jiānchí","persist/insist"],
+["减少","jiǎnshǎo","reduce/decrease"],["建立","jiànlì","establish/build"],
+["建议","jiànyì","suggest/suggestion"],["将来","jiānglái","future"],
+["交流","jiāoliú","communicate/exchange"],["骄傲","jiāoào","proud/arrogant"],
+["教育","jiàoyù","education"],["结果","jiéguǒ","result/outcome"],
+["解决","jiějué","solve/resolve"],["尽管","jǐnguǎn","although/even though"],
+["进行","jìnxíng","carry out/conduct"],["竟然","jìngrán","unexpectedly"],
+["究竟","jiùjìng","after all/exactly"],["举办","jǔbàn","hold(event/competition)"],
+["绝对","juéduì","absolutely"],["开心","kāixīn","happy/cheerful"],
+["科学","kēxué","science"],["肯定","kěndìng","definitely/affirm/certain"],
+["苦","kǔ","bitter/hard/suffer"],["困难","kùnnán","difficulty/difficult"],
+["来不及","lái bu jí","too late/not enough time"],
+["来得及","lái de jí","still in time"],["浪费","làngfèi","waste"],
+["连","lián","even/link/consecutive"],["联系","liánxì","contact/connection"],
+["另外","lìngwài","additionally/besides"],["留学","liúxué","study abroad"],
+["马虎","mǎhu","careless/sloppy"],["满","mǎn","full/satisfied"],
+["矛盾","máodùn","contradiction/conflict"],["美丽","měilì","beautiful"],
+["民族","mínzú","ethnic group/nation"],["明显","míngxiǎn","obvious/clear"],
+["目的","mùdì","purpose/goal"],["内容","nèiróng","content"],
+["年龄","niánlíng","age"],["弄","nòng","do/make/get"],
+["怕","pà","fear/be afraid of"],["培养","péiyǎng","cultivate/train"],
+["批评","pīpíng","criticize"],["平时","píngshí","usually/normally"],
+["普通话","Pǔtōnghuà","Mandarin Chinese"],["其中","qízhōng","among them/of which"],
+["确定","quèdìng","confirm/certain/determine"],["认真","rènzhēn","serious/conscientious"],
+["任何","rènhé","any/whatever"],["散步","sàn bù","take a walk/stroll"],
+["深","shēn","deep/dark(color)"],["生活","shēnghuó","life/live"],
+["省","shěng","province/save(money)"],["失去","shīqù","lose"],
+["实际","shíjì","actual/practical"],["实在","shízài","really/honestly"],
+["使","shǐ","cause/make/use"],["是否","shìfǒu","whether or not"],
+["适合","shìhé","suitable for/fit"],["收入","shōurù","income"],
+["首先","shǒuxiān","first of all"],["说明","shuōmíng","explain/instructions"],
+["讨论","tǎolùn","discuss"],["提高","tígāo","improve/raise"],
+["条件","tiáojiàn","condition/term"],["通过","tōngguò","pass/through/by means of"],
+["同样","tóngyàng","same/equally"],["推","tuī","push"],
+["完全","wánquán","completely/entirely"],["唯一","wéiyī","only/unique"],
+["危险","wēixiǎn","dangerous/danger"],["吸引","xīyǐn","attract"],
+["习惯","xíguàn","habit/be used to"],["细心","xìxīn","careful/attentive"],
+["相同","xiāngtóng","same/identical"],["效果","xiàoguǒ","effect/result"],
+["心情","xīnqíng","mood/state of mind"],["信任","xìnrèn","trust"],
+["阳光","yángguāng","sunlight/sunshine"],["一般","yībān","general/ordinary/usually"],
+["意思","yìsi","meaning/idea"],["引起","yǐnqǐ","cause/trigger"],
+["影响","yǐngxiǎng","influence/affect"],["优秀","yōuxiù","excellent/outstanding"],
+["尤其","yóuqí","especially/particularly"],["有趣","yǒuqù","interesting/fun"],
+["愉快","yúkuài","pleasant/happy"],["语言","yǔyán","language"],
+["原来","yuánlái","originally/it turns out"],["原因","yuányīn","reason/cause"],
+["越","yuè","exceed/the more...the more"],["珍惜","zhēnxī","cherish/treasure"],
+["真正","zhēnzhèng","true/genuine/real"],["整理","zhěnglǐ","organize/sort"],
+["正常","zhèngcháng","normal"],["正确","zhèngquè","correct/right"],
+["支持","zhīchí","support"],["职业","zhíyè","profession/career"],
+["周围","zhōuwéi","surroundings/around"],["仔细","zǐxì","careful/attentive"],
+["自然","zìrán","nature/naturally"],["总结","zǒngjié","summarize/summary"],
+["作用","zuòyòng","function/effect/role"],["尊重","zūnzhòng","respect"],
+["存在","cúnzài","exist/existence"],["现象","xiànxiàng","phenomenon"],
+["方式","fāngshì","way/method/manner"],["系统","xìtǒng","system"],
+["基本","jīběn","basic/fundamental"],["基础","jīchǔ","foundation/basis"],
+["技术","jìshù","technology/skill"],["经验","jīngyàn","experience"],
+["意见","yìjiàn","opinion/suggestion"],["问题","wèntí","problem/question"],
+["情况","qíngkuàng","situation/condition"],["结合","jiéhé","combine/integrate"],
+["发挥","fāhuī","bring into play/exert"],["全面","quánmiàn","comprehensive/overall"],
+["分析","fēnxī","analyze/analysis"],["传统","chuántǒng","tradition/traditional"],
+["代价","dàijià","price/cost(fig)"],["了解","liǎojiě","understand/know about"],
+["阶段","jiēduàn","stage/phase"],["力量","lìliàng","strength/force/power"],
+["目标","mùbiāo","goal/target"],["观点","guāndiǎn","viewpoint/perspective"],
+["事实","shìshí","fact"],["证明","zhèngmíng","prove/proof/certificate"],
+["制度","zhìdù","system/institution/regime"],["质量","zhìliàng","quality"],
+["社会","shèhuì","society"],["经济","jīngjì","economy/economic"],
+["政府","zhèngfǔ","government"],["政策","zhèngcè","policy"],
+["资源","zīyuán","resources"],["市场","shìchǎng","market"],
+["文化","wénhuà","culture"],["环境","huánjìng","environment"],
+["教育","jiàoyù","education"],["健康","jiànkāng","health/healthy"],
+["安全","ānquán","safe/safety"],["科技","kējì","science and technology"],
+["网络","wǎngluò","network/internet"],["数据","shùjù","data"],
+["信息","xìnxī","information"],["平台","píngtái","platform"],
+["功能","gōngnéng","function/feature"],["服务","fúwù","service"],
+["用户","yònghù","user"],["管理","guǎnlǐ","manage/management"],
+["方案","fāng'àn","plan/scheme/solution"],["项目","xiàngmù","project/item"],
+["合作","hézuò","cooperate/cooperation"],["竞争","jìngzhēng","compete/competition"]
+]);
+
+// ─── HSK 5 ───────────────────────────────────────────────────
+a(5,[
+["安排","ānpái","arrange/plan"],["暗","àn","dark"],
+["把握","bǎwò","grasp/be sure of"],["包含","bāohán","include/contain"],
+["保证","bǎozhèng","guarantee/ensure"],["本质","běnzhì","essence/nature"],
+["必然","bìrán","inevitable/certainly"],["比例","bǐlì","proportion/ratio"],
+["表达","biǎodá","express"],["并","bìng","and/moreover/actually"],
+["不足","bùzú","insufficient/not enough"],["采取","cǎiqǔ","adopt/take(measures)"],
+["参考","cānkǎo","reference/consult"],["测试","cèshì","test"],
+["曾经","céngjīng","once/used to/former"],["差距","chājù","gap/disparity"],
+["长期","chángqī","long-term"],["超过","chāoguò","exceed/surpass"],
+["承认","chéngrèn","admit/acknowledge/recognize"],
+["承受","chéngshòu","bear/withstand/endure"],
+["充分","chōngfèn","sufficient/full/ample"],
+["出现","chūxiàn","appear/emerge"],["处理","chǔlǐ","handle/deal with/process"],
+["促进","cùjìn","promote/advance/boost"],["存","cún","store/save/exist"],
+["答案","dá'àn","answer"],["打扰","dǎrǎo","disturb/bother"],
+["大量","dàliàng","large amount/a lot of"],
+["达到","dádào","reach/achieve/attain"],["担任","dānrèn","hold/serve as"],
+["当地","dāngdì","local"],["当时","dāngshí","at that time"],
+["导致","dǎozhì","lead to/cause/result in"],["道德","dàodé","morality/ethics"],
+["得到","dédào","get/obtain/receive"],["等待","děngdài","wait for"],
+["地位","dìwèi","status/position/standing"],
+["电子","diànzǐ","electronic/electron"],
+["调整","tiáozhěng","adjust/regulate/readjust"],
+["独立","dúlì","independent/independence"],
+["对待","duìdài","treat/handle/approach"],
+["对方","duìfāng","the other party/other side"],
+["而","ér","but/and/while/then"],["而且","érqiě","moreover/besides/and also"],
+["丰富","fēngfù","rich/abundant/enrich"],["否则","fǒuzé","otherwise/or else"],
+["概念","gàiniàn","concept/notion"],["敢","gǎn","dare"],
+["感受","gǎnshòu","feel/experience/feeling"],
+["给予","jǐyǔ","give/grant/provide"],
+["公众","gōngzhòng","public/the public"],
+["工程","gōngchéng","engineering/project/works"],
+["购买","gòumǎi","purchase/buy"],["固定","gùdìng","fixed/regular"],
+["规律","guīlǜ","law/rule/regularity"],["过程","guòchéng","process/course"],
+["含义","hányì","meaning/implication"],["合理","hélǐ","reasonable/rational"],
+["核心","héxīn","core/nucleus/central"],["后果","hòuguǒ","consequence/result"],
+["忽视","hūshì","ignore/overlook/neglect"],
+["怀疑","huáiyí","doubt/suspect/be skeptical"],
+["积累","jīlěi","accumulate/build up"],
+["即","jí","immediately/namely/i.e."],
+["加强","jiāqiáng","strengthen/enhance"],["坚定","jiāndìng","firm/resolute"],
+["减轻","jiǎnqīng","reduce/lighten/alleviate"],["简单","jiǎndān","simple/easy"],
+["将","jiāng","will/going to/about to"],
+["角度","jiǎodù","angle/perspective/point of view"],
+["接受","jiēshòu","accept/receive"],["接触","jiēchù","contact/touch"],
+["截止","jiézhǐ","deadline/cut-off date"],
+["尽力","jìnlì","do one's best/try one's utmost"],
+["进步","jìnbù","progress/improvement"],["精神","jīngshén","spirit/mind/energy"],
+["就是","jiùshì","it's just/even/that is"],
+["局面","júmiàn","situation/scene/aspect"],["拒绝","jùjué","refuse/reject"],
+["具体","jùtǐ","concrete/specific/particular"],["据","jù","according to/based on"],
+["考虑","kǎolǜ","consider/think about"],["可见","kějiàn","it can be seen"],
+["客观","kèguān","objective/impartial"],["空间","kōngjiān","space/room"],
+["来自","láizì","come from/originate from"],["劳动","láodòng","labor/work"],
+["理解","lǐjiě","understand/comprehend"],
+["利用","lìyòng","utilize/use/take advantage of"],
+["联合","liánhé","unite/joint/combined"],["良好","liánghǎo","good/fine"],
+["描述","miáoshù","describe/description"],["目前","mùqián","currently/at present"],
+["难道","nándào","don't tell me/is it possible that"],
+["难免","nánmiǎn","unavoidable/hard to avoid"],
+["内部","nèibù","internal/inside/inner"],
+["能源","néngyuán","energy source/energy"],
+["判断","pànduàn","judge/determine/judgment"],
+["培训","péixùn","train/training"],
+["配合","pèihé","cooperate/coordinate/work with"],
+["品质","pǐnzhì","quality/character/nature"],
+["平均","píngjūn","average/mean/equal"],
+["评价","píngjià","evaluate/appraise/assessment"],
+["期间","qījiān","during/period/meanwhile"],["其余","qíyú","the rest/others"],
+["前提","qiántí","prerequisite/premise"],
+["强调","qiángdiào","emphasize/stress"],
+["亲自","qīnzì","personally/in person/oneself"],
+["确实","quèshí","indeed/truly/really"],["然而","rán'ér","however/but/yet"],
+["热门","rèmén","popular/hot/in vogue"],
+["认识","rènshi","know(person)/recognize/understanding"],
+["任务","rènwù","task/mission/assignment"],
+["融合","rónghé","integrate/blend/fuse"],
+["如何","rúhé","how/in what way/what"],
+["软件","ruǎnjiàn","software"],
+["商业","shāngyè","commerce/business/commercial"],
+["设计","shèjì","design"],["生产","shēngchǎn","produce/manufacture/production"],
+["实施","shíshī","implement/carry out/execute"],
+["实现","shíxiàn","realize/achieve/fulfill"],
+["时代","shídài","era/age/epoch"],["受到","shòudào","receive/be subject to"],
+["输入","shūrù","input/enter"],["思考","sīkǎo","think/ponder/reflect"],
+["思想","sīxiǎng","thought/ideology/idea"],
+["随着","suízhe","along with/as/with"],["所谓","suǒwèi","so-called"],
+["态度","tàidu","attitude/manner"],["探索","tànsuǒ","explore/probe"],
+["提供","tígōng","provide/offer/supply"],["提出","tíchū","put forward/raise"],
+["体现","tǐxiàn","embody/reflect/manifest"],["挑战","tiǎozhàn","challenge"],
+["投入","tóurù","invest/devote/input"],
+["推广","tuīguǎng","promote/spread/popularize"],
+["完善","wánshàn","improve/perfect/make better"],
+["维护","wéihù","maintain/safeguard/uphold"],
+["为了","wèile","for the sake of/in order to"],
+["未来","wèilái","future"],["稳定","wěndìng","stable/steady/stabilize"],
+["无论","wúlùn","no matter/regardless of"],
+["限制","xiànzhì","restrict/limit/restrain"],
+["相关","xiāngguān","related/relevant/associated"],
+["相当","xiāngdāng","quite/fairly/equivalent"],
+["想象","xiǎngxiàng","imagine/imagine/imagination"],
+["消费","xiāofèi","consume/consumption"],
+["效率","xiàolǜ","efficiency/effectiveness"],
+["新型","xīnxíng","new type/new kind"],
+["行为","xíngwéi","behavior/action/conduct"],
+["修改","xiūgǎi","modify/revise/amend"],
+["需求","xūqiú","demand/need/requirement"],
+["研究","yánjiū","research/study/investigate"],
+["要求","yāoqiú","require/demand/requirement"],
+["业务","yèwù","business/professional work"],
+["意识","yìshí","awareness/consciousness/realize"],
+["意义","yìyì","meaning/significance/value"],
+["以便","yǐbiàn","so that/in order to/for the convenience of"],
+["以及","yǐjí","as well as/and/along with"],
+["因此","yīncǐ","therefore/as a result"],
+["有效","yǒuxiào","effective/valid/efficient"],
+["于是","yúshì","therefore/so/consequently"],
+["与","yǔ","with/and/together with"],
+["原则","yuánzé","principle/rule/standard"],
+["增加","zēngjiā","increase/add/grow"],
+["整体","zhěngtǐ","whole/overall/entirety"],
+["指出","zhǐchū","point out/indicate"],["智慧","zhìhuì","wisdom/intelligence"],
+["中心","zhōngxīn","center/core/hub"],["主题","zhǔtí","theme/topic/subject"],
+["状态","zhuàngtài","state/condition/status"],
+["追求","zhuīqiú","pursue/seek/strive for"],
+["综合","zōnghé","comprehensive/integrate/synthesize"],
+["做到","zuòdào","achieve/accomplish/do"],
+["包括","bāokuò","include/consist of"],["报道","bàodào","report/coverage"],
+["建设","jiànshè","construct/build/develop"],
+["降低","jiàngdī","lower/reduce/decrease"],
+["结论","jiélùn","conclusion"],["结构","jiégòu","structure/composition"],
+["进程","jìnchéng","process/progress/course"],
+["经历","jīnglì","experience/undergo/go through"],
+["决策","juécè","decision-making/policy decision"],
+["开拓","kāituò","pioneer/expand/open up"],
+["利益","lìyì","interests/benefit/profit"],
+["领域","lǐngyù","field/domain/realm"],
+["满足","mǎnzú","satisfy/meet(requirement)"],
+["面对","miànduì","face/confront/deal with"],
+["明确","míngquè","clear/explicit/clarify"],
+["模型","móxíng","model"],["能够","nénggòu","be able to/can"],
+["评估","pínggū","assess/evaluate/appraise"],
+["强化","qiánghuà","strengthen/reinforce/intensify"],
+["全球","quánqiú","global/worldwide"],["群体","qúntǐ","group/community"],
+["人才","réncái","talent/capable person"],
+["认可","rènkě","approve/recognize/accept"],
+["融入","róngrù","integrate into/blend into"],
+["如今","rújīn","nowadays/today"],
+["善于","shànyú","be good at/excel in"],
+["上升","shàngshēng","rise/increase/go up"],
+["深刻","shēnkè","profound/deep/impressive"],
+["值得","zhídé","be worth/deserve/worthwhile"],
+["指","zhǐ","point to/refer to/indicate"],
+["转变","zhuǎnbiàn","transform/shift/change"],
+["自觉","zìjué","consciously/aware/self-conscious"],
+["推动","tuīdòng","promote/drive/push forward"],
+["提升","tíshēng","promote/upgrade/improve"],
+["展示","zhǎnshì","display/show/demonstrate"],
+["体验","tǐyàn","experience/feel/undergo"],
+["优势","yōushì","advantage/superiority"],
+["特征","tèzhēng","feature/trait/characteristic"],
+["进一步","jìn yī bù","further/go one step further"],
+["逐渐","zhújiàn","gradually/increasingly"],
+["有利","yǒulì","advantageous/beneficial/favorable"]
+]);
+
+// ─── HSK 6 ───────────────────────────────────────────────────
+a(6,[
+["爱戴","àidài","love and esteem"],["安慰","ānwèi","comfort/console"],
+["安装","ānzhuāng","install/set up"],["暗示","ànshì","hint/imply"],
+["傲慢","àomàn","arrogant/haughty"],["拜访","bàifǎng","visit(formal)"],
+["版权","bǎnquán","copyright"],["伴随","bànsuí","accompany/go along with"],
+["悲观","bēiguān","pessimistic"],["本能","běnnéng","instinct"],
+["必要性","bìyàoxìng","necessity"],["弊端","bìduān","drawback/malpractice"],
+["标准","biāozhǔn","standard/criterion"],["博士","bóshì","PhD/doctor"],
+["不断","búduàn","continuous/constantly"],
+["不禁","bùjīn","can't help but/can't refrain from"],
+["采用","cǎiyòng","adopt/use/employ"],["参与","cānyù","participate/involvement"],
+["策略","cèlüè","strategy/tactics"],["差异","chāyì","difference/disparity"],
+["倡导","chàngdǎo","advocate/promote"],["超级","chāojí","super/hyper"],
+["潮流","cháoliú","trend/current/tide"],
+["彻底","chèdǐ","thorough/complete/radical"],
+["成本","chéngběn","cost/expense"],
+["承担","chéngdān","undertake/bear responsibility"],
+["程度","chéngdù","degree/extent/level"],["冲突","chōngtū","conflict/clash"],
+["出口","chūkǒu","export/exit/way out"],
+["处境","chǔjìng","situation/plight/circumstances"],
+["传播","chuánbō","spread/disseminate/broadcast"],
+["创新","chuàngxīn","innovate/innovation"],
+["创造","chuàngzào","create/creation"],
+["此外","cǐwài","in addition/besides/furthermore"],
+["从事","cóngshì","engage in/be engaged in"],
+["促使","cùshǐ","urge/prompt/motivate"],
+["错误","cuòwù","mistake/error/wrong"],
+["打击","dǎjī","strike/hit/attack/crack down"],
+["代价","dàijià","price/cost(sacrifice)"],
+["单独","dāndú","alone/separately/independent"],
+["当前","dāngqián","current/present/at the moment"],
+["道路","dàolù","road/path/way"],["道理","dàolǐ","reason/logic/truth"],
+["得以","déyǐ","be able to/so as to"],
+["典型","diǎnxíng","typical/model/representative"],
+["顶峰","dǐngfēng","peak/summit/zenith"],
+["对象","duìxiàng","object/target/partner"],
+["对应","duìyìng","correspond/match/counterpart"],
+["对照","duìzhào","compare/contrast/reference"],
+["多元","duōyuán","pluralistic/diverse/multi-"],
+["而言","éryán","as for/in terms of/speaking of"],
+["发达","fādá","developed/prosperous/advanced"],
+["法则","fǎzé","law/rule/principle"],
+["反映","fǎnyìng","reflect/mirror/report"],
+["范围","fànwéi","range/scope/domain"],
+["风险","fēngxiǎn","risk/hazard"],["否认","fǒurèn","deny/negate"],
+["服从","fúcóng","obey/comply with/submit to"],
+["辅助","fǔzhù","assist/auxiliary/supplementary"],
+["负担","fùdān","burden/load"],["负责","fùzé","responsible/in charge of"],
+["改善","gǎishàn","improve/better/ameliorate"],
+["感激","gǎnjī","grateful/thankful"],
+["高度","gāodù","height/highly/to a high degree"],
+["格局","géjú","pattern/situation/structure"],
+["工具","gōngjù","tool/instrument"],
+["贡献","gòngxiàn","contribute/contribution"],
+["构成","gòuchéng","constitute/form/compose"],
+["观念","guānniàn","concept/idea/notion"],
+["规模","guīmó","scale/scope/extent"],
+["过于","guòyú","excessively/too much"],
+["含","hán","contain/include/hold"],
+["忽略","hūlüè","overlook/ignore/neglect"],
+["环节","huánjié","link/part/stage"],
+["缓解","huǎnjiě","relieve/ease/alleviate"],
+["回应","huíyìng","respond/response/reaction"],
+["混乱","hùnluàn","chaos/disorder/confusion"],
+["机制","jīzhì","mechanism/system"],
+["基于","jīyú","based on/grounded in"],
+["激励","jīlì","motivate/encourage/incentivize"],
+["即将","jíjiāng","about to/on the verge of"],
+["简称","jiǎnchēng","abbreviation/short for"],
+["践行","jiànxíng","practice/implement/carry out"],
+["阶段","jiēduàn","stage/phase/period"],
+["教训","jiàoxùn","lesson/teach a lesson"],
+["进程","jìnchéng","process/progress/course"],
+["竞争","jìngzhēng","compete/competition"],["就业","jiùyè","employment/find a job"],
+["均","jūn","all/equal/average/uniform"],
+["竞争力","jìngzhēnglì","competitiveness"],["可持续","kě chíxù","sustainable"],
+["客户","kèhù","client/customer"],
+["空前","kōngqián","unprecedented"],["劳力","láolì","labor force"],
+["理念","lǐniàn","idea/philosophy/concept"],
+["联系","liánxì","connection/relation/contact"],
+["良性","liángxìng","benign/positive/virtuous"],
+["劣势","lièshì","disadvantage/weakness"],
+["流程","liúchéng","process/workflow/procedure"],
+["论点","lùndiǎn","argument/point/thesis"],
+["媒体","méitǐ","media"],["名副其实","míng fù qí shí","live up to the name"],
+["谋求","móuqiú","seek/strive for"],
+["难题","nántí","difficult problem/tough question"],
+["内在","nèizài","internal/inherent/intrinsic"],
+["年度","niándù","annual/yearly"],["培育","péiyù","cultivate/foster/nurture"],
+["迫切","pòqiè","urgent/pressing/eager"],
+["普及","pǔjí","popularize/widespread/universal"],
+["期望","qīwàng","expectation/hope/aspire"],
+["启示","qǐshì","enlightenment/revelation/inspiration"],
+["签订","qiāndìng","sign/conclude(agreement)"],
+["侵犯","qīnfàn","infringe/violate/encroach"],
+["勤奋","qínfèn","diligent/hardworking"],
+["全球化","quánqiúhuà","globalization"],
+["群众","qúnzhòng","masses/people/public"],
+["然","rán","so/thus/right/correct"],
+["热点","rèdiǎn","hotspot/hot topic/focal point"],
+["如今","rújīn","nowadays/these days"],["若干","ruògān","several/a number of"],
+["上升趋势","shàngshēng qūshì","upward trend"],
+["深远","shēnyuǎn","far-reaching/profound"],
+["生态","shēngtài","ecology/ecosystem"],
+["剩余","shèngyú","surplus/remaining/leftover"],
+["时期","shíqī","period/phase/epoch"],
+["势力","shìlì","force/power/influence"],
+["适应","shìyìng","adapt/adjust/suit"],
+["收益","shōuyì","profit/income/gain"],
+["输出","shūchū","output/export"],["素质","sùzhì","quality/capacity/caliber"],
+["随机","suíjī","random/at random"],["探讨","tàntǎo","explore/discuss/probe"],
+["调节","tiáojié","regulate/adjust/modulate"],
+["通常","tōngcháng","usually/normally/generally"],
+["同步","tóngbù","synchronize/in step/concurrent"],
+["外部","wàibù","external/outside"],
+["完整","wánzhěng","complete/intact/whole"],
+["为何","wèihé","why/for what reason"],
+["无疑","wúyí","undoubtedly/without doubt"],
+["相比","xiāngbǐ","compare/in comparison"],
+["相互","xiānghù","mutual/each other/reciprocal"],
+["心理","xīnlǐ","psychology/mental/psychological"],
+["行政","xíngzhèng","administrative/administration"],
+["形成","xíngchéng","form/develop/take shape"],
+["形式","xíngshì","form/format/pattern"],
+["虚拟","xūnǐ","virtual/fictitious/imaginary"],
+["寻求","xúnqiú","seek/look for/pursue"],
+["严格","yángé","strict/rigorous/stringent"],
+["严重","yánzhòng","serious/severe/grave"],
+["研发","yánfā","R&D/research and development"],
+["演变","yǎnbiàn","evolve/develop/transform"],
+["业绩","yèjì","performance/achievement/results"],
+["以往","yǐwǎng","in the past/previously/formerly"],
+["优化","yōuhuà","optimize/improve/enhance"],
+["预期","yùqī","expect/anticipate/expected"],
+["运营","yùnyíng","operate/run/operations"],
+["整合","zhěnghé","integrate/consolidate/combine"],
+["整个","zhěnggè","entire/whole/all"],
+["正当","zhèngdàng","legitimate/proper/appropriate"],
+["正式","zhèngshì","formal/official"],
+["证据","zhèngjù","evidence/proof"],
+["制约","zhìyuē","constrain/restrict/check"],
+["致力于","zhìlìyú","devote to/be committed to"],
+["智能","zhìnéng","intelligent/smart/AI"],
+["逐步","zhúbù","step by step/gradually"],
+["转型","zhuǎnxíng","transformation/transition"],
+["资本","zīběn","capital/funds"],
+["资金","zījīn","funds/capital/money"],
+["综上所述","zōngshàng suǒshù","in summary/to sum up"],
+["作为","zuòwéi","act as/as/in the capacity of"],
+["阶级","jiējí","class(social)/stratum"],
+["规律","guīlǜ","law/rule/regularity"],
+["解析","jiěxī","analyze/parse/explanation"],
+["抽象","chōuxiàng","abstract"],["具备","jùbèi","possess/have/be equipped with"],
+["预测","yùcè","predict/forecast/projection"],
+["干预","gānyù","intervene/interference"],
+["波动","bōdòng","fluctuate/wave/undulate"],
+["稳健","wěnjiàn","steady/sound/stable"],
+["缺乏","quēfá","lack/be short of"],
+["突破","tūpò","breakthrough/break through"],
+["宏观","hóngguān","macro/macroscopic"],
+["微观","wēiguān","micro/microscopic"],
+["长远","chángyuǎn","long-term/long-range"],
+["广泛","guǎngfàn","extensive/widespread/broad"],
+["深入","shēnrù","go deep/thorough/penetrating"],
+["根本","gēnběn","fundamental/basic/root"],
+["体制","tǐzhì","system/regime/structure"],
+["历程","lìchéng","course/history/journey"],
+["重大","zhòngdà","major/significant/important"],
+["引领","yǐnlǐng","lead/guide/pioneer"],
+["核查","héchá","verify/check/inspect"],
+["依据","yījù","basis/according to/grounds"],
+["框架","kuàngjià","framework/structure"],
+["模式","móshì","mode/pattern/model"],
+["路径","lùjìng","path/route/approach"],
+["节点","jiédiǎn","node/junction/key point"],
+["门槛","ménkǎn","threshold/barrier"],
+["维度","wéidù","dimension"],["属于","shǔyú","belong to/be part of"],
+["体量","tǐliàng","volume/size/scale"],
+["协同","xiétóng","collaborative/synergistic"],
+["迭代","diédài","iterate/iteration"],["赋能","fùnéng","empower"],
+["落地","luòdì","land/implement/materialize"],
+["赛道","sàidào","track/lane/racecourse"],
+["生态圈","shēngtài quān","ecosystem(business)"],
+["孵化","fūhuà","incubate/hatch"],["闭环","bìhuán","closed loop"],
+["跑通","pǎotōng","make work/prove out"],["颠覆","diānfù","subvert/overturn"],
+["壁垒","bìlěi","barrier/rampart"],["布局","bùjú","layout/plan/deploy"]
+]);
+
+// ─── HSK 3 extended ──────────────────────────────────────────
+a(3,[
+["保险","bǎoxiǎn","insurance/safe"],["表演","biǎoyǎn","perform/performance"],
+["不同","bùtóng","different/unlike"],["材料","cáiliào","material/data"],
+["超","chāo","exceed/super"],["出发","chūfā","set off/depart"],
+["窗户","chuānghu","window"],["打折","dǎzhé","discount"],
+["大夫","dàifu","doctor"],["当时","dāngshí","at that time"],
+["得意","déyì","proud/pleased"],["东边","dōngbiān","east side"],
+["动作","dòngzuò","movement/action"],["发烧","fāshāo","have a fever"],
+["方面","fāngmiàn","aspect/side/respect"],["飞","fēi","fly"],
+["更","gèng","even more/further"],["公园","gōngyuán","park"],
+["广场","guǎngchǎng","square/plaza"],["过去","guòqù","past/go over"],
+["还有","háiyǒu","also have/furthermore"],["互联网","hùliánwǎng","internet"],
+["花园","huāyuán","garden"],["回来","huílái","come back/return"],
+["计划","jìhuà","plan/program"],["见面","jiànmiàn","meet"],
+["接受","jiēshòu","accept/receive"],["结束","jiéshù","end/finish/conclude"],
+["进步","jìnbù","progress/improve"],["开心","kāixīn","happy/cheerful"],
+["科技","kējì","science and technology"],["麻烦","máfan","trouble/troublesome"],
+["满足","mǎnzú","satisfied/satisfy"],["面包","miànbāo","bread"],
+["明星","míngxīng","star/celebrity"],["努力","nǔlì","effort/work hard"],
+["爬","pá","climb/crawl"],["普通","pǔtōng","ordinary/common/usual"],
+["认真","rènzhēn","serious/earnest/careful"],["如果","rúguǒ","if/in case"],
+["散步","sàn bù","take a walk"],["声音","shēngyīn","sound/voice"],
+["使用","shǐyòng","use/employ"],["手机","shǒujī","mobile phone"],
+["帅","shuài","handsome/cool"],["数字","shùzì","numeral/digit/number"],
+["跳","tiào","jump/leap"],["通知","tōngzhī","notify/notification"],
+["问路","wènlù","ask directions"],["下面","xiàmiàn","below/following"],
+["想起","xiǎngqǐ","recall/think of"],["新年","xīnnián","New Year"],
+["行李","xínglǐ","luggage/baggage"],["演出","yǎnchū","performance/show"],
+["也许","yěxǔ","perhaps/maybe"],["以为","yǐwéi","think/believe(mistakenly)"],
+["印象","yìnxiàng","impression"],["用","yòng","use/with"],
+["语法","yǔfǎ","grammar"],["月球","yuèqiú","the Moon"],
+["照顾","zhàogu","take care of/look after"],["这里","zhèlǐ","here"],
+["这么","zhème","so/like this"],["这样","zhèyàng","like this/such"],
+["指","zhǐ","point to/indicate/finger"],["只要","zhǐyào","as long as/provided"],
+["准时","zhǔnshí","on time/punctual"],["自从","zìcóng","since/from"],
+["走路","zǒulù","walk/go on foot"],["最近","zuìjìn","recently/nearest"],
+["安心","ānxīn","feel at ease"],["保持","bǎochí","keep/maintain"],
+["不好意思","bùhǎoyìsi","embarrassed/excuse me"],
+["猜","cāi","guess"],["差不多","chàbuduō","almost/about the same"],
+["分享","fēnxiǎng","share"],["父母","fùmǔ","parents"],
+["公斤","gōngjīn","kilogram"],["怪","guài","strange/blame"],
+["过节","guò jié","celebrate a holiday"],["汉字","hànzì","Chinese character"],
+["好处","hǎochù","benefit/advantage"],["欢乐","huānlè","happy/joyful"],
+["加油","jiā yóu","add oil/come on/keep it up"],["减少","jiǎnshǎo","reduce/decrease"],
+["建议","jiànyì","suggest/suggestion"],["教","jiāo","teach"],
+["老实","lǎoshi","honest/simple and honest"],["例如","lìrú","for example/such as"],
+["说话","shuōhuà","speak/talk"],["水平","shuǐpíng","level/standard"],
+["体重","tǐzhòng","body weight"],["下次","xià cì","next time"],
+["心里","xīnlǐ","in the heart/in mind"],["一共","yīgòng","altogether/in total"],
+["一样","yīyàng","same/alike"],["应该","yīnggāi","should/ought to"],
+["原来","yuánlái","originally/so it turns out"],["正好","zhènghǎo","just right/exactly"],
+["周末","zhōumò","weekend"],["主要","zhǔyào","main/major/primarily"]
+]);
+
+// ─── HSK 4 extended ──────────────────────────────────────────
+a(4,[
+["保障","bǎozhàng","safeguard/ensure"],["别人","biérén","others/other people"],
+["不仅仅","bùjǐnjǐn","not merely/not only"],
+["差异","chāyì","difference/discrepancy"],["产生","chǎnshēng","produce/arise/generate"],
+["城乡","chéngxiāng","urban and rural"],["促进","cùjìn","promote/advance"],
+["从而","cóng'ér","thus/thereby/and so"],["打算","dǎsuàn","plan/intend"],
+["大多数","dàduōshù","majority/most"],["大幅度","dà fúdù","by a large margin"],
+["道德","dàodé","morality/ethics"],["多样","duōyàng","diverse/varied"],
+["发达","fādá","developed/advanced"],["反对","fǎnduì","oppose/objection"],
+["防止","fángzhǐ","prevent/guard against"],["放松","fàngsōng","relax/loosen"],
+["分配","fēnpèi","distribute/allocate"],["服从","fúcóng","obey/comply with"],
+["改进","gǎijìn","improve/make better"],["感激","gǎnjī","grateful/thankful"],
+["个人","gèrén","individual/personal/I(formal)"],
+["工业","gōngyè","industry/industrial"],["供应","gōngyìng","supply/provide"],
+["沟通","gōutōng","communicate/connect"],["故意","gùyì","intentionally/on purpose"],
+["关键","guānjiàn","key/crucial"],["广泛","guǎngfàn","widespread/extensive"],
+["规范","guīfàn","standard/norm/regulate"],["过分","guòfèn","excessive/go too far"],
+["行动","xíngdòng","action/act"],["获取","huòqǔ","obtain/acquire"],
+["基础","jīchǔ","foundation/basis"],["记忆","jìyì","memory/remember"],
+["坚强","jiānqiáng","strong/firm/unyielding"],["简单","jiǎndān","simple/easy"],
+["降低","jiàngdī","lower/reduce/decrease"],["教训","jiàoxùn","lesson/teach a lesson"],
+["借助","jièzhù","with the help of"],["精力","jīnglì","energy/vigor"],
+["精确","jīngquè","precise/accurate"],["净","jìng","clean/clear"],
+["开发","kāifā","develop/exploit/open up"],["宽","kuān","wide/broad"],
+["困扰","kùnrǎo","trouble/perplex"],["离开","líkāi","leave/depart from"],
+["了解","liǎojiě","understand/know about/find out"],
+["理解","lǐjiě","understand/comprehend"],["利用","lìyòng","use/utilize"],
+["联系","liánxì","contact/connection/link"],["灵活","línghuó","flexible/nimble"],
+["命令","mìnglìng","order/command"],["面临","miànlín","face/be confronted with"],
+["明确","míngquè","clear/clarify/explicit"],["模式","móshì","mode/pattern/model"],
+["难以","nányǐ","difficult to/hard to"],["内心","nèixīn","inner heart/mind"],
+["偶尔","ǒu'ěr","occasionally/once in a while"],
+["培养","péiyǎng","cultivate/train/foster"],
+["平衡","pínghéng","balance/equilibrium"],["平静","píngjìng","calm/tranquil"],
+["破坏","pòhuài","destroy/damage/undermine"],["强调","qiángdiào","emphasize"],
+["切实","qièshí","realistic/practical"],["勤奋","qínfèn","diligent/hardworking"],
+["轻视","qīngshì","look down on/belittle"],
+["情感","qínggǎn","feeling/emotion/affection"],
+["取得","qǔdé","achieve/obtain/get"],["缺少","quēshǎo","lack/be short of"],
+["容忍","róngrěn","tolerate/put up with"],["如实","rúshí","truthfully/as it is"],
+["弱","ruò","weak/feeble"],["生产","shēngchǎn","produce/manufacture"],
+["实力","shílì","strength/power/actual capability"],
+["说服","shuōfú","persuade/convince"],["思维","sīwéi","thinking/thought"],
+["提到","tídào","mention/refer to"],["提问","tíwèn","ask a question"],
+["体会","tǐhuì","understand/realize/experience"],["突出","tūchū","outstanding/prominent"],
+["完善","wánshàn","improve/perfect"],["忘记","wàngjì","forget"],
+["为主","wéi zhǔ","mainly/primarily"],["吸取","xīqǔ","draw/absorb(lessons)"],
+["消除","xiāochú","eliminate/dispel/remove"],["写作","xiězuò","writing/write"],
+["行为","xíngwéi","behavior/conduct"],["修改","xiūgǎi","modify/revise"],
+["学会","xuéhuì","learn to/master"],["研究","yánjiū","research/study"],
+["要点","yàodiǎn","key point/main point"],["依然","yīrán","still/as before"],
+["一直","yīzhí","always/continuously/straight"],
+["勇气","yǒngqì","courage/bravery"],["有力","yǒulì","powerful/forceful"],
+["有效","yǒuxiào","effective/valid"],["具有","jùyǒu","possess/have"],
+["遭受","zāoshòu","suffer/encounter/be subjected to"],
+["责任","zérèn","responsibility/duty"],["增长","zēngzhǎng","grow/increase"],
+["展现","zhǎnxiàn","show/display/demonstrate"],
+["周期","zhōuqī","cycle/period"],["转变","zhuǎnbiàn","transform/change"],
+["总体","zǒngtǐ","overall/general/in general"],
+["遵守","zūnshǒu","abide by/comply with/observe"],
+["注重","zhùzhòng","attach importance to/focus on"],
+["主动","zhǔdòng","initiative/active/voluntary"],
+["目光","mùguāng","gaze/sight/vision"],
+["收获","shōuhuò","harvest/gain/benefit"],
+["期待","qīdài","expect/look forward to"],
+["态势","tàishì","posture/trend/situation"]
+]);
+
+// ─── HSK 5 extended ──────────────────────────────────────────
+a(5,[
+["标志","biāozhì","sign/symbol/mark"],["表明","biǎomíng","indicate/show/make clear"],
+["不可避免","bùkě bìmiǎn","inevitable/unavoidable"],
+["财富","cáifù","wealth/fortune/riches"],
+["长处","cháangchù","strong point/merit/forte"],
+["超越","chāoyuè","transcend/surpass/go beyond"],
+["陈述","chénshù","state/narrate/account"],
+["承诺","chéngnuò","promise/commitment/pledge"],
+["持续","chíxù","continue/sustain/ongoing"],
+["初步","chūbù","initial/preliminary/tentative"],
+["创业","chuàngyè","start a business/entrepreneurship"],
+["当局","dāngjú","authorities/the current leadership"],
+["导向","dǎoxiàng","orientation/guide"],
+["道路","dàolù","road/way/path"],["定期","dìngqī","regularly/periodic"],
+["动力","dònglì","power/motive force/motivation"],
+["多元化","duōyuánhuà","diversification/pluralization"],
+["发挥","fāhuī","bring into play/exert/show"],
+["放弃","fàngqì","give up/abandon/relinquish"],
+["分工","fēngōng","division of labor"],
+["否定","fǒudìng","negate/deny/negative"],
+["改革","gǎigé","reform"],["工程","gōngchéng","engineering/project"],
+["共同","gòngtóng","common/together/jointly"],
+["观察","guānchá","observe/observation/examine"],
+["规划","guīhuà","plan/program/blueprint"],
+["归纳","guīnà","induction/summarize/generalize"],
+["过渡","guòdù","transition/interim"],
+["合法","héfǎ","legal/lawful/legitimate"],
+["横向","héngxiàng","horizontal/cross"],
+["宏观","hóngguān","macro/macroscopic"],
+["化","huà","transform into/-ize/-fy suffix"],
+["回报","huíbào","return/repay/report back"],
+["活跃","huóyuè","active/lively/vibrant"],
+["汇集","huìjí","gather/collect/converge"],
+["极其","jíqí","extremely/exceedingly"],
+["集体","jítǐ","collective/group/team"],
+["技能","jìnéng","skill/ability/technique"],
+["加以","jiāyǐ","proceed to/apply to"],
+["价值观","jiàzhíguān","values/value system"],
+["建构","jiàngòu","construct/build/framework"],
+["交叉","jiāochā","intersect/cross/overlap"],
+["交换","jiāohuàn","exchange/swap/trade"],
+["进一步","jìn yī bù","further/go one step further"],
+["净化","jìnghuà","purify/cleanse"],["局限","júxiàn","limit/restrict"],
+["局部","júbù","local/partial/part"],
+["聚焦","jùjiāo","focus/concentrate on"],
+["决心","juéxīn","determination/resolve"],
+["开拓","kāituò","pioneer/expand/blaze a trail"],
+["科研","kēyán","scientific research"],
+["控制","kòngzhì","control/restrain/manage"],
+["来源","láiyuán","source/origin/come from"],
+["理论","lǐlùn","theory/theoretical"],
+["连续","liánxù","consecutive/continuous/series"],
+["梳理","shūlǐ","sort out/comb through"],
+["量","liàng","measure/quantity/amount"],
+["领导","lǐngdǎo","lead/leader/leadership"],
+["流动","liúdòng","flow/mobile/circulation"],
+["落实","luòshí","implement/fulfill/nail down"],
+["面向","miànxiàng","face/oriented toward"],
+["明智","míngzhì","wise/sensible"],["纽带","niǔdài","bond/link/tie"],
+["平台","píngtái","platform"],["评论","pínglùn","comment/commentary"],
+["前景","qiánjǐng","prospect/outlook/foreground"],
+["强有力","qiángyǒulì","powerful/forceful"],
+["区分","qūfēn","distinguish/differentiate/tell apart"],
+["全力","quánlì","with all one's strength"],
+["群体","qúntǐ","group/community"],
+["认可","rènkě","approve/accept/recognize"],
+["融合","rónghé","merge/blend/integrate"],
+["上升","shàngshēng","rise/go up/ascend"],
+["设立","shèlì","establish/set up/found"],
+["生成","shēngchéng","generate/produce/form"],
+["实体","shítǐ","entity/physical/substantial"],
+["市值","shìzhí","market capitalization/market value"],
+["提炼","tíliàn","refine/extract/distill"],
+["调研","diàoyán","research/investigate"],
+["突破口","tūpòkǒu","breakthrough point"],
+["推进","tuījìn","advance/push forward"],
+["完备","wánbèi","complete/perfect/well-equipped"],
+["网站","wǎngzhàn","website"],
+["问卷","wènjuàn","questionnaire"],
+["系列","xìliè","series/set"],
+["向导","xiàngdǎo","guide/lead/direction"],
+["消化","xiāohuà","digest/absorb"],
+["效益","xiàoyì","benefit/effectiveness"],
+["协调","xiétiáo","coordinate/harmonize"],
+["形态","xíngtài","form/shape/morphology"],
+["叙述","xùshù","narrate/describe/account"],
+["延伸","yánshēn","extend/stretch/expand"],
+["严密","yánmì","strict/tight/rigorous"],
+["要素","yàosù","element/factor/essential"],
+["异常","yìcháng","abnormal/unusual/extremely"],
+["因素","yīnsù","factor/element"],
+["应对","yìngduì","deal with/cope with/respond"],
+["应用","yìngyòng","apply/use/application"],
+["与此同时","yǔ cǐ tóngshí","at the same time/meanwhile"],
+["原有","yuányǒu","original/existing/former"],
+["运用","yùnyòng","use/apply/utilize"],
+["增强","zēngqiáng","enhance/strengthen/reinforce"],
+["战略","zhànlüè","strategy/strategic"],
+["支撑","zhīchēng","support/prop up/sustain"],
+["制定","zhìdìng","formulate/draw up/lay down"],
+["重视","zhòngshì","attach importance to/value"],
+["主流","zhǔliú","mainstream/main current"],
+["转化","zhuǎnhuà","transform/convert/change into"],
+["资产","zīchǎn","asset/property"],
+["走向","zǒuxiàng","trend/direction/go toward"],
+["作出","zuòchū","make/produce/render"],
+["坐落","zuòluò","be located/be situated"]
+]);
+
+// ─── HSK 6 extended ──────────────────────────────────────────
+a(6,[
+["阐述","chǎnshù","elaborate/expound"],["澄清","chéngqīng","clarify/clear up"],
+["冲击","chōngjī","impact/hit/shock"],["抽样","chōuyàng","sampling"],
+["触发","chùfā","trigger/cause/spark"],["垂直","chuízhí","vertical/perpendicular"],
+["错综复杂","cuòzōng fùzá","intricate and complex"],
+["打造","dǎzào","forge/create/build up"],["代际","dàijì","inter-generational"],
+["当代","dāngdài","contemporary/modern/current era"],
+["道统","dàotǒng","orthodox tradition"],["抵御","dǐyù","resist/withstand"],
+["底层","dǐcéng","bottom layer/lower class"],
+["典范","diǎnfàn","model/paragon/example"],
+["对冲","duìchōng","hedge/offset"],["多维","duōwéi","multi-dimensional"],
+["而非","érfēi","rather than/instead of"],
+["发端","fāduān","originate from/beginning"],
+["反思","fǎnsī","reflect/rethink/introspect"],
+["范式","fànshì","paradigm"],["分歧","fēnqí","divergence/difference/disagreement"],
+["分散","fēnsàn","scatter/disperse/distributed"],
+["赋予","fùyǔ","give/grant/bestow upon"],
+["甘愿","gānyuàn","willingly/voluntarily"],
+["高效","gāoxiào","high-efficiency/highly efficient"],
+["格外","géwài","particularly/especially/extra"],
+["共识","gòngshí","consensus/common understanding"],
+["管控","guǎnkòng","manage and control"],
+["规律性","guīlǜxìng","regularity/periodicity"],
+["过渡期","guòdùqī","transition period"],
+["宏大","hóngdà","grand/great/magnificent"],
+["忽略不计","hūlüè bùjì","negligible/disregard"],
+["化解","huàjiě","defuse/resolve/dissolve"],
+["话语权","huàyǔ quán","discourse power/right to speak"],
+["基调","jīdiào","keynote/basic tone/underlying theme"],
+["集成","jíchéng","integrate/integration"],
+["加剧","jiājù","intensify/worsen/aggravate"],
+["兼顾","jiāngù","give consideration to both/balance"],
+["监管","jiānguǎn","supervise/regulate/oversight"],
+["矫正","jiǎozhèng","correct/rectify"],
+["结构性","jiégòuxìng","structural"],
+["解构","jiěgòu","deconstruct"],["界定","jièdìng","define/delimit"],
+["精华","jīnghuá","essence/quintessence/cream"],
+["精准","jīngzhǔn","precise/accurate/targeted"],
+["竟争格局","jìngzhēng géjú","competitive landscape"],
+["局势","júshì","situation/state of affairs"],
+["可及","kějí","accessible/attainable"],
+["可量化","kě liànghuà","quantifiable/measurable"],
+["可行性","kěxíngxìng","feasibility"],
+["扩张","kuòzhāng","expand/extend/expansion"],
+["来袭","láixí","come attacking/incoming"],
+["蓝图","lántú","blueprint"],["里程碑","lǐchéngbēi","milestone"],
+["利好","lìhǎo","benefit/favorable news"],["利空","lìkōng","bearish/negative news"],
+["量化","liànghuà","quantify/quantitative"],
+["逻辑","luójí","logic/logical"],["落差","luòchā","gap/drop/differential"],
+["慢慢","mànmàn","slowly/gradually/take one's time"],
+["矛盾体","máodùntǐ","contradictory entity"],
+["谋略","móulüè","strategy/tactics/ingenuity"],
+["内涵","nèihán","connotation/inner meaning/depth"],
+["内驱力","nèi qūlì","intrinsic motivation"],
+["凝聚","níngjù","condense/coalesce/cohesion"],
+["偏差","piānchā","deviation/bias/error"],
+["平衡点","pínghéng diǎn","balance point/equilibrium"],
+["破局","pòjú","break the stalemate/game-changer"],
+["前沿","qiányán","cutting-edge/frontier"],
+["强势","qiángshì","dominant/strong position"],
+["切入点","qiērùdiǎn","entry point/starting point"],
+["驱动","qūdòng","drive/motivate"],["取向","qǔxiàng","orientation/tendency"],
+["全链条","quán liàntiáo","full chain/end-to-end"],
+["确立","quèlì","establish/set up/affirm"],
+["让步","ràngbù","concede/compromise"],
+["热潮","rècháo","craze/upsurge/wave"],
+["人口","rénkǒu","population"],["认知","rènzhī","cognition/recognize/awareness"],
+["融资","róngzī","raise funds/financing"],
+["入场","rùchǎng","enter the market/admission"],
+["软实力","ruǎn shílì","soft power"],
+["闪现","shǎnxiàn","flash/appear briefly"],
+["商业模式","shāngyè móshì","business model"],
+["生产力","shēngchǎnlì","productive forces/productivity"],
+["生命力","shēngmìnglì","vitality/life force"],["输赢","shūyíng","win or lose"],
+["数字化","shùzìhuà","digitalization/digitize"],
+["双向","shuāngxiàng","bidirectional/two-way"],
+["思路","sīlù","train of thought/approach/idea"],
+["探究","tànjīu","explore/probe/investigate"],
+["特质","tèzhì","characteristic/unique quality"],
+["提振","tízhèn","boost/revitalize"],["天花板","tiānhuābǎn","ceiling/upper limit"],
+["通盘","tōngpán","overall/comprehensive"],
+["统筹","tǒngchóu","overall planning/coordinate"],
+["投融资","tóuróngzī","investment and financing"],
+["透明度","tòumíngdù","transparency"],["突围","tūwéi","break out/break through"],
+["完整性","wánzhěngxìng","integrity/completeness"],
+["维系","wéixì","maintain/sustain/hold together"],
+["位移","wèiyí","displacement/shift"],
+["稳步","wěnbù","steadily/in a stable manner"],
+["无缝","wúfèng","seamless"],["无形","wúxíng","intangible/invisible"],
+["系数","xìshù","coefficient/factor"],
+["现实主义","xiànshí zhǔyì","realism"],
+["相辅相成","xiāngfǔ xiāngchéng","complement each other"],
+["叙事","xùshì","narrative/narrate"],
+["循环","xúnhuán","cycle/circulate/recycle"],
+["演进","yǎnjìn","evolve/develop"],["阳谋","yángmóu","open stratagem"],
+["要义","yàoyì","essential meaning/gist"],
+["依托","yītuō","rely on/depend on/base on"],
+["逸散","yìsàn","dissipate/diffuse"],["引发","yǐnfā","trigger/cause/spark"],
+["硬实力","yìng shílì","hard power"],["永续","yǒngxù","perpetual/sustainable"],
+["运营商","yùnyíngshāng","operator/carrier/service provider"],
+["扎根","zhāgēn","take root/be rooted in"],
+["战术","zhànshù","tactics/tactical"],["争议","zhēngyì","controversy/dispute"],
+["整个","zhěnggè","entire/whole"],["整体性","zhěngtǐxìng","holistic/integrity"],
+["政商","zhèngshāng","government-business relations"],
+["制高点","zhìgāodiǎn","commanding height"],
+["治理","zhìlǐ","govern/manage/governance"],
+["中枢","zhōngshū","nerve center/hub/pivot"],
+["重构","chónggòu","restructure/reconstruct"],
+["周全","zhōuquán","thorough/comprehensive/considerate"],
+["主动权","zhǔdòngquán","initiative/upper hand"],
+["助推","zhùtuī","boost/propel/help promote"],
+["追溯","zhuīsù","trace back/retrospect"],
+["资本化","zīběnhuà","capitalize/monetize"],
+["自洽","zìqià","self-consistent/coherent"],
+["阻力","zǔlì","resistance/obstacle"]
+]);
+
+/* ══════════════════════════════════════════════════════════════
+   SAMPLE TEXTS
+   ══════════════════════════════════════════════════════════════ */
+const SAMPLES = [
+  // HSK 2 Story
+  `今天天气很好。我早上起床，吃了早饭，然后去公司上班。公司在地铁站旁边，坐地铁很方便。\n\n我的同事小李喜欢喝茶，他每天都买一杯茶。我喜欢喝咖啡。我们工作很忙，但是很高兴。\n\n下午，我去超市买东西。我买了苹果、鸡蛋和牛奶。回家以后，我做了晚饭。饭很好吃。晚上我看电视，九点睡觉。`,
+
+  // HSK 3-4 Article
+  `随着互联网的发展，越来越多的人开始在网上购物。网购方便、快捷，可以节省很多时间。但是，网购也有一些问题，比如商品质量不好、退换货麻烦等。\n\n为了解决这些问题，很多电商平台推出了更好的售后服务。消费者可以在收到商品后七天内退货，不需要说明原因。这样的政策让消费者更放心地购物。\n\n专家认为，网购的发展是一种趋势，传统商店应该想办法适应这种变化，提高自己的竞争力。`,
+
+  // HSK 5 News
+  `据最新统计数据显示，中国人工智能产业规模已超过五千亿元，预计到2025年将突破万亿元大关。人工智能技术的快速发展，正在深刻改变各行各业的运作模式。\n\n在医疗领域，人工智能辅助诊断系统已在多家医院投入使用，有效提高了诊断准确率，降低了误诊概率。在教育领域，个性化学习系统能够根据学生的学习特点，制定针对性的教学方案，显著提升了学习效率。\n\n然而，人工智能的快速发展也带来了一系列挑战，包括就业市场的结构性变化、数据隐私保护以及算法偏见等问题，需要社会各界共同关注和解决。`,
+
+  // HSK 6 Essay
+  `在全球化深度推进的当下，文明的交流互鉴已成为推动人类社会进步的重要力量。然而，东西方之间的文化鸿沟依然深邃，其根源不仅在于历史积淀的差异，更在于思维方式与价值取向的根本分歧。\n\n西方文明以个人主义为核心，强调个体的自由与权利；而东方文明则历来重视集体和谐与社会责任。这种差异折射在政治体制、经济模式乃至日常生活的方方面面，形成了迥异的社会运行逻辑。\n\n面对这一现实，我们既不能夜郎自大，固步自封，也不能妄自菲薄，盲目崇外。文明的交流应当建立在相互尊重、平等对话的基础之上，取长补短，兼收并蓄，方能实现真正意义上的文明互鉴与共同进步。`
+];
+
+function loadSample(i){
+  document.getElementById('txt').value = SAMPLES[i-1];
+  document.getElementById('cc').textContent = SAMPLES[i-1].length + ' characters';
+  analyze();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SEGMENTATION  (greedy longest-match, max 6 chars)
+   ══════════════════════════════════════════════════════════════ */
+function isCJK(ch){
+  const c = ch.charCodeAt(0);
+  return (c>=0x4E00&&c<=0x9FFF)||(c>=0x3400&&c<=0x4DBF)||(c>=0xF900&&c<=0xFAFF);
+}
+
+function segment(text){
+  const tokens=[];let i=0;
+  while(i<text.length){
+    const ch=text[i];
+    if(!isCJK(ch)){
+      if(ch==='\n')tokens.push({type:'br'});
+      else tokens.push({type:'punc',text:ch});
+      i++;continue;
+    }
+    let matched=false;
+    for(let len=Math.min(6,text.length-i);len>=1;len--){
+      const w=text.slice(i,i+len);
+      if(D[w]){tokens.push({type:'word',text:w,lv:D[w][0],py:D[w][1],en:D[w][2]});i+=len;matched=true;break;}
+    }
+    if(!matched){tokens.push({type:'word',text:ch,lv:0,py:'',en:''});i++;}
+  }
+  return tokens;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   UI LOGIC
+   ══════════════════════════════════════════════════════════════ */
+const LV_COLOR={1:'#79c0ff',2:'#56d364',3:'#e3b341',4:'#ffa657',5:'#f78166',6:'#ff7b72'};
+const LV_NAME={1:'HSK 1',2:'HSK 2',3:'HSK 3',4:'HSK 4',5:'HSK 5',6:'HSK 6'};
+
+document.getElementById('txt').addEventListener('input',function(){
+  document.getElementById('cc').textContent=this.value.length+' characters';
+});
+
+let lastUnknown=[];
+
+function analyze(){
+  const raw=document.getElementById('txt').value.trim();
+  if(!raw)return;
+  const tokens=segment(raw);
+  const cjk=tokens.filter(t=>t.type==='word');
+  const total=cjk.length;
+  if(!total)return;
+
+  // Count
+  const cnt={0:0,1:0,2:0,3:0,4:0,5:0,6:0};
+  cjk.forEach(t=>{cnt[t.lv]=(cnt[t.lv]||0)+1;});
+
+  // Render annotated text
+  const html=tokens.map(t=>{
+    if(t.type==='br')return '<br>';
+    if(t.type==='punc')return `<span class="wp">${esc(t.text)}</span>`;
+    const lv=t.lv;
+    const cls=lv?`w w${lv}`:'w wu';
+    return `<span class="${cls}" data-w="${esc(t.text)}" data-lv="${lv}" data-py="${esc(t.py)}" data-en="${esc(t.en)}">${esc(t.text)}</span>`;
+  }).join('');
+  document.getElementById('output-text').innerHTML=html;
+  document.getElementById('output-box').classList.add('show');
+
+  // Popup
+  document.querySelectorAll('.w').forEach(el=>{
+    el.addEventListener('mouseenter',showPop);
+    el.addEventListener('mouseleave',hidePop);
+    el.addEventListener('click',showPop);
+  });
+
+  // Stats
+  renderStats(cnt,total);
+
+  // Unknown
+  const unkWords=[...new Set(cjk.filter(t=>t.lv===0).map(t=>t.text))];
+  lastUnknown=unkWords;
+  const unkBox=document.getElementById('unk-box');
+  if(unkWords.length){
+    document.getElementById('unk-chips').innerHTML=unkWords.map(w=>`<span class="unk-chip">${w}</span>`).join('');
+    document.getElementById('unk-sub').textContent=`${unkWords.length} unique word${unkWords.length>1?'s':''} not in HSK 1–6. These may be proper nouns, technical terms, or new slang.`;
+    unkBox.classList.add('show');
+  } else {
+    unkBox.classList.remove('show');
+  }
+}
+
+function renderStats(cnt,total){
+  const rows=document.getElementById('stat-rows');
+  rows.innerHTML='';
+  let cum=0;
+  for(let lv=1;lv<=6;lv++){
+    cum+=(cnt[lv]||0);
+    const pct=total?Math.round(cum/total*100):0;
+    const own=cnt[lv]||0;
+    const div=document.createElement('div');
+    div.className='stat-row';
+    div.innerHTML=`<span class="stat-lbl" style="color:${LV_COLOR[lv]}">${LV_NAME[lv]}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${LV_COLOR[lv]}"></div></div>
+      <span class="stat-pct" style="color:${LV_COLOR[lv]}">${pct}%</span>
+      <span class="stat-n">+${own} word${own!==1?'s':''}</span>`;
+    rows.appendChild(div);
+  }
+
+  const unk=cnt[0]||0;
+  const hsk6=total?Math.round((total-unk)/total*100):0;
+  const hsk4cum=(cnt[1]+cnt[2]+cnt[3]+cnt[4])/(total||1)*100;
+
+  // Summary line
+  document.getElementById('summary').innerHTML=
+    `<strong>${total}</strong> Chinese words analyzed · <strong>${unk}</strong> beyond HSK 6 · HSK 6 cumulative coverage: <strong>${hsk6}%</strong>`;
+
+  // Advice
+  const adv=document.getElementById('advice');
+  adv.className='advice show';
+  if(hsk6>=95){
+    adv.className+=' advice-easy';
+    adv.innerHTML=`✅ <strong>Comfortable reading level.</strong> You know ~${hsk6}% of the words. A few unknowns are manageable without breaking your flow.`;
+  } else if(hsk6>=85){
+    adv.className+=' advice-mid';
+    adv.innerHTML=`📖 <strong>Readable with dictionary.</strong> ${hsk6}% coverage — expect to look up roughly 1 in ${Math.round(100/(100-hsk6))} words. Good for intensive study.`;
+  } else if(hsk6>=70){
+    adv.className+=' advice-hard';
+    adv.innerHTML=`⚠️ <strong>Challenging text.</strong> Only ${hsk6}% within HSK 6. Consider finding a graded version of this text first, or building vocabulary at HSK ${Math.min(6,Math.ceil(hsk4cum/20))} level.`;
+  } else {
+    adv.className+=' advice-hard';
+    adv.innerHTML=`🔴 <strong>Advanced / specialist text.</strong> ${100-hsk6}% of words are beyond HSK 6. This targets near-native readers or requires domain expertise.`;
+  }
+
+  document.getElementById('stats-box').classList.add('show');
+}
+
+// Popup
+function showPop(e){
+  const el=e.currentTarget;
+  const lv=+el.dataset.lv,w=el.dataset.w,py=el.dataset.py,en=el.dataset.en;
+  const pop=document.getElementById('popup');
+  document.getElementById('pop-hanzi').textContent=w;
+  document.getElementById('pop-py').textContent=py||'—';
+  const badge=document.getElementById('pop-badge');
+  if(lv){
+    badge.textContent=LV_NAME[lv];
+    badge.style.cssText=`background:${LV_COLOR[lv]}22;color:${LV_COLOR[lv]};border:1px solid ${LV_COLOR[lv]}44`;
+  } else {
+    badge.textContent='Beyond HSK 6';
+    badge.style.cssText='background:rgba(139,148,158,.1);color:#8b949e;border:1px solid rgba(139,148,158,.2)';
+  }
+  document.getElementById('pop-def').textContent=en||'Not in HSK 1–6 word list';
+  const rect=el.getBoundingClientRect();
+  pop.style.left=Math.min(rect.left,window.innerWidth-270)+'px';
+  pop.style.top=(rect.bottom+window.scrollY+6)+'px';
+  pop.classList.add('show');
+}
+function hidePop(){document.getElementById('popup').classList.remove('show');}
+
+function clearAll(){
+  document.getElementById('txt').value='';
+  document.getElementById('cc').textContent='0 characters';
+  document.getElementById('output-box').classList.remove('show');
+  document.getElementById('stats-box').classList.remove('show');
+  document.getElementById('unk-box').classList.remove('show');
+  document.getElementById('advice').classList.remove('show');
+}
+
+function exportUnknown(){
+  if(!lastUnknown.length){alert('No unknown words found.');return;}
+  const blob=new Blob([lastUnknown.join('\n')],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='unknown-words.txt';
+  a.click();
+}
+
+function copyUnknown(){
+  if(!lastUnknown.length)return;
+  navigator.clipboard.writeText(lastUnknown.join('  ')).then(()=>{
+    const btn=document.querySelector('#unk-box .export-btn');
+    const orig=btn.textContent;btn.textContent='Copied ✓';
+    setTimeout(()=>btn.textContent=orig,1500);
+  });
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+</script>
+</body>
+</html>

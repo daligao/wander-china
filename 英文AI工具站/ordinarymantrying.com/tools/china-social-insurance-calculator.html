@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>China 五险一金 Calculator 2026 — What Every Worker Pays | ordinarymantrying.com</title>
+<meta name="description" content="Interactive 五险一金 calculator for 2026. Enter any salary to see the exact breakdown of China's mandatory social insurance: pension, medical, unemployment, work injury, and housing fund.">
+<meta property="og:title" content="China 五险一金 Calculator 2026">
+<meta property="og:description" content="For a ¥10,000/month salary, the employee pays ¥1,850 and the employer secretly pays another ¥3,350. Here's where all of it goes.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060b14;
+  --card:#0c1525;
+  --card2:#101e33;
+  --border:rgba(255,255,255,0.07);
+  --text:#e2e8f0;
+  --muted:#8899aa;
+  --pension:#3b82f6;
+  --medical:#10b981;
+  --unemployment:#f59e0b;
+  --injury:#ef4444;
+  --housing:#8b5cf6;
+  --accent:#38bdf8;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* NAV */
+.top-nav{background:rgba(6,11,20,0.95);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px)}
+.top-nav a{color:var(--muted);font-size:13px}
+.top-nav a:hover{color:var(--text)}
+.top-nav .sep{color:var(--border)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0a1628 0%,#0f1f3a 50%,#0a1628 100%);padding:60px 20px 50px;text-align:center;border-bottom:1px solid var(--border)}
+.hero-tag{display:inline-block;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.3);color:var(--accent);font-size:12px;font-weight:600;letter-spacing:.08em;padding:4px 12px;border-radius:20px;margin-bottom:16px;text-transform:uppercase}
+.hero h1{font-size:clamp(26px,5vw,42px);font-weight:700;line-height:1.2;margin-bottom:12px}
+.hero h1 span{color:var(--accent)}
+.hero-sub{color:var(--muted);font-size:clamp(14px,2.5vw,17px);max-width:600px;margin:0 auto 28px}
+.hero-stats{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.hstat{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px 20px;text-align:center;min-width:120px}
+.hstat-num{font-size:22px;font-weight:700;color:var(--accent)}
+.hstat-label{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* WRAPPER */
+.wrap{max-width:820px;margin:0 auto;padding:0 20px}
+
+/* SECTION TITLES */
+.section-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.section-sub{font-size:14px;color:var(--muted);margin-bottom:24px}
+
+/* CALCULATOR */
+.calc-section{padding:44px 0 36px}
+.salary-row{display:flex;align-items:center;gap:14px;margin-bottom:28px;flex-wrap:wrap}
+.salary-label{font-size:14px;color:var(--muted);white-space:nowrap}
+.salary-input-wrap{position:relative;flex:1;min-width:200px}
+.salary-input-wrap span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px}
+#salaryNum{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 14px 10px 28px;color:var(--text);font-size:17px;font-weight:600;outline:none;-moz-appearance:textfield}
+#salaryNum:focus{border-color:var(--accent)}
+#salaryNum::-webkit-outer-spin-button,#salaryNum::-webkit-inner-spin-button{-webkit-appearance:none}
+.salary-slider{flex:2;min-width:200px}
+#salaryRange{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:var(--card2);outline:none;cursor:pointer}
+#salaryRange::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer}
+#salaryRange::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:none;cursor:pointer}
+
+/* RESULT SUMMARY */
+.result-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px}
+@media(max-width:520px){.result-summary{grid-template-columns:1fr}}
+.rs-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.rs-card.highlight{border-color:rgba(239,68,68,0.35);background:rgba(239,68,68,0.05)}
+.rs-label{font-size:12px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.rs-value{font-size:20px;font-weight:700}
+.rs-value.green{color:#34d399}
+.rs-value.red{color:#f87171}
+.rs-value.blue{color:var(--accent)}
+.rs-note{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* BREAKDOWN TABLE */
+.breakdown-table{width:100%;border-collapse:collapse;font-size:14px}
+.breakdown-table th{text-align:left;color:var(--muted);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--border)}
+.breakdown-table td{padding:11px 10px;border-bottom:1px solid rgba(255,255,255,0.03)}
+.breakdown-table tr:last-child td{border-bottom:none}
+.breakdown-table tr:hover td{background:rgba(255,255,255,0.02)}
+.ins-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:8px;flex-shrink:0}
+.ins-name{display:flex;align-items:center;font-weight:500}
+.ins-cn{font-size:12px;color:var(--muted);margin-left:4px}
+.rate-chip{display:inline-block;background:rgba(255,255,255,0.06);border-radius:4px;padding:2px 7px;font-size:12px;font-family:monospace}
+.bar-cell{width:100px}
+.mini-bar{height:5px;border-radius:3px;transition:width .3s}
+.total-row td{font-weight:700;border-top:1px solid var(--border) !important;padding-top:13px}
+.table-note{font-size:12px;color:var(--muted);margin-top:10px}
+
+/* HIDDEN COST BOX */
+.hidden-cost-box{background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(248,113,113,0.04));border:1px solid rgba(239,68,68,0.25);border-radius:12px;padding:20px 22px;margin-top:24px}
+.hcb-title{font-size:14px;font-weight:700;color:#f87171;margin-bottom:8px}
+.hcb-text{font-size:14px;color:var(--muted);line-height:1.7}
+.hcb-number{color:var(--text);font-weight:600}
+
+/* COMPONENT CARDS */
+.cards-section{padding:12px 0 44px}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.ins-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.ins-card-header{padding:16px 18px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.ins-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ins-card-title{font-weight:700;font-size:15px}
+.ins-card-cn{font-size:12px;color:var(--muted)}
+.ins-card-body{padding:16px 18px}
+.rate-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.rate-badge{font-size:12px;padding:4px 10px;border-radius:6px;font-weight:600}
+.rb-emp{background:rgba(56,189,248,0.12);color:var(--accent)}
+.rb-er{background:rgba(255,255,255,0.07);color:var(--text)}
+.rb-zero{background:rgba(255,255,255,0.04);color:var(--muted)}
+.card-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+.card-desc{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:14px}
+.rules-list{list-style:none;padding:0}
+.rules-list li{font-size:13px;color:var(--muted);padding:5px 0 5px 18px;position:relative;line-height:1.5}
+.rules-list li::before{content:'→';position:absolute;left:0;color:var(--muted)}
+.rules-list li strong{color:var(--text)}
+.warning-row{display:flex;align-items:flex-start;gap:8px;background:rgba(245,158,11,0.08);border-left:3px solid #f59e0b;border-radius:0 6px 6px 0;padding:8px 10px;margin-top:10px;font-size:12px;color:var(--muted)}
+.warning-icon{flex-shrink:0;margin-top:1px}
+
+/* FAQ */
+.faq-section{padding:20px 0 44px;border-top:1px solid var(--border)}
+.faq-grid{display:grid;gap:12px}
+.faq-item{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.faq-q{padding:16px 18px;font-weight:600;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.faq-q:hover{background:rgba(255,255,255,0.02)}
+.faq-arrow{color:var(--muted);font-size:12px;transition:transform .2s;flex-shrink:0}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{display:none;padding:0 18px 16px;font-size:13px;color:var(--muted);line-height:1.7}
+.faq-item.open .faq-a{display:block}
+
+/* COMPARISON */
+.comparison-section{padding:20px 0 50px;border-top:1px solid var(--border)}
+.comp-table{width:100%;border-collapse:collapse;font-size:13px}
+.comp-table th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:8px 10px;border-bottom:1px solid var(--border)}
+.comp-table td{padding:11px 10px;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:top}
+.comp-table tr.china-row td{background:rgba(56,189,248,0.04)}
+.comp-total{font-weight:700;font-size:14px}
+.comp-note{font-size:11px;color:var(--muted);margin-top:3px}
+.tag-high{color:#f87171;font-size:11px;background:rgba(248,113,113,0.1);padding:2px 6px;border-radius:4px}
+.tag-low{color:#34d399;font-size:11px;background:rgba(52,211,153,0.1);padding:2px 6px;border-radius:4px}
+.tag-med{color:#fbbf24;font-size:11px;background:rgba(251,191,36,0.1);padding:2px 6px;border-radius:4px}
+
+/* FOOTER */
+.tool-footer{border-top:1px solid var(--border);padding:28px 0 36px;text-align:center}
+.tool-footer p{font-size:13px;color:var(--muted);line-height:1.8}
+.back-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:9px 16px;font-size:13px;color:var(--muted);margin-top:14px;transition:all .2s}
+.back-btn:hover{color:var(--text);border-color:rgba(255,255,255,0.15);text-decoration:none}
+
+/* DIVIDER */
+.section-divider{border:none;border-top:1px solid var(--border);margin:8px 0 36px}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="/tools/">All Tools</a>
+  <span class="sep">›</span>
+  <a href="/tools/#china">AI Helps You Read China Clearly</a>
+  <span class="sep">›</span>
+  <span style="color:var(--text);font-size:13px">五险一金 Calculator</span>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">2026 Updated</div>
+  <h1>China's <span>五险一金</span> Explained</h1>
+  <p class="hero-sub">Five Social Insurances + One Housing Fund. Every Chinese employee pays 18.5% of their salary. Their employer quietly adds another 33.5% on top. Here's the full picture.</p>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-num">18.5%</div><div class="hstat-label">Employee pays</div></div>
+    <div class="hstat"><div class="hstat-num">33.5%</div><div class="hstat-label">Employer pays</div></div>
+    <div class="hstat"><div class="hstat-num">52%</div><div class="hstat-label">Combined rate</div></div>
+    <div class="hstat"><div class="hstat-num">5+1</div><div class="hstat-label">Components</div></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- CALCULATOR -->
+  <section class="calc-section">
+    <div class="section-title">Contribution Calculator</div>
+    <div class="section-sub">Enter a monthly salary to see the exact breakdown</div>
+
+    <div class="salary-row">
+      <span class="salary-label">Monthly salary (¥)</span>
+      <div class="salary-input-wrap">
+        <span>¥</span>
+        <input type="number" id="salaryNum" value="10000" min="1000" max="100000" step="500">
+      </div>
+      <div class="salary-slider">
+        <input type="range" id="salaryRange" min="1000" max="50000" step="500" value="10000">
+      </div>
+    </div>
+
+    <div class="result-summary">
+      <div class="rs-card">
+        <div class="rs-label">Employee Deduction</div>
+        <div class="rs-value red" id="res-emp-total">¥1,850</div>
+        <div class="rs-note">From your paycheck</div>
+      </div>
+      <div class="rs-card">
+        <div class="rs-label">Net Take-Home Pay</div>
+        <div class="rs-value green" id="res-net">¥8,150</div>
+        <div class="rs-note">Before income tax</div>
+      </div>
+      <div class="rs-card highlight">
+        <div class="rs-label">Employer's Hidden Cost</div>
+        <div class="rs-value red" id="res-er-total">¥3,350</div>
+        <div class="rs-note">You never see this</div>
+      </div>
+    </div>
+
+    <!-- BREAKDOWN TABLE -->
+    <table class="breakdown-table">
+      <thead>
+        <tr>
+          <th>Insurance</th>
+          <th>Employee rate</th>
+          <th>Your deduction</th>
+          <th>Employer rate</th>
+          <th>Employer pays</th>
+          <th class="bar-cell"></th>
+        </tr>
+      </thead>
+      <tbody id="breakdown-body"></tbody>
+      <tfoot>
+        <tr class="total-row">
+          <td><strong>Total</strong></td>
+          <td><span class="rate-chip">18.5%</span></td>
+          <td><strong id="foot-emp">¥1,850</strong></td>
+          <td><span class="rate-chip">33.5%</span></td>
+          <td><strong id="foot-er">¥3,350</strong></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+    <p class="table-note">* Rates shown are 2026 national standard. Cities may vary slightly. Contribution base assumed equal to salary (actual base is capped at 60%–300% of local average wage).</p>
+
+    <div class="hidden-cost-box">
+      <div class="hcb-title">The "Hidden Payroll" Most Employees Don't Know</div>
+      <div class="hcb-text">
+        For a <span class="hcb-number" id="hcb-salary">¥10,000</span>/month salary, your employer's total monthly cost is actually <span class="hcb-number" id="hcb-total-cost">¥13,350</span> — that's your salary plus <span class="hcb-number" id="hcb-er-amount">¥3,350</span> in mandatory contributions they pay directly to the government. You never see this money, but it explains why Chinese employers are cautious about raising base salaries.
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- COMPONENT CARDS -->
+  <section class="cards-section">
+    <div class="section-title">Each Component Explained</div>
+    <div class="section-sub">What it covers, when you can use it, and what happens if payments stop</div>
+    <div class="cards-grid">
+
+      <!-- PENSION -->
+      <div class="ins-card">
+        <div class="ins-card-header">
+          <div class="ins-icon" style="background:rgba(59,130,246,0.15)">🏦</div>
+          <div>
+            <div class="ins-card-title">Pension Insurance</div>
+            <div class="ins-card-cn">养老保险 · Yǎnglǎo bǎoxiǎn</div>
+          </div>
+        </div>
+        <div class="ins-card-body">
+          <div class="rate-row">
+            <span class="rate-badge rb-emp">Employee 8%</span>
+            <span class="rate-badge rb-er">Employer 16%</span>
+          </div>
+          <div class="card-section-title">What it does</div>
+          <p class="card-desc">Funds your monthly pension after retirement. After contributing for a cumulative 15 years, you receive a lifelong monthly pension when you reach retirement age.</p>
+          <div class="card-section-title">Key rules</div>
+          <ul class="rules-list">
+            <li>Retirement age: <strong>Male 60</strong>, Female blue-collar 50, Female white-collar 55</li>
+            <li>Minimum <strong>15 cumulative years</strong> of contributions required</li>
+            <li>Pension amount depends on: contribution base × years × local average wage</li>
+            <li>After male 50 / female 40, out-of-city contributions become "temporary" — you must retire in your home city (户籍地)</li>
+          </ul>
+          <div class="warning-row">
+            <span class="warning-icon">⚠️</span>
+            <span>If you stop contributing before 15 years, you cannot simply pay a lump sum to catch up. You must continue contributing until the total reaches 15 years.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEDICAL -->
+      <div class="ins-card">
+        <div class="ins-card-header">
+          <div class="ins-icon" style="background:rgba(16,185,129,0.15)">🏥</div>
+          <div>
+            <div class="ins-card-title">Medical Insurance</div>
+            <div class="ins-card-cn">医疗保险 · Yīliáo bǎoxiǎn (incl. Maternity)</div>
+          </div>
+        </div>
+        <div class="ins-card-body">
+          <div class="rate-row">
+            <span class="rate-badge rb-emp">Employee 2%</span>
+            <span class="rate-badge rb-er">Employer 8%</span>
+          </div>
+          <div class="card-section-title">What it does</div>
+          <p class="card-desc">Covers hospitalization and outpatient medical costs. The employee's 2% flows into a personal medical card — you can spend it at pharmacies and clinics. Since 2020, <strong>maternity insurance is merged into medical</strong> (no separate employee deduction). 2026 upgrade: outpatient reimbursement raised to 70%.</p>
+          <div class="card-section-title">Key rules</div>
+          <ul class="rules-list">
+            <li>Contribute <strong>25 years (male) / 20 years (female)</strong> cumulative → lifelong medical coverage after retirement, no more payments</li>
+            <li>Years don't have to be in the same city (e.g. Shenzhen: 25 total years, 15 must be in Shenzhen)</li>
+            <li>Maternity: need 1 continuous year before childbirth to claim. Husband's insurance can cover wife.</li>
+          </ul>
+          <div class="warning-row">
+            <span class="warning-icon">⚠️</span>
+            <span>If you stop for &gt;3 months: need 6 continuous months to reactivate reimbursement. Short gaps (&lt;3 months) only need a back-payment, then usable next month.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNEMPLOYMENT -->
+      <div class="ins-card">
+        <div class="ins-card-header">
+          <div class="ins-icon" style="background:rgba(245,158,11,0.15)">📋</div>
+          <div>
+            <div class="ins-card-title">Unemployment Insurance</div>
+            <div class="ins-card-cn">失业保险 · Shīyè bǎoxiǎn</div>
+          </div>
+        </div>
+        <div class="ins-card-body">
+          <div class="rate-row">
+            <span class="rate-badge rb-emp">Employee 0.5%</span>
+            <span class="rate-badge rb-er">Employer 0.5%</span>
+          </div>
+          <div class="card-section-title">What it does</div>
+          <p class="card-desc">Provides monthly payments if you lose your job involuntarily (layoff, company closure). You must register as unemployed within 60 days. Can apply directly via Alipay — search "失业金".</p>
+          <div class="card-section-title">Benefit duration</div>
+          <ul class="rules-list">
+            <li>1–5 years contributed → <strong>max 12 months</strong> of payments</li>
+            <li>5–10 years → <strong>max 18 months</strong></li>
+            <li>10+ years → <strong>max 24 months</strong></li>
+          </ul>
+          <div class="warning-row">
+            <span class="warning-icon">⚠️</span>
+            <span>If you resign voluntarily (主动辞职), you cannot claim. Must be involuntary job loss.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORK INJURY -->
+      <div class="ins-card">
+        <div class="ins-card-header">
+          <div class="ins-icon" style="background:rgba(239,68,68,0.15)">🦺</div>
+          <div>
+            <div class="ins-card-title">Work Injury Insurance</div>
+            <div class="ins-card-cn">工伤保险 · Gōngshāng bǎoxiǎn</div>
+          </div>
+        </div>
+        <div class="ins-card-body">
+          <div class="rate-row">
+            <span class="rate-badge rb-zero">Employee: ¥0</span>
+            <span class="rate-badge rb-er">Employer 0.2%–1.9%</span>
+          </div>
+          <div class="card-section-title">What it does</div>
+          <p class="card-desc">Covers medical costs and disability compensation for injuries during work. Employees pay nothing — this is entirely employer-funded. Rate varies by industry risk level.</p>
+          <div class="card-section-title">What counts as a work injury</div>
+          <ul class="rules-list">
+            <li>Injuries during work hours and at the workplace</li>
+            <li>Injuries during <strong>commute (上下班途中)</strong></li>
+            <li>Occupational diseases</li>
+            <li>Injuries during business travel (出差)</li>
+          </ul>
+          <div class="warning-row">
+            <span class="warning-icon">⚠️</span>
+            <span>Recognition is complex. If injured, immediately call HR and the labor bureau 12333. Preserve all evidence (photos, medical records, witness info).</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MATERNITY (separate card for reference) -->
+      <div class="ins-card">
+        <div class="ins-card-header">
+          <div class="ins-icon" style="background:rgba(236,72,153,0.15)">👶</div>
+          <div>
+            <div class="ins-card-title">Maternity Insurance</div>
+            <div class="ins-card-cn">生育保险 · Shēngyù bǎoxiǎn (merged into Medical)</div>
+          </div>
+        </div>
+        <div class="ins-card-body">
+          <div class="rate-row">
+            <span class="rate-badge rb-zero">Employee: ¥0</span>
+            <span class="rate-badge rb-er">Employer ~0.8% (in medical)</span>
+          </div>
+          <div class="card-section-title">What it does</div>
+          <p class="card-desc">Covers maternity-related medical costs and provides a maternity allowance (生育津贴) after childbirth. Since 2020, merged into medical insurance — the employer's 8% medical rate includes this 0.8%.</p>
+          <div class="card-section-title">Key rules</div>
+          <ul class="rules-list">
+            <li>Need <strong>1 continuous year</strong> of contributions before childbirth</li>
+            <li>If wife has no maternity coverage, <strong>husband's insurance can be used</strong></li>
+            <li>Covers: delivery costs, post-natal recovery, maternity allowance equal to average salary for 98+ days</li>
+          </ul>
+          <div class="warning-row">
+            <span class="warning-icon">💡</span>
+            <span>The maternity allowance is calculated using your company's average salary, not your personal salary — employees at high-paying companies benefit more.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- HOUSING FUND -->
+      <div class="ins-card">
+        <div class="ins-card-header">
+          <div class="ins-icon" style="background:rgba(139,92,246,0.15)">🏠</div>
+          <div>
+            <div class="ins-card-title">Housing Provident Fund</div>
+            <div class="ins-card-cn">住房公积金 · Zhùfáng gōngjījīn</div>
+          </div>
+        </div>
+        <div class="ins-card-body">
+          <div class="rate-row">
+            <span class="rate-badge rb-emp">Employee 5–12%</span>
+            <span class="rate-badge rb-er">Employer 5–12%</span>
+          </div>
+          <div class="card-section-title">What it does</div>
+          <p class="card-desc">Both you and your employer contribute to a personal account you own. The money earns interest annually. Its main power: <strong>housing fund mortgage rates are ~1.75% lower than commercial bank rates</strong> (2026: 2.85% vs ~4.6%), saving hundreds of thousands on a typical apartment purchase.</p>
+          <div class="card-section-title">How to use it</div>
+          <ul class="rules-list">
+            <li>Buy a home: apply for housing fund mortgage (need 6+ continuous months)</li>
+            <li>Rent: withdraw annually if renting (requirements vary by city)</li>
+            <li>Major medical expenses: can withdraw</li>
+            <li>Retirement: withdraw the full balance as lump sum</li>
+            <li>2026 new: flexible/gig workers can now contribute voluntarily; multi-child families get +30% loan quota</li>
+          </ul>
+          <div class="warning-row">
+            <span class="warning-icon">⚠️</span>
+            <span>If you stop contributions, the account is "frozen" (封存). You need 6 continuous months before applying for a housing fund mortgage.</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end cards-grid -->
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="section-title">Common Questions</div>
+    <div class="section-sub" style="margin-bottom:20px">Things foreigners and new employees always ask</div>
+    <div class="faq-grid">
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Do foreigners working in China have to pay 五险一金?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-a">
+          Since 2011, foreign nationals working in China with a work permit are legally required to participate in the social insurance system — pension, medical, unemployment, work injury, and maternity. Housing fund participation for foreigners was optional in most cities, but enforcement varies. Some bilateral social security agreements (e.g. between China and Germany, South Korea, Japan) allow workers to be exempt from double contribution if they're already covered in their home country.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What happens to my pension and housing fund if I leave China permanently?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-a">
+          <strong>Pension:</strong> Foreign nationals who leave China can apply to withdraw their personal pension account (the individual 8% contributions). However, they forfeit the employer's 16% portion, which stays in the social pool. Chinese citizens who leave permanently before reaching retirement age can also apply to withdraw under certain conditions. <br><br>
+          <strong>Housing fund:</strong> You can withdraw the full balance (both your contributions and employer's) when you cancel your work permit and leave China. The process requires your employer's cooperation and takes 1–2 weeks.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What's the "contribution base" and how does it affect my deductions?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-a">
+          Contributions are calculated on a "contribution base" (缴费基数), which is based on your previous year's average monthly salary. The base is capped between 60% and 300% of the local city average wage. <br><br>
+          <strong>Example:</strong> If Beijing's average wage is ¥10,000/month: the minimum base is ¥6,000 (60%), and the maximum is ¥30,000 (300%). A worker earning ¥50,000/month only pays social insurance on ¥30,000. A worker earning ¥4,000 pays on the floor of ¥6,000. This system slightly protects high earners and slightly over-charges low earners.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Does my employer have to pay 五险一金 for part-time or gig workers?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-a">
+          For formal part-time employees (劳动合同), yes — employers are legally required to pay work injury insurance at minimum, and most other insurances if the worker exceeds certain hours. For informal gig workers (freelancers, delivery workers), coverage has historically been patchy. Since 2022, China has been rolling out flexible worker social insurance programs allowing gig workers to contribute to pension and medical insurance independently, and in 2026, housing fund contributions were also opened to this group.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          My employer says they'll give me a higher salary instead of paying 五险一金. Is this legal?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-a">
+          No — it's illegal. 五险一金 is mandatory for any employer-employee relationship. Some small businesses offer cash in lieu to avoid the cost, but this exposes both the employer (fines, back payments) and the employee (no pension credits, no medical coverage, no housing fund). If you agree to this arrangement and then get injured or laid off, you have almost no legal recourse. The employee's social insurance rights are non-waivable under Chinese labor law.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What's the actual pension you'd receive after retirement?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-a">
+          The calculation is complex, but the simplified formula is: <br><br>
+          <strong>Monthly pension ≈ (Personal account ÷ 139) + (Local avg wage × Payment index × Years × 1%)</strong><br><br>
+          For a worker who contributed on a ¥8,000/month base for 30 years in Beijing (where the average wage is ~¥10,000): expect roughly ¥3,500–5,000/month pension. Pension amounts vary enormously by city, contribution years, and contribution base. The system rewards those who contribute longer on a higher base.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- INTERNATIONAL COMPARISON -->
+  <section class="comparison-section">
+    <div class="section-title">How China Compares Globally</div>
+    <div class="section-sub">Employee + employer combined mandatory payroll contribution rates</div>
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Country</th>
+          <th>Employee</th>
+          <th>Employer</th>
+          <th>Total</th>
+          <th>Housing fund?</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="china-row">
+          <td><strong>🇨🇳 China</strong></td>
+          <td>18.5%</td>
+          <td>33.5%</td>
+          <td><span class="comp-total">52%</span> <span class="tag-high">High</span></td>
+          <td>✅ Yes (5–24%)</td>
+          <td class="comp-note">Includes large housing fund; urban property-owning policy driver</td>
+        </tr>
+        <tr>
+          <td>🇫🇷 France</td>
+          <td>~22%</td>
+          <td>~42%</td>
+          <td><span class="comp-total">~64%</span> <span class="tag-high">Very high</span></td>
+          <td>❌ No</td>
+          <td class="comp-note">Highest among major economies; includes generous healthcare + unemployment</td>
+        </tr>
+        <tr>
+          <td>🇩🇪 Germany</td>
+          <td>~20%</td>
+          <td>~20%</td>
+          <td><span class="comp-total">~40%</span> <span class="tag-med">Medium</span></td>
+          <td>❌ No</td>
+          <td class="comp-note">Symmetric split; comprehensive pension + public health</td>
+        </tr>
+        <tr>
+          <td>🇯🇵 Japan</td>
+          <td>~14%</td>
+          <td>~15%</td>
+          <td><span class="comp-total">~29%</span> <span class="tag-med">Medium</span></td>
+          <td>❌ No</td>
+          <td class="comp-note">Lower rates but aging society faces pension pressure</td>
+        </tr>
+        <tr>
+          <td>🇬🇧 UK</td>
+          <td>~8%</td>
+          <td>~13.8%</td>
+          <td><span class="comp-total">~22%</span> <span class="tag-low">Lower</span></td>
+          <td>❌ No</td>
+          <td class="comp-note">National Insurance; NHS is tax-funded (not payroll)</td>
+        </tr>
+        <tr>
+          <td>🇺🇸 USA</td>
+          <td>7.65%</td>
+          <td>7.65%</td>
+          <td><span class="comp-total">15.3%</span> <span class="tag-low">Low</span></td>
+          <td>❌ No</td>
+          <td class="comp-note">Social Security 6.2% + Medicare 1.45% only; healthcare is private</td>
+        </tr>
+        <tr>
+          <td>🇸🇬 Singapore</td>
+          <td>~20%</td>
+          <td>~17%</td>
+          <td><span class="comp-total">~37%</span> <span class="tag-med">Medium</span></td>
+          <td>✅ CPF (similar)</td>
+          <td class="comp-note">Central Provident Fund covers retirement + healthcare + housing — most similar to China's system</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="table-note" style="margin-top:10px">China's 52% combined rate looks high but includes the housing fund (10–24% of salary), which is a forced savings account you ultimately get back. Excluding housing fund: employer+employee ≈ 28–42%, in line with European averages.</p>
+  </section>
+
+  <div class="tool-footer">
+    <p>Built by an ordinary Chinese person trying to explain China to the world.<br>
+    Data source: State Council 《社会保险法》, Ministry of Human Resources 2026 guidelines.</p>
+    <a href="/tools/" class="back-btn">← Back to All Tools</a>
+  </div>
+
+</div><!-- end wrap -->
+
+<script>
+const COMPONENTS = [
+  { key:'pension',      name:'Pension',       cn:'养老保险', emp:0.08,  er:0.16,  color:'#3b82f6' },
+  { key:'medical',      name:'Medical',        cn:'医疗保险', emp:0.02,  er:0.08,  color:'#10b981' },
+  { key:'unemployment', name:'Unemployment',   cn:'失业保险', emp:0.005, er:0.005, color:'#f59e0b' },
+  { key:'injury',       name:'Work Injury',    cn:'工伤保险', emp:0,     er:0.01,  color:'#ef4444' },
+  { key:'housing',      name:'Housing Fund',   cn:'住房公积金',emp:0.08,  er:0.08,  color:'#8b5cf6' },
+];
+
+const EMP_TOTAL_RATE = COMPONENTS.reduce((s,c)=>s+c.emp,0);
+const ER_TOTAL_RATE  = COMPONENTS.reduce((s,c)=>s+c.er,0);
+
+function fmt(n){return '¥'+(Math.round(n)).toLocaleString('en-US')}
+
+function render(salary){
+  const empTotal = salary * EMP_TOTAL_RATE;
+  const erTotal  = salary * ER_TOTAL_RATE;
+  const net      = salary - empTotal;
+
+  document.getElementById('res-emp-total').textContent = fmt(empTotal);
+  document.getElementById('res-net').textContent       = fmt(net);
+  document.getElementById('res-er-total').textContent  = fmt(erTotal);
+  document.getElementById('foot-emp').textContent      = fmt(empTotal);
+  document.getElementById('foot-er').textContent       = fmt(erTotal);
+
+  document.getElementById('hcb-salary').textContent      = fmt(salary);
+  document.getElementById('hcb-total-cost').textContent  = fmt(salary + erTotal);
+  document.getElementById('hcb-er-amount').textContent   = fmt(erTotal);
+
+  const maxBar = salary * 0.16; // pension employer is biggest bar
+  const tbody = document.getElementById('breakdown-body');
+  tbody.innerHTML = COMPONENTS.map(c=>{
+    const empAmt = salary * c.emp;
+    const erAmt  = salary * c.er;
+    const barW   = erAmt > 0 ? Math.round((erAmt/maxBar)*100) : 2;
+    const empRate = c.emp === 0 ? '<span style="color:var(--muted)">—</span>' : `<span class="rate-chip">${(c.emp*100).toFixed(1)}%</span>`;
+    const erRate  = `<span class="rate-chip">${(c.er*100).toFixed(1)}%</span>`;
+    const empFmt  = c.emp === 0 ? '<span style="color:var(--muted)">¥0</span>' : fmt(empAmt);
+    return `<tr>
+      <td><div class="ins-name"><span class="ins-dot" style="background:${c.color}"></span>${c.name}<span class="ins-cn">${c.cn}</span></div></td>
+      <td>${empRate}</td>
+      <td>${empFmt}</td>
+      <td>${erRate}</td>
+      <td>${fmt(erAmt)}</td>
+      <td class="bar-cell"><div class="mini-bar" style="width:${barW}%;background:${c.color}"></div></td>
+    </tr>`;
+  }).join('');
+}
+
+const salaryNum   = document.getElementById('salaryNum');
+const salaryRange = document.getElementById('salaryRange');
+
+salaryNum.addEventListener('input',()=>{
+  const v = Math.max(1000,Math.min(100000,parseInt(salaryNum.value)||10000));
+  salaryRange.value = Math.min(v,50000);
+  render(v);
+});
+salaryRange.addEventListener('input',()=>{
+  salaryNum.value = salaryRange.value;
+  render(parseInt(salaryRange.value));
+});
+
+render(10000);
+
+function toggleFaq(el){
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body>
+</html>

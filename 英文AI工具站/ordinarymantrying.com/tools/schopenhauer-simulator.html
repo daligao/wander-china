@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arthur Schopenhauer Life Simulator — Will, Pessimism & the Poodles | Ordinary Man Trying</title>
+<meta name="description" content="Step into Arthur Schopenhauer's shoes across 8 pivotal decisions — from publishing the greatest pessimist masterpiece to watching it sit unread for 30 years. Fame finally came at 65.">
+<style>
+:root{
+  --bg:#EEEEF0;--card:#F5F5F7;--ink:#080A0E;--muted:#303840;--line:#C0C4CC;
+  --accent:#1A2028;--accent-bg:#D8DCE4;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,238,240,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#080A0E;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #A0A8B0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#060A0E;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#E0E4EC;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#E0E4EC;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #A0A8B0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #A0A8B0;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Arthur Schopenhauer</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #79 of 100</p>
+  <h1 class="cover-title">The World Is Will.<br>And Will Is Suffering.</h1>
+  <p class="cover-sub">Arthur Schopenhauer published <em>The World as Will and Representation</em> in 1818 and watched it sit unsold in a warehouse for thirty years. He deliberately scheduled his Berlin lectures against Hegel's to prove his superiority. Hegel drew hundreds of students; Schopenhauer had almost none. He named his poodles "Atman" — world soul. He ate alone at the best Frankfurt restaurant every evening for twenty-seven years. Fame arrived at sixty-five. He accepted it with the cheerful cynicism of a man who had philosophically expected nothing from the world and was accordingly unsurprised.</p>
+  <div class="cover-facts">
+    <p>📚 <em>The World as Will and Representation</em> published 1818 &nbsp;·&nbsp; 🐩 Named his poodles <em>Atma</em> (world soul) &nbsp;·&nbsp; 😤 Lost a legal annuity case to his neighbor, 1821 &nbsp;·&nbsp; ⚔️ Deliberately lectured against Hegel at Berlin — and lost &nbsp;·&nbsp; Died September 21, 1860 &nbsp;·&nbsp; Age 72 &nbsp;·&nbsp; Fame finally came at 65</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Schopenhauer's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1806</div>
+  <div class="timeline-dot">Weimar, Germany · Age 18</div>
+  <div class="narrative">
+    <p>Your father is dead — suicide, almost certainly, a fall from a Hamburg warehouse in 1805, though no one will say this directly. Your mother Johanna has responded to her widowhood by moving to Weimar and becoming, with startling speed, a celebrated novelist and one of the great literary hostesses of the age. Her salon in Weimar attracts Goethe, Wieland, and the luminaries of German culture. She is charming, socially skilled, and, in your view, completely superficial — a woman who makes her living from the appearance of depth rather than its substance.</p>
+    <p>You and she have an arrangement: you may visit her salon, but not stay too long and not argue with her guests. You find this arrangement degrading. You are eighteen years old and you believe — not without some justification — that you are more intelligent than almost everyone in the room, including the guests she is so eager to impress. The question is whether you can survive this household long enough to get an education without either compromising your intellectual standards or destroying the relationship entirely.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1806</div>
+    <p class="decision-q">You are eighteen, living in your mother's house, watching her salon world with contempt. How do you handle this formative tension?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Engage with her social world — Goethe is there, and the connections available through your mother's salon are intellectually valuable if you approach them with appropriate selectivity.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. Use the household as a temporary base while developing your own intellectual framework as independently as possible, then separate cleanly when you have enough to go on alone.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Challenge your mother directly about the shallowness of her social world — intellectual honesty requires naming what you see, even in family relationships.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Cultivate Goethe specifically — he is the one figure in her circle with genuine intellectual depth, and his mentorship could shape your career more than any university.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You are thrown out permanently in 1814, and you both spend the rest of your lives insisting the other one started it.</strong> <strong>What Schopenhauer actually did:</strong> He used Weimar as a base and did cultivate Goethe briefly — their conversations about color theory were mutually stimulating, and Schopenhauer later wrote his own color theory essay in response. But he and his mother's relationship deteriorated badly: in 1814, after a violent quarrel, Johanna ordered him out of the house permanently, and they never saw each other again. He inherited enough money from his father to live independently and spent the rest of his life doing so. He always maintained that the separation was his mother's fault. His mother maintained the same about him.
+    </div>
+  </div>
+
+  <div class="year-banner">1813</div>
+  <div class="timeline-dot">Jena, Germany · Age 25</div>
+  <div class="narrative">
+    <p>You have been studying under Fichte and Schulze, and you have been reading Kant with the kind of close attention that most philosophy students avoid because it is genuinely difficult. Kant's <em>Critique of Pure Reason</em> has changed the landscape of philosophy permanently: he established that the mind does not passively receive reality but actively structures it through categories of understanding. The world as we experience it — space, time, causality — is not the world as it is in itself, but the world as filtered through the human cognitive apparatus. The thing-in-itself (<em>Ding an sich</em>) remains unknowable.</p>
+    <p>Your dissertation, "On the Fourfold Root of the Principle of Sufficient Reason," systematizes Kant's categories into four fundamental forms of explanation: mathematical, logical, physical, and motivational. It is rigorous, original, and largely ignored. Goethe reads it and sends you a letter of qualified praise, which you treasure more than any academic recognition. Your real work, however, is just beginning. The dissertation is the foundation. You now need to build.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1813</div>
+    <p class="decision-q">Your dissertation systematizes Kant but the truly original step — what will become your life's work — lies ahead. What is the key philosophical move that transforms Kantian philosophy into Schopenhauerian philosophy?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Abandoning Kant's distinction between appearance and thing-in-itself — the entire project of knowing reality as it is must be given up.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. Identifying the thing-in-itself with Will — what drives reality from the inside is not a rational God or Hegelian Geist but a blind, aimless, insatiable striving force that we experience directly in our own bodies as desire and impulse.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. Incorporating Indian philosophy's concept of Maya — the entire phenomenal world is illusion, and the practical task is liberation from it rather than its philosophical explanation.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. Extending Kant's moral philosophy — the categorical imperative provides the foundation for a more rigorous ethics than Kant himself developed.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>You looked at the unknowable thing-in-itself that Kant had left sealed shut and said: we can access it through one door — our own bodies. Every hunger, every effort, every pain is not a representation of reality but reality itself, and what it reveals is a blind force that strives without purpose and is never satisfied.</strong> <strong>Schopenhauer's central insight:</strong> Kant had left the thing-in-itself unknowable. Schopenhauer argued we can know it through one privileged channel: our own bodies. When I reach for food, when I feel desire or pain or effort, I experience Will directly — not as a representation but as a thing-in-itself. This Will, Schopenhauer argued, is not personal or rational but blind and purposeless. It drives all reality — stones falling, plants growing, humans striving — without any goal except more striving. Since the Will is never satisfied, existence is essentially suffering. This is the foundation of his pessimism, and it is the most original idea in post-Kantian German philosophy.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1818</div>
+  <div class="timeline-dot">Dresden, Germany · Age 30</div>
+  <div class="narrative">
+    <p><em>The World as Will and Representation</em> is published in December 1818, dated 1819. You have spent four years writing it, working every morning in a rented room in Dresden, certain that you are producing a work of permanent importance. You are correct, though the correctness will not be confirmed for a very long time. The publisher, Brockhaus, prints 750 copies. They sell almost none. By 1836, most of the print run has been pulped. You receive your author's copies and no royalties. The silence from the academic world is essentially complete.</p>
+    <p>You know why it has failed, or at least what you tell yourself: German philosophy is currently under the spell of Georg Wilhelm Friedrich Hegel, whose system of "Absolute Idealism" — in which history is the self-realization of Spirit — dominates every major university. Hegel's prose is deliberately obscure, his logic circular, and his conclusions convenient for those in power. You consider him, and say openly, a fraud. This does not help your reception.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1818</div>
+    <p class="decision-q">Your masterwork is largely ignored. What is Schopenhauer's diagnosis of why Hegel dominates the academy while his own work sits unsold?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. Academic jealousy — the professoriate protects its own and marginalizes independent thinkers who haven't paid their institutional dues.</button>
+      <button class="dopt" onclick="choose(this,3,false)">B) Bad marketing — the title and publisher choice were wrong; the book needed a better introduction to the academic world.</button>
+      <button class="dopt" onclick="choose(this,3,true)">C. Philosophy had become a servant of the Prussian state — Hegel's system justified the existing order as the rational unfolding of history, which was exactly what employers and patrons wanted to hear. Truth had nothing to do with it.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. His pessimism was simply too depressing — audiences naturally prefer philosophies that affirm life rather than diagnose it as suffering.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>Your publisher printed 750 copies of your masterwork and eventually pulped most of them. You were outsold, across two decades of German philosophy, by a man whose prose you described as "a monument to German stupidity" — and who had been appointed, you correctly noted, partly to justify Prussian state power.</strong> <strong>Schopenhauer vs. Hegel:</strong> Schopenhauer's contempt for Hegel was philosophically motivated but also practically accurate: Hegel had been appointed to the Berlin professorship partly because his philosophy of history could be read as validating Prussian state power. Schopenhauer called Hegel's work "a monument to German stupidity" and characterized his prose style as deliberate obfuscation designed to conceal the absence of content. The judgment was harsh and more than a little motivated by competitive resentment. But it was also, in significant ways, right: Hegel's influence peaked in his lifetime and collapsed after his death, while Schopenhauer's has grown continuously since the 1850s.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1820</div>
+  <div class="timeline-dot">Berlin University · Age 32</div>
+  <div class="narrative">
+    <p>You have obtained a position as a Privatdozent — an unpaid lecturer — at the University of Berlin. You will be paid only if students attend your lectures; if no students come, you receive nothing. This system means you must compete for students in the open market of academic Berlin. Hegel is also at Berlin, now at the height of his fame, drawing hundreds of students to his lectures on logic and philosophy of history.</p>
+    <p>You schedule your own lectures at exactly the same hours as Hegel's. It is a direct confrontation — a wager on your own superiority that requires no academic intermediary to verify. If students choose your lecture room over Hegel's, you win. The result is as unambiguous as any experiment in the history of philosophy: Hegel's hall is packed; your room has three or four students, sometimes fewer. By the end of the first semester, you have effectively no audience. You leave Berlin and never return to academic life.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1820</div>
+    <p class="decision-q">You deliberately scheduled your lectures against Hegel's — and lost catastrophically. What should be concluded from this episode?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. The experiment failed, and Schopenhauer should have recognized that his philosophy needed better popularization before it could compete with Hegel's established following.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. The outcome confirmed his diagnosis — academic audiences in 1820 were attracted to Hegel's system because it flattered them and the institutional world they inhabited. The failure of his lectures proved his theory, not his theory's inadequacy.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. It was a strategic mistake — by making the confrontation direct, he ensured that his defeat would be total and public rather than quiet and recoverable.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. The academic world simply wasn't ready for pessimism — timing, not quality, explains the outcome.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You scheduled your lectures at exactly the same hours as Hegel's — the most famous philosopher in Europe — to prove your superiority in open competition. His hall was packed. Yours had three or four students. You left Berlin and never returned to academic life.</strong> <strong>What Schopenhauer concluded:</strong> He concluded, with somewhat circular reasoning, that the world's failure to appreciate his work proved his pessimistic theory of the world. He spent the next decade in Frankfurt, alone, writing and walking his poodles, convinced that recognition would eventually come — not because he needed it, but because the truth of his philosophy was self-evident and would eventually force itself on anyone who read carefully. He was right. The reading came thirty years later, but it came.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1821</div>
+  <div class="timeline-dot">Berlin, Germany · Age 33</div>
+  <div class="narrative">
+    <p>Your neighbor is Caroline Marquet, a seamstress who works from home. She and her friends regularly gather on the landing outside your apartment door, and the noise disrupts your concentration. You have asked them to be quiet. They have not been quiet. On one occasion, you physically push Marquet away from the door and she falls — she claims down the stairs, you claim only onto the landing. She sues you, claiming injuries to her arm and shoulder that affect her ability to work.</p>
+    <p>The case drags through the courts for years. In 1827, a court rules against you. You are ordered to pay Marquet a quarterly annuity for as long as she lives. This you do, for twenty-one years, writing in his account book each quarter the Latin line "<em>Obit anus, abit onus</em>" — "The old woman dies, the burden departs." She finally dies in 1842. He is fifty-four. He has paid her for twenty-one years.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1821</div>
+    <p class="decision-q">The Marquet incident — pushing a neighbor who then sues you for injuries — reveals what aspect of Schopenhauer's character?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Justified irritability — his need for silence to write was legitimate, and the legal system failed to protect a thinker's right to his working conditions.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. The gap between his philosophy and his character — he argued that compassion was the only genuine ethical foundation, but treated an actual vulnerable person with contempt and physical force, and never expressed remorse.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. The class dynamics of 19th-century Germany — a Privatdozent from a merchant family was entitled to expect certain standards of behavior from working-class neighbors.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. Minor historical color — the incident was trivial and the decision to pay the annuity reflects only the legal reality, not any moral failure.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>You built an entire ethics on compassion — on the idea that recognizing another's suffering as your own is the only genuine moral foundation. Then you pushed your seamstress neighbor down a flight of stairs and spent twenty-one years writing "the old woman dies, the burden departs" in your account book each quarter you paid her annuity.</strong> <strong>Schopenhauer's ethics vs. his behavior:</strong> Schopenhauer's ethical philosophy holds that compassion — <em>Mitleid</em>, "suffering-with" — is the only genuine basis for morality. He argued that recognizing another's suffering as equivalent to one's own is the foundation of all genuine ethical action. His treatment of Caroline Marquet — and his recorded contempt for her and his satisfaction when she died — is a documented counterexample to his own theory. This gap between system and life is not unusual in philosophers. What makes it striking in Schopenhauer's case is that his system is explicitly about suffering, and his response to an actual suffering person was to write a cruel pun in a ledger for twenty-one years.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1836</div>
+  <div class="timeline-dot">Frankfurt, Germany · Age 48</div>
+  <div class="narrative">
+    <p>You have been living in Frankfurt for eight years, alone. You take your poodle — always named Atma, <em>Weltseele</em>, world soul — for two walks a day. You eat dinner alone at the table d'hôte of the <em>Englischer Hof</em>, the best restaurant in Frankfurt, placing a gold coin on the table at the start of the meal and returning it to your pocket at the end. Your standing wager is that the coin goes to charity the first day you hear the officers at the next table discuss anything other than horses, dogs, and women. You keep the coin for twenty-seven years.</p>
+    <p><em>The World as Will and Representation</em> is out of print. You are working on essays and supplements — "On the Will in Nature," "The Two Fundamental Problems of Ethics" — that elaborate and defend the system without yet finding readers. You are writing for a future you are confident exists but that shows no sign of materializing. You are, you tell yourself, content. The Will in you has been partly quieted by the daily routine. You are working. You are walking. You are reading. The recognition will come. The universe is indifferent to your schedule.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1836</div>
+    <p class="decision-q">Your masterwork has failed and you are writing in obscurity. What sustains Schopenhauer through thirty years of philosophical silence?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Denial — he genuinely didn't notice the silence because he avoided situations where it would be confirmed.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. The philosophical consistency of his own pessimism — he had argued that the world was indifferent to individual achievement, and the indifference of the world to his work was simply confirmation of a theory he already held. He had no right to expect otherwise, and expected nothing.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. Financial security — his father's inheritance meant he never needed to publish for income, which removed the pressure of commercial failure.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. A personal vanity that was incompatible with his stated philosophy — he secretly craved recognition and suffered from its absence, but was too proud to show it.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>You placed a gold coin on your restaurant table each evening and promised it to charity the first day the officers at the next table discussed anything other than horses, dogs, and women. You kept the coin for twenty-seven years. Your magnum opus was out of print. You had published nothing that anyone had read.</strong> <strong>Schopenhauer in the Frankfurt years:</strong> His daily routine was a philosophical practice as much as a lifestyle: the two walks, the solo dinner, the flute-playing (he was a competent flutist), the reading. He continued writing. He expanded <em>The World as Will and Representation</em> with an entire second volume of supplementary essays (published 1844). He submitted an ethics essay to the Norwegian Academy and was awarded their prize — though the Danish Academy, for the same competition, rejected him on the grounds that he had been insufficiently respectful to Hegel and Fichte. He was, in his own account, not especially bothered. His account may or may not have been accurate.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1851</div>
+  <div class="timeline-dot">Frankfurt, Germany · Age 63</div>
+  <div class="narrative">
+    <p><em>Parerga und Paralipomena</em> — essays on miscellaneous philosophical topics, written in a more accessible style than <em>The World as Will and Representation</em> — is published in 1851. A critic named John Oxenford writes an English essay titled "Iconoclasm in German Philosophy" in 1853, presenting Schopenhauer's ideas to an English-speaking audience that has never heard of him. Something catches. Students begin writing to you. Journals begin discussing you. By the mid-1850s, you are, at sixty-five, receiving the recognition that you have been certain you deserve since you were thirty.</p>
+    <p>The late fame is sweet, but also, in a way that amuses you, philosophically confirming. You always said the Will is irrational and its satisfactions temporary. The fame you receive in your final decade is pleasant in the moment of receiving and then immediately insufficient — you want more articles, more translations, more disciples, more acknowledgment. The Will is working exactly as described. You are living proof of your own theory.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1851</div>
+    <p class="decision-q">Fame arrives at sixty-five after thirty years of obscurity. What is Schopenhauer's attitude toward it?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Pure satisfaction — the recognition he had always known he deserved had finally come, and he accepted it with uncomplicated pleasure.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. Bitter irony — thirty years of neglect had made genuine enjoyment of recognition impossible, and the late fame felt hollow.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. Amused philosophical confirmation — he welcomed the recognition, enjoyed the visitors and letters, and simultaneously recognized that his desire for more was exactly the insatiable Will at work. His own famous example was himself.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Disappointment — he had expected the fame to change something fundamental about his experience of life, and discovered that it changed almost nothing.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>You waited thirty years to be famous and then walked your poodle past Frankfurt cafés where students pointed you out, placed your own portrait next to a bust of Kant, and received philosophers at your door with the cheerful vanity of a man who had argued that satisfaction was philosophically impossible.</strong> <strong>The late Schopenhauer:</strong> Visitors from the 1850s describe a cheerful, talkative, and rather vain old man who clearly enjoyed his fame — who walked his poodle past the Frankfurt cafés where young students pointed him out, who kept a portrait of himself next to a bust of Kant, who engaged vivaciously with the philosophers and students who came to call. He was not the dour pessimist his philosophy predicts — but then, his theory never claimed that individuals who understand the Will's nature become happy; it claimed that they become wiser about why they are not. His delight in recognition alongside his stated pessimism is not contradiction but demonstration.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1860</div>
+  <div class="timeline-dot">Frankfurt, Germany · Age 72</div>
+  <div class="narrative">
+    <p>September 1860. You die of pneumonia at home, alone. Your housekeeper finds you sitting upright in your armchair. You leave your estate — substantial, thanks to your father's merchant inheritance — to charities for invalid Prussian soldiers and to the families of officers who fell in the 1848 suppressions. You leave instructions about your manuscripts and your portrait. You name your poodle in your will.</p>
+    <p>What you have left the world: a complete philosophical system in which the fundamental reality is a blind, purposeless striving force that drives all existence without goal. Three paths of escape from the Will's suffering — aesthetic contemplation, which momentarily suspends desire; asceticism, which systematically denies it; and compassion, which recognizes in another's suffering an identical experience to one's own. Music, which Schopenhauer considered the highest art, is not a representation of the Will but the Will itself made audible. This idea influenced Wagner, Nietzsche, Freud, Jung, and Wittgenstein. The gold coin you placed on the restaurant table for twenty-seven years, through all the silence, was not returned to your pocket. It went to no one. The contest was never won.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 1860</div>
+    <p class="decision-q">What is Schopenhauer's most important contribution — the idea that most endures beyond the pessimistic system itself?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. Pessimism as a philosophical position — the first rigorous argument that existence is essentially suffering rather than essentially good.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. The identification of the Will with Kant's thing-in-itself — the most original move in post-Kantian German metaphysics.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. The insight that beneath the rational surface of human motivation lies a largely unconscious, non-rational Will — an irrational striving that reason only rationalizes after the fact. This idea, more than any other, shaped Freud, Nietzsche, and the 20th century's understanding of human nature.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. His theory of aesthetic experience — the argument that great art temporarily releases us from the Will's demands and that this release is the highest human experience available within ordinary life.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>You died alone in an armchair in Frankfurt — thrown out of your mother's house at thirty, your masterwork unread for decades, every poodle named after the world soul — and then Wagner rewrote the Ring cycle in your image, Nietzsche built his entire career against yours, Freud borrowed your central concept and barely cited you, and Wittgenstein kept your book on his bedside table until he died.</strong> <strong>Schopenhauer's influence:</strong> Wagner read Schopenhauer and rewrote the second half of the Ring cycle under his influence. Nietzsche called him one of the few genuine thinkers in Germany before declaring himself Schopenhauer's opposite. Freud acknowledged the parallel between the unconscious Will and his own concept of the Id. Wittgenstein kept <em>The World as Will and Representation</em> on his bedside table throughout his life. The concept that human beings are driven by forces they don't understand and rationalize after the fact — that consciousness is not the driver of behavior but its narrator — is the most consequential idea in the history of modern psychology, and Schopenhauer articulated it before any psychologist existed.</p>
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Arthur Schopenhauer · 1788–1860</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"Talent hits a target no one else can hit; genius hits a target no one else can see."<br><em style="font-size:13px;color:var(--muted);">— Arthur Schopenhauer</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="nietzsche-simulator.html" class="next-card">
+        <div class="next-card-name">Friedrich Nietzsche</div>
+        <div class="next-card-sub">God is dead — and then what?</div>
+      </a>
+      <a href="kierkegaard-simulator.html" class="next-card">
+        <div class="next-card-name">Søren Kierkegaard</div>
+        <div class="next-card-sub">The leap of faith taken entirely alone</div>
+      </a>
+      <a href="kant-simulator.html" class="next-card" style="display:none"></a>
+      <a href="plato-simulator.html" class="next-card">
+        <div class="next-card-name">Plato</div>
+        <div class="next-card-sub">Shadows on the wall & the philosopher-king</div>
+      </a>
+      <a href="wittgenstein-simulator.html" class="next-card">
+        <div class="next-card-name">Ludwig Wittgenstein</div>
+        <div class="next-card-sub">The limits of language & the silence beyond</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understood Schopenhauer the way his best readers do — not as a pessimist who gave up, but as a diagnostician who never expected otherwise. He would find your score predictable. He would also find your satisfaction at achieving it predictable.';else if(pct>=0.625)t.textContent='You grasped the system without always catching the man inside it. Schopenhauer\'s choices were consistent but not obvious — it takes time to see how pessimism becomes a method rather than a mood.';else if(pct>=0.375)t.textContent='You caught the outline of the pessimism but missed some of the texture. The Will drove every decision he made — including the ones that look, from outside, like personal failures.';else t.textContent='Schopenhauer is hard to predict precisely because he refused to perform the suffering his philosophy described. Every wrong answer here reflects an expectation the man systematically refused to meet.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

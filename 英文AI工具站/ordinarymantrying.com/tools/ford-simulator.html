@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Henry Ford?</title>
+<meta name="description" content="He invented the assembly line, doubled workers' wages to $5/day, and put America on wheels. He was also a virulent antisemite whose writings Hitler kept on his desk. 8 decisions.">
+<meta property="og:title" content="What Would You Do If You Were Henry Ford?">
+<meta property="og:description" content="He gave America the Model T and the $5 workday. He also inspired Hitler. 8 decisions from the most contradictory industrialist in history.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/ford-simulator.html">
+<style>
+:root{
+  --bg:#EEF2F5;--card:#F6F9FC;--ink:#080E18;--muted:#364050;--line:#B0BCC8;
+  --accent:#183058;--accent-bg:#DDE5F0;
+  --right:#185830;--right-bg:#E0F0E8;--wrong:#601818;--wrong-bg:#F0E0E0;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,242,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#080E18;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #98AABF;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#081018;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#DEE8F4;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.6);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#DEE8F4;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #98AABF;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#081018;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#080E18;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#DEE8F4;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #98AABF;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#DEE8F4;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#90B4D8;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Henry Ford</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #34</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Henry Ford?</h1>
+  <p class="cover-sub">He failed twice before he succeeded. He invented the moving assembly line and made the automobile affordable for ordinary Americans. He doubled his workers' wages to $5 a day — not out of generosity, but strategy. He was also a virulent antisemite whose writings Hitler kept on his desk. One man. All of it true. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Henry Ford</strong> (1863–1947) · Born Dearborn Township, Michigan, on a farm · Ford Motor Company founded 1903 (third attempt) · Model T introduced 1908 — $825 (equivalent to ~$27,000 today); by 1924 the price had dropped to $260 due to production efficiency · Moving assembly line introduced at Highland Park plant, 1913 · $5 workday announced 1914 (double the industry wage) · Published antisemitic series "The International Jew" in his newspaper The Dearborn Independent 1920-1922 · Hitler cited Ford as his inspiration; Ford's portrait hung in Hitler's office · Hitler awarded Ford the Grand Cross of the German Eagle, Germany's highest civilian honor, 1938 · Ford resisted labor unionization through violence (Battle of the Overpass, 1937) · Died 1947, age 83. Considered one of the most influential Americans of the 20th century — and one of the most morally compromised.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1908, Detroit</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Model T</span></div>
+<div class="year-banner">1908</div>
+<div class="timeline-dot">Detroit · Age 45</div>
+<div class="narrative">
+  <p>You have been at this for fifteen years. Two failed companies before this one. You are 45. The automobile exists — Benz, Duryea, other manufacturers are building them — but they are expensive toys for the rich. A car costs $2,000-$3,000. A skilled worker earns $500 a year. Cars are not for ordinary people.</p>
+  <p>Your idea is different: build one car, build it perfectly, build it in volume, and drive the price down. The Model T launches at $825. "I will build a car for the great multitude," you say. You mean it not as charity but as business logic: the multitude is where the money is, if you can find a way to reach them.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Mass Market</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Ford's insight was to build for "the great multitude" rather than for the wealthy. Was this a democratic vision or a business strategy?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Democratic vision. Ford genuinely believed the automobile should be accessible to ordinary people, and his pricing decisions reflect a commitment to that goal beyond what pure profit-maximization would require.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Business strategy. The mass market was larger than the luxury market. Ford was a businessman who saw a gap and filled it. The democratic rhetoric was marketing.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">Genuinely both, inseparably. Ford believed the mass market was where profit was AND he believed ordinary Americans deserved cars. The belief and the business logic reinforced each other. Separating them is artificial — his genius was that he didn't have to choose between them.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What the Model T actually did</div>
+      <p><strong>You launch the Model T at $825 and keep cutting the price until it reaches $260 in 1924. Within 15 years, half of all cars in the world are Model Ts. You have reshaped American geography — where people live, how farms reach markets — in a single generation.</strong> The Model T's price history tells the story: $825 in 1908; $550 in 1913; $440 in 1915; $360 in 1916; $260 in 1924. Over 15 million were sold. The car was so ubiquitous that by 1920, half of all cars in the world were Model Ts. More profoundly: it reshaped American geography. Workers moved to suburbs because they could commute. Farmers connected to markets because they could transport goods. The automobile stopped being a luxury and became an assumption of American life — within 15 years of the Model T's launch. Ford's claim that he was building a car "for the great multitude" was both genuine and profitable. The two are not in tension — which is what made it such a powerful innovation. The strategic and the humane aligned, briefly, before the contradictions of his character reasserted themselves.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Assembly Line</span></div>
+<div class="year-banner">1913</div>
+<div class="timeline-dot">Highland Park, Michigan · Age 50</div>
+<div class="narrative">
+  <p>You have been working on an idea: instead of workers moving from car to car completing different tasks, the car moves past stationary workers, each doing one specialized task. The moving assembly line. In April 1913, you implement it at the Highland Park plant for the Model T flywheel magneto. Assembly time drops from 20 minutes to 5 minutes. By the end of 1913, the line is producing a complete Model T every 93 minutes.</p>
+  <p>But something else is happening. Workers are quitting at an extraordinary rate — nearly 400% annual turnover. The work is so specialized, so repetitive, so dehumanizing that men simply walk away. You have created the most efficient factory in the world and the most miserable work environment in America.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Assembly Line and the $5 Day</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Ford solved the turnover problem by doubling wages to $5/day. Was this a breakthrough in labor relations or a calculated anti-union move?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Labor breakthrough. By paying workers enough to buy what they made, Ford created the consumer economy. This was a genuine insight about sustainable capitalism that went beyond simple profit calculation.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">Anti-union calculation. High wages bought loyalty and reduced the appeal of unionization. Ford was more afraid of unions than he was generous to workers. The "generosity" was strategic defense.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and inseparable. The $5 day solved the turnover problem (business calculation), pre-empted unions (anti-union calculation), AND produced the consumer economy (structural insight). Ford was simultaneously all three at once. The same act had all three effects.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">The $5 day's actual conditions</div>
+      <p><strong>You announce the $5 workday and are celebrated as a labor visionary. The fine print: your "Sociological Department" sends investigators to workers' homes to verify they are drinking moderately and keeping clean houses. Workers who fail are cut from the bonus.</strong> Ford announced the $5 day on January 5, 1914. It was widely celebrated as a breakthrough in labor relations. The reality was more complicated: the $5 wasn't a flat wage — it was a "profit-sharing" supplement on top of $2.34/day base wage, conditional on meeting behavioral standards. Ford's "Sociological Department" sent investigators to workers' homes to verify they were living "properly" — drinking moderately, maintaining clean homes, speaking English. Workers who failed these investigations were disqualified from the profit share. The $5 day was genuinely high wages AND a system of behavioral surveillance. Ford's later opposition to unionization was violent: the Battle of the Overpass (1937) saw Ford Service Department men beat United Auto Workers organizers including Walter Reuther in front of press photographers. Ford was the last of the major auto companies to recognize the UAW, in 1941.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Antisemitism</span></div>
+<div class="year-banner">1920</div>
+<div class="timeline-dot">Dearborn, Michigan · Age 57</div>
+<div class="narrative">
+  <p>You have purchased a small newspaper, the Dearborn Independent, and you are using it to run a series called "The International Jew: The World's Foremost Problem." For 91 weeks, the paper publishes articles attributing virtually every social ill — jazz music, gambling, labor unrest, war, moral decline — to a Jewish conspiracy. The series is reprinted as pamphlets and distributed in the millions across America and Europe. It is translated into German. Adolf Hitler reads it. He will later say: "I regard Henry Ford as my inspiration." Ford's portrait hangs in Hitler's Munich office.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Antisemitism</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Ford's antisemitic writings directly inspired Hitler. How does this affect how we should weigh his other contributions?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">It doesn't change the assessment of the Model T or the assembly line. Ideas are separable from their source. The Holocaust wasn't caused by Ford's pamphlets — Hitler would have found his antisemitism elsewhere.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">It negates the positive contributions. If your work contributed to the inspiration of the Holocaust — the murder of 6 million people — the economic benefits of the Model T cannot balance that ledger.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">It doesn't resolve — it complicates. Both the contributions and the harm were real and large. We can't subtract one from the other. We can only hold both, recognize that the same man produced them, and ask what this tells us about how to assess people whose good and evil operate at the same scale.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">Ford's antisemitism and its consequences</div>
+      <p><strong>You publish antisemitic articles in your newspaper for 91 consecutive weeks. In 1923, Hitler tells a Chicago Tribune journalist: "We look to Heinrich Ford as the leader of the growing Fascist movement in America." In 1938, you accept Germany's highest civilian honor — five years into Hitler's rule, after Jews have been stripped of citizenship.</strong> Ford's The International Jew was published in Germany in 1922 as Ewige Jude (The Eternal Jew). Hitler told a Chicago Tribune journalist in 1923: "We look to Heinrich Ford as the leader of the growing Fascist movement in America." Ford received Germany's highest civilian honor, the Grand Cross of the German Eagle, on his 75th birthday in 1938 — five years into Hitler's rule, after the Nuremberg Laws had stripped German Jews of citizenship. Ford accepted it. He retracted some of the Dearborn Independent articles after a threatened lawsuit in 1927, but the retraction was widely seen as insincere. The historical consensus is that Ford's writings were a significant influence on Nazi antisemitic propaganda — not the cause of the Holocaust, but one of the inputs. The assessment of whether his industrial contributions "outweigh" this is one that historians have largely refused to make, treating them as incommensurable.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Failed Pacifism</span></div>
+<div class="year-banner">1915</div>
+<div class="timeline-dot">Atlantic Ocean · Age 52</div>
+<div class="narrative">
+  <p>You are on the Peace Ship, a chartered ocean liner carrying 170 peace advocates and journalists to Europe to try to end World War I through mediation. You have funded this yourself. The idea was that a delegation of prominent Americans could convene a "continuous conference" of neutral nations that would pressure the belligerents to negotiate. It is, by any objective measure, not working. The European press mocks it. The governments ignore it. You will leave the ship in Norway before it reaches its destination, never explaining why.</p>
+  <p>Your pacifism is genuine; your peace strategy is naive. The war continues for three more years.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Peace Ship</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Ford's Peace Ship is considered one of history's great public relations disasters. What does it reveal about him?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Naïveté. He applied the same direct, practical problem-solving that worked in manufacturing to a political crisis it couldn't address. He didn't understand the difference between building cars and stopping wars.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Genuine conviction. He was willing to use his fortune and his reputation for something he believed in even when it failed publicly. The Peace Ship was embarrassing; it was also sincere.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and it reveals the consistent pattern: Ford's great strength (directness, confidence, willingness to act on convictions) was also his great weakness. The same trait that drove the assembly line drove the Peace Ship and the antisemitism. He was always confident that he knew how to fix whatever he'd identified as a problem.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">The Ford character pattern</div>
+      <p><strong>You charter an ocean liner, fill it with 170 peace advocates and journalists, and sail to Europe to end World War I through conversation. The European press mocks it. Governments ignore it. You slip off the ship in Norway before reaching your destination, offering no explanation.</strong> Historians who study Ford notice a consistent pattern: absolute confidence in his own analysis, willingness to act on it regardless of expert opinion, occasional brilliance, and periodic catastrophic misjudgment. This pattern produced: the moving assembly line (success), the $5 day (complex success), the Peace Ship (failure), the antisemitic newspaper series (moral catastrophe), violent resistance to unionization (eventually failed and damaged the company), and later, a refusal to update the Model T that allowed General Motors to overtake Ford in the 1920s. In manufacturing, his confidence and directness were exactly suited to the problem. In foreign policy, labor relations, and social analysis, the same approach produced disasters. He never learned which domains his approach worked in.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Model T's End</span></div>
+<div class="year-banner">1927</div>
+<div class="timeline-dot">Dearborn, Michigan · Age 64</div>
+<div class="narrative">
+  <p>You have been selling the Model T for 19 years. You have resisted every suggestion to update it — new colors, new features, more power. "Any customer can have a car painted any color that he wants, so long as it is black." But General Motors, under Alfred Sloan, has been selling cars with more colors, more features, annual model updates — something you called "the tyranny of fashion." Now GM has passed Ford in market share. You have finally stopped production of the Model T. The last one rolls off the line on May 26, 1927. You shut the plants for six months to retool. 60,000 workers lose their jobs temporarily. You then introduce the Model A.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Stubborn Genius</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Ford refused to update the Model T for 19 years while GM passed him. Was this principled simplicity or catastrophic stubbornness?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Principled simplicity. The Model T philosophy — one perfect product, maximum efficiency, minimum price — was correct. When customers started choosing features over price, it was a cultural failure, not a Ford failure.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">Catastrophic stubbornness. Ford confused his philosophy with the market's preference. When customers tell you they want something different, your job is to respond, not to educate them about your philosophy.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">The question is about the difference between a principle and a business requirement. Ford was right that simplicity and efficiency are better than complexity and fashion as values. He was wrong that this conviction exempted him from responding to what customers actually wanted. Principles don't override markets.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">Ford vs. GM and the birth of consumer culture</div>
+      <p><strong>You resist updating the Model T for 19 years while GM overtakes you in market share. When you finally stop production, you shut the plants for six months to retool — and 60,000 workers lose their jobs in the interim.</strong> Alfred Sloan's response to Ford's Model T dominance was: annual model updates, multiple price points (Chevrolet to Cadillac), installment financing, used car trade-ins. This was the birth of planned obsolescence and consumer culture. Ford opposed it philosophically — "the customer should get the best we can give, not what fashion dictates." He was philosophically correct and competitively wrong. By 1927, GM's share had risen above Ford's for the first time. The Model A recovered some ground, but Ford never again dominated the American market the way the Model T had. The deeper lesson: Ford's principles had been tested against a consumer market that didn't share them. The market won. Whether this was good for consumers — buying new cars every few years rather than driving a reliable simple car for decades — is a different question, and one Ford would have answered differently than Alfred Sloan.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Battle of the Overpass</span></div>
+<div class="year-banner">1937</div>
+<div class="timeline-dot">River Rouge Plant, Dearborn · Age 74</div>
+<div class="narrative">
+  <p>The United Auto Workers union is organizing Ford employees. Your head of security, Harry Bennett, and the Ford Service Department — essentially a private police force — confront UAW organizers including Walter Reuther on an overpass bridge outside the River Rouge plant. They beat them, in front of press photographers. The photos run in every major newspaper. It is called the "Battle of the Overpass." You are 74 and will refuse to recognize the union for four more years.</p>
+  <p>In 1941, the UAW strikes Ford. You are ready to fight to the end. Then your wife Clara tells you that if you continue to fight the union, she will leave you. You sign. Ford Motor Company becomes the last major automaker to recognize the UAW.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Violence Against Workers</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Ford used private violence against union organizers despite having doubled his workers' wages in 1914. How do we reconcile these?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">They're not contradictory. The $5 day was his choice to pay workers well; the union resistance was his refusal to let workers organize collectively. He was paternalistic — he would give workers what he decided was good for them; he wouldn't let them demand anything.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">The $5 day was specifically designed to prevent exactly this. High wages bought loyalty to undercut union organizing. When the strategy eventually failed, he fell back to violence. The two were part of the same anti-union system.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">Both are true: the $5 day was both generous AND strategically anti-union. The violence against organizers was a failure of that strategy. What they share is the same philosophy: I know what's good for workers; workers don't need collective voice because I'll take care of them. This paternalism, not contradiction, is the through-line.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">Clara Ford and the union recognition</div>
+      <p><strong>You beat union organizers with your private security force in 1937, in front of press photographers. The photos run in every major newspaper. Four years later, your wife Clara tells you that if you keep fighting the union, she will leave you. You sign — and give workers the best wages and conditions in the auto industry.</strong> Clara Ford's ultimatum is well-documented by Ford historians. Henry Ford had already had a minor stroke in 1938 and his mental condition was declining. Clara was his stabilizing force. Her position on the union: she would not watch her husband destroy the company and the family's reputation with violence. "The men are perfectly right," she reportedly told him. When Ford Motor Company signed with the UAW in June 1941, the resulting contract included the highest wages and best working conditions in the auto industry — Ford, having resisted longest, ended up conceding the most. The paternalist who knew best what workers needed ultimately needed his wife to end a conflict the workers had already won.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · WWII Production</span></div>
+<div class="year-banner">1941</div>
+<div class="timeline-dot">Willow Run, Michigan · Age 78</div>
+<div class="narrative">
+  <p>America has entered the war. You resisted involvement — you are a pacifist, you believed the war was a Jewish conspiracy, you accepted the Grand Cross of the German Eagle from Hitler in 1938. But the U.S. is now at war, and the government needs war materiel. Ford Motor Company builds a massive factory at Willow Run, Michigan, to produce B-24 Liberator bombers. At peak production, it produces one bomber every 63 minutes. By the end of the war, Willow Run has produced nearly 9,000 bombers. Your industrial genius is now being directed at the forces of a leader who called you his inspiration.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — Producing Bombers Against Hitler</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Ford's antisemitism inspired Hitler; his factories helped defeat him. Is there moral significance in this reversal?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">No. The Willow Run bombers came from industrial capacity and government contracts, not from a moral reversal. Ford didn't "atone" for his antisemitism by building bombers. He built bombers because the U.S. government needed them and he was the right manufacturer.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">Yes, ironically. Whatever his personal beliefs, the physical output of his factories worked against what his rhetoric helped create. Reality has an irony that moral accounting cannot capture.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">The question of moral significance depends on whether Ford recognized the irony and whether his motivation changed. There's no evidence it did. The bombers are a historical irony, not a moral redemption. The same man who called Hitler his inspiration built the planes that helped kill Hitler's soldiers, without acknowledging the contradiction.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">Ford's war production</div>
+      <p><strong>You accept Germany's highest civilian honor in 1938, with Hitler firmly in power. Three years later, your Willow Run factory is producing B-24 Liberator bombers at one every 63 minutes at peak — aimed at the forces of the man who called you his inspiration.</strong> Willow Run was an extraordinary achievement: a factory nearly a mile long, producing B-24 Liberator bombers on an assembly line — applying the same principles Ford had developed for the Model T to aircraft manufacturing. At peak production in 1944, it produced 650 planes per month. Charles Lindbergh — another prominent American antisemite of the era — consulted with Ford on the project. Ford Motor Company also produced Jeeps, tanks, tank engines, aircraft engines, and gliders. Total WWII military production: approximately $3.7 billion in contracts. Ford himself was 80 when the war ended, increasingly infirm. His grandson Henry Ford II took over the company in 1945. Henry Ford never issued any statement acknowledging the relationship between his published antisemitism and Nazi ideology. He died April 7, 1947.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Legacy</span></div>
+<div class="year-banner">1947</div>
+<div class="timeline-dot">Dearborn · Age 83</div>
+<div class="narrative">
+  <p>You die on April 7, 1947, during a flood that has knocked out the electricity and heat at Fair Lane, your estate. You die by candlelight and kerosene lamp, as you were born. Your estate is worth $600 million. Ford Motor Company is still one of the largest companies in America.</p>
+  <p>You have left behind: the Model T, which put America on wheels. The moving assembly line, which changed manufacturing worldwide. The $5 day, which helped create the consumer middle class. The Dearborn Independent's antisemitic series, which helped inspire the Holocaust. The portrait in Hitler's office. The Grand Cross of the German Eagle. The bombers that helped end the war. One man. All of it real.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Final Balance</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">How should we ultimately assess Henry Ford?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">As one of the most important Americans of the 20th century. The Model T, the assembly line, and the $5 day reshaped American life more profoundly than almost any other single person's work. The moral failures are real and should be named, but the scale of the contribution is undeniable.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">With deep suspicion. A man who published antisemitic propaganda at that scale, who inspired Hitler, who used violence against workers, who accepted awards from Nazi Germany — that man's contributions exist alongside moral catastrophe that qualifies everything else.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">As someone who forces the question: can you separate the industrial from the ideological in one person's life? Ford's case suggests you can't easily. Both operated at massive scale. Both were genuine expressions of the same man. The honest answer is: all of it, assessed together, without resolving into a single judgment.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">The Ford assessment problem</div>
+      <p><strong>You die in 1947 by candlelight and kerosene lamp — cut off by a flood, the same conditions as your birth. You have put America on wheels, doubled workers' wages, inspired Hitler, and built the planes that helped defeat him. One man. All of it real.</strong> Henry Ford is one of the hardest figures in American history to assess because his contributions and his moral failures operated at the same scale and are causally connected to each other. His industrial genius helped create the affluent American middle class. His antisemitism helped inspire the ideological framework of the Holocaust. Both are real. Both were expressed through his life's work. Historians like Steven Watts (The People's Tycoon, 2005) and Douglas Brinkley (Wheels for the World, 2003) have both grappled with this. The emerging framework: assess the contributions on their own terms, assess the moral failures on their own terms, and resist the pressure to subtract one from the other. Ford is not "mostly good" or "mostly bad." He is "fully both" — which is the hardest and most honest thing to say about a historical figure.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Ford's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="next-sims">
+  <p class="next-label">Explore More Lives</p>
+  <div class="next-grid">
+    <a href="carnegie-simulator.html" class="next-card">
+      <span class="next-name">Andrew Carnegie</span>
+      <span class="next-desc">Arrived at 13 with nothing. Built the richest empire. Gave it all away. Also broke the Homestead strike.</span>
+    </a>
+    <a href="edison-simulator.html" class="next-card">
+      <span class="next-name">Thomas Edison</span>
+      <span class="next-desc">1,093 patents. Lost the War of Currents to Tesla. Stubbornness has a price.</span>
+    </a>
+    <a href="tesla-simulator.html" class="next-card">
+      <span class="next-name">Nikola Tesla</span>
+      <span class="next-desc">Invented AC power and was robbed of credit. Died alone in a hotel room.</span>
+    </a>
+    <a href="musk-simulator.html" class="next-card">
+      <span class="next-name">Elon Musk</span>
+      <span class="next-desc">PayPal, Tesla, SpaceX. The modern industrialist who never stops. What would you risk?</span>
+    </a>
+  </div>
+</div>
+<div class="cta-box">
+  <p>Ford put America on wheels, inspired the consumer middle class, and also inspired Hitler. The same man, the same lifetime. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All Life Simulators — Edison, Tesla, Carnegie and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/carnegie-simulator.html" style="color:var(--accent)">Carnegie Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like a Historian";body="You held Ford's contradictions without collapsing them: the mass market was both democratic vision and business strategy, the $5 day was both generous and anti-union, the assembly line pattern produced both genius and disaster, the antisemitism is incommensurable with the Model T. That's the full Ford — harder to hold than either celebration or condemnation.";}else if(pct>=0.625){title="The Industrial Realist";body="You understood the essential complexity: the assembly line's turnover problem, the $5 day's mixed motives, the Peace Ship as an expression of the same character that built the Model T. Where you might push further: Ford's story is specifically about what happens when one cognitive style — direct, confident, action-oriented — encounters problems that require nuance it can't provide.";}else if(pct>=0.375){title="The Pragmatist";body="You tended toward single explanations for Ford's decisions where multiple simultaneous motivations were at work. His story specifically resists simplification — the same confidence that built the assembly line drove the antisemitic newspaper series. The same paternalism that doubled wages fought unions with violence. One trait, many consequences.";}else{title="The Critic";body="You were skeptical throughout — of his motives, his contributions, his place in history. The antisemitism and Hitler connection make this an entirely defensible position. The counter-question Ford's admirers ask: what would American industrialization and the consumer middle class have looked like without him? The answer isn't obvious. The contributions were real, even when the man was not."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

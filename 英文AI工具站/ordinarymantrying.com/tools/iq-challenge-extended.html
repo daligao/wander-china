@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-DBR2PMLR61");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extended IQ & Cognitive Bias Challenge — 20 Questions</title>
+<meta name="description" content="20 questions that expose cognitive biases, faulty probability intuitions, and reasoning errors most people don't know they make. The Cognitive Reflection Test extended to 20 rounds.">
+<style>
+:root {
+  --bg: #0F1117;
+  --card: #1A1D27;
+  --card2: #21253A;
+  --ink: #EEF0F8;
+  --muted: #8891B0;
+  --line: #2C3050;
+  --accent: #5B8BF5;
+  --green: #2ECC71;
+  --red: #E74C3C;
+  --yellow: #F1C40F;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Consolas, monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;min-height:100vh;}
+.container{max-width:640px;margin:0 auto;padding:0 16px;}
+/* COVER */
+.cover{padding:56px 0 0;text-align:center;}
+.cover-tag{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-size:34px;font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:16px;}
+.cover-title span{color:var(--accent);}
+.cover-desc{font-size:15px;color:var(--muted);line-height:1.8;max-width:480px;margin:0 auto 32px;}
+.cover-stats{display:flex;justify-content:center;gap:32px;margin-bottom:36px;}
+.stat{text-align:center;}
+.stat-num{font-size:28px;font-weight:800;font-family:var(--mono);color:var(--accent);}
+.stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+.start-btn{appearance:none;border:none;cursor:pointer;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:18px;padding:18px 40px;border-radius:14px;display:inline-block;transition:filter .15s,transform .08s;margin-bottom:16px;width:100%;max-width:360px;}
+.start-btn:hover{filter:brightness(1.12);}
+.start-btn:active{transform:scale(.98);}
+.cover-note{font-size:12px;color:var(--muted);margin-bottom:48px;}
+.categories{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:40px;text-align:left;}
+.cat-pill{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;}
+.cat-pill-label{font-size:11px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:4px;}
+.cat-pill-desc{font-size:13px;color:var(--muted);}
+/* GAME */
+#game{display:none;padding:20px 0;}
+.progress-bar-wrap{height:4px;background:var(--line);border-radius:2px;margin-bottom:20px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease;}
+.game-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.q-counter{font-family:var(--mono);font-size:13px;color:var(--muted);}
+.q-score{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--ink);}
+.timer-ring-wrap{position:relative;width:44px;height:44px;}
+.timer-ring{transform:rotate(-90deg);}
+.timer-ring .bg{fill:none;stroke:var(--line);stroke-width:3;}
+.timer-ring .fg{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;stroke-dasharray:113;stroke-dashoffset:0;transition:stroke-dashoffset .9s linear,stroke .3s;}
+.timer-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-size:13px;font-weight:700;}
+.category-badge{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+.q-text{font-size:20px;font-weight:700;line-height:1.4;margin-bottom:24px;min-height:80px;}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.opt-btn{appearance:none;text-align:left;cursor:pointer;background:var(--card);border:1.5px solid var(--line);color:var(--ink);font-family:var(--sans);font-size:15px;border-radius:12px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;transition:border-color .15s,background .15s;line-height:1.45;}
+.opt-btn:hover:not(.disabled){border-color:var(--accent);background:var(--card2);}
+.opt-btn.disabled{cursor:default;pointer-events:none;}
+.opt-letter{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--muted);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);transition:all .15s;margin-top:1px;}
+.opt-btn:hover:not(.disabled) .opt-letter{border-color:var(--accent);color:var(--accent);}
+.opt-btn.correct-ans{border-color:var(--green);background:rgba(46,204,113,.1);}
+.opt-btn.correct-ans .opt-letter{background:var(--green);border-color:var(--green);color:#fff;}
+.opt-btn.wrong-ans{border-color:var(--red);background:rgba(231,76,60,.08);opacity:.7;}
+.opt-btn.wrong-ans .opt-letter{background:var(--red);border-color:var(--red);color:#fff;}
+.explanation{display:none;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:12px;padding:16px 18px;margin-bottom:18px;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+.exp-tag{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:8px;}
+.exp-text{font-size:14px;line-height:1.7;color:#BCC4E0;}
+.next-btn{appearance:none;border:none;cursor:pointer;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:16px;padding:15px;border-radius:12px;width:100%;display:none;transition:filter .15s;}
+.next-btn:hover{filter:brightness(1.15);}
+/* RESULTS */
+#results{display:none;padding:40px 0;}
+.res-hero{text-align:center;margin-bottom:32px;}
+.score-circle{width:130px;height:130px;border-radius:50%;border:4px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 16px;}
+.score-big{font-size:40px;font-weight:800;font-family:var(--mono);line-height:1;}
+.score-denom{font-size:14px;color:var(--muted);}
+.res-label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:8px;}
+.res-title{font-size:22px;font-weight:800;margin-bottom:12px;line-height:1.3;}
+.res-desc{font-size:14px;color:var(--muted);line-height:1.8;max-width:480px;margin:0 auto 24px;}
+.breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.bk-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-align:center;}
+.bk-num{font-family:var(--mono);font-size:24px;font-weight:800;margin-bottom:4px;}
+.bk-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+.bk-correct{color:var(--green);}
+.bk-wrong{color:var(--red);}
+.bk-streak{color:var(--yellow);}
+.bk-time{color:var(--accent);}
+.share-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px;}
+.share-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:12px;}
+.share-txt{font-family:var(--mono);font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px;line-height:1.8;white-space:pre-wrap;margin-bottom:12px;color:#BCC4E0;}
+.copy-btn{appearance:none;border:none;cursor:pointer;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:15px;padding:13px;border-radius:10px;width:100%;transition:filter .15s;margin-bottom:8px;}
+.copy-btn:hover{filter:brightness(1.12);}
+.replay-btn{appearance:none;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:var(--sans);font-weight:600;font-size:14px;padding:13px;border-radius:10px;width:100%;cursor:pointer;}
+.review-list{margin-bottom:24px;}
+.review-list h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:14px;font-family:var(--mono);}
+.review-item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start;}
+.review-dot{width:22px;height:22px;border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.dot-c{background:rgba(46,204,113,.15);color:var(--green);}
+.dot-w{background:rgba(231,76,60,.1);color:var(--red);}
+.review-q{font-size:13px;line-height:1.5;color:var(--muted);}
+.review-ans{font-size:12px;margin-top:4px;}
+.ans-ok{color:var(--green);font-weight:600;}
+.ans-bad{color:var(--red);}
+.ans-right{color:var(--green);}
+.more-tools{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:12px;padding:16px;margin-bottom:14px;}
+.more-tools p{font-size:13px;color:var(--muted);margin-bottom:10px;}
+.more-tools a{display:inline-block;padding:6px 14px;border:1px solid var(--line);border-radius:20px;font-size:12px;font-weight:600;color:var(--accent);text-decoration:none;margin:3px 3px 3px 0;background:rgba(91,139,245,.06);}
+@media(max-width:480px){.cover-title{font-size:26px;}.q-text{font-size:17px;}.categories{grid-template-columns:1fr;}}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/iq-challenge-extended.html">
+<meta property="og:title" content="Extended IQ & Cognitive Bias Challenge — 20 Questions">
+<meta property="og:description" content="20 questions that expose cognitive biases, faulty probability intuitions, and reasoning errors most people don't know they make. How many can you get right?">
+<meta property="og:site_name" content="Ordinary Man Trying">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Quiz",
+  "name":"Extended IQ & Cognitive Bias Challenge — 20 Questions",
+  "description":"20 questions covering cognitive reflection, base rate neglect, conjunction fallacy, the Monty Hall problem, and other classic reasoning traps.",
+  "url":"https://ordinarymantrying.com/tools/iq-challenge-extended.html",
+  "educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","targetName":"Critical Thinking"}],
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "publisher":{"@type":"Person","name":"Ordinary Man Trying","url":"https://ordinarymantrying.com"}
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="container">
+
+<!-- COVER -->
+<div class="cover" id="cover-screen">
+  <div class="cover-tag">Cognitive Reflection Test · Extended Edition</div>
+  <h1 class="cover-title">Your brain is lying to you.<br><span>Can you catch it?</span></h1>
+  <p class="cover-desc">20 questions specifically designed to trigger your fast-thinking System 1 brain into giving the wrong answer — then show you why. Covers CRT classics, probability traps, cognitive biases, and lateral thinking.</p>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-num">20</div><div class="stat-label">Questions</div></div>
+    <div class="stat"><div class="stat-num">30s</div><div class="stat-label">Per Question</div></div>
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Categories</div></div>
+  </div>
+  <button class="start-btn" onclick="startGame()">Start the Challenge →</button>
+  <div class="cover-note">Average score on this test: 11/20. Top 10%: 17/20.</div>
+  <div class="categories">
+    <div class="cat-pill"><div class="cat-pill-label">Cognitive Reflection</div><div class="cat-pill-desc">Classic CRT traps where the intuitive answer is wrong</div></div>
+    <div class="cat-pill"><div class="cat-pill-label">Probability & Stats</div><div class="cat-pill-desc">Monty Hall, base rates, gambler's fallacy</div></div>
+    <div class="cat-pill"><div class="cat-pill-label">Cognitive Biases</div><div class="cat-pill-desc">Sunk cost, anchoring, conjunction fallacy</div></div>
+    <div class="cat-pill"><div class="cat-pill-label">Logic & Reasoning</div><div class="cat-pill-desc">Syllogisms, the Wason card task, deduction</div></div>
+    <div class="cat-pill"><div class="cat-pill-label">Numerical Traps</div><div class="cat-pill-desc">Math that looks simpler than it is</div></div>
+    <div class="cat-pill"><div class="cat-pill-label">Lateral Thinking</div><div class="cat-pill-desc">Questions that assume things that aren't true</div></div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-bar"></div></div>
+  <div class="game-meta">
+    <span class="q-counter" id="q-counter">Question 1 of 20</span>
+    <div class="timer-ring-wrap">
+      <svg class="timer-ring" width="44" height="44" viewBox="0 0 44 44">
+        <circle class="bg" cx="22" cy="22" r="18"/>
+        <circle class="fg" id="timer-arc" cx="22" cy="22" r="18"/>
+      </svg>
+      <div class="timer-num" id="timer-num">30</div>
+    </div>
+    <span class="q-score" id="q-score">0 / 0</span>
+  </div>
+  <div class="category-badge" id="q-cat"></div>
+  <div class="q-text" id="q-text"></div>
+  <div class="options" id="options"></div>
+  <div class="explanation" id="explanation">
+    <div class="exp-tag" id="exp-tag"></div>
+    <div class="exp-text" id="exp-text"></div>
+  </div>
+  <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="res-hero">
+    <div class="score-circle" id="score-circle">
+      <div class="score-big" id="score-big">0</div>
+      <div class="score-denom">out of 20</div>
+    </div>
+    <div class="res-label">Your Result</div>
+    <h2 class="res-title" id="res-title"></h2>
+    <p class="res-desc" id="res-desc"></p>
+  </div>
+  <div class="breakdown-grid">
+    <div class="bk-card"><div class="bk-num bk-correct" id="bk-correct">0</div><div class="bk-label">Correct</div></div>
+    <div class="bk-card"><div class="bk-num bk-wrong" id="bk-wrong">0</div><div class="bk-label">Wrong</div></div>
+    <div class="bk-card"><div class="bk-num bk-streak" id="bk-streak">0</div><div class="bk-label">Best Streak</div></div>
+    <div class="bk-card"><div class="bk-num bk-time" id="bk-time">0s</div><div class="bk-label">Avg Time</div></div>
+  </div>
+  <div class="share-card">
+    <div class="share-label">Share your result</div>
+    <div class="share-txt" id="share-txt"></div>
+    <button class="copy-btn" onclick="copyResult(event)">Copy to clipboard</button>
+  </div>
+  <div class="review-list">
+    <h3>Question Review</h3>
+    <div id="review-items"></div>
+  </div>
+  <div class="more-tools">
+    <p>Enjoyed this? Try the life simulators — face the same decisions as historical figures, before knowing what they actually chose.</p>
+    <a href="gandhi-simulator.html">🕊️ Gandhi</a>
+    <a href="lincoln-simulator.html">🏛️ Lincoln</a>
+    <a href="mandela-simulator.html">🏺 Mandela</a>
+    <a href="buffett-simulator.html">💰 Buffett</a>
+    <a href="https://ordinarymantrying.com/tools/">→ All tools</a>
+  </div>
+  <button class="replay-btn" onclick="location.reload()">↺ Play Again</button>
+  <div style="height:40px;"></div>
+</div>
+
+</div>
+
+<script>
+var QUESTIONS = [
+  {
+    cat: "Cognitive Reflection",
+    q: "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?",
+    opts: ["$0.10","$0.05","$0.15","$1.00"],
+    ans: 1,
+    exp: "The intuitive answer is $0.10. But if the ball is $0.10, the bat is $1.10 — and $1.10 + $0.10 = $1.20, not $1.10. The ball must be $0.05 (bat = $1.05; $1.05 + $0.05 = $1.10). This question was answered incorrectly by 50% of MIT students in Frederick's original 2005 study.",
+    expTag: "Classic CRT — System 1 vs System 2"
+  },
+  {
+    cat: "Cognitive Reflection",
+    q: "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets?",
+    opts: ["100 minutes","5 minutes","20 minutes","50 minutes"],
+    ans: 1,
+    exp: "Each machine makes 1 widget every 5 minutes. So 100 machines make 100 widgets in exactly 5 minutes. The intuitive answer (100 minutes) comes from the false pattern '5 → 100, scale proportionally.' But rate × machines = output, not time.",
+    expTag: "Classic CRT — Rate Reasoning"
+  },
+  {
+    cat: "Cognitive Reflection",
+    q: "In a lake, there is a patch of lily pads. Every day, the patch doubles in size. It takes 48 days for the patch to cover the entire lake. How long does it take for the patch to cover half the lake?",
+    opts: ["24 days","47 days","12 days","36 days"],
+    ans: 1,
+    exp: "Since the patch doubles every day, on day 47 it covers half the lake — and on day 48 it doubles to cover the whole lake. The intuitive answer (24) assumes linear growth. Exponential growth is deeply counterintuitive: the patch spends most of the 48 days covering less than 1% of the lake.",
+    expTag: "Classic CRT — Exponential Growth"
+  },
+  {
+    cat: "Numerical Traps",
+    q: "A car travels 60 mph from City A to City B, then returns at 40 mph. What is the car's average speed for the entire trip?",
+    opts: ["50 mph","48 mph","45 mph","52 mph"],
+    ans: 1,
+    exp: "The harmonic mean of speeds applies here, not the arithmetic mean. If the distance is D, the total time is D/60 + D/40 = D(2+3)/120 = D/24. Total distance is 2D. Average speed = 2D / (D/24) = 48 mph. The intuitive answer (50 mph) is wrong because you spend more time at the slower speed.",
+    expTag: "Harmonic Mean Trap"
+  },
+  {
+    cat: "Numerical Traps",
+    q: "How many times does the digit 9 appear if you write out all whole numbers from 1 to 100?",
+    opts: ["10","11","20","19"],
+    ans: 2,
+    exp: "The digit 9 appears in the units place 10 times (9, 19, 29, ... 99) and in the tens place 10 times (90, 91, 92, ... 99). Total: 20 appearances. The common wrong answers are 10 (counting only single-digit appearances) or 11 (forgetting 99 has two 9s).",
+    expTag: "Digit Counting"
+  },
+  {
+    cat: "Lateral Thinking",
+    q: "A doctor gives you 3 pills and tells you to take one every half hour. How many minutes until you've taken all 3 pills?",
+    opts: ["90 minutes","30 minutes","60 minutes","45 minutes"],
+    ans: 2,
+    exp: "Take pill 1 at minute 0. Take pill 2 at minute 30. Take pill 3 at minute 60. That's 60 minutes, not 90. The word 'every half hour' makes people multiply 3 × 30, forgetting that the first pill is taken immediately at the start.",
+    expTag: "Off-by-One Trap"
+  },
+  {
+    cat: "Lateral Thinking",
+    q: "If you're in a race and you pass the person in 3rd place, what place are you now in?",
+    opts: ["2nd place","1st place","3rd place","4th place"],
+    ans: 2,
+    exp: "You took the place of the person who was in 3rd place. So now you are in 3rd place. The intuition says '2nd' because passing someone means moving ahead of them — but the place number belongs to the position, not the runner.",
+    expTag: "Positional Reasoning"
+  },
+  {
+    cat: "Lateral Thinking",
+    q: "Some months have 30 days. Some have 31. How many months have 28 days?",
+    opts: ["1","2","12","4"],
+    ans: 2,
+    exp: "All 12 months have at least 28 days. The question asks which months 'have 28 days' — not which months 'have only 28 days.' February has exactly 28 (non-leap year), but every other month also contains the 28th. The trick is the implicit assumption in 'have 28 days.'",
+    expTag: "Implicit Assumption Trap"
+  },
+  {
+    cat: "Lateral Thinking",
+    q: "Before Mount Everest was discovered and measured, what was the tallest mountain on Earth?",
+    opts: ["K2","The second-tallest peak","Mount Everest","We cannot know"],
+    ans: 2,
+    exp: "Mount Everest was still the tallest mountain — it just hadn't been discovered yet. The question implies that discovery changes physical facts. This tests whether you separate epistemic status (what we know) from objective reality (what's true independently of our knowledge).",
+    expTag: "Epistemic vs Objective Fact"
+  },
+  {
+    cat: "Lateral Thinking",
+    q: "A rooster is sitting on the peak of a barn roof. It lays an egg. Which way does the egg roll?",
+    opts: ["Toward the south slope","Toward the north slope","Straight down","Roosters don't lay eggs"],
+    ans: 3,
+    exp: "Roosters are male. Males don't lay eggs. The question is designed to make you calculate the physics of egg rolling and miss the impossible premise. This tests whether you evaluate assumptions before solving the presented problem.",
+    expTag: "False Premise"
+  },
+  {
+    cat: "Probability & Stats",
+    q: "A disease affects 1 in 1,000 people. A test for it is 99% accurate. You test positive. What is the approximate probability you actually have the disease?",
+    opts: ["99%","50%","About 9%","About 1%"],
+    ans: 2,
+    exp: "In 100,000 people: 100 have the disease (99 test positive). 99,900 don't (about 999 still test positive as false positives). Total positives: ~1,098. True positives: 99. P(disease | positive) ≈ 9%. This is base rate neglect — the disease is so rare that even a 99% accurate test produces mostly false positives.",
+    expTag: "Base Rate Neglect (Bayesian Reasoning)"
+  },
+  {
+    cat: "Probability & Stats",
+    q: "You're on a game show. Three doors: one hides a prize, two hide goats. You pick Door 1. The host (who knows what's behind each door) opens Door 3, revealing a goat. You may switch to Door 2 or stay with Door 1. What should you do?",
+    opts: ["Stay — it's 50/50 now","Switch — you'll win 2/3 of the time","It doesn't matter","Stay — switching is bad luck"],
+    ans: 1,
+    exp: "Switch. When you chose, Door 1 had a 1/3 chance of winning. The other two doors together had a 2/3 chance. When the host eliminates a goat from those two doors, the full 2/3 probability collapses onto Door 2. Your original door stays at 1/3. Switching wins 2/3 of the time. This is the Monty Hall Problem — one of the most counterintuitive results in probability.",
+    expTag: "The Monty Hall Problem"
+  },
+  {
+    cat: "Probability & Stats",
+    q: "A fair coin is flipped 10 times and lands heads every time. What is the probability of tails on the next flip?",
+    opts: ["Much higher than 50% — it's 'due'","Much lower than 50% — the coin may be biased","Exactly 50% — each flip is independent","Cannot be determined"],
+    ans: 2,
+    exp: "Each flip of a fair coin is independent. The previous 10 flips have no effect on the next one. The probability of tails is exactly 50%. The 'gambler's fallacy' is the belief that past random events influence future independent ones. (Note: if you truly see 10 heads, you might rationally question whether the coin is fair — but the question specifies it is.)",
+    expTag: "Gambler's Fallacy"
+  },
+  {
+    cat: "Probability & Stats",
+    q: "You have 3 cards. Card 1: red on both sides. Card 2: white on both sides. Card 3: red on one side, white on the other. You pick a card at random, see one face is red. What's the probability the other side is also red?",
+    opts: ["1/2","1/3","2/3","3/4"],
+    ans: 2,
+    exp: "There are 3 red faces total: two on Card 1, one on Card 3. You're looking at one of these 3 red faces. Two of those three red faces belong to Card 1 (where the other side is also red). So P(other side red | this side red) = 2/3. This is the Bertrand box paradox — the intuitive answer of 1/2 forgets that Card 1 gives you two chances to show a red face.",
+    expTag: "Bertrand Box Paradox"
+  },
+  {
+    cat: "Cognitive Biases",
+    q: "Linda is 31, single, outspoken, and very bright. She majored in philosophy and is deeply concerned with issues of social justice. Which is more probable?\n\nA) Linda is a bank teller.\nB) Linda is a bank teller who is active in the feminist movement.",
+    opts: ["B is more probable","A is more probable","They're equally probable","Cannot be determined"],
+    ans: 1,
+    exp: "A is always more probable. The probability of two events both being true (bank teller AND feminist activist) can never be higher than either event alone. B is a subset of A. Yet in Kahneman & Tversky's original study, 85% of participants chose B. They called this the conjunction fallacy — vivid details make a specific scenario feel more probable even when it's mathematically less so.",
+    expTag: "Conjunction Fallacy (Linda Problem)"
+  },
+  {
+    cat: "Cognitive Biases",
+    q: "You've spent $500 on a non-refundable concert ticket. On the night of the concert, you feel genuinely ill — not sick enough to be dangerous, but sick enough that you won't enjoy the show. What should you rationally do?",
+    opts: ["Go — you spent $500 and should use it","Stay home — the $500 is gone either way and your decision should only consider tonight's costs and benefits","Go — you'll feel worse if you waste the money","Call ahead and ask if they can reschedule"],
+    ans: 1,
+    exp: "The $500 is a sunk cost — it's gone whether you go or not. The rational decision considers only tonight's marginal costs and benefits: how much will you enjoy the show while sick vs. the relief of resting at home? The sunk cost should be completely irrelevant. The sunk cost fallacy leads people to go to shows they won't enjoy, finish bad meals, and continue failed projects.",
+    expTag: "Sunk Cost Fallacy"
+  },
+  {
+    cat: "Cognitive Biases",
+    q: "A store raises a jacket's price from $100 to $200, then advertises a '50% off sale,' bringing it back to $100. Customers report feeling they got a great deal. This illustrates which cognitive bias?",
+    opts: ["Sunk cost fallacy","Anchoring bias","Availability heuristic","Confirmation bias"],
+    ans: 1,
+    exp: "Anchoring bias: the first number you see ($200) becomes an 'anchor' against which you judge subsequent numbers. Even though the jacket costs exactly what it always did ($100), the anchor of $200 makes $100 feel like a bargain. Retailers deliberately set high 'original prices' to exploit this. Kahneman's research showed that anchors affect estimates even when people know the anchor is arbitrary.",
+    expTag: "Anchoring Bias"
+  },
+  {
+    cat: "Logic & Reasoning",
+    q: "Four cards lie on a table. Each card has a letter on one side and a number on the other. The rule is: 'If a card has a vowel on one side, then it has an even number on the other side.' Cards show: E, K, 4, 7. Which cards must you flip to test whether the rule is being followed?",
+    opts: ["E and 4","E and 7","E only","E, 4, and 7"],
+    ans: 1,
+    exp: "E: Must flip — if it has an odd number, the rule is violated. K: No need — the rule says nothing about consonants. 4: No need — the rule says 'if vowel → even,' not 'if even → vowel.' Any letter on the back of 4 is fine. 7: Must flip — if it has a vowel on the back, the rule is violated. Most people choose E and 4, ignoring that 7 can falsify the rule. This is the Wason Selection Task, one of the most studied problems in cognitive psychology.",
+    expTag: "Wason Selection Task"
+  },
+  {
+    cat: "Logic & Reasoning",
+    q: "Premise 1: All mammals are warm-blooded. Premise 2: All whales are mammals. What can we logically conclude?",
+    opts: ["All warm-blooded animals are whales","All whales are warm-blooded","Some whales are not warm-blooded","Whales are the only warm-blooded mammals"],
+    ans: 1,
+    exp: "From 'All mammals are warm-blooded' and 'All whales are mammals,' we can conclude 'All whales are warm-blooded' by transitivity. We cannot conclude anything about other warm-blooded animals from these premises. This is a valid categorical syllogism. The error most people make is either reversing the logic or adding information that isn't there.",
+    expTag: "Categorical Syllogism"
+  },
+  {
+    cat: "Cognitive Biases",
+    q: "People are asked: 'Are there more words in the English language that start with the letter K, or more words that have K as the 3rd letter?' Most people say words starting with K. Which is actually more common?",
+    opts: ["Words starting with K","Words with K as 3rd letter — by about 3 to 1","They're roughly equal","It depends on the dictionary used"],
+    ans: 1,
+    exp: "Words with K as the 3rd letter outnumber those starting with K by roughly 3:1. But words starting with K are much easier to think of — you can mentally flip through K... words easily, while K-as-3rd-letter requires more effort. This is the availability heuristic: we judge frequency by how easily examples come to mind, not by actual frequency. Tversky & Kahneman showed this applies to any letter that's easier to retrieve from the front position.",
+    expTag: "Availability Heuristic"
+  }
+];
+
+var state = {
+  current: 0,
+  score: 0,
+  answered: false,
+  timer: null,
+  timeLeft: 30,
+  streak: 0,
+  bestStreak: 0,
+  times: [],
+  qStart: 0,
+  results: []
+};
+
+var TIMER_MAX = 30;
+var CIRCUMFERENCE = 2 * Math.PI * 18;
+
+function startGame() {
+  document.getElementById('cover-screen').style.display = 'none';
+  document.getElementById('game').style.display = 'block';
+  loadQuestion(0);
+}
+
+function loadQuestion(idx) {
+  var q = QUESTIONS[idx];
+  state.answered = false;
+  state.timeLeft = TIMER_MAX;
+  state.qStart = Date.now();
+
+  document.getElementById('prog-bar').style.width = ((idx / QUESTIONS.length) * 100) + '%';
+  document.getElementById('q-counter').textContent = 'Question ' + (idx + 1) + ' of ' + QUESTIONS.length;
+  document.getElementById('q-score').textContent = state.score + ' / ' + idx;
+  document.getElementById('q-cat').textContent = q.cat;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('explanation').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('timer-num').textContent = TIMER_MAX;
+  setTimerArc(1);
+
+  var optWrap = document.getElementById('options');
+  optWrap.innerHTML = '';
+  q.opts.forEach(function(opt, i) {
+    var letters = ['A','B','C','D'];
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = '<div class="opt-letter">'+letters[i]+'</div><div class="opt-body">'+opt+'</div>';
+    btn.onclick = function() { selectAnswer(i); };
+    optWrap.appendChild(btn);
+  });
+
+  startTimer();
+}
+
+function setTimerArc(fraction) {
+  var arc = document.getElementById('timer-arc');
+  var offset = CIRCUMFERENCE * (1 - fraction);
+  arc.style.strokeDashoffset = offset;
+  if (fraction > 0.5) arc.style.stroke = '#5B8BF5';
+  else if (fraction > 0.25) arc.style.stroke = '#F1C40F';
+  else arc.style.stroke = '#E74C3C';
+}
+
+function startTimer() {
+  clearInterval(state.timer);
+  state.timer = setInterval(function() {
+    state.timeLeft--;
+    document.getElementById('timer-num').textContent = state.timeLeft;
+    setTimerArc(state.timeLeft / TIMER_MAX);
+    if (state.timeLeft <= 0) {
+      clearInterval(state.timer);
+      if (!state.answered) timeUp();
+    }
+  }, 1000);
+}
+
+function timeUp() {
+  state.answered = true;
+  var q = QUESTIONS[state.current];
+  var elapsed = Math.round((Date.now() - state.qStart) / 1000);
+  state.times.push(Math.min(elapsed, TIMER_MAX));
+  state.results.push({ correct: false, chosen: -1, q: q });
+  state.streak = 0;
+  markOptions(q.ans, -1);
+  showExplanation(q, false);
+}
+
+function selectAnswer(chosen) {
+  if (state.answered) return;
+  state.answered = true;
+  clearInterval(state.timer);
+
+  var q = QUESTIONS[state.current];
+  var correct = (chosen === q.ans);
+  var elapsed = Math.round((Date.now() - state.qStart) / 1000);
+  state.times.push(Math.min(elapsed, TIMER_MAX));
+
+  if (correct) {
+    state.score++;
+    state.streak++;
+    if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+  } else {
+    state.streak = 0;
+  }
+
+  state.results.push({ correct: correct, chosen: chosen, q: q });
+  document.getElementById('q-score').textContent = state.score + ' / ' + (state.current + 1);
+
+  markOptions(q.ans, chosen);
+  showExplanation(q, correct);
+}
+
+function markOptions(correctIdx, chosenIdx) {
+  var btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(function(btn, i) {
+    btn.classList.add('disabled');
+    if (i === correctIdx) btn.classList.add('correct-ans');
+    else if (i === chosenIdx) btn.classList.add('wrong-ans');
+  });
+}
+
+function showExplanation(q, correct) {
+  var el = document.getElementById('explanation');
+  var tag = document.getElementById('exp-tag');
+  var text = document.getElementById('exp-text');
+  tag.textContent = (correct ? '✓ Correct — ' : '✗ Wrong — ') + q.expTag;
+  tag.style.color = correct ? '#2ECC71' : '#E74C3C';
+  text.textContent = q.exp;
+  el.style.display = 'block';
+
+  var nextBtn = document.getElementById('next-btn');
+  nextBtn.style.display = 'block';
+  if (state.current + 1 >= QUESTIONS.length) {
+    nextBtn.textContent = 'See Results →';
+  } else {
+    nextBtn.textContent = 'Next Question →';
+  }
+}
+
+function nextQuestion() {
+  state.current++;
+  if (state.current >= QUESTIONS.length) {
+    showResults();
+    return;
+  }
+  loadQuestion(state.current);
+}
+
+function showResults() {
+  clearInterval(state.timer);
+  document.getElementById('game').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+
+  var s = state.score;
+  var total = QUESTIONS.length;
+  document.getElementById('score-big').textContent = s;
+
+  var pct = s / total;
+  var circle = document.getElementById('score-circle');
+  if (pct >= 0.85) circle.style.borderColor = '#2ECC71';
+  else if (pct >= 0.6) circle.style.borderColor = '#5B8BF5';
+  else if (pct >= 0.4) circle.style.borderColor = '#F1C40F';
+  else circle.style.borderColor = '#E74C3C';
+
+  var title, desc;
+  if (s >= 18) { title = 'Exceptional.'; desc = s + '/20. You scored higher than 99% of people who take this test. You caught almost every cognitive trap — including the ones most researchers miss on first attempt.'; }
+  else if (s >= 15) { title = 'Strong critical thinker.'; desc = s + '/20. Top 10%. You caught the probability traps and most of the bias questions. The gaps — wherever they are — tend to be in the subtler conjunction and base rate problems.'; }
+  else if (s >= 11) { title = 'Above average.'; desc = s + '/20. You scored above the population mean. You likely got the lateral thinking questions and some of the CRT classics, but the probability and bias categories caught you a few times.'; }
+  else if (s >= 7) { title = 'Average — but aware.'; desc = s + '/20. Most people score 9-12. The fact that you finished the test means you know what you\'re up against now. The explanations are the whole point.'; }
+  else { title = 'Your System 1 brain ran the show.'; desc = s + '/20. Don\'t feel bad — the questions are specifically engineered to fool you. The original CRT (only 3 questions) has an average score of 1.24 even at elite universities. These 20 questions are harder.'; }
+
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('res-desc').textContent = desc;
+  document.getElementById('bk-correct').textContent = s;
+  document.getElementById('bk-wrong').textContent = total - s;
+  document.getElementById('bk-streak').textContent = state.bestStreak;
+  var avgTime = state.times.length ? Math.round(state.times.reduce(function(a,b){return a+b;},0)/state.times.length) : 0;
+  document.getElementById('bk-time').textContent = avgTime + 's';
+
+  // Share text
+  var cats = {};
+  state.results.forEach(function(r) {
+    var c = r.q.cat;
+    if (!cats[c]) cats[c] = {right:0,total:0};
+    cats[c].total++;
+    if (r.correct) cats[c].right++;
+  });
+  var catLines = Object.keys(cats).map(function(c){ return c+' '+cats[c].right+'/'+cats[c].total; }).join(' · ');
+  var shareText = 'I scored '+s+'/20 on the Extended IQ & Cognitive Bias Challenge.\n\n'+catLines+'\n\nTests: Cognitive Reflection (CRT), Monty Hall, Conjunction Fallacy, Wason Task, Anchoring, Sunk Cost + more.\n\nordinarymantrying.com/tools/iq-challenge-extended.html';
+  document.getElementById('share-txt').textContent = shareText;
+
+  // Review items
+  var reviewEl = document.getElementById('review-items');
+  state.results.forEach(function(r, i) {
+    var div = document.createElement('div');
+    div.className = 'review-item';
+    var letters = ['A','B','C','D'];
+    var correctLetter = letters[r.q.ans];
+    var chosenLetter = r.chosen >= 0 ? letters[r.chosen] : '—';
+    div.innerHTML = '<div class="review-dot '+(r.correct?'dot-c':'dot-w')+'">'+(r.correct?'✓':'✗')+'</div><div class="review-q"><strong>Q'+(i+1)+':</strong> '+r.q.q.substring(0,80)+(r.q.q.length>80?'...':'')+'<div class="review-ans">'+(r.correct ? '<span class="ans-ok">✓ '+correctLetter+' — correct</span>' : '<span class="ans-bad">You: '+chosenLetter+'</span> · <span class="ans-right">Correct: '+correctLetter+'</span>')+'</div></div>';
+    reviewEl.appendChild(div);
+  });
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function copyResult(evt) {
+  var text = document.getElementById('share-txt').textContent;
+  var btn = evt.target;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function(){ btn.textContent='✓ Copied!'; setTimeout(function(){btn.textContent='Copy to clipboard';},2000); });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent='✓ Copied!';
+    setTimeout(function(){btn.textContent='Copy to clipboard';},2000);
+  }
+}
+</script>
+</body>
+</html>

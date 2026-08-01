@@ -290,7 +290,7 @@ function parseHrTimes(hr){
                 off/peak flight+hotel pricing) via api-proxy.php.
    The seam is callAI() below — wire the DeepSeek/Claude proxy there.
 ========================================================= */
-function smartBuild(){
+function smartBuild(maxDays){
   // 1. Build candidate list — respect active filter, skip spots closed on the relevant days
   const startVal = document.getElementById('startDate').value;
   const baseDate = startVal ? new Date(startVal) : null;
@@ -400,6 +400,8 @@ function smartBuild(){
     return;
   }
 
+  if(maxDays && nd.length > maxDays) nd.splice(maxDays);
+
   days = nd;
   dayStarts = nd.map(() => dayStarts[0] || '09:00');
   curDay = 0;
@@ -409,7 +411,7 @@ function smartBuild(){
   const nDays = nd.length;
   const nSpots = nd.reduce((s, day) => s + day.filter(r => r.k === 's').length, 0);
   const closedNote = baseDate ? ' · closed spots auto-skipped' : '';
-  toast(`✨ ${nDays}-day plan, ${nSpots} spots${closedNote} — fine-tune by dragging!`);
+  toast(`✨ ${nDays}-day plan · ${nSpots} spots${closedNote} — drag to fine-tune!`);
 
   // Show share strip after a short delay
   setTimeout(showShareStrip, 1200);
@@ -489,11 +491,55 @@ window.addEventListener('afterprint', ()=>{
     }
   }, 500);
 });
+// Day picker state
+let _selectedDays = 3;
+document.getElementById('dayPickerBtns').addEventListener('click', e => {
+  const btn = e.target.closest('.dpb');
+  if (!btn) return;
+  _selectedDays = parseInt(btn.dataset.d, 10);
+  document.querySelectorAll('.dpb').forEach(b => b.classList.toggle('active', b === btn));
+});
+
 document.getElementById('aiBtn').onclick=()=>{
   const b=document.getElementById('aiBtn');const t=b.textContent;
-  b.textContent='🤖 Planning…';b.disabled=true;
-  setTimeout(()=>{smartBuild();b.textContent=t;b.disabled=false;
-    toast('✨ Draft built! Now drag to fine-tune — it\'s yours.');},650);
+  b.textContent='⚡ Planning…';b.disabled=true;
+  setTimeout(()=>{smartBuild(_selectedDays);b.textContent=t;b.disabled=false;},650);
+};
+
+document.getElementById('aiDeepBtn').onclick=async()=>{
+  const b=document.getElementById('aiDeepBtn');const t=b.textContent;
+  b.textContent='🤖 Asking DeepSeek…';b.disabled=true;
+  try{
+    const brief=`${_selectedDays}-day trip to ${CITY.nm} for a foreign tourist. Spots available: ${SP.map(s=>s.nm).join(', ')}. Plan exactly ${_selectedDays} days, sequence spots by proximity, mix culture/food/nature. Reply in JSON: {"days":[[spot names for day1],[day2],...]}`;
+    const data=await callAI(brief);
+    if(data && data.days && Array.isArray(data.days)){
+      // Map DeepSeek names back to SP indices
+      const nameMap={};SP.forEach((s,i)=>nameMap[s.nm.toLowerCase()]=i);
+      const nd=data.days.slice(0,_selectedDays).map(dayNames=>{
+        const row=[];
+        dayNames.forEach(nm=>{
+          const idx=nameMap[nm.toLowerCase()];
+          if(idx!=null)row.push({k:'s',i:idx});
+        });
+        return row;
+      }).filter(d=>d.length);
+      if(nd.length){
+        days=nd;dayStarts=nd.map(()=>dayStarts[0]||'09:00');curDay=0;
+        syncDayStart();renderAll();
+        toast(`🤖 DeepSeek built a ${nd.length}-day plan — drag to fine-tune!`);
+        setTimeout(showShareStrip,1200);
+      }else{
+        toast('DeepSeek returned no matching spots — try Quick Plan instead.');
+        smartBuild(_selectedDays);
+      }
+    }else{
+      throw new Error('bad response');
+    }
+  }catch(e){
+    toast('DeepSeek unavailable — using Quick Plan instead.');
+    smartBuild(_selectedDays);
+  }
+  b.textContent=t;b.disabled=false;
 };
 /* =========================================================
    REAL TOTAL COST — free estimate, paid deliverable

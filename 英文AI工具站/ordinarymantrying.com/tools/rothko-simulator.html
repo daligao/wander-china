@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mark Rothko Life Simulator — He Painted Silence and Meant It</title>
+<meta name="description" content="Make the same decisions as Mark Rothko — who invented a new way to paint emotion, turned down a luxury restaurant commission at its peak, and designed a sacred chapel he never lived to see opened.">
+<style>
+:root{
+  --bg:#F5F0EC;--card:#FAF7F5;--ink:#140A04;--muted:#4A2810;--line:#DCCAB8;
+  --accent:#6A1808;--accent-bg:#F5E0D0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Latvia / USA · 1903–1970</div>
+  <h1>Could You Have Been<br>Mark Rothko?</h1>
+  <div class="cover-sub">He arrived in America at ten as a Jewish immigrant from Latvia. He spent decades developing a way to paint pure emotion — large rectangles of color that seemed to breathe and pulse and grieve. He accepted the most prestigious restaurant commission in American art history, then returned the money and kept the paintings because he couldn't bear to see them hanging where people ate expensive food. He designed a chapel in Houston he never lived to see opened. He was found dead in his New York studio on February 25, 1970.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">$35k</div><div class="stat-l">The Seagram commission fee — returned with the paintings</div></div>
+    <div class="stat"><div class="stat-n">14</div><div class="stat-l">Paintings in the Rothko Chapel — his final major work</div></div>
+    <div class="stat"><div class="stat-n">66</div><div class="stat-l">Years of age at death in his New York studio</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · New York, 1940s · The Transition</div>
+<p class="narrative">You are in your late thirties and forties, working your way through various phases — Social Realist paintings, then Surrealist-influenced work, then a strange mythological period. Nothing has yet become what you know it needs to become. You have been poor for most of your adult life, teaching art to children to make rent. Something is forming in you: a belief that painting can make a viewer feel something that has no name — not sadness, not joy, not beauty, but something prior to those, something that happens in the body before the mind can label it. You are developing what will be called Color Field painting. Large rectangles of color, luminous and layered, hovering on the canvas like breath.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Abstraction</div>
+  <div class="d-situation">You are moving toward complete abstraction — no figures, no objects, just color and light. The market for figurative work is larger. Do you follow the painting wherever it leads?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Yes — follow the painting; the work will find what it needs to be regardless of the market</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. No — maintain some figurative elements to stay commercially viable; pure abstraction is a financial risk</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Yes, but explain what you are doing — write essays and statements that help the audience understand the intention</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Rothko followed the painting. By the late 1940s he had found his signature form: large soft-edged rectangles of layered color on dark or luminous grounds, the colors seeming to vibrate against each other. He was also writing and speaking extensively about what the paintings meant to him — he had a clear theory, and he was not shy about stating it. He said the paintings were about tragedy, ecstasy, and doom. He said he was not interested in relationships of color or form. He was interested in expressing basic human emotions. He said if people weep in front of his paintings, he had communicated what he intended. People wept.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · New York, 1954 · The Market</div>
+<p class="narrative">Abstract Expressionism has arrived. You are becoming famous and your paintings are beginning to sell — for more money than you ever imagined possible. The art market is embracing exactly what you are doing. Other abstract expressionists — Pollock, de Kooning, Kline — are celebrities. You are slower to sell, more private, more suspicious. You are beginning to worry about something: that the collectors and the galleries are turning your paintings into commodities, hanging them in banks and corporate lobbies and luxury apartments as status objects. The paintings were supposed to make people feel. In banks, they make the bank feel expensive.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Market Success</div>
+  <div class="d-situation">Your paintings are becoming expensive commodities. Do you embrace the market or resist it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Remain ambivalent — take the money, since poverty is not ennobling, but be selective about where the work goes and maintain control of its context</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Embrace it — art has always been purchased by the wealthy; the fact that someone pays a lot for a painting doesn't change what the painting is</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Refuse sales to collectors who will hang the work in corporate lobbies — specify in contracts how the work can be displayed</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Rothko was ambivalent and deeply conflicted about money throughout his life. He took the money — he had a family to support — but became increasingly distressed about where the work ended up. His preferred exhibition conditions were specific: dim lighting, paintings hung lower than usual, close to the floor, so the viewer was surrounded rather than looking at the paintings from above. In a corporate lobby, those conditions were impossible. The paintings he cared most about he directed toward museums with strict conditions. The Seagram Murals would be the crisis point of this conflict.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · New York, 1958–59 · The Seagram Commission</div>
+<p class="narrative">Philip Johnson offers you the most prestigious commission in American art: a series of murals for the Four Seasons restaurant in the Seagram Building — the most expensive and exclusive restaurant in New York. The fee is $35,000. You accept. You rent a large studio on the Bowery and begin working at a scale larger than anything you've done before — dark maroon and black paintings, claustrophobic and overwhelming. You say to a friend: "I hope to paint something that will ruin the appetite of every son of a bitch who ever eats in that room." You spend eight months on the paintings. Then you and your wife go to dinner at the Four Seasons.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Return</div>
+  <div class="d-situation">You have seen the Four Seasons restaurant where your paintings will hang — the most expensive restaurant in New York, full of people performing wealth. You walk out and call your dealer. What do you do?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Return the money and keep the paintings — you cannot hang these works in a place designed to flatter the rich</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Fulfill the commission — you accepted money for work you agreed to do; the restaurant context is not your responsibility</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Negotiate — ask for specific installation conditions that would make the context more appropriate for the paintings</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Rothko returned the $35,000 fee and kept the paintings. He later said: "Anybody who will eat that kind of food for those kinds of prices will never look at a painting of mine." The Seagram Murals were eventually split among three institutions: a group went to the Tate Modern in London, a group to the National Gallery of Art in Washington, and a group to the Kawamura Memorial DIC Museum in Japan. They hang in the specific dim conditions Rothko required, at the heights he specified. In London, they are in a dedicated room where visitors often sit on benches for extended periods, which is exactly what he wanted. The paintings about claustrophobia and enclosure became places people chose to stay in.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Houston, 1964–1967 · The Chapel</div>
+<p class="narrative">John and Dominique de Menil commission you to create a sacred space for Houston — an interfaith chapel that will hold paintings specifically made for it. No denomination, no liturgy, no figure, no narrative. Just the paintings and the space. It is the commission that fits you perfectly: you have always said you want people to feel something in the presence of your work, and a chapel is a place where people expect to feel something. You design 14 large dark paintings — maroon and black, almost identical in tone, the differences becoming apparent as the eye adjusts. It is the darkest work you have ever done.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Sacred Space</div>
+  <div class="d-situation">The Chapel commission asks you to make a sacred space without religion. Can painting do that?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Yes — the Chapel paintings are the logical conclusion of everything you have been doing; color and light and silence can create the conditions for religious experience without religion</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. No — sacred experience requires religious context; painting alone cannot produce it; the commission is a category error</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Possibly — accept the commission as an experiment; you don't know the answer until you make the paintings</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Rothko accepted the commission with complete conviction and worked on the Chapel paintings for several years. They are among the most austere works he ever produced — almost monochromatic, the near-black maroons requiring extended looking before the shapes inside the color become apparent. The chapel opened in 1971, a year after his death. It has become one of the most visited non-sectarian sacred spaces in the world — people of every faith and no faith report experiences of stillness, grief, and expansion there that they do not find in ordinary church or gallery settings. He was right that painting could do this. He did not live to know he was right.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · New York, 1968 · The Aneurysm</div>
+<p class="narrative">You have an aortic aneurysm in 1968. Your doctor tells you clearly: no more large canvases, no more heavy lifting. Your paintings have always been large — part of how they work is their size, their demand on the body as well as the eye. You shift to works on paper: smaller, in acrylic, a new medium for you. The acrylic paintings on paper — dark grays and blacks, raw sienna, red — are extraordinary. They are as focused as the large canvases are immersive. Some critics consider them his finest works. Your marriage has ended. You are living alone in your studio. The depression that has always been present is now permanent.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · After the Health Crisis</div>
+  <div class="d-situation">Your body forces you to change your working scale. Do you accept the limitation and find what the smaller work offers?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Yes — find what the constraint offers; the works on paper are a different but equally powerful mode</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. No — push against the limitation; the large canvases are what you do and the risk is worth taking</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Step back from painting entirely — the health and the depression are telling you something; rest before returning</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Rothko worked in the smaller format with great intensity. The late works on paper are now considered among his most personal and direct — the constraint of scale forced a concentration that the large canvases didn't always require. He worked in his studio alone, increasingly isolated after the marriage ended, increasingly dependent on alcohol and antidepressants that interacted badly. The studio became both refuge and trap. He was found there on February 25, 1970, by his studio assistant, Oliver Steindecker.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · The Estate Crisis</div>
+<p class="narrative">Rothko left no will. His estate — 798 paintings — was controlled by the Mark Rothko Foundation, whose three directors (including his dealer Frank Lloyd) immediately sold most of the paintings to Marlborough Gallery at prices far below market value. The fraud trial that followed (Rothko v. Reis) took years, involved his children Kate and Christopher Rothko, and resulted in the trustee directors being removed and ordered to pay restitution. Frank Lloyd fled to the Bahamas. The paintings were eventually recovered. The case transformed American art law regarding artists' estates.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · The Estate</div>
+  <div class="d-situation">He left no will, which allowed trustees to defraud the estate. What should artists do with their legacy?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Document intentions clearly and establish legally binding structures — the absence of a will was a catastrophic omission that cost his children and the public enormously</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Trust the appointed trustees — that's what trustees are for; the fraud was exceptional, not structural</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Donate major works to museums during one's lifetime — institutional protection is more reliable than legal structures</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> The Rothko estate case became the precedent for American law on fiduciary responsibility in artists' estates. His children fought for over a decade and eventually recovered significant portions of the estate, establishing the Mark Rothko Foundation on more secure legal ground. The case revealed how vulnerable artists' estates are to exploitation and led to legal reforms. Rothko's failure to make a will — understandable given his depression and health — had consequences that outlasted the paintings' recovery. His children spent years in courts when they should have been living their lives.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · The Lighting Question</div>
+<p class="narrative">Rothko's most specific and consistent instruction about his paintings was how they should be lit: dim, not bright. He wanted the colors to emerge gradually, to shift as the eye adjusted, to seem to pulse with internal light rather than reflect external light. He staged his studio at the specific lighting levels he required. Most museums, when they acquired Rothko paintings, ignored these instructions for decades — bright gallery lighting, high on the wall, visible from across the room. The Tate Modern's dedicated Rothko room uses dim light and low hanging. In those conditions, the Seagram Murals do something different from what they do in bright light.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The Viewing Conditions</div>
+  <div class="d-situation">An artist specifies how their work should be seen. Institutions often override these specifications. Whose vision should prevail?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. The artist's — the viewing conditions are part of the work, not its packaging; overriding them changes what the work is</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. The institution's — they have practical responsibilities to many viewers with different needs; the artist's conditions are one input among several</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. Neither — the work ultimately speaks for itself regardless of conditions; a great painting survives inappropriate lighting</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> The Tate Modern's decision to honor Rothko's lighting specifications has been cited as one of the most important institutional decisions in recent British art museum history. Visitors to the Tate's dedicated Rothko room report experiences they do not have elsewhere — extended dwell times, emotional responses, a quality of attention that is unusual in public gallery settings. The same paintings in the wrong lighting produce the wrong experience. Rothko knew this and specified it. The institutions that listened produced a different kind of encounter than those that didn't.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · The Legacy</div>
+<p class="narrative">The Rothko Chapel in Houston opened in 1971, a year after his death. Martin Luther King Jr. Award ceremonies have been held there. It is used for meditation, prayer, and reflection by people of every faith and no faith. The Seagram Murals hang in the specific conditions he required. The large paintings — Orange and Yellow, No. 61, Black on Maroon — appear in auction records as among the most expensive works ever sold. The paintings that were supposed to ruin appetites are now the most expensive objects in the world.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · The Price of a Painting</div>
+  <div class="d-situation">His paintings are among the most valuable objects on Earth. He returned the Seagram fee because he didn't want them in a luxury restaurant. Is this irony, tragedy, or something else?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. Something else — the Chapel exists and works; some of the paintings hang in the conditions he specified; the auction records are beside the point</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. Tragedy — the commercialization he feared happened anyway; the Seagram gesture was ultimately futile</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. Irony — the refusal to participate in luxury culture made the work more valuable to luxury culture; he could not escape the market by refusing the market</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> The Rothko Chapel holds the answer: it works. Thousands of people every year sit in the dim room with the 14 dark paintings and feel something that they report as significant. That was what he said he wanted to do. He did it. The auction records reflect something real — the paintings hold extraordinary value for people who want to live with them. Some of those people are the rich who eat expensive food. Some of them sit with the paintings for hours in the Chapel and weep. He wanted the second group. He got both. The distinction mattered to him. Whether it should matter is a question the work keeps asking.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Mark Rothko Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="munch-simulator.html">
+      <span class="next-name">Edvard Munch</span>
+      <span class="next-desc">The painter who first established that inner emotional states could be the subject of art</span>
+    </a>
+    <a class="next-card" href="vangogh-simulator.html">
+      <span class="next-name">Vincent van Gogh</span>
+      <span class="next-desc">Another painter who made color carry emotional weight rather than describe appearances</span>
+    </a>
+    <a class="next-card" href="kafka-simulator.html">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">Another artist whose work is about the experience of being enclosed, watched, and unable to escape</span>
+    </a>
+    <a class="next-card" href="picasso-simulator.html">
+      <span class="next-name">Pablo Picasso</span>
+      <span class="next-desc">The abstract expressionist's contemporary who also rebuilt what painting could be in the 20th century</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You understand exactly what Rothko understood — follow the painting into abstraction, stay ambivalent about the market, return the Seagram fee, build the Chapel, honor the constraint. The Rothko Chapel exists and works because he made exactly these choices. You would have made the same ones.';else if(score>=5)t.textContent='Strong instincts. You understood the core choices — abstraction over safety, context over commodity, Chapel over luxury restaurant. A few hesitations around the market or the constraint crept in, but you would have produced significant color field work and understood what it was for.';else if(score>=3)t.textContent='You accommodated the market more than Rothko was willing to, completed the Seagram commission, and prioritized the income over the context. Those choices are understandable. They would have produced a different legacy — more commercial, more comfortable, more quickly forgotten than the Chapel.';else t.textContent='You chose the figurative work, the market, the Seagram delivery, and the bright gallery lighting. Rothko made opposite choices at every point. The Tate room with dim lights and low-hung maroon paintings exists because he refused exactly what you would have accepted.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

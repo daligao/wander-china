@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Søren Kierkegaard Life Simulator — Faith, Despair & the Leap | Ordinary Man Trying</title>
+<meta name="description" content="Step into Søren Kierkegaard's shoes across 8 pivotal decisions — from breaking his engagement to Regine to refusing last rites from the church he spent a year attacking.">
+<style>
+:root{
+  --bg:#F0EEF7;--card:#F7F5FC;--ink:#0D0A1A;--muted:#3A2858;--line:#C8C0D8;
+  --accent:#2A1860;--accent-bg:#E4E0F4;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(240,238,247,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#0D0A1A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B0A8D0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#0A0818;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#EAE8F8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.3);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#EAE8F8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B0A8D0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B0A8D0;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Søren Kierkegaard</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #72 of 100</p>
+  <h1 class="cover-title">The Leap of Faith<br>Taken Alone</h1>
+  <p class="cover-sub">Søren Kierkegaard broke off the engagement he desperately wanted. Attacked the church he genuinely believed in. Invited a satirical newspaper to ridicule him in public, then walked into those ridicules daily on the streets of Copenhagen. He spent his entire adult life performing the philosophical equivalent of open-heart surgery — on himself — and publishing the results under pseudonyms. He died at 42. His work was not understood for fifty years.</p>
+  <div class="cover-facts">
+    <p>📚 Over <strong>30 books</strong> written in 13 years &nbsp;·&nbsp; 💍 Broke off engagement to Regine Olsen, 1841 &nbsp;·&nbsp; ✒️ Published under pseudonyms to avoid "direct communication" &nbsp;·&nbsp; ⛪ Launched attack on Danish Lutheran Church, 1854 &nbsp;·&nbsp; Died of spinal paralysis, November 11, 1855 &nbsp;·&nbsp; Age 42</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Kierkegaard's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1835</div>
+  <div class="timeline-dot">Copenhagen, Denmark · Age 22</div>
+  <div class="narrative">
+    <p>You are twenty-two years old when your father tells you something that breaks the architecture of your world. Michael Pedersen Kierkegaard is a wealthy hosier who built his fortune from nothing — a profoundly religious man who raised you on theology and fear of God. What he confesses now is that as a boy, cold and starving on a Jutland heath, he cursed God. That he seduced his family's maid before his first wife died. That he has carried this guilt for decades, and believes God will punish him by outliving all his children.</p>
+    <p>In the Danish of your journals, you call it the "great earthquake" — a shock that runs through your understanding of faith, family, guilt, and the nature of God's relationship with broken human beings. Five of your six siblings are already dead. You — the youngest — are the only one left. Your father's fear may be a prophecy.</p>
+    <p>You sit in his study with this knowledge now inside you, and the question is what to do with it.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1835</div>
+    <p class="decision-q">Your father has confessed sins that shattered your faith and your image of him. How do you respond to this "great earthquake"?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Confront your father publicly — the congregation that reveres him deserves to know who he really is.</button>
+      <button class="dopt" onclick="choose(this,1,false)">B. Abandon faith entirely — if God allowed this suffering in a believing family, the whole framework must be false.</button>
+      <button class="dopt" onclick="choose(this,1,true)">C. Keep it within yourself and use this shattering knowledge as the fuel for a lifelong examination of guilt, melancholy, and what authentic faith actually requires.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Forgive your father immediately and move on — dwelling on it helps no one and helps nothing.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>Your father confesses that he cursed God as a starving boy on a Jutland heath and seduced a servant before his first wife died — and that he believes God will punish him by outliving all his children.</strong> Five of your six siblings are already dead. You keep this entirely private, reconcile with your father before he dies, and spend the rest of your life writing about guilt, melancholy, and what happens to faith when the wound is real. The wound became the work.</p>
+      <strong>What Kierkegaard actually did:</strong> He kept it entirely private. He reconciled with his father shortly before the elder Kierkegaard's death in 1838 — an event Kierkegaard called his "greatest joy." But the earthquake's tremors run through everything he ever wrote: the concept of guilt, the nature of despair, the relationship between sin and selfhood, the impossibility of justifying God through reason. The wound became the work.
+    </div>
+  </div>
+
+  <div class="year-banner">1841</div>
+  <div class="timeline-dot">Copenhagen, Denmark · Age 28</div>
+  <div class="narrative">
+    <p>Regine Olsen is eighteen years old and the most purely joyful person you have ever known. You have been engaged to her for over a year. You love her. This is not in question. The question is whether you can be what she needs — a husband who is present, cheerful, domestic, capable of ordinary happiness. You have been writing in your journals about your "thorn in the flesh," the melancholy that runs so deep in your character that you consider it essential to who you are.</p>
+    <p>You cannot reveal this darkness to her. To explain what you truly are would be to burden her with something she is too young and too unclouded to carry. And yet to marry her without revealing it — to let her spend her life with a man she doesn't fully know — is a different kind of wrong. You pace the apartment on Nørregade for hours. The engagement ring is on her finger. The announcement has been made to both families.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1841</div>
+    <p class="decision-q">You love Regine but believe the engagement is a mistake you cannot explain without destroying her. What do you do?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Go through with the marriage — love is enough, and your melancholy is your own problem to carry quietly.</button>
+      <button class="dopt" onclick="choose(this,2,false)">B. Explain your true nature to her honestly and let her decide whether to continue.</button>
+      <button class="dopt" onclick="choose(this,2,true)">C. Break off the engagement deliberately, making yourself appear the callous villain — so that she is freed without having to understand why, and can hate you cleanly.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. Ask for a long postponement and hope the philosophical work you are beginning will clarify what you should do.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>You love Regine Olsen, you break the engagement, and you make yourself appear callous enough that she can hate you cleanly and move on.</strong> Then you write three books that are coded letters to her that she can't fully decode. She marries someone else in 1847. You leave her your entire estate in your will. She declines it. She outlives you by forty-nine years.</p>
+      <strong>What Kierkegaard actually did:</strong> He broke the engagement in October 1841, behaving coldly enough that Regine — and the Copenhagen social world — concluded he was simply heartless. He then wrote <em>Either/Or</em>, <em>Repetition</em>, and <em>Fear and Trembling</em> largely as coded letters to her, which she could not fully decode. He watched her marry someone else in 1847. He never stopped loving her. In his will, he left her his entire estate — which she declined. She outlived him by fifty years.
+    </div>
+  </div>
+
+  <div class="year-banner">1843</div>
+  <div class="timeline-dot">Copenhagen, Denmark · Age 29</div>
+  <div class="narrative">
+    <p>You have written a book unlike anything published in Danish letters: a two-volume work containing what appears to be the private papers of two completely different men — an aesthete who celebrates seduction, beautiful moments, and the art of avoiding boredom; and a judge who argues passionately for the ethical life of duty and commitment. Neither voice is obviously you. The editor who "found" both manuscripts and decided to publish them is himself a fiction.</p>
+    <p>You call this approach "indirect communication." You believe that if a philosopher simply states a conclusion — "choose the ethical life" — the reader will passively agree and nothing will change. The only way to actually move a reader toward truth is to let them experience the thinking themselves, through a voice they can inhabit. But indirect communication requires a mask. It requires not being Søren Kierkegaard.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1843</div>
+    <p class="decision-q">You've written a major philosophical work. Should you publish it under your own name or a pseudonym?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. Publish under your real name — a philosopher should stand behind his arguments and be accountable for them.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. Publish under a pseudonym (Victor Eremita), allowing the aesthetic and ethical voices to exist independently of you — so the reader encounters the arguments, not the man.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. Don't publish at all — your ideas are too personal, too radical, too likely to be misread by Copenhagen society.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. Publish under Regine's name — as a tribute, and a way to tell her what you could not say in person.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>You publish your most important philosophical work under a name that isn't yours — Victor Eremita, the hermit victor — so that readers encounter the argument rather than defer to the man.</strong> Over the next twelve years you create an elaborate world of fictional philosophers, each with their own voice and perspective, to prevent anyone from simply trusting Søren Kierkegaard's opinion. The strategy requires spending your life behind masks.</p>
+      <strong>What Kierkegaard actually did:</strong> He published <em>Either/Or</em> in February 1843 under the pseudonym Victor Eremita. Over the following years he created an elaborate fictional world of pseudonymous authors — Johannes Climacus, Anti-Climacus, Constantin Constantius, Judge William — each with their own philosophical voice, style, and perspective. He considered this pseudonymous production his most important philosophical contribution: not telling the reader <em>what</em> to think, but staging the conditions under which they might think it themselves.
+    </div>
+  </div>
+
+  <div class="year-banner">1843</div>
+  <div class="timeline-dot">Copenhagen, Denmark · Age 29</div>
+  <div class="narrative">
+    <p>The same year you publish <em>Either/Or</em>, you write <em>Fear and Trembling</em> — a meditation on the story of Abraham and Isaac that will become your most famous work. The question you are asking is deceptively simple: Was Abraham right? God commanded him to sacrifice his son. Abraham did not hesitate. At the last moment, God stopped him. Christianity calls this an act of supreme faith. But if Abraham were a modern man who told his neighbors he was going to kill his son because God told him to, they would lock him away.</p>
+    <p>The philosophical establishment of your time — dominated by Hegel — argues that faith is merely a preliminary stage before reason, that the rational ethical universal always takes precedence over individual religious experience. Your entire philosophical project is an argument against this. The Abraham story is your key exhibit.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1843</div>
+    <p class="decision-q">What is Kierkegaard's central insight in <em>Fear and Trembling</em> regarding Abraham's willingness to sacrifice Isaac?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. Abraham was morally wrong — God was testing whether Abraham would have the moral courage to refuse an unjust command.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. Genuine faith requires a "teleological suspension of the ethical" — a leap beyond rational morality into a direct, individual relationship with God that no system of ethics can justify or contain.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. The Abraham story is a myth with no philosophical significance — it should be read purely as allegory, not taken literally.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. Abraham represents Hegel's ethical hero — he was willing to sacrifice everything for the universal moral law of his community.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You write <em>Fear and Trembling</em> to argue that Abraham was right to prepare to kill his son — not because the command was ethical, but because faith operates in a space where ethics cannot follow.</strong> Hegel says reason always wins. You say there is a move reason cannot make. Kafka, Heidegger, Sartre, and Camus all build their work on top of yours. You don't call it existentialism. You call it the leap.</p>
+      <strong>Kierkegaard's argument:</strong> The "teleological suspension of the ethical" is Kierkegaard's term for the moment when a direct command from God overrides what universal ethics would demand. Abraham cannot explain his action to anyone — not Sarah, not Isaac, not the community. He acts in fear and trembling, in absolute solitude, in a relationship with God that exists entirely outside language and reason. This is Kierkegaard's definition of faith: not a reasoned position, but a leap. It is the opposite of what Hegel taught, and it launched existentialism.
+    </div>
+  </div>
+
+  <div class="year-banner">1845</div>
+  <div class="timeline-dot">Copenhagen, Denmark · Age 31</div>
+  <div class="narrative">
+    <p>You have now published a shelf of books under various pseudonyms, and alongside them a parallel series of religious "edifying discourses" under your own name. The philosophical project is coherent, even if no one in Copenhagen has mapped it yet. At its heart is a description of how a human being develops — or fails to develop — into full selfhood. You describe three "stages on life's way," three modes of existence that a person might inhabit.</p>
+    <p>The first is a life governed by pleasure, sensation, and the avoidance of boredom. The second is a life governed by ethical duty, commitment, and the attempt to live up to universal moral standards. The third — the most difficult and the most genuine — is the religious stage: the leap of faith into a personal relationship with God that goes beyond both pleasure and ethics.</p>
+    <p>Most people, you observe, never leave the first stage. Many sincerely believe they are in the second. Almost no one genuinely inhabits the third.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1845</div>
+    <p class="decision-q">Kierkegaard describes three stages of human existence. What is the correct order of these stages of spiritual development?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Religious → Ethical → Aesthetic: we begin with God, lose our way into pleasure, and must return through duty.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. Aesthetic → Ethical → Religious: from pleasure-seeking, to ethical duty, to the leap of faith — each stage higher and more demanding, each requiring a break with what came before.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. Ethical → Aesthetic → Religious: we begin with duty, explore pleasure, and transcend both through faith.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. Aesthetic → Religious → Ethical: we move from pleasure directly to faith, and faith then produces our ethical commitments.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>You describe three stages of human existence — pleasure, ethics, and faith — and you observe that most people never leave the first one, many think they're in the second when they're still in the first, and almost nobody genuinely inhabits the third.</strong> The move from ethics to faith isn't a logical step; it's a discontinuity, a crisis, a leap into what reason cannot justify. You can't reason your way to God. You can only jump.</p>
+      <strong>Kierkegaard's three stages:</strong> The Aesthetic stage (pleasure, sensation, immediate experience) gives way — through despair — to the Ethical stage (duty, commitment, universal moral law). But the Ethical stage also ultimately fails: we cannot be good enough, cannot sustain the ethical demand. This failure opens the possibility of the Religious stage — not as a logical conclusion, but as a leap. You cannot reason your way to God; you can only leap. The break between each stage is not gradual; it is existential — a crisis, a choice, a discontinuity.
+    </div>
+  </div>
+
+  <div class="year-banner">1846</div>
+  <div class="timeline-dot">Copenhagen, Denmark · Age 32</div>
+  <div class="narrative">
+    <p>A critic named P.L. Møller publishes a piece that mentions your work dismissively while defending the literary taste of <em>The Corsair</em> — Copenhagen's most popular satirical newspaper, famous for its vicious caricatures of public figures. <em>The Corsair</em> has, until now, left you alone. In fact, its editor has praised you in print.</p>
+    <p>You could ignore Møller's piece entirely. Or you could do what no rational person would do: publicly attack <em>The Corsair</em> and invite it to target you. You know exactly what will happen. The paper will publish grotesque caricatures. Your distinctive profile — the uneven trouser legs, the slightly hunched walk — will be mocked on every street corner. Copenhagen is a small city. You will not be able to leave your apartment without being pointed at and laughed at by strangers. This is not a hypothetical outcome. It is a certainty.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1846</div>
+    <p class="decision-q">You can ignore the critic and stay safe, or attack <em>The Corsair</em> publicly — inviting years of public ridicule. What do you do?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Ignore it entirely — engaging with a satirical newspaper is beneath you and the work.</button>
+      <button class="dopt" onclick="choose(this,6,false)">B. Write a measured, rational response in a respectable journal — respond to the ideas, not the personality.</button>
+      <button class="dopt" onclick="choose(this,6,true)">C. Attack <em>The Corsair</em> publicly and invite its editors to do their worst — accepting social martyrdom as the price of philosophical consistency and authentic selfhood.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. Use your social connections to quietly pressure the editor into backing down — avoid the conflict without appearing to avoid it.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>You attack <em>The Corsair</em> publicly and specifically invite it to caricature you — knowing exactly what will happen.</strong> For eighteen months, Copenhagen schoolchildren can recognize your silhouette on the street. You bear it without public complaint, then write that this "crucifixion by laughter" was the most important formative experience of your adult life. You knew what would happen. You did it anyway.</p>
+      <strong>What Kierkegaard actually did:</strong> He attacked <em>The Corsair</em> publicly and specifically invited it to ridicule him. The paper obliged for the next eighteen months — weekly caricatures of his legs, his back, his umbrella. Copenhagen schoolchildren recognized his silhouette. He could not walk to the pharmacy without being mocked. He bore it without public complaint. Later, he wrote that this "crucifixion by laughter" was the most important formative experience of his adult life — it clarified, in the most direct possible way, what authentic existence actually costs.
+    </div>
+  </div>
+
+  <div class="year-banner">1854</div>
+  <div class="timeline-dot">Copenhagen, Denmark · Age 41</div>
+  <div class="narrative">
+    <p>Bishop Jacob Peter Mynster — the head of the Danish Lutheran Church, your father's beloved pastor, a man you have known since childhood — has just died. At his memorial service, your friend Hans Lassen Martensen delivers a sermon calling Mynster "a witness to the truth" in the line of the great Christian saints and martyrs.</p>
+    <p>You have been holding back for years. You have profound theological objections to the institutional church of your time: it preaches a comfortable, socially respectable Christianity that makes no demands, costs nothing, and requires no personal transformation. The "witnesses to the truth" were people who suffered for their faith. The Danish church offers state salaries, career advancement, and middle-class respectability. You consider this a lie — perhaps the most dangerous kind, because it is told in the name of Christ.</p>
+    <p>For years you have stayed silent out of respect for Mynster and your father's memory. Mynster is now dead. The question is whether you will finally speak.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1854</div>
+    <p class="decision-q">Mynster is dead. Martensen has called him a "witness to the truth." Do you finally attack the institutional church you've spent years opposing in silence?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Wait — attacking the church immediately after the bishop's death is in poor taste, and your moment will come later.</button>
+      <button class="dopt" onclick="choose(this,7,true)">B. Respond publicly to Martensen's sermon and launch what becomes <em>The Instant</em> — a series of pamphlets demanding that the Danish church stop calling itself Christian while asking nothing of its members.</button>
+      <button class="dopt" onclick="choose(this,7,false)">C. Try to reform the church from within — apply for a pastoral position and model authentic Christianity through your own practice.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Write your objections privately, for publication only after your death — let the work outlast the controversy.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>Bishop Mynster — your father's beloved pastor, a man you've known your entire life — has just died, and your friend's eulogy calls him a "witness to the truth" in the line of the Christian martyrs.</strong> You have been silent for years out of respect. Mynster is now dead. You publish your response eight days later and spend the next year writing pamphlets that consume your last savings and energy. The tenth issue of <em>The Instant</em> was found at your bedside when you collapsed.</p>
+      <strong>What Kierkegaard actually did:</strong> He published a newspaper article responding to Martensen's eulogy on December 18, 1854, accusing him of dishonestly applying the title "witness to the truth" to a comfortable establishment figure. The response was furious. Kierkegaard escalated, launching his own newspaper — <em>The Instant</em> (<em>Øieblikket</em>) — which he wrote and published himself in nine pamphlets over 1854–55. They called the Danish church a fraud, its clergy playactors, and its theology a comfortable forgery of Christianity. The tenth issue was found at his bedside when he collapsed.
+    </div>
+  </div>
+
+  <div class="year-banner">1855</div>
+  <div class="timeline-dot">Frederiks Hospital, Copenhagen · Age 42</div>
+  <div class="narrative">
+    <p>You collapse in the street on October 2nd, 1855 — your legs simply giving out under you. You are carried to Frederiks Hospital, where the doctors diagnose spinal paralysis. You cannot walk, and you know you are dying. You are forty-two years old. You have published thirty books in thirteen years, most of them under names that are not your own, all of them addressed to a Copenhagen audience that has mostly laughed at or ignored you.</p>
+    <p>Your friend Emil Boesen visits regularly. Your brother Peter — now a bishop in the very church you have spent the last year attacking — comes to see you. And the hospital chaplain, Pastor Paulli, an ordained minister of the Danish Lutheran Church, offers to administer the last rites of Holy Communion before you die.</p>
+    <p>You have spent the last year arguing that this church is a lie dressed in Christ's name. The sacrament from this man's hands is either the most important thing in the world or it is not. And you have staked your entire life on the position that it is not — not from this source, not this way.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · November 1855</div>
+    <p class="decision-q">A pastor of the Danish Lutheran Church — the institution you spent a year publicly attacking — offers you last rites as you lie dying. What do you do?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. Accept gratefully — you want peace in your final hours, and the sacrament is the sacrament regardless of the vessel.</button>
+      <button class="dopt" onclick="choose(this,8,true)">B. Refuse — you will not receive the sacrament from an official of the state church. If the church is a lie, then its rites administered from habit and pity are also a lie.</button>
+      <button class="dopt" onclick="choose(this,8,false)">C. Ask Pastor Paulli to first publicly denounce the institutional church on your behalf, then administer the rites.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. Say nothing and let him do what he will — you are too weak to fight anything anymore.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>You refuse the last rites of the church you've spent a year destroying.</strong> You tell your friend you can only receive the sacrament from a layman — not a state-church minister. Your brother, now a bishop, cannot arrange it in time. You die without it on November 11, 1855. The consistency was total: you had argued the Danish church had no authority to represent Christianity, and you died as you had written.</p>
+      <strong>What Kierkegaard actually did:</strong> He refused. He told Boesen that he could only receive Communion "from a layman" — not a state-church minister. When his brother Peter offered to arrange it, he declined. He died on November 11, 1855, without receiving last rites from the church. The consistency was total: he had argued that the Danish church had no authority to represent Christianity, and he died as he had written. He was buried, with some irony, in the same churchyard as his father. He left the entirety of his estate to Regine.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Søren Kierkegaard · 1813–1855</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"The most common form of despair is not being who you are."<br><em style="font-size:13px;color:var(--muted);">— Søren Kierkegaard</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="nietzsche-simulator.html" class="next-card">
+        <div class="next-card-name">Friedrich Nietzsche</div>
+        <div class="next-card-sub">God is dead — and the abyss looks back</div>
+      </a>
+      <a href="socrates-simulator.html" class="next-card">
+        <div class="next-card-name">Socrates</div>
+        <div class="next-card-sub">The man who died rather than stop asking questions</div>
+      </a>
+      <a href="wittgenstein-simulator.html" class="next-card">
+        <div class="next-card-name">Ludwig Wittgenstein</div>
+        <div class="next-card-sub">The limits of language & the silence beyond</div>
+      </a>
+      <a href="plato-simulator.html" class="next-card">
+        <div class="next-card-name">Plato</div>
+        <div class="next-card-sub">Shadows on the cave wall & the philosopher-king</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understand Kierkegaard — the wound that became the work, the pseudonyms that kept the arguments from being deferred to the author, the leap that cannot be reasoned into, and the dying refusal that made the whole life consistent. He didn\'t name existentialism; he lived it.';else if(pct>=0.625)t.textContent='You follow Kierkegaard\'s logic most of the time — the indirect communication, the three stages, the teleological suspension of the ethical. The gaps are in the most costly moves: the engagement broken out of love, the attack launched at personal expense, the last rites refused on principle.';else if(pct>=0.375)t.textContent='You grasp Kierkegaard in outline but miss some of the interior necessity. The earthquake, the broken engagement, the Corsair attack, the dying refusal — these are not random biographical facts. They are the same argument, performed in real life, that the pseudonyms were performing on paper.';else t.textContent='Kierkegaard is genuinely difficult — not because the ideas are obscure but because they require taking seriously the possibility that authentic existence costs something real. He broke the engagement he wanted to keep. He invited the ridicule he had to live in. He refused last rites he may have needed. The consistency is the philosophy.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

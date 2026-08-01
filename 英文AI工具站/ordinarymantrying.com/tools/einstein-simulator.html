@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Albert Einstein?</title>
+<meta name="description" content="You failed the entrance exam. You worked as a patent clerk. In one year you rewrote physics — twice. Then came the Nazis, the bomb, and the hardest question of your life.">
+<meta property="og:title" content="What Would You Do If You Were Einstein?">
+<meta property="og:description" content="8 decisions across a life that changed the universe. Patent clerk to refugee to the man who unlocked E=mc². Where do your choices take you?">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/einstein-simulator.html">
+<style>
+:root {
+  --bg: #F2F0EC;
+  --card: #FAFAF8;
+  --ink: #1A1410;
+  --muted: #6B6358;
+  --line: #D4CEC4;
+  --accent: #7B5E2A;
+  --accent-bg: #F5EFE3;
+  --right: #2A6B4B;
+  --right-bg: #E8F5EE;
+  --wrong: #8B2020;
+  --wrong-bg: #F8ECEC;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Consolas, monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;-webkit-tap-highlight-color:transparent;}
+
+.topbar{position:sticky;top:0;z-index:100;background:rgba(242,240,236,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#3A2E22;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #D4C4A4;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:var(--accent);line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.15);}
+.start-btn:active{transform:scale(.99);}
+
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#3A2E22;font-family:var(--serif);font-size:17px;line-height:1.8;}
+
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+
+.reveal-box{background:var(--accent-bg);border:1.5px solid #D4C4A4;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#3A2E22;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+
+.quote-block{background:var(--ink);color:#F5EFE3;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#A09080;margin-top:12px;font-family:var(--mono);}
+
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#3A2E22;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#fff;}
+
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #D4C4A4;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+
+.cta-box{background:var(--accent);color:#fff;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#FFE4A0;text-decoration:underline;font-weight:600;}
+
+@media(max-width:480px){
+  .cover-title{font-size:28px;}
+  .year-banner{font-size:52px;}
+  .ending-score{font-size:36px;}
+}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Albert Einstein</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #12</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Einstein?</h1>
+  <p class="cover-sub">
+    You failed the entrance exam. You spent seven years as a patent clerk.
+    In twelve months you published four papers that rewrote the laws of the universe.
+    Then came the Nazis, the refugees, the bomb — and a question physics couldn't answer.
+    <strong>What would you choose?</strong>
+  </p>
+  <div class="cover-facts">
+    <p>
+      <strong>Albert Einstein</strong> (1879–1955) · German-born theoretical physicist ·
+      Developed the theory of <strong>special and general relativity</strong> ·
+      Nobel Prize in Physics 1921 (photoelectric effect) ·
+      Fled Nazi Germany in 1933 · <strong>Refugee in America</strong> ·
+      Signed the letter that launched the Manhattan Project ·
+      Later campaigned for nuclear disarmament until his death.
+    </p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1895, Munich</button>
+</div>
+
+<div id="story">
+<div class="story-wrap">
+
+<!-- ══ CHAPTER 1 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · Failure</span></div>
+<div class="year-banner">1895</div>
+<div class="timeline-dot">Aarau, Switzerland · Age 16</div>
+
+<div class="narrative">
+  <p>You are sixteen years old, and you have just failed.</p>
+  <p>The Zurich Polytechnic entrance exam. You passed mathematics and physics — brilliantly, examiners note — but your French was so poor, and your overall score so weak, that the school has turned you away. Your father wanted you to be an electrical engineer. Your own dreams are harder to name: something about light, something about how the universe moves.</p>
+  <p>Hermann Einstein, your father, sighs over dinner.</p>
+  <div class="dialogue">"Albert, a year ago I moved the family from Munich to Milan for my business, and it failed. Now this. You must be practical. What will you do?"</div>
+  <p>You could enroll at a Swiss cantonal school in Aarau — a gentler path that would let you reapply to the Polytechnic in a year. Or you could abandon the formal route entirely and teach yourself, follow your own mind wherever it goes.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 1 — The Path After Failure</span>
+    <span class="d-num">01 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">Your entrance exam has failed. What do you do?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,true)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Enroll at the Aarau school for a year, complete the curriculum, reapply to the Polytechnic properly.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,1,false)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Forget formal education. Study physics alone from books. Genius doesn't need a certificate.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,1,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Listen to your father. Drop physics. Pursue practical engineering — the family needs stability.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Einstein actually did</div>
+      <p><strong>You fail the entrance exam at 16 — and later call the year that follows the happiest of your life.</strong> Einstein enrolled at the Aarau cantonal school — and later called it the happiest year of his life. The school's progressive methods, which emphasized conceptual thinking over rote learning, suited his mind perfectly. He graduated, was admitted to the Zurich Polytechnic (ETH), and never looked back. The lesson: setbacks on someone else's timeline are not setbacks on your own.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CHAPTER 2 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Desk Drawer</span></div>
+<div class="year-banner">1902</div>
+<div class="timeline-dot">Swiss Patent Office, Bern · Age 23</div>
+
+<div class="narrative">
+  <p>You graduated from the Polytechnic, but no university will hire you. Professors remember you as difficult, unconventional — one called you a "lazy dog." Every academic post you applied for was rejected.</p>
+  <p>A friend's father found you this job: Technical Expert, Third Class, at the Swiss Federal Patent Office in Bern. You read patent applications eight hours a day. It pays enough to marry Mileva Marić, your fellow physicist from ETH. You slip your own calculations into the desk drawer when no one is looking.</p>
+  <p>In your stolen hours, you are thinking about a problem that has kept you awake for ten years: if you could ride alongside a beam of light, what would you see? Maxwell says light moves at a fixed speed. Newton says velocities add. They can't both be right.</p>
+  <p>You have a theory. It would overturn every physics textbook ever written. To publish it, you will have to claim that Newton was wrong, that time itself is not constant, that every physicist alive has been missing something fundamental.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 2 — The Paper in the Drawer</span>
+    <span class="d-num">02 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">Your theory contradicts Newton and every established physicist. How do you publish?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,true)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Publish the full theory without apology. Include the most radical claims — that time dilates, that simultaneity is relative. Let the evidence speak.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,2,false)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Soften the claims. Frame it as a minor correction to existing theory. Avoid confronting Newton directly — you're an unknown patent clerk, nobody will believe you anyway.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,2,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Wait until you have a proper academic position. Publishing from a patent office would embarrass the theory before anyone takes it seriously.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Einstein actually did</div>
+      <p><strong>You publish four papers in twelve months from a patent office desk. They collectively rewrite the laws of the universe. No academic position required.</strong> In 1905 — his <em>Annus Mirabilis</em>, the "miracle year" — Einstein published four papers from his patent office desk that collectively revolutionized physics. He did not soften the claims. Special relativity, Brownian motion, the photoelectric effect, and the mass-energy equivalence (E=mc²) — all in twelve months, all radical, all correct. Being unknown was not a limitation. The ideas carried themselves.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world.</q>
+  <div class="q-attr">— Albert Einstein, 1929</div>
+</div>
+
+<!-- ══ CHAPTER 3 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The War Manifesto</span></div>
+<div class="year-banner">1914</div>
+<div class="timeline-dot">Berlin, Germany · Age 35</div>
+
+<div class="narrative">
+  <p>Ten years have passed. You are now the most famous physicist in Europe. The Kaiser Wilhelm Institute in Berlin has created a position specifically for you — full professor, no teaching duties, unlimited research time, access to the best minds on the continent.</p>
+  <p>Then the Great War begins. Germany invades Belgium. Within weeks, 93 of Germany's most eminent intellectuals — scientists, artists, writers, your colleagues — sign the "Manifesto of the 93." It proclaims that German militarism is inseparable from German culture, that the war is justified, that accusations of German atrocities in Belgium are Allied propaganda.</p>
+  <p>Your colleagues ask you to sign. Some are men you admire. Max Planck, whose quantum theory opened the door for your own work, has already signed. Refusing will mark you as unpatriotic. Signing will give the war machine the legitimacy of science.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 3 — Science and War</span>
+    <span class="d-num">03 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">The "Manifesto of 93" arrives on your desk. Your colleagues are watching.</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Sign. You need these colleagues. You have work to protect. Science is a long game — pick your battles.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,3,true)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Refuse to sign — and go further. Counter-sign the anti-war "Manifesto to Europeans," which only three other people have signed.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,3,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Stay silent. Issue no statement in either direction. Physics is above politics.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Einstein actually did</div>
+      <p><strong>Four people sign the anti-war manifesto. You are one of them. The enemies you make in 1914 will have your books burned in 1933.</strong> Einstein refused to sign the Manifesto of 93, and co-signed the pacifist counter-manifesto. Only four people signed it. He became openly anti-war in a country at war, denouncing nationalism as a disease, arguing that scientists had a responsibility to humanity beyond borders. He kept his Berlin post through the war because his physics made him too valuable to expel — but the decision made him enemies who would resurface with catastrophic force twenty years later.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CHAPTER 4 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Starlight</span></div>
+<div class="year-banner">1919</div>
+<div class="timeline-dot">Princeton, New Jersey · Age 40</div>
+
+<div class="narrative">
+  <p>General relativity — your greatest work, ten years in the making — predicted that massive objects bend spacetime, and therefore bend light itself. The sun, you calculated, should deflect starlight passing near it by a precise, measurable angle.</p>
+  <p>In May 1919, during a total solar eclipse, British astronomer Arthur Eddington measured starlight positions near the sun. The measurements confirmed your prediction exactly. The London Times headline: <em>"Revolution in Science — New Theory of the Universe — Newtonian Ideas Overthrown."</em></p>
+  <p>Overnight you are the most famous scientist in the world. Interview requests pour in from New York, Paris, Tokyo. Wealthy admirers want to fund your research. Governments want to use your name. You could live like a king, lecture for money, attend every gala, or you could do what you actually want to do — keep thinking.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 4 — Fame's Offer</span>
+    <span class="d-num">04 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">You are suddenly the most famous scientist alive. How do you use it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Monetize it. Accept all speaking requests, endorse products, write popular books. Fame is a resource — use it before it fades.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,4,true)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Use the platform selectively — for pacifism, for Zionism, for causes that matter — while protecting time to think. Turn down most invitations.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,4,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Retreat entirely. Fame is the enemy of thought. Refuse all interviews, all attention. Go back to work.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What Einstein actually did</div>
+      <p><strong>You become the most famous scientist alive — and spend the fame on pacifism and refugee appeals rather than speaking fees.</strong> Einstein used his fame deliberately but selectively. He became an early advocate for Zionism and a Jewish homeland. He campaigned for pacifism between the wars. He gave some interviews, wrote some popular essays — but turned down the vast majority of invitations and guarded his working time fiercely. He also kept trying to find a Unified Field Theory until the day he died, never successfully — but never giving up. The fame became a tool, not a trap.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CHAPTER 5 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Burning</span></div>
+<div class="year-banner">1933</div>
+<div class="timeline-dot">California, USA · Age 54</div>
+
+<div class="narrative">
+  <p>January 1933. You are in California on a lecture tour when Adolf Hitler becomes Chancellor of Germany. You have been warned not to return. The Nazi party considers you an enemy: Jewish, pacifist, internationally connected, author of a "degenerate Jewish physics" they intend to expunge from textbooks.</p>
+  <p>In May, your books are burned in the streets of Berlin. Your Berlin bank account is seized. Your cottage in Caputh is raided. The Prussian Academy demands you renounce your membership — you write and resign before they can expel you. The Nazis place a price on your head.</p>
+  <p>You are offered a permanent position at the newly founded Institute for Advanced Study in Princeton, New Jersey. You will never see your homeland again. You will leave behind Germany, Europe, your language, everything familiar — and become a refugee.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 5 — The Exile's Choice</span>
+    <span class="d-num">05 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">Your books are burning in Berlin. You are offered a position in Princeton. What do you do?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Return to Germany. Surely the political crisis will pass. You cannot abandon your home, your colleagues, your language.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,5,true)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Accept Princeton. Leave Europe permanently. A mind without a country can still think. Survival first.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,5,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Settle in France or England — stay in Europe to monitor events, close enough to respond, far enough to be safe for now.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Einstein actually did</div>
+      <p><strong>You leave Germany in 1933 and never return. In the years that follow, you use your name to help hundreds of people escape. Germany burns your books.</strong> Einstein accepted Princeton and never returned to Germany. He arrived in October 1933, renounced his German citizenship, and spent the rest of his life at the Institute for Advanced Study. He used his new platform to advocate for Jewish refugees fleeing Europe — writing letters, making appeals, using his name wherever it might open doors. He later estimated that through his personal interventions, he helped hundreds of people escape. He never forgave Germany; he declined all invitations to return after the war.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>The world is a dangerous place, not because of those who do evil, but because of those who look on and do nothing.</q>
+  <div class="q-attr">— Attributed to Albert Einstein</div>
+</div>
+
+<!-- ══ CHAPTER 6 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Letter</span></div>
+<div class="year-banner">1939</div>
+<div class="timeline-dot">Nassau Point, Long Island · Age 60</div>
+
+<div class="narrative">
+  <p>Hungarian physicist Leó Szilárd arrives at your summer cottage with a problem. He has information that German scientists are working toward a nuclear fission weapon. The same equation you published in 1905 — E=mc² — reveals that a small amount of matter, properly split, releases energy of almost incomprehensible destructive force.</p>
+  <p>Szilárd wants you to write a letter to President Roosevelt. Not to design a weapon — just to warn him. To tell him that the physics is real, that Germany may be closer than anyone realizes, and that America should begin its own research program. Your name alone, Szilárd says, will guarantee the letter is read.</p>
+  <p>If you sign and America builds the bomb first, millions of lives might be saved from Nazi conquest — or the weapon might simply create a new kind of mass killing. If you refuse and Germany gets there first, the consequences are unthinkable. If the letter goes ignored regardless, nothing changes.</p>
+  <p>This is the heaviest decision a physicist has ever been asked to make.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 6 — The Einstein-Szilárd Letter</span>
+    <span class="d-num">06 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">Szilárd has drafted the letter. It will warn Roosevelt about nuclear weapons. Do you sign it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,true)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Sign it. The threat from Nazi Germany is real. If they build the bomb first while America does nothing, the consequences are catastrophic. Your name matters — use it.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,6,false)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Refuse. You are a pacifist. Your name should never appear on anything that leads toward a weapon, regardless of who builds it first.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,6,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Delay. Ask to see more evidence about the German program. You won't sign without more certainty about what you're setting in motion.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What Einstein actually did</div>
+      <p><strong>You sign the letter. It leads to the Manhattan Project. When you hear about Hiroshima on the radio six years later, you say only: "Ach."</strong> Einstein signed. The letter reached Roosevelt in October 1939 and directly triggered the Advisory Committee on Uranium, the precursor to the Manhattan Project. Hiroshima and Nagasaki were bombed in August 1945. Einstein was not told about the Manhattan Project while it was underway — he lacked the security clearance the Army deemed necessary. When he heard about Hiroshima on the radio, he said only: <em>"Ach."</em> He spent the rest of his life trying to undo what the letter had helped set in motion. "Had I known that the Germans would not succeed in developing an atomic bomb," he later said, "I would have done nothing." He signed it anyway — in 1939, he did not know.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CHAPTER 7 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Ash</span></div>
+<div class="year-banner">1945</div>
+<div class="timeline-dot">Princeton · Age 66</div>
+
+<div class="narrative">
+  <p>August 6, 1945. A uranium bomb called "Little Boy" is detonated 600 meters above Hiroshima. Roughly 70,000 people die instantly. Tens of thousands more die in the weeks that follow. Three days later, Nagasaki. The war ends.</p>
+  <p>The world celebrates. Einstein is silent.</p>
+  <p>In the months that follow, some physicists argue that the bomb was necessary — that it ended the war faster, saved more lives than a land invasion would have cost. Others argue the Japanese were already negotiating surrender. Others say the second bomb was gratuitous. The moral calculation is not clear.</p>
+  <p>What is clear: the equation you published in 1905 has been used to build the most destructive weapon in human history. Your name is now attached — in the public mind — to the mushroom cloud. You are asked, repeatedly, for your view. Your words will be heard.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 7 — The Aftermath</span>
+    <span class="d-num">07 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">After Hiroshima, what is the responsibility of a scientist whose equation made it possible?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Stay quiet. You didn't build the bomb. You didn't order its use. Scientists discover — governments decide. That line must hold.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,7,false)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Defend the decision. The war ended. Fewer total lives were lost. The physics served its purpose.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,7,true)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Speak out. Campaign loudly for nuclear disarmament, international control of atomic weapons, and a world government that transcends national interests. Use every remaining year to undo the damage.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Einstein actually did</div>
+      <p><strong>You spend the rest of your life trying to undo what the letter started — and die ten days after signing a manifesto calling for peace in the nuclear age.</strong> Einstein became one of the loudest voices for nuclear disarmament in the postwar world. He co-founded the Emergency Committee of Atomic Scientists in 1946. He wrote, spoke, and lobbied for international control of atomic energy, arguing that nationalism itself was the disease that made weapons inevitable. He was accused during the McCarthy era of being a communist sympathizer. He defended civil liberties publicly even when it was politically dangerous. In April 1955, ten days before he died, he signed the Russell–Einstein Manifesto calling on world leaders to seek peaceful resolution of conflicts in the nuclear age.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CHAPTER 8 ══ -->
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Last Equation</span></div>
+<div class="year-banner">1955</div>
+<div class="timeline-dot">Princeton University Hospital · Age 76</div>
+
+<div class="narrative">
+  <p>April 1955. You are dying of an aortic aneurysm. The doctors say surgery might extend your life; it might also kill you immediately. You are seventy-six years old.</p>
+  <p>On the night table beside your hospital bed is a yellow legal pad. On it are fourteen pages of equations. You have spent the last thirty years — every hour not spent on politics, on speaking, on the letter you now regret — searching for a Unified Field Theory. A single framework that would reconcile gravity and electromagnetism, that would make the universe one thing instead of two.</p>
+  <p>You have not found it. You wonder sometimes if it exists. You wonder if you spent too many years on it. But you cannot stop.</p>
+  <p>The surgeon asks if you want the operation.</p>
+</div>
+
+<div class="decision-block">
+  <div class="decision-header">
+    <span>Decision 8 — The Final Choice</span>
+    <span class="d-num">08 / 08</span>
+  </div>
+  <div class="decision-body">
+    <div class="decision-q">The operation might save you. Or it might not. What do you say?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">
+        <span class="dopt-id">A</span>
+        <span class="dopt-body">Agree to the surgery. You still have equations to write. Every hour matters.</span>
+      </button>
+      <button class="dopt" onclick="choose(this,8,true)">
+        <span class="dopt-id">B</span>
+        <span class="dopt-body">Decline. "I want to go when I want to. It is tasteless to prolong life artificially. I have done my share; it is time to go. I will do it elegantly."</span>
+      </button>
+      <button class="dopt" onclick="choose(this,8,false)">
+        <span class="dopt-id">C</span>
+        <span class="dopt-body">Ask for more time to think. One more night with the equations.</span>
+      </button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What Einstein actually did</div>
+      <p><strong>You decline the surgery. You die at 1:15 AM with unfinished equations on the nightstand. No one knows what your last words were — the nurse didn't speak German.</strong> Einstein declined the operation. He said exactly those words — that he wanted to go "elegantly." He died on April 18, 1955 at 1:15 AM, with the yellow legal pad of Unified Field Theory equations still on his nightstand, unfinished. A nurse reportedly heard him speaking his final words in German — but she didn't understand German. What he said at the very end remains unknown. The equations on the pad were never completed. The Unified Field Theory still doesn't exist.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label" id="final-label">correct decisions</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+
+<div class="cta-box">
+  <p>Einstein's decisions across 76 years — from a failed exam in Munich to equations on a hospital nightstand — were rarely obvious and never safe. <strong>What other lives can you step into?</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/index.html">→ Explore all 12 Life Simulators</a> — Mandela, Hawking, Musk, Jobs, Gandhi, Tesla, and more. Free, no login.</p>
+</div>
+
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/mandarin-flashcards.html" style="color:var(--accent)">Learn Mandarin Free</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+
+</div><!-- story-wrap -->
+</div><!-- story -->
+
+<script>
+let score = 0;
+let answered = 0;
+const TOTAL = 8;
+
+function startStory(){
+  document.querySelector('.cover').style.display='none';
+  document.getElementById('story').style.display='block';
+  document.querySelector('.topbar-score').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateProgress(0);
+}
+
+function choose(btn, num, correct){
+  const block = btn.closest('.decision-block');
+  const opts = block.querySelectorAll('.dopt');
+  opts.forEach(o=>o.classList.add('disabled'));
+
+  if(correct){
+    btn.classList.add('right');
+    score++;
+  } else {
+    btn.classList.add('wrong');
+    // highlight the correct one
+    opts.forEach(o=>{
+      const onclick = o.getAttribute('onclick');
+      if(onclick && onclick.includes(',true)')) o.classList.add('right');
+    });
+  }
+
+  document.getElementById('r'+num).classList.add('show');
+  answered++;
+
+  document.getElementById('score-display').textContent = 'Score: '+score+'/'+answered;
+  updateProgress(answered / TOTAL * 100);
+
+  if(answered === TOTAL){
+    setTimeout(showEnding, 800);
+  }
+}
+
+function updateProgress(pct){
+  document.getElementById('prog').style.width = pct+'%';
+}
+
+function showEnding(){
+  document.getElementById('ending').style.display='block';
+  const pct = score / TOTAL;
+  let title, body;
+
+  if(pct >= 0.875){
+    title = "The Man Who Always Chose the Harder Call";
+    body = "You matched Einstein at every turn — the Aarau detour after the failed exam, the unhedged papers, the anti-war manifesto that only four people signed, using fame for causes rather than income, leaving Germany permanently, signing the letter, speaking out after Hiroshima, declining the surgery. Each of those was the harder choice. Einstein didn't make them because they were correct — he made them because he couldn't see himself doing anything else. Neither could you.";
+  } else if(pct >= 0.625){
+    title = "The Physicist Who Understood the Weight";
+    body = "You matched Einstein on most of the choices that required risk. The ones you missed tend to be the moments where Einstein chose voice over silence — the anti-war manifesto in 1914, the postwar disarmament campaign, the refusal of surgery. His silence would have been understandable at every one of those moments. He was never silent. That specific quality — the refusal to look away — is what put him in categories most brilliant people never reach.";
+  } else if(pct >= 0.375){
+    title = "The Scientist Who Stayed Quiet After Hiroshima";
+    body = "You got the physics right but stopped short at the politics. Softening the theory, signing the manifesto, staying quiet after the bomb — these aren't failures of courage so much as failures of imagination. Einstein had a specific ability to see the political as a continuation of the scientific: both required following the evidence to its conclusion, no matter how uncomfortable. You followed the evidence to the lab. He followed it all the way to the Russell-Einstein Manifesto.";
+  } else {
+    title = "A Different Einstein";
+    body = "You took the opposite path at nearly every turn — the practical route after the failed exam, the hedged theory, the signed manifesto, the safe post-fame life, Germany in 1933. This is a plausible version of Einstein: a competent physicist who avoided trouble, stayed safe, and died without the enemy list or the bomb letter or the manifesto. That Einstein exists in some parallel timeline. He just didn't change anything.";
+  }
+
+  document.getElementById('final-score').textContent = score + '/' + TOTAL;
+  document.getElementById('final-label').textContent = 'Einstein\'s decisions matched';
+  document.getElementById('final-title').textContent = title;
+  document.getElementById('final-body').textContent = body;
+  document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function restart(){
+  score = 0; answered = 0;
+  document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));
+  document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));
+  document.getElementById('ending').style.display='none';
+  document.getElementById('score-display').textContent='Score: 0';
+  updateProgress(0);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

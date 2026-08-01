@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-DBR2PMLR61");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Oprah Winfrey?</title>
+<meta name="description" content="An interactive story about Oprah Winfrey — fired from her first TV job, born into poverty, who built a media empire by refusing to be what others told her to be. At every turning point, you make the call.">
+<style>
+:root {
+  --bg: #F7F0F5;
+  --card: #FDFAFC;
+  --ink: #1E0A1E;
+  --muted: #7A5A7A;
+  --line: #DDD0DC;
+  --accent: #7B1552;
+  --accent-bg: #F9EEF5;
+  --warm: #C49200;
+  --warm-bg: #FBF6E0;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Consolas, monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;-webkit-tap-highlight-color:transparent;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,240,245,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#4a2a44;line-height:1.8;margin-bottom:28px;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.12);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#4a2a44;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--warm);background:var(--warm-bg);}
+.dopt.right .dopt-id{background:var(--warm);border-color:var(--warm);color:#fff;}
+.dopt.wrong{border-color:#C0392B;background:#FDF3F2;opacity:.7;}
+.dopt.wrong .dopt-id{background:#C0392B;border-color:#C0392B;color:#fff;}
+.dopt.correct{border-color:var(--warm);background:var(--warm-bg);border-width:2px;}
+.dopt.correct .dopt-id{background:var(--warm);border-color:var(--warm);color:#fff;}
+.reveal{display:none;border-top:1.5px solid var(--line);padding:20px 18px;animation:slideIn .35s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.reveal-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:4px 11px;border-radius:20px;margin-bottom:14px;}
+.badge-y{background:var(--warm-bg);color:var(--warm);border:1px solid #D4B060;}
+.badge-n{background:#FDF3F2;color:#C0392B;border:1px solid #F0A898;}
+.reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--warm);font-weight:700;margin-bottom:6px;}
+.reveal-text{font-family:var(--serif);font-size:17px;line-height:1.5;margin-bottom:14px;}
+.reveal-explain{font-size:14px;line-height:1.85;color:#4a2a44;}
+.seg{display:none;}
+.seg.shown{display:block;animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.results{padding:40px 0 20px;}
+.results-hero{text-align:center;padding:20px 0 28px;}
+.results-trophy{font-size:56px;display:block;margin-bottom:10px;}
+.results-score-big{font-family:var(--serif);font-size:64px;font-weight:700;line-height:1;letter-spacing:-.03em;}
+.results-score-big span{font-size:24px;color:var(--muted);}
+.results-sub{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+.results-title{font-family:var(--serif);font-size:22px;font-weight:700;margin:18px 0 10px;line-height:1.3;}
+.results-desc{font-size:14px;color:#4a2a44;line-height:1.85;margin-bottom:24px;}
+.divider{height:1px;background:var(--line);margin:24px 0;}
+.dim-rows{display:flex;flex-direction:column;gap:14px;margin:16px 0 24px;}
+.dim-row-head{display:flex;justify-content:space-between;margin-bottom:5px;}
+.dim-row-name{font-size:13px;font-weight:700;}
+.dim-row-num{font-family:var(--mono);font-size:12px;color:var(--muted);}
+.bar-bg{height:7px;background:var(--line);border-radius:6px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:6px;width:0;transition:width 1.1s ease;}
+.bar-b{background:var(--accent);}
+.bar-o{background:var(--warm);}
+.bar-r{background:#2A6E4A;}
+.res-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.res-card .rc-title{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.share-pre{font-family:var(--mono);font-size:12px;background:#EDE5EA;border:1px solid var(--line);border-radius:8px;padding:14px;line-height:1.8;white-space:pre-wrap;margin-bottom:12px;}
+.copy-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:15px;padding:14px 20px;border-radius:10px;width:100%;transition:filter .15s;}
+.copy-btn:hover{filter:brightness(1.12);}
+.sim-links{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.sim-links p{font-size:14px;color:#4a2a44;line-height:1.7;margin-bottom:10px;}
+.sim-links a{color:var(--accent);font-weight:700;text-decoration:none;font-size:13px;margin-right:10px;display:inline-block;margin-bottom:6px;}
+.sim-links a:hover{text-decoration:underline;}
+.replay-btn{appearance:none;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:var(--sans);font-weight:600;font-size:14px;padding:13px 20px;border-radius:10px;width:100%;}
+@media(max-width:480px){.cover-title{font-size:28px;}.narrative p{font-size:16px;}}
+
+.tweet-btn{display:inline-block;margin-left:10px;padding:9px 18px;background:#000;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .2s;}
+.tweet-btn:hover{opacity:0.8;}
+
+.next-sims{margin:32px 0 8px;text-align:center;}
+.next-sims h3{font-size:14px;color:#888;margin-bottom:14px;font-weight:400;letter-spacing:.05em;text-transform:uppercase;}
+.next-sims-grid{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.next-sim-btn{display:inline-block;padding:10px 18px;border:1px solid rgba(0,0,0,.15);border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;color:var(--ink,#2d2d2d);background:#fff;transition:all .2s;}
+.next-sim-btn:hover{border-color:var(--accent,#8B6914);color:var(--accent,#8B6914);transform:translateY(-1px);}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/oprah-simulator.html">
+<meta property="og:title" content="Oprah Winfrey Life Simulator — Would You Have Believed in Yourself?">
+<meta property="og:description" content="An interactive story about Oprah Winfrey — fired from her first TV job, born into poverty, who built a media empire by trusting her own voice over every expert's advice.">
+<meta property="og:site_name" content="Ordinary Man Trying">
+<meta property="og:locale" content="en_US">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Game",
+  "name": "Oprah Winfrey Life Simulator",
+  "description": "Navigate the real decisions Oprah Winfrey made on her path from poverty to becoming the world's most influential media figure.",
+  "url": "https://ordinarymantrying.com/tools/oprah-simulator.html",
+  "genre": [
+    "Educational",
+    "Simulation"
+  ],
+  "gamePlatform": "Web Browser",
+  "applicationCategory": "Game",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Ordinary Man Trying",
+    "url": "https://ordinarymantrying.com"
+  }
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Oprah Winfrey</span>
+  <span class="topbar-score" id="topbar-score"></span>
+</div>
+<div class="cover" id="cover">
+  <div class="cover-eyebrow">True Story · Interactive</div>
+  <h1 class="cover-title">She was born into poverty in rural Mississippi, fired from her first television job for being "too emotional," and told she was wrong for TV. She became the most powerful person in American media. At every turning point, you make the call.</h1>
+  <p class="cover-sub">This is a life simulation. At each critical moment in Oprah Winfrey's real story, you face the same choice she did — before you're told what she actually did.</p>
+  <button class="start-btn" onclick="startStory()">Start the Simulation →</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+  <div class="narrative">
+    <p>Oprah Gail Winfrey was born on January 29, 1954, on a farm in Kosciusko, Mississippi. Her mother, Vernita Lee, was an unmarried teenager. Her father, Vernon Winfrey, was a soldier who didn't know she'd been born. She spent her early years on her grandmother's farm — no running water, no indoor plumbing, wearing dresses made from potato sacks.</p>
+    <p>She was reading before she started school. Her grandmother taught her. By kindergarten, she wrote a note to her teacher asking to be moved to first grade. The teacher moved her. That habit — of asking directly for what she needed, without waiting to be invited — would define the next six decades.</p>
+  </div>
+
+  <div class="decision-block" id="d1">
+    <div class="decision-header"><span>Decision 1 · 1970 · Age 16 · Nashville</span><span class="d-num">1 / 7</span></div>
+    <div class="decision-body">
+      <p class="decision-q">Oprah is 16 and living with her father in Nashville. She wins a speech competition and the prize is a partial scholarship plus a trip to Hollywood. A local radio station — WVOL — hears her and offers her a part-time job reading news on air while still in high school. It means splitting her time during senior year. What does she do?</p>
+      <div class="dopts" id="opts-1">
+        <button class="dopt" onclick="answer(1,'A')"><div class="dopt-id">A</div><div class="dopt-body">Decline politely. Focus on getting through high school strong, then pursue media after graduation.</div></button>
+        <button class="dopt" onclick="answer(1,'B')"><div class="dopt-id">B</div><div class="dopt-body">Take it, but treat it as a hobby — don't let it distract from school.</div></button>
+        <button class="dopt" onclick="answer(1,'C')"><div class="dopt-id">C</div><div class="dopt-body">Negotiate: take the job only on weekends and during school breaks.</div></button>
+        <button class="dopt" onclick="answer(1,'D')"><div class="dopt-id">D</div><div class="dopt-body">Take the job without hesitation. When a radio station offers you a microphone at 16, you say yes.</div></button>
+      </div>
+      <div class="reveal" id="rev-1">
+        <div class="reveal-badge" id="badge-1"></div>
+        <div class="reveal-label">What Oprah Winfrey Did</div>
+        <div class="reveal-text">She took the job. She read the news on WVOL while still in high school. Her voice, her timing, and her instinct for what mattered in a story were immediately apparent. The station paid her. She was 16.</div>
+        <div class="reveal-explain"><strong>In 1970, a Nashville radio station offered a sixteen-year-old girl a paid slot reading the news on air — and her first instinct, the one she would follow for the next fifty years, was yes.</strong> Oprah later described this as the moment she understood what she was for. "I walked into that radio station," she said, "and I just felt at home." She won a full scholarship to Tennessee State University through a speaking competition the same year. At TSU she studied communication, continued in radio, and was offered a local TV news anchor job before she graduated. She took that too — before finishing her degree. Her instinct was always the same: when the door opens, walk through it. The moment and the preparation have to meet. Don't let preparation keep waiting for a better moment.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-1">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1977 · Age 23 · Baltimore, WJZ-TV</div></div>
+    <div class="narrative">
+      <p>Oprah was co-anchoring the evening news at WJZ-TV in Baltimore. The station's news director decided she was wrong for the role. She was too emotional. She got too personally involved in the stories. She cried. She cared visibly. These were considered flaws in the world of broadcast news.</p>
+      <p>She was demoted. Off the evening news. Reassigned to co-host a morning talk show called <em>People Are Talking</em>. It was considered a professional humiliation.</p>
+      <p>She sat in the chair for her first episode of the talk show and felt something she had never felt during the news: completely at home.</p>
+    </div>
+    <div class="decision-block" id="d2">
+      <div class="decision-header"><span>Decision 2 · 1977 · Age 23 · The Demotion</span><span class="d-num">2 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Oprah has been demoted from evening news anchor — told she's "too emotional" — to morning talk show host. This is a step down in prestige. What does she do?</p>
+        <div class="dopts" id="opts-2">
+          <button class="dopt" onclick="answer(2,'A')"><div class="dopt-id">A</div><div class="dopt-body">Fight the decision. Being demoted without cause is wrong — push back formally or find another station that will use her as an anchor.</div></button>
+          <button class="dopt" onclick="answer(2,'B')"><div class="dopt-id">B</div><div class="dopt-body">Accept the demotion but keep looking for an anchor opportunity elsewhere. This is a detour, not a destination.</div></button>
+          <button class="dopt" onclick="answer(2,'C')"><div class="dopt-id">C</div><div class="dopt-body">Use the morning show to rebuild credibility, then pitch herself back into news anchoring in 6 months.</div></button>
+          <button class="dopt" onclick="answer(2,'D')"><div class="dopt-id">D</div><div class="dopt-body">Sit down in that chair and do the talk show better than anyone has ever done it. The demotion is information — maybe news was the wrong format, not the wrong her.</div></button>
+        </div>
+        <div class="reveal" id="rev-2">
+          <div class="reveal-badge" id="badge-2"></div>
+          <div class="reveal-label">What Oprah Winfrey Did</div>
+          <div class="reveal-text">She took the chair. People Are Talking debuted on August 14, 1978. It was an immediate hit. The qualities that made her wrong for news — her empathy, her emotional honesty, her genuine interest in people — made her extraordinary for talk.</div>
+          <div class="reveal-explain"><strong>In 1977, a Baltimore news director demoted you from evening anchor because you were "too emotionally invested" in stories — and every quality he named as a disqualifying flaw became the foundation of a media empire.</strong> Oprah later said the demotion was "the greatest gift anyone ever gave me." She spent six years at WJZ. By the time she left, People Are Talking was a Baltimore institution. A station in Chicago — WLS — headhunted her in 1983. The demotion that felt like failure was, in retrospect, a redirection toward the exact format where her gifts were most powerful. She didn't discover her genius by fighting for the thing she thought she wanted. She discovered it by thriving in the thing she'd been handed.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-2">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1983 · Age 29 · Chicago</div></div>
+    <div class="narrative">
+      <p>WLS-TV in Chicago had a struggling morning talk show called AM Chicago. It was seventh in the ratings in its time slot. The host was leaving. The station needed someone new.</p>
+      <p>They approached Oprah. The offer was to take over a failing show in a city she'd never lived in, leaving a stable position in Baltimore where she was established. Chicago was also the home turf of Phil Donahue — the king of daytime talk, who had invented the format she'd be competing in.</p>
+      <p>Her agent advised against it. The risk was real. Donahue's show was the benchmark. If AM Chicago failed with Oprah, it could end her television career.</p>
+    </div>
+    <div class="decision-block" id="d3">
+      <div class="decision-header"><span>Decision 3 · 1983 · Age 29 · Chicago</span><span class="d-num">3 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">WLS Chicago is offering Oprah a struggling morning talk show in Phil Donahue's home city. Her agent says don't. She's established in Baltimore. If Chicago fails, it could be the end. What does she do?</p>
+        <div class="dopts" id="opts-3">
+          <button class="dopt" onclick="answer(3,'A')"><div class="dopt-id">A</div><div class="dopt-body">Stay in Baltimore. She's built something real there — risking it to compete against Donahue in his own city is unnecessary.</div></button>
+          <button class="dopt" onclick="answer(3,'B')"><div class="dopt-id">B</div><div class="dopt-body">Negotiate: ask for a larger budget, a better time slot, and a contract clause protecting her if ratings don't improve.</div></button>
+          <button class="dopt" onclick="answer(3,'C')"><div class="dopt-id">C</div><div class="dopt-body">Visit Chicago first, feel out the market, then decide. Don't move until she's seen the room she'd be walking into.</div></button>
+          <button class="dopt" onclick="answer(3,'D')"><div class="dopt-id">D</div><div class="dopt-body">Say yes immediately. Chicago is a bigger stage. Donahue is a benchmark, not a ceiling. Take the challenge.</div></button>
+        </div>
+        <div class="reveal" id="rev-3">
+          <div class="reveal-badge" id="badge-3"></div>
+          <div class="reveal-label">What Oprah Winfrey Did</div>
+          <div class="reveal-text">She moved to Chicago. AM Chicago premiered on January 2, 1984. Within a month, it was beating Donahue in the ratings. Within a year, it was renamed The Oprah Winfrey Show and expanded to an hour.</div>
+          <div class="reveal-explain"><strong>In January 1984, you walked into a Chicago morning show ranked seventh in its time slot — in Phil Donahue's own city — and within one month you were beating Donahue in the ratings.</strong> Oprah's approach to the show was the opposite of Donahue's: where he led with issues, she led with people. Where he was a journalist, she was a confessor. Where he moderated, she participated — sharing her own experiences, her own pain, her own joy. Viewers didn't just watch her; they felt known by her. The show went national in September 1986. It became the highest-rated talk show in American television history. Oprah later said she wasn't sure she would have taken the risk without the demotion in Baltimore five years earlier. The demotion had taught her that what looks like the wrong direction can be the right one.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-3">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1985 · Age 31 · The Color Purple</div></div>
+    <div class="narrative">
+      <p>Steven Spielberg was casting The Color Purple. He had never seen Oprah Winfrey. She had never acted professionally. She was a talk show host who had been on television for less than two years.</p>
+      <p>She desperately wanted the role of Sofia — a proud, fierce woman who refuses to be broken. She sent an audition tape without being asked. She sent it to Quincy Jones, who was producing.</p>
+      <p>She got the role. She went to the set in North Carolina. She had no idea what she was doing. She learned on set, scene by scene, from Spielberg and from Whoopi Goldberg and Danny Glover. Her performance earned her an Academy Award nomination for Best Supporting Actress.</p>
+    </div>
+    <div class="decision-block" id="d4">
+      <div class="decision-header"><span>Decision 4 · 1985 · Age 31 · The Audition</span><span class="d-num">4 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">The Color Purple is being cast. Oprah has never acted professionally. She desperately wants the role of Sofia. She was not invited to audition. What does she do?</p>
+        <div class="dopts" id="opts-4">
+          <button class="dopt" onclick="answer(4,'A')"><div class="dopt-id">A</div><div class="dopt-body">Don't pursue it. She's a talk show host — entering a major film production without experience could humiliate her and damage her TV career.</div></button>
+          <button class="dopt" onclick="answer(4,'B')"><div class="dopt-id">B</div><div class="dopt-body">Ask her agent to request a formal audition through proper channels.</div></button>
+          <button class="dopt" onclick="answer(4,'C')"><div class="dopt-id">C</div><div class="dopt-body">Write a letter to Spielberg explaining why she understands Sofia — but don't send a tape without being asked.</div></button>
+          <button class="dopt" onclick="answer(4,'D')"><div class="dopt-id">D</div><div class="dopt-body">Make a tape and send it directly. Don't wait for permission. If she wants the role, she has to show them what she sees — that she is Sofia.</div></button>
+        </div>
+        <div class="reveal" id="rev-4">
+          <div class="reveal-badge" id="badge-4"></div>
+          <div class="reveal-label">What Oprah Winfrey Did</div>
+          <div class="reveal-text">She sent an unsolicited tape to Quincy Jones. He showed it to Spielberg. She got the role. At the Academy Awards, she sat in the audience having been nominated for Best Supporting Actress in her first professional film.</div>
+          <div class="reveal-explain"><strong>In 1985, you sent an unsolicited audition tape to Quincy Jones — a producer you had never met — for a role in a Spielberg film you had never been invited to audition for, and you got the part.</strong> Oprah has told this story many times because she considers it the clearest example of a principle she lives by: you have to be willing to be seen before you've been certified. The world often waits for you to prove you belong before letting you in the room. The only way through that is to put yourself in the room first and let the work make the argument. She had no credentials as an actor. She had lived the character. That was enough — once she stopped waiting to be asked and started showing what she could do.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-4">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1986 · Age 32 · Owning It</div></div>
+    <div class="narrative">
+      <p>The Oprah Winfrey Show had gone national. It was the biggest talk show in America. King World Productions wanted to handle syndication — they would distribute the show to stations across the country and take a large cut of the revenue.</p>
+      <p>The conventional arrangement was: talent gets paid, production company owns the show. Oprah's attorney, Jeff Jacobs, saw something different. He pushed for Oprah to own the show herself — to create a production company, Harpo Productions, that would own the rights and license the show rather than selling it.</p>
+      <p>No major television personality had done this before. It would mean more risk, more complexity, and a fight with King World. But it would mean Oprah owned what she built.</p>
+    </div>
+    <div class="decision-block" id="d5">
+      <div class="decision-header"><span>Decision 5 · 1986 · Age 32 · Ownership</span><span class="d-num">5 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">The Oprah Winfrey Show is the biggest talk show in America. King World wants to handle syndication under a traditional deal — they distribute, they own. Her attorney says she can own the show herself. No personality has done this before. What does she do?</p>
+        <div class="dopts" id="opts-5">
+          <button class="dopt" onclick="answer(5,'A')"><div class="dopt-id">A</div><div class="dopt-body">Take the standard deal. King World has the relationships and infrastructure — let them distribute it. Focus on doing the show.</div></button>
+          <button class="dopt" onclick="answer(5,'B')"><div class="dopt-id">B</div><div class="dopt-body">Negotiate for a larger revenue share within King World's structure — ownership is too complex for now.</div></button>
+          <button class="dopt" onclick="answer(5,'C')"><div class="dopt-id">C</div><div class="dopt-body">Take the standard deal for 3 years, use that time to learn the business, then renegotiate from a position of strength.</div></button>
+          <button class="dopt" onclick="answer(5,'D')"><div class="dopt-id">D</div><div class="dopt-body">Create Harpo Productions. Own the show. It's her name on it, her face on it, her work. If it succeeds, the value should be hers.</div></button>
+        </div>
+        <div class="reveal" id="rev-5">
+          <div class="reveal-badge" id="badge-5"></div>
+          <div class="reveal-label">What Oprah Winfrey Did</div>
+          <div class="reveal-text">She created Harpo Productions — named by reversing "Oprah" — and became the first Black woman, and one of the first American entertainers of any background, to own and produce her own television show.</div>
+          <div class="reveal-explain"><strong>In 1986, while every previous television personality had signed their show over to the production company, you created Harpo Productions and became the first Black woman — and one of the first American entertainers of any background — to own and produce her own national television program.</strong> The ownership decision transformed what the show was worth. When Oprah eventually ended The Oprah Winfrey Show in 2011, the syndication rights, the archive, the international licensing, the brand — all of it belonged to Harpo. She also used Harpo to produce films (Beloved, Selma) and later to launch the OWN network. Jeff Jacobs became her business manager and the architect of the Harpo empire. Oprah has consistently said that ownership — not fame — is the foundation of real power in the entertainment industry. She watched what happened to artists who didn't own their work. She made sure it wouldn't happen to her.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-5">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1996 · Age 42 · The Beef Industry</div></div>
+    <div class="narrative">
+      <p>In April 1996, Oprah hosted an episode of her show about mad cow disease. During the taping, she listened to a food safety advocate describe how cattle feed worked and said — on air — "It has just stopped me cold from eating another burger. I'm stopped."</p>
+      <p>Beef prices dropped 10% in the days following. Texas cattlemen filed a $12 million lawsuit against her under Texas' "food disparagement" law — the first major test of the law. They claimed she had damaged the beef industry with false statements.</p>
+      <p>The case would be tried in Amarillo, Texas — cattle country. Her lawyers recommended settling quietly.</p>
+    </div>
+    <div class="decision-block" id="d6">
+      <div class="decision-header"><span>Decision 6 · 1998 · Age 44 · The Lawsuit</span><span class="d-num">6 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Texas cattlemen are suing Oprah for $12 million under a food disparagement law. Her lawyers recommend settling. The trial would be held in Amarillo — cattle country. Fighting it means a long, expensive, public battle on hostile ground. What does she do?</p>
+        <div class="dopts" id="opts-6">
+          <button class="dopt" onclick="answer(6,'A')"><div class="dopt-id">A</div><div class="dopt-body">Settle. $12 million is manageable and settling protects her from a hostile jury in Texas. Move on.</div></button>
+          <button class="dopt" onclick="answer(6,'B')"><div class="dopt-id">B</div><div class="dopt-body">Settle, but with a public statement making clear she believes she did nothing wrong.</div></button>
+          <button class="dopt" onclick="answer(6,'C')"><div class="dopt-id">C</div><div class="dopt-body">Fight it in court, but from Chicago — apply to move the trial to a neutral venue.</div></button>
+          <button class="dopt" onclick="answer(6,'D')"><div class="dopt-id">D</div><div class="dopt-body">Fight it in Amarillo. Move the show to Amarillo for the duration of the trial. Broadcast from cattle country while being sued by cattlemen. She said what she believed. She'll defend it.</div></button>
+        </div>
+        <div class="reveal" id="rev-6">
+          <div class="reveal-badge" id="badge-6"></div>
+          <div class="reveal-label">What Oprah Winfrey Did</div>
+          <div class="reveal-text">She moved her show to Amarillo and broadcast from there for the six weeks of the trial. She walked into the courthouse every day. She said: "I come from good stock. I'm not a quitter." The jury found for Oprah. She won.</div>
+          <div class="reveal-explain"><strong>From January to February 1998, you walked into the Potter County Courthouse in Amarillo, Texas, every single day for six weeks — and broadcast your show from cattle country while Texas cattlemen sued you for $12 million.</strong> The trial became one of the most watched legal battles in American broadcast history. Every day, footage of Oprah walking into the Amarillo courthouse aired on the evening news. She didn't hide. She didn't hedge. She stood in the middle of it. The jury deliberated for six hours and rejected all claims. Outside the courthouse after the verdict, Oprah raised her fists and said: "Free speech not only lives — it rocks." The case became a landmark in First Amendment law and in the failed attempts to use food disparagement statutes to suppress journalism and commentary.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-6">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">2011 · Age 57 · The Last Show</div></div>
+    <div class="narrative">
+      <p>The Oprah Winfrey Show had been on the air for 25 years. It was still the highest-rated talk show in America. It still made enormous amounts of money. It still had an audience that showed up, reliably, season after season.</p>
+      <p>Oprah announced she would end it.</p>
+      <p>The industry could not understand why. Ending a successful show at the peak of its power — not because it was failing, not because she was forced out, but by choice — seemed irrational. She was launching the OWN network, which was a risk. She could do both, people told her. She had done harder things. Why stop something that was working?</p>
+    </div>
+    <div class="decision-block" id="d7">
+      <div class="decision-header"><span>Decision 7 · 2011 · Age 57 · Ending It</span><span class="d-num">7 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">The Oprah Winfrey Show is still dominant, still profitable, still beloved — and Oprah wants to end it. She could do both the show and OWN. No one is making her stop. Should she end the show?</p>
+        <div class="dopts" id="opts-7">
+          <button class="dopt" onclick="answer(7,'A')"><div class="dopt-id">A</div><div class="dopt-body">Keep both going. She's proven she can handle enormous complexity — running the show and launching OWN is manageable.</div></button>
+          <button class="dopt" onclick="answer(7,'B')"><div class="dopt-id">B</div><div class="dopt-body">Take a two-year hiatus. Pause the show while OWN launches, then return if OWN struggles.</div></button>
+          <button class="dopt" onclick="answer(7,'C')"><div class="dopt-id">C</div><div class="dopt-body">End it in three years — give it time to transition, not end it at the peak which feels like waste.</div></button>
+          <button class="dopt" onclick="answer(7,'D')"><div class="dopt-id">D</div><div class="dopt-body">End it now. The show has been everything it can be. She knows when a chapter is finished. Ending it at the peak is the right ending — not the safe one.</div></button>
+        </div>
+        <div class="reveal" id="rev-7">
+          <div class="reveal-badge" id="badge-7"></div>
+          <div class="reveal-label">What Oprah Winfrey Did</div>
+          <div class="reveal-text">She ended it. The final episode of The Oprah Winfrey Show aired on May 25, 2011. Oprah stood alone on the stage for the last 45 minutes and talked to her audience as if they were in the same room. It was watched by 16.4 million people.</div>
+          <div class="reveal-explain"><strong>On May 25, 2011, you ended the highest-rated talk show in America at the peak of its power — not because it was failing, not because anyone forced you out, but because you decided alone that the chapter was done.</strong> Oprah has said that knowing when to leave is as important as knowing when to stay. She ended the show because she knew she had said everything she had to say in that format. She was 57. OWN launched the same year — it struggled initially and became profitable by 2013. She later produced the film Selma, returned to acting in The Butler and A Wrinkle in Time, launched Super Soul Sunday, and in 2018 gave a speech at the Golden Globes that briefly made "Oprah for President" a national conversation. She has never been finished. She has just kept deciding what the next chapter is — and when the previous one is done.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seg" id="seg-epilogue">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">The Long Run</div></div>
+    <div class="narrative">
+      <p>Oprah Winfrey is the first Black female billionaire in American history. She built Harpo Productions, The Oprah Winfrey Show, the OWN network, O Magazine, Oprah.com, and a philanthropy that has provided over 400 scholarships to Morehouse College and funded schools in South Africa.</p>
+      <p>She was born on a Mississippi farm with no running water. She was demoted from news anchor at 23. She was told she was too emotional, too personal, too much.</p>
+      <p>The things she was told were flaws turned out to be her entire business model. Her emotional honesty made her irreplaceable. Her willingness to be seen — fully seen, not just presented — created a relationship with her audience that no format could contain and no competitor could replicate.</p>
+      <p>She has said, in dozens of interviews across decades, a version of the same thing: she was never trying to be successful. She was trying to be true. The success came because the truth was rare enough to be worth something.</p>
+    </div>
+    <div class="results" id="seg-results">
+      <div class="results-hero">
+        <span class="results-trophy" id="res-trophy">🌟</span>
+        <div class="results-score-big" id="res-score">0<span>/7</span></div>
+        <div class="results-sub">decisions matched Oprah Winfrey</div>
+      </div>
+      <h2 class="results-title" id="res-title"></h2>
+      <p class="results-desc" id="res-desc"></p>
+      <div class="divider"></div>
+      <div class="dim-rows">
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Boldness</span><span class="dim-row-num" id="d-b-num">0/3</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-b" id="d-b-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Ownership</span><span class="dim-row-num" id="d-o-num">0/2</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-o" id="d-o-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head"><span class="dim-row-name">Resilience</span><span class="dim-row-num" id="d-r-num">0/2</span></div>
+          <div class="bar-bg"><div class="bar-fill bar-r" id="d-r-bar"></div></div>
+        </div>
+      </div>
+      <div class="res-card">
+        <div class="rc-title">Share your result</div>
+        
+<div class="next-sims"><h3>Try another simulator</h3><div class="next-sims-grid"><a class="next-sim-btn" href="rowling-simulator.html">J.K. Rowling</a><a class="next-sim-btn" href="curie-simulator.html">Marie Curie</a><a class="next-sim-btn" href="mandela-simulator.html">Nelson Mandela</a></div></div>
+<div class="share-pre" id="share-pre"></div>
+        <button class="copy-btn" onclick="copyShare(event)">Copy to clipboard</button>
+<a class="tweet-btn" id="tweet-btn" href="#" onclick="return shareTweet()" rel="noopener">𝕏 Share Result</a>
+      </div>
+
+      <div class="res-card" style="text-align:center;">
+        <div class="rc-title">📚 Go Deeper — Read the Book</div>
+        <p style="font-size:14px;line-height:1.7;margin-bottom:14px;">Oprah's own words — wisdom on joy, resilience, gratitude, and possibility, distilled from 25 years of conversations with the world's most inspiring people.</p>
+        <a href="https://amzn.to/43IPEei" target="_blank" rel="noopener" style="display:inline-block;background:#FF9900;color:#111;font-weight:700;padding:10px 22px;border-radius:6px;text-decoration:none;font-size:14px;">📖 View on Amazon →</a>
+        <p style="font-size:11px;color:#999;margin-top:10px;">As an Amazon Associate I earn from qualifying purchases.</p>
+      </div>
+
+      <div class="sim-links" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-left:4px solid var(--accent,#60a5fa);border-radius:12px;padding:18px 20px;margin-bottom:14px;">
+  
+  <p style="font-size:13px;font-weight:700;color:inherit;margin-bottom:10px;">🎮 Try another legendary life:</p>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;">
+    <a href="zhangxue-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🏍️ Zhang Xue</a>
+    <a href="disney-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🏰 Walt Disney</a>
+    <a href="honda-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🔧 Soichiro Honda</a>
+    <a href="curie-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">⚗️ Marie Curie</a>
+    <a href="jobs-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">📱 Steve Jobs</a>
+    <a href="rowling-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">📚 J.K. Rowling</a>
+    <a href="musk-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🛸 Elon Musk</a>
+    <a href="mandela-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">✊ Nelson Mandela</a>
+    <a href="buffett-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">💰 Warren Buffett</a>
+    <a href="hawking-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🔭 Stephen Hawking</a>
+  </div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);">
+    <a href="https://ordinarymantrying.com/tools/" style="font-size:13px;color:var(--accent,#60a5fa);font-weight:700;text-decoration:none;">→ See all 11 simulators + free tools</a>
+  </div>
+</div>
+      <div class="res-card">
+        <div class="rc-title">About this simulator</div>
+        <p style="font-size:14px;color:#4a2a44;line-height:1.85;">This simulator is part of <a href="https://ordinarymantrying.com" style="color:var(--accent);font-weight:700;text-decoration:none;">ordinarymantrying.com</a> — a blog about one ordinary person using AI to navigate investing, side hustles, and building things in public. All events are based on documented historical accounts of Oprah Winfrey's life.</p>
+      </div>
+      <button class="replay-btn" onclick="location.reload()">↺ Play again</button>
+      <div style="height:48px;"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+<script>
+var TOTAL=7;
+var DECISIONS={1:{zx:'D',dim:'boldness'},2:{zx:'D',dim:'resilience'},3:{zx:'D',dim:'boldness'},4:{zx:'D',dim:'boldness'},5:{zx:'D',dim:'ownership'},6:{zx:'D',dim:'resilience'},7:{zx:'D',dim:'ownership'}};
+var NEXT_SEG={1:'seg-1',2:'seg-2',3:'seg-3',4:'seg-4',5:'seg-5',6:'seg-6',7:'seg-epilogue'};
+var DIM_MAX={boldness:3,ownership:2,resilience:2};
+var scores={boldness:0,ownership:0,resilience:0};
+var totalCorrect=0,answered={};
+function startStory(){document.getElementById('cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('topbar-score').style.display='block';document.getElementById('topbar-score').textContent='0 / '+TOTAL;window.scrollTo({top:0,behavior:'smooth'});}
+function answer(num,chosen){if(answered[num])return;answered[num]=chosen;var d=DECISIONS[num];var correct=(chosen===d.zx);if(correct){totalCorrect++;scores[d.dim]++;}var opts=document.querySelectorAll('#opts-'+num+' .dopt');opts.forEach(function(btn){btn.classList.add('disabled');var id=btn.querySelector('.dopt-id').textContent.trim();if(id===chosen&&correct)btn.classList.add('right');if(id===chosen&&!correct)btn.classList.add('wrong');if(id===d.zx&&!correct)btn.classList.add('correct');});var badge=document.getElementById('badge-'+num);if(correct){badge.className='reveal-badge badge-y';badge.textContent='✓ Same as Oprah Winfrey';}else{badge.className='reveal-badge badge-n';badge.textContent='✗ You chose '+chosen+' — Oprah chose '+d.zx;}document.getElementById('rev-'+num).style.display='block';document.getElementById('topbar-score').textContent=totalCorrect+' / '+TOTAL;setTimeout(function(){var next=document.getElementById(NEXT_SEG[num]);next.classList.add('shown');setTimeout(function(){next.scrollIntoView({behavior:'smooth',block:'start'});},80);if(num===TOTAL)showResults();},950);}
+function showResults(){setTimeout(function(){var s=totalCorrect;var trophies=['🌱','🌱','💫','💫','🏅','🏅','🥇','🌟'];document.getElementById('res-trophy').textContent=trophies[s]||'🌟';document.getElementById('res-score').innerHTML=s+'<span>/'+TOTAL+'</span>';var title,desc;if(s===TOTAL){title='You think like Oprah.';desc='Perfect score. Every decision matched hers. You have the same instinct — walk through the open door, own what you build, and stand in the middle of the fight with your name attached to it.';}else if(s>=5){title='You have her nerve.';desc=s+' out of 7. You made the bold call most of the time. The gaps are exactly where Oprah refused to play it safe — and those choices are what made the difference between a good career and a cultural institution.';}else if(s>=3){title='You have her instinct.';desc=s+' out of 7. More than half matching her choices. Oprah\'s logic was simple: when a door opens, walk through it. The risk of not going is always larger than the risk of going wrong.';}else{title='You chose safety. She didn\'t.';desc=s+' out of 7. Your choices protected you at every junction. Oprah\'s didn\'t — she walked into hostile territory, gave unsolicited auditions, and refused to settle. The protection you kept is the growth she gave up. And she was fine with that trade.';}document.getElementById('res-title').textContent=title;document.getElementById('res-desc').textContent=desc;setTimeout(function(){var bMax=DIM_MAX.boldness,oMax=DIM_MAX.ownership,rMax=DIM_MAX.resilience;document.getElementById('d-b-num').textContent=scores.boldness+'/'+bMax;document.getElementById('d-o-num').textContent=scores.ownership+'/'+oMax;document.getElementById('d-r-num').textContent=scores.resilience+'/'+rMax;document.getElementById('d-b-bar').style.width=((scores.boldness/bMax)*100)+'%';document.getElementById('d-o-bar').style.width=((scores.ownership/oMax)*100)+'%';document.getElementById('d-r-bar').style.width=((scores.resilience/rMax)*100)+'%';},300);document.getElementById('share-pre').textContent='I just played the Oprah Winfrey Life Simulator and matched '+totalCorrect+'/'+TOTAL+' of her real decisions.\n\nOprah was fired from her first TV job for being "too emotional."\nShe became the most powerful person in American media by being exactly that.\n\nBoldness '+scores.boldness+'/'+DIM_MAX.boldness+'  ·  Ownership '+scores.ownership+'/'+DIM_MAX.ownership+'  ·  Resilience '+scores.resilience+'/'+DIM_MAX.resilience+'\n\nWould you have made the same choices? ordinarymantrying.com/tools/oprah-simulator.html';document.getElementById('seg-epilogue').scrollIntoView({behavior:'smooth',block:'start'});},600);}
+function shareTweet(){var text=document.getElementById('share-pre').textContent;if(!text||text.trim()===''){alert('Finish the simulator first to share your result!');return false;}var url='https://x.com/intent/tweet?text='+encodeURIComponent(text.substring(0,240));window.open(url,'_blank','width=550,height=450');return false;}
+function copyShare(evt){var text=document.getElementById('share-pre').textContent;var btn=evt.target;function restore(){btn.textContent='Copy to clipboard';}if(navigator.clipboard){navigator.clipboard.writeText(text).then(function(){btn.textContent='✓ Copied!';setTimeout(restore,2000);});}else{var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='✓ Copied!';setTimeout(restore,2000);}}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

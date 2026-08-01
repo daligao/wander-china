@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wander China — AI China Trip Planner & Itinerary Generator | 31 Cities · Free</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<meta name="description" content="Plan your China trip in minutes. AI builds a smart day-by-day itinerary — real opening hours, metro routes, ticket prices, local tips. 31 cities. First 10 plans free.">
+<meta name="keywords" content="China trip planner, China travel itinerary builder, plan China trip, China travel 2025, Beijing Shanghai Chengdu travel, China tourist attractions, free China itinerary">
+<style>
+  :root{
+    --ink:#1a1a2e; --muted:#5b6472; --line:#e9e6df;
+    --red:#e11d48; --red-d:#be123c; --gold:#f59e0b;
+    --paper:#fbf7f0; --card:#ffffff;
+    --play:#7c3aed; --plan:#0891b2; --go:#16a34a;
+    --shadow:0 6px 24px rgba(30,20,10,.08);
+    --shadow-lg:0 18px 50px rgba(30,20,10,.14);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+  /* NAV */
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(251,247,240,.90);
+    backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px;letter-spacing:-.02em}
+  .logo .mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--red),var(--gold));
+    display:grid;place-items:center;color:#fff;font-size:16px}
+  .nav-links{display:flex;gap:24px;align-items:center;font-weight:600;font-size:14px;color:var(--muted)}
+  .nav-links a:hover{color:var(--ink)}
+  .btn{display:inline-flex;align-items:center;gap:7px;font-weight:700;border-radius:999px;
+    padding:10px 20px;cursor:pointer;border:0;font-size:14px;transition:.18s;white-space:nowrap}
+  .btn-primary{background:var(--red);color:#fff;box-shadow:0 4px 14px rgba(225,29,72,.28)}
+  .btn-primary:hover{background:var(--red-d);transform:translateY(-1px)}
+  .btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--ink)}
+  @media(max-width:720px){.nav-links{display:none}}
+
+  /* HERO */
+  .hero{padding:72px 0 56px;text-align:center;position:relative;overflow:hidden}
+  .hero:before{content:"";position:absolute;inset:0;z-index:-1;
+    background:radial-gradient(60% 60% at 50% 0%,rgba(225,29,72,.06) 0%,rgba(251,247,240,0) 70%)}
+  .kicker{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+    border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:700;color:var(--red-d);
+    box-shadow:var(--shadow);margin-bottom:20px}
+  h1{font-size:clamp(32px,5vw,56px);line-height:1.07;letter-spacing:-.03em;max-width:16ch;margin:0 auto;font-weight:900}
+  h1 em{font-style:normal;background:linear-gradient(120deg,var(--red),var(--gold));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:clamp(15px,2vw,19px);color:var(--muted);max-width:54ch;margin:18px auto 0;line-height:1.65}
+  .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+  .btn-lg{padding:14px 28px;font-size:16px}
+  .trust-chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+  .chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 13px;
+    font-size:12.5px;font-weight:600;color:var(--muted);box-shadow:0 2px 6px rgba(0,0,0,.04)}
+  .chip b{color:var(--ink)}
+
+  /* DEMO MOCKUP */
+  .demo-wrap{margin-top:52px;position:relative}
+  .demo-label{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);text-align:center;margin-bottom:14px}
+  .demo{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;
+    box-shadow:0 20px 60px rgba(30,20,10,.12);max-width:780px;margin:0 auto}
+  .demo-hd{background:linear-gradient(120deg,#be123c,#e11d48 60%,#f59e0b);
+    color:#fff;padding:16px 22px}
+  .demo-hd h3{font-size:17px;font-weight:800;margin:0}
+  .demo-hd p{font-size:12px;opacity:.85;margin:3px 0 0}
+  .demo-body{padding:16px 20px}
+  .demo-day{margin-bottom:14px}
+  .demo-day-hd{font-size:12px;font-weight:800;color:var(--red-d);letter-spacing:.06em;
+    text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .demo-row{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid #f5f3ef;align-items:flex-start}
+  .demo-row:last-child{border-bottom:none}
+  .demo-t{font-size:11.5px;color:var(--muted);font-weight:600;flex:0 0 80px;padding-top:1px}
+  .demo-c b{font-size:13.5px;font-weight:700}
+  .demo-c small{display:block;font-size:11.5px;color:var(--muted);margin-top:1px}
+  .demo-transit{font-size:11px;color:#0891b2;padding:4px 0 4px 8px;border-left:2px solid #bae6fd;margin:0 0 0 8px}
+  .demo-foot{background:#fafaf8;border-top:1px solid var(--line);padding:12px 20px;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .demo-cost{font-size:13px;font-weight:700;color:var(--ink);flex:1}
+  .demo-cost span{color:var(--muted);font-weight:500;font-size:12px}
+  .demo-actions{display:flex;gap:8px}
+  .demo-btn{font-size:12px;font-weight:700;padding:6px 13px;border-radius:8px;border:none;cursor:pointer}
+  .demo-btn-red{background:var(--red);color:#fff}
+  .demo-btn-grey{background:#e5e7eb;color:#374151}
+
+  /* SECTION */
+  .section{padding:60px 0}
+  .eyebrow{text-align:center;font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:12.5px;color:var(--red)}
+  .h2{text-align:center;font-size:clamp(24px,3.4vw,36px);font-weight:900;letter-spacing:-.02em;margin-top:8px}
+  .lead{text-align:center;color:var(--muted);max-width:58ch;margin:12px auto 0;font-size:16px}
+
+  /* HOW IT WORKS */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+  @media(max-width:800px){.steps{grid-template-columns:1fr}}
+  .step{background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px 24px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .step .bar{position:absolute;top:0;left:0;right:0;height:4px;border-radius:4px 4px 0 0}
+  .step:nth-child(1) .bar{background:var(--red)}
+  .step:nth-child(2) .bar{background:var(--play)}
+  .step:nth-child(3) .bar{background:var(--go)}
+  .step-num{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:6px}
+  .step-ico{font-size:32px;margin-bottom:8px}
+  .step h3{font-size:20px;font-weight:800}
+  .step p{font-size:14.5px;color:var(--muted);margin-top:8px;line-height:1.6}
+  .step-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-weight:800;font-size:14px;color:var(--red)}
+  .step ul{list-style:none;margin-top:14px}
+  .step li{font-size:14px;color:var(--muted);padding:5px 0;display:flex;gap:8px}
+  .step li .tick{color:var(--go);font-size:13px;flex:0 0 16px}
+
+  /* CITY GRID */
+  .city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:36px}
+  .city-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 12px;
+    text-align:center;cursor:pointer;transition:.18s;box-shadow:var(--shadow);position:relative}
+  .city-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:#e11d48}
+  .city-card .ico{font-size:26px;margin-bottom:4px}
+  .city-card .nm{font-size:13px;font-weight:800}
+  .city-card .cn{font-size:11px;color:var(--muted)}
+  .city-card .feat{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.4}
+  .city-card .lite-badge{position:absolute;top:7px;right:7px;background:#f3f4f6;border:1px solid #d1d5db;
+    border-radius:999px;font-size:9.5px;font-weight:700;color:#9ca3af;padding:1px 6px}
+  .city-more{text-align:center;margin-top:16px;font-size:14px;color:var(--muted)}
+
+  /* ALREADY-PLANNING CALLOUT */
+  .already-box{background:linear-gradient(120deg,#f0f9ff,#e0f2fe);border:1px solid #bae6fd;
+    border-radius:20px;padding:32px 36px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
+  @media(max-width:680px){.already-box{grid-template-columns:1fr;}}
+  .already-box h3{font-size:20px;font-weight:900;color:#0c4a6e}
+  .already-box p{color:#0369a1;font-size:14px;margin-top:6px;line-height:1.6}
+  .already-checks{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+  .already-checks span{font-size:13.5px;color:#075985;display:flex;gap:8px;align-items:flex-start}
+  .already-checks b{color:#0c4a6e}
+
+  /* WHY */
+  .why{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:36px}
+  @media(max-width:760px){.why{grid-template-columns:1fr}}
+  .why-item{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 20px;box-shadow:var(--shadow)}
+  .why-item .e{font-size:26px;margin-bottom:8px}
+  .why-item h4{font-size:16px;font-weight:800;margin-bottom:4px}
+  .why-item p{color:var(--muted);font-size:13.5px;line-height:1.6}
+
+  /* PASSPORT */
+  .passport{background:linear-gradient(135deg,#1a1a2e,#312e81);color:#fff;border-radius:24px;
+    padding:44px 40px;display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center;
+    box-shadow:var(--shadow-lg)}
+  @media(max-width:760px){.passport{grid-template-columns:1fr;padding:30px 24px}}
+  .passport h3{font-size:clamp(22px,3vw,30px);font-weight:900;letter-spacing:-.02em}
+  .passport p{color:#c9c3d6;margin-top:10px;font-size:15px;line-height:1.6}
+  .stamps{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}
+  .stamp{aspect-ratio:1;border-radius:10px;display:grid;place-items:center;font-size:18px;
+    background:rgba(255,255,255,.06);border:1.5px dashed rgba(255,255,255,.18)}
+  .stamp.on{background:rgba(245,158,11,.15);border:1.5px solid rgba(245,158,11,.5)}
+
+  /* FINAL CTA */
+  .final{text-align:center;background:linear-gradient(135deg,#fff4e6,#ffe8ec);border-radius:24px;
+    padding:52px 30px;border:1px solid #fddcdc}
+  .final h2{font-size:clamp(24px,3.8vw,40px);font-weight:900;letter-spacing:-.02em}
+  .final p{color:var(--muted);font-size:17px;margin-top:10px}
+  .final .small-note{font-size:13px;color:var(--muted);margin-top:14px}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--line);margin-top:60px;padding:36px 0;color:var(--muted);font-size:13.5px}
+  footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+</style>
+<meta property="og:image" content="https://ordinarymantrying.com/wp-content/uploads/2026/07/wander-china-landing-page.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Wander China — free AI trip planner for 31 Chinese cities">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ordinarymantrying.com/wp-content/uploads/2026/07/wander-china-landing-page.jpg">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/wander-china/">
+<meta property="og:title" content="Wander China — AI China Trip Planner · 31 Cities · Free">
+<meta property="og:description" content="Plan your China trip in minutes. AI builds a smart day-by-day itinerary — real opening hours, metro routes, ticket prices, local tips. 31 cities. First 10 plans free.">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top"><span class="mark">游</span>Wander China</a>
+    <nav class="nav-links">
+      <a href="quiz.html">City Quiz</a>
+      <a href="planner.html">Trip Planner</a>
+      <a href="passport.html">Passport</a>
+      <a href="go.html">How to Go</a>
+    </nav>
+    <a class="btn btn-primary" href="planner.html">Plan my trip →</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <span class="kicker">🇨🇳 31 cities · 372+ attractions · Free to start</span>
+    <h1>Plan your China trip in <em>30 seconds</em></h1>
+    <p class="sub">AI-powered itineraries for foreign travelers — real opening hours, metro routes, ticket prices, and insider tips for 31 Chinese cities. No Chinese needed.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary btn-lg" href="planner.html">🗺️ Plan my China trip — free</a>
+      <a class="btn btn-ghost btn-lg" href="quiz.html">✨ Which city fits me?</a>
+    </div>
+    <div class="trust-chips">
+      <span class="chip">✅ <b>Free</b></span>
+      <span class="chip">✅ <b>No signup</b></span>
+      <span class="chip">⭐⭐⭐⭐⭐ <b>AI-generated</b></span>
+      <span class="chip">🕐 Real opening hours</span>
+      <span class="chip">🚇 Metro directions</span>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO MOCKUP -->
+<section style="padding:0 0 60px">
+  <div class="wrap">
+    <p class="demo-label">Sample AI-generated itinerary — Shanghai · 3 days</p>
+    <div class="demo">
+      <div class="demo-hd">
+        <h3>🏙️ My Shanghai Trip</h3>
+        <p>Pearl of the Orient · 3 days · built with Wander China</p>
+      </div>
+      <div class="demo-body">
+        <div class="demo-day">
+          <div class="demo-day-hd">Day 1 (Jul 14, Mon) · tickets ≈ $12</div>
+          <div class="demo-row">
+            <div class="demo-t">09:00–11:00</div>
+            <div class="demo-c"><b>🏺 Shanghai Museum</b><small>Free · People's Square · 2h</small></div>
+          </div>
+          <div class="demo-transit">🚇 ~8 min · Line 2 to East Nanjing Rd</div>
+          <div class="demo-row">
+            <div class="demo-t">11:08–12:08</div>
+            <div class="demo-c"><b>🍜 Lunch</b><small>~¥40 · $6 · eat near where you are</small></div>
+          </div>
+          <div class="demo-transit">🚇 ~5 min · walk to Bund</div>
+          <div class="demo-row">
+            <div class="demo-t">12:13–14:13</div>
+            <div class="demo-c"><b>🌃 The Bund 外滩</b><small>Free · Best at sunset · 2h</small></div>
+          </div>
+          <div class="demo-transit">🚇 ~6 min · Line 10 to Yuyuan</div>
+          <div class="demo-row">
+            <div class="demo-t">14:19–16:19</div>
+            <div class="demo-c"><b>🏮 Yu Garden 豫园</b><small>¥40 · $6 · Ming dynasty garden · 2h</small></div>
+          </div>
+          <div class="demo-transit">🚇 ~9 min · Line 9 to Dapuqiao</div>
+          <div class="demo-row">
+            <div class="demo-t">16:28–17:28</div>
+            <div class="demo-c"><b>🎭 Tianzifang 田子坊</b><small>Free · art alleys · 1h</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="demo-foot">
+        <div class="demo-cost">Tickets &amp; activities ≈ $22 <span>per person · Day 1</span></div>
+        <div class="demo-actions">
+          <button class="demo-btn demo-btn-grey">📄 Copy</button>
+          <button class="demo-btn demo-btn-red">🖨️ Print</button>
+        </div>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--muted)">
+      ↑ The AI considers opening hours, metro times, and spot clusters — no wasted cross-city detours
+    </p>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how" style="padding-top:0">
+  <div class="wrap">
+    <p class="eyebrow">How it works</p>
+    <h2 class="h2">From zero to printable itinerary in 3 steps</h2>
+    <p class="lead">No account. No app download. Works on your phone right now.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="bar"></div>
+        <div class="step-num">Step 1</div>
+        <div class="step-ico">🏙️</div>
+        <h3>Pick a city</h3>
+        <p>Choose from 31 Chinese cities — Beijing, Shanghai, Chengdu, Xi'an and 27 more. Each has real data on 12+ top attractions.</p>
+        <ul>
+          <li><span class="tick">✓</span>Opening hours verified</li>
+          <li><span class="tick">✓</span>Metro directions included</li>
+          <li><span class="tick">✓</span>Ticket prices in USD + CNY</li>
+        </ul>
+      </div>
+      <div class="step">
+        <div class="bar"></div>
+        <div class="step-num">Step 2</div>
+        <div class="step-ico">🤖</div>
+        <h3>Let AI build your day</h3>
+        <p>Hit "AI Build" — the planner sequences your spots by distance, saves night attractions for evenings, and skips anything closed that day.</p>
+        <ul>
+          <li><span class="tick">✓</span>Route-optimized, no backtracking</li>
+          <li><span class="tick">✓</span>Closed Monday? Skipped automatically</li>
+          <li><span class="tick">✓</span>Night spots sequenced for evening</li>
+        </ul>
+      </div>
+      <div class="step">
+        <div class="bar"></div>
+        <div class="step-num">Step 3</div>
+        <div class="step-ico">🖨️</div>
+        <h3>Export &amp; go</h3>
+        <p>Print a clean itinerary sheet, copy to WhatsApp, or share the link. Your whole trip on one page — no internet needed on the road.</p>
+        <ul>
+          <li><span class="tick">✓</span>Print / PDF — always free</li>
+          <li><span class="tick">✓</span>Copy to WhatsApp or Notes</li>
+          <li><span class="tick">✓</span>Share link with travel buddies</li>
+        </ul>
+        <a class="step-link" href="planner.html">Start planning now →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALREADY-PLANNING CALLOUT -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="already-box">
+      <div>
+        <h3>Already have a plan? Use ours to fill the gaps.</h3>
+        <p>You know you're going to Xi'an — but do you know the Terracotta Museum closes at 5pm, not 6pm? Or that the Muslim Quarter gets packed by 7pm and it's worth arriving at 5:30?</p>
+        <div class="already-checks">
+          <span>✅ <b>Verify every opening hour</b> — don't get stuck outside a closed museum</span>
+          <span>✅ <b>Build a timed schedule</b> — see exactly how many spots fit in your day</span>
+          <span>✅ <b>Print before you fly</b> — no Wi-Fi needed on the ground in China</span>
+          <span>✅ <b>Spot which days things are closed</b> — most travelers miss this until it's too late</span>
+        </div>
+      </div>
+      <div style="text-align:center;flex:0 0 auto">
+        <a class="btn btn-primary btn-lg" href="planner.html" style="background:#0284c7;box-shadow:0 4px 14px rgba(2,132,199,.3)">Check my itinerary →</a>
+        <p style="font-size:12px;color:#0369a1;margin-top:8px">No sign-up · 10 AI plans free</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CITIES -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <p class="eyebrow">31 Cities covered</p>
+    <h2 class="h2">Where do you want to go?</h2>
+    <p class="lead">Click any city to jump straight into planning. Full verified data on 12+ attractions per city.</p>
+    <div class="city-grid">
+      <a href="planner.html?city=beijing" class="city-card">
+        <div class="ico">🏯</div><div class="nm">Beijing</div><div class="cn">北京</div>
+        <div class="feat">Great Wall · Forbidden City · hutong alleys</div></a>
+      <a href="planner.html?city=shanghai" class="city-card">
+        <div class="ico">🏙️</div><div class="nm">Shanghai</div><div class="cn">上海</div>
+        <div class="feat">Art Deco Bund · Pudong skyline · French Concession</div></a>
+      <a href="planner.html?city=chengdu" class="city-card">
+        <div class="ico">🐼</div><div class="nm">Chengdu</div><div class="cn">成都</div>
+        <div class="feat">Panda Base · mahjong teahouses · Sichuan hotpot</div></a>
+      <a href="planner.html?city=xian" class="city-card">
+        <div class="ico">⚔️</div><div class="nm">Xi'an</div><div class="cn">西安</div>
+        <div class="feat">8,000 terracotta soldiers · Muslim Quarter night market</div></a>
+      <a href="planner.html?city=guangzhou" class="city-card">
+        <div class="ico">🍤</div><div class="nm">Guangzhou</div><div class="cn">广州</div>
+        <div class="feat">Cantonese dim sum capital · Canton Tower · Chen Clan</div></a>
+      <a href="planner.html?city=hangzhou" class="city-card">
+        <div class="ico">🌸</div><div class="nm">Hangzhou</div><div class="cn">杭州</div>
+        <div class="feat">UNESCO West Lake · Longjing tea fields · silk history</div></a>
+      <a href="planner.html?city=suzhou" class="city-card">
+        <div class="ico">🏯</div><div class="nm">Suzhou</div><div class="cn">苏州</div>
+        <div class="feat">9 UNESCO gardens · ancient canals · Venice of the East</div></a>
+      <a href="planner.html?city=chongqing" class="city-card">
+        <div class="ico">🌶️</div><div class="nm">Chongqing</div><div class="cn">重庆</div>
+        <div class="feat">3D mountain city · spiciest hotpot · Yangtze fog nights</div></a>
+      <a href="planner.html?city=nanjing" class="city-card">
+        <div class="ico">🌸</div><div class="nm">Nanjing</div><div class="cn">南京</div>
+        <div class="feat">Ming city walls · sobering WWII memorial · Qinhuai river</div></a>
+      <a href="planner.html?city=wuhan" class="city-card">
+        <div class="ico">🌸</div><div class="nm">Wuhan</div><div class="cn">武汉</div>
+        <div class="feat">Yellow Crane Tower · cherry blossom university · hot-dry noodles</div></a>
+      <a href="planner.html?city=kunming" class="city-card">
+        <div class="ico">🌸</div><div class="nm">Kunming</div><div class="cn">昆明</div>
+        <div class="feat">Eternal spring · Stone Forest · gateway to Yunnan's wonders</div></a>
+      <a href="planner.html?city=harbin" class="city-card">
+        <div class="ico">❄️</div><div class="nm">Harbin</div><div class="cn">哈尔滨</div>
+        <div class="feat">Ice & Snow Festival · Russian Orthodox churches · tiger park</div></a>
+      <a href="planner.html?city=lhasa" class="city-card">
+        <span class="lite-badge">filling</span>
+        <div class="ico">🏔️</div><div class="nm">Lhasa</div><div class="cn">拉萨</div>
+        <div class="feat">Potala Palace · Jokhang Temple · high-altitude spiritual capital</div></a>
+      <a href="planner.html?city=changsha" class="city-card">
+        <div class="ico">🌶️</div><div class="nm">Changsha</div><div class="cn">长沙</div>
+        <div class="feat">2,000-year-old preserved body · street food madness · Mao's birthplace nearby</div></a>
+      <a href="planner.html?city=jinan" class="city-card">
+        <div class="ico">⛲</div><div class="nm">Jinan</div><div class="cn">济南</div>
+        <div class="feat">72 artesian springs · gateway to sacred Tai Mountain · old city lanes</div></a>
+      <a href="planner.html?city=tianjin" class="city-card">
+        <span class="lite-badge">filling</span>
+        <div class="ico">🎡</div><div class="nm">Tianjin</div><div class="cn">天津</div>
+        <div class="feat">5 colonial-era concessions · Porcelain House · Goubuli dumplings</div></a>
+      <a href="planner.html?city=fuzhou" class="city-card">
+        <div class="ico">🌳</div><div class="nm">Fuzhou</div><div class="cn">福州</div>
+        <div class="feat">Hot springs resort city · Tulou fortress clusters day trip · banyan trees</div></a>
+      <a href="planner.html?city=haikou" class="city-card">
+        <div class="ico">🌴</div><div class="nm">Haikou</div><div class="cn">海口</div>
+        <div class="feat">Tropical gateway · Hainan cuisine · colonial Qilou old street</div></a>
+      <a href="planner.html?city=guiyang" class="city-card">
+        <div class="ico">🌿</div><div class="nm">Guiyang</div><div class="cn">贵阳</div>
+        <div class="feat">Gateway to Huangguoshu Falls · ethnic Miao/Dong villages nearby</div></a>
+      <a href="planner.html?city=hohhot" class="city-card">
+        <div class="ico">🐑</div><div class="nm">Hohhot</div><div class="cn">呼和浩特</div>
+        <div class="feat">Mongolian grassland day trips · yurt stays · giant temples</div></a>
+      <a href="planner.html?city=lanzhou" class="city-card">
+        <div class="ico">🍜</div><div class="nm">Lanzhou</div><div class="cn">兰州</div>
+        <div class="feat">Hand-pulled noodle birthplace · Yellow River waterwheels · Silk Road gateway</div></a>
+      <a href="planner.html?city=urumqi" class="city-card">
+        <span class="lite-badge">filling</span>
+        <div class="ico">🕌</div><div class="nm">Urumqi</div><div class="cn">乌鲁木齐</div>
+        <div class="feat">Tianshan mountain scenery · Xinjiang night bazaar · Uyghur cuisine</div></a>
+      <a href="planner.html?city=nanchang" class="city-card">
+        <div class="ico">🦩</div><div class="nm">Nanchang</div><div class="cn">南昌</div>
+        <div class="feat">Tengwang Pavilion · Poyang Lake · revolutionary history landmarks</div></a>
+      <a href="planner.html?city=zhengzhou" class="city-card">
+        <span class="lite-badge">filling</span>
+        <div class="ico">⚡</div><div class="nm">Zhengzhou</div><div class="cn">郑州</div>
+        <div class="feat">Shaolin Temple · Yellow River civilization cradle · Longmen Grottoes nearby</div></a>
+      <a href="planner.html?city=nanning" class="city-card">
+        <span class="lite-badge">filling</span>
+        <div class="ico">🌴</div><div class="nm">Nanning</div><div class="cn">南宁</div>
+        <div class="feat">Detian Waterfall border · Zhuang ethnic culture · gateway to Vietnam</div></a>
+      <a href="planner.html?city=hefei" class="city-card">
+        <div class="ico">🌿</div><div class="nm">Hefei</div><div class="cn">合肥</div>
+        <div class="feat">Li Hongzhang mansion · Chao Lake · Anhui cuisine &amp; Huizhou culture</div></a>
+      <a href="planner.html?city=changchun" class="city-card">
+        <div class="ico">❄️</div><div class="nm">Changchun</div><div class="cn">长春</div>
+        <div class="feat">Last Emperor's puppet palace · film city · Northeast dumpling feasts</div></a>
+      <a href="planner.html?city=shenyang" class="city-card">
+        <span class="lite-badge">filling</span>
+        <div class="ico">🦅</div><div class="nm">Shenyang</div><div class="cn">沈阳</div>
+        <div class="feat">Manchu Imperial Palace · Zhang Xueliang estate · Northeast BBQ</div></a>
+      <a href="planner.html?city=shijiazhuang" class="city-card">
+        <span class="lite-badge">filling</span>
+        <div class="ico">🌾</div><div class="nm">Shijiazhuang</div><div class="cn">石家庄</div>
+        <div class="feat">Gateway to Chengde Mountain Resort · Zhengding ancient city temples</div></a>
+      <a href="planner.html?city=taiyuan" class="city-card">
+        <span class="lite-badge">filling</span>
+        <div class="ico">🏺</div><div class="nm">Taiyuan</div><div class="cn">太原</div>
+        <div class="feat">Shanxi cave temples · Pingyao ancient city nearby · aged vinegar culture</div></a>
+      <a href="planner.html?city=xining" class="city-card">
+        <span class="lite-badge">filling</span>
+        <div class="ico">🏔️</div><div class="nm">Xining</div><div class="cn">西宁</div>
+        <div class="feat">Kumbum Monastery · Qinghai Lake day trip · Tibetan plateau gateway</div></a>
+      <a href="planner.html?city=yinchuan" class="city-card">
+        <span class="lite-badge">filling</span>
+        <div class="ico">🌙</div><div class="nm">Yinchuan</div><div class="cn">银川</div>
+        <div class="feat">Western Xia pyramid tombs · desert dunes · Hui Muslim halal cuisine</div></a>
+    </div>
+    <p class="city-more">"filling" = highlights available, rich local tips coming soon · <a href="planner.html" style="color:var(--red);font-weight:700">Open the full planner →</a></p>
+  </div>
+</section>
+
+<!-- CITY GUIDES SEO SECTION -->
+<section class="section" style="padding-top:0" id="city-guides">
+  <div class="wrap">
+    <p class="eyebrow">In-depth travel guides</p>
+    <h2 class="h2">City Travel Guides for Foreigners</h2>
+    <p class="lead">Each guide covers real opening hours, metro directions, ticket prices, insider tips, and answers to the questions every first-time visitor actually asks.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:28px">
+      <a href="cities/shanghai.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:2px solid #e11d48;text-decoration:none;color:inherit;transition:.15s;position:relative" onmouseover="this.style.background='#fff8f0'" onmouseout="this.style.background='#fff'">
+        <div style="font-size:28px;margin-bottom:6px">🏙️</div>
+        <div style="font-weight:700;font-size:15px">Shanghai Guide ⭐</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">The Bund · French Concession · Disneyland</div>
+      </a>
+      <a href="cities/beijing.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🏯</div>
+        <div style="font-weight:700;font-size:15px">Beijing Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Forbidden City · Great Wall · hutongs</div>
+      </a>
+      <a href="cities/chengdu.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🐼</div>
+        <div style="font-weight:700;font-size:15px">Chengdu Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Panda Base · hotpot · Sichuan opera</div>
+      </a>
+      <a href="cities/guangzhou.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🍤</div>
+        <div style="font-weight:700;font-size:15px">Guangzhou Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Dim sum · Canton Tower · Chen Clan</div>
+      </a>
+      <a href="cities/hangzhou.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🌸</div>
+        <div style="font-weight:700;font-size:15px">Hangzhou Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">West Lake · Longjing tea · silk</div>
+      </a>
+      <a href="cities/suzhou.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🏯</div>
+        <div style="font-weight:700;font-size:15px">Suzhou Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">9 UNESCO gardens · canals · Silk heritage</div>
+      </a>
+      <a href="cities/chongqing.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🌶️</div>
+        <div style="font-weight:700;font-size:15px">Chongqing Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">8D city · spiciest hotpot · Hongya Cave</div>
+      </a>
+      <a href="cities/changsha.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🌶️</div>
+        <div style="font-weight:700;font-size:15px">Changsha Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Mao's birthplace · street food · Lady Dai</div>
+      </a>
+      <a href="cities/harbin.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">❄️</div>
+        <div style="font-weight:700;font-size:15px">Harbin Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Ice Festival · Russian heritage · -30°C</div>
+      </a>
+      <a href="cities/kunming.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🌿</div>
+        <div style="font-weight:700;font-size:15px">Kunming Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Spring City · Yunnan gateway · Stone Forest</div>
+      </a>
+      <a href="cities/lanzhou.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🍜</div>
+        <div style="font-weight:700;font-size:15px">Lanzhou Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Hand-pulled noodles · Silk Road · Yellow River</div>
+      </a>
+      <a href="cities/xian.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🗿</div>
+        <div style="font-weight:700;font-size:15px">Xi'an Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Terracotta Army · City Wall cycling · Muslim Quarter</div>
+      </a>
+      <a href="cities/nanjing.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🏛️</div>
+        <div style="font-weight:700;font-size:15px">Nanjing Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Sun Yat-sen Mausoleum · Presidential Palace · Qinhuai River</div>
+      </a>
+      <a href="cities/fuzhou.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🌳</div>
+        <div style="font-weight:700;font-size:15px">Fuzhou Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Three Lanes · jasmine tea · seafood</div>
+      </a>
+      <a href="cities/haikou.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🌴</div>
+        <div style="font-weight:700;font-size:15px">Haikou Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Visa-free · tropical island · Qilou street</div>
+      </a>
+      <a href="cities/guiyang.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🌿</div>
+        <div style="font-weight:700;font-size:15px">Guiyang Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Hidden gem · sour-spicy cuisine · Huangguoshu</div>
+      </a>
+      <a href="cities/hohhot.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🐑</div>
+        <div style="font-weight:700;font-size:15px">Hohhot Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Mongolian grasslands · yurt stays · lamb</div>
+      </a>
+      <a href="cities/jinan.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">⛲</div>
+        <div style="font-weight:700;font-size:15px">Jinan Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">72 springs · Mount Tai base · artesian city</div>
+      </a>
+      <a href="cities/hefei.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">🌿</div>
+        <div style="font-weight:700;font-size:15px">Hefei Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Huangshan gateway · Anhui cuisine · Li Hongzhang</div>
+      </a>
+      <a href="cities/changchun.html" style="display:block;padding:16px;background:#fff;border-radius:12px;border:1px solid #e9e6df;text-decoration:none;color:inherit;transition:.15s" onmouseover="this.style.borderColor='#e11d48'" onmouseout="this.style.borderColor='#e9e6df'">
+        <div style="font-size:28px;margin-bottom:6px">❄️</div>
+        <div style="font-weight:700;font-size:15px">Changchun Guide</div>
+        <div style="font-size:12px;color:#5b6472;margin-top:3px">Last Emperor palace · FAW birthplace · film city</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <p class="eyebrow">Why it's different</p>
+    <h2 class="h2">Not another "AI itinerary generator"</h2>
+    <p class="lead">Most AI trip planners hallucinate wrong hours and send you to closed museums. Here's what makes ours actually reliable.</p>
+    <div class="why">
+      <div class="why-item">
+        <div class="e">🚫</div>
+        <h4>Closed-day awareness</h4>
+        <p>The system knows which museums close on Mondays, which temples need advance booking, and which spots are "night only." Conflicts are automatically resolved — not silently ignored.</p>
+      </div>
+      <div class="why-item">
+        <div class="e">🗺️</div>
+        <h4>Route optimization</h4>
+        <p>A real travel-time matrix clusters nearby spots together. Day attractions go in the morning, night spots in the evening. You never zig-zag across a city because the AI didn't look at a map.</p>
+      </div>
+      <div class="why-item">
+        <div class="e">📚</div>
+        <h4>Human-verified facts</h4>
+        <p>Every ticket price, opening hour, and metro stop is manually checked — not generated. AI shapes the schedule; the facts underneath are real and current.</p>
+      </div>
+      <div class="why-item">
+        <div class="e">🈚</div>
+        <h4>Designed for "no Chinese"</h4>
+        <p>Every attraction has English-friendliness notes, WeChat booking guides, and local tips specifically for visitors who don't read Chinese characters.</p>
+      </div>
+      <div class="why-item">
+        <div class="e">🧩</div>
+        <h4>Plan like a game</h4>
+        <p>Drag spots onto a timeline, watch timing and budget update live. You can override anything the AI suggests — it's a starting point, not a locked itinerary.</p>
+      </div>
+      <div class="why-item">
+        <div class="e">💸</div>
+        <h4>Real budget picture</h4>
+        <p>Ticket costs add up automatically as you plan. Add your flight origin and travel style for a full trip cost estimate — flights, hotels, food, and activities included.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PASSPORT TEASER -->
+<section class="section" style="padding-top:0" id="passport">
+  <div class="wrap">
+    <div class="passport">
+      <div>
+        <p style="font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px">Collect · Keep · Share</p>
+        <h3>Your China passport, one city at a time</h3>
+        <p>Every city you plan earns a virtual stamp. Collect all 31 — and share your map with friends to show where you've been (or where you're going).</p>
+        <a class="btn btn-primary" href="passport.html" style="margin-top:22px">Open my passport →</a>
+      </div>
+      <div>
+        <div class="stamps">
+          <div class="stamp on">🌶️</div><div class="stamp on">🐼</div><div class="stamp">🏯</div>
+          <div class="stamp">🏙️</div><div class="stamp">🏔️</div><div class="stamp">🌊</div>
+          <div class="stamp">🍜</div><div class="stamp">🏮</div><div class="stamp">🌸</div>
+          <div class="stamp">⛩️</div><div class="stamp">🐉</div><div class="stamp on">⚔️</div>
+        </div>
+        <p style="color:#9a94aa;font-size:12px;margin-top:10px;text-align:center">3 / 31 cities explored</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ TEASER -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div style="background:#fff;border:1px solid var(--line);border-radius:24px;padding:44px 40px;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center;box-shadow:var(--shadow)">
+      <div>
+        <p class="eyebrow" style="text-align:left">Not sure where to go?</p>
+        <h3 style="font-size:clamp(22px,3vw,30px);font-weight:900;letter-spacing:-.02em;margin-top:8px">Find your matching Chinese city in 60 seconds</h3>
+        <p style="color:var(--muted);margin-top:10px;font-size:15px">Answer 6 questions about your travel style — we'll match you to the city that fits how you actually travel, then drop you straight into a plan.</p>
+        <a class="btn btn-primary" href="quiz.html" style="margin-top:20px">✨ Take the quiz →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#fff4e6;border-radius:14px;padding:16px;text-align:center;border:1px solid #fddcba">
+          <div style="font-size:28px">🌶️</div>
+          <div style="font-size:13px;font-weight:800;margin-top:6px">Changsha</div>
+          <div style="font-size:11.5px;color:var(--muted)">Foodie · nightlife · bold</div>
+        </div>
+        <div style="background:#f0fdf4;border-radius:14px;padding:16px;text-align:center;border:1px solid #bbf7d0">
+          <div style="font-size:28px">🐼</div>
+          <div style="font-size:13px;font-weight:800;margin-top:6px">Chengdu</div>
+          <div style="font-size:11.5px;color:var(--muted)">Pandas · slow life · tea</div>
+        </div>
+        <div style="background:#eff6ff;border-radius:14px;padding:16px;text-align:center;border:1px solid #bfdbfe">
+          <div style="font-size:28px">🏯</div>
+          <div style="font-size:13px;font-weight:800;margin-top:6px">Beijing</div>
+          <div style="font-size:11.5px;color:var(--muted)">History · culture · grand</div>
+        </div>
+        <div style="background:#fdf4ff;border-radius:14px;padding:16px;text-align:center;border:1px solid #e9d5ff">
+          <div style="font-size:28px">🏙️</div>
+          <div style="font-size:13px;font-weight:800;margin-top:6px">Shanghai</div>
+          <div style="font-size:11.5px;color:var(--muted)">Modern · cosmopolitan · art</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="final">
+      <h2>Your China trip starts right now</h2>
+      <p>No sign-up. No app. Just pick a city and start building.</p>
+      <div class="cta-row" style="margin-top:24px">
+        <a class="btn btn-primary btn-lg" href="planner.html">🗺️ Plan my China trip — free</a>
+        <a class="btn btn-ghost btn-lg" href="quiz.html">✨ Find my city first</a>
+      </div>
+      <p class="small-note">First 10 AI plans free · Print &amp; copy always free · No account needed</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:#fff8f0;border-top:1px solid #ffe0b2;padding:36px 0;">
+  <div class="wrap" style="max-width:760px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+    <div style="flex-shrink:0;font-size:48px;line-height:1;">📖</div>
+    <div style="flex:1;min-width:220px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#e65100;font-weight:700;margin-bottom:4px;">Before You Go</div>
+      <div style="font-size:17px;font-weight:800;color:#1a1a2e;margin-bottom:4px;">Lonely Planet China Travel Guide</div>
+      <div style="font-size:13px;color:#666;margin-bottom:12px;">193 reviews · 4.5★ · Covers Beijing, Shanghai, Guangdong &amp; more — the classic companion for first-timers and return visitors.</div>
+      <a href="https://amzn.to/4peKQHz" target="_blank" rel="noopener sponsored"
+         style="display:inline-flex;align-items:center;gap:6px;background:#ff9900;color:#111;font-weight:700;font-size:13px;padding:9px 18px;border-radius:8px;text-decoration:none;">
+        🛒 View on Amazon →
+      </a>
+      <span style="display:block;font-size:11px;color:#999;margin-top:6px;">Affiliate link — supports this free tool at no extra cost to you.</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo"><span class="mark">游</span>Wander China</div>
+    <div>31 Chinese cities · 372+ attractions · AI trip planner · Free to use</div>
+    <div><a href="planner.html" style="color:var(--red);font-weight:700">Start planning →</a></div>
+  </div>
+</footer>
+
+<script>
+// City cards link through to planner with city param — planner already handles ?city= param
+// If planner doesn't yet auto-load from URL, city cards fall back to opening planner.html
+// (the planner's init() reads citySel which gets set to default)
+</script>
+</body>
+</html>

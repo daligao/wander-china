@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Nikola Tesla?</title>
+<meta name="description" content="He worked for Edison, then quit. He won the War of Currents. He gave away his royalties to save a friend. He died alone in a hotel room, penniless, with the future in his head. 8 decisions.">
+<meta property="og:title" content="What Would You Do If You Were Tesla?">
+<meta property="og:description" content="8 decisions across the life of the man who lit the world — and died broke. Would you have made the same bets?">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/tesla-simulator.html">
+<style>
+:root{
+  --bg:#F0F4FA;--card:#F8FAFF;--ink:#0A0F1E;--muted:#5A6A8A;--line:#C8D4E8;
+  --accent:#1B3A8C;--accent-bg:#EEF3FC;
+  --right:#2A6B4B;--right-bg:#E8F5EE;--wrong:#8B2020;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(240,244,250,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#1A2A4A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B0C4E0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#2A3A6A;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.15);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#1A2A4A;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B0C4E0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#1A2A4A;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.quote-block{background:var(--ink);color:#EEF3FC;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#8090B0;margin-top:12px;font-family:var(--mono);}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#1A2A4A;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#fff;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B0C4E0;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.cta-box{background:var(--accent);color:#fff;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#A0C4FF;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Nikola Tesla</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #14</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Tesla?</h1>
+  <p class="cover-sub">He arrived in New York with four cents in his pocket and a letter to Edison. He won the War of Currents against the most powerful inventor alive. He gave away the royalties that would have made him the richest man in America — to save a friend. He died alone in Room 3327 of the New Yorker Hotel. The world he imagined is the one you live in. <strong>8 decisions. Would you have made them?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Nikola Tesla</strong> (1856–1943) · Serbian-American inventor · Pioneer of <strong>alternating current (AC)</strong> electricity · Held 300+ patents · Won the War of Currents against Thomas Edison · Worked with Westinghouse · Built the Wardenclyffe Tower to transmit wireless power globally · Died penniless in a New York hotel room · Awarded the Edison Medal in 1917 (he almost refused it).</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1884, New York City</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Promised $50,000</span></div>
+<div class="year-banner">1884</div>
+<div class="timeline-dot">New York City · Age 28</div>
+<div class="narrative">
+  <p>You arrived in New York with four cents in your pocket, a book of poems, and a letter of introduction to Thomas Edison from Charles Batchelor: <em>"I know two great men. You are one of them. The other is this young man."</em></p>
+  <p>Edison hired you on the spot. Within months you are doing the work his other engineers cannot — redesigning Edison's DC dynamos, working 20-hour days, solving problems that have stumped the laboratory. Edison is impressed, in his way.</p>
+  <p>One evening Edison tells you, somewhat casually, that if you can improve his DC generator designs and solve the problems he has been unable to fix, he will pay you $50,000. In today's terms, roughly $1.6 million.</p>
+  <p>You work for months. You solve every problem. You return to Edison to collect. Edison looks at you and laughs. "Tesla," he says, "you don't understand our American humor."</p>
+  <p>There is no $50,000. There was never going to be $50,000. He offers you a $10-per-week raise instead.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Broken Promise</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Edison has cheated you of $50,000 and laughed about it. What do you do?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Accept the raise and stay. Edison is the most powerful name in electricity. His network and resources are worth more than one broken promise.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">B</span><span class="dopt-body">Resign immediately. You cannot work for a man who cheats and calls it a joke. Start your own laboratory.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">Stay but demand the payment in writing. If he won't commit, then you'll negotiate a new arrangement before doing another day's work.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Tesla actually did</div>
+      <p><strong>You quit the most powerful name in electricity over a joke — then spend the next two years digging ditches for $2 a day.</strong> Tesla resigned and left Edison's laboratory in 1885. He spent nearly two years in poverty — at one point digging ditches for $2 a day — before finding investors willing to fund his AC research. The break from Edison was total and permanent. The two men became rivals in one of history's most consequential technology battles. Tesla later said that leaving Edison was the best decision of his professional life, and the $50,000 incident was the clearest thing Edison ever did for him — it showed him exactly who he was dealing with.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The War of Currents</span></div>
+<div class="year-banner">1888</div>
+<div class="timeline-dot">Pittsburgh, Pennsylvania · Age 32</div>
+<div class="narrative">
+  <p>You have found your partner: George Westinghouse, a businessman who understands what AC electricity can do that DC cannot. DC current degrades over distance — it can only power a city block or two from its source. AC current can be transformed to high voltages and transmitted hundreds of miles. AC is the future of electrification. This is not a close call technically.</p>
+  <p>But Edison has made DC his empire. He has invested everything — reputation, money, patents, political relationships — in direct current. And now he is fighting back. He holds public demonstrations in which he electrocutes dogs, calves, and eventually a circus elephant named Topsy with AC power, calling it "Westinghoused" — trying to make your technology synonymous with death. The New York State Prison is considering using AC electricity for executions, calling it the "electric chair." Edison is whispering in their ears.</p>
+  <p>Westinghouse asks you to tour the country and publicly demonstrate AC's safety. You are a poor public speaker. You dislike crowds. But your technical demonstrations — drawing artificial lightning from your body, lighting a glass tube by holding it in a field of alternating current — are extraordinary. Nobody who sees them forgets them.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Public Scientist</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Edison is killing animals with your technology to discredit it. Westinghouse wants you to go public. Do you become the face of AC?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">A</span><span class="dopt-body">Yes. Give the demonstrations. Let people see what AC actually does. A live human being holding a glowing tube is a more powerful argument than any pamphlet.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">Stay in the laboratory. Public demonstrations are Edison's territory. Win the technical argument with patents and engineering, not theatre.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Let Westinghouse's team handle public relations. Your value is your mind, not your showmanship.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Tesla actually did</div>
+      <p><strong>You pass 250,000 volts through your own body to prove a point — and it works.</strong> Tesla gave the demonstrations — and they were electrifying, literally. At the 1893 World's Columbian Exposition in Chicago, he and Westinghouse lit 100,000 electric bulbs with AC power, powering the entire "White City" for the first time in history. Tesla passed 250,000 volts through his body, producing sparks and glowing tubes, while standing perfectly unharmed. The public was transfixed. Edison's DC could not have lit the exposition — the distance from the power source was too great. The War of Currents effectively ended that year. AC is the current standard everywhere in the world today.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>The present is theirs. The future, for which I really worked, is mine.</q>
+  <div class="q-attr">— Nikola Tesla</div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Royalties</span></div>
+<div class="year-banner">1897</div>
+<div class="timeline-dot">New York City · Age 41</div>
+<div class="narrative">
+  <p>The AC system has won. Niagara Falls is now generating AC electricity and sending it to Buffalo, New York — the first large-scale AC power transmission in history. Your name is famous. Your patents with Westinghouse are worth a fortune. You are owed royalties on every AC motor and transformer sold — which, given that the world is now electrifying itself with AC, will eventually amount to an enormous sum.</p>
+  <p>George Westinghouse comes to you privately. The Westinghouse company is in financial trouble — the costs of the War of Currents, the Niagara project, legal battles, have left the company strained. The royalty payments to you are the largest liability on Westinghouse's books. If they continue, the company may fail.</p>
+  <p>Westinghouse was the man who believed in you when no one else did. He gave you the resources to prove AC worked. He fought Edison alongside you.</p>
+  <p>The royalties, by some estimates, would eventually total $12 million — roughly $400 million today. They are legally yours.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Royalties</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Westinghouse needs you to tear up your royalty contract to save the company. The payments would eventually be worth hundreds of millions. What do you do?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">A</span><span class="dopt-body">Tear up the contract. Westinghouse believed in you. The work matters more than the money. You will find other ways to fund your research.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Keep the contract. The royalties are your only financial security. Without them, every future experiment depends on finding new investors.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">Renegotiate to a lower rate. Give Westinghouse relief but keep some income stream. A full surrender is not necessary.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Tesla actually did</div>
+      <p><strong>You hand back $400 million in today's money to a man who doesn't expect it — and you do it without hesitating.</strong> Tesla tore up the contract on the spot. He told Westinghouse: "You have been a good friend to me, George, and I want to do something for you. Here — tear up that contract." Westinghouse protested. Tesla insisted. The royalties were gone. The Westinghouse company survived. Tesla spent the remaining 46 years of his life perpetually dependent on investors, donors, and his own dwindling resources. He never had stable financial security again. He later said he had no regrets. His laboratory was funded by other means; his ideas were not for sale.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Tower</span></div>
+<div class="year-banner">1901</div>
+<div class="timeline-dot">Wardenclyffe, Long Island · Age 45</div>
+<div class="narrative">
+  <p>You have a vision that makes AC power transmission look modest by comparison: a tower that can transmit not just information but energy — electrical power — wirelessly across the globe. Anyone on Earth could receive electricity through the ground beneath their feet. No wires. No utility companies. Energy as free and universal as air.</p>
+  <p>J.P. Morgan, the most powerful financier in America, has agreed to fund a smaller version of the project: a wireless communication tower on Long Island, Wardenclyffe, that would compete with Marconi's radio. Morgan wants a commercial product. You want to change the structure of human civilization.</p>
+  <p>As construction progresses, you begin telling Morgan the real scope of your vision — free wireless power for everyone. Morgan's response is swift and brutal:</p>
+  <div class="dialogue">"If anyone can draw on the power, where do I put the meter?"</div>
+  <p>Morgan withdraws his funding. The tower is half-built. You have invested everything you have in it.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Tower Stands Half-Built</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Morgan has pulled his funding. The tower is unfinished. Do you keep trying to complete it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">A</span><span class="dopt-body">Keep trying. Write to every potential investor. Mortgage everything. The tower is the most important thing you have ever attempted. It cannot be abandoned.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Pivot. Build a smaller, commercial version of wireless transmission — something Morgan and other investors will fund. Compromise on scale to survive.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">Abandon the tower. The vision was right but the timing was wrong. Move to other patents and rebuild your financial base before trying again.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What Tesla actually did</div>
+      <p><strong>You spend the next sixteen years writing letters no one answers, mortgaging everything, and watching the tower rot — then it's demolished for scrap while you're somewhere else.</strong> Tesla kept trying. He wrote hundreds of letters seeking investors. He mortgaged the Wardenclyffe property. He reduced his staff, stopped paying them, and eventually stopped paying himself. He had periods of breakdown, periods of recovery, periods of brilliant patent work in other areas. The tower was never completed. In 1917, his creditors foreclosed on the property. The tower was demolished for scrap metal to pay debts. Tesla was not there to see it. He lived in New York hotels for the rest of his life, often unable to pay his bills, running tabs that hotels extended him out of respect for his name.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Nobel Prize That Wasn't</span></div>
+<div class="year-banner">1915</div>
+<div class="timeline-dot">New York City · Age 59</div>
+<div class="narrative">
+  <p>The New York Times has reported that you and Thomas Edison will share the Nobel Prize in Physics. The announcement appears to be confirmed. It would be the formal recognition that your work has always deserved — and the two of you, rivals for thirty years, sharing the prize would be one of history's great reconciliations.</p>
+  <p>Then nothing happens. The Nobel Committee awards the 1915 prize to William Henry Bragg and William Lawrence Bragg for X-ray crystallography. Your name is not mentioned. The story quietly disappears.</p>
+  <p>Rumors circulate — and persist to this day — that one or both of you refused to share the prize with the other. The Nobel Committee never officially confirmed or denied this.</p>
+  <p>You are fifty-nine years old. The Wardenclyffe Tower is two years from demolition. Your financial situation is desperate. You are living at the Waldorf-Astoria and cannot pay your bill. Your laboratory burned down in 1895, destroying years of work. Marconi has received credit — and will receive the Nobel Prize — for radio, using seventeen of your patents.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Prize</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Rumors say you may have refused to share the Nobel Prize with Edison. If offered a prize conditional on sharing it with the man who cheated you — what do you do?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Accept it. Shared or not, the recognition matters. Your financial situation is desperate. Use the prize money and the platform.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">Refuse to share it with Edison. Principle matters more than the prize. What Edison did to you — and to others — should not be rewarded with a Nobel Medal standing next to your name.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">Accept any prize offered regardless of conditions. You are nearly 60, broke, and your legacy needs anchoring now, not later.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Tesla actually did (probably)</div>
+      <p><strong>You possibly turn down the Nobel Prize rather than stand next to Thomas Edison. The records say "maybe." Your principles say "obviously."</strong> The historical record is genuinely unclear. Most researchers believe Tesla refused to share the prize with Edison, though neither party ever confirmed this. What is known: Tesla received the Edison Medal from the American Institute of Electrical Engineers in 1917 — he almost refused that too, and had to be persuaded to attend the ceremony. He did attend, gave a speech about his early work, and was received with a standing ovation. He later said the medal meant little to him. He never won the Nobel Prize. Edison never won it either.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Pigeons</span></div>
+<div class="year-banner">1922</div>
+<div class="timeline-dot">New York City · Age 66</div>
+<div class="narrative">
+  <p>You have lived in hotels for years — the Waldorf-Astoria when you could afford it, lesser establishments when you couldn't. Your room at the Hotel St. Regis is paid for by friends and admirers who quietly arrange the bill.</p>
+  <p>You have taken to feeding the pigeons of Bryant Park every day. You know each bird individually. There is one white female pigeon who you love with a feeling you have not had for any human being. You have written about her: "I loved that pigeon as a man loves a woman, and she loved me." When she died, you held her in your hands and felt that something central in your life had gone out.</p>
+  <p>Your friends — those who remain — worry that you have become isolated. Your ideas are enormous and the world is not listening. You are still filing patents. You are still thinking. But you spend much of each day alone, feeding birds.</p>
+  <p>A young journalist asks to interview you. He says he is writing about the forgotten geniuses of electricity. You know what "forgotten" means. You also know what you are still working on. Your current project involves transmitting energy not through wires or even through air, but through the earth itself.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Interview</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">A journalist calls you "forgotten." Do you give the interview and tell him what you are still working on?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">A</span><span class="dopt-body">Give the interview. Describe the new experiments. Let people know you are not finished. The ideas deserve to be heard even if the money is gone.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Decline. The press has misrepresented your work before. Better to publish through scientific channels than through journalism.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">Give the interview but say nothing about current projects. Protect the ideas until they are funded and built.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What Tesla actually did</div>
+      <p><strong>You give the interview. The press calls you an eccentric genius. Both words are accurate, and only one of them is a compliment.</strong> Tesla gave many interviews in his later years — sometimes grand claims about death rays, particle beams, and wireless power that the press seized on and distorted. He became a figure of fascination: the eccentric genius living alone in a hotel, surrounded by pigeons and ideas. Some interviewers treated him sympathetically. Others made him seem like a crank. The truth was somewhere in between — his later theoretical work included concepts that physicists would not catch up to for decades, alongside some genuine dead ends. He kept giving interviews until shortly before his death, because he believed the ideas had to survive even if he could not.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Death Ray</span></div>
+<div class="year-banner">1934</div>
+<div class="timeline-dot">Hotel New Yorker, Room 3327 · Age 78</div>
+<div class="narrative">
+  <p>You have been living at the Hotel New Yorker for three years, in Room 3327. The hotel has given you the room at no charge out of respect for your name. You eat at Delmonico's restaurant, where they reserve a table for you. You feed the pigeons from the window ledge.</p>
+  <p>You are working on what you call a "teleforce weapon" — a directed-energy beam that could destroy aircraft at a distance of 250 miles, fired from a tower. You believe this technology, if shared with all nations simultaneously, would make war impossible — the threat of mutual destruction so absolute that no country would dare attack another.</p>
+  <p>You offer the plans to multiple governments — the United States, the United Kingdom, Canada, Yugoslavia, the Soviet Union. You are asking for funding to build a prototype. The Great Depression has made military spending cautious. Most dismiss you. The Soviets pay you $25,000 for information but do not fund development.</p>
+  <p>You are seventy-eight years old and have no money. The "death ray" is your last major project. Whether it would work, no one has ever tested.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Last Invention</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have invented what you believe is a weapon that could end all wars — by making attack impossible. No government will fund it. Do you keep pushing?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">A</span><span class="dopt-body">Keep pushing. Send the proposals to every government that might listen. If even one country builds it and shares the technology, the argument about mutual deterrence can begin.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">Let it go. At 78, the energy it takes to fight for funding is the same energy the project needs. Document the concept and let future engineers build it.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">Publish the principles openly and completely. If the idea is as important as you believe, make it available to every scientist in the world simultaneously.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Tesla actually did</div>
+      <p><strong>When you die, government agents are in your hotel room within hours — seizing papers that three countries have been watching for a decade.</strong> Tesla kept pushing until he physically couldn't. He sent proposals, gave interviews claiming the weapon was real and functional, and continued corresponding with governments into the early 1940s. When he died in January 1943, agents from the Office of Alien Property Custodian seized all his papers within hours. The FBI had the files reviewed by scientists who reported the technical descriptions were not advanced enough to constitute a threat or a major breakthrough. The files were eventually declassified. No "teleforce" weapon was ever built from Tesla's designs — but the basic concept of directed energy weapons is now very real. Tesla's notes have been studied by weapons researchers since the 1940s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · Room 3327</span></div>
+<div class="year-banner">1943</div>
+<div class="timeline-dot">Hotel New Yorker, New York · Age 86</div>
+<div class="narrative">
+  <p>January 7, 1943. You have not been seen for several days. A maid enters Room 3327 and finds you on the bed, your body cold. You died sometime during the night of January 7th, alone.</p>
+  <p>On your desk are notebooks, letters, and the beginnings of a paper on cosmic ray physics. The white pigeon you loved is long dead. The Wardenclyffe Tower was demolished 26 years ago. The AC patents that should have made you rich were torn up half a century ago.</p>
+  <p>Somewhere, in factories and cities and homes across the world, alternating current is humming through every wire on the planet. The system you invented is powering everything — refrigerators, radios, hospital equipment, the lights in the hotel where you died. Your name is not on any of it.</p>
+  <p>The question is not what you left behind. The question is what you would have changed.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The One Thing</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">If you could go back and change one thing about how you lived your life as a scientist, what would it be?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Keep the Westinghouse royalties. The financial security would have let you fund Wardenclyffe yourself, without Morgan, without compromise.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Make peace with Edison earlier. The War of Currents consumed resources and energy that could have gone into the work. The feud served no one in the end.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">Nothing. The ideas were right. The work was right. The compromises others made to get rich — that would have been the real loss. The future belongs to the work, not the man.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What Tesla actually said</div>
+      <p><strong>He died with no money, no family, and a world that ran entirely on his inventions. His notes say he had no regrets. The notes appear to be telling the truth.</strong> Tesla left notes suggesting he believed he had lived exactly as he should have. He wrote: "I do not think there is any thrill that can go through the human heart like that felt by the inventor as he sees some creation of the brain unfolding to success." He never expressed regret about tearing up the Westinghouse contract. He never expressed regret about refusing to commercialize his ideas at the expense of their scope. What he expressed, repeatedly, was frustration that the world was not yet ready for what he saw. In 2018, a Serbian-American electric vehicle company took his name. Every electric motor in that company's cars is a descendant of his 1887 AC induction motor patent. His name is finally on it.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Tesla's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="cta-box">
+  <p>Tesla lit the world and died with four cents to his name — the same amount he arrived with. The question his life poses is still open: what is a discovery worth if the discoverer gets none of it? <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/index.html#simulators">→ All Life Simulators — Van Gogh, Einstein, Hawking, Jobs, Curie and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/vangogh-simulator.html" style="color:var(--accent)">Van Gogh Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="The Man Who Gave Away a Fortune and Meant It";body="You matched Tesla at every turn — walking out on Edison, giving the demonstrations, tearing up the royalties, staying with the Tower long after it made financial sense. The detail that most people cannot replicate is Decision 3: giving back $400 million on principle, with no negotiation, no conditions, and no regret. Tesla did it because Westinghouse had believed in him when no one else would. Most people who think they understand loyalty have never had that amount of money in their hands to give away. You have his decisions. Whether you have his reasons is a different question.";}else if(pct>=0.625){title="The Inventor Who Almost Chose the Work";body="You followed Tesla on most of the decisions that required choosing the idea over the money. The gaps are telling: the moments where a financially reasonable alternative existed, you sometimes took it. Tesla never did — not once, across six decades, not even when he was digging ditches for $2 a day after quitting Edison. His consistency looks like stubbornness. It was something else: he genuinely could not imagine the money mattering more than the work. You mostly agreed. Mostly is the word that puts you in this category, not the higher one.";}else if(pct>=0.375){title="The Scientist Who Would Have Died Comfortable";body="You would have kept the royalties. You would have found a compromise at Wardenclyffe. You would have taken the Nobel Prize even standing next to Edison. These are not failures of vision — they are the choices that keep most inventors in business. Tesla made none of them. The trade was: financial ruin in exchange for a world that runs on your work for the next 100 years, with your name on none of it. You would have gotten the money. He got the legacy. Which one lasts longer is now a matter of historical record.";}else{title="The Engineer Who Stayed With Edison";body="You made the practical choices. Stayed with Edison, kept the royalties, let someone else chase the Tower, declined to pass 250,000 volts through your body in public. These are not wrong choices — they're the choices that build a normal career in science. Tesla's path required something that doesn't appear on any resume: the ability to lose everything, repeatedly, and still believe the next idea was worth more than financial security. You chose not to test that limit. The world you live in runs on electricity. Tesla's electricity. You just didn't want to go through what Tesla went through to make it."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

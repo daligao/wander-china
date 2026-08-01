@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ernest Shackleton Life Simulator — All 28 Men Came Home</title>
+<meta name="description" content="Make the same decisions as Ernest Shackleton — ship crushed by Antarctic ice, 28 men stranded, 800-mile open-boat journey. He brought every single one of them home.">
+<style>
+:root{
+  --bg:#EEF2F5;--card:#F3F7FA;--ink:#081018;--muted:#305060;--line:#C0D4DC;
+  --accent:#1A3050;--accent-bg:#DDE8F0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Antarctica · 1914–1916</div>
+  <h1>Could You Have Been<br>Ernest Shackleton?</h1>
+  <div class="cover-sub">His ship was crushed by Antarctic ice. His crew of 28 men were stranded on a frozen sea 1,200 miles from civilization, with no radio, no rescue coming, and temperatures that could kill a man in minutes. He brought every single one of them home. Eight decisions in the greatest survival story in history.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">28</div><div class="stat-l">Men stranded — all survived</div></div>
+    <div class="stat"><div class="stat-n">800</div><div class="stat-l">Miles across open ocean in a 22-foot boat</div></div>
+    <div class="stat"><div class="stat-n">635</div><div class="stat-l">Days until all were rescued</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · London, 1914 · Before Departure</div>
+<p class="narrative">The Imperial Trans-Antarctic Expedition — your third attempt at Antarctic glory — is ready to sail. The goal: cross the Antarctic continent on foot. It has never been done. But WWI has just begun and the Admiralty has sent a telegram suggesting you might want to offer your ship and crew to the war effort. You are 40 years old. You've spent years fundraising for this expedition. The crew has signed on. The stores are loaded. Your backers expect you to sail.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · War or Ice</div>
+  <div class="d-situation">Britain is going to war. Your Antarctic expedition is ready to sail. The Admiralty is giving you a choice. What do you do?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Telegraph the Admiralty offering everything — ship, stores, crew — and await their order</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. Sail immediately — you have commitments to backers and crew that outweigh a telegram</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Postpone the expedition — Antarctica will wait; the war won't</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Shackleton sent one word to the Admiralty: "Ready." He offered everything. Winston Churchill, then First Lord of the Admiralty, replied with one word in return: "Proceed." The expedition sailed. Ironically, this decision — putting the mission in the Admiralty's hands — showed a kind of self-discipline that would prove essential in the months ahead. When you lead 28 men through catastrophe, every decision has to be made on principle, not on impulse.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Weddell Sea, January 1915 · The Ice Closes</div>
+<p class="narrative">The Endurance has been trapped in pack ice since January. It is now October 1915. For nine months your ship has been held fast, drifting north with the ice floe, unable to move. Now the ice is shifting — and instead of releasing the ship, it is squeezing it. The wooden hull is groaning. The decks are buckling. The ship that was supposed to carry you across Antarctica is being slowly crushed to pieces around you. There are 28 men on this ship. The nearest inhabited place is 1,200 miles away.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · Abandon Ship</div>
+  <div class="d-situation">The Endurance is dying. You have three lifeboats and 28 men. The ice floe underneath you is drifting — but to where? When do you give the order to abandon ship?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Abandon ship now and camp on the ice — save the men before the ship goes down with them aboard</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Wait — maybe the ice will release the ship before it breaks up entirely</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Load the strongest lifeboat with the core crew and abandon the rest of the supplies</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Shackleton gave the order on October 27, 1915. They spent the next five months camping on the ice floe as it drifted north, dragging the three lifeboats. On November 21, 1915, the Endurance slipped beneath the ice. Shackleton later wrote that he did not let the men see his face as she went down. He had already suppressed his grief and was calculating the next move. The mission had changed: it was no longer about crossing Antarctica. It was about getting 28 men home alive.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Ice Floe Camp, December 1915 · Morale</div>
+<p class="narrative">It is Christmas Day on the ice. The men are cold, cramped, and five months into what was supposed to be a summer crossing. The ship is gone. Home is 1,200 miles away. Many of the men are losing hope. The cook has prepared a special meal — the only way to mark the day. You watch your men eat in near-silence. You know that morale is now a survival variable, as real as food or warmth. A man who stops believing he can survive will stop doing the things that keep him alive.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · Keeping Hope Alive</div>
+  <div class="d-situation">Your men need to believe they can survive. How do you sustain that belief through months of drifting on ice with no rescue coming?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Maintain full daily routines — every meal on time, every watch kept — normality is the opposite of despair</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Be completely honest with the men about how bad the situation is — they deserve to know</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Assign ambitious goals — give them tasks that require full attention and leave no room for fear</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Shackleton did all three — but the through-line was relentless normality. He kept the cook serving meals at regular times. He held evening entertainment sessions. He refused to let anyone wallow. He also managed the information carefully — never lying, but choosing what to emphasize. When crew members panicked or became difficult, he quietly assigned them to share a tent with him, keeping them close. His management of those 28 personalities across 635 days is studied in leadership courses to this day.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Weddell Sea, April 1916 · Into the Boats</div>
+<p class="narrative">The ice floe has broken up. You must launch the three small lifeboats — the largest is 22 feet long — into the Weddell Sea, one of the most dangerous bodies of water on Earth. The nearest land is Elephant Island, 100 miles north. It has no human inhabitants. No ship has ever called there. Getting to it means open-water sailing in Antarctic conditions with 28 men and gear packed into three tiny boats. But there is no alternative.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · Into the Open Sea</div>
+  <div class="d-situation">Three small boats, 28 men, Antarctic seas. How do you distribute the men between boats?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Split the difficult personalities across boats — put potential troublemakers near the leaders who can manage them</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Let men choose their own boats — they'll be more motivated with people they trust</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Assign by skill — strongest sailors in the weakest boat</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Shackleton distributed the men carefully — separating those who were becoming difficult or despairing, keeping them near steady personalities. He put himself in the smallest boat, the Stancomb Wills, to show the assignment wasn't a punishment. The seven-day journey to Elephant Island through icy, storm-tossed seas was brutal beyond description. Several men had severe frostbite. One experienced what appeared to be a mental breakdown. They reached Elephant Island on April 15, 1916 — the first time any of the men had stood on solid land in 497 days.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Elephant Island, April 1916 · The Decision</div>
+<p class="narrative">You are on Elephant Island. You and 27 others. No ships come here. No one knows where you are. Your only radio went down with the Endurance. The nearest inhabited outpost — South Georgia Island — is 800 miles away across the Drake Passage, the most violent stretch of open ocean on Earth. You have the James Caird, a 22-foot lifeboat. You and five of your best men could attempt to sail it to South Georgia and come back with rescue. Or you could wait and hope that someone comes looking, which they won't.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · The Impossible Voyage</div>
+  <div class="d-situation">Sail 800 miles across the most dangerous ocean in the world in a 22-foot open boat, or wait on an island where no help will come. What do you choose?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Sail the James Caird — the chance of making it is low but the certainty of waiting is death</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. Wait — the Drake Passage crossing is suicide; a passing ship might still see your signals</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Send one man in the smallest boat to try; keep the main crew together</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Shackleton sailed. He took five men in the James Caird and left 22 men on Elephant Island under the command of Frank Wild. The voyage that followed — 800 miles of hurricane-force seas, sleeping bag ice, a near-capsize in a rogue wave the size of a building — took 16 days. Navigator Frank Worsley took sextant readings through gaps in the storm clouds, finding their position by pure astronomical calculation. They reached South Georgia on May 10, 1916. The sailing is considered the greatest feat of small-boat navigation in history.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · South Georgia Island, May 1916 · The Mountain</div>
+<p class="narrative">You have reached South Georgia. But you've landed on the wrong side of the island — the whaling station is at Stromness, on the north side, across a mountain range that has never been crossed on foot. No map exists. It is winter. You, Tom Crean, and Frank Worsley are in frozen clothes with three days of food left. The men on Elephant Island have been waiting four months. You put a carpenter's adze through your boot soles for crampons and start climbing.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · The Mountain Crossing</div>
+  <div class="d-situation">No one has ever crossed South Georgia's mountains. You have no map, it is winter, and you have inadequate equipment. Do you attempt it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Go immediately — you have no time to wait for better conditions; every day is a day the men on Elephant Island don't have</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Wait on South Georgia until conditions improve — the crossing in winter is certain death</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Send one man to try to reach the station by boat while the others rest</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> They went immediately. The 36-hour crossing without sleep — climbing, rappelling, navigating by stars through passes no human had ever walked — is considered one of the great feats of exploration. At one point, trapped on a ridge in gathering darkness, Shackleton made the three men sit together and slide down an unknown slope into the dark, not knowing what was at the bottom. They landed in snow. They kept going. When they staggered into the Stromness whaling station at 3 PM on May 20, the station manager burst into tears.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · Elephant Island, August 1916 · The Rescue</div>
+<p class="narrative">It takes four attempts to reach Elephant Island — ice blocks three rescue ships. On August 30, 1916, the Yelcho (borrowed from the Chilean Navy) pushes through. Shackleton stands at the bow, scanning the shore through binoculars, counting the figures. He counts twenty-two. All twenty-two men left on Elephant Island have survived — 105 days alone on a desolate rock, living under two upturned lifeboats, eating penguins and seals. All twenty-eight men from the Endurance are alive.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The Count</div>
+  <div class="d-situation">You are approaching Elephant Island. You are counting the men on shore. What does it mean — truly mean — if even one is missing?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. One loss would have broken you — the mission was always about all of them, not most of them</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. One loss was always possible and statistically likely; any survivors would have been a miracle</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. The survival standard he set was impossible — he was lucky, not brilliantly skilled</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> All twenty-two men on Elephant Island had survived. Shackleton reportedly wept. He had organized everything — leaving the most capable man in charge, leaving more than enough food, leaving explicit instructions — with the explicit intention that all of them would live. Frank Wild, who commanded them on Elephant Island, kept their morale intact by waking them each morning with: "Roll up your sleeping bags, boys — the Boss may come today." He said it every single day for 105 days. He was right on day 105.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · London, 1919 · After</div>
+<p class="narrative">The Endurance expedition is the most extraordinary survival story in exploration history. Every man alive. But the world has changed — WWI has consumed it. Antarctic exploration seems quaint against trenches and gas and a million dead. The expedition has no triumphant reception. Shackleton speaks at some venues, writes a book, pays off creditors. He is already planning another Antarctic expedition. In 1922 he dies of a heart attack at 47, on the ship heading south, before the expedition begins.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · What This Was For</div>
+  <div class="d-situation">The expedition failed its original goal — no Antarctic crossing. But it succeeded at something else entirely. Which version of success matters?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. Bringing all 28 men home was always the only success that mattered — everything else was secondary</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. The original goal — crossing Antarctica — was the point; the survival was impressive but a consolation</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. Both failures and successes: failing the mission but succeeding at something more human</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> Shackleton died at 47 on South Georgia, not far from where he had crossed the mountains six years earlier. He was buried there, at his widow's request. Today the Endurance expedition is studied not as an exploration story but as one of history's most remarkable demonstrations of leadership under catastrophic failure. Business schools teach it. Military academies teach it. Psychologists study it. The lesson is not that Shackleton was extraordinarily lucky — it is that he made thousands of small decisions that collectively prevented catastrophe. He failed magnificently. He brought everyone home. Both are true.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Shackleton Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="darwin-simulator.html">
+      <span class="next-name">Charles Darwin</span>
+      <span class="next-desc">Another 19th-century voyage that changed everything — Darwin's Beagle journey lasted 5 years</span>
+    </a>
+    <a class="next-card" href="tesla-simulator.html">
+      <span class="next-name">Nikola Tesla</span>
+      <span class="next-desc">Another man who achieved the extraordinary and received almost none of the credit</span>
+    </a>
+    <a class="next-card" href="hawking-simulator.html">
+      <span class="next-name">Stephen Hawking</span>
+      <span class="next-desc">A man who refused to let physical limitation end his life's work — for 55 years</span>
+    </a>
+    <a class="next-card" href="nightingale-simulator.html">
+      <span class="next-name">Florence Nightingale</span>
+      <span class="next-desc">Another leader who made thousands of small decisions in a crisis — and changed what survived</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators →</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=Math.round(score/TOTAL*100);document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You think like Shackleton — which means you understand that leadership in catastrophe is not about heroism, it\'s about thousands of small decisions, all made with the same principle: everyone comes home. You would have brought them all back.';else if(score>=5)t.textContent='Strong survival instincts. You understood the core calculus — morale matters as much as food; the difficult men need the most attention; the impossible crossing is better than the certain death of waiting. A few hesitations crept in, but you\'d have saved most of them.';else if(score>=3)t.textContent='You grasped the scale of the situation but made a few choices that prioritized comfort or certainty over decisive action. In Antarctica, waiting for better conditions is not patience. It\'s dying slowly.';else t.textContent='You chose safety and certainty at multiple moments where Shackleton chose decisive, terrifying action. His genius was recognizing that in a survival situation, the most dangerous thing you can do is wait. Not every risk he took was rational. All of them were right.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F. Scott Fitzgerald Life Simulator — Gatsby, Zelda & the Long Fall | Ordinary Man Trying</title>
+<meta name="description" content="Relive F. Scott Fitzgerald's 8 pivotal decisions — from This Side of Paradise at 23 to The Great Gatsby's initial failure, Zelda's breakdown, Hollywood exile, and Tender is the Night written while everything fell apart.">
+<style>
+:root{
+  --bg:#F5F0E8;--card:#FAF7F2;--ink:#100C06;--muted:#483820;--line:#D8C8A8;
+  --accent:#7A5010;--accent-bg:#F0E4C8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,240,232,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#100C06;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B8A070;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#080604;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0E8D8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0E8D8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B8A070;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B8A070;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · F. Scott Fitzgerald</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #82 of 100</p>
+  <h1 class="cover-title">He Wrote the Jazz Age.<br>Then It Buried Him.</h1>
+  <p class="cover-sub">F. Scott Fitzgerald published his first novel at twenty-three, married Zelda on the strength of it, and for a few years was the most envied young writer in America. Then The Great Gatsby failed commercially. Then Zelda broke down. Then the Depression made the Jazz Age seem obscene in retrospect. By 1936 he was writing a series of essays for <em>Esquire</em> called "The Crack-Up" — the most honest account of literary failure and personal collapse ever published by an author in his own lifetime. He died in Hollywood at forty-four, writing a novel he didn't finish, largely forgotten. His books sold 72 copies the year he died.</p>
+  <div class="cover-facts">
+    <p>📖 <em>This Side of Paradise</em> published 1920, age 23 &nbsp;·&nbsp; 💚 <em>The Great Gatsby</em> 1925 — initial sales modest, later called the great American novel &nbsp;·&nbsp; 💔 Zelda Fitzgerald committed 1930, in and out of institutions &nbsp;·&nbsp; 🎬 Hollywood screenwriter 1937-1940 &nbsp;·&nbsp; ✍️ <em>The Last Tycoon</em> unfinished at death &nbsp;·&nbsp; Died December 21, 1940 · Age 44</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Fitzgerald's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1920</div>
+  <div class="timeline-dot">New York, USA · Age 23</div>
+  <div class="narrative">
+    <p>March 26, 1920: <em>This Side of Paradise</em> is published. April 3: you marry Zelda Sayre, the most beautiful woman in Montgomery, Alabama, who had broken the engagement when you were broke and reinstated it on the strength of the novel's advance. The book sells 40,000 copies in its first year. You and Zelda go to New York, drink too much, dance in fountains, ride on taxi rooftops, and generally conduct yourselves as if life is a celebration with no hangover scheduled. You are, for approximately three years, the avatars of an era. You define the Jazz Age even as you are living it.</p>
+    <p>Editors pay you enormous sums for short stories you write in weekends — <em>Saturday Evening Post</em> rates, which are the highest available. You spend the money as fast as it arrives. Zelda spends more. You move to Great Neck, Long Island, where you observe the parties of the very rich from the position of people who attend the parties but cannot quite afford them. You are taking notes. You do not know yet what they will become.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1920</div>
+    <p class="decision-q">At 23, Fitzgerald is the most promising young writer in America. His greatest danger at this moment is:</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Competition — other talented young writers (Hemingway, Dos Passos) will challenge his position, and he needs to produce work that establishes permanent superiority.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. The money — the <em>Saturday Evening Post</em> pays so well for commercial short stories that the economic incentive to write them consistently will crowd out the time and focus needed for serious novel-length work. This is exactly what happens.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Zelda — her demands for money, parties, and social position will distract him from writing in ways he cannot yet see.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Success itself — early fame makes it harder to develop artistically because the audience expects the same thing forever, and departing from what sold is financially risky.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+<p><strong>The Saturday Evening Post pays you more per story than most men earn in a month. You write twenty-eight of them between 1920 and 1925. The money arrives. The time for the real work does not.</strong></p>
+      <strong>The short story trap:</strong> Between 1920 and 1925, Fitzgerald wrote 28 short stories for the <em>Saturday Evening Post</em> and other magazines, earning rates that made him one of the highest-paid writers in America. The problem was not that these stories were bad (some are excellent) but that writing them to commercial specifications used the same creative energy he needed for the novels. He was aware of the trap and wrote about it in letters — but the bills kept arriving and the <em>Post</em> kept paying. The pattern of writing commercial stories to fund serious novel-writing became the financial structure of his entire career.
+    </div>
+  </div>
+
+  <div class="year-banner">1922</div>
+  <div class="timeline-dot">Great Neck, New York · Age 26</div>
+  <div class="narrative">
+    <p><em>The Beautiful and Damned</em> is published in 1922 — a darker, longer, more ambitious novel than <em>This Side of Paradise</em>, about a wealthy couple who destroy themselves through dissipation and waiting for an inheritance that arrives too late. Critics notice that Zelda and Scott are writing about themselves, which they are. The novel receives mixed reviews and sells respectably. You are not satisfied. You know there is a better book in you.</p>
+    <p>From your house in Great Neck, you can see, across the bay, the green light at the end of a dock. The parties you attend are across the water — the established rich, old money, the people for whom success is not something achieved but simply something inherited and therefore permanent. You are not them. You will never be them no matter how many <em>Saturday Evening Post</em> stories you write. The light at the end of the dock is the distance between the parties you attend and the parties you can never quite reach. You are starting to understand what your next novel is about.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1922</div>
+    <p class="decision-q">The green light at the end of Daisy's dock — what does it mean in The Great Gatsby?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. The American Dream specifically — a symbol of the promise of success and wealth that America offers to those willing to work for it.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. The thing you want that is always across the water — close enough to see but structurally unreachable, because the point is not to reach it but to reach toward it. The moment you reach it, it ceases to be the green light. Gatsby's tragedy is not that he fails to get Daisy but that he succeeds — and discovers she is not the light but the extinguishing of it.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. The past — the green light represents Daisy as she was five years earlier, before Gatsby left, and the desire to repeat the past is the novel's explicit theme.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. The corruption of the wealthy — the green color suggests envy and money, and the light represents the moral rot at the center of the old-money world Gatsby is trying to enter.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+<p><strong>The green light at the end of Daisy's dock is not the American Dream. It is the structure of all desire: close enough to see, structurally unreachable — and extinguished the moment you arrive.</strong></p>
+      <strong>The green light's meaning:</strong> Nick Carraway, watching Gatsby reach toward the light on the final page, says: "So we beat on, boats against the current, borne back ceaselessly into the past." The novel's final image holds past, desire, and futility simultaneously. Fitzgerald was aware that the light is not a simple symbol — he resisted the obvious readings in his letters. The green light works because it is simultaneously: the specific object of Gatsby's desire (Daisy), the American Dream (always beckoning, never arrived), and the impossibility of any future that equals the imagination's version of what the future should be. The boat against the current cannot stop beating. That is the tragedy.
+    </div>
+  </div>
+
+  <div class="year-banner">1925</div>
+  <div class="timeline-dot">Paris, France · Age 29</div>
+  <div class="narrative">
+    <p><em>The Great Gatsby</em> is published on April 10, 1925. Your editor, Maxwell Perkins, believes it is a masterpiece. Edith Wharton writes a polite note. T.S. Eliot calls it the first step forward American fiction has taken since Henry James. Hemingway, whom you met in Paris last year and whose early work you have championed to Perkins, says it is fine but that he will write something much better. The initial sales are 20,000 copies — decent, but not the enormous commercial success you needed to pay your debts. You had hoped for 75,000. The novel is not a failure but it is not the triumph you believed it deserved.</p>
+    <p>You go to parties. Zelda is dancing seriously now — she wants to be a professional ballerina, which is, at twenty-five, extremely late to begin serious training. You are both drinking too much. You are watching, through the parties and the drinking, for the material for the next novel. You will spend the next nine years writing it. When <em>Tender is the Night</em> is finally published in 1934, the Depression will have made its world look grotesque, and the reviews will be mixed.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1925</div>
+    <p class="decision-q">The Great Gatsby sells modestly on first publication. Fitzgerald knows it is his best work. How does the gap between his certainty and the market's verdict affect him?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. He adjusts his standards — if the public does not recognize his best work, he should write more commercial fiction and accept that literary and commercial success are incompatible.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. It creates a wound that never heals — the certainty that he had written something permanent that the world failed to recognize combines with the financial pressure of debts and Zelda's expenses to produce a sustained anxiety that underlies the nine-year delay before Tender is the Night.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. It motivates him — knowing Gatsby was underpublicized rather than underwritten, he campaigns for its recognition through friends and critics who will eventually vindicate it.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. It clarifies his position — the commercial disappointment of Gatsby confirms that he must choose between literary integrity and financial security, and he chooses literary integrity from this point forward.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+<p><strong>The Great Gatsby sells 20,000 copies in 1925 — not the 75,000 you needed, not the triumph you knew it deserved. You never stop believing in it. The vindication arrives twenty years after you are dead.</strong></p>
+      <strong>Gatsby's long delay:</strong> Fitzgerald never stopped believing in <em>Gatsby</em>. He pushed Scribner's to keep it in print, he cited it to critics, he compared his later work to it explicitly and anxiously. The gap between his certainty of its greatness and the public's relatively modest response created exactly the anxiety he described in "The Crack-Up": a man who knows his best work has been done and is not sure he can equal it, writing in a declining market, watching his wife deteriorate, spending more than he earns. <em>Gatsby</em> was vindicated after his death — it was assigned in high schools during World War II and has been in print ever since. The vindication came too late.
+    </div>
+  </div>
+
+  <div class="year-banner">1930</div>
+  <div class="timeline-dot">Paris, France · Age 34</div>
+  <div class="narrative">
+    <p>April 23, 1930. Zelda has her first breakdown. She is committed to the Malmaison Clinic near Paris, then the Prangins Clinic in Switzerland, where she spends fourteen months. The diagnosis is schizophrenia. She will spend the rest of her life in and out of institutions, with periods of relative functioning between hospitalizations. She writes a novel during her hospitalization — <em>Save Me the Waltz</em> — which she submits to Perkins without telling Scott, causing one of the catastrophic fights of a catastrophically fought marriage. Her novel covers the same material as the novel Scott has been working on for five years. They are both writing <em>Tender is the Night</em>.</p>
+    <p>You pay for the institutions by writing stories. The stories pay for the institutions and nothing else. You have been drinking since you were a teenager; now you are drinking in a way that is functionally distinct from social drinking. You are forty thousand dollars in debt. Zelda's illness has answered a question you did not know you had been asking: the Jazz Age is over. The parties were not a celebration but a countdown.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1930</div>
+    <p class="decision-q">Zelda's breakdown in 1930 — what does it reveal about the Fitzgerald marriage?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. That Zelda's mental illness was the root cause of the marriage's difficulties, and the drinking and financial chaos were consequences rather than contributing causes.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. That the marriage was a complex system in which Scott's drinking, Zelda's thwarted ambitions, their mutual financial extravagance, and her underlying instability all contributed to a collapse that cannot be attributed to any single cause — and that both of them bore responsibility for a life they had built together and that was destroying both of them.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. That Scott's prioritization of his own writing over Zelda's aspirations as a dancer and writer created the resentment that produced her breakdown.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. That the Jazz Age lifestyle they had championed was inherently self-destructive, and their personal collapse was the inevitable logical conclusion of the values they had publicly promoted.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+<p><strong>Zelda is committed to a clinic outside Paris in April 1930 while you are forty thousand dollars in debt and writing to pay the institution bills. Both of you are working on the same material. The breakdown is not one person's failure. You built the life together.</strong></p>
+      <strong>The Fitzgerald marriage:</strong> It is one of the most examined relationships in literary history, and the examinations disagree fundamentally. Zelda's biographers tend to see Scott as a controlling man who suppressed his wife's artistic ambitions because they threatened his material. Scott's defenders see an alcoholic trying to hold together a fundamentally unstable marriage to a woman with a serious illness while maintaining a career under constant financial pressure. Both accounts are probably true simultaneously. Their letters are among the most painful documents in American literary history — the anger and love so intertwined they cannot be separated. They remained married until Scott's death. Zelda died in a fire at Highland Hospital in 1948.
+    </div>
+  </div>
+
+  <div class="year-banner">1934</div>
+  <div class="timeline-dot">Baltimore, Maryland · Age 38</div>
+  <div class="narrative">
+    <p><em>Tender is the Night</em> is published on April 12, 1934, after nine years of work, four complete drafts, and an intervening catastrophe that has reshaped the novel around it. The book is about Dick Diver, a brilliant psychiatrist who marries his patient Nicole, a wealthy American who is recovering from a breakdown caused by her father's abuse. Over the course of the novel, Dick declines — not dramatically but in small increments, each compromise slightly larger than the last, until he is drinking heavily and his patients are leaving and Nicole is recovering and leaving him. The pattern reverses: the stronger takes from the weaker until there is nothing left to take.</p>
+    <p>The reviews are mixed. Hemingway, whose career has overtaken yours, pronounces it a failure. It sells fourteen thousand copies. The Depression is in its fifth year and the audience for novels about dissolute American expatriates living on inherited wealth is approximately zero. You know the book is flawed — the structure never quite worked — but you also know that Dick Diver's slow erasure is the most honest thing you have ever written.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1934</div>
+    <p class="decision-q">What is the central theme of <em>Tender is the Night</em> that distinguishes it from The Great Gatsby?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. The corruption of the wealthy — Nicole's inherited money destroys Dick in the same way that old money destroys Gatsby, but from inside the marriage rather than from across the bay.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. The slow erosion of character through accumulation of small compromises — not a single dramatic fall but the incremental yielding of principle until nothing remains. Dick Diver doesn't crash; he fades. This is Fitzgerald's deeper and harder truth about how people are destroyed.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. The American in Europe — the contrast between American energy and vitality and European decadence that also appears in Hemingway and Henry James.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. Mental illness — the novel's treatment of Nicole's schizophrenia is the first serious literary engagement with psychiatry in American fiction.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+<p><strong>Dick Diver doesn't crash. He fades — in small increments, each individually survivable, until there is nothing left. Fitzgerald spent nine years writing this novel about a man who declines exactly the way he himself was declining while he wrote it.</strong></p>
+      <strong>Tender is the Night and Fitzgerald:</strong> The novel's subtitle could be "the autobiography of a collapse." Dick Diver's incremental descent mirrors Fitzgerald's own during the nine years of writing: the drinking that starts as social and becomes necessary, the charm that works on everyone except the problem at the center of the life, the slow discovery that being good at something does not protect you from destroying yourself. What Fitzgerald saw — what makes the novel remarkable despite its structural problems — is that the decline has no single cause and no single moment of decision. There is no choice that ruins Dick. There is only the accumulation of choices, each individually survivable, that collectively amount to a life.
+    </div>
+  </div>
+
+  <div class="year-banner">1936</div>
+  <div class="timeline-dot">Asheville, North Carolina · Age 40</div>
+  <div class="narrative">
+    <p>You publish three essays in <em>Esquire</em> in February, March, and April 1936: "The Crack-Up," "Pasting It Together," and "Handle with Care." They are the most honest confession of failure by a living writer in American literary history. You describe the breakdown in exactly the terms it feels: "a feeling that I was standing at twilight on a deserted range, with an empty rifle in my hands and the targets down." You describe the strategies you have used to keep functioning — "the trick of the heart," borrowing emotional tone from the people around you since you have no reserves of your own. You describe how you have always traded on your capacity to charm and function and now the capacity is gone.</p>
+    <p>Hemingway writes to you privately that you have shamed yourself by publishing these essays. He says a man should keep his despair to himself. You don't answer. You know what you have written is true, and you know that Hemingway's version of masculinity — never showing weakness — is its own kind of lie. The essays will be read for as long as anyone reads about what it feels like to fail.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1936</div>
+    <p class="decision-q">"The Crack-Up" essays — honest public confession of failure — provoke criticism from Hemingway and others. Was publishing them right?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. No — publishing them damaged his professional reputation at the moment he most needed editors and studios to believe in his reliability. The personal honesty came at too high a practical cost.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. Yes — the essays are among the most important documents of literary failure ever published, precisely because they refuse the usual evasions (the writer who pretends success is temporary setback, the drunk who insists he is in control). Their honesty is a different kind of literary achievement than the novels, and it has proved as durable.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. The question is wrong — Fitzgerald didn't make a strategic choice about publication; he needed money and Esquire paid for what he had to write about.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. Partially — the diagnosis in the essays is accurate but the public nature of it was a mistake; a private memoir would have served literature equally well without the professional damage.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+<p><strong>Hemingway writes you privately that publishing "The Crack-Up" has shamed you. You don't answer. The essays will outlast the criticism — and Hemingway's version of masculinity has held up considerably less well than your version of honesty.</strong></p>
+      <strong>"The Crack-Up":</strong> Hemingway's objection — that men don't publicly confess weakness — reveals the fundamental difference between the two writers' ethics. Hemingway's code required concealment of damage behind performance of strength. Fitzgerald's essays argue, implicitly, that the concealment is itself a kind of lie, and that writing honestly about failure is as much the writer's job as writing honestly about success. The essays influenced a generation of writers who came after — they are explicitly cited by John Berryman, Mary Karr, and many others as models for confessional writing about collapse. Hemingway's view of masculinity, in the long run, has held up less well.
+    </div>
+  </div>
+
+  <div class="year-banner">1937</div>
+  <div class="timeline-dot">Hollywood, California · Age 41</div>
+  <div class="narrative">
+    <p>July 1937. You arrive in Hollywood with a contract from MGM paying $1,000 a week — enormous money, enough to pay debts and Zelda's institution bills and your daughter Scottie's school fees and still have something left over. Your relationship at this point is with the Hollywood gossip columnist Sheilah Graham — she will be with you until your death. She is practical, organized, and genuinely devoted; she is the thing Zelda was not, or could not be by the end.</p>
+    <p>Hollywood does not know what to do with you. You are assigned to projects that go nowhere. Your screenplays are rewritten by other writers, your scenes cut, your dialogue changed. The studio system is a collaborative industrial process and you are a solo literary artist, and the combination is predictably disastrous. You drink. You fall off the wagon, embarrass yourself at parties, are managed by agents and doctors. Between drinks you are writing a novel about Hollywood — <em>The Last Tycoon</em> — that is, in the two hundred pages you will complete before you die, arguably your finest prose.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1937</div>
+    <p class="decision-q">Hollywood employs Fitzgerald but cannot use him effectively. What does this mismatch reveal?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. That Fitzgerald was too alcoholic by this point to function professionally in any demanding work environment.</button>
+      <button class="dopt" onclick="choose(this,7,true)">B. That the specific skill of a literary novelist — sustained individual vision, precision of prose, the ability to control a complete work from first word to last — is not only irrelevant to studio screenwriting but actively counterproductive in a system where the final product emerges from committee revision.</button>
+      <button class="dopt" onclick="choose(this,7,false)">C. That Fitzgerald's Jazz Age material was simply obsolete in Depression-era Hollywood, and a younger, more contemporary writer would have succeeded where he failed.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. That the creative bankruptcy of Hollywood was a real force that could drain talent from anyone who worked in it long enough, regardless of that talent's scale.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+<p><strong>MGM pays you $1,000 a week. You receive screen credit on exactly one film. The studio rewrites your dialogue, cuts your scenes, revises your screenplays into unrecognizability. The clearest prose you write in Hollywood goes into a novel about Hollywood — unfinished when you die.</strong></p>
+      <strong>Fitzgerald in Hollywood:</strong> He received screen credit on exactly one film: <em>Three Comrades</em> (1938), based on a Remarque novel, and even that screenplay was heavily rewritten. The rest of his Hollywood contracts produced work that was revised into unrecognizability or shelved entirely. What he was doing was observing — the unfinished <em>Last Tycoon</em> has a studio executive, Monroe Stahr, who is drawn with such precision and sympathy that Edmund Wilson (who edited the posthumous publication) called it a portrait of a genuinely tragic American figure. Fitzgerald saw Hollywood clearly. He just couldn't make his clarity useful to MGM.
+    </div>
+  </div>
+
+  <div class="year-banner">1940</div>
+  <div class="timeline-dot">Hollywood, California · Age 44</div>
+  <div class="narrative">
+    <p>December 21, 1940. You die of a heart attack at 1403 North Laurel Avenue, Hollywood, at the apartment of Sheilah Graham. You are forty-four years old. You have been sober, more or less, for the last months, and you have been writing <em>The Last Tycoon</em> — roughly 50,000 words are complete when you die, about half of the planned novel. Edmund Wilson will edit and publish it posthumously in 1941. The year of your death, Scribner's reports sales of your books in total: seventy-two copies. In 1942, the Armed Services Edition distributes 150,000 copies of <em>The Great Gatsby</em> to soldiers overseas. The revival begins. By 1960, <em>Gatsby</em> is the most assigned novel in American high schools. It has never gone out of print.</p>
+    <p>What you leave: a perfect novel, a longer flawed novel with great passages, three hundred short stories of varying quality, "The Crack-Up" essays, and the first version of a Hollywood novel that the pages suggest would have been your best. You coined the phrase "Jazz Age." You described the American Dream as a tragedy before most Americans had decided it was a dream. You got there first, and you didn't live to know it.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 1940</div>
+    <p class="decision-q">Fitzgerald dies largely forgotten; Gatsby becomes the quintessential American novel within twenty years. What does this reversal teach?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. That commercial reception is a poor guide to literary value — the market gets it wrong more often than we admit, and this case proves it.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. That writers should not stake their sense of worth on contemporary reception, since the judgments of the living are consistently unreliable.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. That some books require the historical moment they describe to become history before they can be read clearly — Gatsby captured the Jazz Age while it was happening, which made it difficult to see. Once the era was over and could be seen as an era, the novel became its perfect monument. The timing of literary recognition is not random.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. That academic adoption (high school curricula, college reading lists) is the primary mechanism of canonical status, and Fitzgerald's revival was an institutional decision more than an organic literary re-evaluation.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+<p><strong>Scribner's reports total sales of your books in the year you die: seventy-two copies. Two years later, the Armed Services Edition ships 150,000 copies of The Great Gatsby to soldiers overseas. The book you died thinking had failed is the one they carry to war.</strong></p>
+      <strong>Gatsby's posthumous life:</strong> The Armed Services Edition reached soldiers who were fighting to preserve a version of America, and <em>Gatsby</em>'s critique of what the American Dream actually delivers was, paradoxically, part of why they connected with it — it told the truth about something they were simultaneously fighting for. The post-war college boom created an audience for the novel's precise, aspirational prose and its diagnostic clarity about class and desire. By the time Trilling and Cowley wrote about it in the early 1950s, the case was essentially settled. Fitzgerald never knew. His final diary entry reads: "I am not a great man, but sometimes I think the impersonal and objective quality of my talent and the sacrifices of it, in pieces, to preserve its essential value has some sort of epic grandeur."
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">F. Scott Fitzgerald · 1896–1940</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"So we beat on, boats against the current, borne back ceaselessly into the past."<br><em style="font-size:13px;color:var(--muted);">— F. Scott Fitzgerald, The Great Gatsby</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="melville-simulator.html" class="next-card">
+        <div class="next-card-name">Herman Melville</div>
+        <div class="next-card-sub">Moby-Dick failed. He died ignored.</div>
+      </a>
+      <a href="kafka-simulator.html" class="next-card">
+        <div class="next-card-name">Franz Kafka</div>
+        <div class="next-card-sub">Burn the manuscripts. Don't burn them.</div>
+      </a>
+      <a href="wilde-simulator.html" class="next-card">
+        <div class="next-card-name">Oscar Wilde</div>
+        <div class="next-card-sub">The trial that ended everything</div>
+      </a>
+      <a href="keats-simulator.html" class="next-card">
+        <div class="next-card-name">John Keats</div>
+        <div class="next-card-sub">The greatest odes — written at 23</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understood Fitzgerald\'s traps — the commercial short stories that crowded out the serious work, Gatsby\'s delayed recognition, the connection between personal collapse and literary honesty. You read the life with the clarity Fitzgerald brought to his fiction.';else if(pct>=0.625)t.textContent='You grasped the major themes of Fitzgerald\'s life — the Jazz Age, the commercial trap, the slow collapse. A few of the subtler connections between his work and his experience slipped past.';else if(pct>=0.375)t.textContent='You caught some of Fitzgerald\'s story but missed the through-lines connecting the Saturday Evening Post trap to Gatsby\'s failure to the Hollywood exile to the posthumous revival. The life is more connected than it appears.';else t.textContent='The Fitzgerald story is more specific than the legend. The Jazz Age writer who failed commercially and was redeemed posthumously — the details are the tragedy, and they are worth revisiting.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

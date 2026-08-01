@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agatha Christie Life Simulator — The 11-Day Disappearance &amp; 66 Mysteries | Ordinary Man Trying</title>
+<meta name="description" content="Live Agatha Christie's life across 8 pivotal decisions — from her mysterious 11-day disappearance in 1926, to creating Hercule Poirot and Miss Marple, to writing And Then There Were None, the world's best-selling mystery.">
+<style>
+:root{
+  --bg:#F5F0EC;--card:#FAF7F4;--ink:#100C08;--muted:#483828;--line:#D8C8B0;
+  --accent:#503818;--accent-bg:#F0E0C8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,240,236,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#100C08;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C0A080;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#080604;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0E0C8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0E0C8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C0A080;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:var(--line);font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C0A080;border-radius:999px;margin-bottom:12px;gap:8px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Agatha Christie</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #89 of 100</p>
+  <h1 class="cover-title">She Wrote 66 Mysteries.<br>Then She Vanished for 11 Days.</h1>
+  <p class="cover-sub">Agatha Christie is the best-selling fiction writer of all time after Shakespeare — over two billion books sold, translated into 103 languages. She invented Hercule Poirot and Miss Marple. She wrote <em>And Then There Were None</em>, the world's best-selling mystery novel. In December 1926, at the height of her fame, her car was found abandoned near a quarry in Surrey. She was gone for eleven days. When she was found, registered under a false name in a hotel in Harrogate, she claimed amnesia. She never explained it. The real mystery in Agatha Christie's life was Agatha Christie herself.</p>
+  <div class="cover-facts">
+    <p>📚 66 detective novels + 14 short story collections &nbsp;·&nbsp; 🏆 Best-selling fiction writer of all time after Shakespeare: 2+ billion copies &nbsp;·&nbsp; 🕵️ Created Hercule Poirot (1920) and Miss Marple (1930) &nbsp;·&nbsp; 🚗 Disappeared December 3, 1926 — found 11 days later in Harrogate &nbsp;·&nbsp; 🎭 "The Mousetrap" opened 1952 — longest-running play in history &nbsp;·&nbsp; 1890–1976 · Devon, England</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Christie's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1916</div>
+  <div class="timeline-dot">Devon, England · Age 26</div>
+  <div class="narrative">
+    <p>You are twenty-six, working as an apothecary's assistant during the First World War. You handle poisons daily — arsenic, cyanide, strychnine, morphine, digitalis. This is not unusual work for a woman of your background in wartime, but you find it genuinely interesting. The pharmacological properties of different poisons — how they work, how they present, how long they take — are stored away in the careful systematic memory that underlies your apparently unremarkable exterior. You have been writing stories since childhood, none published.</p>
+    <p>Your sister Madge makes you a bet: you cannot write a detective novel with a satisfying solution. You accept the bet. You think about what kind of detective would be interesting. You have Belgian refugees in your town — Torquay is full of them after the German invasion of Belgium. You invent a Belgian detective: small, precise, obsessive about order, with an egg-shaped head and immaculate mustaches. You call him Hercule Poirot. The Mysterious Affair at Styles takes you two years to write, seven publishers to reject, and eventually appears in 1920. You have won Madge's bet. You have no idea you have also launched the most successful detective fiction career in history.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1916</div>
+    <p class="decision-q">Christie's pharmaceutical work directly informs her mysteries. What does this origin reveal about her method?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. That she was primarily a technician — her mysteries succeed because of accurate procedural knowledge about poisons rather than psychological insight about character.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. That the specific knowledge that makes a mystery satisfying comes from genuine expertise, not research — her poisons are accurate because she worked with them; her domestic settings are accurate because she lived in them. The combination of technical accuracy and domestic observation is the foundation of her work's credibility.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. That luck was decisive — the wartime pharmaceutical work was accidental, and a Christie without it would still have been a great mystery writer using different methods.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. That the pharmacological knowledge was a secondary advantage — her primary gift was plotting, and the poison accuracy could have been researched rather than lived.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You handled arsenic and cyanide for wartime pay, filed it all away, and spent fifty years killing fictional characters with doses accurate enough to save a real life in 1977.</strong> Forensic pathologists have commented on the accuracy of Christie's poisonings: doses are correct, symptoms are accurate, detection timelines are realistic. This accuracy is a direct product of her wartime pharmaceutical experience. Her mysteries are set in country houses, seaside villages, and Middle Eastern archaeological sites (she accompanied her husband Max Mallowan on excavations) — all settings she knew intimately. The combination produces what Dorothy Sayers called "fair play" mysteries: the reader is given all the information needed to solve the puzzle, and if they don't solve it, it is because they failed to notice what they were shown, not because they were cheated. The accuracy enables the fairness.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1926</div>
+  <div class="timeline-dot">Surrey, England · Age 36</div>
+  <div class="narrative">
+    <p>1926 is the worst year of your life. Your mother dies in April. You are grieving. Your husband Archie Christie tells you in August that he is in love with another woman — Nancy Neele — and wants a divorce. You had expected the marriage to be permanent. You are working on <em>The Mystery of the Blue Train</em>, which you later describe as the most difficult book you ever wrote. Then, on the night of December 3, 1926, you leave home in your car. Your car is found the next morning near a quarry at Newlands Corner, Surrey, headlights still on, engine cold. You are gone.</p>
+    <p>Eleven days. Fifteen thousand volunteers search the Surrey hills. The newspapers run daily updates. The Home Secretary is asked to intervene. Arthur Conan Doyle, Doyle himself, consults a medium about your whereabouts. You are found on December 14 at the Hydropathic Hotel in Harrogate, Yorkshire, registered under the name Teresa Neele — the last name of your husband's mistress. You have been staying there for eleven days, apparently in good spirits, participating in hotel activities. You claim complete amnesia about how you got there. You never explain further. You never write about it directly.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1926</div>
+    <p class="decision-q">Christie's 11-day disappearance is one of the great mysteries of the 20th century. What is the most accurate account of what happened?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Staged publicity — she engineered the disappearance to gain attention or punish her husband and maintained the amnesia story to avoid embarrassment.</button>
+      <button class="dopt" onclick="choose(this,2,false)">B. Genuine amnesia — the combination of her mother's death and her husband's betrayal produced a genuine dissociative episode, and she truly remembered nothing about the eleven days.</button>
+      <button class="dopt" onclick="choose(this,2,true)">C. We genuinely do not know — she never explained, her autobiography skips the entire episode, and the evidence supports at least three different explanations. What we can say is that she was in severe emotional distress, that she chose a hotel registered under her husband's mistress's name, and that she never admitted or denied the various theories. The mystery is genuinely unresolved, which is appropriate for Agatha Christie.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. A suicide attempt that became something else — she intended to disappear permanently, changed her mind at the hotel, and the amnesia explanation was cover for the original intention.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>You were gone for eleven days, registered under your husband's mistress's name, and you never explained it — not even in your own autobiography.</strong> Christie's 1977 autobiography, published posthumously as she directed, makes no mention of the 1926 disappearance. Her daughter Rosalind, who outlived her, always insisted her mother had genuine amnesia and was distressed that people continued to treat the episode as a mystery. The registration under the name Teresa Neele is the fact that most confounds the amnesia explanation — it is hard to choose a name in a dissociative state that so precisely mirrors the emotional wound. Jared Cade's 1998 book "Agatha Christie and the Eleven Missing Days" argues for deliberate staging. The novelist Andrew Wilson made a different case. Christie, typically, left no solution.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1930</div>
+  <div class="timeline-dot">Baghdad, Iraq · Age 40</div>
+  <div class="narrative">
+    <p>The divorce from Archie Christie was finalized in 1928. You have been rebuilding. You have traveled — to the West Indies, to the Canary Islands, and in 1928, on an impulse following a conversation with a stranger at a dinner party, to Baghdad and Ur, where the archaeologist Leonard Woolley is excavating a Mesopotamian site. You meet Max Mallowan, Woolley's assistant, who is fourteen years younger than you. He takes you to visit the digs. You marry him in 1930. It is, by all accounts, a completely successful marriage. You will accompany him on excavations across the Middle East for decades and write several mysteries set in archaeological contexts.</p>
+    <p>This year you also publish "The Murder at the Vicarage" — the first Miss Marple novel. Jane Marple is a white-haired elderly spinster in the village of St Mary Mead who solves murders by drawing on her intimate knowledge of human weakness, observed through decades of watching her neighbors. She is the opposite of Poirot in method — where he uses psychology and logic, she uses parallel instances from village life. "It reminds me of something that happened with old Mrs Brown's niece..." She is underestimated by everyone she meets. She is never wrong.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1930</div>
+    <p class="decision-q">Miss Marple's method — parallel examples from village life rather than Poirot's logical deduction — represents what insight about detection?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. That women's knowledge (domestic, social, relational) is a form of intelligence that systematic logic cannot replicate and that is equally effective at reaching truth.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. That human nature is consistent across contexts — the same patterns of greed, jealousy, fear, and self-deception that appear in village life appear in every crime. Miss Marple's knowledge is not local knowledge but universal knowledge derived from a local setting. She is not parochial; she is a miniaturist who understands the universe through its smallest examples.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. That extensive experience eventually substitutes for intelligence — Miss Marple has simply seen enough to recognize most situations, and her "knowledge of human nature" is pattern-matching accumulated over decades.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. That Christie was making a feminist argument about the investigative competence of women in domestic settings — Miss Marple succeeds where male detectives fail because she has access to social spaces they don't.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>Miss Marple solved murders in cities she'd never visited by comparing them to things that happened in a village everyone else found boring.</strong> Christie described Miss Marple as modeled partly on her grandmother and the grandmother's friends — women who "always managed to see or hear of something that reflected exactly what was happening." The village as a microcosm of human nature is Miss Marple's explicit theory: "Human nature is the same everywhere," she says repeatedly. The vicar's wife's affair, the gardener's jealousy, the spinster's malice — all of these, scaled up, are the motives for the murders in London or the Middle East. This is not a parochial view; it is a universalist one, expressed through the most available material: the people immediately around you.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1939</div>
+  <div class="timeline-dot">Devon, England · Age 49</div>
+  <div class="narrative">
+    <p>"And Then There Were None" is published in November 1939. Ten strangers are lured to an island with no way off. One by one, they are killed, each death corresponding to a verse from the children's counting rhyme "Ten Little Indians" (later "Ten Little Soldiers"). By the end, all ten are dead. The killer's identity and method are revealed in a final manuscript found in a bottle. Christie considers it her most technically difficult novel — maintaining suspense when there is no detective figure, showing the psychology of ten people under extreme stress, and making the solution both logical and surprising. It is the best-selling mystery novel of all time, having sold over 100 million copies. Nothing else is close.</p>
+    <p>The novel is also the first in the genre to kill everyone. Standard detective fiction protects the reader by providing a detective who will restore order. Christie removes this comfort: the detective is absent; the island is sealed; everyone dies. The reader has no one to identify with except the next victim. This is an act of structural courage that explains, in part, why the novel remains the definitive example of the impossible-crime genre.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1939</div>
+    <p class="decision-q">And Then There Were None kills all ten characters, with no detective to restore order. What makes this the boldest formal decision in Christie's career?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. The technical difficulty — constructing a plot in which ten deaths all make logical sense with a concealed killer is harder than any standard detective puzzle, and the achievement deserves recognition as craft.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. It removes the reader's safety — standard detective fiction offers the reassurance that order will be restored: the detective will identify the killer and the world will make sense again. By killing everyone including any potential detective, Christie forces the reader to confront the possibility that the world does not restore order, that the mystery may not be solved, that the logic of the genre is itself a comfort she is choosing not to provide. This structural choice is what makes the novel unforgettable.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. The island setting — the isolated location with no way off is the narrative mechanism that makes the plot work, and the boldness is in the logistical ingenuity rather than the formal decision to kill everyone.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. The moral seriousness — the victims are all guilty of genuine crimes (deaths they caused but weren't convicted for), so the novel is not really about innocent people dying but about a form of justice outside the law. The ambiguity about whether this is justice or murder is the boldest element.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You wrote a detective novel with no detective, no survivors, and no restoration of order — and it became the best-selling mystery novel in history.</strong> Christie told her friend and rival Dorothy Sayers that she considered it the most difficult book she had written — more difficult than any Poirot puzzle, because the structural challenge was doing without the comfort that detective fiction normally provides. Raymond Chandler criticized the "whodunit" genre for its structural cowardice: the detective is always safer than the criminals, and the world always returns to order. Christie in 1939 wrote the anti-Chandler novel: no detective, no safety, no order restored. The solution (in the final manuscript) is satisfying but cold. The reader has no one to be glad for. This is unusual and deliberate.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1952</div>
+  <div class="timeline-dot">London, England · Age 62</div>
+  <div class="narrative">
+    <p>"The Mousetrap" opens at the Ambassadors Theatre in London on November 25, 1952. It is a stage mystery adapted from your short story "Three Blind Mice," written in 1947 as a radio play for the BBC as a birthday gift for Queen Mary. The play is about a group of people stranded in a boarding house by a snowstorm, one of whom is a murderer. It has been running continuously, without closing for a single performance (except for the COVID-19 pandemic in 2020-2021, when all London theaters closed), since 1952. It is the longest continuously running play in history. More than ten million people have seen it. The solution is still kept secret by a gentlemen's agreement between the theater and the audience.</p>
+    <p>You do not particularly think of it as your best work. You consider it a pleasant entertainment. Posterity has been more attached to it than you are. You are sixty-two, you have written forty detective novels and numerous short story collections, and you have spent the morning in the garden.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1952</div>
+    <p class="decision-q">The Mousetrap has run continuously since 1952 — 70+ years. What explains this extraordinary longevity?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Pure institutional inertia — it has run so long that it continues running by momentum, and a production that started fresh today would not run for seventy years.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. The specific appeal of the locked-room mystery in a theatrical setting — the audience knows a murder occurred, knows the killer is on stage, and must reason along with the detective. The pleasure of this exercise is renewable: every new audience experiences it for the first time. It is not a great play but an endlessly fresh puzzle, and puzzles of this kind age less than drama.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. The tradition of secrecy about the solution — the gentlemen's agreement that audiences won't reveal the killer creates a word-of-mouth dynamic in which people feel honor-bound to see it rather than be told the ending.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. Christie's name — the play runs on the reputation of the most successful mystery writer in history, and the Agatha Christie brand is what keeps audiences coming rather than any specific quality of the play itself.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>You considered The Mousetrap a pleasant entertainment. Seventy years later it is still running in the same theater.</strong> The play's 70-year run is genuinely puzzling and has been written about extensively. The secrecy about the solution is part of it — audiences who have been told the solution are less likely to attend than audiences who want to solve it themselves. But the larger reason is probably structural: the play offers an experience (the puzzle, then the solution) that is satisfying regardless of what you know about the history of mystery fiction. Christie designed mystery experiences to be self-contained and complete. The Mousetrap is the purest version of this design: contained, fair, satisfying. It does not require cultural context to work. It just works, for every new audience that has never seen it.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1960</div>
+  <div class="timeline-dot">Devon and Iraq · Age 70</div>
+  <div class="narrative">
+    <p>You are seventy. You have been traveling to Max's excavations in Iraq and Syria for three decades and have written several books about the experience, including "Come Tell Me How You Live" (1946), a warm memoir of life on archaeological digs. Max has become a professor at the University of London. Your daughter Rosalind lives with her family at Greenway, the beautiful Devon house that you bought in 1938 and that is your most beloved home. You have a routine: writing in the mornings, gardening, grandchildren.</p>
+    <p>You are also, this year, writing "The Pale Horse" — a novel about the use of thallium poisoning, the symptoms described in such accurate detail that a nurse in 1977 will recognize them in a patient's chart and correctly identify thallium poisoning when the medical team cannot. Christie's pharmaceutical accuracy will save a real life, decades after the novel is written. You have been poisoning fictional characters for fifty years. You have been right about the poisons the entire time.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1960</div>
+    <p class="decision-q">Christie's accurate description of thallium poisoning in The Pale Horse later saves a real life. What does this reveal about genre fiction?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. A coincidence — the accuracy of the poisoning description was not intended to be medically useful, and the life-saving incident is a happy accident rather than a reflection of the novel's quality.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. That accuracy in fiction creates value beyond entertainment — Christie's pharmaceutical training made her descriptions genuinely accurate, and genuine accuracy in any domain has a way of being useful in ways the author cannot anticipate. Fiction with real knowledge embedded in it is different from fiction that only resembles knowledge.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. The narrow value of specialist knowledge in fiction — the thallium incident is a medical curiosity and does not generalize to a broader claim about what serious fiction can do compared to genre fiction.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. The practical value of systematic research in writing — even if Christie's knowledge came from direct experience rather than research, the lesson is that accurate procedural content makes fiction more valuable than inaccurate procedural content.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>A nurse in 1977 recognized thallium poisoning in a dying patient by matching the symptoms to a novel you published sixteen years earlier.</strong> The 1977 incident — a nurse reading <em>The Pale Horse</em> and recognizing the symptom pattern in a baby who had been given thallium in her food — was reported in the British Medical Journal. There have been several other documented cases of Christie's pharmacological descriptions being medically useful. The accuracy is not accidental: Christie retained and used her pharmaceutical knowledge throughout her career, and she consulted chemists and pharmacologists when she was uncertain. The result is what good research fiction produces: knowledge accurate enough to work, embedded in narrative accessible enough to reach people who would not encounter it in textbooks.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1970</div>
+  <div class="timeline-dot">Devon, England · Age 80</div>
+  <div class="narrative">
+    <p>You are eighty. You have written sixty-six detective novels, fourteen short story collections, and numerous plays. You have been in print continuously for fifty years. You are the best-selling fiction writer alive and, in total sales, second only to Shakespeare in English-language publishing. The Queen will appoint you Dame Commander of the Order of the British Empire in 1971. You are writing more slowly now — the last novels show signs of the difficulty you are having, and you recognize that the writing is no longer what it was.</p>
+    <p>In 1975, you publish "Curtain: Poirot's Last Case," written during World War II and kept in a safe deposit box for thirty years. In it, Hercule Poirot dies. The obituary is published in the New York Times — one of only two fictional characters to receive an NYT obituary (the other is Sherlock Holmes). You have been Agatha Christie for fifty-five years. You have hidden one mystery that the world still cannot solve. You have created the world's most successful puzzle. You are quite pleased with both.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1970</div>
+    <p class="decision-q">Christie holds the "Curtain" manuscript — Poirot's death — for 30 years before publishing. Why?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Financial planning — the manuscript was held as a financial asset for her estate, to be published after her death for maximum revenue.</button>
+      <button class="dopt" onclick="choose(this,7,true)">B. She wrote it during the war as insurance — if she died during the Blitz (a genuine possibility), she wanted Poirot to have a proper ending rather than simply stopping. When the war ended and she didn't die, she had no urgent reason to publish it and held it until her own death was genuinely near. It was not financial strategy but the logic of narrative closure.</button>
+      <button class="dopt" onclick="choose(this,7,false)">C. Dissatisfaction with the manuscript — she wrote it during the war but considered it not quite right and held it while intending to revise it, ultimately deciding to publish without revision.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. The wish to outlive Poirot — she wanted to write further Poirot stories and felt that publishing "Curtain" would prevent this. When she could no longer write at her former level, she released it.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>You wrote Poirot's death during the Blitz, locked it in a vault, and didn't publish it until you were eighty-five and dying yourself.</strong> Christie wrote both "Curtain" and "Sleeping Murder" (Miss Marple's last case) during the Second World War, when she was working in a pharmacy dispensary and genuinely uncertain whether she would survive. She deposited both manuscripts with her publisher with instructions for posthumous publication. The logic is exactly the logic she would use in a mystery: if I die before Poirot does, the story is incomplete. This is how she thought about her characters — as having a life that needed to be properly concluded, not just abandoned when the author stopped writing. When she finally published "Curtain" in 1975, she was eighty-five and dying. The timing was correct.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1976</div>
+  <div class="timeline-dot">Cholsey, Oxfordshire · Age 85</div>
+  <div class="narrative">
+    <p>January 12, 1976. You die at your home Winterbrook in Cholsey, Oxfordshire, aged eighty-five. Max is with you. You are buried in the churchyard of St Mary's, Cholsey. The inscription on your grave is a line from Edmund Spenser: "Sleep after toyle, port after stormy seas, ease after warre, death after life, does greatly please." "Sleeping Murder," Miss Marple's last case, will be published posthumously in October 1976. "Curtain" was published in 1975. Both characters are properly concluded. The mystery of 1926 remains unsolved. This is, perhaps, as you intended.</p>
+    <p>The Mousetrap is still running. It will continue running. Your books remain in print in 103 languages. Two billion copies have been sold, and counting. You are the most-read mystery writer who ever lived. You never explained the eleven days. Well — someone has to keep a mystery.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 1976</div>
+    <p class="decision-q">What is the essential quality that makes Christie's mysteries endure while most detective fiction of her era has not?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. Character — Poirot and Miss Marple are vivid enough to carry any plot, and readers return for the characters regardless of the specific puzzles.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. Plotting — her puzzle construction is technically superior to her contemporaries, and readers return because the solutions are genuinely surprising without being unfair.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. The fairness of the game — she commits to showing the reader everything the detective sees, making the solution derivable in principle from the evidence given. This commitment — to a genuinely winnable puzzle, where the reader has all the information and fails only by not thinking carefully enough — is rarer than it seems and more satisfying than the mysteries that surprise through concealment rather than through the reader's failure to notice what was shown. She trusts the reader. The reader feels this and returns.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. Accessibility — her prose is clear and her settings are familiar, making her mysteries readable by a wider audience than the more literary detective fiction of her era.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>Two billion copies sold. The reason is simpler than anyone wants to admit: you put everything on the page and let the reader try to see it.</strong> Dorothy Sayers, Christie's contemporary, articulated the principle: the reader must be given all the clues necessary to solve the mystery, placed fairly in the text without misleading emphasis. Christie committed to this more rigorously than almost any other writer in the genre. When the solution is revealed in a Christie mystery and the reader feels simultaneously surprised and retrospectively obvious — "of course, it was right there, I should have seen it" — this is the feeling of fair play properly executed. The two billion readers have, for a century, been playing a game they can in principle win, against a constructor who always played fair. That is why they keep coming back.</p>
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Agatha Christie · 1890–1976</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"The impossible could not have happened, therefore the impossible must be possible in spite of appearances."<br><em style="font-size:13px;color:var(--muted);">— Hercule Poirot (Agatha Christie)</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="doyle-simulator.html" class="next-card">
+        <div class="next-card-name">Arthur Conan Doyle</div>
+        <div class="next-card-sub">Holmes, fairies, and what Doyle believed</div>
+      </a>
+      <a href="wilde-simulator.html" class="next-card">
+        <div class="next-card-name">Oscar Wilde</div>
+        <div class="next-card-sub">Art for art's sake — until the trial</div>
+      </a>
+      <a href="chesterton-simulator.html" class="next-card">
+        <div class="next-card-name">G.K. Chesterton</div>
+        <div class="next-card-sub">Father Brown, orthodoxy &amp; paradox</div>
+      </a>
+      <a href="dickens-simulator.html" class="next-card">
+        <div class="next-card-name">Charles Dickens</div>
+        <div class="next-card-sub">The blacking factory &amp; Pickwick Papers</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You think like a detective. You saw what was actually on the page rather than what you assumed was there. Christie\'s highest compliment: you played fair back.';else if(pct>=0.625)t.textContent='You followed the evidence most of the way. The gaps are where Christie went somewhere most readers don\'t expect — and she always played fair getting there.';else if(pct>=0.375)t.textContent='You had the instinct more than half the time. The full mystery is still on the page, waiting. All the clues were already there.';else t.textContent='The answer was always visible. Christie committed to showing you everything the detective saw. The miss was in the looking, not the hiding.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

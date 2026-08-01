@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Oscar Wilde Life Simulator — The Man Who Turned Life Into Art</title>
+<meta name="description" content="Make the same decisions as Oscar Wilde — the most brilliant conversationalist in Victorian England, who destroyed himself by suing the wrong man, and wrote his masterpiece in prison.">
+<style>
+:root{
+  --bg:#F5F0E8;--card:#FAF7F0;--ink:#180E00;--muted:#5A4018;--line:#E0D4B8;
+  --accent:#2A1808;--accent-bg:#F0E8D0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Ireland / England / France · 1854–1900</div>
+  <h1>Could You Have Been<br>Oscar Wilde?</h1>
+  <div class="cover-sub">He was the most celebrated wit in Victorian England — the playwright whose comedies filled every theatre, the novelist whose single book was called immoral, the man who dressed for effect and talked for effect and lived for effect. At the peak of his fame, he made the worst single decision of his life: he sued a duke. Two years of hard labor in Reading Gaol destroyed his health. He was 46 when he died in a Paris hotel, reportedly saying: "Either that wallpaper goes, or I do."</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">1895</div><div class="stat-l">Year he went from London's greatest celebrity to convicted prisoner</div></div>
+    <div class="stat"><div class="stat-n">2</div><div class="stat-l">Years hard labor in Reading Gaol</div></div>
+    <div class="stat"><div class="stat-n">46</div><div class="stat-l">Years of age at death — ruined in 5 years from peak of fame</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Oxford, 1874–1878 · The Aesthetic Education</div>
+<p class="narrative">You are at Magdalen College, Oxford, studying Classics. You are extraordinarily good at it — you will take a First and win the Newdigate Prize for poetry. But Oxford in the 1870s offers something more interesting than prizes: it offers Walter Pater's aesthetic philosophy, the idea that art should be pursued for its own sake, that "to burn always with this hard gem-like flame" is the only success worth having. You encounter this and everything changes. You stop caring about conventional success. You start caring about beauty, sensation, and the construction of an aesthetic life. You begin wearing velvet jackets and carrying lilies down the street. People notice. That is the point.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Pose</div>
+  <div class="d-situation">You have developed a distinctive aesthetic persona — the dandy who makes his life a work of art. Is this a genuine philosophy or a performance?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Both — the pose and the belief are inseparable; aestheticism requires performing it publicly or it remains merely a private opinion</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. It is pure performance — you are building a brand for commercial reasons; the philosophy is the packaging, not the product</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. It is purely genuine — the performance is a mistake; the ideas should stand without the spectacle</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Wilde maintained throughout his life that there was no contradiction between the pose and the belief — that the aesthetic life had to be lived, not merely theorized. He performed the dandy because he was one, and was one because he performed it. The American lecture tour of 1882 demonstrated this: he arrived in New York with a deliberately quotable quip for customs officers ("I have nothing to declare except my genius") and delivered 140 lectures on aestheticism across North America. The performance and the argument were the same thing. It worked because he believed it. He believed it because it worked.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · London, 1890 · The Picture of Dorian Gray</div>
+<p class="narrative">Your first and only novel appears in Lippincott's Monthly Magazine in June 1890. The story of a beautiful young man who stays young while his portrait ages and grows monstrous — absorbing every sin, every cruelty, every selfish choice — is immediately attacked as immoral, as a defense of hedonism, as corrupting. The editor had already deleted 500 words he considered too explicit. One reviewer says it is "esoteric pruriency." Another says it is "fit only for outlaws." You respond by adding a preface for the book edition that becomes the most quoted statement of aestheticism in the language: "All art is quite useless."</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Preface</div>
+  <div class="d-situation">The novel is attacked as immoral. Do you defend it on moral grounds or on purely aesthetic ones?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Purely aesthetic — there is no moral dimension to art; "The books that the world calls immoral are books that show the world its own shame"</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Moral defense — the novel has a clear moral: hedonism destroys the hedonist; Dorian Gray is a morality tale</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. No defense — responding to critics gives them more power; let the book speak for itself</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Wilde published the preface — "The books that the world calls immoral are books that show the world its own shame. That is why the world calls them immoral" — and doubled down on the aesthetic position entirely. This was exactly the right artistic choice and precisely the wrong legal-biographical one. The preface arguments about the separation of art from morality would be used against him in his 1895 trial, where the prosecution quoted his own aestheticist statements to suggest he had no moral compass at all. He had armed his enemies with his own epigrams.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · London, 1895 · The Importance of Being Earnest</div>
+<p class="narrative">On February 14, 1895, Valentine's Day, The Importance of Being Earnest opens at St James's Theatre. The audience laughs from the first scene to the last. It is a perfect comedy — every line is a joke, every joke is a paradox, every paradox is also a truth. "To lose one parent, Mr. Worthing, may be regarded as a misfortune; to lose both looks like carelessness." You have four plays running simultaneously in the West End. You are 40 years old and you are at the absolute peak of Victorian literary celebrity. Nothing can touch you. Or so it seems on February 14, 1895.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · At the Peak</div>
+  <div class="d-situation">You are at the height of your fame and power. The Marquess of Queensberry — the father of your companion Lord Alfred Douglas — is harassing you publicly, calling you a "somdomite" in a note left at your club. Do you sue him for libel?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,false)">A. Yes — his public accusation has damaged your reputation; as the most famous writer in England you cannot be seen to retreat</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Yes — Lord Alfred Douglas is pushing you to fight his father; you owe it to the relationship to defend yourself</button>
+    <button class="dopt" onclick="choose(this,3,true)">C. No — flee to France immediately; Queensberry has investigators who have documented everything; this is a trap and the evidence will destroy you</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Wilde sued Queensberry for criminal libel. His friends urged him desperately not to — Robert Ross, Ada Leverson, Frank Harris all begged him to drop the case and cross to France. He would not. Queensberry's lawyers had spent weeks gathering evidence — hotel records, witnesses, young men willing to testify. When Wilde's legal team saw the evidence they withdrew the libel suit. But it was too late. The prosecution immediately charged Wilde. He could still have fled — the trial hadn't started, his passport was valid, the ferry was running. He went home instead and was arrested the following day. It was the worst decision of his life, and he made it deliberately.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · London, April 1895 · The Night Before</div>
+<p class="narrative">The libel suit has collapsed. Queensberry's investigators have spent weeks building a case. Ada Leverson has offered you her house to shelter in. Friends are at the Holborn Viaduct Hotel with a carriage and the means to get you to Dover and France. The last train to the coast leaves in hours. You sit in the Cadogan Hotel with Lord Alfred Douglas, drinking hock and seltzer. Your solicitor comes in and tells you what is coming. You look at your glass. Outside, it has begun to rain on Sloane Street.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Last Train</div>
+  <div class="d-situation">You can be in France by morning and safe from prosecution. Or you can stay. What do you do?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,false)">A. Stay — flight is cowardice; you have done nothing you are ashamed of and you will not pretend otherwise by running</button>
+    <button class="dopt" onclick="choose(this,4,true)">B. Go to France — your work is what matters; a trial will destroy everything and you can write in Paris as well as London</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Stay — Lord Alfred Douglas needs you here and you will not abandon him to face his father alone</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Wilde stayed. He was arrested at the Cadogan Hotel at 6:30pm. He was tried twice — the first jury could not agree on a verdict. The second convicted him on counts of gross indecency. He was sentenced to two years' hard labor with a recommendation that he serve the maximum. He was taken to Reading Gaol. Later, from prison, he wrote De Profundis — a 50,000-word letter to Lord Alfred Douglas — which contains some of the finest prose he ever wrote. The Ballad of Reading Gaol, published after his release, is among the great poems of the century. He produced two masterpieces from the wreckage. But he was never the same physically, and he knew it.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Reading Gaol, 1895–1897 · Hard Labor</div>
+<p class="narrative">Reading Gaol. Cell C.3.3. Hard labor means the treadmill — walking a wheel for six hours a day that goes nowhere. It means oakum picking — unraveling tarred rope fiber by fiber until your fingers bleed. It means silence. The rule of silence is absolute: no conversation in corridors, in the exercise yard, in the chapel. You are permitted to speak only to warders. You have been the most brilliant conversationalist in England. The silence is a kind of torture designed precisely for someone like you. After six months your health is already deteriorating. You will not recover it.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · Prison</div>
+  <div class="d-situation">You are in Reading Gaol under conditions designed to break the mind. What do you hold on to?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. The writing — you cannot write in prison but you can compose in your head; when you are released you will have De Profundis and the Ballad already formed</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. The injustice — maintaining anger is the only thing that keeps you from collapsing; you will fight for prison reform when you are released</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Nothing — the point is to survive, not to transform the experience; survival first, meaning later</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Wilde composed De Profundis mentally during his imprisonment and was eventually allowed to write it out — an extraordinary letter to Lord Alfred Douglas about love, suffering, humility, and Christ. It is one of the strangest and most beautiful things in English prose. He also witnessed the hanging of a soldier convicted of murder, which became the Ballad of Reading Gaol's central image: "Yet each man kills the thing he loves." He did not waste the prison. He turned it into the best writing of his life, which is itself a kind of scandal — that the cruelest years produced the finest work.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Dieppe, 1897 · After Prison</div>
+<p class="narrative">You are released in May 1897. You are 43. You are thin, your hair has grown out strangely, your health is compromised in ways that will prove permanent. Your wife has changed her name and moved to Italy with your children. Your friends have mostly scattered. The English theatre managers will not touch your name. You sail immediately to France. Lord Alfred Douglas meets you in Rouen. Against the advice of everyone who loves you, you go back to him for several months before the reunion breaks down again. You will never return to England.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · The Return to Douglas</div>
+  <div class="d-situation">Everyone who survived the disaster of the trial warns you not to return to Lord Alfred Douglas. You do it anyway. Do you understand why?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Yes — some attachments are not chosen; returning to Douglas was not a rational act and was not meant to be</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. No — it was self-destructive behavior that makes no sense except as punishment of yourself for what happened</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Yes — Douglas was the last connection to the person you used to be; losing him would mean accepting that person was gone</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Wilde went back to Douglas and then separated from him when the money ran out — Douglas's father had cut the allowance that made the reunion financially possible. They never met again. Wilde spent his last three years in France, moving between cheap hotels, writing little, drinking heavily, accepting money from friends. The Ballad of Reading Gaol was published in 1898, selling well, the last thing he published in his lifetime. He died in the Hotel d'Alsace in Paris in November 1900, from cerebral meningitis most likely related to an ear infection from prison.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · Paris, 1900 · The Last Hotel</div>
+<p class="narrative">You are dying in a cheap hotel in the Latin Quarter. You have spent your last months here, known to the other residents, occasionally recognized by visiting English tourists who are embarrassed to see you like this. The wallpaper is terrible. You have made jokes about it. Robert Ross, the loyal friend who stayed loyal throughout everything, is with you. You are received into the Catholic Church in your final days. On November 30, 1900, you die. You are 46 years old.</p>
+<div class="decision-block">
+<div class="d-label">Decision 7 · The Judgment</div>
+<div class="d-situation">He produced comic masterpieces, a gothic novel, and prison-born poetry that survived everything. He also destroyed himself with a libel suit that every friend told him not to bring. How do we understand this life?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. The tragedy is inseparable from the gifts — the same qualities that made the writing extraordinary made the self-destruction inevitable</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. The trial was a simple bad decision; a more careful man could have lived the same artistic life without the catastrophe</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. The fault lies with Victorian society, not Wilde; the same choices in a different era would have cost him nothing</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> All three arguments have adherents. What is certain is that Wilde understood his own situation more clearly than anyone watching him. He wrote in De Profundis: "I am one of those who are made for exceptions, not for laws. But while I see that there is nothing wrong in what one does, I see that there is something wrong in what one becomes." He knew exactly what he was doing and did it anyway. Whether that is tragedy, integrity, or self-destruction depends on what you value.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · The Legacy</div>
+<p class="narrative">The Importance of Being Earnest has been in continuous performance somewhere in the world since 1895. It may be the most performed comedy in the English language. The Picture of Dorian Gray sells steadily. The epigrams — "I can resist everything except temptation," "The truth is rarely pure and never simple," "To define is to limit" — have become part of the language. The Ballad of Reading Gaol is on every list of great Victorian poetry. He is more famous now than he was the day he was arrested.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · What He Proved</div>
+  <div class="d-situation">Oscar Wilde was destroyed by Victorian society and outlasted it entirely. What is the most important thing his life demonstrated?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. That art survives what society cannot tolerate — the law destroyed the man but could not destroy the plays, the novel, or the epigrams</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. That wit and brilliance are not protection against the world's cruelty — he was as vulnerable as anyone once the law was turned against him</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. That the aestheticist philosophy was self-defeating — living for beauty and sensation led directly to the choices that destroyed him</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> The works outlasted everything that tried to destroy them. The Importance of Being Earnest was revived in London within a year of his death. The Picture of Dorian Gray was officially rehabilitated within a decade. By the 1960s Wilde had been transformed from a disgraced criminal into a martyr and cultural hero. He is now studied in universities, performed in every country, and quoted in every language. Victorian society tried to unmake him. Victorian society is barely remembered. Oscar Wilde is.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Oscar Wilde Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="kafka-simulator.html">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">Another writer whose work only survived because a loyal friend defied his instructions to destroy it</span>
+    </a>
+    <a class="next-card" href="woolf-simulator.html">
+      <span class="next-name">Virginia Woolf</span>
+      <span class="next-desc">Wilde's nearest literary heir — the next writer to make style and consciousness the subject of the work</span>
+    </a>
+    <a class="next-card" href="nietzsche-simulator.html">
+      <span class="next-name">Friedrich Nietzsche</span>
+      <span class="next-desc">The philosopher who built an aesthetic worldview that shares much with Wilde's — and also collapsed in it</span>
+    </a>
+    <a class="next-card" href="austen-simulator.html">
+      <span class="next-name">Jane Austen</span>
+      <span class="next-desc">The master of social comedy who built the English tradition that Wilde brought to its extreme</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You understand the Wilde paradox completely — the pose was genuine, the preface was necessary, and the only rational response to Queensberry was to run. You would have saved the man while preserving the work. Whether that is better than what actually happened is a question Wilde himself could not answer.';else if(score>=5)t.textContent='Strong instincts. You saw that the libel suit was a trap and that the aesthetic argument needed to be total rather than moral. A few choices drifted toward convention, but you would have kept most of the work and, possibly, the life.';else if(score>=3)t.textContent='You wanted to fight the injustice more than Wilde\'s wisest friends thought safe. That instinct is understandable. It is also what destroyed him. Queensberry had investigators, evidence, and a Victorian court. Pride was the wrong weapon.';else t.textContent='You made the decisions that Wilde made — sue, stay, fight. The result was two years of hard labor and a ruined body. The Importance of Being Earnest ran for years without his name on the posters. He had been the most famous writer in England. The law made him vanish.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

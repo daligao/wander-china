@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeatRisk™ · Health-Wealth Terminal</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --bg:#070a10; --card:#0c1018; --card2:#0f1520; --border:#1a2030;
+  --text:#c8d4e8; --muted:#3a4558;
+  --green:#00e87a; --yellow:#f5c518; --orange:#f97316; --red:#ef4444; --blue:#3b82f6;
+}
+body {
+  font-family:'Courier New',Courier,monospace;
+  background:var(--bg); color:var(--text);
+  min-height:100vh;
+  display:flex; flex-direction:column; align-items:center;
+  padding:12px 16px 40px;
+  user-select:none;
+}
+
+/* ── Header ─────── */
+.hbar {
+  width:100%; max-width:920px;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:9px 18px;
+  background:var(--card); border:1px solid var(--border);
+  border-bottom:2px solid var(--green);
+  border-radius:10px 10px 0 0;
+  font-size:.7rem; letter-spacing:.08em;
+  transition:border-bottom-color .4s;
+}
+.hbar.rest-mode  { border-bottom-color:var(--blue); }
+.hbar.danger-mode{ border-bottom-color:var(--red); }
+.hbar-logo { color:var(--green); font-weight:700; font-size:.82rem; }
+.hbar-meta { display:flex; gap:20px; color:var(--muted); }
+.hbar-meta b { color:var(--text); font-weight:400; }
+#hbarClock { color:var(--green); }
+
+/* ── Terminal ────── */
+.terminal {
+  width:100%; max-width:920px;
+  background:var(--card);
+  border:1px solid var(--border); border-top:none;
+  border-radius:0 0 12px 12px;
+  padding:22px 22px 28px;
+  transition:border-color .4s, box-shadow .4s;
+}
+.terminal.danger-border { border-color:rgba(239,68,68,.45); box-shadow:0 0 40px rgba(239,68,68,.08); }
+
+/* ── Main row ────── */
+.main-row { display:flex; gap:16px; align-items:stretch; }
+
+/* ── Stat boxes ──── */
+.stat-box {
+  flex:1; background:var(--card2); border:1px solid var(--border);
+  border-radius:10px; padding:18px 16px;
+  display:flex; flex-direction:column; gap:6px;
+  transition:filter .75s ease;
+}
+body.is-resting .stat-box {
+  filter:grayscale(100%) blur(5px) brightness(.3);
+  pointer-events:none;
+}
+.sl { font-size:.65rem; color:var(--muted); letter-spacing:.1em; }
+.sv { font-size:2rem; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.02em; line-height:1; }
+.sd { font-size:.68rem; color:var(--muted); }
+.hbw { height:5px; background:#111820; border-radius:3px; overflow:hidden; margin-top:2px; }
+.hbf { height:100%; border-radius:3px; transition:width 1s linear, background-color .5s; }
+
+/* ── Center ──────── */
+.center-panel { flex:1.4; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; }
+
+/* Phase badge */
+.pbadge { display:inline-flex; align-items:center; gap:5px; padding:3px 12px; border-radius:20px; font-size:.65rem; font-weight:700; letter-spacing:.09em; border:1px solid transparent; transition:all .3s; }
+.pb-idle   { border-color:var(--muted); color:var(--muted); }
+.pb-work   { border-color:rgba(0,232,122,.3); color:var(--green); background:rgba(0,232,122,.05); }
+.pb-rest   { border-color:rgba(59,130,246,.3); color:var(--blue);  background:rgba(59,130,246,.05); }
+.pb-danger { border-color:rgba(239,68,68,.4);  color:var(--red);   background:rgba(239,68,68,.08); }
+.dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+.blink { animation:blink .9s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.15} }
+
+/* Ring */
+.ring-wrap { position:relative; width:210px; height:210px; }
+.ring-wrap svg { width:210px; height:210px; transform:rotate(-90deg); }
+.r-bg  { fill:none; stroke:#111820; stroke-width:11; }
+.r-prog { fill:none; stroke-width:11; stroke-linecap:round; transition:stroke-dashoffset 1s linear, stroke .6s, filter .6s; }
+.ring-inner { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; }
+.ri-time { font-size:2.3rem; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.03em; line-height:1; transition:color .5s; }
+.ri-label { font-size:.6rem; color:var(--muted); letter-spacing:.1em; }
+.ri-sub   { font-size:.6rem; color:var(--muted); }
+
+@keyframes shake-mild {
+  0%,100%{transform:translate(0)} 20%{transform:translate(-5px,-1px) rotate(-1.5deg)}
+  40%{transform:translate(5px,1px) rotate(1.5deg)} 60%{transform:translate(-3px,0) rotate(-1deg)}
+  80%{transform:translate(3px,0) rotate(1deg)}
+}
+@keyframes shake-hard {
+  0%,100%{transform:translate(0)} 10%{transform:translate(-9px,-2px) rotate(-3deg)}
+  20%{transform:translate(9px,2px) rotate(3deg)} 30%{transform:translate(-8px,0) rotate(-2deg)}
+  40%{transform:translate(8px,0) rotate(2deg)} 50%{transform:translate(-5px,-2px) rotate(-1deg)}
+  60%{transform:translate(5px,2px) rotate(1deg)} 70%{transform:translate(-3px,0)}
+  80%{transform:translate(3px,0)} 90%{transform:translate(-1px,0)}
+}
+.ring-warn  { animation:shake-mild 1.8s ease-in-out infinite; }
+.ring-alarm { animation:shake-hard  .55s ease-in-out infinite; }
+
+/* Alert strip */
+.alert-strip { display:none; width:100%; margin-top:10px; padding:7px 16px; border-radius:8px; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.35); font-size:.7rem; color:var(--red); letter-spacing:.06em; text-align:center; animation:blink .9s ease-in-out infinite; }
+.alert-strip.show { display:block; }
+
+/* ── Glitch ──────── */
+@keyframes glitch {
+  0%,100%{transform:translate(0)} 20%{transform:translate(-3px,1px)} 40%{transform:translate(3px,-1px)}
+  60%{transform:translate(-2px,2px)} 80%{transform:translate(2px,-2px)}
+}
+.glitching { animation:glitch .12s steps(1) infinite; color:var(--red) !important; }
+
+/* ── Action ──────── */
+.action-area { margin-top:18px; display:flex; flex-direction:column; align-items:center; gap:8px; }
+.btn-main { width:100%; max-width:380px; padding:14px 0; border:none; border-radius:10px; font-family:inherit; font-size:.9rem; font-weight:700; letter-spacing:.07em; cursor:pointer; transition:all .15s; }
+.btn-start { background:linear-gradient(135deg,#166534,#15803d); color:#fff; box-shadow:0 0 22px rgba(0,200,90,.2); }
+.btn-start:hover { box-shadow:0 0 34px rgba(0,200,90,.35); transform:translateY(-1px); }
+.btn-break { background:linear-gradient(135deg,#991b1b,#dc2626); color:#fff; box-shadow:0 0 22px rgba(220,38,38,.25); }
+.btn-break:hover { box-shadow:0 0 34px rgba(220,38,38,.4); transform:translateY(-1px); }
+.btn-wait  { background:#0f1520; color:var(--muted); border:1px solid var(--border); cursor:not-allowed; }
+.btn-cost  { font-size:.67rem; color:var(--muted); letter-spacing:.05em; text-align:center; }
+.btn-reset { display:none; background:none; border:1px solid var(--border); color:var(--muted); border-radius:7px; padding:5px 18px; font-family:inherit; font-size:.65rem; letter-spacing:.07em; cursor:pointer; transition:all .2s; }
+.btn-reset:hover { border-color:var(--muted); color:var(--text); }
+.btn-wipe { background:none; border:1px solid rgba(239,68,68,.45); color:var(--red); border-radius:7px; padding:6px 16px; font-family:inherit; font-size:.68rem; font-weight:700; letter-spacing:.06em; cursor:pointer; transition:all .2s; white-space:nowrap; }
+.btn-wipe:hover { background:rgba(239,68,68,.1); border-color:var(--red); }
+.btn-alarm-stop { display:none; background:rgba(239,68,68,.18); border:2px solid var(--red); color:#fff; border-radius:10px; padding:10px 28px; font-family:inherit; font-size:.85rem; font-weight:700; letter-spacing:.08em; cursor:pointer; animation:blink .7s ease-in-out infinite; }
+.btn-alarm-stop:hover { background:rgba(239,68,68,.35); animation:none; }
+
+.divider { border:none; border-top:1px solid var(--border); margin:18px 0; }
+
+/* ── Duration inputs ── */
+.dur-row { display:flex; align-items:center; justify-content:center; gap:18px; margin:14px 0 4px; }
+.dur-item { display:flex; flex-direction:column; align-items:center; gap:3px; }
+.dur-item label { font-size:.6rem; color:var(--muted); letter-spacing:.1em; }
+.dur-inp { width:60px; text-align:center; background:var(--card2); border:1px solid var(--border); border-radius:7px; color:var(--text); font-family:inherit; font-size:.95rem; font-weight:700; padding:5px 2px; outline:none; transition:border-color .2s; }
+.dur-inp:focus { border-color:var(--green); }
+.dur-inp:disabled { color:var(--muted); cursor:not-allowed; opacity:.5; }
+.dur-sep { color:var(--muted); font-size:1rem; padding-top:16px; }
+
+/* ── CAPEX ───────── */
+.blurable { transition:filter .75s ease; }
+body.is-resting .blurable { filter:grayscale(100%) blur(5px) brightness(.3); pointer-events:none; }
+.section-title { font-size:.65rem; color:var(--muted); letter-spacing:.12em; margin-bottom:12px; }
+.capex-grid { display:flex; gap:12px; }
+.ci {
+  flex:1; background:var(--card2); border:1px solid var(--border);
+  border-radius:10px; padding:14px;
+  display:flex; flex-direction:column; gap:5px;
+  transition:border-color .3s;
+}
+.ci.owned { border-color:rgba(0,232,122,.35); }
+.ci-name { font-size:.78rem; font-weight:700; }
+.ci-desc { font-size:.67rem; color:var(--muted); }
+.ci-cost { font-size:.7rem; color:var(--yellow); }
+.ci-btn {
+  align-self:flex-start; margin-top:4px; padding:5px 14px;
+  border:none; border-radius:7px;
+  font-family:inherit; font-size:.7rem; font-weight:700; letter-spacing:.05em;
+  cursor:pointer; background:var(--yellow); color:#000; transition:background .15s;
+}
+.ci-btn:hover:not(:disabled) { background:#e6b800; }
+.ci-btn:disabled { background:var(--muted); color:var(--card2); cursor:not-allowed; }
+
+/* ── Settings ────── */
+.settings-details { cursor:pointer; }
+summary.ssummary { font-size:.65rem; color:var(--muted); letter-spacing:.12em; list-style:none; cursor:pointer; }
+summary.ssummary::-webkit-details-marker { display:none; }
+.sbody { margin-top:12px; display:flex; flex-direction:column; gap:6px; }
+.sbody label { font-size:.67rem; color:var(--muted); }
+.sbody input[type=url] {
+  width:100%; padding:7px 10px;
+  background:var(--card2); border:1px solid var(--border);
+  border-radius:7px; color:var(--text);
+  font-family:inherit; font-size:.72rem; outline:none;
+}
+.sbody input[type=url]:focus { border-color:var(--blue); }
+
+/* ── History ─────── */
+.hist-row { display:flex; gap:10px; font-size:.7rem; color:var(--muted); padding:5px 0; border-bottom:1px solid #0e1520; align-items:center; }
+.hist-row:last-child { border-bottom:none; }
+.h-num   { color:var(--text); min-width:28px; }
+.h-worth { color:var(--green); min-width:80px; font-variant-numeric:tabular-nums; }
+.h-info  { flex:1; }
+.no-hist { font-size:.72rem; color:var(--muted); }
+
+/* ── Game Over ────── */
+.overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.93); backdrop-filter:blur(5px); z-index:999; align-items:center; justify-content:center; }
+.overlay.show { display:flex; }
+.go-box { background:#080a10; border:2px solid var(--red); border-radius:16px; padding:36px 30px; max-width:500px; width:90%; text-align:center; box-shadow:0 0 80px rgba(239,68,68,.35); animation:goPop .35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes goPop { from{transform:scale(.8);opacity:0} to{transform:scale(1);opacity:1} }
+.go-icon  { font-size:3rem; margin-bottom:12px; }
+.go-title { font-size:1.1rem; font-weight:700; color:var(--red); letter-spacing:.05em; margin-bottom:8px; }
+.go-msg   { font-size:.78rem; color:#8090aa; line-height:1.75; margin-bottom:20px; }
+.go-stats { display:flex; justify-content:center; gap:24px; margin-bottom:20px; padding:14px; background:#0c0e16; border-radius:10px; }
+.go-sv { font-size:1.35rem; font-weight:700; font-variant-numeric:tabular-nums; }
+.go-sl { font-size:.6rem; color:var(--muted); margin-top:4px; letter-spacing:.08em; }
+.btn-reborn { padding:11px 32px; background:var(--red); color:#fff; border:none; border-radius:10px; font-family:inherit; font-size:.86rem; font-weight:700; letter-spacing:.07em; cursor:pointer; }
+.btn-reborn:hover { background:#dc2626; }
+
+/* ── Submit + Leaderboard ── */
+.go-submit { margin:14px 0 12px; display:flex; flex-direction:column; align-items:center; gap:8px; }
+.go-form { display:flex; flex-direction:column; gap:9px; width:100%; max-width:320px; text-align:left; }
+.go-form-lbl { font-size:.58rem; color:var(--muted); letter-spacing:.1em; display:block; margin-bottom:3px; }
+.go-name-inp { width:100%; background:#0c0e16; border:1px solid #2a3040; border-radius:7px; color:var(--text); font-family:inherit; font-size:.84rem; padding:8px 11px; outline:none; box-sizing:border-box; }
+.go-name-inp:focus { border-color:var(--yellow); }
+.go-occ-sel { width:100%; background:#0c0e16; border:1px solid #2a3040; border-radius:7px; color:var(--text); font-family:inherit; font-size:.8rem; padding:8px 10px; outline:none; cursor:pointer; box-sizing:border-box; }
+.go-occ-sel:focus { border-color:var(--yellow); }
+.go-score-preview { background:#0c0e16; border:1px solid rgba(245,197,24,.3); border-radius:8px; padding:10px 14px; font-size:.7rem; color:var(--muted); letter-spacing:.05em; text-align:center; }
+.btn-submit { padding:8px 18px; background:var(--yellow); color:#000; border:none; border-radius:7px; font-family:inherit; font-size:.78rem; font-weight:700; letter-spacing:.05em; cursor:pointer; white-space:nowrap; transition:box-shadow .3s; }
+.btn-submit.new-best-glow { box-shadow:0 0 20px rgba(245,197,24,.7); animation:blink .7s ease-in-out infinite; }
+.btn-submit:disabled { background:var(--muted); color:#000; cursor:not-allowed; animation:none; box-shadow:none; }
+.go-rank-result { font-size:.75rem; color:var(--green); letter-spacing:.05em; }
+.new-best-banner { background:rgba(245,197,24,.1); border:1px solid rgba(245,197,24,.45); border-radius:8px; padding:8px 18px; color:var(--yellow); font-size:.78rem; font-weight:700; letter-spacing:.06em; text-align:center; }
+
+.lb-section { width:100%; max-width:920px; margin-top:20px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:22px 22px 24px; }
+.lb-title { font-size:.72rem; font-weight:700; color:var(--yellow); letter-spacing:.1em; margin-bottom:14px; }
+.lb-row { display:flex; gap:10px; align-items:center; font-size:.72rem; color:var(--muted); padding:6px 0; border-bottom:1px solid #0e1520; }
+.lb-row:last-child { border-bottom:none; }
+.lb-rank { min-width:32px; font-size:.8rem; }
+.lb-name { min-width:100px; color:var(--text); font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:120px; }
+.lb-peak { min-width:80px; color:var(--green); font-variant-numeric:tabular-nums; }
+.lb-info { flex:1; }
+
+/* ── How It Works ─── */
+.how-section {
+  width:100%; max-width:920px; margin-top:20px;
+  background:var(--card); border:1px solid var(--border); border-radius:12px;
+  padding:22px 22px 24px;
+}
+.how-title { font-size:.72rem; font-weight:700; color:var(--green); letter-spacing:.1em; margin-bottom:16px; }
+.how-grid  { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; }
+.how-card  { background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:14px; }
+.how-icon  { font-size:1.4rem; margin-bottom:6px; }
+.how-name  { font-size:.76rem; font-weight:700; color:var(--text); margin-bottom:5px; }
+.how-desc  { font-size:.67rem; color:var(--muted); line-height:1.6; }
+.how-desc b{ color:var(--yellow); font-weight:600; }
+
+/* ── Tools Section ── */
+.tools-section {
+  width:100%; max-width:920px;
+  margin-top:28px;
+  background:var(--card); border:1px solid var(--border); border-radius:12px;
+  padding:24px 22px 28px;
+}
+.tools-header { font-size:.82rem; font-weight:700; color:var(--green); letter-spacing:.08em; margin-bottom:4px; }
+.tools-sub { font-size:.7rem; color:var(--muted); margin-bottom:18px; }
+.tools-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px; }
+.tool-card {
+  background:var(--card2); border:1px solid var(--border); border-radius:10px;
+  padding:13px 14px; display:flex; flex-direction:column; gap:4px;
+  transition:border-color .2s;
+}
+.tool-card:hover { border-color:rgba(0,232,122,.25); }
+.tc-row1 { display:flex; align-items:center; gap:8px; }
+.tc-num  { font-size:.62rem; color:var(--muted); min-width:18px; }
+.tc-name { font-size:.8rem; font-weight:700; color:var(--text); }
+.tc-type { font-size:.62rem; color:var(--blue); margin-left:auto; white-space:nowrap; }
+.tc-desc { font-size:.67rem; color:var(--muted); line-height:1.5; }
+.tc-link { font-size:.65rem; color:var(--green); text-decoration:none; margin-top:2px; display:inline-block; }
+.tc-link:hover { text-decoration:underline; }
+.tc-best { font-size:.62rem; color:var(--yellow); margin-top:2px; }
+
+/* ── Responsive ───── */
+@media (max-width:640px) {
+  .main-row { flex-direction:column; }
+  .sv { font-size:1.6rem; }
+  .ring-wrap { width:180px; height:180px; }
+  .ring-wrap svg { width:180px; height:180px; }
+  .ri-time { font-size:1.9rem; }
+  .hbar-meta { gap:12px; font-size:.62rem; }
+  .capex-grid { flex-direction:column; }
+  .tools-grid { grid-template-columns:1fr; }
+  .how-grid   { grid-template-columns:1fr; }
+}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+
+<div class="hbar" id="hbar">
+  <span class="hbar-logo">◈ SEAT RISK™</span>
+  <div class="hbar-meta">
+    <span>SESSION <b id="hdrSess">1</b></span>
+    <span>PEAK <b id="hdrPeak">$1,000.00</b></span>
+    <b id="hbarClock">--:--:--</b>
+  </div>
+</div>
+
+<div style="width:100%;max-width:920px;margin:10px 0 0;background:linear-gradient(135deg,#1e3a5f,#1e40af);border:1px solid #3b82f6;border-radius:10px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+  <div>
+    <div style="font-size:.8rem;font-weight:700;color:#fff;margin-bottom:3px">💼 Want the Office Version?</div>
+    <div style="font-size:.7rem;color:#93c5fd">No game mechanics · Silent Chrome notifications · Pomodoro cycles · Clean white UI</div>
+  </div>
+  <a href="/tools/focus-timer.html" style="display:inline-block;background:#fff;color:#1e40af;font-weight:700;font-size:.82rem;padding:9px 20px;border-radius:8px;text-decoration:none;white-space:nowrap;flex-shrink:0">Switch to Office Timer →</a>
+</div>
+
+<div class="terminal" id="terminal">
+  <div class="main-row">
+
+    <div class="stat-box">
+      <div class="sl">💰 NET WORTH</div>
+      <div class="sv" id="svWorth" style="color:var(--green)">$1,000.00</div>
+      <div class="sd" id="sdWorth">Idle — not earning</div>
+    </div>
+
+    <div class="center-panel">
+      <div class="pbadge pb-idle" id="pBadge">
+        <div class="dot" id="pDot"></div>
+        <span id="pText">READY TO TRADE</span>
+      </div>
+      <div class="ring-wrap" id="ringWrap">
+        <svg viewBox="0 0 210 210">
+          <circle class="r-bg"   cx="105" cy="105" r="90"/>
+          <circle class="r-prog" id="rProg" cx="105" cy="105" r="90"
+            stroke-dasharray="565.5" stroke-dashoffset="0" stroke="var(--green)"/>
+        </svg>
+        <div class="ring-inner">
+          <div class="ri-time" id="riTime" style="color:var(--green)">45:00</div>
+          <div class="ri-label" id="riLabel">WORK SESSION</div>
+          <div class="ri-sub"   id="riSub">start to begin</div>
+        </div>
+      </div>
+      <div class="alert-strip" id="alertStrip">⚡ DANGER — TAKE A BREAK NOW</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="sl">❤️ HEALTH SCORE</div>
+      <div class="sv" id="svHealth" style="color:var(--green)">100.0</div>
+      <div class="hbw"><div class="hbf" id="hFill" style="width:100%;background:var(--green)"></div></div>
+      <div class="sd" id="sdHealth">Full capacity</div>
+    </div>
+  </div>
+
+  <div class="dur-row">
+    <div class="dur-item">
+      <label>WORK (MIN)</label>
+      <input type="number" class="dur-inp" id="workMin" value="45" min="1" max="120" oninput="onDurChange()">
+    </div>
+    <span class="dur-sep">/</span>
+    <div class="dur-item">
+      <label>BREAK (MIN)</label>
+      <input type="number" class="dur-inp" id="breakMin" value="5" min="1" max="60" oninput="onDurChange()">
+    </div>
+  </div>
+
+  <div class="action-area">
+    <button class="btn-alarm-stop" id="alarmStopBtn" onclick="stopAlarm()">🔕 STOP ALARM</button>
+    <button class="btn-main btn-start" id="mainBtn" onclick="handleBtn()">▶  START FOCUS SESSION</button>
+    <div class="btn-cost" id="btnCost">Earn $2.00/min · Health −1.5/min · Auto-break at 45 min · Hard kill at 60 min</div>
+    <button class="btn-reset" id="resetBtn" onclick="resetGame()">✎ STOP &amp; ADJUST TIMER</button>
+  </div>
+
+  <hr class="divider">
+
+  <div class="blurable">
+    <div class="section-title">▸ INFRASTRUCTURE INVESTMENT (CAPEX)</div>
+    <div class="capex-grid">
+      <div class="ci" id="ciChair">
+        <div class="ci-name">🪑 Ergonomic Chair</div>
+        <div class="ci-desc">Reduces health drain 33%: 1.5 → 1.0 /min. More runway before break.</div>
+        <div class="ci-cost">$2,000</div>
+        <button class="ci-btn" id="btnChair" onclick="buyCAPEX('chair')">BUY — $2,000</button>
+      </div>
+      <div class="ci" id="ciDesk">
+        <div class="ci-name">🖥 Standing Desk</div>
+        <div class="ci-desc">Halves rest fee: 1% → 0.5%. Raises wealth ceiling from $9K to $18K.</div>
+        <div class="ci-cost">$5,000</div>
+        <button class="ci-btn" id="btnDesk" onclick="buyCAPEX('desk')">BUY — $5,000</button>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <details class="settings-details blurable">
+    <summary class="ssummary">⚙ SETTINGS</summary>
+    <div class="sbody">
+      <label>Webhook URL — receives JSON on every game-over (optional, leave blank to disable)</label>
+      <input type="url" id="webhookInput" placeholder="https://your-endpoint.example.com/hook" oninput="saveWebhook()">
+      <div class="sd">Payload: { session, peakWorth, breaks, minsWorked, cause, investments, timestamp }</div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0">
+      <label style="color:var(--red)">DANGER ZONE</label>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:6px">
+        <button class="btn-wipe" onclick="wipeAll()">🗑 WIPE ALL DATA</button>
+        <span class="sd">Resets net worth to $1,000 · clears session history · starts over from session #1</span>
+      </div>
+    </div>
+  </details>
+
+  <hr class="divider">
+
+  <div class="blurable">
+    <div class="section-title">▸ SESSION HISTORY</div>
+    <div id="histList"><div class="no-hist">No sessions yet — start your first run.</div></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="go-box">
+    <div class="go-icon"  id="goIcon">💀</div>
+    <div class="go-title" id="goTitle">⚠ POSITION LIQUIDATED</div>
+    <div class="go-msg"   id="goMsg"></div>
+    <div class="go-stats">
+      <div><div class="go-sv" id="goPeak"   style="color:var(--yellow)">$0</div><div class="go-sl">PEAK WORTH</div></div>
+      <div><div class="go-sv" id="goBreaks" style="color:var(--blue)">0</div>  <div class="go-sl">BREAKS TAKEN</div></div>
+      <div><div class="go-sv" id="goMins"   style="color:var(--green)">0</div> <div class="go-sl">MINS WORKED</div></div>
+    </div>
+    <div class="go-submit">
+      <div id="newBestBanner" class="new-best-banner" style="display:none">🎉 NEW PERSONAL BEST — Share it with the world!</div>
+      <div style="font-size:.62rem;color:var(--muted);letter-spacing:.1em;margin-top:6px">▸ POST YOUR SCORE TO GLOBAL LEADERBOARD</div>
+      <div class="go-form">
+        <div>
+          <label class="go-form-lbl">YOUR NAME</label>
+          <input type="text" class="go-name-inp" id="playerName" placeholder="Display name (max 20 chars)" maxlength="20">
+        </div>
+        <div>
+          <label class="go-form-lbl">YOUR OCCUPATION</label>
+          <select class="go-occ-sel" id="playerOcc">
+            <option value="Software Developer">💻 Software Developer</option>
+            <option value="Data Analyst">📊 Data Analyst / Scientist</option>
+            <option value="UI/UX Designer">🎨 UI/UX Designer</option>
+            <option value="Content Writer">📝 Content Writer / Editor</option>
+            <option value="Digital Marketer">📣 Digital Marketer</option>
+            <option value="Product Manager">🗂 Product Manager</option>
+            <option value="Accountant">🧮 Accountant / Finance</option>
+            <option value="Customer Support">🎧 Customer Support</option>
+            <option value="Project Manager">📋 Project Manager</option>
+            <option value="Video Editor">🎬 Video Editor / Creator</option>
+            <option value="System Admin">🖥 System Admin / IT</option>
+            <option value="Trader/Investor">📈 Trader / Investor</option>
+            <option value="Sales">🤝 Sales / Business Dev</option>
+            <option value="HR">👥 HR / Recruiter</option>
+            <option value="Student">🎓 Student</option>
+            <option value="Freelancer">🏠 Freelancer / Remote Worker</option>
+            <option value="Other" selected>👤 Other</option>
+          </select>
+        </div>
+        <div class="go-score-preview">
+          SUBMITTING PEAK WORTH &nbsp;→&nbsp; <span id="submitPeakPreview" style="color:var(--yellow);font-weight:700;font-size:.9rem">$0</span>
+        </div>
+        <button class="btn-submit" id="submitBtn" onclick="submitScore()">🏆 Confirm &amp; Submit to Leaderboard</button>
+      </div>
+      <div id="rankResult" class="go-rank-result" style="display:none;margin-top:4px"></div>
+    </div>
+    <button class="btn-reborn" onclick="restart()">♻  REINCARNATE</button>
+  </div>
+</div>
+
+<!-- ── Global Leaderboard ─────────────────────────────────────────── -->
+<div class="lb-section">
+  <div class="lb-title">🏆 GLOBAL LEADERBOARD — TOP 20 NET WORTH</div>
+  <div id="lbList"><div class="no-hist">Loading scores...</div></div>
+</div>
+
+<!-- ── How It Works ────────────────────────────────────────────────── -->
+<div class="how-section">
+  <div class="how-title">◈ HOW THIS GAME WORKS</div>
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-icon">💰</div>
+      <div class="how-name">Earn While You Work</div>
+      <div class="how-desc">Your net worth grows at <b>+$2.00/min</b> while in Focus Mode. The longer you stay focused, the more you earn — but health slowly drains at −1.5/min.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">⏱</div>
+      <div class="how-name">Auto-Break at Your Timer</div>
+      <div class="how-desc">When the ring empties, the game auto-triggers a break and plays an alert. You can also break early — at a cost of <b>1% of your net worth</b> as a "health maintenance fee."</div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">⚡</div>
+      <div class="how-name">60-Min Hard Kill</div>
+      <div class="how-desc">Miss your break and sit for a full 60 minutes? <b>Instant game over.</b> All assets seized for the ICU bill. This mirrors real biology: sudden health collapse from chronic sitting.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">📈</div>
+      <div class="how-name">The $9,000 Wealth Ceiling</div>
+      <div class="how-desc">Work 45 min → earn $90. Rest costs 1% of worth. When worth = $9,000, the 1% fee equals $90 — your profit. <b>Single-handedly proves you can't escape the time-for-money trap.</b></div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">🪑</div>
+      <div class="how-name">Invest to Break the Ceiling</div>
+      <div class="how-desc">Buy the <b>Ergonomic Chair ($2K)</b> to cut health drain by 33%. Buy the <b>Standing Desk ($5K)</b> to halve the rest fee and raise your ceiling to $18,000.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">❤️</div>
+      <div class="how-name">Why This Matters IRL</div>
+      <div class="how-desc">Prolonged sitting compresses pelvic blood flow, linked to prostate issues, back pain, and metabolic risk. <b>Standing up every 45 min is one of the highest-ROI health habits.</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Tools Recommendations ──────────────────────────────────────── -->
+<div class="tools-section">
+  <div class="tools-header">▸ 10 BEST STAND-UP & BREAK TIMER TOOLS</div>
+  <div class="tools-sub">Curated alternatives — desktop apps, mobile, gamified, and Chrome extensions.</div>
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tc-row1"><span class="tc-num">01</span><span class="tc-name">Stretchly</span><span class="tc-type">Desktop App</span></div>
+      <div class="tc-desc">Open-source cross-platform break reminder (Win/Mac/Linux). Highly customizable intervals, mini &amp; long breaks.</div>
+      <a class="tc-link" href="https://hovancik.net/stretchly/" target="_blank" rel="noopener">hovancik.net/stretchly ↗</a>
+      <div class="tc-best">★ Best overall free desktop pick</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-row1"><span class="tc-num">02</span><span class="tc-name">Forest</span><span class="tc-type">Mobile + Web</span></div>
+      <div class="tc-desc">Gamified Pomodoro — grow a virtual tree while focused. Leave the app and the tree dies. Real trees planted with earnings.</div>
+      <a class="tc-link" href="https://www.forestapp.cc/" target="_blank" rel="noopener">forestapp.cc ↗</a>
+      <div class="tc-best">★ Most popular gamified focus app</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-row1"><span class="tc-num">03</span><span class="tc-name">Habitica</span><span class="tc-type">Web + Mobile</span></div>
+      <div class="tc-desc">Full RPG habit tracker. Turn "stand up every 45 min" into a daily quest. Lose HP if you skip, gain XP when you complete.</div>
+      <a class="tc-link" href="https://habitica.com/" target="_blank" rel="noopener">habitica.com ↗</a>
+      <div class="tc-best">★ Deepest gamification of any app</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-row1"><span class="tc-num">04</span><span class="tc-name">Supermoo</span><span class="tc-type">Multi-platform</span></div>
+      <div class="tc-desc">Fun character-based reminders with a cute cow mascot. Available on iOS, Android, Mac, and as a Chrome extension.</div>
+      <a class="tc-link" href="https://supermoo.org/" target="_blank" rel="noopener">supermoo.org ↗</a>
+      <div class="tc-best">Best for friendly, non-threatening reminders</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-row1"><span class="tc-num">05</span><span class="tc-name">Time Out</span><span class="tc-type">Mac App</span></div>
+      <div class="tc-desc">Elegant full-screen fade break tool for macOS. Natural and micro break modes. Clean, minimal, respectful UI.</div>
+      <a class="tc-link" href="https://www.dejal.com/timeout/" target="_blank" rel="noopener">dejal.com/timeout ↗</a>
+      <div class="tc-best">Best for Mac users who want elegance</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-row1"><span class="tc-num">06</span><span class="tc-name">PomoFit</span><span class="tc-type">Web App</span></div>
+      <div class="tc-desc">Pomodoro timer with built-in exercise suggestions during breaks. Guides you through quick stretches and movements.</div>
+      <a class="tc-link" href="https://pomofit.online/" target="_blank" rel="noopener">pomofit.online ↗</a>
+      <div class="tc-best">Best if you want guided movement breaks</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-row1"><span class="tc-num">07</span><span class="tc-name">Stand Up!</span><span class="tc-type">iOS App</span></div>
+      <div class="tc-desc">Dedicated stand-up timer for iPhone. Simple schedule-based reminders, hourly nudges, Apple Watch support.</div>
+      <div class="tc-desc" style="margin-top:2px">Search "Stand Up! The Work Break Timer" on App Store</div>
+      <div class="tc-best">Best dedicated iOS stand-up app</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-row1"><span class="tc-num">08</span><span class="tc-name">Be Focused</span><span class="tc-type">Mac + iOS</span></div>
+      <div class="tc-desc">Clean, lightweight Pomodoro for Mac and iPhone. Task list integration, statistics, iCloud sync between devices.</div>
+      <div class="tc-desc" style="margin-top:2px">Available on Mac App Store &amp; App Store</div>
+      <div class="tc-best">Best lightweight Pomodoro for Apple ecosystem</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-row1"><span class="tc-num">09</span><span class="tc-name">StandUp Extension</span><span class="tc-type">Chrome Extension</span></div>
+      <div class="tc-desc">Lightweight browser-based stand-up reminder with a small gamification layer. No install required beyond the extension.</div>
+      <div class="tc-desc" style="margin-top:2px">Search "StandUp — Break Reminder" on Chrome Web Store</div>
+      <div class="tc-best">Best zero-friction browser reminder</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-row1"><span class="tc-num">10</span><span class="tc-name">Workrave</span><span class="tc-type">Desktop App</span></div>
+      <div class="tc-desc">Open-source RSI prevention tool for Windows &amp; Linux. Tracks typing/mouse activity, enforces micro-breaks, rest breaks, and daily limits.</div>
+      <a class="tc-link" href="https://workrave.org/" target="_blank" rel="noopener">workrave.org ↗</a>
+      <div class="tc-best">Best for RSI prevention on Windows/Linux</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Blog CTA ──────────────────────────────────────────────────────── -->
+<div style="max-width:760px;margin:0 auto;padding:32px 20px;text-align:center;border-top:1px solid rgba(255,255,255,.07)">
+  <div style="font-size:.65rem;letter-spacing:.15em;color:var(--muted);margin-bottom:10px">▸ THE STORY BEHIND THIS TOOL</div>
+  <a href="https://ordinarymantrying.com/dangers-of-prolonged-sitting-pomodoro-timer-seatrisk/"
+     style="display:inline-block;color:var(--yellow);font-size:.95rem;font-weight:700;text-decoration:none;border:1px solid rgba(245,197,24,.3);border-radius:8px;padding:12px 28px;transition:border-color .2s"
+     onmouseover="this.style.borderColor='rgba(245,197,24,.7)'" onmouseout="this.style.borderColor='rgba(245,197,24,.3)'">
+    Why I Quit Pomodoro Timers and Built This Instead →
+  </a>
+  <div style="font-size:.72rem;color:var(--muted);margin-top:8px">A 40-year-old's medical checkup, the dangers of prolonged sitting, and loss aversion.</div>
+</div>
+
+<script>
+// ─── Constants ───────────────────────────────────────────────────────
+const C = {
+  WORTH0:   1000,  HEALTH0: 100,
+  EARN_S:   2/60,  DRAIN_S: 1.5/60,
+  SIT_MAX:  3600,  SIT_WARN: 3000,
+  WORK_DUR: 2700,  BREAK_DUR: 300,
+  REST_PCT: 0.01,
+  CIRC:     2 * Math.PI * 90,
+  CAPEX: {
+    chair: { cost:2000, drainMult:0.667, name:'Ergonomic Chair' },
+    desk:  { cost:5000, restMult:0.5,    name:'Standing Desk'   },
+  },
+};
+
+// ─── State ───────────────────────────────────────────────────────────
+let G, session, history, tickId, alarmId, audioCtx, workDoneTimeout;
+
+function freshState() {
+  return {
+    phase:'idle', worth:C.WORTH0, health:C.HEALTH0,
+    sitSec:0, restSec:C.BREAK_DUR,
+    peakWorth:C.WORTH0, breaks:0, minsWorked:0, cause:'',
+    lastTick:Date.now(), inv:{ chair:false, desk:false },
+  };
+}
+function drainRate()   { return C.DRAIN_S * (G.inv.chair ? C.CAPEX.chair.drainMult : 1); }
+function restCostPct() { return C.REST_PCT * (G.inv.desk  ? C.CAPEX.desk.restMult   : 1); }
+
+function onDurChange() {
+  if (G.phase !== 'idle') return;
+  C.WORK_DUR  = Math.max(1, parseInt(document.getElementById('workMin').value)  || 45) * 60;
+  C.BREAK_DUR = Math.max(1, parseInt(document.getElementById('breakMin').value) ||  5) * 60;
+  G.restSec   = C.BREAK_DUR;
+  render();
+}
+
+// ─── Audio ───────────────────────────────────────────────────────────
+function actx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function tone(f, dur, t0, type='square', vol=0.25) {
+  const c=actx(), o=c.createOscillator(), g=c.createGain();
+  o.connect(g); g.connect(c.destination);
+  o.type=type; o.frequency.value=f;
+  g.gain.setValueAtTime(vol, t0);
+  g.gain.exponentialRampToValueAtTime(0.001, t0+dur);
+  o.start(t0); o.stop(t0+dur+.01);
+}
+function chime() {
+  const t=actx().currentTime;
+  [[523,.12,0],[659,.12,.2],[784,.2,.42],[1047,.32,.67]].forEach(([f,d,dt])=>tone(f,d,t+dt,'sine',.28));
+}
+function alarmBurst() {
+  const t=actx().currentTime;
+  tone(880,.13,t,'square',.28); tone(1100,.13,t+.18,'square',.28);
+  tone(880,.13,t+.36,'square',.28); tone(1320,.13,t+.54,'square',.28);
+}
+function startAlarm() { if(alarmId)return; alarmBurst(); alarmId=setInterval(alarmBurst,1350); }
+function stopAlarm()  {
+  if(alarmId){ clearInterval(alarmId); alarmId=null; }
+  if(workDoneTimeout){ clearTimeout(workDoneTimeout); workDoneTimeout=null; }
+}
+
+function playWorkDone() {
+  startAlarm();
+  workDoneTimeout = setTimeout(() => { stopAlarm(); }, 25000);
+  const mins = Math.round(C.WORK_DUR / 60);
+  if (Notification.permission==='granted')
+    new Notification('SeatRisk™ — Time to stand up!', { body: mins + '-min session done. Recovery starting now.' });
+  else if (Notification.permission!=='denied') Notification.requestPermission();
+}
+function warnBeep() { tone(660,.18,actx().currentTime,'sine',.12); }
+
+// ─── Game Logic ──────────────────────────────────────────────────────
+function tick() {
+  const now=Date.now();
+  const dt=Math.min((now-G.lastTick)/1000, 7200);
+  G.lastTick=now;
+  stepPhase(dt);
+}
+
+function stepPhase(dt) {
+  if (dt<=0 || G.phase==='gameover' || G.phase==='idle') { render(); return; }
+
+  if (G.phase==='working') {
+    G.worth      += C.EARN_S * dt;
+    G.health     -= drainRate() * dt;
+    G.sitSec     += dt;
+    G.minsWorked += dt/60;
+    if (G.worth > G.peakWorth) G.peakWorth=G.worth;
+
+    if (G.sitSec >= C.SIT_MAX)  { G.health=0; G.cause='overload'; die(); return; }
+    if (G.health <= 0)           { G.health=0; G.cause='drain';    die(); return; }
+    if (G.sitSec >= C.WORK_DUR)  { autoBreak(); return; }
+    if (G.sitSec>C.SIT_WARN && Math.floor(G.sitSec)%20===0) warnBeep();
+
+  } else if (G.phase==='resting') {
+    G.restSec -= dt;
+    if (G.restSec <= 0) {
+      const overflow = -G.restSec;
+      finishRest();
+      if (overflow > 0.5) { stepPhase(overflow); return; }
+    }
+  }
+  render();
+}
+
+function startWork() {
+  C.WORK_DUR  = Math.max(1, parseInt(document.getElementById('workMin').value)  || 45) * 60;
+  C.BREAK_DUR = Math.max(1, parseInt(document.getElementById('breakMin').value) ||  5) * 60;
+  G.phase='working';
+  tickId=setInterval(tick, 1000);
+  render();
+}
+
+function autoBreak()   { playWorkDone(); applyBreak(); }
+function manualBreak() { if(G.phase!=='working')return; applyBreak(); }
+
+function applyBreak() {
+  G.worth   -= G.worth * restCostPct();
+  G.phase    = 'resting';
+  G.restSec  = C.BREAK_DUR;
+  G.breaks++;
+  render();
+}
+
+function finishRest() {
+  clearInterval(tickId); tickId=null;
+  stopAlarm();
+  G.health=C.HEALTH0; G.sitSec=0; G.phase='idle';
+  document.body.classList.remove('is-resting');
+  chime();
+}
+
+function die() {
+  clearInterval(tickId);
+  G.phase='gameover';
+  document.body.classList.remove('is-resting');
+  startAlarm();
+  glitchEl(document.getElementById('svWorth'));
+  glitchEl(document.getElementById('svHealth'));
+
+  history.unshift({ sess:session, peak:G.peakWorth, breaks:G.breaks, mins:Math.round(G.minsWorked), cause:G.cause, inv:{...G.inv} });
+  if(history.length>6) history.pop();
+  localStorage.setItem('sr_hist', JSON.stringify(history));
+  localStorage.removeItem('sr_state');
+
+  const hook=localStorage.getItem('sr_webhook')||'';
+  if(hook) fetch(hook,{ method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ session, peakWorth:G.peakWorth, breaks:G.breaks, minsWorked:Math.round(G.minsWorked), cause:G.cause, investments:G.inv, timestamp:new Date().toISOString() })
+  }).catch(()=>{});
+
+  render();
+  setTimeout(showGameOver, 600);
+}
+
+function restart() {
+  stopAlarm();
+  const sb = document.getElementById('submitBtn');
+  sb.disabled = false; sb.textContent = '🏆 Submit Score'; sb.classList.remove('new-best-glow');
+  document.getElementById('newBestBanner').style.display = 'none';
+  const rr = document.getElementById('rankResult');
+  rr.style.display = 'none'; rr.style.color = 'var(--green)'; rr.textContent = '';
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('ringWrap').className='ring-wrap';
+  document.body.classList.remove('is-resting');
+  session++;
+  localStorage.setItem('sr_session', session);
+  G=freshState();
+  render();
+}
+
+function wipeAll() {
+  if (!confirm('WIPE ALL DATA?\n\nThis will reset your net worth to $1,000, clear all session history, and start over from session #1.\n\nThis cannot be undone.')) return;
+  clearInterval(tickId); tickId=null;
+  stopAlarm();
+  document.body.classList.remove('is-resting');
+  document.getElementById('ringWrap').className='ring-wrap';
+  document.getElementById('overlay').classList.remove('show');
+  ['sr_state','sr_hist','sr_session'].forEach(k=>localStorage.removeItem(k));
+  session=1; history=[];
+  G=freshState();
+  render();
+}
+
+function resetGame() {
+  clearInterval(tickId); tickId=null;
+  stopAlarm();
+  document.body.classList.remove('is-resting');
+  document.getElementById('ringWrap').className='ring-wrap';
+  document.getElementById('overlay').classList.remove('show');
+  G=freshState();
+  localStorage.removeItem('sr_state');
+  render();
+}
+
+function handleBtn() {
+  if      (G.phase==='idle')    startWork();
+  else if (G.phase==='working') manualBreak();
+}
+
+function buyCAPEX(item) {
+  const cap=C.CAPEX[item];
+  if(G.inv[item] || G.phase==='gameover' || G.worth<cap.cost) return;
+  G.worth-=cap.cost; G.inv[item]=true; render();
+}
+
+// ─── Render ──────────────────────────────────────────────────────────
+function render() {
+  rStats(); rRing(); rPhase(); rBtn(); rCapex(); rHist();
+  document.getElementById('hdrSess').textContent=session;
+  document.getElementById('hdrPeak').textContent='$'+G.peakWorth.toFixed(2);
+  document.getElementById('terminal').classList.toggle('danger-border', G.phase==='working' && G.sitSec>=C.SIT_WARN);
+  document.body.classList.toggle('is-resting', G.phase==='resting');
+  const hbar=document.getElementById('hbar');
+  hbar.className='hbar'+(G.phase==='resting'?' rest-mode':G.phase==='working'&&G.sitSec>=C.SIT_WARN?' danger-mode':'');
+}
+
+function rStats() {
+  const wEl=document.getElementById('svWorth');
+  wEl.textContent='$'+G.worth.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  wEl.style.color=G.worth>=C.WORTH0?'var(--green)':'var(--red)';
+  const wd=document.getElementById('sdWorth');
+  if(G.phase==='working')      { wd.style.color='var(--green)'; wd.textContent='+$2.00 / min'; }
+  else if(G.phase==='resting') { wd.style.color='var(--muted)'; wd.textContent='— recovery pause —'; }
+  else                         { wd.style.color='var(--muted)'; wd.textContent='Idle — not earning'; }
+
+  const h=Math.max(0,G.health);
+  const hEl=document.getElementById('svHealth');
+  hEl.textContent=h.toFixed(1);
+  const hc=h>60?'var(--green)':h>30?'var(--yellow)':'var(--red)';
+  hEl.style.color=hc;
+  document.getElementById('hFill').style.width=Math.min(100,h)+'%';
+  document.getElementById('hFill').style.backgroundColor=hc;
+  const hd=document.getElementById('sdHealth');
+  if(G.phase==='working') {
+    hd.style.color='var(--red)'; hd.textContent='−'+(drainRate()*60).toFixed(1)+' / min';
+  } else if(G.phase==='resting') {
+    hd.style.color='var(--green)'; hd.textContent='Recovering → 100...';
+  } else { hd.style.color='var(--muted)'; hd.textContent='Full capacity'; }
+}
+
+function rRing() {
+  const rp=document.getElementById('rProg'), rt=document.getElementById('riTime'),
+        rl=document.getElementById('riLabel'), rs=document.getElementById('riSub'),
+        rw=document.getElementById('ringWrap'), as=document.getElementById('alertStrip');
+
+  if(G.phase==='resting') {
+    const frac=Math.max(0,G.restSec)/C.BREAK_DUR;
+    rp.style.strokeDashoffset=C.CIRC*(1-frac);
+    rp.style.stroke='var(--blue)'; rp.style.filter='drop-shadow(0 0 8px var(--blue))';
+    rt.style.color='var(--blue)'; rt.textContent=fmt(Math.max(0,G.restSec));
+    rl.textContent='RECOVERY TIME'; rs.textContent='stand · stretch · walk';
+    as.classList.remove('show'); rw.className='ring-wrap'; return;
+  }
+
+  // Work countdown ring (full → empty as 45 min passes)
+  const frac=Math.min(1, G.sitSec/C.WORK_DUR);
+  rp.style.strokeDashoffset=C.CIRC*frac;
+  const color=frac<0.6?'var(--green)':frac<0.78?'var(--yellow)':frac<0.93?'var(--orange)':'var(--red)';
+  rp.style.stroke=color; rp.style.filter=`drop-shadow(0 0 ${frac<0.6?5:10}px ${color})`;
+  rt.style.color=color;
+  rt.textContent=G.phase==='idle'?fmt(C.WORK_DUR):fmt(Math.max(0,C.WORK_DUR-G.sitSec));
+  rl.textContent=G.phase==='idle'?'WORK SESSION':'REMAINING';
+  rs.textContent=G.phase==='idle'?'start to begin':'sitting: '+fmt(G.sitSec);
+
+  const danger=G.phase==='working'&&G.sitSec>=C.SIT_WARN;
+  as.classList.toggle('show', danger);
+  rw.className='ring-wrap'+(G.phase==='gameover'?' ring-alarm':danger?' ring-warn':'');
+}
+
+function rPhase() {
+  const b=document.getElementById('pBadge'), t=document.getElementById('pText'), d=document.getElementById('pDot');
+  b.className='pbadge'; d.className='dot';
+  if(G.phase==='working') {
+    b.classList.add(G.sitSec>=C.SIT_WARN?'pb-danger':'pb-work');
+    t.textContent=G.sitSec>=C.SIT_WARN?'⚡ DANGER ZONE':'FOCUS MODE'; d.classList.add('blink');
+  } else if(G.phase==='resting') {
+    b.classList.add('pb-rest'); t.textContent='RECOVERING'; d.classList.add('blink');
+  } else if(G.phase==='gameover') {
+    b.classList.add('pb-danger'); t.textContent='💀 LIQUIDATED';
+  } else { b.classList.add('pb-idle'); t.textContent='READY TO TRADE'; }
+}
+
+function rBtn() {
+  const locked = G.phase !== 'idle';
+  document.getElementById('workMin').disabled  = locked;
+  document.getElementById('breakMin').disabled = locked;
+  document.getElementById('alarmStopBtn').style.display = alarmId ? 'inline-block' : 'none';
+  document.getElementById('resetBtn').style.display = (G.phase==='working'||G.phase==='resting') ? 'inline-block' : 'none';
+  const btn=document.getElementById('mainBtn'), cost=document.getElementById('btnCost');
+  if(G.phase==='idle') {
+    btn.className='btn-main btn-start'; btn.disabled=false;
+    btn.textContent='▶  START FOCUS SESSION';
+    cost.innerHTML='Earn $2.00/min &nbsp;·&nbsp; Health −1.5/min &nbsp;·&nbsp; Auto-break at 45 min &nbsp;·&nbsp; Hard kill at 60 min';
+  } else if(G.phase==='working') {
+    const c=(G.worth*restCostPct()).toFixed(2), pct=(restCostPct()*100).toFixed(1);
+    btn.className='btn-main btn-break'; btn.disabled=false;
+    btn.textContent='⏸  EARLY BREAK  (cost: $'+c+')';
+    cost.innerHTML=`Rest fee: <span style="color:var(--red)">−$${c}</span> (${pct}% of net worth) · health restores to 100`;
+  } else if(G.phase==='resting') {
+    btn.className='btn-main btn-wait'; btn.disabled=true;
+    btn.textContent='⟳  RECOVERING  '+fmt(Math.max(0,G.restSec));
+    cost.textContent='Stand up, walk around — returning to full health shortly';
+  } else {
+    btn.className='btn-main btn-wait'; btn.disabled=true;
+    btn.textContent='▶  START FOCUS SESSION';
+    cost.textContent='Click Reincarnate to start a new session';
+  }
+}
+
+function rCapex() {
+  ['chair','desk'].forEach(k => {
+    const cap=C.CAPEX[k], owned=G.inv[k], K=k.charAt(0).toUpperCase()+k.slice(1);
+    document.getElementById('ci'+K).className='ci'+(owned?' owned':'');
+    const btn=document.getElementById('btn'+K);
+    if(owned) { btn.textContent='✓ OWNED'; btn.disabled=true; }
+    else { btn.textContent='BUY — $'+cap.cost.toLocaleString(); btn.disabled=G.worth<cap.cost||G.phase==='gameover'; }
+  });
+}
+
+function rHist() {
+  const el=document.getElementById('histList');
+  if(!history.length) { el.innerHTML='<div class="no-hist">No sessions yet — start your first run.</div>'; return; }
+  el.innerHTML=history.map(h=>`
+    <div class="hist-row">
+      <span class="h-num">#${h.sess}</span>
+      <span class="h-worth">$${h.peak.toFixed(0)}</span>
+      <span class="h-info">${h.breaks} break${h.breaks!==1?'s':''} · ${h.mins} min</span>
+      <span style="min-width:130px;text-align:right;color:${h.cause==='overload'?'var(--red)':'var(--orange)'}">
+        ${h.cause==='overload'?'⚡ Overload Kill':'💔 Health Drained'}
+      </span>
+    </div>`).join('');
+}
+
+// ─── Game Over ───────────────────────────────────────────────────────
+function showGameOver() {
+  const ol=G.cause==='overload';
+  document.getElementById('goIcon').textContent  = ol?'⚡':'💔';
+  document.getElementById('goTitle').textContent = ol?'⚡ OVERLOAD MELTDOWN':'💔 HEALTH LIQUIDATED';
+  document.getElementById('goMsg').textContent   = ol
+    ? `You sat for over 60 minutes without standing up. Sudden collapse. Peak: $${G.peakWorth.toFixed(2)} — seized to cover the ICU bill. This life run is over.`
+    : `Health hit zero after ${Math.round(G.minsWorked)} min of relentless work. Peak: $${G.peakWorth.toFixed(2)} — liquidated for medical expenses. Your body filed for bankruptcy.`;
+  document.getElementById('goPeak').textContent          = '$'+G.peakWorth.toFixed(2);
+  document.getElementById('goBreaks').textContent        = G.breaks;
+  document.getElementById('goMins').textContent          = Math.round(G.minsWorked);
+  document.getElementById('submitPeakPreview').textContent = '$'+G.peakWorth.toFixed(2);
+
+  // personal best check
+  const bestKey  = 'sr_best_peak';
+  const prevBest = parseFloat(localStorage.getItem(bestKey) || '1000');
+  const isNewBest = G.peakWorth > 1050 && G.peakWorth > prevBest;
+  if (isNewBest) localStorage.setItem(bestKey, G.peakWorth.toString());
+  document.getElementById('newBestBanner').style.display = isNewBest ? 'block' : 'none';
+  const sb = document.getElementById('submitBtn');
+  if (isNewBest) sb.classList.add('new-best-glow');
+  else sb.classList.remove('new-best-glow');
+
+  document.getElementById('overlay').classList.add('show');
+}
+
+// ─── Glitch Effect ───────────────────────────────────────────────────
+function glitchEl(el) {
+  const chars='0123456789ABCDEF$!@#%×÷±∞', orig=el.textContent;
+  let i=0; el.classList.add('glitching');
+  const iv=setInterval(()=>{
+    el.textContent=Array.from({length:orig.length},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+    if(++i>20){ clearInterval(iv); el.classList.remove('glitching'); el.textContent=orig; }
+  }, 65);
+}
+
+// ─── Persistence ─────────────────────────────────────────────────────
+function saveState() {
+  if(G.phase==='gameover'||G.phase==='idle') return;
+  localStorage.setItem('sr_state', JSON.stringify({...G, lastTick:Date.now()}));
+}
+function loadState() {
+  try {
+    const raw=localStorage.getItem('sr_state');
+    if(!raw) return false;
+    const saved=JSON.parse(raw);
+    const elapsed=(Date.now()-saved.lastTick)/1000;
+    G={...saved, lastTick:Date.now()};
+    if(elapsed>0.5) stepPhase(elapsed); else render();
+    return true;
+  } catch(e){ return false; }
+}
+function saveWebhook() { localStorage.setItem('sr_webhook', document.getElementById('webhookInput').value); }
+
+// ─── Clock ───────────────────────────────────────────────────────────
+setInterval(()=>{
+  const n=new Date();
+  document.getElementById('hbarClock').textContent=
+    [n.getHours(),n.getMinutes(),n.getSeconds()].map(v=>String(v).padStart(2,'0')).join(':');
+}, 1000);
+setInterval(saveState, 5000);
+
+// ─── Utils ───────────────────────────────────────────────────────────
+function fmt(sec) {
+  sec=Math.max(0,Math.floor(sec));
+  return String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');
+}
+
+// ─── Leaderboard ─────────────────────────────────────────────────────
+const API = 'https://ordinarymantrying.com/tools/standup-scores.php';
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+const OCC_ICON = {
+  'Software Developer':'💻','Data Analyst':'📊','UI/UX Designer':'🎨',
+  'Content Writer':'📝','Digital Marketer':'📣','Product Manager':'🗂',
+  'Accountant':'🧮','Customer Support':'🎧','Project Manager':'📋',
+  'Video Editor':'🎬','System Admin':'🖥','Trader/Investor':'📈',
+  'Sales':'🤝','HR':'👥','Student':'🎓','Freelancer':'🏠','Other':'👤'
+};
+
+async function submitScore() {
+  const nameEl = document.getElementById('playerName');
+  const occEl  = document.getElementById('playerOcc');
+  const btn    = document.getElementById('submitBtn');
+  const result = document.getElementById('rankResult');
+  const name   = nameEl.value.trim() || 'Anonymous';
+  const occ    = occEl.value;
+  localStorage.setItem('sr_player_name', name);
+  localStorage.setItem('sr_occ', occ);
+  btn.disabled = true; btn.classList.remove('new-best-glow'); btn.textContent = 'Submitting…';
+  try {
+    const res  = await fetch(API, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ name, occ, peak:G.peakWorth, breaks:G.breaks, mins:Math.round(G.minsWorked), cause:G.cause })
+    });
+    const data = await res.json();
+    result.style.display = 'block'; result.style.color = 'var(--green)';
+    result.textContent   = `🎖 You ranked #${data.rank} out of ${data.total} players`;
+    btn.textContent = '✓ Submitted';
+    loadLeaderboard();
+  } catch(e) {
+    btn.disabled = false; btn.textContent = '🏆 Submit Score';
+    result.style.display = 'block'; result.style.color = 'var(--red)';
+    result.textContent = 'Submit failed — check connection';
+  }
+}
+
+async function loadLeaderboard() {
+  const el = document.getElementById('lbList');
+  try {
+    const res    = await fetch(API + '?t=' + Date.now());
+    const scores = await res.json();
+    if (!scores.length) { el.innerHTML = '<div class="no-hist">No scores yet — be the first to submit!</div>'; return; }
+    const medals = ['🥇','🥈','🥉'];
+    el.innerHTML = scores.map((s,i) => `
+      <div class="lb-row">
+        <span class="lb-rank">${medals[i] || '#'+(i+1)}</span>
+        <span style="min-width:22px;font-size:.85rem">${OCC_ICON[s.occ]||'👤'}</span>
+        <span class="lb-name">${escHtml(s.name)}</span>
+        <span class="lb-peak">$${s.peak.toFixed(0)}</span>
+        <span class="lb-info">${s.breaks} break${s.breaks!==1?'s':''} · ${s.mins} min</span>
+        <span style="color:${s.cause==='overload'?'var(--red)':'var(--orange)'}; min-width:80px; text-align:right;">
+          ${s.cause==='overload'?'⚡ Overload':'💔 Drained'}
+        </span>
+      </div>`).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="no-hist">Could not load leaderboard.</div>';
+  }
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────
+session = parseInt(localStorage.getItem('sr_session')||'1');
+history = JSON.parse(localStorage.getItem('sr_hist')||'[]');
+G       = freshState();
+document.getElementById('webhookInput').value = localStorage.getItem('sr_webhook')||'';
+document.getElementById('playerName').value   = localStorage.getItem('sr_player_name')||'';
+const savedOcc = localStorage.getItem('sr_occ');
+if (savedOcc) document.getElementById('playerOcc').value = savedOcc;
+Notification.requestPermission && Notification.requestPermission();
+if(!loadState()) render();
+if(['working','resting'].includes(G.phase)) tickId=setInterval(tick,1000);
+loadLeaderboard();
+window.addEventListener('beforeunload',()=>{ localStorage.setItem('sr_session',session); saveState(); });
+</script>
+</body>
+</html>

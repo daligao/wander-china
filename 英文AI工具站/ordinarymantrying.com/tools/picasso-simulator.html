@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pablo Picasso Life Simulator — 20,000 Works of Art</title>
+<meta name="description" content="Make the same decisions as Pablo Picasso — from Cubism to Guernica. Interactive historical life simulator.">
+<style>
+:root{
+  --bg:#F5EEEB;--card:#FBF6F3;--ink:#1A0808;--muted:#8B6050;--line:#E8D5CC;
+  --accent:#8B1A1A;--accent-bg:#F8EDEA;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Spain → France · 1881–1973</div>
+  <h1>Could You Have Been<br>Pablo Picasso?</h1>
+  <div class="cover-sub">8 decisions that built the most prolific artist in history — from a boy in Málaga to the creator of Cubism, Guernica, and over 20,000 works.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">20,000+</div><div class="stat-l">Works created</div></div>
+    <div class="stat"><div class="stat-n">91</div><div class="stat-l">Years — never stopped</div></div>
+    <div class="stat"><div class="stat-n">7</div><div class="stat-l">Distinct artistic periods</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Málaga, 1894 · Age 13</div>
+<p class="narrative">Your father, José Ruiz Blanco, is a painting teacher who specializes in pigeons. One day he watches you paint a pigeon so skillfully — so much more precisely than him — that he reportedly hands you his own palette and brushes. His artistic career, he has decided, is over.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Inheritance</div>
+  <div class="d-situation">Your father hands you his palette — an act of surrender from teacher to student. How do you receive this moment?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Accept it — become the student who surpasses the teacher</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. Refuse — humility matters more than acknowledging your own skill</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Accept it but keep painting his pigeons — honor the tradition</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Picasso accepted. His father's gesture became legendary — and Picasso spent the rest of his life proving the passing was real. At 14 he completed the Barcelona School of Fine Arts entrance exam in a single day (it normally takes a month). The student didn't just surpass the teacher; he redefined what painting could be.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Paris, 1901–1904 · The Blue Period</div>
+<p class="narrative">A close friend commits suicide in Paris. You're 20, poor, and devastated. The world seems cold and sorrowful. Your palette begins draining of color — everything turns blue. Critics hate it. Fellow artists think you've lost your way. It isn't selling.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Blue Turn</div>
+  <div class="d-situation">Your paintings are now monochromatic blue — melancholy figures, beggars, acrobats in despair. Do you persist or snap out of it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Keep painting blue — let grief become a period, not just a mood</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Force yourself back to color — grief shouldn't dictate your palette</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Abandon painting for sculpture — change the medium entirely</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Picasso persisted through the Blue Period (1901–1904). The works — La Vie, The Old Guitarist, The Tragedy — are now among his most beloved. His willingness to let an emotional state become an entire aesthetic period set the template for every "period" that followed. Art historians count seven distinct periods in his lifetime of work.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Paris, 1907 · Age 25</div>
+<p class="narrative">You've created a painting unlike anything before it: five female figures, faces fractured like African masks, geometry replacing flesh. Georges Braque sees it and says it looks like you're "drinking gasoline and spitting fire." Your dealer Kahnweiler is unsure. You've been working on it for months and it's still technically "unfinished."</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · Les Demoiselles d'Avignon</div>
+  <div class="d-situation">You have a painting that breaks every rule of Western art — proportion, perspective, beauty. Do you show it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Show it to fellow artists — it will shock, but it will open a door</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Destroy it — even revolutionary ideas can be premature</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Finish it properly with correct anatomy — then show it</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Picasso showed it. Les Demoiselles d'Avignon (1907) is now considered the most important painting of the 20th century — the work that broke Western perspective and made Cubism possible. Matisse was furious. Braque was disturbed. But within a year, Braque and Picasso were co-inventing Cubism together. "Correct" anatomy would have been irrelevant.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Paris, 1908–1914 · Analytic Cubism</div>
+<p class="narrative">You and Georges Braque are developing Cubism together — so closely that you sometimes sign each other's paintings anonymously to prevent attribution debates. Braque calls you both "climbers roped together on a mountain." This is unlike any artistic collaboration in history.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Rope Between Climbers</div>
+  <div class="d-situation">True creative partnership means sharing credit and sharing discovery. Can you sustain it without competing?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Sustain the true partnership — two minds roped together is stronger</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Use Braque's insights but position yourself publicly as the leader</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. End it — the collaboration is diluting your individual identity</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> The partnership lasted until WWI separated them (Braque was drafted; Picasso, Spanish, was not). Together they produced Analytic Cubism — one of art history's most radical joint projects. Picasso later said the collaboration was so close he could barely tell their works apart. He never had another creative partnership quite like it.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Paris, 1937 · The Commission</div>
+<p class="narrative">Nazi and Fascist aircraft, supporting Franco, bomb the Basque market town of Guernica during a busy weekday. Hundreds of civilians die. The Spanish Republican government has commissioned you to create a mural for the Paris International Exposition. You now have a reason.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · Guernica</div>
+  <div class="d-situation">A war crime has just occurred. You have a public commission. What do you paint?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Paint the bombing — in black, white and grey, all screaming chaos</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. Paint a neutral allegory — art shouldn't be propaganda</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Paint it in full color — monochrome limits the emotional impact</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Picasso painted Guernica in black, white and grey — the colors of newspaper photographs and ash. The absence of color was the point: documentary, not decoration. Completed in six weeks, the painting toured the world and became the 20th century's most powerful anti-war image. A reproduction hangs outside the UN Security Council chambers to this day.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Paris, 1940 · Occupation</div>
+<p class="narrative">Germany occupies Paris. Most artists flee to New York. You are famous enough to get out easily. But Paris is your home, your studios, your world. German officers will allow you to work privately but ban all exhibition. A Gestapo officer visits your studio and picks up a postcard of Guernica.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · Stay or Go</div>
+  <div class="d-situation">The Gestapo officer asks, "Did you do this?" What do you say — and do you stay?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. "No — you did." Stay in Paris through the entire occupation</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Deny making Guernica — then take the first passage to New York</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Cooperate with German cultural authorities to protect your studios</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Picasso reportedly replied, "No — you did," and stayed. He was banned from exhibiting but painted continuously through four years of occupation. After liberation in 1944 he joined the French Communist Party as an anti-fascist statement. Staying was defiance; leaving would have been flight. History records the difference.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · Vallauris, 1947 · Age 65</div>
+<p class="narrative">You discover ceramics at a small pottery in Vallauris. You're 65 and have already revolutionized painting. Within one year you produce over 2,000 ceramic pieces. Friends think you're wasting your legend on a "minor" craft.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The New Medium</div>
+  <div class="d-situation">At 65, you are a living monument. Do you risk your reputation on pottery?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. Dive in completely — an artist who stops taking risks is already finished</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. Make a few pieces for fun but return to painting — protect the legacy</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. Decline ceramics entirely — too commercial and decorative</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> Picasso produced over 4,000 ceramic works across two decades. He approached pottery the same way he approached everything: a domain to conquer and transform. Today his ceramics are exhibited alongside his paintings. His willingness to begin again at 65 is why he had seven artistic periods rather than two.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · Mougins, 1970 · Age 88</div>
+<p class="narrative">You are 88. You wake before dawn to paint. You produce 347 engravings in eight months. Your last self-portrait, painted months before your death in 1973, shows a skull-like face with enormous, unafraid eyes. Your output has never once slowed.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · The Final Question</div>
+  <div class="d-situation">Should an artist ever stop working?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. Never — the work is the life; stopping is dying before you die</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. Yes — finish with a great late masterwork and leave on a high note</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. Yes — rest is eventually earned and owed</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> Picasso painted the morning of April 8, 1973. He died that day at 91. His final works — the 347 Series engravings, his raw last self-portraits — are considered among his most emotionally honest. He produced over 20,000 works across painting, sculpture, ceramics, printmaking and poetry. For Picasso, stopping would have been the only true failure.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Picasso Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="davinci-simulator.html">
+      <span class="next-name">Leonardo da Vinci</span>
+      <span class="next-desc">The original polymath — painter, scientist, and engineer 400 years before Picasso</span>
+    </a>
+    <a class="next-card" href="vangogh-simulator.html">
+      <span class="next-name">Vincent van Gogh</span>
+      <span class="next-desc">Produced 900 paintings in 10 years — and sold exactly one while alive</span>
+    </a>
+    <a class="next-card" href="rembrandt-simulator.html">
+      <span class="next-name">Rembrandt van Rijn</span>
+      <span class="next-desc">The Dutch master who painted light, shadow, and human frailty like no other</span>
+    </a>
+    <a class="next-card" href="michelangelo-simulator.html">
+      <span class="next-name">Michelangelo</span>
+      <span class="next-desc">Sculptor, painter, architect — coerced into the Sistine Chapel and never forgave it</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators →</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=Math.round(score/TOTAL*100);document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='Extraordinary. You made the same bold choices as Picasso — refusing to stop, refusing to repeat yourself, and refusing to be defined by any single style. You have the restless creative courage that separates genius from talent.';else if(score>=5)t.textContent='Strong instincts. You grasped most of Picasso\'s logic — the emotional honesty, the willingness to reinvent. A few safe choices crept in, but you\'d have produced significant, lasting work.';else if(score>=3)t.textContent='You had talent but played it safer than Picasso did. Several of your choices would have traded radical transformation for comfortable success — a different, more conventional career.';else t.textContent='You prioritized stability over revolution at key moments. Picasso\'s genius lay in never choosing the safe path when it conflicted with his artistic instinct — even when it cost him relationships, sales, and security.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

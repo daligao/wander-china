@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Family Trip Planner — Free, No Login, Save as Image</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+<style>
+:root {
+  --bg: #f0f4f8; --surface: #fff; --surface2: #f8fafc; --border: #e2e8f0;
+  --text: #1a202c; --muted: #718096; --primary: #4f46e5; --primary-l: #eef2ff;
+  --green: #059669; --green-l: #d1fae5; --red: #dc2626; --red-l: #fee2e2;
+  --orange: #d97706; --orange-l: #fef3c7; --blue: #2563eb; --blue-l: #dbeafe;
+  --purple: #7c3aed; --purple-l: #ede9fe; --shadow: 0 4px 16px rgba(0,0,0,.08);
+  --r: 12px;
+}
+[data-theme="dark"] {
+  --bg: #0f172a; --surface: #1e293b; --surface2: #293548; --border: #334155;
+  --text: #f1f5f9; --muted: #94a3b8; --primary-l: #312e81;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",sans-serif;background:var(--bg);color:var(--text);font-size:15px}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:900;display:flex;align-items:center;justify-content:center;padding:16px}
+.overlay.hide{display:none}
+.modal{background:var(--surface);border-radius:20px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-head{padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between}
+.modal-head h2{font-size:1.15rem}
+.close-btn{background:var(--surface2);border:none;color:var(--muted);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+.close-btn:hover{color:var(--text)}
+.m-tabs{display:flex;border-bottom:1px solid var(--border);margin:14px 20px 0}
+.m-tab{padding:9px 14px;cursor:pointer;font-size:.85rem;color:var(--muted);border-bottom:2px solid transparent;transition:.2s;white-space:nowrap}
+.m-tab.on{color:var(--primary);border-bottom-color:var(--primary);font-weight:700}
+.m-body{padding:18px 20px 24px}
+.m-page{display:none}
+.m-page.on{display:block}
+
+/* ── FORM ── */
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.fi{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;background:var(--surface);color:var(--text);transition:border-color .2s}
+.fi:focus{outline:none;border-color:var(--primary)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fhint{font-size:.76rem;color:var(--muted);margin-top:3px}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 18px;border-radius:8px;border:none;font-size:.9rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:.2s}
+.btn:hover{opacity:.88}
+.btn-p{background:var(--primary);color:#fff}
+.btn-s{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-d{background:var(--red-l);color:var(--red)}
+.btn-full{width:100%;justify-content:center}
+.btn-sm{padding:5px 11px;font-size:.8rem}
+.mt8{margin-top:8px} .mt12{margin-top:12px} .mt16{margin-top:16px}
+
+/* ── PRIVACY & HOW-TO ── */
+.priv-box{background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px;margin-bottom:14px}
+.priv-box h3{color:#166534;margin-bottom:8px;font-size:.95rem;display:flex;align-items:center;gap:6px}
+.priv-box li{font-size:.85rem;color:#166534;margin-bottom:3px;padding-left:4px}
+.priv-box ul{padding-left:16px}
+.how-box{background:var(--surface2);border-radius:10px;padding:14px}
+.how-box h3{font-size:.9rem;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.how-step{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.step-n{background:var(--primary);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px}
+.step-t strong{display:block;font-size:.88rem;margin-bottom:1px}
+.step-t span{font-size:.82rem;color:var(--muted)}
+
+/* ── SLOT EDITOR ── */
+.slot-list{list-style:none}
+.slot-item{display:flex;align-items:center;gap:7px;padding:9px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:7px}
+.slot-icon-in{width:36px;border:1px solid var(--border);border-radius:6px;padding:4px;font-size:1rem;text-align:center;background:var(--surface);color:var(--text)}
+.slot-name-in{flex:1;border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:.88rem;background:var(--surface);color:var(--text)}
+.slot-time-in{width:100px;border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:.82rem;background:var(--surface);color:var(--text)}
+.ord-btns{display:flex;flex-direction:column;gap:1px}
+.ord-btn{background:none;border:none;cursor:pointer;font-size:.7rem;color:var(--muted);padding:1px 3px;line-height:1.4}
+.ord-btn:hover{color:var(--primary)}
+.del-slot{background:none;border:none;cursor:pointer;color:var(--muted);font-size:1rem;padding:2px}
+.del-slot:hover{color:var(--red)}
+.add-slot-row{display:flex;gap:8px;margin-top:8px}
+
+/* ── HEADER ── */
+.app-hd{background:var(--primary);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.hd-row{display:flex;align-items:center;justify-content:space-between}
+.hd-title{font-size:1.05rem;font-weight:700}
+.hd-sub{font-size:.76rem;opacity:.8;margin-top:2px}
+.hd-acts{display:flex;gap:6px}
+.icon-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:.2s}
+.icon-btn:hover{background:rgba(255,255,255,.35)}
+
+/* ── TAB BAR ── */
+.tab-bar{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;padding:0 14px}
+.tab-bar::-webkit-scrollbar{display:none}
+.main-tab{padding:11px 18px;font-size:.88rem;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;font-weight:500;transition:.2s}
+.main-tab.on{color:var(--primary);border-bottom-color:var(--primary);font-weight:700}
+
+/* ── SCHEDULE ── */
+.container{max-width:680px;margin:0 auto;padding:14px 14px 120px}
+.day-card{background:var(--surface);border-radius:var(--r);margin-bottom:18px;box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border)}
+.day-hd{padding:11px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.day-title{font-weight:700;font-size:1rem;display:flex;align-items:center;gap:8px}
+.day-badge{font-size:.72rem;color:var(--muted);background:var(--border);padding:2px 8px;border-radius:10px}
+.day-prog{text-align:right}
+.prog-txt{font-size:.72rem;color:var(--muted)}
+.prog-bar{width:56px;height:3px;background:var(--border);border-radius:2px;margin-top:3px;margin-left:auto;overflow:hidden}
+.prog-fill{height:100%;background:var(--green);border-radius:2px;transition:width .3s}
+
+.slot-row{display:flex;border-bottom:1px solid var(--border)}
+.slot-row:last-child{border-bottom:none}
+.slot-row.done .slot-body{opacity:.55}
+.slot-lbl{width:76px;flex-shrink:0;padding:11px 8px;background:var(--surface2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px}
+.slot-icon{font-size:1.15rem}
+.slot-name{font-size:.72rem;font-weight:700;color:var(--text)}
+.slot-time{font-size:.63rem;color:var(--muted)}
+.slot-body{flex:1;padding:11px 12px;min-height:48px}
+.slot-view{font-size:.92rem;line-height:1.6}
+.slot-view.empty{color:var(--muted);font-style:italic;font-size:.86rem}
+.slot-ta{width:100%;border:1.5px solid var(--primary);border-radius:8px;padding:7px 9px;font-family:inherit;font-size:.92rem;background:var(--surface);color:var(--text);resize:vertical;min-height:66px;display:block}
+.slot-ta:focus{outline:none;box-shadow:0 0 0 3px rgba(79,70,229,.15)}
+.slot-chk{width:38px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-left:1px solid var(--border)}
+.slot-chk input{width:17px;height:17px;accent-color:var(--green);cursor:pointer}
+
+/* Tags */
+.tag{display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border-radius:10px;font-size:.78rem;font-weight:700;margin:1px 2px;vertical-align:middle}
+.tag-r{background:var(--red-l);color:#991b1b}
+.tag-b{background:var(--blue-l);color:#1e40af}
+.tag-o{background:var(--orange-l);color:#92400e}
+.tag-p{background:var(--purple-l);color:#6b21a8}
+.tag-g{background:var(--green-l);color:#065f46}
+
+.tags-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;padding-top:7px;border-top:1px dashed var(--border)}
+.tags-label{font-size:.73rem;color:var(--muted);width:100%;margin-bottom:2px}
+.tag-ins{cursor:pointer;transition:.15s}
+.tag-ins:hover{opacity:.75;transform:scale(1.05)}
+
+/* ── PHOTOS ── */
+.photo-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.photo-wrap{position:relative;display:inline-block}
+.photo-thumb{width:70px;height:70px;border-radius:8px;object-fit:cover;cursor:pointer;border:2px solid var(--border);transition:.2s;display:block}
+.photo-thumb:hover{border-color:var(--primary);transform:scale(1.04)}
+.photo-rm{position:absolute;top:-5px;right:-5px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.62rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.photo-add-btn{width:70px;height:70px;border-radius:8px;border:2px dashed var(--border);background:var(--surface2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted);font-size:1.2rem;transition:.2s}
+.photo-add-btn:hover{border-color:var(--primary);color:var(--primary)}
+.photo-add-label{font-size:.62rem;font-weight:600}
+/* ── LIGHTBOX ── */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1000;display:flex;align-items:center;justify-content:center}
+.lightbox.hide{display:none}
+.lb-img{max-width:95vw;max-height:88vh;border-radius:10px;object-fit:contain}
+.lb-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.2);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lb-close:hover{background:rgba(255,255,255,.35)}
+/* ── READ-ONLY BANNER ── */
+.ro-banner{background:#fef3c7;border-bottom:2px solid #fbbf24;padding:9px 16px;text-align:center;font-size:.84rem;font-weight:600;color:#92400e;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.ro-banner.hide{display:none}
+
+/* ── PACKING ── */
+.pack-cat{margin-bottom:16px}
+.pack-cat-hd{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;margin-bottom:6px;font-weight:700;font-size:.9rem}
+.pack-cat-hd .toggle-icon{color:var(--muted);transition:.2s}
+.pack-item{display:flex;align-items:center;gap:9px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:4px}
+.pack-item.done span{text-decoration:line-through;color:var(--muted)}
+.pack-item input[type=checkbox]{width:17px;height:17px;accent-color:var(--green);cursor:pointer;flex-shrink:0}
+.pack-item span{flex:1;font-size:.9rem}
+.pack-item .rm{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.95rem;padding:2px}
+.pack-item .rm:hover{color:var(--red)}
+.pack-add{display:flex;gap:7px;margin-top:7px}
+.pack-add input{flex:1}
+.pack-tmpl-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.tmpl-btn{padding:5px 11px;border:1.5px solid var(--border);border-radius:20px;background:var(--surface);color:var(--text);cursor:pointer;font-size:.82rem;transition:.2s}
+.tmpl-btn:hover{border-color:var(--primary);color:var(--primary)}
+
+/* ── CONTACTS ── */
+.contact-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;position:relative}
+.contact-name{font-weight:700;font-size:.98rem;margin-bottom:3px}
+.contact-phone{font-size:1.05rem;color:var(--primary);font-weight:700}
+.contact-note{font-size:.82rem;color:var(--muted);margin-top:3px}
+.contact-rm{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem}
+.contact-rm:hover{color:var(--red)}
+.contact-add-form{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px}
+.contact-add-form h3{font-size:.9rem;font-weight:700;margin-bottom:12px;color:var(--muted)}
+
+/* ── SAVE INDICATOR ── */
+.save-ind{position:fixed;top:68px;right:14px;background:var(--green);color:#fff;padding:5px 13px;border-radius:16px;font-size:.78rem;font-weight:700;opacity:0;transition:opacity .3s;z-index:500;pointer-events:none}
+.save-ind.show{opacity:1}
+
+/* ── FAB ── */
+.fab-wrap{position:fixed;bottom:22px;right:14px;z-index:200;display:flex;flex-direction:column;align-items:flex-end;gap:9px}
+.fab{width:50px;height:50px;border-radius:50%;border:none;cursor:pointer;font-size:1.2rem;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:.2s;display:flex;align-items:center;justify-content:center}
+.fab:hover{transform:scale(1.07)}
+.fab-main{background:var(--primary);color:#fff}
+.fab-main.editing{background:var(--green)}
+.fab-menu-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+.fab-row{display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s}
+.fab-row.vis{opacity:1;transform:none;pointer-events:all}
+.fab-row:nth-child(2){transition-delay:.04s}
+.fab-row:nth-child(3){transition-delay:.08s}
+.fab-row:nth-child(4){transition-delay:.12s}
+.fab-lbl{background:var(--surface);color:var(--text);padding:4px 10px;border-radius:6px;font-size:.78rem;font-weight:700;box-shadow:var(--shadow);border:1px solid var(--border);white-space:nowrap}
+.fab-sm{width:38px;height:38px;font-size:.9rem}
+.fab-more{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+
+/* ── PRINT ── */
+@media print{
+  .app-hd,.tab-bar,.fab-wrap,.save-ind,.overlay,.slot-chk,.tags-row,.slot-ta{display:none!important}
+  body{background:#fff!important;color:#000!important}
+  .day-card{break-inside:avoid;box-shadow:none;border:1px solid #ccc;margin-bottom:12px}
+  .container{padding:0;max-width:100%}
+  #page-packing,#page-contacts{display:none!important}
+}
+
+/* ── DOUBLE-CLICK EDIT HINT ── */
+.slot-body.tappable{cursor:pointer}
+.slot-body.tappable:hover{background:rgba(79,70,229,.04);transition:background .15s}
+/* ── MISC ── */
+@media(max-width:440px){.slot-lbl{width:62px}.slot-time{display:none}.frow{grid-template-columns:1fr}}
+.hide{display:none!important}
+.section-title{font-size:1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-state .ico{font-size:3rem;margin-bottom:10px}
+.divider{border:none;border-top:1px solid var(--border);margin:14px 0}
+</style>
+</head>
+<body>
+
+<!-- ═══ LIGHTBOX ═══ -->
+<div class="lightbox hide" id="lightbox" onclick="closeLightbox()">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <img class="lb-img" id="lbImg" src="" alt="">
+</div>
+
+<div class="save-ind" id="saveInd"></div>
+
+<!-- ═══ SETUP MODAL ═══ -->
+<div class="overlay" id="setupOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>🗓️ <span id="mTitle">Family Itinerary</span></h2>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button onclick="toggleModalLang()" id="mLangBtn" style="background:var(--primary-l);color:var(--primary);border:1.5px solid var(--primary);border-radius:20px;padding:4px 12px;font-size:.82rem;font-weight:700;cursor:pointer">中文</button>
+        <button class="close-btn hide" id="mCloseBtn" onclick="closeSetup()">✕</button>
+      </div>
+    </div>
+    <div class="m-tabs">
+      <div class="m-tab on" id="mt0" onclick="switchMTab(0)" data-zh="👋 使用说明" data-en="👋 How To Use">👋 How To Use</div>
+      <div class="m-tab" id="mt1" onclick="switchMTab(1)" data-zh="🗓️ 行程设置" data-en="🗓️ Trip Setup">🗓️ Trip Setup</div>
+      <div class="m-tab" id="mt2" onclick="switchMTab(2)" data-zh="⚙️ 时段设置" data-en="⚙️ Time Slots">⚙️ Time Slots</div>
+    </div>
+    <div class="m-body">
+
+      <!-- PAGE 0: Welcome -->
+      <div class="m-page on" id="mp0">
+        <div class="priv-box">
+          <h3>🔒 <span data-i="privTitle">Data Privacy</span></h3>
+          <ul>
+            <li data-i="priv1">All data is stored locally in your browser only</li>
+            <li data-i="priv2">Nothing is uploaded to any server or cloud — fully private</li>
+            <li data-i="priv3">Your data can only be shared via print or export</li>
+            <li data-i="priv4">Clearing browser cache will delete data — back up regularly</li>
+          </ul>
+        </div>
+        <div class="how-box">
+          <h3 data-i="howTitle">How To Use</h3>
+          <div class="how-step"><div class="step-n">1</div><div class="step-t"><strong data-i="s1t">Create Trip</strong><span data-i="s1d">Enter title, date, and days to generate your schedule</span></div></div>
+          <div class="how-step"><div class="step-n">2</div><div class="step-t"><strong data-i="s2t">Custom Slots</strong><span data-i="s2d">Set up "Breakfast/Morning/Lunch..." or fully custom slots</span></div></div>
+          <div class="how-step"><div class="step-n">3</div><div class="step-t"><strong data-i="s3t">Fill Content</strong><span data-i="s3d">Tap ✏️ button to enter edit mode and fill each slot</span></div></div>
+          <div class="how-step"><div class="step-n">4</div><div class="step-t"><strong data-i="s4t">Share</strong><span data-i="s4d">Export as image to send family, or print to take along</span></div></div>
+        </div>
+        <button class="btn btn-p btn-full mt12" onclick="switchMTab(1)" data-i="startBtn">Create Itinerary →</button>
+      </div>
+
+      <!-- PAGE 1: Trip Setup -->
+      <div class="m-page" id="mp1">
+        <div class="fg">
+          <label class="fl" data-i="lTripName">Trip Name</label>
+          <input class="fi" id="fTripName" type="text" data-ph-zh="例：爸妈云南之旅" data-ph-en="e.g. Parents Yunnan Trip" placeholder="e.g. Parents Yunnan Trip">
+        </div>
+        <div class="fg">
+          <label class="fl" data-i="lMember">Member(s)</label>
+          <input class="fi" id="fMember" type="text" data-ph-zh="例：爸爸妈妈" data-ph-en="e.g. Mom & Dad" placeholder="e.g. Mom & Dad">
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <label class="fl" data-i="lStartDate">Start Date</label>
+            <input class="fi" id="fStartDate" type="date">
+          </div>
+          <div class="fg">
+            <label class="fl" data-i="lDays">Duration</label>
+            <input class="fi" id="fDays" type="number" min="1" max="60" value="7">
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl" data-i="lLang">Language</label>
+          <select class="fi" id="fLang">
+            <option value="en">English</option>
+            <option value="zh">中文</option>
+          </select>
+        </div>
+        <hr class="divider">
+        <button class="btn btn-p btn-full" onclick="saveSetup()" data-i="confirmBtn">Create Itinerary →</button>
+        <p class="fhint mt8" style="text-align:center" data-i="setupNote">You can change settings anytime via the ⚙️ button</p>
+      </div>
+
+      <!-- PAGE 2: Slot Editor -->
+      <div class="m-page" id="mp2">
+        <p class="fhint" style="margin-bottom:12px" data-i="slotHint">Click any field to edit. Enter any emoji as icon. Use ▲▼ to reorder.</p>
+        <ul class="slot-list" id="slotEditorList"></ul>
+        <div class="add-slot-row">
+          <button class="btn btn-s btn-sm" onclick="addSlot()" data-i="addSlotBtn">+ 添加时段</button>
+        </div>
+        <hr class="divider">
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-s" style="flex:1" onclick="resetSlots()" data-i="resetSlotsBtn">Reset Default</button>
+          <button class="btn btn-p" style="flex:2" onclick="saveSetup()" data-i="saveSlots">Save & Apply</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="mainApp" class="hide">
+
+  <div class="app-hd">
+    <div class="hd-row">
+      <div>
+        <div class="hd-title" id="hdTitle">家人专属行程单</div>
+        <div class="hd-sub" id="hdSub"></div>
+      </div>
+      <div class="hd-acts">
+        <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="主题">🌙</button>
+        <button class="icon-btn" id="langBtn" onclick="toggleLang()" title="语言" style="font-size:.72rem;font-weight:700">EN</button>
+        <button class="icon-btn" onclick="openSetup()" title="设置">⚙️</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ro-banner hide" id="roBanner">
+    <span>👁 View Only</span>
+    <span id="roBannerNote" style="font-weight:400;font-size:.78rem">This link contains the trip data itself. View only — photos not included.</span>
+  </div>
+
+  <div class="tab-bar">
+    <div class="main-tab on" id="tabSch" onclick="switchTab('sch')" data-zh="📅 行程" data-en="📅 Schedule">📅 行程</div>
+    <div class="main-tab" id="tabPack" onclick="switchTab('pack')" data-zh="🧳 打包清单" data-en="🧳 Packing">🧳 打包清单</div>
+    <div class="main-tab" id="tabCont" onclick="switchTab('cont')" data-zh="📞 联系人" data-en="📞 Contacts">📞 联系人</div>
+  </div>
+
+  <div class="container">
+    <div id="page-sch"></div>
+    <div id="page-pack" class="hide"></div>
+    <div id="page-cont" class="hide"></div>
+  </div>
+</div>
+
+<!-- ═══ FAB ═══ -->
+<div class="fab-wrap" id="fabWrap" style="display:none">
+  <div class="fab-menu-wrap" id="fabMenu">
+    <div class="fab-row" id="fr0" style="transition-delay:.20s">
+      <span class="fab-lbl" id="fabShare">Share Link</span>
+      <button class="fab fab-sm" style="background:#0ea5e9;color:#fff" onclick="generateShareLink()">🔗</button>
+    </div>
+    <div class="fab-row" id="fr1">
+      <span class="fab-lbl" data-i="fabImg">导出图片</span>
+      <button class="fab fab-sm" style="background:var(--purple);color:#fff" onclick="exportImage()">🖼</button>
+    </div>
+    <div class="fab-row" id="fr2">
+      <span class="fab-lbl" data-i="fabPrint">打印/PDF</span>
+      <button class="fab fab-sm" style="background:var(--blue);color:#fff" onclick="window.print()">🖨</button>
+    </div>
+    <div class="fab-row" id="fr3">
+      <span class="fab-lbl" data-i="fabBackup">备份数据</span>
+      <button class="fab fab-sm" style="background:var(--orange);color:#fff" onclick="exportJson()">💾</button>
+    </div>
+    <div class="fab-row" id="fr4">
+      <span class="fab-lbl" data-i="fabRestore">恢复数据</span>
+      <button class="fab fab-sm" style="background:var(--green);color:#fff" onclick="triggerImport()">📂</button>
+    </div>
+    <div class="fab-row" id="fr5">
+      <span class="fab-lbl" data-i="fabClear">清空重置</span>
+      <button class="fab fab-sm" style="background:var(--red-l);color:var(--red)" onclick="clearAll()">🗑</button>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button class="fab fab-more" id="fabMore" onclick="toggleFabMenu()" title="更多">⋯</button>
+    <button class="fab fab-main" id="fabEdit" onclick="toggleEdit()">✏️</button>
+  </div>
+</div>
+
+<input type="file" id="jsonInput" accept=".json" style="display:none" onchange="handleImport(event)">
+<input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhotoInput(event)">
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const KEY = 'fam_sched_v2';
+
+const DEFAULT_SLOTS = {
+  zh: [
+    {id:'s1',icon:'🌅',name:'早餐',time:'07:00-08:30'},
+    {id:'s2',icon:'🚶',name:'上午',time:'09:00-12:00'},
+    {id:'s3',icon:'🍽️',name:'午餐',time:'12:00-13:30'},
+    {id:'s4',icon:'☀️',name:'下午',time:'14:00-17:30'},
+    {id:'s5',icon:'🍲',name:'晚餐',time:'18:00-19:30'},
+    {id:'s6',icon:'🌙',name:'夜晚',time:'20:00+'},
+  ],
+  en: [
+    {id:'s1',icon:'🌅',name:'Breakfast',time:'07:00-08:30'},
+    {id:'s2',icon:'🚶',name:'Morning',time:'09:00-12:00'},
+    {id:'s3',icon:'🍽️',name:'Lunch',time:'12:00-13:30'},
+    {id:'s4',icon:'☀️',name:'Afternoon',time:'14:00-17:30'},
+    {id:'s5',icon:'🍲',name:'Dinner',time:'18:00-19:30'},
+    {id:'s6',icon:'🌙',name:'Evening',time:'20:00+'},
+  ]
+};
+
+const TAGS = [
+  {tok:'[高消耗]',en:'[Tiring]',cls:'tag-r',label:'🔴 高消耗',labelEn:'🔴 Tiring'},
+  {tok:'[带药]',en:'[Meds]',cls:'tag-b',label:'💊 带药',labelEn:'💊 Meds'},
+  {tok:'[防晒]',en:'[Sunscreen]',cls:'tag-o',label:'🧴 防晒',labelEn:'🧴 Sunscreen'},
+  {tok:'[早起]',en:'[Early]',cls:'tag-p',label:'⏰ 早起',labelEn:'⏰ Early'},
+  {tok:'[易晕车]',en:'[Carsick]',cls:'tag-g',label:'🚗 易晕车',labelEn:'🚗 Carsick'},
+];
+
+const TMPL_PACKING = {
+  zh: {
+    '证件': ['身份证','医保卡','银行卡'],
+    '药品': ['常备药','晕车药','创可贴','血压药'],
+    '衣物': ['换洗衣物','雨衣/雨伞','舒适步行鞋'],
+    '电子': ['手机充电器','充电宝','相机'],
+    '其他': ['纸巾','水杯','零食','防晒霜'],
+  },
+  en: {
+    'Documents': ['ID Card','Health Insurance Card','Bank Card'],
+    'Medicine': ['Daily Meds','Motion Sickness Pills','Band-Aids'],
+    'Clothing': ['Change of Clothes','Rain Jacket','Comfy Walking Shoes'],
+    'Electronics': ['Charger','Power Bank','Camera'],
+    'Other': ['Tissues','Water Bottle','Snacks','Sunscreen'],
+  }
+};
+
+const I18N = {
+  zh: {
+    appName:'家人专属行程单', newTrip:'新建行程', settings:'设置',
+    editOn:'📝 编辑中', editOff:'✏️ 编辑',
+    day:'第{n}天', weekdays:['周日','周一','周二','周三','周四','周五','周六'],
+    done:'{n}/{t} 完成', notPlanned:'（暂无安排）',
+    tagsLabel:'快速标签：', tabSch:'📅 行程', tabPack:'🧳 打包清单', tabCont:'📞 联系人',
+    packTitle:'行李清单', packTmplHint:'快速套用模板：',
+    tmplParent:'父母游', tmplKid:'带娃游', tmplCustom:'通用',
+    addItem:'添加物品', addItemPh:'输入物品名称...', addCat:'添加分类',
+    contTitle:'紧急联系人', addContact:'+ 添加联系人',
+    contactName:'姓名', contactPhone:'电话', contactNote:'备注',
+    fabShare:'分享链接', fabImg:'导出图片', fabPrint:'打印/PDF', fabBackup:'备份数据',
+    fabRestore:'恢复数据', fabClear:'清空重置',
+    confirmClear:'确认清空所有数据？此操作不可撤销！',
+    confirmImport:'导入会覆盖当前所有数据，确认继续？',
+    saveMsg:'已自动保存 ✓', exportName:'行程单',
+    lTripName:'行程名称', lMember:'成员', lStartDate:'开始日期', lDays:'天数',
+    lLang:'界面语言', confirmBtn:'确认并生成行程 →',
+    setupNote:'设置后仍可通过顶部⚙️按钮修改',
+    addSlotBtn:'+ 添加时段', resetSlotsBtn:'恢复默认', saveSlots:'保存并应用',
+    slotHint:'图标输入 emoji，时间格式示例：09:00-12:00',
+    privTitle:'数据安全说明', howTitle:'使用步骤',
+    priv1:'所有数据仅保存在您手机/电脑的浏览器本地',
+    priv2:'没有任何数据上传到服务器或云端，完全私密',
+    priv3:'您的数据只能打印或导出图片/文件进行分享',
+    priv4:'更换浏览器或清除缓存会导致数据丢失，建议定期备份',
+    s1t:'创建行程', s1d:'输入标题、日期和天数，自动生成行程表',
+    s2t:'自定义时段', s2d:'可按需设置"早餐/上午/午餐..."或完全自定义',
+    s3t:'填写内容', s3d:'点击右下角✏️按钮进入编辑模式，逐格填写',
+    s4t:'分享行程', s4d:'导出图片发给家人，或打印出来带出门',
+    startBtn:'开始创建行程 →', mTitle:'家人专属行程单',
+    themeLight:'🌙 切换深色', themeDark:'☀️ 切换浅色', langBtn:'EN',
+    noData:'暂无内容，点击 ✏️ 开始编辑',
+  },
+  en: {
+    appName:'Family Itinerary', newTrip:'New Trip', settings:'Settings',
+    editOn:'📝 Editing', editOff:'✏️ Edit',
+    day:'Day {n}', weekdays:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    done:'{n}/{t} done', notPlanned:'(Nothing planned)',
+    tagsLabel:'Quick tags:', tabSch:'📅 Schedule', tabPack:'🧳 Packing', tabCont:'📞 Contacts',
+    packTitle:'Packing List', packTmplHint:'Quick templates:',
+    tmplParent:'Parents Trip', tmplKid:'Kids Trip', tmplCustom:'General',
+    addItem:'Add Item', addItemPh:'Type item name...', addCat:'Add Category',
+    contTitle:'Emergency Contacts', addContact:'+ Add Contact',
+    contactName:'Name', contactPhone:'Phone', contactNote:'Note',
+    fabShare:'Share Link', fabImg:'Export Image', fabPrint:'Print/PDF', fabBackup:'Backup Data',
+    fabRestore:'Restore Data', fabClear:'Clear All',
+    confirmClear:'Clear all data? This cannot be undone!',
+    confirmImport:'Importing will overwrite all current data. Continue?',
+    saveMsg:'Auto-saved ✓', exportName:'itinerary',
+    lTripName:'Trip Name', lMember:'Member(s)', lStartDate:'Start Date', lDays:'Duration',
+    lLang:'Language', confirmBtn:'Create Itinerary →',
+    setupNote:'You can change settings anytime via the ⚙️ button',
+    addSlotBtn:'+ Add Slot', resetSlotsBtn:'Reset Default', saveSlots:'Save & Apply',
+    slotHint:'Enter any emoji as icon. Time format e.g. 09:00-12:00',
+    privTitle:'Data Privacy', howTitle:'How To Use',
+    priv1:'All data is stored locally in your browser only',
+    priv2:'Nothing is uploaded to any server or cloud — fully private',
+    priv3:'Your data can only be shared via print or export',
+    priv4:'Clearing browser cache will delete data — back up regularly',
+    s1t:'Create Trip', s1d:'Enter title, date, and days to generate your schedule',
+    s2t:'Custom Slots', s2d:'Set up "Breakfast/Morning/Lunch..." or fully custom slots',
+    s3t:'Fill Content', s3d:'Tap ✏️ button to enter edit mode and fill each slot',
+    s4t:'Share', s4d:'Export as image to send family, or print to take along',
+    startBtn:'Create Itinerary →', mTitle:'Family Itinerary',
+    themeLight:'🌙 Dark Mode', themeDark:'☀️ Light Mode', langBtn:'中文',
+    noData:'Nothing here yet — tap ✏️ to start editing',
+  }
+};
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let APP = {
+  lang: 'en',
+  theme: 'light',
+  trip: { title: '', member: '', startDate: '', days: 7 },
+  slots: [],
+  schedule: {},   // { 'YYYY-MM-DD': { slotId: { text, done } } }
+  packing: {},    // { cat: [{ id, text, done }] }
+  contacts: [],   // [{ id, name, phone, note }]
+};
+
+let isEditing = false;
+let isReadOnly = false;
+let fabOpen = false;
+let lastFocused = null;
+let saveTimer = null;
+let currentTab = 'sch';
+const photoCache = {};
+let pendingPhoto = null;
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+function init() {
+  if (window.location.hash.startsWith('#share=') && typeof LZString !== 'undefined') {
+    loadFromShare();
+    return;
+  }
+  const saved = localStorage.getItem(KEY);
+  if (saved) {
+    try {
+      APP = Object.assign(APP, JSON.parse(saved));
+      applyTheme();
+      applyLang();
+      document.getElementById('mCloseBtn').classList.remove('hide');
+      showApp();
+    } catch(e) {
+      openSetupFresh();
+    }
+  } else {
+    openSetupFresh();
+  }
+  // Set today as default start date
+  const td = new Date().toISOString().split('T')[0];
+  document.getElementById('fStartDate').value = td;
+  fillSetupForm();
+}
+
+function openSetupFresh() {
+  document.getElementById('mCloseBtn').classList.add('hide');
+  document.getElementById('setupOverlay').classList.remove('hide');
+  updateModalLangBtn();
+  updateI18nNodes();
+  renderSlotEditor();
+}
+
+function fillSetupForm() {
+  if (APP.trip.title) document.getElementById('fTripName').value = APP.trip.title;
+  if (APP.trip.member) document.getElementById('fMember').value = APP.trip.member;
+  if (APP.trip.startDate) document.getElementById('fStartDate').value = APP.trip.startDate;
+  if (APP.trip.days) document.getElementById('fDays').value = APP.trip.days;
+  document.getElementById('fLang').value = APP.lang;
+}
+
+function showApp() {
+  document.getElementById('mainApp').classList.remove('hide');
+  document.getElementById('fabWrap').style.display = '';
+  renderApp();
+}
+
+// ══════════════════════════════════════════
+// SETUP MODAL
+// ══════════════════════════════════════════
+let mTab = 0;
+function switchMTab(n) {
+  mTab = n;
+  [0,1,2].forEach(i => {
+    document.getElementById('mt'+i).classList.toggle('on', i===n);
+    document.getElementById('mp'+i).classList.toggle('on', i===n);
+  });
+  if (n === 2) renderSlotEditor();
+}
+
+function openSetup() {
+  fillSetupForm();
+  document.getElementById('mCloseBtn').classList.remove('hide');
+  document.getElementById('setupOverlay').classList.remove('hide');
+  updateModalLangBtn();
+  switchMTab(0);
+}
+
+function closeSetup() {
+  document.getElementById('setupOverlay').classList.add('hide');
+}
+
+function saveSetup() {
+  const title = document.getElementById('fTripName').value.trim();
+  const member = document.getElementById('fMember').value.trim();
+  const startDate = document.getElementById('fStartDate').value;
+  const days = parseInt(document.getElementById('fDays').value) || 7;
+  const lang = document.getElementById('fLang').value;
+
+  if (!title || !startDate) {
+    alert(lang==='zh' ? '请填写行程名称和开始日期' : 'Please fill in trip name and start date');
+    switchMTab(1);
+    return;
+  }
+
+  APP.trip = { title, member, startDate, days };
+  APP.lang = lang;
+  if (APP.slots.length === 0) {
+    APP.slots = JSON.parse(JSON.stringify(DEFAULT_SLOTS[lang] || DEFAULT_SLOTS.zh));
+  }
+
+  applyTheme();
+  applyLang();
+  save();
+  closeSetup();
+  document.getElementById('mCloseBtn').classList.remove('hide');
+  showApp();
+}
+
+// ── Slot Editor ──
+function renderSlotEditor() {
+  if (APP.slots.length === 0) {
+    APP.slots = JSON.parse(JSON.stringify(DEFAULT_SLOTS[APP.lang] || DEFAULT_SLOTS.zh));
+  }
+  const list = document.getElementById('slotEditorList');
+  list.innerHTML = APP.slots.map((s, i) => `
+    <li class="slot-item" data-id="${s.id}">
+      <div class="ord-btns">
+        <button class="ord-btn" onclick="moveSlot(${i},-1)">▲</button>
+        <button class="ord-btn" onclick="moveSlot(${i},1)">▼</button>
+      </div>
+      <input class="slot-icon-in" maxlength="2" value="${s.icon}" onchange="updateSlot(${i},'icon',this.value)" title="图标">
+      <input class="slot-name-in" value="${s.name}" onchange="updateSlot(${i},'name',this.value)" placeholder="时段名称">
+      <input class="slot-time-in" value="${s.time}" onchange="updateSlot(${i},'time',this.value)" placeholder="09:00-12:00">
+      <button class="del-slot" onclick="deleteSlot(${i})" title="删除">✕</button>
+    </li>
+  `).join('');
+}
+
+function updateSlot(i, field, val) {
+  APP.slots[i][field] = val;
+}
+
+function moveSlot(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= APP.slots.length) return;
+  [APP.slots[i], APP.slots[j]] = [APP.slots[j], APP.slots[i]];
+  renderSlotEditor();
+}
+
+function deleteSlot(i) {
+  if (APP.slots.length <= 1) return;
+  APP.slots.splice(i, 1);
+  renderSlotEditor();
+}
+
+function addSlot() {
+  const id = 'u' + Date.now();
+  APP.slots.push({ id, icon: '📌', name: APP.lang==='zh'?'新时段':'New Slot', time: '' });
+  renderSlotEditor();
+  setTimeout(() => {
+    const items = document.querySelectorAll('.slot-item');
+    const last = items[items.length-1];
+    if (last) last.querySelector('.slot-name-in').focus();
+  }, 50);
+}
+
+function resetSlots() {
+  APP.slots = JSON.parse(JSON.stringify(DEFAULT_SLOTS[APP.lang] || DEFAULT_SLOTS.zh));
+  renderSlotEditor();
+}
+
+// ══════════════════════════════════════════
+// RENDER APP
+// ══════════════════════════════════════════
+function renderApp() {
+  const t = APP.trip;
+  document.getElementById('hdTitle').textContent = t.title || I18N[APP.lang].appName;
+  const sub = [];
+  if (t.member) sub.push(t.member);
+  if (t.startDate && t.days) {
+    const end = new Date(t.startDate);
+    end.setDate(end.getDate() + t.days - 1);
+    sub.push(`${fmt(t.startDate)} - ${fmt(end.toISOString().split('T')[0])}`);
+  }
+  document.getElementById('hdSub').textContent = sub.join(' · ');
+
+  renderSchedule();
+  renderPacking();
+  renderContacts();
+  updateI18nNodes();
+}
+
+function fmt(d) {
+  const [y,m,day] = d.split('-');
+  return APP.lang==='zh' ? `${m}月${day}日` : `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]} ${+day}`;
+}
+
+function buildDates() {
+  const dates = [];
+  const start = new Date(APP.trip.startDate + 'T00:00:00');
+  for (let i = 0; i < APP.trip.days; i++) {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    dates.push(d.toISOString().split('T')[0]);
+  }
+  return dates;
+}
+
+// ── Schedule ──
+function renderSchedule() {
+  const el = document.getElementById('page-sch');
+  if (!APP.trip.startDate) { el.innerHTML = `<div class="empty-state"><div class="ico">🗓️</div><p>${I18N[APP.lang].noData}</p></div>`; return; }
+  const dates = buildDates();
+  const L = I18N[APP.lang];
+  el.innerHTML = dates.map((date, idx) => {
+    const dow = new Date(date+'T00:00:00').getDay();
+    const dayData = APP.schedule[date] || {};
+    const totalSlots = APP.slots.length;
+    const doneCount = APP.slots.filter(s => dayData[s.id]?.done).length;
+    const pct = totalSlots ? Math.round(doneCount/totalSlots*100) : 0;
+    const dayLabel = L.day.replace('{n}', idx+1);
+
+    const slotsHTML = APP.slots.map(s => {
+      const sd = dayData[s.id] || {};
+      const text = sd.text || '';
+      const done = sd.done || false;
+      const displayText = formatContent(text);
+      return `
+        <div class="slot-row${done?' done':''}" id="row-${date}-${s.id}">
+          <div class="slot-lbl">
+            <span class="slot-icon">${s.icon}</span>
+            <span class="slot-name">${s.name}</span>
+            <span class="slot-time">${s.time}</span>
+          </div>
+          <div class="slot-body${!isEditing && !isReadOnly ? ' tappable' : ''}"${!isEditing && !isReadOnly ? ` ondblclick="enterEditModeOnSlot('${date}','${s.id}')" title="${APP.lang==='zh'?'双击此处编辑':'Double-click to edit'}"` : ''}>
+            ${isEditing ? `
+              <textarea class="slot-ta" data-date="${date}" data-sid="${s.id}"
+                onchange="onSlotChange(this)" oninput="onSlotChange(this)"
+                onfocus="lastFocused=this"
+                placeholder="${L.notPlanned}">${text}</textarea>
+              <div class="tags-row">
+                <span class="tags-label">${L.tagsLabel}</span>
+                ${TAGS.map(tg=>`<span class="tag ${tg.cls} tag-ins" onclick="insertTag('${APP.lang==='zh'?tg.tok:tg.en}')">${APP.lang==='zh'?tg.label:tg.labelEn}</span>`).join('')}
+              </div>
+            ` : `
+              <div class="slot-view${!text.trim()?' empty':''}">
+                ${text.trim() ? displayText : (!isReadOnly ? (APP.lang==='zh' ? '双击此处添加内容…' : 'Double-click to add…') : L.notPlanned)}
+              </div>
+            `}
+            ${renderPhotos(date, s.id, sd.photos || [], isEditing)}
+          </div>
+          ${isReadOnly ? '' : `
+          <div class="slot-chk">
+            <input type="checkbox" ${done?'checked':''} onchange="toggleDone('${date}','${s.id}',this.checked)">
+          </div>`}
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="day-card">
+        <div class="day-hd">
+          <div class="day-title">
+            🗓️ ${dayLabel}
+            <span class="day-badge">${fmt(date)} ${L.weekdays[dow]}</span>
+          </div>
+          <div class="day-prog">
+            <div class="prog-txt">${L.done.replace('{n}',doneCount).replace('{t}',totalSlots)}</div>
+            <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+          </div>
+        </div>
+        ${slotsHTML}
+      </div>
+    `;
+  }).join('');
+}
+
+function formatContent(text) {
+  if (!text) return '';
+  let t = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  TAGS.forEach(tg => {
+    const tok = tg.tok.replace(/\[/g,'\\[').replace(/\]/g,'\\]');
+    const tokEn = tg.en.replace(/\[/g,'\\[').replace(/\]/g,'\\]');
+    t = t.replace(new RegExp(tok,'g'), `<span class="tag ${tg.cls}">${tg.label}</span>`);
+    t = t.replace(new RegExp(tokEn,'g'), `<span class="tag ${tg.cls}">${tg.labelEn}</span>`);
+  });
+  return t.replace(/\n/g,'<br>');
+}
+
+function onSlotChange(el) {
+  const date = el.dataset.date;
+  const sid = el.dataset.sid;
+  if (!APP.schedule[date]) APP.schedule[date] = {};
+  if (!APP.schedule[date][sid]) APP.schedule[date][sid] = {};
+  APP.schedule[date][sid].text = el.value;
+  scheduleSave();
+}
+
+function toggleDone(date, sid, val) {
+  if (!APP.schedule[date]) APP.schedule[date] = {};
+  if (!APP.schedule[date][sid]) APP.schedule[date][sid] = {};
+  APP.schedule[date][sid].done = val;
+  const row = document.getElementById(`row-${date}-${sid}`);
+  if (row) row.classList.toggle('done', val);
+  // update progress bar
+  updateDayProgress(date);
+  scheduleSave();
+}
+
+function updateDayProgress(date) {
+  const dayData = APP.schedule[date] || {};
+  const doneCount = APP.slots.filter(s => dayData[s.id]?.done).length;
+  const total = APP.slots.length;
+  const pct = total ? Math.round(doneCount/total*100) : 0;
+  const L = I18N[APP.lang];
+  const card = document.querySelector(`[id^="row-${date}"]`)?.closest('.day-card');
+  if (card) {
+    const txt = card.querySelector('.prog-txt');
+    const fill = card.querySelector('.prog-fill');
+    if (txt) txt.textContent = L.done.replace('{n}',doneCount).replace('{t}',total);
+    if (fill) fill.style.width = pct+'%';
+  }
+}
+
+function insertTag(tok) {
+  if (!lastFocused) return;
+  const el = lastFocused;
+  const start = el.selectionStart;
+  const end = el.selectionEnd;
+  const val = el.value;
+  el.value = val.slice(0,start) + tok + val.slice(end);
+  el.selectionStart = el.selectionEnd = start + tok.length;
+  el.focus();
+  el.dispatchEvent(new Event('change'));
+}
+
+// ── Packing ──
+function renderPacking() {
+  const el = document.getElementById('page-pack');
+  const L = I18N[APP.lang];
+  const cats = Object.keys(APP.packing);
+
+  const tmplHTML = `
+    <div class="pack-tmpl-row">
+      <span style="font-size:.82rem;color:var(--muted);align-self:center">${L.packTmplHint}</span>
+      <button class="tmpl-btn" onclick="loadTemplate('parent')">${L.tmplParent}</button>
+      <button class="tmpl-btn" onclick="loadTemplate('kid')">${L.tmplKid}</button>
+      <button class="tmpl-btn" onclick="loadTemplate('custom')">${L.tmplCustom}</button>
+    </div>
+  `;
+
+  const catsHTML = cats.map(cat => {
+    const items = APP.packing[cat];
+    const doneCount = items.filter(x=>x.done).length;
+    return `
+      <div class="pack-cat">
+        <div class="pack-cat-hd">
+          <div class="pack-cat-title">${cat} <span style="color:var(--muted);font-size:.8rem;font-weight:400">${doneCount}/${items.length}</span></div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="btn btn-sm btn-d" onclick="deleteCategory('${cat}')">删除分类</button>
+          </div>
+        </div>
+        ${items.map((item,i) => `
+          <div class="pack-item${item.done?' done':''}">
+            <input type="checkbox" ${item.done?'checked':''} onchange="togglePackItem('${cat}',${i},this.checked)">
+            <span>${item.text}</span>
+            <button class="rm" onclick="deletePackItem('${cat}',${i})">✕</button>
+          </div>
+        `).join('')}
+        <div class="pack-add">
+          <input class="fi" type="text" placeholder="${L.addItemPh}" id="packInput-${cat}" onkeydown="if(event.key==='Enter')addPackItem('${cat}')">
+          <button class="btn btn-s btn-sm" onclick="addPackItem('${cat}')">${L.addItem}</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const addCatHTML = `
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <input class="fi" type="text" placeholder="${APP.lang==='zh'?'新分类名称':'New category name'}" id="newCatInput" onkeydown="if(event.key==='Enter')addCategory()">
+      <button class="btn btn-p btn-sm" onclick="addCategory()">${L.addCat}</button>
+    </div>
+  `;
+
+  el.innerHTML = `
+    <div class="section-title">🧳 ${L.packTitle}</div>
+    ${Object.keys(APP.packing).length===0 ? tmplHTML : ''}
+    ${catsHTML}
+    ${addCatHTML}
+  `;
+}
+
+function loadTemplate(type) {
+  const tmpl = TMPL_PACKING[APP.lang] || TMPL_PACKING.zh;
+  APP.packing = {};
+  // all templates use same structure
+  for (const [cat, items] of Object.entries(tmpl)) {
+    APP.packing[cat] = items.map((t,i) => ({ id: cat+i, text: t, done: false }));
+  }
+  save();
+  renderPacking();
+}
+
+function addPackItem(cat) {
+  const input = document.getElementById('packInput-'+cat);
+  const text = input.value.trim();
+  if (!text) return;
+  APP.packing[cat].push({ id: cat+Date.now(), text, done: false });
+  input.value = '';
+  save();
+  renderPacking();
+}
+
+function deletePackItem(cat, i) {
+  APP.packing[cat].splice(i, 1);
+  save();
+  renderPacking();
+}
+
+function togglePackItem(cat, i, val) {
+  APP.packing[cat][i].done = val;
+  save();
+  renderPacking();
+}
+
+function addCategory() {
+  const input = document.getElementById('newCatInput');
+  const name = input.value.trim();
+  if (!name || APP.packing[name] !== undefined) return;
+  APP.packing[name] = [];
+  input.value = '';
+  save();
+  renderPacking();
+}
+
+function deleteCategory(cat) {
+  if (!confirm(APP.lang==='zh'?`删除"${cat}"分类？`:`Delete category "${cat}"?`)) return;
+  delete APP.packing[cat];
+  save();
+  renderPacking();
+}
+
+// ── Contacts ──
+function renderContacts() {
+  const el = document.getElementById('page-cont');
+  const L = I18N[APP.lang];
+  const cardsHTML = APP.contacts.map((c, i) => `
+    <div class="contact-card">
+      <button class="contact-rm" onclick="deleteContact(${i})">✕</button>
+      <div class="contact-name">${c.name}</div>
+      <div class="contact-phone">${c.phone}</div>
+      ${c.note ? `<div class="contact-note">${c.note}</div>` : ''}
+    </div>
+  `).join('');
+
+  el.innerHTML = `
+    <div class="section-title">📞 ${L.contTitle}</div>
+    ${cardsHTML}
+    <div class="contact-add-form">
+      <h3>${L.addContact}</h3>
+      <div class="fg"><label class="fl">${L.contactName}</label><input class="fi" id="cName" type="text"></div>
+      <div class="fg"><label class="fl">${L.contactPhone}</label><input class="fi" id="cPhone" type="tel"></div>
+      <div class="fg"><label class="fl">${L.contactNote}</label><input class="fi" id="cNote" type="text" placeholder="${APP.lang==='zh'?'例：儿子':'e.g. Son'}"></div>
+      <button class="btn btn-p btn-full mt8" onclick="addContact()">${L.addContact}</button>
+    </div>
+  `;
+}
+
+function addContact() {
+  const name = document.getElementById('cName').value.trim();
+  const phone = document.getElementById('cPhone').value.trim();
+  const note = document.getElementById('cNote').value.trim();
+  if (!name || !phone) return;
+  APP.contacts.push({ id: Date.now(), name, phone, note });
+  save();
+  renderContacts();
+}
+
+function deleteContact(i) {
+  APP.contacts.splice(i, 1);
+  save();
+  renderContacts();
+}
+
+// ══════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════
+function switchTab(tab) {
+  currentTab = tab;
+  ['sch','pack','cont'].forEach(t => {
+    document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1))?.classList.toggle('on', t===tab);
+    document.getElementById('page-'+t)?.classList.toggle('hide', t!==tab);
+  });
+  // update tab labels using data attributes
+  document.getElementById('tabSch').textContent = I18N[APP.lang].tabSch;
+  document.getElementById('tabPack').textContent = I18N[APP.lang].tabPack;
+  document.getElementById('tabCont').textContent = I18N[APP.lang].tabCont;
+}
+
+// ══════════════════════════════════════════
+// EDIT MODE
+// ══════════════════════════════════════════
+function toggleEdit() {
+  isEditing = !isEditing;
+  const btn = document.getElementById('fabEdit');
+  const L = I18N[APP.lang];
+  btn.textContent = isEditing ? '💾' : '✏️';
+  btn.classList.toggle('editing', isEditing);
+  if (currentTab === 'sch') renderSchedule();
+}
+
+// ══════════════════════════════════════════
+// FAB MENU
+// ══════════════════════════════════════════
+function toggleFabMenu() {
+  fabOpen = !fabOpen;
+  [0,1,2,3,4,5].forEach(i => {
+    document.getElementById('fr'+i)?.classList.toggle('vis', fabOpen);
+  });
+}
+
+// ══════════════════════════════════════════
+// THEME & LANG
+// ══════════════════════════════════════════
+function toggleTheme() {
+  APP.theme = APP.theme === 'light' ? 'dark' : 'light';
+  applyTheme();
+  save();
+}
+
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', APP.theme);
+  const btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = APP.theme === 'light' ? '🌙' : '☀️';
+}
+
+function toggleLang() {
+  APP.lang = APP.lang === 'zh' ? 'en' : 'zh';
+  applyLang();
+  save();
+  renderApp();
+}
+
+function toggleModalLang() {
+  APP.lang = APP.lang === 'zh' ? 'en' : 'zh';
+  document.getElementById('fLang').value = APP.lang;
+  updateModalLangBtn();
+  updateI18nNodes();
+  if (mTab === 2) renderSlotEditor();
+}
+
+function applyLang() {
+  document.documentElement.lang = APP.lang === 'zh' ? 'zh-CN' : 'en';
+  const btn = document.getElementById('langBtn');
+  if (btn) btn.textContent = APP.lang === 'zh' ? 'EN' : '中';
+  updateModalLangBtn();
+  updateI18nNodes();
+}
+
+function updateModalLangBtn() {
+  const btn = document.getElementById('mLangBtn');
+  if (!btn) return;
+  btn.textContent = APP.lang === 'zh' ? 'EN' : '中文';
+  const titleEl = document.getElementById('mTitle');
+  if (titleEl) titleEl.textContent = I18N[APP.lang].mTitle;
+}
+
+function updateI18nNodes() {
+  const L = I18N[APP.lang];
+  // Modal tabs
+  ['mt0','mt1','mt2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = el.getAttribute('data-'+APP.lang) || el.textContent;
+  });
+  // Main tabs
+  const ts = document.getElementById('tabSch');
+  const tp = document.getElementById('tabPack');
+  const tc = document.getElementById('tabCont');
+  if (ts) ts.textContent = L.tabSch;
+  if (tp) tp.textContent = L.tabPack;
+  if (tc) tc.textContent = L.tabCont;
+  // FAB labels
+  const shareEl = document.getElementById('fabShare');
+  if (shareEl) shareEl.textContent = L.fabShare;
+  const map = {fabImg:'fabImg',fabPrint:'fabPrint',fabBackup:'fabBackup',fabRestore:'fabRestore',fabClear:'fabClear'};
+  Object.entries(map).forEach(([id,key]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = L[key];
+  });
+  // Save indicator
+  const si = document.getElementById('saveInd');
+  if (si) si.textContent = L.saveMsg;
+  // i18n data attrs in modal
+  document.querySelectorAll('[data-i]').forEach(el => {
+    const key = el.dataset.i;
+    if (L[key] !== undefined) el.textContent = L[key];
+  });
+  // Placeholders
+  document.querySelectorAll('[data-ph-zh]').forEach(el => {
+    el.placeholder = el.getAttribute('data-ph-'+APP.lang) || el.placeholder;
+  });
+}
+
+// ══════════════════════════════════════════
+// SAVE
+// ══════════════════════════════════════════
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(save, 600);
+}
+
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(APP));
+  showSaveIndicator();
+}
+
+function showSaveIndicator() {
+  const el = document.getElementById('saveInd');
+  el.textContent = I18N[APP.lang].saveMsg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+// ══════════════════════════════════════════
+// EXPORT / IMPORT
+// ══════════════════════════════════════════
+async function exportImage() {
+  if (typeof html2canvas === 'undefined') {
+    alert(APP.lang==='zh'?'图片导出需要网络连接加载必要组件，请确认网络后重试':'Image export requires internet connection. Please check your connection and retry.');
+    return;
+  }
+  const wasEditing = isEditing;
+  if (isEditing) { isEditing=false; renderSchedule(); }
+
+  const el = document.getElementById('page-sch');
+  el.style.background = 'var(--bg)';
+  try {
+    const canvas = await html2canvas(el, {
+      scale: 2, useCORS: true, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#f0f4f8'
+    });
+    const a = document.createElement('a');
+    a.download = (APP.trip.title || I18N[APP.lang].exportName) + '.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  } catch(e) {
+    alert('导出失败: ' + e.message);
+  }
+  if (wasEditing) { isEditing=true; renderSchedule(); }
+}
+
+function exportJson() {
+  const blob = new Blob([JSON.stringify(APP, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (APP.trip.title || 'itinerary') + '_backup.json';
+  a.click();
+}
+
+function triggerImport() {
+  document.getElementById('jsonInput').click();
+}
+
+function handleImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const L = I18N[APP.lang];
+  if (!confirm(L.confirmImport)) { e.target.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      APP = data;
+      save();
+      applyTheme();
+      applyLang();
+      renderApp();
+      alert(APP.lang==='zh'?'数据恢复成功！':'Data restored successfully!');
+    } catch(err) {
+      alert(APP.lang==='zh'?'文件格式错误':'Invalid file format');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function clearAll() {
+  const L = I18N[APP.lang];
+  if (!confirm(L.confirmClear)) return;
+  localStorage.removeItem(KEY);
+  APP = { lang: APP.lang, theme: APP.theme, trip:{title:'',member:'',startDate:'',days:7}, slots:[], schedule:{}, packing:{}, contacts:[] };
+  document.getElementById('mainApp').classList.add('hide');
+  document.getElementById('fabWrap').style.display = 'none';
+  fabOpen = false;
+  openSetupFresh();
+}
+
+// ══════════════════════════════════════════
+// PHOTOS
+// ══════════════════════════════════════════
+function renderPhotos(date, sid, photos, editMode) {
+  const addLabel = APP.lang === 'zh' ? '添加照片' : 'Add photo';
+  const shortLabel = APP.lang === 'zh' ? '添加' : 'Add';
+  if (!photos || photos.length === 0) {
+    if (!editMode) return '';
+    return `<div class="photo-grid"><button class="photo-add-btn" onclick="addPhoto('${date}','${sid}')"><span>📷</span><span class="photo-add-label">${addLabel}</span></button></div>`;
+  }
+  const thumbs = photos.map((src, i) => {
+    const pid = `${date}_${sid}_${i}`;
+    photoCache[pid] = src;
+    return editMode
+      ? `<div class="photo-wrap"><img class="photo-thumb" src="${src}" onclick="openLightbox('${pid}')"><button class="photo-rm" onclick="removePhoto('${date}','${sid}',${i})">✕</button></div>`
+      : `<img class="photo-thumb" src="${src}" onclick="openLightbox('${pid}')">`;
+  }).join('');
+  const addBtn = (editMode && photos.length < 2)
+    ? `<button class="photo-add-btn" onclick="addPhoto('${date}','${sid}')"><span>📷</span><span class="photo-add-label">${shortLabel}</span></button>`
+    : '';
+  return `<div class="photo-grid">${thumbs}${addBtn}</div>`;
+}
+
+function addPhoto(date, sid) {
+  pendingPhoto = { date, sid };
+  document.getElementById('photoInput').click();
+}
+
+async function handlePhotoInput(e) {
+  const file = e.target.files[0];
+  if (!file || !pendingPhoto) return;
+  const { date, sid } = pendingPhoto;
+  pendingPhoto = null;
+  e.target.value = '';
+  try {
+    const compressed = await compressPhoto(file);
+    if (!APP.schedule[date]) APP.schedule[date] = {};
+    if (!APP.schedule[date][sid]) APP.schedule[date][sid] = {};
+    const photos = APP.schedule[date][sid].photos || [];
+    if (photos.length >= 2) return;
+    photos.push(compressed);
+    APP.schedule[date][sid].photos = photos;
+    save();
+    renderSchedule();
+  } catch(err) {
+    alert('Photo upload failed: ' + err.message);
+  }
+}
+
+function compressPhoto(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = ev => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        const MAX = 800;
+        let w = img.width, h = img.height;
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+          else { w = Math.round(w * MAX / h); h = MAX; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function removePhoto(date, sid, idx) {
+  APP.schedule[date][sid].photos.splice(idx, 1);
+  save();
+  renderSchedule();
+}
+
+function openLightbox(pid) {
+  const src = photoCache[pid];
+  if (!src) return;
+  document.getElementById('lbImg').src = src;
+  document.getElementById('lightbox').classList.remove('hide');
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.add('hide');
+  document.getElementById('lbImg').src = '';
+}
+
+// ══════════════════════════════════════════
+// DOUBLE-CLICK EDIT
+// ══════════════════════════════════════════
+function enterEditModeOnSlot(date, sid) {
+  if (isReadOnly) return;
+  const wasEditing = isEditing;
+  if (!isEditing) {
+    isEditing = true;
+    const btn = document.getElementById('fabEdit');
+    btn.textContent = '💾';
+    btn.classList.add('editing');
+    renderSchedule();
+    showEditHint();
+  }
+  setTimeout(() => {
+    const ta = document.querySelector(`textarea[data-date="${date}"][data-sid="${sid}"]`);
+    if (ta) {
+      ta.focus();
+      ta.selectionStart = ta.selectionEnd = ta.value.length;
+      if (!ta.value) ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, wasEditing ? 0 : 80);
+}
+
+function showEditHint() {
+  const msg = APP.lang === 'zh'
+    ? '✏️ 编辑模式已开启，点 💾 保存'
+    : '✏️ Edit mode on — tap 💾 to save';
+  const el = document.getElementById('saveInd');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════
+// SHARE LINK
+// ══════════════════════════════════════════
+async function generateShareLink() {
+  if (typeof LZString === 'undefined') {
+    alert(APP.lang === 'zh'
+      ? '生成分享链接需要网络，请检查网络后重试'
+      : 'Share link requires internet. Please check your connection.');
+    return;
+  }
+  // Build payload — photos intentionally excluded to keep URL manageable
+  const payload = {
+    v: 1, lang: APP.lang, trip: APP.trip, slots: APP.slots, schedule: {}
+  };
+  for (const [date, dayData] of Object.entries(APP.schedule)) {
+    payload.schedule[date] = {};
+    for (const [sid, sd] of Object.entries(dayData)) {
+      payload.schedule[date][sid] = { text: sd.text || '', done: sd.done || false };
+    }
+  }
+  const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(payload));
+  const url = `https://ordinarymantrying.com/tools/family-schedule.html#share=${compressed}&lang=${APP.lang}`;
+  await copyToClipboard(url);
+  const msg = APP.lang === 'zh'
+    ? `✅ 分享链接已复制！\n\n📌 关于这个链接：\n• 行程数据直接包含在链接里，不经过任何服务器\n• 收到链接的人点击即可查看（仅查看，无法修改）\n• 照片不包含在链接中，仅保存在您的本设备上`
+    : `✅ Share link copied!\n\n📌 About this link:\n• Your trip data is embedded directly in the link — no server involved\n• Anyone with the link can view it (read-only)\n• Photos are not included — they stay on your device only`;
+  alert(msg);
+}
+
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+}
+
+function loadFromShare() {
+  try {
+    const parts = window.location.hash.slice(1).split('&');
+    const sharePart = parts.find(p => p.startsWith('share='));
+    const langPart  = parts.find(p => p.startsWith('lang='));
+    if (!sharePart) throw new Error('No share data');
+    // Apply language immediately before decompression so UI renders correctly
+    if (langPart) {
+      const l = langPart.split('=')[1];
+      if (l === 'zh' || l === 'en') APP.lang = l;
+    }
+    const compressed = sharePart.slice('share='.length);
+    const data = JSON.parse(LZString.decompressFromEncodedURIComponent(compressed));
+    APP.lang = data.lang || 'en';
+    APP.trip = data.trip || {};
+    APP.slots = data.slots || [];
+    APP.schedule = data.schedule || {};
+    APP.packing = {};
+    APP.contacts = [];
+    isReadOnly = true;
+    applyTheme();
+    applyLang();
+    document.getElementById('setupOverlay').classList.add('hide');
+    document.getElementById('mainApp').classList.remove('hide');
+    renderApp();
+    // Read-only UI
+    document.getElementById('roBanner').classList.remove('hide');
+    document.getElementById('roBannerNote').textContent = APP.lang === 'zh'
+      ? '此链接包含行程数据本身，仅供查看，照片不包含在内'
+      : 'This link contains the trip data itself. View only — photos not included.';
+    document.getElementById('fabWrap').style.display = 'none';
+    document.getElementById('tabPack').style.display = 'none';
+    document.getElementById('tabCont').style.display = 'none';
+    document.getElementById('langBtn').style.display = 'none';
+    const settingsBtn = document.querySelector('.hd-acts button[onclick="openSetup()"]');
+    if (settingsBtn) settingsBtn.style.display = 'none';
+  } catch(e) {
+    alert('Invalid or corrupted share link.');
+    window.location.hash = '';
+    openSetupFresh();
+  }
+}
+
+// ══════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════
+init();
+</script>
+</body>
+</html>

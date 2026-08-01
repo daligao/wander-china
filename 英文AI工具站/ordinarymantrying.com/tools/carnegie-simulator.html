@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Andrew Carnegie?</title>
+<meta name="description" content="He arrived in America at 13 with nothing. He became the richest man in the world, then gave it all away. 8 decisions from Carnegie's life of radical contradictions.">
+<meta property="og:title" content="What Would You Do If You Were Andrew Carnegie?">
+<meta property="og:description" content="Poorest boy, richest man, greatest philanthropist. 8 decisions from Carnegie's life of steel and libraries.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/carnegie-simulator.html">
+<style>
+:root{
+  --bg:#F2EEE8;--card:#FAF8F5;--ink:#130F08;--muted:#4A4030;--line:#C8BEA8;
+  --accent:#5C3A10;--accent-bg:#EDE5D8;
+  --right:#1A5C2A;--right-bg:#E6F2EC;--wrong:#6B1818;--wrong-bg:#F2E8E8;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(242,238,232,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#130F08;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #BAA888;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#1A1008;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#FAF0E0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#1A0E00;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#FAF0E0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #BAA888;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#1A1008;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#130F08;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#FAF0E0;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #BAA888;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#FAF0E0;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#D4B888;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Andrew Carnegie</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #32</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Andrew Carnegie?</h1>
+  <p class="cover-sub">He arrived in America at 13 with pennies. He worked as a bobbin boy in a cotton mill, then a telegraph operator, then a railroad manager. At 65, he was the richest man in the world — richer than Rockefeller. Then he spent the rest of his life giving it all away. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Andrew Carnegie</strong> (1835–1919) · Born Dunfermline, Scotland · Emigrated to Pittsburgh, Pennsylvania, 1848, age 13 · Work history: bobbin boy ($1.20/week) → bobbin changer → telegraph operator → Thomas Scott's personal secretary at Pennsylvania Railroad → railroad executive → bond salesman in Europe → built Carnegie Steel Company · 1901: sold Carnegie Steel to J.P. Morgan for $480 million ($17 billion in 2024 dollars), becoming the world's richest private individual · Spent next 18 years giving away ~$350 million (equivalent to ~$10 billion today) · Built 2,509 public libraries worldwide · Established Carnegie Mellon University, Carnegie Hall, Endowment for International Peace, and dozens more institutions · Died 1919, age 83. At death, had given away 90% of his fortune; remaining 10% given to foundations.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1848, Pittsburgh</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Bobbin Boy</span></div>
+<div class="year-banner">1848</div>
+<div class="timeline-dot">Pittsburgh · Age 13</div>
+<div class="narrative">
+  <p>You are 13. Your family has arrived in Pittsburgh from Scotland with almost nothing. Your father, a master weaver, has found that the power loom has made his skill worthless. Your mother takes in boarders to survive. You are now working 12-hour days in a cotton factory, replacing bobbins on spinning machines. You earn $1.20 a week.</p>
+  <p>Pittsburgh is brutal, smoky, loud. The factory is worse. But you watch everything. You are learning what this country runs on, and how it runs, and who rises in it. Your father's sense of dignity — that a man's worth is his skill — no longer seems adequate as a guide to navigating this world.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Immigrant's Mindset</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Carnegie arrived poor and ended up the richest man in the world. What was the essential ingredient that others in his position lacked?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Ruthlessness. Carnegie was willing to crush competitors, suppress wages, and do whatever it took to win. That willingness, not sentiment or education, was the engine.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Education. Carnegie was relentless about self-education — using free libraries, reading voraciously, absorbing everything. Intelligence amplified by knowledge was the real engine.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">The ability to identify and attach himself to people smarter than him. Carnegie consistently found mentors, understood their operations completely, and made himself indispensable before moving up. Network intelligence, not just individual intelligence.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">Carnegie's pattern of mentorship</div>
+      <p><strong>You arrive in America at 13 earning $1.20 a week changing bobbins in a cotton mill. Fifty-two years later, you write a number on a slip of paper — $480 million — and J.P. Morgan accepts without negotiating.</strong> Carnegie's rise followed a consistent pattern: find a smarter, more successful person; study them intensively; make yourself essential to them; absorb everything they know; move on to the next level. Colonel James Anderson opened his personal library to working boys each Saturday — Carnegie attended every week and later said this single habit changed his life. At the telegraph office, he memorized the telegraph operators' rhythms well enough to decipher messages by sound before the tape came out — impressing every superior who watched him. At Pennsylvania Railroad, he became so useful to Thomas Scott that Scott taught him investing — lending Carnegie money for his first stock purchase. Carnegie didn't rise despite being an immigrant; he rose partly because he watched the American system with the fresh eyes of an outsider and understood how it actually worked, not how it was supposed to work.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The First Investment</span></div>
+<div class="year-banner">1856</div>
+<div class="timeline-dot">Pittsburgh · Age 21</div>
+<div class="narrative">
+  <p>Thomas Scott, your boss at the Pennsylvania Railroad, tips you off: Adams Express Company stock is available at a favorable price. But you don't have the money. Your mother takes a mortgage on the family house to give you $500 for the investment. The first dividend check arrives — for $10. You have never received money that you didn't earn with your hands. You later write: "I shall remember that check as long as I live. It gave me the first penny I ever received that I had not personally earned by honest toil."</p>
+  <p>You begin to understand: money can work while you sleep. The factory worker's wage is linear; capital compounds.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — Capital vs. Labor</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Carnegie's first insight was that capital compounds while wages are linear. Did understanding this make him empathetic toward workers or contemptuous?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Empathetic. Having grown up as a laborer, he never forgot what it felt like. His philanthropy — especially libraries — was specifically designed to give workers access to the self-education he'd had access to.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">Contemptuous, or at least indifferent. His suppression of unions, including the Homestead Strike, showed that when profit and worker welfare conflicted, profit won decisively.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">C</span><span class="dopt-body">Genuinely both — which is why he remains a contested figure. He sincerely believed in giving workers the tools to rise (libraries, education) AND refused to let worker organization interfere with profit. He held these contradictory positions without seeing the contradiction.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">The Carnegie contradiction</div>
+      <p><strong>You write articles defending workers' right to organize. When your workers strike in 1892, your manager sends 300 armed Pinkertons. Nine workers die. From your Scottish castle, you write: "Life is worth living again."</strong> Carnegie publicly supported workers' rights to organize, wrote articles defending labor unions, and claimed to empathize with workers because he'd been one. His personal philosophy emphasized the "Gospel of Wealth" — rich men's obligation to use wealth for public benefit. At the same time, when steel workers at Homestead, Pennsylvania struck in 1892 over wage cuts, Carnegie was vacationing in Scotland. His manager Henry Frick hired 300 Pinkerton detectives, leading to a battle in which 9 workers and 7 Pinkertons were killed. Carnegie claimed not to have authorized the approach; Frick claimed otherwise. The Homestead Strike destroyed Carnegie's public image among workers for the rest of his life. He spent decades trying to recover it through philanthropy. Many argued he never fully acknowledged the contradiction.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · Building the Steel Empire</span></div>
+<div class="year-banner">1875</div>
+<div class="timeline-dot">Pittsburgh · Age 40</div>
+<div class="narrative">
+  <p>You have entered the steel business. It's dangerous — the Bessemer process creates steel faster than anything that came before, but existing steel companies are using it sloppily. You hire the best chemists. You install accounting systems so exact that you know your cost per ton of steel to the penny — something no competitor does. You use this to cut prices and win contracts while still making a profit your competitors can't match.</p>
+  <p>Your management principle: "Cut the wages, boys." Not cruelty — strategy. When costs go down, you cut prices. When prices go down, competitors can't survive. You buy them in bankruptcy. The empire grows by systematically destroying everyone who can't be as efficient.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The Cost Obsession</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Carnegie's competitive advantage was knowing his costs to the penny when competitors guessed. Was this a business insight or a moral failing?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">Business insight, full stop. Better information leads to better decisions. Carnegie's accounting discipline was a legitimate advantage that benefited consumers through lower steel prices.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Moral failing. The cost obsession meant labor was a variable to minimize, not a human consideration. Workers bore the cost of his efficiency in wages, safety, and Homestead.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">The question frames it as either/or. The cost system was a genuine insight AND it produced brutal labor conditions. Industrial capitalism is not separable from the conditions it created. You can understand the business logic and judge the human cost simultaneously.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">Carnegie's accounting innovation</div>
+      <p><strong>You know your cost per ton of steel to the penny when your competitors are still guessing. The steel you sell builds the Brooklyn Bridge. The workers who make it work 12-hour shifts, six days a week, in conditions that regularly kill men.</strong> Carnegie Steel's accounting was genuinely revolutionary for the 1870s-1880s. He hired William Borntraeger as his bookkeeper to track costs with a precision no competitor had — cost per ton at each step of production, cost of raw materials, labor costs broken down by process. This gave him information that allowed him to cut prices aggressively when competitors were still guessing their own costs. His famous line to plant managers was: "Show me your cost sheets." The steel he sold built the Brooklyn Bridge, Pennsylvania Railroad networks, and dozens of buildings. The workers who made it worked 12-hour shifts, six days a week, in conditions that regularly killed men. Both facts are true and neither cancels the other.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Homestead Strike</span></div>
+<div class="year-banner">1892</div>
+<div class="timeline-dot">Homestead, Pennsylvania · Age 57</div>
+<div class="narrative">
+  <p>You are vacationing in your castle at Skibo, Scotland, while your partner Henry Clay Frick manages the Homestead Steel Works during a labor dispute. The union contract is expiring. Frick, with your approval, has proposed a wage cut of 22%. The workers strike. Frick calls in 300 Pinkerton agents. The workers, armed, meet them at the river. Nine workers die. Seven Pinkertons die. The governor calls in the state militia. The strike is broken.</p>
+  <p>You write to Frick from Scotland: "Life is worth living again. Congratulations all around." Later you will claim you knew nothing of the Pinkerton plan. The damage to your reputation is permanent.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Homestead Contradiction</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Carnegie claimed to be pro-worker but was absent during Homestead. How should history judge him on this?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Harshly. His written support for unions while allowing Frick to deploy Pinkertons against workers is hypocrisy, not complexity. His absence was strategic distancing, not ignorance.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Charitably. The evidence that Carnegie authorized Frick's specific approach is mixed. He may genuinely have been shocked by the violence. History shouldn't convict him more than the evidence supports.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">C</span><span class="dopt-body">Honestly: he was genuinely conflicted and genuinely culpable. He didn't plan the Pinkertons, AND he created the conditions (wage cuts, deadline pressure) that made violent confrontation likely, AND he was glad it was resolved. His later guilt was real. So was his responsibility.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">The historical record on Homestead</div>
+      <p><strong>You are vacationing in your Scottish castle when nine of your workers are killed. Your private letters after receiving the full reports express genuine distress. You never return to Homestead. You build a library there as partial amends. The surviving workers reject it.</strong> The correspondence between Carnegie and Frick before Homestead shows Carnegie approved the wage cut and the lockout strategy. There's no evidence he ordered Pinkertons specifically — that was Frick's decision. Carnegie's letter congratulating Frick was written before he understood the scale of the violence. After receiving full reports, Carnegie's private letters express genuine distress. He never returned to Homestead after 1892. In his autobiography, he described Homestead as the only event he "could never quite forgive myself" for. He later paid for a library and church in Homestead as partial amends. The workers who survived the strike largely rejected these gestures. Steel historian Paul Krause wrote: "Carnegie's philanthropy was paid for with Homestead wages." The line captures both truths.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · Selling Everything</span></div>
+<div class="year-banner">1901</div>
+<div class="timeline-dot">New York · Age 65</div>
+<div class="narrative">
+  <p>J.P. Morgan wants to build the world's largest steel company, United States Steel, by combining Carnegie Steel with others. He sends an emissary to ask your price. You write a number on a slip of paper: $480 million. Morgan accepts without negotiation. It is the largest private business transaction in history up to that point.</p>
+  <p>You are now 65 and, by some measures, the richest private individual on earth. You have the rest of your life — 18 years — to figure out what to do with it. You have already been thinking about this. In 1889, you published "The Gospel of Wealth."</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Gospel of Wealth</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Carnegie's "Gospel of Wealth" argued wealthy men must use their fortunes for public benefit — it's a moral obligation, not optional. Was this a profound moral insight or a way to justify wealth accumulation?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Justification. The "Gospel of Wealth" made accumulation itself virtuous — you had to be rich first to give it away. It was an elaborate rationalization for doing what he wanted to do anyway.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">Genuine moral insight. Carnegie sincerely believed wealthy men were the most efficient administrators of social investment, and acted consistently on this belief. The argument may be wrong, but it was sincere.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and worth separating. The prescription (wealthy men must give) was genuinely radical for 1889 and influenced the entire modern philanthropic tradition. The justification (this is better than redistribution or democracy deciding) was self-serving and has been extensively criticized. The prescription outlasted the justification.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">The Gospel of Wealth's legacy</div>
+      <p><strong>In 1889, you publish the argument that wealthy men have a moral duty to give their fortunes away in their lifetimes — a radical claim when most expected to leave it to their children. Bill Gates and Warren Buffett cite your essay explicitly when launching the Giving Pledge in 2010.</strong> Carnegie published "The Gospel of Wealth" in the North American Review in 1889, arguing that wealthy men have a moral duty to manage their fortunes in life rather than leave them to heirs or governments. This was a radical argument in 1889 — most wealthy men assumed their fortunes would pass to children and grandchildren. Carnegie's argument influenced John D. Rockefeller, who established Rockefeller Foundation in 1913. In 2010, Bill Gates and Warren Buffett launched the Giving Pledge, explicitly citing Carnegie as their inspiration. The criticism of the "Gospel" — that it legitimizes the accumulation itself, that philanthropists decide what's good for people rather than democratically — was made immediately by contemporaries like William Gladstone and remains the central critique of modern philanthropic capitalism. Andrew Carnegie generated the template for this entire debate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Libraries</span></div>
+<div class="year-banner">1910</div>
+<div class="timeline-dot">New York · Age 75</div>
+<div class="narrative">
+  <p>You have now built 1,679 free public libraries in the United States alone, and hundreds more in Britain, Canada, Australia. The deal is always the same: you provide the building; the community must provide the land and commit to funding operations from local taxes forever. You refuse to build libraries communities won't invest in themselves.</p>
+  <p>The memory that drives this: Colonel James Anderson's personal library in Allegheny, Pennsylvania, open to working boys every Saturday. Without it, you have said, you would not have escaped the factory. You are giving every child in America what Colonel Anderson gave you.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Libraries as Tool</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Carnegie chose libraries as his signature gift rather than higher wages or worker ownership. Was this the right choice?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">No. Libraries help the already-motivated. Higher wages or profit-sharing would have benefited all workers immediately, not just those who used the libraries. Carnegie chose the gift that fit his own story.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Yes. Access to information and self-education creates compounding returns. Libraries are infrastructure — they serve communities for 100+ years and enable possibilities that cash gifts could not.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">C</span><span class="dopt-body">The right question isn't which is "better" in abstract — it's whether Carnegie's choice was about the workers or about his own narrative. The libraries fit his bootstrap story. They're also genuinely valuable. Those two things aren't mutually exclusive.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What Carnegie's libraries actually did</div>
+      <p><strong>You build 2,509 free public libraries — the largest private investment in public library infrastructure in history. Many are still operating over 100 years later. You also suppress wages throughout the same career that made them possible.</strong> Carnegie's 2,509 libraries (built 1883-1929) represent the largest private investment in public library infrastructure in history. Many are still operating as public libraries over 100 years later — the Carnegie library in Pittsburgh (1895) is now a museum. The model was innovative: Carnegie funded construction, communities funded operations from tax revenue, ensuring long-term institutional commitment. The criticism is valid: Carnegie also opposed unions and suppressed wages throughout his career, meaning the workers who would most benefit from libraries were being paid less partly because of him. The counter-argument: wages and libraries address different problems. Both perspectives are defensible. The more interesting question historians ask: what would have happened if Carnegie had structured Carnegie Steel as a worker cooperative in 1875?</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Peace Effort</span></div>
+<div class="year-banner">1914</div>
+<div class="timeline-dot">Scotland · Age 78</div>
+<div class="narrative">
+  <p>You have spent $10 million building the Peace Palace at The Hague, funded the Carnegie Endowment for International Peace, and personally lobbied every major world leader you could reach for arbitration treaties that would prevent war. In 1910, you published "The Path to Peace," arguing that a league of civilized nations could end war as an institution. You believe you are making progress.</p>
+  <p>On June 28, 1914, Archduke Franz Ferdinand is assassinated in Sarajevo. By August, Europe is at war. The system you believed would prevent this — treaties, arbitration, rational self-interest — has failed completely. Your health never recovers from the shock.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Peace Project's Failure</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Carnegie's peace effort was a complete failure — the war he tried to prevent killed 20 million people. Did this make his effort worthless?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">Yes. A project measured by results failed by its own measure. The Carnegie Endowment for International Peace failed to produce peace. Noble intentions don't redeem failures at this scale.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">No. The League of Nations, which Carnegie's ideas helped inspire, did prevent some conflicts. The institutions he supported eventually contributed to the United Nations framework. Long-term impact isn't measured by the first failure.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">C</span><span class="dopt-body">The question is whether any realistic alternative would have worked better. Carnegie's peace project failed. But so did every other approach to preventing WWI. The failure of the effort doesn't mean the effort was the wrong one — it means the problem was harder than anyone understood.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">The Carnegie peace legacy</div>
+      <p><strong>You spend $10 million building the Peace Palace at The Hague and personally lobby every world leader you can reach for arbitration treaties. World War I kills 20 million people anyway. Your health never recovers from the shock.</strong> Carnegie spent approximately $25 million on peace institutions and efforts. These included: The Peace Palace at The Hague (now the International Court of Justice), the Carnegie Endowment for International Peace (still operating, one of the oldest think tanks in the world), and lobbying for the arbitration treaty between the US and UK. None of this prevented WWI. After the war, Carnegie's framework — that rational nations would choose arbitration over war — was adopted (with modifications) by Wilson in the League of Nations proposal. The League failed in its primary purpose but established precedents for international institutions. The United Nations incorporated many of these precedents after WWII. Whether this vindicates Carnegie's approach or simply shows that institutions take generations to develop is genuinely unresolved.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Reckoning</span></div>
+<div class="year-banner">1919</div>
+<div class="timeline-dot">Lenox, Massachusetts · Age 83</div>
+<div class="narrative">
+  <p>You die on August 11, 1919, in Lenox, Massachusetts. You have given away approximately $350 million — roughly 90% of the $480 million you received for Carnegie Steel. The remaining $30 million goes to foundations and pensions for former employees. You die with less than 10% of your peak wealth.</p>
+  <p>You leave behind: 2,509 libraries. Carnegie Mellon University. Carnegie Hall. The Peace Palace. The Carnegie Endowment for International Peace. Dozens of other institutions. And the Homestead Strike, which you never resolved to everyone's satisfaction, including perhaps your own.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Balance Sheet</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Carnegie built his fortune partly by paying workers as little as possible, then gave it to public institutions. Is this a story of redemption, hypocrisy, or something else?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Redemption. He made hard choices in building the business, recognized his obligation, and spent 18 years making it right. The libraries are still standing. The institutions still operate. The good outlasted the harm.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">Hypocrisy. You can't exploit workers, break unions, and suppress wages — then give money to libraries and call yourself a benefactor. The workers who built his wealth never received their share. Philanthropy doesn't cancel exploitation.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">Something else — a template. Carnegie established the terms of a debate that's still happening: accumulate under capitalism's rules, then give. The libraries and Homestead are both part of the same story. The moral question doesn't resolve. That's exactly why his story stays relevant.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">The Carnegie template</div>
+      <p><strong>You die in 1919 having given away roughly 90% of the $480 million you received for Carnegie Steel. The remaining $30 million still unspent goes to foundations. You leave behind 2,509 libraries and the Homestead Strike — both part of the same story.</strong> Carnegie's life established the modern template for the "philanthropic capitalist" — a figure who operates ruthlessly within market capitalism, then gives the proceeds to public benefit institutions. The template has been followed by: Rockefeller, Ford, Gates, Buffett, Zuckerberg, and dozens of others. Each has faced the same criticism Carnegie faced: the philanthropy legitimizes the accumulation; workers or society bear the cost; the donor decides what's good rather than democratic processes. Each has also produced real, lasting institutions. The debate hasn't advanced much since 1889 when Carnegie published the "Gospel of Wealth" and Gladstone responded that public institutions should be publicly funded by democratic taxation. Carnegie didn't resolve this tension. No one has. His life is a case study in why.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Carnegie's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="next-sims">
+  <p class="next-label">Explore More Lives</p>
+  <div class="next-grid">
+    <a href="buffett-simulator.html" class="next-card">
+      <span class="next-name">Warren Buffett</span>
+      <span class="next-desc">The Oracle of Omaha. Started with $6,000 at 11. The patient accumulator.</span>
+    </a>
+    <a href="ford-simulator.html" class="next-card">
+      <span class="next-name">Henry Ford</span>
+      <span class="next-desc">Invented mass production. Doubled wages. Also a notorious antisemite.</span>
+    </a>
+    <a href="edison-simulator.html" class="next-card">
+      <span class="next-name">Thomas Edison</span>
+      <span class="next-desc">1,093 patents. He lost the War of Currents to Tesla. Stubbornness has a price.</span>
+    </a>
+    <a href="honda-simulator.html" class="next-card">
+      <span class="next-name">Soichiro Honda</span>
+      <span class="next-desc">Failed in every direction before winning. "Success is 99% failure."</span>
+    </a>
+  </div>
+</div>
+<div class="cta-box">
+  <p>Carnegie arrived at 13 with nothing and left 2,509 libraries. He also broke the Homestead strike. The same life. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All Life Simulators — Edison, Buffett, Marie Curie and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/buffett-simulator.html" style="color:var(--accent)">Warren Buffett Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Carnegie";body="You understood that Carnegie's rise was about network intelligence more than individual genius, that his contradictions were genuine not just PR problems, that the Gospel of Wealth was both a real moral argument and self-serving, and that his legacy is a template for debate rather than a resolved question. That's the full Carnegie.";}else if(pct>=0.625){title="The Steel Baron";body="You grasped the essentials: the immigrant's playbook, the capital insight, the philanthropy's genuine value. Where you may have simplified: Carnegie's life resists single-frame interpretations. Homestead and the libraries are the same story. The peace effort's failure doesn't make it wrong. These tensions don't resolve — they're the point.";}else if(pct>=0.375){title="The Benefactor";body="You tended toward either celebrating or condemning Carnegie, rather than holding both. His story is specifically valuable because it doesn't resolve. The same person suppressed wages and built 2,509 libraries. Both facts are real. The moral question — does philanthropy cancel exploitation? — is still being argued in every conversation about tech billionaires today.";}else{title="The Skeptic";body="You were critical throughout — of the accumulation, the labor practices, the self-serving philanthropy narrative. This is a valid position, consistently held by Carnegie's contemporaries and modern critics. The counter-question: what would have been better? Worker ownership of Carnegie Steel? Different labor laws? Government provision of libraries? These alternatives were available in 1880; Carnegie chose his path. What would you have built?"}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

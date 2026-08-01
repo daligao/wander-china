@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paul Gauguin Life Simulator — Abandoned Finance for Tahiti to Paint the Primitive | Ordinary Man Trying</title>
+<meta name="description" content="Live Paul Gauguin's life across 8 pivotal decisions — from abandoning his stockbroker career for painting, to fleeing Paris for Tahiti, to creating the bold flat colors and spiritual imagery that defined Post-Impressionism.">
+<style>
+:root{
+  --bg:#F5EEE8;--card:#FBF6F2;--ink:#180C06;--muted:#503820;--line:#D8C0A8;
+  --accent:#703010;--accent-bg:#F0D8C0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(245,238,232,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#180C06;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C09070;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#100806;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0D8C0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0D8C0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C09070;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C09070;border-radius:999px;margin-bottom:12px;gap:8px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Paul Gauguin</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #92 of 100</p>
+  <h1 class="cover-title">He Quit the Stock Exchange at 35.<br>He Sailed to Tahiti to Paint What Europe Had Lost.</h1>
+  <p class="cover-sub">Paul Gauguin was a successful Paris stockbroker and a Sunday painter. At 35, he quit his job. At 43, he abandoned France entirely for Tahiti. He left behind his wife, five children, and everything conventional society measured as success. He found poverty, disease, and a body of work that would define Post-Impressionism and influence nearly every significant Western painter who came after him. He died in the Marquesas Islands at 54, virtually alone, facing criminal charges. His paintings now sell for hundreds of millions of dollars. His life asks an uncomfortable question: what is a life well-spent?</p>
+  <div class="cover-facts">
+    <p>📈 Gave up successful stockbroking career at 35 to paint full-time &nbsp;·&nbsp; 🌺 Moved to Tahiti 1891, later the Marquesas Islands permanently &nbsp;·&nbsp; 🎨 Developed bold flat colors and spiritual subject matter that defined Post-Impressionism &nbsp;·&nbsp; 🤝 Shared a studio with Van Gogh in Arles — ended in the ear incident &nbsp;·&nbsp; 💰 Died virtually penniless 1903; "Where Do We Come From?" now valued at $300M+ &nbsp;·&nbsp; 1848–1903 · Paris to the Marquesas Islands</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Gauguin's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1883</div>
+  <div class="timeline-dot">Paris, France · Age 35</div>
+  <div class="narrative">
+    <p>You are thirty-five, working as a successful stockbroker at Bertin's brokerage in Paris. You have a Danish wife, Mette, and five children. You have been painting on Sundays for several years, studying with Camille Pissarro and exhibiting with the Impressionists in their group shows. Your paintings are not famous. You are a collector of Impressionist works — your collection includes pieces by Cézanne, Pissarro, Manet, Guillaumin. You have, by most measures, a good life. The Paris stock market collapses in January 1882. By 1883, you have decided. You stop working at the brokerage. You will paint full-time. Mette is not supportive. The family income collapses. The marriage fractures. You move the family to Denmark, where Mette's family can help support them, but you are useless in Copenhagen, unable to speak Danish, unable to sell your paintings there, and Mette asks you to leave. You return to Paris with your son Clovis. You are completely broke.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1883</div>
+    <p class="decision-q">Gauguin quit a stable career to pursue painting, leaving his family in poverty. How should we evaluate this choice?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. As selfish and unjustifiable — he had obligations to his wife and five children that precluded the luxury of pursuing an artistic vocation at their expense, and no artistic outcome justifies this failure of responsibility.</button>
+      <button class="dopt" onclick="choose(this,1,false)">B. As heroically necessary — the paintings he made prove that the sacrifice was worth it, and only by making this break could he have produced work of this significance. The family paid a real cost, but the world gained something it would not otherwise have had.</button>
+      <button class="dopt" onclick="choose(this,1,true)">C. As genuinely ambiguous, requiring honest acknowledgment of both sides — the work is real and significant; the harm to his family is real and significant. Attempts to resolve the tension (either "the art justifies it" or "nothing justifies it") flatten a complexity that is actually instructive. The honest position is that he made a choice that produced both great art and real suffering, and the relationship between these outcomes is not simple.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. As a reasonable calculated risk that went wrong — he reasonably estimated that painting could support his family and was mistaken. The failure was practical rather than moral, and his departure from Denmark was a consequence of the practical failure rather than an abandonment of his obligations.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You quit your stockbroker job at 35, move your family to Denmark because you have no money, then leave when your wife asks you to — and Mette Gauguin raises five children alone for thirty years while strangers pay hundreds of millions for your paintings.</strong> <strong>Gauguin's abandonment:</strong> Mette Gauguin raised the five children largely alone in Denmark after 1885, working as a French teacher and translator. She outlived her husband by thirty years and was repeatedly contacted by art dealers and journalists about his work after his posthumous fame; she was consistently bitter. She had legitimate grievances. The biographer David Sweetman's account shows that Gauguin periodically sent money and made promises he did not keep, and that the children had complicated relationships with his memory. The art world has largely resolved the tension by focusing on the paintings. This is a choice, not an inevitable conclusion.
+    </div>
+  </div>
+
+  <div class="year-banner">1888</div>
+  <div class="timeline-dot">Arles, France · Age 40</div>
+  <div class="narrative">
+    <p>Vincent van Gogh has been writing to you for years, admiring your work and proposing a collaboration at his "Studio of the South" in Arles, where he has been living and painting intensively. Van Gogh's brother Theo, who is your dealer, funds the arrangement: Theo will pay your debts and provide a monthly allowance in exchange for paintings. You arrive in Arles in October 1888. You are productive. The two-month collaboration produces important work. You and Van Gogh argue constantly about painting — you believe in working from memory and imagination; he paints obsessively from direct observation. The arguments become heated. On December 23, 1888, following a major confrontation in which you tell Van Gogh you are leaving, Van Gogh takes a razor and cuts off the lower portion of his own left ear. You leave the next morning. You never see him again. He dies eighteen months later.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1888</div>
+    <p class="decision-q">The Arles collaboration with Van Gogh ended in the ear incident. What does the fundamental disagreement between them — memory/imagination vs. direct observation — reveal about artistic method?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. That Gauguin's method was superior — working from memory and imagination produces more emotionally resonant work than mechanical transcription of observed reality, and Gauguin's Post-Impressionist influence was larger than Van Gogh's.</button>
+      <button class="dopt" onclick="choose(this,2,false)">B. That Van Gogh's method was superior — the intensity of direct observation produced the specific quality of Van Gogh's work that cannot be replicated through imagination, and the empirical commitment to what is actually seen is the foundation of the most powerful visual art.</button>
+      <button class="dopt" onclick="choose(this,2,true)">C. That both are genuine paths to significant work, and the disagreement is about constitutive values rather than technique — Gauguin believed the artist's primary material is internal (memory, feeling, imagination transformed by experience); Van Gogh believed the artist's primary material is external (the specific tree, the specific face, the specific light). These are not competing techniques but competing accounts of what art is for. The Arles arguments were productive and genuine — they were two serious artists in genuine disagreement about something that mattered.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. That the disagreement was primarily temperamental rather than substantive — the arguments in Arles escalated due to both men's volatile states (Van Gogh's mental illness, Gauguin's poverty-related stress) rather than genuine artistic differences that couldn't have been peacefully resolved.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>You tell Van Gogh you are leaving Arles. That night he cuts off his own ear. You leave the next morning and never see him again. He is dead eighteen months later.</strong> <strong>The Arles collaboration:</strong> The letters between Gauguin and Van Gogh document the disagreement in detail. Van Gogh: "I can only make a portrait from life, I hate working from memory." Gauguin: "The best work is done in the studio. Nature is the starting point, not the subject." Both produced important paintings during the two months in Arles. Martin Bailey's research on the Arles period shows that the mutual stimulation was real — each influenced the other's color choices. The breakdown was both practical (Van Gogh's mental state) and philosophical (a genuine impasse about method). The philosophical disagreement outlasted both painters: it is still the central argument in art education.
+    </div>
+  </div>
+
+  <div class="year-banner">1891</div>
+  <div class="timeline-dot">Papeete, Tahiti · Age 43</div>
+  <div class="narrative">
+    <p>You arrive in Tahiti in June 1891. The island is not what you imagined. Papeete, the capital, is a colonial town — French administrators, European merchants, missionary churches. The "primitive paradise" you sought exists mainly in your imagination. The Tahitian culture you are seeking has already been substantially changed by French colonization. You move away from Papeete, into the countryside, and construct a version of Tahiti in your paintings that draws from Polynesian mythology, your own spiritual ideas, and the visual reality around you — a composite that is neither documentary nor purely invented. You paint the local women with a flat, simplified style that abandons Impressionist light effects for bold outlines and pure color. You are creating a visual language for something that has never been painted before.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1891</div>
+    <p class="decision-q">Gauguin sought "primitive" authenticity in Tahiti but found a colonial society. His paintings create an idealized Tahiti that didn't exist as he depicted it. How should we understand this?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. As straightforward colonial fantasy — he went to Tahiti projecting European desires onto a place that was already damaged by European colonialism, and the paintings are documents of this projection rather than authentic encounters with another culture.</button>
+      <button class="dopt" onclick="choose(this,3,false)">B. As legitimate artistic transformation — all significant art involves transformation of raw material, and the distinction between "authentic representation" and "artistic vision" is always present. Gauguin's Tahitian paintings are no more or less "true" than Monet's water lilies.</button>
+      <button class="dopt" onclick="choose(this,3,true)">C. As requiring both: the colonial critique is valid and the artistic achievement is real — these two things can coexist in an honest assessment. The paintings drew from a place and people Gauguin encountered and partly idealized, in ways that erased the actual effects of French colonialism. They also created a visual language (flat color, bold outline, spiritual subject matter from non-Western sources) that significantly changed the direction of Western painting. Separating the critique from the achievement is not required, and pretending either nullifies the other is intellectually dishonest.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. As a product of its time that cannot be fairly evaluated by contemporary standards — the concept of "cultural appropriation" and postcolonial critique were not available in 1891, and applying them retrospectively holds Gauguin to a standard he could not have known to apply.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>You sail to Tahiti to find a primitive paradise untouched by European civilization — and when you arrive, you find French colonial administrators, missionary churches, and a capital city that has already altered everything you came to paint.</strong> <strong>Gauguin and Tahiti:</strong> The art historian Abigail Solomon-Godeau's essay "Going Native" (1989) made the postcolonial critique of Gauguin's Tahitian work rigorously: he went to Tahiti in flight from European bourgeois life, projected a fantasy of the "primitive" onto a colonized people, and the paintings record that projection rather than Tahitian life. This critique is well-founded. The paintings' influence on Matisse, Picasso (Les Demoiselles d'Avignon is inconceivable without Gauguin's Tahitian work), and the entire trajectory of modernism is also well-documented. Both things are true. The discomfort of holding them simultaneously is appropriate.
+    </div>
+  </div>
+
+  <div class="year-banner">1895</div>
+  <div class="timeline-dot">Paris, France · Age 47</div>
+  <div class="narrative">
+    <p>You are back in Paris briefly. The auction of your Tahitian paintings in February 1895 is a disaster: only nine of forty-nine works sell, for prices far below your expectations. You have syphilis, which you contracted in Tahiti. You have been injured in a street brawl. You have spent most of the money you raised from selling your Copenhagen collection in 1893. You are deeply in debt. You give a farewell dinner and return to Tahiti in June 1895, this time with the clear intention not to return to Europe. You write to your friend Monfreid: "I have decided to go away for ever. I am going to settle in Oceania. I shall live there on nothing, and when I die, I know that my paintings will be of value — and perhaps my name will be pronounced with veneration."</p>
+    <p>This is not optimism. This is a statement of faith made against all available evidence, at a moment of complete practical failure.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1895</div>
+    <p class="decision-q">Gauguin writes: "when I die, I know that my paintings will be of value." How could he be certain of posthumous recognition that the present entirely denied?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. He couldn't — it was wishful thinking by a desperate man rationalizing a decision made from lack of options rather than vision. The statement is a psychological comfort rather than a genuine prediction.</button>
+      <button class="dopt" onclick="choose(this,4,false)">B. He had historical precedents — he knew Van Gogh's work was already being recognized after death, and he understood that the most radical work of their generation was not yet legible to contemporary audiences but would eventually be.</button>
+      <button class="dopt" onclick="choose(this,4,true)">C. He had internal evidence — if you have produced work that you believe is genuinely new, the audience that can appreciate it may not yet exist but will eventually. Gauguin had looked at his own paintings, understood what he was doing with color and form that nobody had done before, and extrapolated that the audience for this novelty would arrive. This is not the same as arrogance: it is the specific confidence of someone who can see clearly what is new in their own work and understands that novelty takes time to find its audience.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. He was wrong in his reasoning but right in his conclusion — the posthumous value came not from the specific qualities he imagined but from the influence on later painters (Matisse, Picasso) who were not yet working in 1895 and whose work would validate his method retrospectively.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>You sell nine of forty-nine paintings at auction, have syphilis, owe debts you cannot pay, and write to your friend: "when I die, I know that my paintings will be of value." The painting you finish this year is now estimated at over $300 million.</strong> <strong>Confidence and posthumous recognition:</strong> Gauguin's letters from this period are extraordinary documents of someone who understands that he is working in advance of his audience. He writes to Monfreid and Schuffenecker with detailed analyses of his own work that show genuine understanding of what he was doing technically. The art historian Belinda Thomson has noted that Gauguin was an unusually sophisticated theorist of his own practice — he understood exactly what the flat color, the bold outline, and the abandonment of perspectival depth were doing, and why this was different from Impressionism. The gap between his self-understanding and the market's response was real and painful, but the self-understanding was not delusional.
+    </div>
+  </div>
+
+  <div class="year-banner">1897</div>
+  <div class="timeline-dot">Tahiti · Age 49</div>
+  <div class="narrative">
+    <p>Your daughter Aline, who was in Denmark with Mette, dies of pneumonia in January 1897. She was twenty years old. You are thousands of miles away. You learn of it months later. You are ill with syphilis, in debt, in despair. Between December 1897 and January 1898 you paint the largest canvas of your life: four meters wide, 1.5 meters high. You work without preliminary sketches, directly onto the canvas, in one continuous effort that nearly kills you. You call it "D'où venons-nous? Que sommes-nous? Où allons-nous?" — "Where Do We Come From? What Are We? Where Are We Going?" You intend it as a summation. When you finish it, you go into the hills and attempt to take arsenic to kill yourself. The dose is too large — you vomit and survive. You write to Monfreid: "I have finished a philosophical work, comparable to the Gospels."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1897</div>
+    <p class="decision-q">"Where Do We Come From?" was painted in response to Aline's death, after an attempted suicide. Does the painting's biographical context change how we should understand it aesthetically?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. No — biographical context is irrelevant to aesthetic value. The painting either succeeds as a visual and philosophical statement or it doesn't, independent of what produced it.</button>
+      <button class="dopt" onclick="choose(this,5,false)">B. Yes, it makes it more valuable — knowing that Gauguin painted it as a final summation after his daughter's death and before his suicide attempt adds a layer of meaning that deepens the work's emotional content.</button>
+      <button class="dopt" onclick="choose(this,5,true)">C. The context illuminates but doesn't determine the painting's meaning — the painting poses questions (where do we come from, what are we, where are we going) that are genuinely philosophical and stand independently of their biographical trigger. But knowing the trigger explains the urgency, the scale, the compressed totality of the composition. The biographical context is the condition under which the work was made and explains its specific quality without exhausting its meaning. Context is useful without being decisive.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. The context makes it aesthetically suspect — a painting made as an emotional response to personal grief is more likely to be therapeutically important to the painter than aesthetically significant as an artwork, and the critical success of "Where Do We Come From?" owes more to its biography than its visual qualities.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>Your daughter dies of pneumonia in Denmark while you are in Tahiti. You learn of it months later by letter. You paint a four-meter canvas as a final summation — then walk into the hills and try to kill yourself with arsenic. The dose is too large. You vomit and survive.</strong> <strong>"Where Do We Come From?":</strong> The painting is now in the Museum of Fine Arts in Boston, acquired in 1936 for $84,000. It was estimated in 2015 at over $300 million. Art historians consistently note that the painting's composition — reading right to left, from birth through life to death, with a central idol figure — is one of the most structurally complex and deliberately composed works of the Post-Impressionist period. The biographical urgency (painted as a final statement before suicide) explains the compressed scale and ambition of the composition but does not reduce the painting to biography. Gauguin's philosophical questions were genuine and preceded the crisis; the crisis gave him the urgency to paint the fullest possible answer.
+    </div>
+  </div>
+
+  <div class="year-banner">1901</div>
+  <div class="timeline-dot">Atuona, Hiva Oa · Age 53</div>
+  <div class="narrative">
+    <p>You have moved from Tahiti to the Marquesas Islands — to Atuona on Hiva Oa, even more remote. You build a house you call "Maison du Jouir" — House of Pleasure. You continue painting. You also take on a new role: you defend the local Marquesan population against the French colonial authorities' enforcement of taxes and regulations, writing letters and publishing a short-run satirical newspaper called "Le Sourire" (The Smile). The bishop and the gendarmerie resent you. They bring charges against you: you have allegedly told local people to refuse to pay taxes. You are convicted and fined 500 francs and sentenced to three months in jail. You appeal the conviction. Before the appeal can be heard, on May 8, 1903, you are found dead in your house in the morning. You are fifty-four. Your letters are still in the desk. The appeal papers are still on the table.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1901</div>
+    <p class="decision-q">In his final years, Gauguin defended Marquesan people against French colonial authority — using the same energy he resisted in Europe when directed at himself. How should we understand this apparent contradiction?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. As hypocritical — a man who exploited his position in Tahitian society (taking very young local wives, extracting the visual material of their culture) cannot coherently claim to defend the same people against different forms of exploitation.</button>
+      <button class="dopt" onclick="choose(this,6,false)">B. As a consistent anti-authority stance — Gauguin opposed institutional authority in all its forms (financial employers in 1883, Parisian art critics, and then French colonial administrators in Polynesia), and the specific authority changed but the basic posture did not.</button>
+      <button class="dopt" onclick="choose(this,6,true)">C. As genuinely complicated and not resolvable into a simple characterization — he did exploit his position in Polynesian society in ways that are legitimately criticizable; he also genuinely advocated for Marquesan people at personal cost, facing a criminal conviction he died fighting. Both are true. People contain contradictions, especially people who live as intensely and inconsistently as Gauguin did. The honest position is that he was capable of genuine advocacy and genuine exploitation simultaneously, and the colonial critique does not require pretending the advocacy didn't happen.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. As redemptive — the final years of advocacy and resistance to colonial authority represent a moral growth that partially redeems the earlier exploitation, and the criminal conviction he faced for defending Marquesan people should be understood as genuine cost paid for genuine principle.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>You spend your last years defending indigenous Marquesan people against French colonial tax collectors, get convicted and fined, file a criminal appeal — and die with the appeal papers still on your desk.</strong> <strong>Gauguin and colonial authority:</strong> The Marquesan advocacy is documented in surviving issues of "Le Sourire" (some have been reproduced) and in Gauguin's letters to his friend Daniel de Monfreid, who eventually arranged for his papers and remaining paintings to reach Paris. The colonial administrator's resentment of Gauguin is also documented — his criticism of the colonial tax system was genuine and consistent with his expressed values, even as his personal conduct in Polynesia was ethically complex. His letters from this period show someone who was still working, still thinking, and still fighting — not someone who had given up. He died in the middle of an appeal he believed he would win.
+    </div>
+  </div>
+
+  <div class="year-banner">1903</div>
+  <div class="timeline-dot">Legacy · Hiva Oa</div>
+  <div class="narrative">
+    <p>He died with thirteen paintings in his house, several unpublished manuscripts, and a debt. His friend Monfreid received the paintings, the papers, and news of his death. Within a decade, Gauguin's work was exhibiting in Paris, London, and New York. By 1913, his paintings were in the Armory Show in New York, the exhibition that introduced modern European painting to American audiences. By 1920, he was recognized as one of the three or four decisive figures in the development of modern Western art (alongside Cézanne and Van Gogh). "Where Do We Come From?" entered the Boston MFA in 1936. The paintings are worth hundreds of millions of dollars. His five children received nothing from their father's estate while alive. Mette outlived him by thirty years and saw his name become famous in ways she could only regard with complicated feelings.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 1903</div>
+    <p class="decision-q">Gauguin asked: "Where Do We Come From? What Are We? Where Are We Going?" — as both a painting title and a life question. What is the most accurate answer to "What Are We?" that his life suggests?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Seekers of beauty — the life demonstrates that the drive to make and encounter beautiful things is more fundamental than security, family obligation, or social acceptance, and Gauguin's choices express this hierarchy honestly.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. Contradictions — Gauguin was simultaneously explorer and exploiter, revolutionary artist and irresponsible father, advocate for the oppressed and colonizer. His life suggests that "what we are" is too complex for any single category.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. Beings who make meaning — Gauguin's entire trajectory, from the stock exchange to Hiva Oa, was organized by the need to make things that expressed what he understood about existence. The painting's title question is answered by the painting's existence: we are the beings who ask these questions and make things in response. The asking and the making are what distinguish us from the natural world he painted. This is what his life, at its best, was about.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Products of circumstance — the specific accidents of Gauguin's biography (the collapsed market, Pissarro's mentorship, the Polynesian images he happened to encounter) produced the specific artist he became, and the "we" of his philosophical question is more determined than chosen.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>You die with thirteen paintings in your house and a debt. Within twenty years, you are recognized alongside Cézanne and Van Gogh as one of the decisive figures in the development of modern Western art. Your five children receive nothing from the estate while alive.</strong> <strong>Gauguin's central question:</strong> Art historians have consistently noted that "D'où venons-nous?" is unusual among major Western paintings in that it poses explicit philosophical questions rather than asserting a narrative or depicting a subject. It is less a painting of Tahiti than a painting of questions about existence, painted in Tahiti. The French philosopher Maurice Merleau-Ponty wrote about Cézanne but described something applicable to Gauguin: the painter's question is always "what is given to see, and what can be made from what is given to see?" This is the question Gauguin carried from Paris to Arles to Tahiti to Hiva Oa. The answer was the paintings.
+    </div>
+  </div>
+
+  <div class="decision-block">
+    <div class="decision-header">Final Question · Legacy</div>
+    <p class="decision-q">Gauguin is one of the most influential and most morally complicated artists in Western history. What is the appropriate way to hold these two truths simultaneously?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. Separate them — evaluate the art and evaluate the person on different criteria and in different contexts, acknowledging both without insisting they bear on each other.</button>
+      <button class="dopt" onclick="choose(this,8,true)">B. Hold them together without resolving them — the same person who made "Where Do We Come From?" also abandoned five children and operated within colonial exploitation in Polynesia. The discomfort of holding these simultaneously is more honest than the comfort of resolving it either way. Great artists can be morally complicated people; morally complicated people can make great art. The complexity is the truth.</button>
+      <button class="dopt" onclick="choose(this,8,false)">C. Weight the artistic achievement more heavily — the cultural impact of the paintings, measured in their influence on every major painter of the 20th century, outweighs the personal moral failures by any reasonable utilitarian accounting.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. Weight the moral failures more heavily — the people directly harmed by his choices (Mette, the five children, the young Polynesian women) experienced real harm that was not compensated by the existence of paintings that benefited strangers. Their interests should not be dismissed by appeals to art historical importance.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>The man who painted "Where Do We Come From?" also abandoned five children in Denmark and operated within colonial power structures in Tahiti. He is the same person. The discomfort of holding both truths is not a problem to be solved — it is the honest position.</strong> <strong>Living with complexity:</strong> The philosopher Kwame Anthony Appiah has argued that the appropriate response to complex historical figures is neither canonization nor cancellation but "honest reckoning" — acknowledging both the contribution and the cost. This is easier to say than to do, because the canonical art world has structural incentives to emphasize achievement and minimize harm (the paintings are worth more if Gauguin is a hero), while cancel culture has structural incentives in the opposite direction. Neither incentive structure is disinterested. The honest position requires holding both truths without the resolution that either direction provides, and accepting the discomfort of not being able to simply categorize Paul Gauguin.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Paul Gauguin · 1848–1903</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <h2 id="final-title" style="font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:12px;"></h2>
+    <p id="final-body" style="font-size:15px;line-height:1.8;color:#180C06;margin-bottom:20px;text-align:left;"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"Life being what it is, one dreams of revenge."<br><em style="font-size:13px;color:var(--muted);">— Paul Gauguin</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="satie-simulator.html" class="next-card">
+        <div class="next-card-name">Erik Satie</div>
+        <div class="next-card-sub">Gymnastics &amp; umbrellas: music's great eccentric</div>
+      </a>
+      <a href="fitzgerald-simulator.html" class="next-card">
+        <div class="next-card-name">F. Scott Fitzgerald</div>
+        <div class="next-card-sub">Gatsby sold 72 copies the year he died</div>
+      </a>
+      <a href="van-gogh-simulator.html" class="next-card">
+        <div class="next-card-name">Vincent van Gogh</div>
+        <div class="next-card-sub">880 paintings, 1 sold: the impossible life</div>
+      </a>
+      <a href="blake-simulator.html" class="next-card">
+        <div class="next-card-name">William Blake</div>
+        <div class="next-card-sub">The visionary who printed his own books</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Held It Without Resolving It";body="You did what Gauguin himself couldn't quite do — hold the full contradiction without flinching. The abandoned children are real. 'Where Do We Come From?' is real. The colonial exploitation in Tahiti is real. The Marquesan advocacy is real. His conviction that his paintings would outlast him was not arrogance but accurate self-knowledge. The same person produced all of this, from a stock exchange desk to a dying house on Hiva Oa. The discomfort of holding it together without resolution is the honest position, and you held it.";}else if(pct>=0.625){title="You Saw Most of the Canvas";body="You grasped the essentials — the Van Gogh disagreement was substantive, not temperamental; the Tahitian paintings require both colonial critique and aesthetic acknowledgment; the posthumous confidence was genuine self-knowledge rather than delusion. Where the full picture eludes you: Gauguin's life is most illuminating when you refuse to let any single frame contain it. Neither 'heroic artist' nor 'irresponsible exploiter' covers what he was. He was the person who painted 'Where Do We Come From?' after his daughter died and before his suicide attempt. That fact tells you something no simple category can.";}else if(pct>=0.375){title="You Saw the Edges";body="You caught the external shape of Gauguin's life — the dramatic departure from the brokerage, the ear incident in Arles, the posthumous fame — without quite getting inside the internal logic. What's harder from outside: his choices weren't erratic. They were organized by a conviction that making certain paintings was worth whatever it cost, including things it had no right to cost other people. Whether you find that conviction admirable or destructive depends on where you stand. He was certain of it. His family was not consulted.";}else{title="The Mette Account";body="You took a skeptical view throughout, and Mette Gauguin would have agreed with you. Five children raised largely alone in Denmark while their father chased visions in the South Pacific. An auction in 1895 that sold nine of forty-nine paintings. A man who wrote 'when I die, I know that my paintings will be of value' from a position of complete practical failure. That confidence proved accurate — 'Where Do We Come From?' is now worth over $300 million. None of that money went to his children. The pragmatic view does not fully explain how the paintings got made, or why they still matter."}document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

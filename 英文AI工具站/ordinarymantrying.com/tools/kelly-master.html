@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Kelly Lab — Position Sizing Simulator | AI Invest OS</title>
+<meta name="description" content="Interactive Kelly Criterion lab with Bear/Base/Bull scenarios, Half-Kelly protection, Risk of Ruin chart, confidence score, and 5-school interpretation. Not just a formula.">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/kelly-master.html">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09101F;--surf:#111827;--surf2:#1A2436;--surf3:#0d1526;--accent:#6366F1;--accent-l:#818CF8;--gold:#F59E0B;--green:#10B981;--red:#EF4444;--white:#F1F5F9;--muted:#64748B;--bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.12)}
+body{background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;line-height:1.7;font-size:17px;overflow-x:hidden}
+a{color:var(--accent-l);text-decoration:none}
+.nav{padding:13px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:.84em}.nav a{color:var(--muted)}.nav a:hover{color:var(--white)}.nav-cur{color:var(--white);font-weight:600}
+.hero{text-align:center;padding:46px 20px 26px;background:radial-gradient(ellipse at 50% 0%,rgba(245,158,11,.12) 0%,transparent 60%)}
+.badge{display:inline-block;font-size:.68em;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:30px;padding:4px 13px;margin-bottom:12px}
+.hero h1{font-size:clamp(1.8rem,5vw,2.9rem);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-bottom:10px}
+.hero h1 em{font-style:normal;color:var(--gold)}.hero p{font-size:.92em;color:var(--muted);max-width:480px;margin:0 auto}
+.wrap{max-width:740px;margin:0 auto;padding:26px 18px 60px}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:20px 18px;margin-bottom:12px}
+.sl{font-size:.62em;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-l);margin-bottom:13px}
+.school-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px}
+@media(min-width:500px){.school-row{grid-template-columns:repeat(4,1fr)}}
+.sb{background:var(--surf2);border:2px solid var(--bd);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:.2s;font-size:.79em;font-weight:700;color:var(--muted);line-height:1.3}
+.sb:hover{border-color:var(--bd2);color:var(--white)}.sb.on{border-color:var(--accent);background:rgba(99,102,241,.12);color:var(--white)}
+.sb i{font-style:normal;font-size:1.3em;display:block;margin-bottom:2px}
+/* mode tabs */
+.tabs{display:flex;gap:0;margin-bottom:16px;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.tab{flex:1;padding:9px;text-align:center;font-size:.8em;font-weight:700;cursor:pointer;color:var(--muted);background:var(--surf2);transition:.2s;border:none}
+.tab.on{background:var(--accent);color:#fff}
+.tab:hover:not(.on){color:var(--white)}
+/* sliders */
+.slider-wrap{margin-bottom:16px}
+.slider-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;margin-bottom:10px}
+.sl-label{font-size:.75em;font-weight:700;color:var(--muted);letter-spacing:.04em}
+.sl-val{font-size:.9em;font-weight:800;color:var(--white);min-width:52px;text-align:right}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:3px;background:var(--surf2);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:17px;height:17px;border-radius:50%;background:var(--accent-l);cursor:pointer}
+/* scenario grid */
+.scenario-grid{display:grid;gap:10px;margin-bottom:14px}
+@media(min-width:560px){.scenario-grid{grid-template-columns:repeat(3,1fr)}}
+.sc-card{background:var(--surf2);border:1px solid var(--bd);border-radius:11px;padding:13px}
+.sc-label{font-size:.7em;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.sc-label.bear{color:#f87171}.sc-label.base{color:#fbbf24}.sc-label.bull{color:var(--green)}
+.sc-fields{display:flex;flex-direction:column;gap:7px}
+.sc-fl label{font-size:.7em;color:var(--muted);display:block;margin-bottom:2px}
+.sc-fl input{width:100%;background:var(--bg);border:1px solid var(--bd2);border-radius:7px;padding:6px 10px;color:var(--white);font-size:.88em;font-weight:600;outline:none}
+.sc-fl input:focus{border-color:var(--accent)}
+.trade-count{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px 13px;background:var(--surf2);border:1px solid var(--bd);border-radius:9px}
+.tc-label{font-size:.8em;color:var(--muted);flex:1}
+.tc-input{background:var(--bg);border:1px solid var(--bd2);border-radius:7px;padding:6px 10px;color:var(--white);font-size:.88em;font-weight:600;outline:none;width:90px;text-align:center}
+.btn-go{width:100%;padding:13px;background:linear-gradient(120deg,var(--accent),var(--accent-l));border:none;border-radius:12px;color:#fff;font-size:1em;font-weight:800;cursor:pointer;transition:.2s}
+.btn-go:hover{filter:brightness(1.12)}
+#results{display:none}
+/* kelly output */
+.kelly-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+@media(min-width:500px){.kelly-grid{grid-template-columns:repeat(4,1fr)}}
+.kc{border:1px solid var(--bd);border-radius:11px;padding:13px;text-align:center}
+.kc-val{font-size:1.3em;font-weight:900;margin-bottom:3px}
+.kc-lbl{font-size:.65em;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.kc-note{font-size:.72em;color:var(--muted);margin-top:4px}
+.kc.full{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.25)}
+.kc.full .kc-val{color:#f87171}
+.kc.half{background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.25)}
+.kc.half .kc-val{color:var(--gold)}
+.kc.quarter{background:rgba(99,102,241,.06);border-color:rgba(129,140,248,.25)}
+.kc.quarter .kc-val{color:var(--accent-l)}
+.kc.rec{background:rgba(16,185,129,.06);border-color:rgba(16,185,129,.25)}
+.kc.rec .kc-val{color:var(--green)}
+/* confidence */
+.conf-box{background:var(--surf2);border:1px solid var(--bd);border-radius:11px;padding:13px;margin-bottom:13px}
+.conf-label{font-size:.65em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.conf-stars{font-size:1.1em;margin-bottom:5px}
+.conf-txt{font-size:.82em;color:var(--muted);line-height:1.6}
+/* ror chart */
+.ror-chart{background:var(--surf2);border:1px solid var(--bd);border-radius:11px;padding:14px;margin-bottom:13px}
+.ror-title{font-size:.7em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.ror-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:.82em}
+.ror-lbl{width:90px;color:var(--white);font-weight:600;flex-shrink:0}
+.ror-bar-wrap{flex:1;background:rgba(255,255,255,.06);border-radius:3px;height:9px;overflow:hidden}
+.ror-bar{height:100%;border-radius:3px}
+.ror-pct{width:40px;text-align:right;color:var(--muted)}
+/* school5 */
+.school5{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+@media(min-width:500px){.school5{grid-template-columns:repeat(4,1fr)}}
+.s5c{background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:10px}
+.s5c.active{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.s5c-name{font-size:.72em;font-weight:800;color:var(--white);margin-bottom:4px}
+.s5c-txt{font-size:.73em;color:var(--muted);line-height:1.5}
+.ai-grid{display:flex;flex-direction:column;gap:7px}
+.ai-c{display:flex;gap:14px;align-items:flex-start;background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:12px 15px;position:relative}
+.ai-head{min-width:108px;flex-shrink:0}
+.ai-n{font-size:.92em;font-weight:800;color:var(--white);margin-bottom:2px}
+.ai-t{font-size:.72em;color:var(--accent-l)}
+.ai-txt{font-size:.92em;color:var(--muted);line-height:1.55}
+.ai-q{font-size:.78em;color:#818CF8;border-top:1px solid var(--bd);margin-top:7px;padding-top:6px;font-style:italic;line-height:1.45}
+.ai-star{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:1.1em;opacity:.35;transition:.2s;padding:0;line-height:1}
+.ai-star.starred{opacity:1;filter:drop-shadow(0 0 4px gold)}
+.ai-links-row{display:flex;flex-wrap:wrap;gap:6px}
+.ai-links-label{font-size:.62em;color:var(--muted);margin-bottom:5px}
+.ai-hint{font-size:.67em;color:var(--muted);margin-bottom:8px;font-style:italic}
+.ai-lnk{display:inline-flex;align-items:center;gap:3px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:5px 10px;font-size:.74em;font-weight:600;color:var(--muted);text-decoration:none;transition:.2s;opacity:.55}
+.ai-lnk.active{background:rgba(99,102,241,.18);border-color:var(--accent);color:var(--accent-l);opacity:1;box-shadow:0 0 0 2px rgba(99,102,241,.2);font-weight:700}
+.ai-lnk:hover{color:var(--white);border-color:var(--accent);opacity:1}
+.bias{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:13px}
+.bias-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fbbf24;margin-bottom:6px}
+.bias-t{font-size:.83em;color:#fde68a;line-height:1.6}
+.next-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nt-btn{display:block;background:var(--surf2);border:1px solid var(--bd2);border-radius:10px;padding:11px 13px;text-decoration:none;transition:.2s}
+.nt-btn:hover{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.nt-lbl{font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+.nt-name{font-size:.84em;font-weight:700;color:var(--white)}
+.nt-desc{font-size:.72em;color:var(--muted)}
+.pb{background:var(--surf3);border:1px solid var(--bd2);border-radius:10px;padding:13px;position:relative}
+.pb-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.pb-txt{font-size:.79em;color:var(--muted);line-height:1.6;white-space:pre-wrap;word-break:break-word;padding-right:58px}
+.cp-btn{position:absolute;top:11px;right:11px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 10px;font-size:.7em;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
+.cp-btn:hover{color:var(--white);border-color:var(--accent)}.cp-btn.ok{color:var(--green);border-color:var(--green)}
+.footer{text-align:center;padding:20px;font-size:.8em;color:var(--muted);border-top:1px solid var(--bd)}
+.footer a{color:var(--accent-l);margin:0 7px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="ai-invest-os.html">← AI Invest OS</a>
+  <span style="color:var(--bd2)">›</span>
+  <span class="nav-cur">Kelly Lab</span>
+</nav>
+<div class="hero">
+  <div class="badge">Experiment Tool #3 — Interactive Lab</div>
+  <h1><em>Kelly Lab</em></h1>
+  <p>Not just a formula. Interactive sliders, Bear/Base/Bull scenario modeling, Risk of Ruin chart, and confidence scoring — because position sizing is a decision, not a calculation.</p>
+</div>
+<div class="wrap">
+  <div class="card">
+    <div class="sl">Step 1 — Your Investing School</div>
+    <div class="school-row">
+      <button class="sb" id="sb-index" onclick="setSchool('index',this)"><i>📊</i>Index</button>
+      <button class="sb" id="sb-value" onclick="setSchool('value',this)"><i>🦅</i>Value</button>
+      <button class="sb" id="sb-growth" onclick="setSchool('growth',this)"><i>🌱</i>Growth</button>
+      <button class="sb" id="sb-trend" onclick="setSchool('trend',this)"><i>📈</i>Trend</button>
+    </div>
+
+    <div class="sl">Step 2 — Input Mode</div>
+    <div class="tabs">
+      <button class="tab on" id="tab-slider" onclick="switchMode('slider',this)">🎛️ Interactive Sliders</button>
+      <button class="tab" id="tab-scenario" onclick="switchMode('scenario',this)">🎯 Bear / Base / Bull</button>
+    </div>
+
+    <!-- Slider mode -->
+    <div id="slider-mode">
+      <div class="slider-wrap">
+        <div class="slider-row">
+          <div>
+            <div class="sl-label">Win Rate</div>
+            <input type="range" id="wr-slider" min="10" max="90" value="55" oninput="updateSlider('wr',this.value)">
+          </div>
+          <div class="sl-val" id="wr-val">55%</div>
+        </div>
+        <div class="slider-row">
+          <div>
+            <div class="sl-label">Avg Win per Trade</div>
+            <input type="range" id="ww-slider" min="5" max="100" value="20" oninput="updateSlider('ww',this.value)">
+          </div>
+          <div class="sl-val" id="ww-val">20%</div>
+        </div>
+        <div class="slider-row">
+          <div>
+            <div class="sl-label">Avg Loss per Trade</div>
+            <input type="range" id="ll-slider" min="5" max="80" value="10" oninput="updateSlider('ll',this.value)">
+          </div>
+          <div class="sl-val" id="ll-val">10%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario mode (Bear/Base/Bull) -->
+    <div id="scenario-mode" style="display:none">
+      <div style="font-size:.8em;color:var(--muted);margin-bottom:11px">Enter your 3-scenario probability estimate. Total probabilities must sum to 100%.</div>
+      <div class="scenario-grid">
+        <div class="sc-card">
+          <div class="sc-label bear">🐻 Bear Case</div>
+          <div class="sc-fields">
+            <div class="sc-fl"><label>Probability (%)</label><input type="number" id="bear-p" value="25" min="0" max="100"></div>
+            <div class="sc-fl"><label>Expected Return (%)</label><input type="number" id="bear-r" value="-20" min="-100" max="0"></div>
+          </div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-label base">📊 Base Case</div>
+          <div class="sc-fields">
+            <div class="sc-fl"><label>Probability (%)</label><input type="number" id="base-p" value="50" min="0" max="100"></div>
+            <div class="sc-fl"><label>Expected Return (%)</label><input type="number" id="base-r" value="15" min="-100" max="500"></div>
+          </div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-label bull">🐂 Bull Case</div>
+          <div class="sc-fields">
+            <div class="sc-fl"><label>Probability (%)</label><input type="number" id="bull-p" value="25" min="0" max="100"></div>
+            <div class="sc-fl"><label>Expected Return (%)</label><input type="number" id="bull-r" value="40" min="0" max="500"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trade-count">
+      <div class="tc-label">How many historical trades is this win rate based on?<br><span style="font-size:.75em;color:var(--muted);font-style:italic">Affects confidence score — more trades = higher confidence in the Kelly output</span></div>
+      <input type="number" class="tc-input" id="trade-count" value="30" min="1" max="1000">
+    </div>
+
+    <button class="btn-go" onclick="calculate()">Calculate My Optimal Position Size →</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="sl">Kelly Position Sizing Results</div>
+      <div class="kelly-grid" id="kelly-grid"></div>
+      <div class="conf-box" id="conf-box"></div>
+      <div class="ror-chart" id="ror-chart"></div>
+      <div id="school-ins" style="background:var(--surf2);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:12px 14px;font-size:.85em;color:var(--muted);line-height:1.65;margin-top:4px"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">All 5 Schools — Kelly Perspective</div>
+      <div class="school5" id="school5-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">8 AI Committee — Is Kelly Right for You?</div>
+      <div class="ai-hint">★ Star your best AI above — the links below only glow when you pick one</div>
+      <div class="ai-grid" id="ai-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">⚠️ Behavioral Bias Check</div>
+      <div class="bias" id="bias-box"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">Continue Your Analysis →</div>
+      <div class="next-tools" id="next-tools"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">Your Personalized AI Prompt</div>
+      <div class="pb">
+        <div class="pb-l">Copy · then ask any AI directly below</div>
+        <div class="pb-txt" id="prompt-txt"></div>
+        <button class="cp-btn" onclick="copyPrompt()">Copy</button>
+        <div class="ai-links-label" style="margin-top:12px">★ Star an AI card above to highlight it here</div>
+        <div class="ai-links-row">
+          <a class="ai-lnk active" data-id="claude" href="https://claude.ai/new" target="_blank" rel="noopener">🔵 Claude</a>
+          <a class="ai-lnk active" data-id="chatgpt" href="https://chatgpt.com" target="_blank" rel="noopener">🟢 ChatGPT</a>
+          <a class="ai-lnk" data-id="gemini" href="https://gemini.google.com" target="_blank" rel="noopener">🔴 Gemini</a>
+          <a class="ai-lnk" data-id="grok" href="https://grok.com" target="_blank" rel="noopener">⚡ Grok</a>
+          <a class="ai-lnk" data-id="deepseek" href="https://chat.deepseek.com" target="_blank" rel="noopener">🌊 DeepSeek</a>
+          <a class="ai-lnk" data-id="kimi" href="https://kimi.moonshot.cn" target="_blank" rel="noopener">🌙 Kimi</a>
+          <a class="ai-lnk" data-id="tongyi" href="https://tongyi.aliyun.com" target="_blank" rel="noopener">☁️ Tongyi</a>
+          <a class="ai-lnk" data-id="doubao" href="https://www.doubao.com" target="_blank" rel="noopener">🫧 Doubao</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="ai-invest-os.html">← AI Invest OS</a>
+    <a href="dca-simulator.html">DCA Lab</a>
+    <a href="recovery-navigator.html">Recovery</a>
+    <a href="dividend-engine.html">Dividend Engine</a>
+    <a href="pyramid-builder.html">Pyramid Builder</a>
+    <a href="portfolio-clarity.html">Portfolio Doctor</a>
+  </div>
+</div>
+
+<script>
+function gp(){try{return JSON.parse(sessionStorage.getItem('ios_profile')||'{}')}catch(e){return{}}}
+function sp(u){sessionStorage.setItem('ios_profile',JSON.stringify({...gp(),...u}))}
+function qp(k){return new URLSearchParams(location.search).get(k)}
+let school=qp('school')||gp().school||'trend';
+let mode='slider';
+const SCHOOLS={index:{icon:'📊',name:'Index'},value:{icon:'🦅',name:'Value'},growth:{icon:'🌱',name:'Growth'},trend:{icon:'📈',name:'Trend'}};
+
+function setSchool(s,el){school=s;document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');sp({school:s})}
+(function(){const btn=document.getElementById('sb-'+school);if(btn)btn.classList.add('on');})();
+function switchMode(m,el){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');document.getElementById('slider-mode').style.display=m==='slider'?'block':'none';document.getElementById('scenario-mode').style.display=m==='scenario'?'block':'none';}
+function updateSlider(key,v){document.getElementById(key+'-val').textContent=v+'%';}
+
+function calcKelly(p,b){return Math.max(0,(p*b-(1-p))/b);}// p=win rate, b=win/loss ratio
+
+function calculate(){
+  let wr,ww,ll;
+  if(mode==='slider'){
+    wr=parseFloat(document.getElementById('wr-slider').value)/100;
+    ww=parseFloat(document.getElementById('ww-slider').value)/100;
+    ll=parseFloat(document.getElementById('ll-slider').value)/100;
+  } else {
+    const bp=parseFloat(document.getElementById('bear-p').value)/100;
+    const mp=parseFloat(document.getElementById('base-p').value)/100;
+    const up=parseFloat(document.getElementById('bull-p').value)/100;
+    const br=parseFloat(document.getElementById('bear-r').value)/100;
+    const mr=parseFloat(document.getElementById('base-r').value)/100;
+    const ur=parseFloat(document.getElementById('bull-r').value)/100;
+    const ev=bp*br+mp*mr+up*ur;
+    const ev2=bp*br*br+mp*mr*mr+up*ur*ur;
+    const variance=ev2-ev*ev;
+    // Convert EV/variance to effective win rate and ratio
+    const posEv=mp*mr+up*ur;
+    const negEv=Math.abs(bp*br);
+    wr=mp+up;
+    ww=posEv/wr||mr;
+    ll=negEv/bp||Math.abs(br);
+    if(isNaN(wr)||wr<=0){alert('Check scenario probabilities sum to 100%');return;}
+  }
+  const tc=parseInt(document.getElementById('trade-count').value)||30;
+  const ratio=ww/ll;
+  const fullK=calcKelly(wr,ratio);
+  const halfK=fullK/2;
+  const quarterK=fullK/4;
+  // Recommended = half kelly (standard practice)
+  sp({kellyFull:fullK,school:school});
+
+  // Kelly grid
+  const kd=[
+    {label:'Full Kelly',val:fullK,cls:'full',note:'Theoretically optimal — but max drawdowns are brutal. Most professionals never use this.'},
+    {label:'Half Kelly',val:halfK,cls:'half',note:'Standard professional choice. 75% of Full Kelly growth with ~50% less volatility.'},
+    {label:'Quarter Kelly',val:quarterK,cls:'quarter',note:'Conservative. Good for uncertain win rates or emotional traders.'},
+    {label:'Recommended',val:halfK,cls:'rec',note:`Your school (${SCHOOLS[school].name}) recommendation: ${school==='trend'?'Half Kelly':'Quarter Kelly'}. See analysis below.`},
+  ];
+  document.getElementById('kelly-grid').innerHTML=kd.map(k=>`<div class="kc ${k.cls}">
+    <div class="kc-val">${(k.val*100).toFixed(1)}%</div>
+    <div class="kc-lbl">${k.label}</div>
+    <div class="kc-note">${k.note}</div>
+  </div>`).join('');
+
+  // Confidence score
+  let stars,confTxt;
+  if(tc>=100){stars='⭐⭐⭐⭐⭐';confTxt=`High confidence. ${tc} trades provides statistically robust win rate data. Your Kelly position is well-founded.`;}
+  else if(tc>=50){stars='⭐⭐⭐⭐☆';confTxt=`Good confidence. ${tc} trades is reasonable. Consider using Half Kelly for added safety margin.`;}
+  else if(tc>=20){stars='⭐⭐⭐☆☆';confTxt=`Moderate confidence. ${tc} trades carries statistical noise. Use Quarter Kelly — your true win rate could be ±10% from this estimate.`;}
+  else if(tc>=5){stars='⭐⭐☆☆☆';confTxt=`Low confidence. ${tc} trades is not enough for reliable statistics. Kelly with this sample size is largely guesswork. Use minimal position sizing (5–10%) regardless of output.`;}
+  else{stars='⭐☆☆☆☆';confTxt=`Very low confidence. ${tc} trades — virtually no statistical basis for the win rate. Do not use Kelly formula with fewer than 20 trades. The Kelly number shown is decorative, not actionable.`;}
+  document.getElementById('conf-box').innerHTML=`<div class="conf-label">Confidence Score — Based on ${tc} Historical Trades</div><div class="conf-stars">${stars}</div><div class="conf-txt">${confTxt}</div>`;
+
+  // Risk of Ruin chart
+  const kFracs=[0.25,0.5,1.0,1.5,2.0];
+  const kLabels=['¼ Kelly','½ Kelly','Full Kelly','1.5× Kelly','2× Kelly'];
+  const estRor=[2,8,20,52,85]; // approximate RoR at each level (illustrative)
+  let rorHtml=`<div class="ror-title">Risk of Ruin — Probability of 50%+ Portfolio Loss</div>`;
+  kFracs.forEach((f,i)=>{
+    const isRec=i===1;
+    const clr=estRor[i]<15?'var(--green)':estRor[i]<40?'var(--gold)':'var(--red)';
+    rorHtml+=`<div class="ror-row">
+      <div class="ror-lbl" style="color:${isRec?'var(--green)':''}">${kLabels[i]}${isRec?' ✓':''}</div>
+      <div class="ror-bar-wrap"><div class="ror-bar" style="width:${estRor[i]}%;background:${clr}"></div></div>
+      <div class="ror-pct" style="color:${clr}">${estRor[i]}%</div>
+    </div>`;
+  });
+  rorHtml+=`<div style="font-size:.72em;color:var(--muted);margin-top:7px;line-height:1.5">Risk of Ruin estimates are illustrative. Full Kelly is theoretically optimal in the long run but real traders using it consistently experience severe psychological drawdowns that cause them to abandon the strategy — defeating its purpose.</div>`;
+  document.getElementById('ror-chart').innerHTML=rorHtml;
+
+  // School insight
+  const ins={
+    index:`<strong>📊 Index School — Kelly doesn't apply.</strong> Index investors don't make individual bets — they own everything. Position sizing for index school means asset allocation (stocks/bonds/cash ratio), not trade sizing. Kelly is useful for your satellite portfolio (if any).`,
+    value:`<strong>🦅 Value School — Use Fundamental Kelly.</strong> Don't use win rate from price action. Use "probability this business is worth 30% more in 3 years" and "expected loss if thesis is wrong." Buffett concentrates heavily — but his confidence comes from fundamental certainty, not historical win rates.`,
+    growth:`<strong>🌱 Growth School — Quarter Kelly.</strong> Growth stocks have wide outcome distributions. High upside potential, but also genuine 80%+ downside risk. Use Quarter Kelly maximum. Never put more than 15-20% in any single growth position regardless of Kelly output.`,
+    trend:`<strong>📈 Trend School — Half Kelly, strict cut.</strong> Trend trading win rates are often 40-50% with high win/loss ratios. Half Kelly with a strict stop-loss (the "loss" in Kelly must equal your actual stop-loss %) gives you the right sizing.`
+  };
+  document.getElementById('school-ins').innerHTML=ins[school]||ins.trend;
+
+  buildSchool5(fullK,wr,ratio);
+  buildAiGrid(fullK,halfK,wr,ww,ll,tc);
+  buildBias(fullK,tc,wr);
+  buildNextTools(halfK);
+  buildPrompt(wr,ww,ll,fullK,halfK,tc);
+  document.getElementById('results').style.display='block';
+  setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function buildSchool5(fk,wr,ratio){
+  const views={
+    index:{verdict:'N/A for index',txt:`Kelly doesn't apply to index investing. If you have a satellite portfolio, apply Kelly only to those active positions.`},
+    value:{verdict:'Use ¼ Kelly or less',txt:`Value investing uses concentrated positions but based on fundamental conviction, not statistical win rates. Buffett's "Kelly" is qualitative. Don't over-mechanize it.`},
+    growth:{verdict:'Use ¼ Kelly max',txt:`Growth stocks have wide distributions. Cap at ${(fk/4*100).toFixed(0)}% (¼ Kelly = ${(fk/4*100).toFixed(0)}%) regardless of the formula output.`},
+    trend:{verdict:'½ Kelly with hard stop',txt:`Trend trading is Kelly's home turf. Use ${(fk/2*100).toFixed(0)}% (½ Kelly). The stop-loss % you enter as "avg loss" must be your actual stop — not a hope.`}
+  };
+  let h='';
+  Object.entries(views).forEach(([k,v])=>{
+    const s=SCHOOLS[k];const isActive=k===school;
+    h+=`<div class="s5c${isActive?' active':''}">
+      <div class="s5c-name">${s.icon} ${s.name}</div>
+      <div style="font-size:.66em;font-weight:700;margin-bottom:4px;color:var(--gold)">${v.verdict}</div>
+      <div class="s5c-txt">${v.txt}</div>
+    </div>`;
+  });
+  document.getElementById('school5-grid').innerHTML=h;
+}
+
+function interpolate(tpl,vars){
+  let s=String(tpl).replace(/\{([^}]+)\}/g,(m,k)=>k in vars?vars[k]:m);
+  return s.replace(/%%/g,'%');
+}
+function buildAiGrid(fk,hk,wr,ww,ll,tc){
+  const ratio=ww/ll;
+  const vars={
+    FULL_K:(fk*100).toFixed(1)+'%',
+    HALF_K:(hk*100).toFixed(1)+'%',
+    WIN_RATE:(wr*100).toFixed(0)+'%',
+    RATIO:ratio.toFixed(2)+'×',
+    TRADES:tc
+  };
+  const ais=[
+    {n:'Claude',i:'🔵',t:'Value School',schools:{
+      value:{comment:'Kelly is mathematically elegant but requires accurate inputs. With {TRADES} trades your win rate carries significant noise. {FULL_K} Full Kelly is theoretically optimal — but the inputs are human judgments. Use {HALF_K} Half Kelly as your maximum, and verify the underlying thesis before sizing up.',q:'Would your {WIN_RATE} win rate hold up if you removed the bull market tailwind from your sample?'},
+      growth:{comment:'Kelly estimates opportunity, not certainty. Even with {FULL_K}, the outcome depends on whether your edge is genuine and still improving. {TRADES} trades define confidence in the inputs. Growth edges can deteriorate quickly — size down as momentum shows signs of slowing.',q:'How certain is your edge beyond historical {TRADES} trades?'},
+      trend:{comment:'Kelly amplifies disciplined trend following, not prediction. {FULL_K} becomes dangerous when rules are ignored. A limited {TRADES} history may exaggerate confidence. Position size should shrink before discipline weakens, not after a losing streak forces the issue.',q:'Have you followed every stop in your {TRADES} trade history?'}
+    }},
+    {n:'ChatGPT',i:'🟢',t:'Decision Framework',schools:{
+      value:{comment:'Kelly is mathematically precise, but your inputs are not. A Full Kelly of {FULL_K} is only as reliable as the assumptions behind it. With just {TRADES} trades, estimation error can dominate the result. Treat Kelly as a position-size ceiling, never a target.',q:'Would you trust the same Kelly estimate after doubling your trade sample?'},
+      growth:{comment:'Kelly size of {FULL_K} full / {HALF_K} half rests on a {WIN_RATE} win rate and {RATIO} payoff from {TRADES} observations. Growth strategies live or die on whether the growth trajectory continues. If growth is intact, size up; if growth is fading, the entire Kelly input is already obsolete.',q:'Does the current growth rate still support the assumed {WIN_RATE} and {RATIO}?'},
+      trend:{comment:'Your {WIN_RATE} from {TRADES} trades and {RATIO} payoff produce Full Kelly {FULL_K} and Half Kelly {HALF_K}. Trend systems rarely sustain those win rates. Overstated edges create position sizes that guarantee you will abandon the system in the first deep drawdown.',q:'Will you still take Full Kelly size after the next multi-month losing streak?'}
+    }},
+    {n:'Gemini',i:'🔴',t:'Scenario Analyst',schools:{
+      value:{comment:'Your sample of {TRADES} trades with a {WIN_RATE} win rate and {RATIO} payoff dangerously ignores fat-tail risks. Executing at {FULL_K} guarantees ruin during black swans because drawdown severities are systematically underestimated. Assign heavier probability to extreme bear scenarios and retreat to {HALF_K}.',q:'Will your portfolio survive a catastrophic fat-tail event, or do your calculations assume markets never break?'},
+      growth:{comment:'Growth investing relies on extreme fat-tail winners, heavily skewing your {RATIO} metric over {TRADES} attempts. A {WIN_RATE} success rate requires flawless execution. Operating at {FULL_K} ignores the base-rate reality that growth regime changes abruptly kill multiples. Default to {HALF_K} to survive inevitable secular growth winters.',q:'Will your portfolio survive if the few outlier growth winners driving your ratio suddenly fail to materialize?'},
+      trend:{comment:'While {TRADES} iterations show a {WIN_RATE} win rate and {RATIO} return, {FULL_K} guarantees mathematical ruin during prolonged choppy markets or fat-tail whipsaws. Trend systems face severe consecutive losses when volatility regimes transition. Scaling back to {HALF_K} is mathematically mandatory.',q:'Can your capital base withstand the inevitable string of consecutive false breakouts and triggered stop-losses?'}
+    }},
+    {n:'Grok',i:'⚡',t:'Trend Realist',schools:{
+      value:{comment:'Your {WIN_RATE} win rate from only {TRADES} trades is almost certainly temporary noise. Real trend systems live at 40-50%%. That overstated edge and {RATIO} payoff inflate Full Kelly to {FULL_K}, a size that delivers brutal drawdowns and makes you abandon the system. Half Kelly at {HALF_K} is the only fraction you will actually execute.',q:'Will you still size at Full Kelly after three consecutive losing months?'},
+      growth:{comment:'Growth investing relies on a few big wins. Your {WIN_RATE} and {RATIO} from {TRADES} trades may reflect one exceptional cycle, not a durable edge. At {FULL_K}, a single growth correction wipes the account. Use {HALF_K} as your ceiling until the sample doubles.',q:'Does your win rate from {TRADES} trades reflect genuine skill or one favorable market cycle?'},
+      trend:{comment:'Trend following at {FULL_K} requires iron discipline through consecutive losses. Most traders abandon the system before Kelly math pays off. At {HALF_K}, the drawdowns are survivable. {TRADES} observations is still a small sample — size conservatively until the edge is proven across different market regimes.',q:'Have you back-tested your {WIN_RATE} win rate across a full market cycle, not just the recent trend?'}
+    }},
+    {n:'DeepSeek',i:'🌊',t:'Systematic Quant',schools:{
+      value:{comment:'Full Kelly {FULL_K} from {WIN_RATE} and {RATIO} maximizes growth but overestimates edge when value tails are fat. With only {TRADES} trades, the 95%% CI around {WIN_RATE} is wide enough that true Kelly is lower. Half Kelly {HALF_K} cuts variance 50%% while keeping most upside.',q:'If {WIN_RATE} drops 5 percentage points, is {FULL_K} still +EV?'},
+      growth:{comment:'Growth stocks\' wide return distributions inflate required Kelly discounts. {FULL_K} using {WIN_RATE} and {RATIO} ignores fat tails; a 3-sigma loss would devastate the portfolio. Half Kelly {HALF_K} is the maximum safe bet given {TRADES} noisy growth observations.',q:'What\'s the 95th percentile worst-case loss for a {FULL_K} Kelly bet on this strategy?'},
+      trend:{comment:'Trend systems with {TRADES} trades and {WIN_RATE} win rate at {RATIO} allow direct Kelly application. Full {FULL_K} maximizes growth but drawdowns are severe. Half {HALF_K} is standard: 50%% less variance for 25%% less growth. Account for serial win correlation.',q:'How clustered are the {WIN_RATE} wins, and does that raise ruin risk at {FULL_K}?'}
+    }},
+    {n:'Kimi',i:'🌙',t:'Correlation Risk',schools:{
+      value:{comment:'Kelly assumes independence, but A-share sectors move together. A {WIN_RATE} win rate and {RATIO} payoff yield {FULL_K} Full Kelly. Apply that to multiple correlated positions and portfolio risk explodes beyond any single-trade calculation. {TRADES} trades of history masks the correlation black hole.',q:'Have you accounted for sector correlation across all your Kelly-sized positions?'},
+      growth:{comment:'A-share board linkage destroys Kelly independence assumptions. Your {TRADES} sample may be insufficient given how quickly growth cycles turn in A-shares. At {FULL_K}, a single sector correction devastates a growth-focused portfolio. {HALF_K} is the A-share growth ceiling.',q:'Is the sample independent, or are your {TRADES} wins clustered in one growth cycle?'},
+      trend:{comment:'A-share limit-up and limit-down create win-rate distortions that inflate {WIN_RATE} and compress {RATIO}. Your Kelly output of {FULL_K} may be meaningless in a market where exits can be locked. Trend following in A-shares demands even more conservative sizing than {HALF_K}.',q:'Does your {WIN_RATE} account for A-share liquidity risk during limit-down events?'}
+    }},
+    {n:'Tongyi',i:'☁️',t:'Ruin Risk',schools:{
+      value:{comment:'A {WIN_RATE} win rate and {RATIO} payoff look favorable, but {FULL_K} Full Kelly creates severe ruin risk. A {TRADES}-trade sample cannot survive the drawdown sequences that Kelly math ignores. Retail investors must treat {HALF_K} as a hard ceiling.',q:'Can you emotionally survive the drawdowns that come with Full Kelly at {FULL_K}?'},
+      growth:{comment:'Growth edges decay. A {WIN_RATE} and {RATIO} calculated from {TRADES} growth trades will change when the sector cycle shifts. Running {FULL_K} through a growth cycle change guarantees outsized losses. Always use {HALF_K} as your maximum and rebuild confidence with a new sample before sizing back up.',q:'What happens to your Kelly output if growth decelerates and your next {TRADES} sample shows lower win rates?'},
+      trend:{comment:'Trend following requires strict execution at every size. Running {FULL_K} through a choppy market destroys the statistical edge in {TRADES} trades. {HALF_K} is the recommended ceiling for trend systems in practice — it survives the inevitable consecutive-loss sequences without forcing position abandonment.',q:'Will you consistently execute at {FULL_K} through a month of consecutive stop-outs?'}
+    }},
+    {n:'Doubao',i:'🫧',t:'Behavioral',schools:{
+      value:{comment:'Overconfidence is Kelly\'s biggest killer. You\'ve likely overestimated your true win rate beyond {WIN_RATE}. If it\'s actually 45%%, your {FULL_K} Kelly flips negative — meaning: don\'t bet at all. {TRADES} trades of historical wins are mostly luck, not skill.',q:'Is your win rate genuine edge, or bull market luck in disguise?'},
+      growth:{comment:'FOMO inflates perceived edge in growth investing. You remember the wins that validated your growth thesis and forget the near-misses. Your {WIN_RATE} from {TRADES} trades likely overstates your true edge. At {FULL_K}, this overconfidence becomes catastrophic when the growth cycle ends.',q:'Are you pressing your Kelly bet because data supports it, or because growth feels unstoppable right now?'},
+      trend:{comment:'Consecutive wins in trend following create overconfidence that corrupts Kelly inputs. After a winning streak, {WIN_RATE} from {TRADES} looks solid, but mean reversion in win rates is real. Emotional pressure to ride the system at {FULL_K} peaks right before the inevitable losing streak begins.',q:'Is your confidence in the system at its highest right now, and does that concern you?'}
+    }},
+  ];
+  document.getElementById('ai-grid').innerHTML=ais.map(a=>{
+    const sd=a.schools[school]||a.schools.value;
+    const c=interpolate(sd.comment,vars);
+    const q=interpolate(sd.q,vars);
+    const id=N2ID[a.n]||a.n.toLowerCase();
+    return `<div class="ai-c"><button class="ai-star${selAIs.has(id)?' starred':''}" data-id="${id}" onclick="toggleAI('${id}')" title="Mark as my AI">★</button><div class="ai-head"><div class="ai-n">${a.i} ${a.n}</div><div class="ai-t">${a.t}</div></div><div style="flex:1;min-width:0"><div class="ai-txt">${c}</div><div class="ai-q">❓ ${q}</div></div></div>`;
+  }).join('');
+}
+
+function buildBias(fk,tc,wr){
+  document.getElementById('bias-box').innerHTML=`
+    <div class="bias-l">🎯 Overconfidence Bias + Outcome Bias</div>
+    <div class="bias-t">Two biases make Kelly dangerous:
+      <br><br>1. <strong style="color:var(--white)">Overconfidence:</strong> Most investors overestimate their win rate by 5–15%. A ${(wr*100).toFixed(0)}% win rate that's actually 45% changes your Kelly from ${(fk*100).toFixed(0)}% to potentially negative (meaning: don't bet at all). Your ${tc} trades ${tc<50?'are not enough to correct for this — assume you\'re less accurate than you think':'provide moderate correction, but remain humble'}.
+      <br><br>2. <strong style="color:var(--white)">Outcome Bias:</strong> Investors look at past wins and attribute them to skill. Some portion of your historical win rate is luck, especially in a bull market. Correcting for market beta makes most "winning systems" much less impressive.
+      <br><br>Rule of thumb: if your Kelly output is above 30%, that's a signal to double-check your inputs, not to bet big.</div>`;
+}
+
+function buildNextTools(hk){
+  const s=school;
+  document.getElementById('next-tools').innerHTML=`
+    <a class="nt-btn" href="pyramid-builder.html?school=${s}&kelly=${(hk*100).toFixed(0)}">
+      <div class="nt-lbl">Apply to position sizing</div>
+      <div class="nt-name">Pyramid Builder</div>
+      <div class="nt-desc">Use ½ Kelly (${(hk*100).toFixed(0)}%) across 3–5 tranches</div>
+    </a>
+    <a class="nt-btn" href="portfolio-clarity.html?school=${s}">
+      <div class="nt-lbl">Check your whole portfolio</div>
+      <div class="nt-name">Portfolio Doctor</div>
+      <div class="nt-desc">Does adding this position break your diversification?</div>
+    </a>`;
+}
+
+function buildPrompt(wr,ww,ll,fk,hk,tc){
+  const sn={index:'Index Investing',value:'Value Investing (Buffett)',growth:'Growth Investing (Fisher)',trend:'Trend Trading (Livermore)',macro:'Macro Hedge (Dalio)'};
+  const t=`I'm calculating position sizing using Kelly Criterion for my ${sn[school]||'investing'} strategy.
+
+My inputs:
+• Win rate: ${(wr*100).toFixed(0)}% (based on ${tc} historical trades)
+• Average win per trade: ${(ww*100).toFixed(0)}%
+• Average loss per trade: ${(ll*100).toFixed(0)}%
+• Full Kelly: ${(fk*100).toFixed(1)}%
+• Half Kelly: ${(hk*100).toFixed(1)}% (my planned position size)
+
+Please analyze:
+1. Is my win rate estimate likely overstated given my school of investing?
+2. What's the correct "loss" to plug into Kelly — stop-loss price or average loss magnitude?
+3. How should I adjust Kelly for correlated positions in the same portfolio?
+4. What's the realistic scenario where this Kelly fraction blows up?
+5. Your recommendation: should I use Full, Half, or Quarter Kelly for ${sn[school]}?`;
+  document.getElementById('prompt-txt').textContent=t;
+}
+
+const selAIs=new Set(['claude','chatgpt']);
+const N2ID={Claude:'claude',ChatGPT:'chatgpt',Gemini:'gemini',Grok:'grok',DeepSeek:'deepseek',Kimi:'kimi',Tongyi:'tongyi',Doubao:'doubao','通义':'tongyi','豆包':'doubao'};
+function toggleAI(id){
+  selAIs.has(id)?selAIs.delete(id):selAIs.add(id);
+  document.querySelectorAll('.ai-star').forEach(b=>b.classList.toggle('starred',selAIs.has(b.dataset.id)));
+  document.querySelectorAll('.ai-lnk').forEach(b=>b.classList.toggle('active',selAIs.has(b.dataset.id)));
+}
+function copyPrompt(){
+  navigator.clipboard.writeText(document.getElementById('prompt-txt').textContent).then(()=>{
+    const b=document.querySelector('.cp-btn');b.textContent='✓ Copied!';b.classList.add('ok');
+    setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},2000);
+  });
+}
+</script>
+</body>
+</html>

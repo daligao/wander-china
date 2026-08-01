@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DCA Strategy Lab — AI Invest OS Tools</title>
+<meta name="description" content="Not just a DCA calculator — a decision lab. Compare fixed vs valuation-linked DCA, see the Smile Curve, and get a school-specific AI coaching prompt.">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/dca-simulator.html">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09101F;--surf:#111827;--surf2:#1A2436;--surf3:#0d1526;--accent:#6366F1;--accent-l:#818CF8;--gold:#F59E0B;--green:#10B981;--red:#EF4444;--white:#F1F5F9;--muted:#64748B;--bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.12)}
+body{background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;line-height:1.7;font-size:17px;overflow-x:hidden}
+a{color:var(--accent-l);text-decoration:none}.nav{padding:13px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:.84em}.nav a{color:var(--muted)}.nav a:hover{color:var(--white)}.nav-cur{color:var(--white);font-weight:600}
+.hero{text-align:center;padding:46px 20px 26px;background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,.15) 0%,transparent 60%)}
+.badge{display:inline-block;font-size:.68em;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-l);background:rgba(99,102,241,.12);border:1px solid rgba(129,140,248,.25);border-radius:30px;padding:4px 13px;margin-bottom:12px}
+.hero h1{font-size:clamp(1.8rem,5vw,2.9rem);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-bottom:10px}
+.hero h1 em{font-style:normal;color:var(--accent-l)}.hero p{font-size:.92em;color:var(--muted);max-width:460px;margin:0 auto}
+.wrap{max-width:740px;margin:0 auto;padding:26px 18px 60px}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:20px 18px;margin-bottom:12px}
+.sl{font-size:.62em;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-l);margin-bottom:13px}
+.school-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px}
+@media(min-width:500px){.school-row{grid-template-columns:repeat(4,1fr)}}
+.sb{background:var(--surf2);border:2px solid var(--bd);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:.2s;font-size:.79em;font-weight:700;color:var(--muted);line-height:1.3}
+.sb:hover{border-color:var(--bd2);color:var(--white)}.sb.on{border-color:var(--accent);background:rgba(99,102,241,.12);color:var(--white)}
+.sb i{font-style:normal;font-size:1.3em;display:block;margin-bottom:2px}
+.frow{display:grid;gap:11px;margin-bottom:14px}
+@media(min-width:480px){.frow{grid-template-columns:1fr 1fr 1fr}}
+.fl label{display:block;font-size:.73em;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-bottom:4px}
+.fl input{width:100%;background:var(--surf2);border:1.5px solid var(--bd2);border-radius:9px;padding:9px 12px;color:var(--white);font-size:.94em;font-weight:600;outline:none;transition:.2s}
+.fl input:focus{border-color:var(--accent)}
+.toggle-row{display:flex;align-items:center;gap:9px;margin-bottom:14px;padding:10px 13px;background:var(--surf2);border:1px solid var(--bd);border-radius:9px;cursor:pointer;font-size:.83em;color:var(--muted)}
+.toggle-row input{accent-color:var(--accent);width:14px;height:14px;cursor:pointer}
+.adv{font-size:.68em;background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.28);border-radius:4px;padding:1px 7px}
+.btn-go{width:100%;padding:13px;background:linear-gradient(120deg,var(--accent),var(--accent-l));border:none;border-radius:12px;color:#fff;font-size:1em;font-weight:800;cursor:pointer;transition:.2s}
+.btn-go:hover{filter:brightness(1.12)}
+#results{display:none}
+.sgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+@media(min-width:480px){.sgrid{grid-template-columns:repeat(4,1fr)}}
+.sv{background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:12px;text-align:center}
+.sv-val{font-size:1.15em;font-weight:900;color:var(--white);margin-bottom:2px}
+.sv-lbl{font-size:.63em;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.chart-box{background:var(--surf2);border:1px solid var(--bd);border-radius:11px;padding:14px;overflow:hidden;margin-bottom:13px}
+.chart-ttl{font-size:.7em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:9px}
+.bar-outer{display:flex;align-items:flex-end;gap:2px;height:120px}
+.school5{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:13px}
+@media(min-width:500px){.school5{grid-template-columns:repeat(4,1fr)}}
+.s5c{background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:10px}
+.s5c-name{font-size:.72em;font-weight:800;color:var(--white);margin-bottom:4px}
+.s5c-txt{font-size:.73em;color:var(--muted);line-height:1.5}
+.s5c.active{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.school-ins{background:var(--surf2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 14px;font-size:.85em;color:var(--muted);line-height:1.65}
+.school-ins strong{color:var(--white)}
+.ai-grid{display:flex;flex-direction:column;gap:7px}
+.ai-c{display:flex;gap:14px;align-items:flex-start;background:var(--surf2);border:1px solid var(--bd);border-radius:10px;padding:12px 15px;position:relative}
+.ai-head{min-width:108px;flex-shrink:0}
+.ai-n{font-size:.92em;font-weight:800;color:var(--white);margin-bottom:2px}
+.ai-t{font-size:.72em;color:var(--accent-l)}
+.ai-txt{font-size:.92em;color:var(--muted);line-height:1.55}
+.ai-q{font-size:.78em;color:#818CF8;border-top:1px solid var(--bd);margin-top:7px;padding-top:6px;font-style:italic;line-height:1.45}
+.ai-star{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:1.1em;opacity:.35;transition:.2s;padding:0;line-height:1}
+.ai-star.starred{opacity:1;filter:drop-shadow(0 0 4px gold)}
+.ai-links-row{display:flex;flex-wrap:wrap;gap:6px}
+.ai-links-label{font-size:.62em;color:var(--muted);margin-bottom:5px}
+.ai-hint{font-size:.67em;color:var(--muted);margin-bottom:8px;font-style:italic}
+.ai-lnk{display:inline-flex;align-items:center;gap:3px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:5px 10px;font-size:.74em;font-weight:600;color:var(--muted);text-decoration:none;transition:.2s;opacity:.55}
+.ai-lnk.active{background:rgba(99,102,241,.18);border-color:var(--accent);color:var(--accent-l);opacity:1;box-shadow:0 0 0 2px rgba(99,102,241,.2);font-weight:700}
+.ai-lnk:hover{color:var(--white);border-color:var(--accent);opacity:1}
+.bias{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:13px}
+.bias-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fbbf24;margin-bottom:6px}
+.bias-t{font-size:.83em;color:#fde68a;line-height:1.6}
+.next-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.nt-btn{display:block;background:var(--surf2);border:1px solid var(--bd2);border-radius:10px;padding:11px 13px;text-decoration:none;transition:.2s}
+.nt-btn:hover{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.nt-lbl{font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+.nt-name{font-size:.84em;font-weight:700;color:var(--white)}
+.nt-desc{font-size:.72em;color:var(--muted)}
+.pb{background:var(--surf3);border:1px solid var(--bd2);border-radius:10px;padding:13px;position:relative}
+.pb-l{font-size:.63em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.pb-txt{font-size:.79em;color:var(--muted);line-height:1.6;white-space:pre-wrap;word-break:break-word;padding-right:58px}
+.cp-btn{position:absolute;top:11px;right:11px;background:var(--surf2);border:1px solid var(--bd2);border-radius:6px;padding:4px 10px;font-size:.7em;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
+.cp-btn:hover{color:var(--white);border-color:var(--accent)}.cp-btn.ok{color:var(--green);border-color:var(--green)}
+.footer{text-align:center;padding:20px;font-size:.8em;color:var(--muted);border-top:1px solid var(--bd)}
+.footer a{color:var(--accent-l);margin:0 7px}
+.smile-box{background:var(--surf2);border:1px solid var(--bd);border-radius:11px;padding:14px;margin-top:12px}
+.green-tip{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:10px 12px;font-size:.8em;color:rgba(52,211,153,.9);line-height:1.6;margin-top:9px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="ai-invest-os.html">← AI Invest OS</a>
+  <span style="color:var(--bd2)">›</span>
+  <span class="nav-cur">DCA Strategy Lab</span>
+</nav>
+<div class="hero">
+  <div class="badge">Experiment Tool #1 — Decision Lab</div>
+  <h1><em>DCA Strategy Lab</em></h1>
+  <p>Not just a calculator — a decision engine. Compare fixed vs valuation-linked DCA, see the Smile Curve, and get a school-specific action plan.</p>
+</div>
+<div class="wrap">
+  <div class="card">
+    <div class="sl">Step 1 — Your Investing School</div>
+    <div class="school-row">
+      <button class="sb" id="sb-index" onclick="setSchool('index',this)"><i>📊</i>Index</button>
+      <button class="sb" id="sb-value" onclick="setSchool('value',this)"><i>🦅</i>Value</button>
+      <button class="sb" id="sb-growth" onclick="setSchool('growth',this)"><i>🌱</i>Growth</button>
+      <button class="sb" id="sb-trend" onclick="setSchool('trend',this)"><i>📈</i>Trend</button>
+    </div>
+    <div class="sl">Step 2 — Your Plan</div>
+    <div class="frow">
+      <div class="fl"><label>Monthly Amount ($)</label><input type="number" id="monthly" value="500" min="1"></div>
+      <div class="fl"><label>Annual Return (%)</label><input type="number" id="rate" value="10" min="0.1" max="50" step="0.5"></div>
+      <div class="fl"><label>Years to Invest</label><input type="number" id="years" value="20" min="1" max="50"></div>
+    </div>
+    <label class="toggle-row">
+      <input type="checkbox" id="smileOn">
+      Enable Smile Curve Comparison <span class="adv">+Crash Scenario</span>
+    </label>
+    <button class="btn-go" onclick="calculate()">Analyze My DCA Strategy →</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="sl">Your Results</div>
+      <div class="sgrid">
+        <div class="sv"><div class="sv-val" id="r-final">—</div><div class="sv-lbl">Final Portfolio</div></div>
+        <div class="sv"><div class="sv-val" id="r-inv">—</div><div class="sv-lbl">Total Invested</div></div>
+        <div class="sv"><div class="sv-val" id="r-gain" style="color:var(--green)">—</div><div class="sv-lbl">Market Gain</div></div>
+        <div class="sv"><div class="sv-val" id="r-mult" style="color:var(--gold)">—</div><div class="sv-lbl">Multiplier</div></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-ttl">Portfolio Growth — Year by Year</div>
+        <div class="bar-outer" id="bar-chart"></div>
+        <div style="display:flex;gap:14px;margin-top:7px;font-size:.68em;color:var(--muted)">
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--accent-l);margin-right:4px"></span>Portfolio Value</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(99,102,241,.22);margin-right:4px"></span>Total Contributed</span>
+        </div>
+      </div>
+      <div id="smile-section" style="display:none"></div>
+      <div id="school-ins" class="school-ins" style="margin-top:12px"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">All 5 Schools — How Each Views Your DCA Plan</div>
+      <div class="school5" id="school5-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">8 AI Committee — Independent Verdicts</div>
+      <div class="ai-hint">★ Star your best AI above — the links below only glow when you pick one</div>
+      <div class="ai-grid" id="ai-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">⚠️ Behavioral Bias Check</div>
+      <div class="bias" id="bias-box"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">Continue Your Analysis →</div>
+      <div style="font-size:.82em;color:var(--muted);margin-bottom:10px">Your DCA numbers carry forward automatically.</div>
+      <div class="next-tools" id="next-tools"></div>
+    </div>
+
+    <div class="card">
+      <div class="sl">Your Personalized AI Prompt</div>
+      <div style="font-size:.8em;color:var(--muted);margin-bottom:9px">Paste into Claude, ChatGPT, or any AI for a coaching session tailored to your exact plan.</div>
+      <div class="pb">
+        <div class="pb-l">Copy · then ask any AI directly below</div>
+        <div class="pb-txt" id="prompt-txt"></div>
+        <button class="cp-btn" onclick="copyPrompt()">Copy</button>
+        <div class="ai-links-label" style="margin-top:12px">★ Star an AI card above to highlight it here</div>
+        <div class="ai-links-row">
+          <a class="ai-lnk active" data-id="claude" href="https://claude.ai/new" target="_blank" rel="noopener">🔵 Claude</a>
+          <a class="ai-lnk active" data-id="chatgpt" href="https://chatgpt.com" target="_blank" rel="noopener">🟢 ChatGPT</a>
+          <a class="ai-lnk" data-id="gemini" href="https://gemini.google.com" target="_blank" rel="noopener">🔴 Gemini</a>
+          <a class="ai-lnk" data-id="grok" href="https://grok.com" target="_blank" rel="noopener">⚡ Grok</a>
+          <a class="ai-lnk" data-id="deepseek" href="https://chat.deepseek.com" target="_blank" rel="noopener">🌊 DeepSeek</a>
+          <a class="ai-lnk" data-id="kimi" href="https://kimi.moonshot.cn" target="_blank" rel="noopener">🌙 Kimi</a>
+          <a class="ai-lnk" data-id="tongyi" href="https://tongyi.aliyun.com" target="_blank" rel="noopener">☁️ Tongyi</a>
+          <a class="ai-lnk" data-id="doubao" href="https://www.doubao.com" target="_blank" rel="noopener">🫧 Doubao</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="ai-invest-os.html">← AI Invest OS</a>
+    <a href="recovery-navigator.html">Recovery Navigator</a>
+    <a href="kelly-master.html">Kelly Lab</a>
+    <a href="dividend-engine.html">Dividend Engine</a>
+    <a href="pyramid-builder.html">Pyramid Builder</a>
+    <a href="portfolio-clarity.html">Portfolio Doctor</a>
+  </div>
+</div>
+
+<script>
+// — Profile persistence —
+function gp(){try{return JSON.parse(sessionStorage.getItem('ios_profile')||'{}')}catch(e){return{}}}
+function sp(u){sessionStorage.setItem('ios_profile',JSON.stringify({...gp(),...u}))}
+function qp(k){return new URLSearchParams(location.search).get(k)}
+
+let school = qp('school')||gp().school||'index';
+const SCHOOLS={
+  index:{icon:'📊',name:'Index',fig:'Bogle'},
+  value:{icon:'🦅',name:'Value',fig:'Buffett'},
+  growth:{icon:'🌱',name:'Growth',fig:'Fisher'},
+  trend:{icon:'📈',name:'Trend',fig:'Livermore'}
+};
+
+function setSchool(s,el){school=s;document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');sp({school:s})}
+
+// Init school from URL / session
+(function(){
+  const btn=document.getElementById('sb-'+school);
+  if(btn)btn.classList.add('on');
+  const m=qp('monthly');const y=qp('years');
+  if(m)document.getElementById('monthly').value=m;
+  if(y)document.getElementById('years').value=y;
+})();
+
+function fmt(n){if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';if(n>=1e3)return'$'+(n/1e3).toFixed(1)+'K';return'$'+n.toFixed(0)}
+function pct(n){return(n*100).toFixed(1)+'%'}
+
+function calculate(){
+  const m=parseFloat(document.getElementById('monthly').value)||500;
+  const r=parseFloat(document.getElementById('rate').value)||10;
+  const y=parseInt(document.getElementById('years').value)||20;
+  const smile=document.getElementById('smileOn').checked;
+  const mr=r/100/12,n=y*12;
+  const fv=m*((Math.pow(1+mr,n)-1)/mr);
+  const inv=m*n,gain=fv-inv,mult=fv/inv;
+  sp({monthly:m,rate:r,years:y,dcaFV:Math.round(fv)});
+
+  document.getElementById('r-final').textContent=fmt(fv);
+  document.getElementById('r-inv').textContent=fmt(inv);
+  document.getElementById('r-gain').textContent=fmt(gain);
+  document.getElementById('r-mult').textContent=mult.toFixed(1)+'×';
+
+  buildChart(m,mr,y);
+  if(smile){document.getElementById('smile-section').style.display='block';buildSmile(m,r,y,mr);}
+  else document.getElementById('smile-section').style.display='none';
+  buildSchoolIns(m,r,y);
+  buildSchool5(m,r,y,fv,mult);
+  buildAiGrid(m,r,y,mult,fv);
+  buildBias(mult,y);
+  buildNextTools(m,y,Math.round(fv));
+  buildPrompt(m,r,y,fv,inv,mult);
+  document.getElementById('results').style.display='block';
+  setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function buildChart(m,mr,y){
+  const el=document.getElementById('bar-chart'),vals=[],invs=[];
+  for(let i=1;i<=y;i++){const n=i*12;vals.push(m*((Math.pow(1+mr,n)-1)/mr));invs.push(m*n);}
+  const max=Math.max(...vals);
+  const step=Math.max(1,Math.ceil(y/16));
+  let h='';
+  for(let i=step-1;i<y;i+=step){
+    const hp=(vals[i]/max*100).toFixed(1),ip=(invs[i]/max*100).toFixed(1);
+    h+=`<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;min-width:0;position:relative">
+      <div title="Yr ${i+1}: ${fmt(vals[i])}" style="background:linear-gradient(to top,var(--accent),var(--accent-l));border-radius:2px 2px 0 0;height:${hp}%;min-height:2px;position:relative;z-index:2"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(99,102,241,.22);border-radius:2px 2px 0 0;height:${ip}%;z-index:1"></div>
+    </div>`;
+  }
+  el.innerHTML=h;
+}
+
+function buildSmile(m,annR,y,mr){
+  const months=y*12;
+  // Steady
+  let fvA=0;for(let i=1;i<=months;i++)fvA=(fvA+m)*(1+mr);
+  // Early crash yr1 then recover
+  let uB=0,pB=100;
+  for(let i=1;i<=months;i++){pB*=i<=12?(1-0.40/12):(1+mr);uB+=m/pB;}
+  const fvB=uB*pB;
+  // Late crash final yr
+  let uC=0,pC=100;
+  for(let i=1;i<=months;i++){pC*=i>months-12?(1-0.40/12):(1+mr);uC+=m/pC;}
+  const fvC=uC*pC;
+  const inv=m*months,maxV=Math.max(fvA,fvB,fvC);
+  const rows=[
+    {l:'📊 Steady Market',v:fvA,note:'Consistent annual return every year',c:'var(--accent-l)'},
+    {l:'💥 Early Crash (Yr 1 −40%)',v:fvB,note:'Market crashes at the start, then recovers fully',c:'var(--green)'},
+    {l:'⚡ Late Crash (Final Yr −40%)',v:fvC,note:'Great ride — then crashes right before the end',c:'var(--red)'},
+  ];
+  let h='<div style="font-size:.65em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-l);margin-bottom:10px">Smile Curve — Same Money, 3 Market Paths</div>';
+  rows.forEach(s=>{
+    const bw=(s.v/maxV*100).toFixed(0),mult=(s.v/inv).toFixed(1);
+    const badge=s.v>fvA?'<span style="color:var(--green);font-size:.7em;font-weight:700"> ▲ better</span>':s.v<fvA?'<span style="color:var(--red);font-size:.7em;font-weight:700"> ▼ worse</span>':'';
+    h+=`<div style="margin-bottom:11px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:.83em;font-weight:700;color:var(--white)">${s.l}</span>
+        <span style="font-size:.76em;color:var(--muted)">${fmt(s.v)} · ${mult}×${badge}</span>
+      </div>
+      <div style="background:rgba(255,255,255,.06);border-radius:3px;height:10px;overflow:hidden">
+        <div style="height:100%;width:${bw}%;background:${s.c};border-radius:3px"></div>
+      </div>
+      <div style="font-size:.68em;color:var(--muted);margin-top:2px">${s.note}</div>
+    </div>`;
+  });
+  h+=`<div class="green-tip">💡 <strong>The Smile Curve insight:</strong> An early crash forces you to buy more units at depressed prices during peak contribution years. When prices recover, those cheap units are worth far more. DCA investors with long horizons should <em>welcome</em> early crashes — not fear them.</div>`;
+  document.getElementById('smile-section').innerHTML=`<div class="smile-box">${h}</div>`;
+}
+
+function buildSchoolIns(m,r,y){
+  const ins={
+    index:`<strong>📊 Index School (Bogle) — Your Optimal DCA Mode:</strong> Automate monthly purchases of VTI/SPY/QQQ. Never skip, never time. Reinvest all dividends. One rule: increase contribution by 10% each year as income grows. The index handles everything else.`,
+    value:`<strong>🦅 Value School (Buffett) — Your Optimal DCA Mode:</strong> DCA is your floor, not your ceiling. Overlay valuation signals: when P/E falls below your target threshold, double the monthly contribution. Keep the base rate when overvalued. You're not market-timing — you're price-sensitive accumulation.`,
+    growth:`<strong>🌱 Growth School (Fisher) — Your Optimal DCA Mode:</strong> Don't DCA a broad index — DCA into 3–5 highest-conviction growth names. Buy on schedule but weight heavier into earnings dips. Your ${r}% assumption only holds if your picks compound revenue at 20%+. Diversify across sectors, not inside one theme.`,
+    trend:`<strong>📈 Trend School (Livermore) — Your Optimal DCA Mode:</strong> Trend-filtered DCA: invest full amount above the 200-day MA, invest 50% below. No precision timing required, but you reduce average entry cost in downtrends. Stress-test your ${r}% assumption — trend DCA in choppy markets often delivers 30–40% less.`
+  };
+  document.getElementById('school-ins').innerHTML=ins[school]||ins.index;
+}
+
+function buildSchool5(m,r,y,fv,mult){
+  const views={
+    index:{verdict:'✅ Endorsed',txt:`Fixed monthly index DCA over ${y} yrs is exactly what Bogle recommended. The ${mult.toFixed(1)}× multiplier is realistic.`},
+    value:{verdict:'✅ Approved with caveat',txt:`Solid baseline. Value school would overlay valuation triggers — buy more when P/E is at historic lows.`},
+    growth:{verdict:'⚠️ Needs adjustment',txt:`DCA into broad index misses the compounding power of individual growth leaders. Concentrate into 3–5 names.`},
+    trend:{verdict:'⚠️ Conditional',txt:`Fixed-amount DCA ignores price momentum. Trend school prefers trend-filtered DCA (full amount above MA, half below).`}
+  };
+  let h='';
+  Object.entries(views).forEach(([k,v])=>{
+    const s=SCHOOLS[k];
+    const isActive=k===school;
+    h+=`<div class="s5c${isActive?' active':''}">
+      <div class="s5c-name">${s.icon} ${s.name}</div>
+      <div style="font-size:.66em;font-weight:700;margin-bottom:4px;color:${v.verdict.startsWith('✅')?'var(--green)':'#fbbf24'}">${v.verdict}</div>
+      <div class="s5c-txt">${v.txt}</div>
+    </div>`;
+  });
+  document.getElementById('school5-grid').innerHTML=h;
+}
+
+function interpolate(tpl,vars){
+  let s=String(tpl).replace(/\{([^}]+)\}/g,(m,k)=>k in vars?vars[k]:m);
+  return s.replace(/%%/g,'%');
+}
+
+function buildAiGrid(m,r,y,mult,fv){
+  const inv=m*y*12;
+  const vars={
+    MONTHLY:fmt(m),
+    RATE:r+'%',
+    YEARS:y,
+    MULT:mult.toFixed(1)+'×',
+    FV:fmt(fv),
+    INVESTED:fmt(inv)
+  };
+  // Real responses collected from each AI
+  const ais=[
+    {n:'Claude',i:'🔵',role:'Value School',schools:{
+      value:{comment:'The {MULT} multiplier is mathematically real — if you stay in. Most DCA plans break at the halfway point during a major drawdown, precisely when cheap units are accumulating fastest. Pre-commit now to a floor contribution you can sustain regardless of market level. The formula works. The only question is whether you will.',q:'What is the minimum monthly amount you can commit to no matter what the market does?'},
+      growth:{comment:'DCA works because quality businesses compound over time. Investing {MONTHLY} for {YEARS} targets ownership, not market timing. Review growth assumptions constantly instead of assuming {RATE} will persist forever. Ignore short-term fluctuations and focus on whether the asset genuinely deserves decades of capital.',q:'What growth signal would make you stop your monthly purchases?'},
+      trend:{comment:'Automatic investing ignores price structure. If momentum weakens, adding {MONTHLY} simply increases exposure to a falling trend. Capital preservation beats blind consistency. A projected {FV} on {INVESTED} matters only if market direction supports continued participation.',q:'Would you pause DCA during a confirmed downtrend?'}
+    }},
+    {n:'ChatGPT',i:'🟢',role:'Discipline Auditor',schools:{
+      value:{comment:'DCA succeeds because it defeats inconsistent behavior, not because it magically beats lump sums. If you can invest with full conviction today, delaying capital is usually costly. Your real edge is surviving {YEARS} years without interruption. At {MONTHLY}/mo with {RATE} return, consistency determines the {MULT} outcome far more than perfect entry timing.',q:'Will you keep investing through a brutal 50%% market crash?'},
+      growth:{comment:'Regular investing is useful only while earnings growth remains exceptional. {MONTHLY} over {YEARS} should reinforce winners, not average into fading businesses. Review growth assumptions constantly instead of assuming {RATE} will persist forever.',q:'What growth signal would stop your monthly purchases?'},
+      trend:{comment:'Automatic investing ignores price structure. If momentum weakens, adding {MONTHLY} simply increases exposure to a falling trend. Capital preservation beats blind consistency. A projected {FV} matters only if market direction supports participation.',q:'Would you pause DCA during a confirmed downtrend?'}
+    }},
+    {n:'Gemini',i:'🔴',role:'Quantitative Strategist',schools:{
+      value:{comment:'Mathematically, lump-sum beats DCA 67%% of the time. But raw math ignores human panic. By deploying {MONTHLY} over {YEARS} years at {RATE}, you force a final value of {FV} from {INVESTED} invested — a {MULT} multiplier — solely because DCA prevents you from timing the market. It is mathematically inferior, yet behaviorally bulletproof.',q:'Are you actually capable of surviving a lump-sum crash, or is DCA your mandatory psychological insurance?'},
+      growth:{comment:'Projecting a constant {RATE} return over {YEARS} years ignores the base-rate reality that hyper-growth phases are finite. Deploying {MONTHLY} to reach {FV} from {INVESTED} assumes uninterrupted structural adoption. A fat-tail paradigm shift disrupts this {MULT} compounding, trapping your capital in secularly decaying legacy assets.',q:'Can your target assets sustain exponential growth for a full decade before facing irreversible market saturation?'},
+      trend:{comment:'Blindly deploying {MONTHLY} for {YEARS} years to hit {FV} guarantees you will buy into brutal secular downtrends. A projected {RATE} return yielding {MULT} on {INVESTED} is a mathematical fantasy if a fat-tail bear market triggers a decade of negative price action. Never average into weakness.',q:'Why commit capital systematically into assets that demonstrate negative price momentum?'}
+    }},
+    {n:'Grok',i:'⚡',role:'Behavioral Critic',schools:{
+      value:{comment:'Media pretends the math is the hard part. It is not. {MONTHLY}/mo at {RATE} over {YEARS} years turning {INVESTED} into {FV} for {MULT} — that math is easy. What kills almost every plan is you. You will freeze or sell during the ugly drawdown that arrives right before compounding explodes. Human frailty, not returns, is the real execution risk.',q:'Will you keep buying when your portfolio is down 40%% and every headline screams sell?'},
+      growth:{comment:'Blind DCA of {MONTHLY} for {YEARS} years assumes the underlying growth engine never breaks. If growth decelerates, your projected {FV} and {MULT} become irrelevant. Price drops without growth damage are noise; growth damage turns the entire accumulation into a value trap.',q:'What growth metric would force you to stop the {MONTHLY} contributions?'},
+      trend:{comment:'Your {MONTHLY} DCA for {YEARS} years projects {FV} from {INVESTED} at {MULT}. Trend reality: you will keep buying into a broken downtrend and call it discipline. Price is the only honest signal. Continuing to add while structure is collapsing is not patience — it is financing the decline.',q:'Will you pause DCA the moment the primary trend turns down?'}
+    }},
+    {n:'DeepSeek',i:'🌊',role:'Sequence Risk Modeler',schools:{
+      value:{comment:'DCA {MONTHLY} at {RATE} over {YEARS} years turns {INVESTED} into {FV} ({MULT}x). Value investors benefit most from early bear markets: more shares bought cheap. The terminal wealth distribution hinges on mean reversion, and a crash early lifts the multiplier substantially.',q:'Will you increase {MONTHLY} by 50%% during a 30%% market decline, or freeze?'},
+      growth:{comment:'With growth stocks\' higher volatility, early crashes supercharge DCA: deeply discounted shares lift {FV} far beyond {MULT}. Stopping {MONTHLY} contributions destroys that asymmetry. The final distribution is heavily right-skewed if you hold through pain.',q:'If growth stocks crash 50%% in Year 1, will you double {MONTHLY} or panic-sell?'},
+      trend:{comment:'DCA averaging assumes mean reversion, which trend systems reject. Deploying {MONTHLY} blindly over {YEARS} years ignores sequence risk — a long early drawdown undermines geometric growth despite {RATE} average returns. Trend filters sidestep drawdowns.',q:'Why commit {MONTHLY} without a trend filter that avoids bear markets?'}
+    }},
+    {n:'Kimi',i:'🌙',role:'A-Share Reality Check',schools:{
+      value:{comment:'A-shares are not US stocks. Registration reform continuously dilutes index composition; policy black swans can shatter a {YEARS}-year DCA curve. Your {MONTHLY}/mo in high-volatility A-shares can become a trap. The {MULT} figure is survivorship bias — {FV} may underperform a bank wealth product in the wrong decade.',q:'Is your DCA quietly providing exit liquidity for continuous new IPO supply?'},
+      growth:{comment:'A-share growth stocks are high-volatility; blindly adding {MONTHLY} during a growth breakdown accelerates losses. {YEARS}-year commitment assumes the underlying business keeps compounding — in A-shares, sector policy shifts can invalidate even solid growth theses overnight.',q:'Is the growth logic behind your A-share DCA still intact?'},
+      trend:{comment:'A-shares trend can reverse violently without warning. Mechanical DCA of {MONTHLY} through a trending decline in A-shares means buying into a market where liquidity can vanish. Always verify trend direction before each monthly contribution.',q:'Has the A-share trend confirmed direction before you hit buy?'}
+    }},
+    {n:'Tongyi',i:'☁️',role:'Execution Discipline',schools:{
+      value:{comment:'DCA success hinges entirely on holding through crashes. Auto-debit {MONTHLY} without exception is non-negotiable. When {FV} falls below {INVESTED}, that is the moment to double contributions, not quit — doubling there is what delivers the {MULT} outcome. Short-term {RATE} fluctuations are noise. Execution discipline decides everything. Emotion is the only real enemy.',q:'What is your real reason for stopping DCA when markets crash?'},
+      growth:{comment:'Growth DCA requires periodic thesis validation. Set a quarterly review of your asset\'s growth metrics. If the growth thesis breaks, pausing {MONTHLY} is discipline, not fear. The {MULT} outcome depends on the underlying business keeping its growth trajectory over {YEARS}.',q:'Have you scheduled a quarterly growth review alongside your DCA plan?'},
+      trend:{comment:'Trend-filtered DCA adds only when the primary trend is up. Before each {MONTHLY} contribution, check whether the trend is still intact. Stopping during confirmed downtrends protects your {INVESTED} capital from unnecessary drawdown. Resume when trend reverses upward.',q:'Does your DCA plan include a trend-filter checkpoint before each contribution?'}
+    }},
+    {n:'Doubao',i:'🫧',role:'Behavioral Psychologist',schools:{
+      value:{comment:'Myopic loss aversion is DCA\'s core psychological trap: when markets crash you instinctively pause your {MONTHLY} contributions to avoid paper losses. But across a {YEARS}-year horizon, cheap units bought at the bottom are exactly what drives the {MULT} multiplier and builds {FV}. Stopping at the bottom destroys your cost advantage with your own hands.',q:'During a market crash, can you keep buying — or even increase contributions?'},
+      growth:{comment:'FOMO causes investors to chase growth DCA — adding {MONTHLY} to momentum names at peak enthusiasm. The same emotion reverses: when growth disappoints, they stop contributions just when accumulating more would be most valuable. Separate growth monitoring from emotional market timing.',q:'Is your DCA schedule driven by a plan, or by whether the market feels exciting?'},
+      trend:{comment:'Trend reversals trigger loss aversion and anchor bias simultaneously — you hold on hoping the old trend returns while evidence accumulates that it has changed. Adding {MONTHLY} in this state compounds the mistake. Build a pre-set rule: if trend breaks for X weeks, reduce or halt contributions.',q:'Is your DCA rule written down, or does it change based on how you feel?'}
+    }},
+  ];
+  document.getElementById('ai-grid').innerHTML=ais.map(a=>{
+    const sd=a.schools[school]||a.schools.value;
+    const c=interpolate(sd.comment,vars);
+    const q=interpolate(sd.q,vars);
+    const id=N2ID[a.n]||a.n.toLowerCase();
+    return `<div class="ai-c"><button class="ai-star${selAIs.has(id)?' starred':''}" data-id="${id}" onclick="toggleAI('${id}')" title="Mark as my AI">★</button><div class="ai-head"><div class="ai-n">${a.i} ${a.n}</div><div class="ai-t">${a.role}</div></div><div style="flex:1;min-width:0"><div class="ai-txt">${c}</div><div class="ai-q">❓ ${q}</div></div></div>`;
+  }).join('');
+}
+
+function buildBias(mult,y){
+  const biases={
+    index:{l:'📌 Starting-Point Anchoring',t:`You're anchoring "normal" contribution to what feels comfortable today. The data shows: a 20% increase in monthly amount has more long-term impact than a 1% improvement in return. Revisit the number every 12 months as income grows.`},
+    value:{l:'⚖️ Perfect-Price Paralysis',t:`Value investors wait for "the right entry" — delaying DCA by months or years. In 75%+ of 10-year rolling windows, consistent monthly DCA beats "wait for the dip." Use valuation as a multiplier, not a stop signal.`},
+    growth:{l:'🔭 Recency Extrapolation',t:`Growth stocks have fat-tail risk indexes don't. The company you're DCA-ing into today may not exist in ${y} years in its current form. Protect against single-name concentration by spreading across 3–5 names.`},
+    trend:{l:'🔄 Complexity Creep',t:`Trend-filtered DCA sounds smarter than plain DCA. But research consistently shows that active modifications underperform in real portfolios due to decision fatigue and execution errors. Simpler often wins.`}
+  };
+  const b=biases[school]||biases.index;
+  document.getElementById('bias-box').innerHTML=`<div class="bias-l">${b.l}</div><div class="bias-t">${b.t}</div>`;
+}
+
+function buildNextTools(m,y,fv){
+  const s=school;
+  document.getElementById('next-tools').innerHTML=`
+    <a class="nt-btn" href="dividend-engine.html?school=${s}&capital=${fv}">
+      <div class="nt-lbl">When can you retire?</div>
+      <div class="nt-name">Dividend Freedom Engine</div>
+      <div class="nt-desc">Use your ${fmt(fv)} target → calculate your freedom date</div>
+    </a>
+    <a class="nt-btn" href="recovery-navigator.html?school=${s}&monthly=${m}">
+      <div class="nt-lbl">Already in a loss?</div>
+      <div class="nt-name">Recovery Planner</div>
+      <div class="nt-desc">Hold vs add vs switch — with your ${fmt(m)}/mo budget</div>
+    </a>`;
+}
+
+function buildPrompt(m,r,y,fv,inv,mult){
+  const sn={index:'Index Investing (Bogle school)',value:'Value Investing (Buffett school)',growth:'Growth Investing (Fisher school)',trend:'Trend Trading (Livermore school)'};
+  const t=`I'm a ${sn[school]||'index'} investor running a DCA plan. My numbers:
+• Monthly contribution: ${fmt(m)}
+• Expected annual return: ${r}%
+• Investment horizon: ${y} years
+• Projected final portfolio: ${fmt(fv)}
+• Total contributed: ${fmt(inv)}
+• Money multiplier: ${mult.toFixed(1)}×
+
+Please analyze:
+1. Is my ${r}% assumption realistic for ${sn[school]}?
+2. Top 3 behavioral risks that could derail this plan
+3. "Stay the course" protocol for a 30%+ market drawdown
+4. How to adjust contributions as income grows over ${y} years
+5. One thing I should NEVER do with this DCA plan
+
+Be specific to my school of investing. No generic advice.`;
+  document.getElementById('prompt-txt').textContent=t;
+}
+
+const selAIs=new Set(['claude','chatgpt']);
+const N2ID={Claude:'claude',ChatGPT:'chatgpt',Gemini:'gemini',Grok:'grok',DeepSeek:'deepseek',Kimi:'kimi',Tongyi:'tongyi',Doubao:'doubao','通义':'tongyi','豆包':'doubao'};
+function toggleAI(id){
+  selAIs.has(id)?selAIs.delete(id):selAIs.add(id);
+  document.querySelectorAll('.ai-star').forEach(b=>b.classList.toggle('starred',selAIs.has(b.dataset.id)));
+  document.querySelectorAll('.ai-lnk').forEach(b=>b.classList.toggle('active',selAIs.has(b.dataset.id)));
+}
+function copyPrompt(){
+  navigator.clipboard.writeText(document.getElementById('prompt-txt').textContent).then(()=>{
+    const b=document.querySelector('.cp-btn');b.textContent='✓ Copied!';b.classList.add('ok');
+    setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},2000);
+  });
+}
+</script>
+</body>
+</html>

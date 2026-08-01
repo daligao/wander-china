@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfred Nobel Life Simulator — Dynamite, Peace & Legacy | Ordinary Man Trying</title>
+<meta name="description" content="Step into Alfred Nobel's shoes across 8 pivotal decisions — from the 1864 explosion that killed his brother to the will that created the world's most famous prizes.">
+<style>
+:root{
+  --bg:#EDF0F5;--card:#F5F8FC;--ink:#0A0E18;--muted:#2A3554;--line:#BBC5D8;
+  --accent:#1A2840;--accent-bg:#DAE2F0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(237,240,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#0A0E18;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #A8B8D0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#080C18;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#E8EEF8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.3);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#E8EEF8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #A8B8D0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #A8B8D0;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Alfred Nobel</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #71 of 100</p>
+  <h1 class="cover-title">The Merchant of Death<br>Who Dreamed of Peace</h1>
+  <p class="cover-sub">In September 1888, Alfred Nobel opened a Paris newspaper and read his own obituary. His brother Ludvig had died — but a confused reporter ran Alfred's death notice instead. The headline: <em>"The merchant of death is dead."</em> Nobel never recovered from those words. Eight years later, he quietly rewrote his will — and changed what humanity does with its greatest minds.</p>
+  <div class="cover-facts">
+    <p>⚗️ <strong>354 patents</strong> in 20 countries &nbsp;·&nbsp; 💥 Dynamite invented 1867 &nbsp;·&nbsp; ✒️ Will signed November 27, 1895 &nbsp;·&nbsp; 🕊️ Five Nobel Prizes established &nbsp;·&nbsp; Died of cerebral hemorrhage, San Remo, December 10, 1896 &nbsp;·&nbsp; Age 63 &nbsp;·&nbsp; Never married</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Alfred Nobel's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1864</div>
+  <div class="timeline-dot">Heleneborg, Stockholm · Age 31</div>
+  <div class="narrative">
+    <p>The explosion comes without warning. On September 3rd, the Heleneborg laboratory — a wooden shed on the family property outside Stockholm — vanishes in a single white-orange flash. The shockwave shatters windows for a mile around. When the smoke clears, five people are dead. One of them is Emil Nobel, your twenty-year-old brother, who had just returned from studying chemistry in Paris.</p>
+    <p>Your father suffers a stroke the same week. He never fully recovers. The Swedish authorities ban further nitroglycerin experiments on land within Stockholm city limits. The press calls you reckless. Neighbors come to stare at the blackened crater where the shed stood. You stand in the November wind and look at the scorched earth where Emil used to work beside you.</p>
+    <p>Nitroglycerin is the future of construction, mining, and engineering — you know this with absolute certainty. But the path forward just killed your brother.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · September 1864</div>
+    <p class="decision-q">After the explosion kills Emil and four others, how do you continue your nitroglycerin research?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Abandon nitroglycerin entirely — the substance is too dangerous, and no invention is worth more lives.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. Move all experiments to a barge anchored in the middle of Lake Mälaren, far from any buildings or people.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Continue on land exactly as before — accidents happen in chemistry, and halting means Emil died for nothing.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Transfer the research to Germany immediately, where regulations are looser and the press won't interfere.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <strong>On September 3, 1864, the wooden shed where you and your twenty-year-old brother Emil have been experimenting with nitroglycerin outside Stockholm vanishes in a single explosion. When the smoke clears, Emil is dead, four others are dead, and your father has just had the stroke that will end him.</strong> <strong>What Nobel actually did:</strong> Nobel moved his experiments to a barge on Lake Mälaren — technically outside Stockholm's jurisdiction — and continued. He refused to abandon the work but accepted that he had to remove the danger from populated areas. The barge became his laboratory for the next phase of research: a decision that balanced scientific conviction with hard-won respect for what nitroglycerin could do.
+    </div>
+  </div>
+
+  <div class="year-banner">1865</div>
+  <div class="timeline-dot">Hamburg, Germany · Age 32</div>
+  <div class="narrative">
+    <p>You move operations to Hamburg, where a chemist offers factory space. Here, away from Swedish grief and official scrutiny, you make the breakthrough that will make you rich: the blasting cap. Until now, miners triggered nitroglycerin with fuses that burned unpredictably or electrical currents that were unreliable. Your metal detonator cap — packed with mercury fulminate — triggers nitroglycerin with perfect, controllable precision.</p>
+    <p>Orders are arriving from mining companies in Germany and Sweden. The Suez Canal project, the alpine railway tunnels, the American transcontinental railroad — all of them need to move mountains. You are at the center of the industrial world's most urgent problem: how to blast through rock safely and reliably at scale. The blasting cap is patented. The question is what to build around it.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1865</div>
+    <p class="decision-q">You have a working detonator and growing demand from mining companies across Europe. How do you build your business?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Sell the patent to a large chemical company for a lump sum — let someone else handle manufacturing.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. Establish your own factory in Hamburg, keep control of production, and expand to multiple countries under your direct ownership.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. License the detonator only to government agencies — keep it out of private commercial hands for safety reasons.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. Wait until you've perfected a second-generation design before going to market — don't rush a half-finished product.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <strong>It is 1865, you have a dead brother, a father who has just suffered a stroke, a Swedish press calling you reckless, Stockholm's authorities banning your experiments within city limits — and every mining company in Europe is writing to you because they need your working detonator to build the railroads and canals of the industrial age.</strong> <strong>What Nobel actually did:</strong> Nobel established manufacturing in Hamburg in 1865, then over the following decade created a network of factories across 20 countries — all controlled by him personally. By the 1870s he held stakes in Nobel Dynamite Co. (UK), Société Centrale de Dynamite (France), and Dynamit AG (Germany). His empire of controlled explosives manufacturing became the foundation of the fortune that eventually funded the prizes.
+    </div>
+  </div>
+
+  <div class="year-banner">1867</div>
+  <div class="timeline-dot">Krümmel Factory, Hamburg · Age 34</div>
+  <div class="narrative">
+    <p>The problem with nitroglycerin is that it sweats. In cold weather, liquid nitroglycerin seeps out of its containers. On ships crossing the Atlantic, in warehouse storage, under mechanical stress — it has exploded without warning, killing dozens in the United States and killing twelve in a San Francisco hotel. Germany has banned its transport. The British government is alarmed.</p>
+    <p>You have been testing every possible stabilizing agent: sawdust, charcoal, paper pulp. None work well enough. Then your factory manager notices that the Krümmel factory sits on deposits of a chalky, porous earth — kieselguhr, the fossilized shells of ancient algae. A broken nitroglycerin can has leaked into it. You pick up the solidified mass and turn it in your hands. It is dry. Moldable. You think: <em>what if the answer is not to modify nitroglycerin, but to contain it?</em></p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1867</div>
+    <p class="decision-q">You've noticed nitroglycerin absorbed into kieselguhr becomes stable and manageable. What is the key insight that makes dynamite viable?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. Increase the nitroglycerin ratio in the mix — more power per unit means smaller, cheaper charges for the same result.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. Kieselguhr absorbs nitroglycerin while preserving its explosive force — creating a product that won't detonate from friction or shock, only from a detonator cap.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. Freeze the mixture for transport — cold temperatures slow the chemical reaction and prevent spontaneous detonation.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. Dilute nitroglycerin with water — the paste is safer to handle and still powerful enough for mining use.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <strong>Twelve people have died in a San Francisco hotel from spontaneous nitroglycerin detonation, Germany has banned its transport, and you are 34 years old, kneeling on the floor of the Krümmel factory outside Hamburg, turning over in your hands a solidified mass of nitroglycerin that has leaked into a bed of chalky fossilized algae and gone completely inert.</strong> <strong>What Nobel discovered:</strong> Dynamite — Nobel's 1867 patent — was nitroglycerin absorbed in kieselguhr at roughly a 3:1 ratio. The kieselguhr acted as an inert carrier: it absorbed the liquid, making it stable against accidental shock, while the explosive force remained fully intact when triggered by a blasting cap. The insight was that you weren't weakening the nitroglycerin — you were controlling when and how it released its power.
+    </div>
+  </div>
+
+  <div class="year-banner">1876</div>
+  <div class="timeline-dot">Paris, Avenue Malakoff · Age 43</div>
+  <div class="narrative">
+    <p>You place an advertisement in a Viennese newspaper: you are looking for a mature, educated woman to serve as your secretary in Paris. Among the applicants is Countess Bertha von Kinsky, 33, daughter of an Austrian field marshal, fluent in French and English, widely read in philosophy and literature. She is everything your laboratory notebooks are not — warm, witty, and deeply engaged with the world of ideas.</p>
+    <p>You hire her. For five days, she works in your Paris apartment. On the sixth day, a telegram arrives: she has eloped with Baron Arthur von Suttner, a man her family had forbidden her to marry. She leaves immediately. You stand in your suddenly empty apartment. You have met, perhaps, the one person in your life who made you feel less alone — and she is already gone.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1876</div>
+    <p class="decision-q">Bertha von Kinsky has left your employ to elope. How do you respond to losing this extraordinary person from your life?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. Cut all contact — the reminder of what you almost had is too painful to maintain.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. Write to her in Vienna, wish her happiness, and begin a decades-long correspondence — supporting her emerging work for world peace.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. Hire a replacement secretary immediately and focus entirely on work — personal connections are not your strength.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. Offer her husband a position in your company so she might return to Paris and remain close.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <strong>In 1876, you hire the most intellectually alive person you have ever met as your Paris secretary, and she is gone in five days — eloped to Vienna with a man her family had forbidden her to marry, leaving your apartment emptier than it was before she arrived.</strong> <strong>What Nobel actually did:</strong> Nobel and Bertha von Suttner maintained a warm correspondence for nearly twenty years. She became one of Europe's leading peace activists, writing <em>Die Waffen nieder!</em> (Lay Down Your Arms!) in 1889. Under her influence, Nobel grew increasingly interested in the idea of a peace prize. When she visited him in Zürich in 1892, they discussed it at length. She is widely credited as a key reason the Nobel Peace Prize exists — and received it herself in 1905.
+    </div>
+  </div>
+
+  <div class="year-banner">1888</div>
+  <div class="timeline-dot">Paris, France · Age 55</div>
+  <div class="narrative">
+    <p>Your brother Ludvig dies on April 12th in Cannes. The French press, confused about which Nobel brother has died, publishes your obituary. <em>Le Figaro</em> runs it. Other papers pick it up. For one morning in April, Alfred Nobel — inventor of dynamite, owner of dozens of munitions factories, supplier of explosives to armies on every continent — is dead in the eyes of the world.</p>
+    <p>One small paper runs the headline: <em>«Le marchand de la mort est mort.»</em> The merchant of death is dead. The obituary describes you as a man who made a fortune by finding ways to kill more people faster than ever before. It lists your patents. Your factories. The wars your dynamite has supplied. It reads like an indictment. You read it alone in your Paris study. Outside, the Seine is silver under April rain.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · April 1888</div>
+    <p class="decision-q">You have just read your own obituary — "The Merchant of Death is Dead." How do you respond to this confrontation with your legacy?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Dismiss it as sensationalist journalism — you make tools, not wars. It is not your fault how others use them.</button>
+      <button class="dopt" onclick="choose(this,5,false)">B. Write a public rebuttal detailing dynamite's peaceful applications — infrastructure, mining, canal construction.</button>
+      <button class="dopt" onclick="choose(this,5,true)">C. Take it as a rare and sobering warning — a glimpse of how history will remember you — and begin seriously planning a legacy that might balance the account.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. Consult a lawyer about whether the newspaper can be held liable for publishing a false obituary.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <strong>Your brother Ludvig dies in April 1888, a confused French journalist runs your obituary instead, and you spend one April morning in your Paris study reading how the world intends to remember you: "Le marchand de la mort est mort." The merchant of death is dead. The list of your patents and factories reads like an indictment.</strong> <strong>What historians believe:</strong> The false obituary is widely cited as the pivotal event that set Nobel on the path toward the prizes. He never spoke about it publicly — he was intensely private — but the timeline is striking: within seven years of reading those words, he had quietly drafted and signed the will establishing five prizes in his name. The obituary gave him something almost no one gets: a preview of how history would judge him, while he still had time to change it.
+    </div>
+  </div>
+
+  <div class="year-banner">1893</div>
+  <div class="timeline-dot">Paris, France · Age 60</div>
+  <div class="narrative">
+    <p>Your health is declining. You have angina pectoris — the iron band around the chest that tightens when you climb stairs. The irony is not lost on you: you spent decades manufacturing nitroglycerin, and your doctor now prescribes nitroglycerin tablets for your heart. You are designing the prizes seriously now, in long letters to Bertha and quiet evenings with legal pads.</p>
+    <p>Some advisors suggest limiting the prizes to science alone, where outcomes are measurable and politics cannot interfere. A peace prize, they warn, will be controversial. Every nation at war believes it is the peaceful party. The selection committee will be endlessly criticized. But Bertha's voice is in your mind, and so is the obituary.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1893</div>
+    <p class="decision-q">You're designing the Nobel Prize categories. Should you include a peace prize, knowing it will inevitably become politicized?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Limit the prizes to the four sciences only — Physics, Chemistry, Medicine, and a general science category. Keep politics entirely out.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. Include a peace prize alongside scientific prizes and a literature prize — specifically for whoever has done most to reduce standing armies and promote peace conferences.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. Create a prize for the greatest commercial invention instead — rewarding practical engineering and economic benefit.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. Focus only on Physics and Chemistry — the fields where your own expertise lets you judge who is truly deserving.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <strong>You are 60 years old, have angina pectoris, have spent thirty years manufacturing explosives that armies on every continent have used to kill people, and you are quietly deciding in long letters to Bertha von Suttner and on legal pads in the evenings whether the prizes you are planning with your entire fortune should include one for peace.</strong> <strong>What Nobel decided:</strong> Nobel's will specified five prizes: Physics, Chemistry, Physiology or Medicine, Literature, and Peace. The peace prize was the most unconventional and the most specifically directed. He wrote that it should go to "the person who shall have done the most or the best work for fraternity between nations, for the abolition or reduction of standing armies and for the holding and promotion of peace congresses." He assigned it to a Norwegian committee — a politically loaded choice in 1895, when Norway was seeking independence from Sweden.
+    </div>
+  </div>
+
+  <div class="year-banner">1895</div>
+  <div class="timeline-dot">Swedish-Norwegian Club, Paris · Age 62</div>
+  <div class="narrative">
+    <p>November 27th. The Swedish-Norwegian Club in Paris. You sign the document alone — no family present, no ceremony. The will is witnessed by four Swedish engineers you have gathered for the occasion. Your primary executor is Ragnar Sohlman, a 23-year-old chemist who has worked in your laboratories and whom you trust completely.</p>
+    <p>The will directs that after your death, your entire estate — roughly 31 million Swedish kronor, the accumulated profits of a lifetime of explosives manufacturing — be converted to a fund. The annual interest on that fund is to be distributed each year as five prizes. Your lawyers have warned you: this document is legally vulnerable. You have lived in five countries and have no fixed legal residence — which nation's laws apply? Your family has not been consulted and will almost certainly contest it.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · November 27, 1895</div>
+    <p class="decision-q">Your lawyers say the will is legally imperfect and vulnerable to family challenges. What do you do?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Delay signing until lawyers in Sweden, France, and Germany have reviewed and endorsed every clause.</button>
+      <button class="dopt" onclick="choose(this,7,true)">B. Sign it today, as written. Trust Ragnar Sohlman to fight whatever legal challenges arise — the intent is clear even if the legal form is imperfect.</button>
+      <button class="dopt" onclick="choose(this,7,false)">C. Scale back to two prize categories only — a simpler will is harder to contest and more likely to survive.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Establish the prize foundation immediately as a legal entity while you are still alive, putting it beyond dispute before you die.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <strong>Your lawyers have told you the will is legally imperfect, your relatives have not been consulted and will certainly contest it, no country's courts can definitively say they have jurisdiction — and on November 27, 1895, in Paris, you gather four Swedish engineers as witnesses and sign it alone anyway, trusting a 23-year-old chemist named Ragnar Sohlman to fight whatever comes next.</strong> <strong>What Nobel actually did:</strong> Nobel signed the will that November day and never revised it. He died 13 months later. As predicted, his relatives contested it bitterly — the Swedish king himself expressed reservations. Ragnar Sohlman, then 26, spent years navigating legal challenges across multiple countries to honor it. He succeeded. The first Nobel Prizes were awarded in 1901, five years after Nobel's death. Nobel's choice to trust Sohlman over legal perfectionism is the reason the prizes exist.
+    </div>
+  </div>
+
+  <div class="year-banner">1896</div>
+  <div class="timeline-dot">Villa Nobel, San Remo, Italy · Age 63</div>
+  <div class="narrative">
+    <p>December 10th. Your villa in San Remo overlooks the Mediterranean — a view you chose because the light reminds you of Swedish summers before everything became about explosives and lawyers and money. You have been declining since October: a series of small strokes that have left your right hand trembling and your thoughts arriving a beat too slow.</p>
+    <p>In the early hours, you suffer a major cerebral hemorrhage. The Italian doctors are called. Your only company in these final hours are household staff — no family, no close friend. The business of dying, like so much of your life, you do alone. Outside, the Ligurian Sea catches the last of the winter stars. The prizes are contested. Sohlman will fight them. Whether they survive depends on forces you can no longer control.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · December 10, 1896</div>
+    <p class="decision-q">In your final hours, what do you most hope the prizes will accomplish — the thing you would want future laureates to understand?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. That the prizes rehabilitate your name — that future generations associate "Nobel" with achievement rather than destruction.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. That the peace prize specifically ends all wars — a concrete, measurable result from a concrete endowment.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. That human knowledge, properly honored and directed, is itself a kind of peace — and that the curiosity of scientists, writers, and peacemakers is the only real answer to the destructive forces your career helped unleash.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. That your family eventually reconciles with the prizes and acknowledges that your legacy was greater than they understood.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <strong>You die at 2 a.m. on December 10, 1896, in a villa overlooking the Mediterranean at San Remo, without family present, having left your entire fortune — 31 million Swedish kronor, every profit from a lifetime of manufacturing the world's most commercially dangerous substance — to prizes honoring what humanity does right.</strong> <strong>Nobel's final legacy:</strong> Alfred Nobel died at 2 a.m. on December 10, 1896 — a date now observed globally as Nobel Prize Day. He left an estate of 31 million Swedish kronor, virtually his entire fortune, to the prizes. The Nobel Prize has since been awarded to over 975 individuals and organizations. The peace prize went to Bertha von Suttner in 1905. The question of whether it has made the world more peaceful remains, as he might have expected, stubbornly open.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Alfred Nobel · 1833–1896</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"If I have a thousand ideas and only one turns out to be good, I am satisfied."<br><em style="font-size:13px;color:var(--muted);">— Alfred Nobel</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="tesla-simulator.html" class="next-card">
+        <div class="next-card-name">Nikola Tesla</div>
+        <div class="next-card-sub">Electricity, obsession & Edison's shadow</div>
+      </a>
+      <a href="darwin-simulator.html" class="next-card">
+        <div class="next-card-name">Charles Darwin</div>
+        <div class="next-card-sub">Evolution, doubt & 20 years of silence</div>
+      </a>
+      <a href="faraday-simulator.html" class="next-card">
+        <div class="next-card-name">Michael Faraday</div>
+        <div class="next-card-sub">The blacksmith's son who unlocked electricity</div>
+      </a>
+      <a href="edison-simulator.html" class="next-card">
+        <div class="next-card-name">Thomas Edison</div>
+        <div class="next-card-sub">The wizard of Menlo Park & the war of currents</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You traced Nobel\'s complete arc from the 1864 explosion that killed Emil through the 1895 will signed alone in Paris. You understood why he moved to a barge rather than quitting, why he kept Bertha\'s correspondence for twenty years, why the "merchant of death" obituary was not a wound to dismiss but a preview to act on. The prizes exist because he did exactly what you understood him to do — and because he trusted a 26-year-old to fight for them after he was gone.';else if(pct>=0.625)t.textContent='You matched most of Nobel\'s critical decisions. The connection between them you may have missed: Nobel was not trying to launder his reputation. He was genuinely trying to close an equation — the destructive power he had spent his life commercializing, balanced by whatever knowledge and peace could accomplish in the other direction. The prizes were not guilt. They were arithmetic, and he ran the numbers alone in a Paris study in April 1888 while his brother was still being buried.';else if(pct>=0.375)t.textContent='You felt the weight of Nobel\'s choices but perhaps read some as obvious. The 1864 barge decision was not obvious — it required believing the work was worth continuing after your brother died for it. The 1895 will was not obvious — it required ignoring your lawyers, your family, and five countries\' worth of jurisdiction questions. Nobel was not cautious. He was simply very clear about what the equation required.';else t.textContent='Every careful decision you made was the decision a reasonable person makes: sell the patent, skip the peace prize, wait for the lawyers to approve the will, console yourself that you make tools and not wars. Alfred Nobel read his own obituary in April 1888 — "the merchant of death is dead" — while his brother was still being buried. He had eight years left. He used them to make sure the next thing history associated with his name would be different.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

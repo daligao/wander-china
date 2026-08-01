@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mary Shelley Life Simulator — She Invented Science Fiction at 19</title>
+<meta name="description" content="Make the same decisions as Mary Shelley — from elopement at 16 to writing Frankenstein at 19 to surviving every loss the 19th century could throw at one woman.">
+<style>
+:root{
+  --bg:#F0EEF5;--card:#F6F4FB;--ink:#100818;--muted:#503860;--line:#D8CCEC;
+  --accent:#1A0838;--accent-bg:#EBE5F5;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">England · 1797–1851</div>
+  <h1>Could You Have Been<br>Mary Shelley?</h1>
+  <div class="cover-sub">At 16 she eloped with a married man. At 18 her baby died. At 19, on a dark rainy night in Switzerland, she invented science fiction. By 30 she had buried her husband, three children, and two close friends. She kept writing. Eight decisions in a life that would break almost anyone.</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">19</div><div class="stat-l">Age when she wrote Frankenstein</div></div>
+    <div class="stat"><div class="stat-n">3</div><div class="stat-l">Children who died before age 3</div></div>
+    <div class="stat"><div class="stat-n">200+</div><div class="stat-l">Years Frankenstein has never gone out of print</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · London, 1814 · Age 16</div>
+<p class="narrative">Your mother, Mary Wollstonecraft — author of "A Vindication of the Rights of Woman" — died eleven days after giving birth to you. You grew up in her shadow, reading her books, visiting her grave. You are now 16 and you have fallen in love with Percy Bysshe Shelley — a poet, a radical, a visionary — who is also already married to someone else. His wife is pregnant. Running away with him to Europe would destroy your father's relationship with Percy's family, who fund him. It would also be the most alive you've ever felt.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Elopement</div>
+  <div class="d-situation">Percy is married, 21 years old, brilliant and irresponsible. You are 16 and the daughter of two of the most radical philosophers in England. Do you go?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Go — love and freedom are principles your mother died defending; act on them</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. Stay — he is married; this is not freedom, it is recklessness</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Wait until his wife has the baby and the situation clarifies itself</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Mary went. She and Percy eloped to France and Switzerland with her stepsister Claire. The consequences were immediate: her father refused to speak to her. Percy's wife Harriet was devastated. Money ran out almost instantly — they fled creditors across Europe. Two years later Harriet drowned herself, and Percy and Mary married. The elopement cost enormous damage to people around them. It also produced, in the next four years, some of the most important writing of the Romantic era — including Frankenstein.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · London, 1815 · A Baby Dies</div>
+<p class="narrative">You are 17 and your first baby — a girl, born two months early — has died after eleven days. You write in your diary: "Dreamt that my little baby came to life again; that it had only been cold, and that we rubbed it before the fire, and it lived. Awoke and found no baby. I think about the little thing all day." You are 17 years old. Percy is already talking about new projects, new ideas. You are sitting with the silence of the nursery.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · Grief and Writing</div>
+  <div class="d-situation">You have lost an infant. Percy wants to keep moving, keep writing, keep living at the speed of ideas. How do you hold your grief and his momentum?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Write the grief — not around it, not past it, but directly into it</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Match Percy's pace — movement is the only thing that keeps the darkness at bay</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Stop writing entirely — you cannot make art from this kind of pain</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Mary wrote. She wrote in her diary about the dead baby in language so raw it is still almost unbearable to read. The grief of losing a child — and then another, and then a third — runs through Frankenstein like a current: the novel is, at one level, about what it means to create life and watch it suffer. The creature's loneliness and rage is also the rage of the grieving mother. You cannot fully understand the book without knowing what it cost her to write it.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Switzerland, June 1816 · The Ghost Story Contest</div>
+<p class="narrative">It is the "Year Without a Summer" — a volcanic eruption in Indonesia has darkened skies across the Northern Hemisphere. You are staying with Percy near Lake Geneva. Lord Byron is there, and the poet Polidori. The weather is too terrible to go outside. Byron proposes a contest: each person will write a ghost story. Byron gives up after two pages. Polidori writes something forgettable. Percy tries and fails. You lie awake that night and have a waking vision: a "pale student of unhallowed arts" kneeling over a creature he has assembled from corpses, horrified by what he has created.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Vision</div>
+  <div class="d-situation">You have a terrifying image in your mind. It could be a short ghost story — or, if you follow it, something much longer. Do you pursue it fully?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Follow it wherever it leads — expand the image into a full novel about creation and consequence</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Write a short story — the ghost story contest was the point, not a novel</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Tell Percy the idea — he's the published poet; the novel form needs his experience</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Mary followed the vision. She began writing what would become Frankenstein — exploring the question that haunted her: what does a creator owe the creature they bring into the world? The novel took nearly two years. Percy helped — editing, encouraging, writing the preface — but the story, its central question, its emotional architecture, is entirely Mary's. She published it anonymously in 1818 at age 20. When it was assumed to be Percy's work, he corrected the assumption. She was 20 years old and had written the founding text of science fiction.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · London, 1818 · Publication</div>
+<p class="narrative">Frankenstein has been published anonymously — "by the Author of 'Godwin's Daughter'" in some editions. The reviews are mixed: some call it extraordinary; others find it morally objectionable. The publisher assumes it was written by Percy. Some readers assume it was written by a man. You are 20 years old. Should you claim it?</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · Taking Credit</div>
+  <div class="d-situation">Your novel is out. People assume your husband wrote it. Do you correct them?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Let Percy correct the record publicly — you don't need to fight for credit, but you won't deny it either</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Claim it loudly and immediately — anonymity served its purpose, now own the work</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Maintain anonymity permanently — the work matters more than who wrote it</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> The 1823 second edition of Frankenstein was published under Mary Shelley's name. Percy publicly corrected the attribution in his lifetime. The novel's authorship was eventually established beyond doubt — but Mary spent years in a kind of half-acknowledged position, celebrated as the wife of a great poet who had also written something remarkable. The full recognition of Frankenstein as a foundational work in its own right — not a curiosity of Percy's circle — came largely after her death.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Italy, 1818–1822 · The Deaths</div>
+<p class="narrative">Clara, your one-year-old daughter, dies of dysentery in Venice. William, your three-year-old son, dies of malaria in Rome. You are devastated in ways that make writing feel impossible. You draft a novel, then abandon it. And then, in July 1822, Percy goes sailing on the Bay of La Spezia. A storm comes. The boat is found ten days later. Percy's body washes ashore. You are 24. You have now lost three children and your husband. You have no money. You have a surviving son, Percy Florence, who is three.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · After Percy</div>
+  <div class="d-situation">You are 24. Your husband has drowned. You have no income. Every support you've built your life around is gone. What do you do?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Write — it's the only thing you own that no one can take from you</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. Accept help from Percy's family and step back from your own writing to focus on his legacy</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Return to your father and let him support you — start over</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Mary wrote. She returned to England, negotiated a painful financial arrangement with Percy's father, and wrote to survive — novels, stories, biographical essays, travel writing, encyclopedia entries. She edited and published Percy's poetry posthumously, fighting for his reputation while also establishing her own. She wrote four more novels after Percy's death. The grief is in every line of them. She was producing sustained, serious literary work at 24, widowed, poor, and alone with a toddler.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · London, 1826 · The Last Man</div>
+<p class="narrative">You have written "The Last Man" — a novel set in the late 21st century, in which a pandemic wipes out all of humanity except one survivor. Critics hate it. "The product of a diseased imagination," one writes. "Ghastly and disgusting." You have just written the first post-apocalyptic science fiction novel in history. The reviews feel like being buried alive.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · After the Savaging</div>
+  <div class="d-situation">Your second major novel has been destroyed by critics. You had put enormous emotional truth into it — the pandemic is clearly an allegory for your personal losses. Do you continue this kind of writing?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Continue — bad reviews from readers who don't yet have the framework to understand your work aren't evidence you're wrong</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Retreat to safer territory — less experimental, more conventionally Gothic</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Stop writing novels entirely and focus on editing and criticism</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Mary continued writing novels, though she moved in somewhat different directions after The Last Man's failure. She wrote Perkin Warbeck (1830), Lodore (1835), Falkner (1837) — less experimental, more conventionally readable, but still psychologically complex. The Last Man was almost completely forgotten until the 20th century, when pandemic fiction became its own genre and scholars recognized it as the foundational text. It has been in print continuously since the 1960s. The critics were wrong. They usually are.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · London, 1830s · Percy's Legacy vs Her Own</div>
+<p class="narrative">You are spending enormous energy editing and annotating Percy's unpublished poems and letters — giving them to the world in organized, scholarly editions that establish his canonical reputation. But your own work is being eclipsed by this effort. Readers know you more as Percy Shelley's widow than as the author of Frankenstein. His father's family controls the purse strings and they dislike you. You are balancing your own career against a debt of love you feel you owe a dead man.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · Whose Legacy</div>
+  <div class="d-situation">You are spending the most productive years of your career building your dead husband's reputation. Is this the right use of your time?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. Both matter — preserving Percy's work and writing your own are not opposites; do both</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. Your own work must come first — Percy would have understood; he always put his work first too</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. Percy's work matters more — his genius was greater; history will judge you by how well you served it</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> Mary did both — and the combination was costly. She produced scholarly editions of Percy's work that were crucial for his posthumous reputation (he was barely read in his lifetime). She also kept writing her own novels, stories, and nonfiction. She was perpetually short of money, perpetually fighting Percy's family for support, perpetually resented for being the difficult widow who kept insisting on her own creative identity. Her work has been rediscovered and re-evaluated multiple times since her death. The editing she did for Percy preserved his legacy. The writing she did for herself preserved hers.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · London, 1851 · The End</div>
+<p class="narrative">You are 53 and your son Percy Florence is finally settled — married well, financially secure, the title your father-in-law withheld for so long now his. You have grandchildren who call you "Grannie." You have spent thirty years writing, editing, surviving, adapting. You have been treated as a lesser genius in a household of greater ones your entire life. You are dying of a brain tumor. Frankenstein has never gone out of print since 1818.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · The Reckoning</div>
+  <div class="d-situation">Looking back on a life shaped by enormous loss and underappreciation — was the writing worth it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. Yes — the work outlasts the pain, and that was always the only thing she could control</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. No — she sacrificed her own recognition for Percy's and was never fully acknowledged in her own lifetime</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. The question is wrong — she didn't have the luxury of choosing; writing was survival, not art</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> Mary Shelley died on February 1, 1851, at 53. In the 170+ years since, Frankenstein has never been out of print. It has been adapted into more films than almost any other literary work. The monster is one of the most recognized images in world culture. Mary Shelley created science fiction, invented the post-apocalyptic novel, wrote the first major work of bioethics in the form of a story — and she did it all as a teenager who had already buried a child and would bury three more. The work was worth it. It always was.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Mary Shelley Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="austen-simulator.html">
+      <span class="next-name">Jane Austen</span>
+      <span class="next-desc">Another woman who wrote brilliant fiction under constraints that would have silenced most people</span>
+    </a>
+    <a class="next-card" href="kafka-simulator.html">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">Another writer who invented a genre and didn't live to see his work recognized</span>
+    </a>
+    <a class="next-card" href="darwin-simulator.html">
+      <span class="next-name">Charles Darwin</span>
+      <span class="next-desc">Another thinker who held a dangerous idea for years, afraid of what the world would do with it</span>
+    </a>
+    <a class="next-card" href="curie-simulator.html">
+      <span class="next-name">Marie Curie</span>
+      <span class="next-desc">Another woman who created something world-changing while the world tried to dismiss her</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators →</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=Math.round(score/TOTAL*100);document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You think like Mary Shelley — with the understanding that loss is material, not an obstacle, and that creating something real requires following the terrifying image wherever it leads, not away from it. You have the emotional courage and the artistic stubbornness that the 19th century tried very hard to extinguish in women.';else if(score>=5)t.textContent='Strong instincts — you understood that the work had to be done, that grief could be written through, that the vision had to be followed. A few moments of caution or deference crept in, but you\'d have made something worth reading.';else if(score>=3)t.textContent='You made the understandable choices — the ones that protect you, that honor others, that avoid conflict. Mary\'s life punished those choices relentlessly. The work she did was not the comfortable work. Neither was the life.';else t.textContent='You chose safety and acknowledgment over the harder, stranger path. Mary Shelley never had the luxury of safety and rarely received acknowledgment in her lifetime. She wrote anyway. That stubbornness is Frankenstein. That stubbornness is why we still read her.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

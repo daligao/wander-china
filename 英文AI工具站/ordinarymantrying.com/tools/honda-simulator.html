@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-DBR2PMLR61");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Soichiro Honda?</title>
+<meta name="description" content="An interactive story about Soichiro Honda — the blacksmith's son who built the world's largest motorcycle company from bombed-out ruins and army surplus engines. At every turning point, you make the call.">
+<style>
+:root {
+  --bg: #F4F1ED;
+  --card: #FDFCF9;
+  --ink: #1A1A1A;
+  --muted: #6B7280;
+  --line: #DDD8D0;
+  --accent: #C8001A;
+  --accent-bg: #FBF0F1;
+  --steel: #3D5166;
+  --steel-bg: #EDF1F5;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Consolas, monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.7;
+  -webkit-tap-highlight-color: transparent;
+}
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(244,241,237,.93);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  padding: 10px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-title { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.topbar-score { font-family: var(--mono); font-size: 12px; color: var(--ink); font-weight: 700; display: none; }
+.cover { max-width: 680px; margin: 0 auto; padding: 48px 20px 0; }
+.cover-eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 16px; }
+.cover-title { font-family: var(--serif); font-size: 36px; font-weight: 700; line-height: 1.2; letter-spacing: -.02em; margin-bottom: 20px; }
+.cover-sub { font-size: 16px; color: #3c4148; line-height: 1.8; margin-bottom: 28px; }
+.cover-img { width: 100%; aspect-ratio: 16/9; background: #E5E0D8; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 28px; }
+.cover-img .ph { text-align: center; padding: 24px; }
+.cover-img .ph .icon { font-size: 40px; margin-bottom: 10px; }
+.cover-img .ph .cap { font-size: 12px; color: var(--muted); font-style: italic; line-height: 1.5; }
+.start-btn { appearance: none; cursor: pointer; border: none; background: var(--accent); color: #fff; font-family: var(--sans); font-weight: 700; font-size: 16px; padding: 16px 24px; border-radius: 12px; width: 100%; transition: filter .15s, transform .08s; }
+.start-btn:hover { filter: brightness(1.1); }
+.start-btn:active { transform: scale(.99); }
+#story { display: none; }
+.story-wrap { max-width: 680px; margin: 0 auto; padding: 0 20px; }
+.narrative { padding: 36px 0 8px; }
+.narrative p { font-family: var(--serif); font-size: 17px; line-height: 1.9; color: var(--ink); margin-bottom: 18px; }
+.narrative p:last-child { margin-bottom: 0; }
+.dialogue { border-left: 3px solid var(--accent); padding-left: 16px; margin: 20px 0; font-style: italic; color: #3c4148; font-family: var(--serif); font-size: 17px; line-height: 1.8; }
+.story-img { width: 100%; aspect-ratio: 4/3; background: #E5E0D8; border-radius: 10px; overflow: hidden; margin: 24px 0 6px; display: flex; align-items: center; justify-content: center; }
+.story-img .ph { text-align: center; padding: 24px; }
+.story-img .ph .icon { font-size: 30px; margin-bottom: 8px; }
+.story-img .ph .cap { font-size: 12px; color: var(--muted); font-style: italic; line-height: 1.45; }
+.img-caption { font-size: 12px; color: var(--muted); font-style: italic; text-align: center; line-height: 1.5; margin-bottom: 20px; }
+.chapter-divider { padding: 32px 0 20px; text-align: center; }
+.chapter-divider .cline { height: 1px; background: var(--line); margin-bottom: 16px; }
+.chapter-label { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.decision-block { background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; margin: 28px 0; overflow: hidden; }
+.decision-header { background: var(--ink); color: #fff; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; padding: 9px 18px; display: flex; align-items: center; justify-content: space-between; }
+.d-num { opacity: .45; }
+.decision-body { padding: 20px 18px 18px; }
+.decision-q { font-family: var(--serif); font-size: 18px; line-height: 1.45; margin-bottom: 18px; }
+.dopts { display: flex; flex-direction: column; gap: 10px; }
+.dopt { appearance: none; cursor: pointer; text-align: left; width: 100%; background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 13px 15px; font-family: var(--sans); font-size: 14px; color: var(--ink); display: flex; gap: 12px; align-items: flex-start; transition: border-color .15s, background .15s; line-height: 1.45; }
+.dopt:hover { border-color: var(--ink); background: #fff; }
+.dopt.disabled { cursor: default; pointer-events: none; }
+.dopt-id { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--muted); margin-top: 1px; transition: all .15s; }
+.dopt:hover .dopt-id { border-color: var(--ink); color: var(--ink); }
+.dopt-body { flex: 1; }
+.dopt-text { display: block; }
+.dopt-grade { display: none; }
+.dopt.right { border-color: var(--steel); background: var(--steel-bg); }
+.dopt.right .dopt-id { background: var(--steel); border-color: var(--steel); color: #fff; }
+.dopt.wrong { border-color: var(--accent); background: var(--accent-bg); opacity: .7; }
+.dopt.wrong .dopt-id { background: var(--accent); border-color: var(--accent); color: #fff; }
+.dopt.correct { border-color: var(--steel); background: var(--steel-bg); border-width: 2px; }
+.dopt.correct .dopt-id { background: var(--steel); border-color: var(--steel); color: #fff; }
+.reveal { display: none; border-top: 1.5px solid var(--line); padding: 20px 18px; animation: slideIn .35s ease; }
+@keyframes slideIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+.reveal-badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; padding: 4px 11px; border-radius: 20px; margin-bottom: 14px; }
+.badge-y { background: var(--steel-bg); color: var(--steel); border: 1px solid #A8BDD0; }
+.badge-n { background: var(--accent-bg); color: var(--accent); border: 1px solid #F0A8B0; }
+.reveal-sh-label { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--steel); font-weight: 700; margin-bottom: 6px; }
+.reveal-sh-text { font-family: var(--serif); font-size: 17px; line-height: 1.5; margin-bottom: 14px; }
+.reveal-explain { font-size: 14px; line-height: 1.85; color: #3c4148; }
+.seg { display: none; }
+.seg.shown { display: block; animation: fadeIn .4s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.results { padding: 40px 0 20px; }
+.results-hero { text-align: center; padding: 20px 0 28px; }
+.results-trophy { font-size: 56px; display: block; margin-bottom: 10px; }
+.results-score-big { font-family: var(--serif); font-size: 64px; font-weight: 700; line-height: 1; letter-spacing: -.03em; }
+.results-score-big span { font-size: 24px; color: var(--muted); }
+.results-sub { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+.results-title { font-family: var(--serif); font-size: 22px; font-weight: 700; margin: 18px 0 10px; line-height: 1.3; }
+.results-desc { font-size: 14px; color: #3c4148; line-height: 1.85; margin-bottom: 24px; }
+.divider { height: 1px; background: var(--line); margin: 24px 0; }
+.dim-rows { display: flex; flex-direction: column; gap: 14px; margin: 16px 0 24px; }
+.dim-row-head { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.dim-row-name { font-size: 13px; font-weight: 700; }
+.dim-row-num { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.bar-bg { height: 7px; background: var(--line); border-radius: 6px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 6px; width: 0; transition: width 1.1s ease; }
+.bar-p { background: var(--accent); }
+.bar-r { background: var(--steel); }
+.bar-v { background: #2A7A4F; }
+.res-card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+.res-card .rc-title { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.share-pre { font-family: var(--mono); font-size: 12px; background: #EDE9E0; border: 1px solid var(--line); border-radius: 8px; padding: 14px; line-height: 1.8; white-space: pre-wrap; margin-bottom: 12px; }
+.copy-btn { appearance: none; cursor: pointer; border: none; background: var(--ink); color: #fff; font-family: var(--sans); font-weight: 700; font-size: 15px; padding: 14px 20px; border-radius: 10px; width: 100%; transition: filter .15s; }
+.copy-btn:hover { filter: brightness(1.2); }
+.video-teaser { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+.video-teaser p { font-size: 14px; color: #3c4148; line-height: 1.7; margin-bottom: 10px; }
+.video-teaser a { color: var(--accent); font-weight: 700; text-decoration: none; font-size: 14px; }
+.video-teaser a:hover { text-decoration: underline; }
+.replay-btn { appearance: none; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--muted); font-family: var(--sans); font-weight: 600; font-size: 14px; padding: 13px 20px; border-radius: 10px; width: 100%; }
+.story-img-REMOVED { display: none; }
+.img-caption { display: none; }
+@media (max-width: 480px) {
+  .cover-title { font-size: 28px; }
+  .narrative p { font-size: 16px; }
+  .dialogue { font-size: 16px; }
+}
+
+.tweet-btn{display:inline-block;margin-left:10px;padding:9px 18px;background:#000;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .2s;}
+.tweet-btn:hover{opacity:0.8;}
+
+.next-sims{margin:32px 0 8px;text-align:center;}
+.next-sims h3{font-size:14px;color:#888;margin-bottom:14px;font-weight:400;letter-spacing:.05em;text-transform:uppercase;}
+.next-sims-grid{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.next-sim-btn{display:inline-block;padding:10px 18px;border:1px solid rgba(0,0,0,.15);border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;color:var(--ink,#2d2d2d);background:#fff;transition:all .2s;}
+.next-sim-btn:hover{border-color:var(--accent,#8B6914);color:var(--accent,#8B6914);transform:translateY(-1px);}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/honda-simulator.html">
+<meta property="og:title" content="Soichiro Honda Life Simulator — Would You Have His Stubbornness?">
+<meta property="og:description" content="An interactive story about Soichiro Honda — the blacksmith's son who failed Toyota's interview, lost his factory in WWII, and built the world's largest motorcycle company.">
+<meta property="og:site_name" content="Ordinary Man Trying">
+<meta property="og:locale" content="en_US">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Game",
+  "name": "Soichiro Honda Life Simulator",
+  "description": "Navigate the real decisions of Soichiro Honda \u2014 who rebuilt after losing everything twice before building one of the world's great companies.",
+  "url": "https://ordinarymantrying.com/tools/honda-simulator.html",
+  "genre": [
+    "Educational",
+    "Simulation"
+  ],
+  "gamePlatform": "Web Browser",
+  "applicationCategory": "Game",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Ordinary Man Trying",
+    "url": "https://ordinarymantrying.com"
+  }
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Soichiro Honda</span>
+  <span class="topbar-score" id="topbar-score"></span>
+</div>
+
+<!-- COVER -->
+<div class="cover" id="cover">
+  <div class="cover-eyebrow">True Story · Interactive</div>
+  <h1 class="cover-title">His factory was bombed to rubble. He started over with army surplus engines and ¥3,500. He built the world's largest motorcycle company. At every turning point, you make the call.</h1>
+  <p class="cover-sub">This is a life simulation. At each critical moment in Soichiro Honda's real story, you face the same choice he did — before you're told what he actually did.</p>
+  <button class="start-btn" onclick="startStory()">Start the Simulation →</button>
+</div>
+
+<!-- STORY -->
+<div id="story">
+<div class="story-wrap">
+
+  <!-- INTRO -->
+  <div class="narrative">
+    <p>Soichiro Honda was born on November 17, 1906, in Komyo — a small village in Shizuoka Prefecture, Japan. His father, Gihei, was a blacksmith who repaired bicycles on the side. His mother wove cloth. They were not poor by village standards, but the family had very little.</p>
+    <p>From the time he could hold a tool, Soichiro was in his father's workshop. He learned to use a file before he could read properly. He was not a serious student. He was, however, someone who could not walk past a broken machine without needing to understand it.</p>
+    <p>In 1912, when Soichiro Honda was six years old, something came down the road that would change his life.</p>
+  </div>
+
+
+  <!-- DECISION 1 -->
+  <div class="decision-block" id="d1">
+    <div class="decision-header"><span>Decision 1 · 1912 · Age 6</span><span class="d-num">1 / 7</span></div>
+    <div class="decision-body">
+      <p class="decision-q">A Ford Model T drives through Komyo — the first automobile anyone in the village has ever seen. Soichiro is in school. He can hear the engine from his classroom window. He is six years old. What does he do?</p>
+      <div class="dopts" id="opts-1">
+        <button class="dopt" onclick="answer(1,'A')">
+          <div class="dopt-id">A</div>
+          <div class="dopt-body"><span class="dopt-text">Stay in his seat. The teacher is watching. There will be other chances to see a car someday.</span><span class="dopt-grade">retreat</span></div>
+        </button>
+        <button class="dopt" onclick="answer(1,'B')">
+          <div class="dopt-id">B</div>
+          <div class="dopt-body"><span class="dopt-text">Rush to the window to watch it pass. Get a good look, then return to his lesson.</span><span class="dopt-grade">average</span></div>
+        </button>
+        <button class="dopt" onclick="answer(1,'C')">
+          <div class="dopt-id">C</div>
+          <div class="dopt-body"><span class="dopt-text">Ask the teacher for permission to step outside and observe the automobile for educational purposes.</span><span class="dopt-grade">bold</span></div>
+        </button>
+        <button class="dopt" onclick="answer(1,'D')">
+          <div class="dopt-id">D</div>
+          <div class="dopt-body"><span class="dopt-text">Run out of the classroom without a word. Chase the car down the road until he catches it. Touch the oil drips it leaves on the ground.</span><span class="dopt-grade">Honda</span></div>
+        </button>
+      </div>
+      <div class="reveal" id="rev-1">
+        <div class="reveal-badge" id="badge-1"></div>
+        <div class="reveal-sh-label">What Soichiro Honda Did</div>
+        <div class="reveal-sh-text">He bolted from the classroom. He chased the car on foot until he caught up with it, ran his fingers through the oil drips on the road, and pressed his face close enough to smell the exhaust.</div>
+        <div class="reveal-explain">Honda later described this moment as one of the defining experiences of his life. "I had never seen anything so wonderful," he recalled. He followed the car until it disappeared, then walked back to school — not troubled by the consequences, but unable to think about anything else. From that day, he knew he would spend his life around engines. He was six years old and had already made the most important decision of his life.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEG 1 -->
+  <div class="seg" id="seg-1">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1922 · Age 15 · Tokyo</div></div>
+    <div class="narrative">
+      <p>By 15, Soichiro Honda had barely finished elementary school. His grades were poor. His only real skills were mechanical — he could repair almost any bicycle that came into his father's shop, and he had begun modifying engines for sport.</p>
+      <p>One day, he came across a pamphlet from an auto repair company in Tokyo called Art Shokai. The pamphlet included a photograph of the owner standing next to a racing car. Honda had never seen anything like it. He stared at that photograph for a long time.</p>
+      <p>Art Shokai was 250 kilometers away. Honda knew no one in Tokyo. He had very little money. His application letter, when he wrote it, was full of spelling errors and grammatical mistakes. He sent it anyway.</p>
+    </div>
+
+    <div class="story-img-REMOVED">
+      <div class="ph"><div class="icon">📷</div><div class="cap">Art Shokai, Tokyo, early 1920s<br>Japan's premier auto repair shop — where Honda would spend six years learning everything</div></div>
+    </div>
+    <div class="img-caption">A badly-written letter, sent to a stranger, to a city he'd never been. Honda sent it anyway.</div>
+
+    <div class="decision-block" id="d2">
+      <div class="decision-header"><span>Decision 2 · 1922 · Age 15</span><span class="d-num">2 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Soichiro Honda, 15 years old, has found a pamphlet for an auto repair shop in Tokyo. He has almost no money, knows no one in the city, and writes poorly. The owner, Yuzo Sakakibara, runs the most respected auto shop in Japan. What does Honda do?</p>
+        <div class="dopts" id="opts-2">
+          <button class="dopt" onclick="answer(2,'A')">
+            <div class="dopt-id">A</div>
+            <div class="dopt-body"><span class="dopt-text">Stay in the village. Find work at a local repair shop, learn the trade close to home, and build up skills before attempting Tokyo.</span><span class="dopt-grade">retreat</span></div>
+          </button>
+          <button class="dopt" onclick="answer(2,'B')">
+            <div class="dopt-id">B</div>
+            <div class="dopt-body"><span class="dopt-text">Write a polished letter asking about future opportunities — but wait until he has more qualifications before actually applying.</span><span class="dopt-grade">average</span></div>
+          </button>
+          <button class="dopt" onclick="answer(2,'C')">
+            <div class="dopt-id">C</div>
+            <div class="dopt-body"><span class="dopt-text">Visit Tokyo first to scout the situation, see if Art Shokai is really what the pamphlet promises, then decide.</span><span class="dopt-grade">bold</span></div>
+          </button>
+          <button class="dopt" onclick="answer(2,'D')">
+            <div class="dopt-id">D</div>
+            <div class="dopt-body"><span class="dopt-text">Send the letter — spelling mistakes and all. If accepted, go to Tokyo immediately and start as whatever they need: cook, cleaner, houseboy. Get in the door.</span><span class="dopt-grade">Honda</span></div>
+          </button>
+        </div>
+        <div class="reveal" id="rev-2">
+          <div class="reveal-badge" id="badge-2"></div>
+          <div class="reveal-sh-label">What Soichiro Honda Did</div>
+          <div class="reveal-sh-text">He sent the letter. Sakakibara accepted him — as a live-in house servant. For the first two years, Honda washed diapers, cleaned the house, and cared for the owner's infant child. He was not allowed to touch the cars.</div>
+          <div class="reveal-explain">Honda later admitted this period was humiliating. He cleaned, cooked, and watched from a distance as mechanics worked on engines he desperately wanted to understand. But he stayed. He observed everything. Then one day, while the mechanics were away at a race, a customer brought in a broken car. Honda fixed it himself — perfectly. When Sakakibara heard what the boy had done, he put him on the shop floor immediately. In six years at Art Shokai, Honda became one of the most skilled auto mechanics in Japan. The two years of cleaning came first.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEG 2 -->
+  <div class="seg" id="seg-2">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1936 · Age 29 · Tamagawa Speedway, Tokyo</div></div>
+    <div class="narrative">
+      <p>By his late twenties, Honda had returned to Hamamatsu and opened his own branch of Art Shokai. He was successful, respected, and increasingly consumed by speed. He had become a serious racing driver — competing on the national circuit with home-built cars he designed and modified himself.</p>
+      <p>On September 20, 1936, at the All Japan Speed Rally at Tamagawa Speedway, Honda was doing 120 kilometers per hour when his car hit another vehicle. The car rolled. Honda was thrown from the vehicle, his face crushed against the track.</p>
+      <p>His left eye was knocked from its socket. A witness pushed it back with his thumb. His wrist was shattered. His face was so severely injured that doctors debated whether he would survive, let alone see again.</p>
+      <p>He spent months in hospital. Doctors told him his racing career was over.</p>
+    </div>
+
+    <div class="story-img-REMOVED">
+      <div class="ph"><div class="icon">📷</div><div class="cap">Tamagawa Speedway, 1936<br>The crash that ended Honda's racing career — and nearly ended everything else</div></div>
+    </div>
+    <div class="img-caption">His eye was pushed back into its socket at the scene. His wrist was shattered. Doctors said he was finished.</div>
+
+    <div class="decision-block" id="d3">
+      <div class="decision-header"><span>Decision 3 · 1936 · After the Crash</span><span class="d-num">3 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">You nearly died. Your face is reconstructed. Your wrist is broken. Doctors say your racing career is over. You are 29 years old. Your auto repair business is running well without you. What do you do next?</p>
+        <div class="dopts" id="opts-3">
+          <button class="dopt" onclick="answer(3,'A')">
+            <div class="dopt-id">A</div>
+            <div class="dopt-body"><span class="dopt-text">Take it as a sign. Retire from racing. Run the repair business safely and build a stable life.</span><span class="dopt-grade">retreat</span></div>
+          </button>
+          <button class="dopt" onclick="answer(3,'B')">
+            <div class="dopt-id">B</div>
+            <div class="dopt-body"><span class="dopt-text">Recover fully, then return to racing more carefully — better safety equipment, better preparation.</span><span class="dopt-grade">average</span></div>
+          </button>
+          <button class="dopt" onclick="answer(3,'C')">
+            <div class="dopt-id">C</div>
+            <div class="dopt-body"><span class="dopt-text">Stop driving yourself, but stay in the sport as an engineer — design cars for other drivers to race.</span><span class="dopt-grade">bold</span></div>
+          </button>
+          <button class="dopt" onclick="answer(3,'D')">
+            <div class="dopt-id">D</div>
+            <div class="dopt-body"><span class="dopt-text">Use the recovery time to think bigger. The crash ends racing — but it opens something else. Start studying engineering seriously. Build something that goes faster than you ever drove.</span><span class="dopt-grade">Honda</span></div>
+          </button>
+        </div>
+        <div class="reveal" id="rev-3">
+          <div class="reveal-badge" id="badge-3"></div>
+          <div class="reveal-sh-label">What Soichiro Honda Did</div>
+          <div class="reveal-sh-text">He never raced again. During his months of recovery, he studied engineering — specifically the piston ring, a component he believed was the key bottleneck in engine performance.</div>
+          <div class="reveal-explain">Honda became obsessed with piston rings. He enrolled part-time at Hamamatsu Technical School to study metallurgy — though he attended so irregularly that he never received a diploma. It didn't matter. He understood what he needed to understand. In 1937, he founded Tokai Seiki to manufacture piston rings for Toyota. The company would become, in a few years, a significant wartime supplier. The crash had ended one chapter. Honda used the time on his back to write the next one.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEG 3 -->
+  <div class="seg" id="seg-3">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1945 · Age 38 · Hamamatsu, Japan · End of World War II</div></div>
+    <div class="narrative">
+      <p>During the war, Tokai Seiki had grown into a major manufacturer supplying piston rings to Toyota. Honda had expanded the factory, hired hundreds of workers, and built something genuinely substantial.</p>
+      <p>Then the American bombers came.</p>
+      <p>In December 1944, a formation of B-29s dropped bombs on the Tokai Seiki factory. Honda rebuilt what he could. In January 1945, they came again. This time the factory was nearly leveled. A few weeks later, a massive earthquake finished what the bombs had started. Honda stood in the ruins and surveyed what remained of everything he had built.</p>
+      <p>He was 38 years old. The war ended in August 1945. Japan was devastated. There was no fuel, almost no food, and very little hope. A nation had to rebuild itself from almost nothing.</p>
+      <p>Honda sold the rubble of Tokai Seiki to Toyota for ¥450,000. Then he bought rice wine and threw a party.</p>
+    </div>
+
+    <div class="story-img-REMOVED">
+      <div class="ph"><div class="icon">📷</div><div class="cap">Hamamatsu, 1945 — bombed twice, then hit by an earthquake<br>Honda surveyed what remained of his factory</div></div>
+    </div>
+    <div class="img-caption">B-29s. Earthquake. Rubble. ¥450,000 and a blank page.</div>
+
+    <div class="decision-block" id="d4">
+      <div class="decision-header"><span>Decision 4 · 1945 · After the Bombs</span><span class="d-num">4 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Your factory has been bombed twice and finished by an earthquake. You've sold the ruins for ¥450,000. Japan has just surrendered. There is no fuel, little food, and almost no economy. You are 38 years old. What do you do with the money — and the rest of your life?</p>
+        <div class="dopts" id="opts-4">
+          <button class="dopt" onclick="answer(4,'A')">
+            <div class="dopt-id">A</div>
+            <div class="dopt-body"><span class="dopt-text">Invest the money safely. Japan needs to rebuild — real estate and basic goods are the safe bet during recovery.</span><span class="dopt-grade">retreat</span></div>
+          </button>
+          <button class="dopt" onclick="answer(4,'B')">
+            <div class="dopt-id">B</div>
+            <div class="dopt-body"><span class="dopt-text">Find a partner in the manufacturing business and rebuild a conventional factory using the capital as investment.</span><span class="dopt-grade">average</span></div>
+          </button>
+          <button class="dopt" onclick="answer(4,'C')">
+            <div class="dopt-id">C</div>
+            <div class="dopt-body"><span class="dopt-text">Rest for a year. Let Japan stabilize. Decide on the next move only when the economy shows clear signs of recovery.</span><span class="dopt-grade">bold</span></div>
+          </button>
+          <button class="dopt" onclick="answer(4,'D')">
+            <div class="dopt-id">D</div>
+            <div class="dopt-body"><span class="dopt-text">Buy the best sake you can find. Throw a party for your workers. Take a year to drink, think, and wander. The right idea will come.</span><span class="dopt-grade">Honda</span></div>
+          </button>
+        </div>
+        <div class="reveal" id="rev-4">
+          <div class="reveal-badge" id="badge-4"></div>
+          <div class="reveal-sh-label">What Soichiro Honda Did</div>
+          <div class="reveal-sh-text">He bought sake and threw a party. Then he spent months drinking, resting, and thinking — refusing to rush into the next thing before the right idea arrived.</div>
+          <div class="reveal-explain">Honda later said this was one of the most important decisions he ever made. "I was tired," he recalled, "and I had nothing. So I decided to rest and think rather than act and fail again." He wandered. He observed. He noticed what post-war Japan needed desperately: a way to move without fuel. Conventional gasoline was nearly impossible to obtain. But the military had left behind thousands of small engines — originally used to power radio equipment — that were being discarded everywhere. Honda saw something no one else had seen yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEG 4 -->
+  <div class="seg" id="seg-4">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1946 · Age 39 · Hamamatsu · A Bombed-Out Shed</div></div>
+    <div class="narrative">
+      <p>Post-war Japan had a transportation problem. The trains were crowded and unreliable. Cars required gasoline that almost no one could obtain. The only thing most people could afford was a bicycle — but bicycles required human energy that malnourished people in a ruined economy didn't always have.</p>
+      <p>Honda had noticed something on his months of wandering: the Japanese military had left behind thousands of small Type 6 engines, originally designed to power military radios. These engines were being discarded, sold for scrap, given away. They were small, simple, and ran on pine resin oil — which was available everywhere.</p>
+      <p>The idea arrived fully formed: attach one to a bicycle frame. A motor-bicycle. Cheap enough for anyone to buy. Practical enough to actually use.</p>
+      <p>Honda rented a bombed-out shed in Hamamatsu. He founded the Honda Technical Research Institute with twelve workers. His starting capital: ¥3,500 — roughly equivalent to $10 today.</p>
+    </div>
+
+    <div class="story-img-REMOVED">
+      <div class="ph"><div class="icon">📷</div><div class="cap">Hamamatsu, 1946 — the Honda Technical Research Institute<br>A bombed-out shed. Twelve workers. ¥3,500.</div></div>
+    </div>
+    <div class="img-caption">The first Honda "factory" had holes in the roof. It didn't matter.</div>
+
+    <div class="decision-block" id="d5">
+      <div class="decision-header"><span>Decision 5 · 1946 · ¥3,500 and a Shed</span><span class="d-num">5 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Honda wants to build motorized bicycles using discarded military engines. His starting capital is ¥3,500. His factory is a bombed-out shed. Japan's economy is in ruins. His wife thinks the idea is reckless. What is the right move?</p>
+        <div class="dopts" id="opts-5">
+          <button class="dopt" onclick="answer(5,'A')">
+            <div class="dopt-id">A</div>
+            <div class="dopt-body"><span class="dopt-text">Wait. ¥3,500 is not enough to start a company. Save more capital first before committing to anything.</span><span class="dopt-grade">retreat</span></div>
+          </button>
+          <button class="dopt" onclick="answer(5,'B')">
+            <div class="dopt-id">B</div>
+            <div class="dopt-body"><span class="dopt-text">Start small — just sell or distribute the army engines rather than manufacturing anything. Lower risk, lower commitment.</span><span class="dopt-grade">average</span></div>
+          </button>
+          <button class="dopt" onclick="answer(5,'C')">
+            <div class="dopt-id">C</div>
+            <div class="dopt-body"><span class="dopt-text">Find a larger investor or company to partner with before starting. Don't build on ¥3,500 — find proper backing first.</span><span class="dopt-grade">bold</span></div>
+          </button>
+          <button class="dopt" onclick="answer(5,'D')">
+            <div class="dopt-id">D</div>
+            <div class="dopt-body"><span class="dopt-text">Start now with what you have. Rent the shed. Hire the workers. Build the first unit and sell it. Use that money to build the next one.</span><span class="dopt-grade">Honda</span></div>
+          </button>
+        </div>
+        <div class="reveal" id="rev-5">
+          <div class="reveal-badge" id="badge-5"></div>
+          <div class="reveal-sh-label">What Soichiro Honda Did</div>
+          <div class="reveal-sh-text">He rented the shed and started. The first Honda motorized bicycle — nicknamed the "bata-bata" for the sound it made — sold out immediately. Every unit was spoken for before it was built.</div>
+          <div class="reveal-explain">Demand was so overwhelming that Honda ran out of military surplus engines within months. He was forced to design and manufacture his own engine — which turned out to be better than the army's. By 1948, he had enough cash flow to formally found Honda Motor Company. His wife Sachi had pawned her jewelry to raise part of the initial capital. When Honda told her he would pay her back, she reportedly said: "I didn't do it to be paid back. I did it because I believe in you." In two years, the bata-bata had become a real motorcycle company.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEG 5 -->
+  <div class="seg" id="seg-5">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1949 · Age 42 · Hamamatsu</div></div>
+    <div class="narrative">
+      <p>Honda Motor Company was growing — but chaotically. Soichiro Honda was a genius engineer and a terrible businessman. He spent money on the best materials he could find, overpaid for quality, and had no interest in profit margins, distribution strategy, or sales. The company was technically excellent and financially precarious.</p>
+      <p>Then a stranger appeared.</p>
+      <p>Takeo Fujisawa was 38 years old, a businessman with no engineering background whatsoever. He had heard about Honda Motor Company and sought Honda out with a proposition: let Fujisawa handle everything that Honda wasn't — finance, sales, marketing, distribution. Honda would handle everything Fujisawa wasn't — engines, design, manufacturing.</p>
+      <p>Honda had always done things his own way. He had never trusted a partner. His engineers were loyal to him personally. Handing the business to a stranger felt, to many around him, like a serious risk.</p>
+    </div>
+
+    <div class="story-img-REMOVED">
+      <div class="ph"><div class="icon">📷</div><div class="cap">Soichiro Honda (left) and Takeo Fujisawa — one of the great business partnerships of the 20th century<br>They ran Honda together for 26 years and retired on the same day</div></div>
+    </div>
+    <div class="img-caption">Honda had never trusted a partner. Fujisawa was different.</div>
+
+    <div class="decision-block" id="d6">
+      <div class="decision-header"><span>Decision 6 · 1949 · The Partnership</span><span class="d-num">6 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">A stranger with no engineering background wants to become your business partner and take complete control of Honda's finances, sales, and distribution. You have always done things yourself. Your engineers are loyal to you. Do you trust him?</p>
+        <div class="dopts" id="opts-6">
+          <button class="dopt" onclick="answer(6,'A')">
+            <div class="dopt-id">A</div>
+            <div class="dopt-body"><span class="dopt-text">Decline. You've built this company your way. Bringing in an outsider to run half the business is too great a risk.</span><span class="dopt-grade">retreat</span></div>
+          </button>
+          <button class="dopt" onclick="answer(6,'B')">
+            <div class="dopt-id">B</div>
+            <div class="dopt-body"><span class="dopt-text">Hire him as a senior manager, but retain control. Let him prove himself before giving him real authority.</span><span class="dopt-grade">average</span></div>
+          </button>
+          <button class="dopt" onclick="answer(6,'C')">
+            <div class="dopt-id">C</div>
+            <div class="dopt-body"><span class="dopt-text">Agree to a one-year trial partnership. If the business improves, make it permanent. If not, part ways cleanly.</span><span class="dopt-grade">bold</span></div>
+          </button>
+          <button class="dopt" onclick="answer(6,'D')">
+            <div class="dopt-id">D</div>
+            <div class="dopt-body"><span class="dopt-text">Give him full authority over everything outside the factory floor — no conditions, no interference. You build the machines. He builds the business.</span><span class="dopt-grade">Honda</span></div>
+          </button>
+        </div>
+        <div class="reveal" id="rev-6">
+          <div class="reveal-badge" id="badge-6"></div>
+          <div class="reveal-sh-label">What Soichiro Honda Did</div>
+          <div class="reveal-sh-text">He agreed — completely. Fujisawa took over all business operations. Honda never interfered. The two men never had a written contract between them, only a handshake.</div>
+          <div class="reveal-explain">The Honda-Fujisawa partnership lasted 26 years. They never had a formal written agreement. Honda focused entirely on engineering; Fujisawa on building the business infrastructure that would take Honda global. It was Fujisawa who devised the dealer network system that gave Honda unparalleled distribution in Japan. It was Fujisawa who managed the financing for Honda's most ambitious projects. It was Fujisawa who saw the American market as Honda's future while Honda was still focused on winning races in Europe. In October 1973, both men retired on the same day — a symbolic gesture they had apparently planned for years without ever discussing it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEG 6 -->
+  <div class="seg" id="seg-6">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1954 · Age 47 · Tokyo · A Magazine Declaration</div></div>
+    <div class="narrative">
+      <p>By 1954, Honda Motor Company was a real company — producing reliable, affordable motorcycles for the Japanese market. But Soichiro Honda had a larger ambition that he had not shared with many people.</p>
+      <p>The Isle of Man Tourist Trophy — the TT — was the most prestigious motorcycle race on earth. European manufacturers had dominated it for decades: Norton, Moto Guzzi, Gilera, MV Agusta. Their machines were engineering masterworks refined over generations of competition. Honda's best motorcycles were capable commuter bikes. They were not in the same category.</p>
+      <p>In 1954, Honda published an open letter in a Japanese automotive magazine. The letter was addressed to no one in particular and everyone at once.</p>
+      <p class="dialogue">"I am pleased to announce that Honda Motor Company will participate in and win the Isle of Man TT race."</p>
+      <p>His engineers read it and went pale. His competitors laughed. Foreign observers assumed it was a translation error.</p>
+    </div>
+
+    <div class="story-img-REMOVED">
+      <div class="ph"><div class="icon">📷</div><div class="cap">Isle of Man TT course — 37.7 miles of public roads, mountain passes, stone walls<br>The most dangerous and prestigious motorcycle race in the world</div></div>
+    </div>
+    <div class="img-caption">"We will win the Isle of Man TT." Honda's engineers went pale when they read it.</div>
+
+    <div class="decision-block" id="d7">
+      <div class="decision-header"><span>Decision 7 · 1954 · The Declaration</span><span class="d-num">7 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Honda's motorcycles are not remotely competitive with European racing machines. His engineers are horrified. His competitors are laughing. He has publicly declared that Honda will win the Isle of Man TT — the world's most prestigious motorcycle race. Is this the right move?</p>
+        <div class="dopts" id="opts-7">
+          <button class="dopt" onclick="answer(7,'A')">
+            <div class="dopt-id">A</div>
+            <div class="dopt-body"><span class="dopt-text">Retract the statement. Announce it was misquoted. Focus on the domestic market where Honda is genuinely strong.</span><span class="dopt-grade">retreat</span></div>
+          </button>
+          <button class="dopt" onclick="answer(7,'B')">
+            <div class="dopt-id">B</div>
+            <div class="dopt-body"><span class="dopt-text">Quietly enter the race without the public declaration. No announcement — just show up, learn, and build from there.</span><span class="dopt-grade">average</span></div>
+          </button>
+          <button class="dopt" onclick="answer(7,'C')">
+            <div class="dopt-id">C</div>
+            <div class="dopt-body"><span class="dopt-text">Make the declaration but set a realistic timeline — "Honda will win the TT within ten years" — to manage expectations.</span><span class="dopt-grade">bold</span></div>
+          </button>
+          <button class="dopt" onclick="answer(7,'D')">
+            <div class="dopt-id">D</div>
+            <div class="dopt-body"><span class="dopt-text">Stand by it — publicly, completely, no conditions. Make the whole company believe the impossible is already decided. The declaration creates the pressure. The pressure creates the result.</span><span class="dopt-grade">Honda</span></div>
+          </button>
+        </div>
+        <div class="reveal" id="rev-7">
+          <div class="reveal-badge" id="badge-7"></div>
+          <div class="reveal-sh-label">What Soichiro Honda Did</div>
+          <div class="reveal-sh-text">He stood by every word. Honda Motor Company entered the Isle of Man TT for the first time in 1959, finishing 6th through 10th — respectable but not winning. Honda increased investment. They came back in 1961 and finished 1st through 5th in two classes simultaneously.</div>
+          <div class="reveal-explain">Honda's engineers later said the public declaration was what made it possible. "If he had kept it internal, we might have found reasons to slow down," one engineer recalled. "Because the whole world knew, we could not fail." The 1961 Isle of Man TT win made Honda Motor Company a global name overnight. Within five years, Honda was the largest motorcycle manufacturer in the world. Soichiro Honda had made the declaration in 1954 when his machines had no realistic chance of winning. He made it because he knew the declaration itself was part of how you build something that can win.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EPILOGUE / RESULTS -->
+  <div class="seg" id="seg-epilogue">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">August 5, 1991 · Tokyo</div></div>
+    <div class="narrative">
+      <p>Soichiro Honda died on August 5, 1991, from liver failure. He was 84 years old.</p>
+      <p>He had gone from a blacksmith's workshop to building a company that sold motorcycles in every country on earth. From a bombed-out shed with ¥3,500 to one of the most recognized brands in automotive history. From being laughed at for declaring he would win the Isle of Man TT to winning it — and then dominating Formula 1.</p>
+      <p>He received 15 honorary doctorates. He was the first Asian inducted into the Automotive Hall of Fame. He never received an actual engineering degree.</p>
+      <p>Near the end of his life, a journalist asked him what the secret of his success was. Honda thought about it for a moment.</p>
+      <p class="dialogue">"Success," he said, "is 99% failure."</p>
+      <p>He meant it literally. He had failed at school, failed at racing, had his factory bombed twice, built his first company with ¥3,500 and a broken shed. Every success had been preceded by a failure that most people would have found final. Honda simply refused to treat any failure as final.</p>
+    </div>
+
+    <div class="results" id="seg-results">
+      <div class="results-hero">
+        <span class="results-trophy" id="res-trophy">🔧</span>
+        <div class="results-score-big" id="res-score">0<span>/7</span></div>
+        <div class="results-sub">decisions matched Soichiro Honda</div>
+      </div>
+      <h2 class="results-title" id="res-title"></h2>
+      <p class="results-desc" id="res-desc"></p>
+
+      <div class="divider"></div>
+      <div class="dim-rows">
+        <div>
+          <div class="dim-row-head">
+            <span class="dim-row-name">Passion</span>
+            <span class="dim-row-num" id="d-p-num">0/3</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill bar-p" id="d-p-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head">
+            <span class="dim-row-name">Resilience</span>
+            <span class="dim-row-num" id="d-r-num">0/2</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill bar-r" id="d-r-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head">
+            <span class="dim-row-name">Vision</span>
+            <span class="dim-row-num" id="d-v-num">0/2</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill bar-v" id="d-v-bar"></div></div>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="rc-title">Share your result</div>
+        
+<div class="next-sims"><h3>Try another simulator</h3><div class="next-sims-grid"><a class="next-sim-btn" href="musk-simulator.html">Elon Musk</a><a class="next-sim-btn" href="disney-simulator.html">Walt Disney</a><a class="next-sim-btn" href="buffett-simulator.html">Warren Buffett</a></div></div>
+<div class="share-pre" id="share-pre"></div>
+        <button class="copy-btn" onclick="copyShare(event)">Copy to clipboard</button>
+<a class="tweet-btn" id="tweet-btn" href="#" onclick="return shareTweet()" rel="noopener">𝕏 Share Result</a>
+      </div>
+
+      <div class="res-card" style="text-align:center;">
+        <div class="rc-title">📚 Go Deeper — Read the Book</div>
+        <p style="font-size:14px;line-height:1.7;margin-bottom:14px;">The story of Soichiro Honda — a self-taught mechanic who turned post-war rubble into one of the world's greatest engineering companies through sheer stubbornness and passion.</p>
+        <a href="https://amzn.to/43Io54R" target="_blank" rel="noopener" style="display:inline-block;background:#FF9900;color:#111;font-weight:700;padding:10px 22px;border-radius:6px;text-decoration:none;font-size:14px;">📖 View on Amazon →</a>
+        <p style="font-size:11px;color:#999;margin-top:10px;">As an Amazon Associate I earn from qualifying purchases.</p>
+      </div>
+
+      <div class="video-teaser">
+        <p>Try the other simulators in this series — each one a different kind of impossible life.</p>
+        <a href="https://ordinarymantrying.com/tools/zhangxue-simulator.html">Zhang Xue →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/disney-simulator.html">Walt Disney →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/curie-simulator.html">Marie Curie →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/jobs-simulator.html">Steve Jobs →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/rowling-simulator.html">J.K. Rowling →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/oprah-simulator.html">Oprah Winfrey →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/musk-simulator.html">Elon Musk →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/mandela-simulator.html">Nelson Mandela →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/buffett-simulator.html">Warren Buffett →</a>
+      </div>
+
+      <div class="res-card">
+        <div class="rc-title">About this simulator</div>
+        <p style="font-size:14px;color:#3c4148;line-height:1.85;">This simulator is part of <a href="https://ordinarymantrying.com" style="color:var(--accent);font-weight:700;text-decoration:none;">ordinarymantrying.com</a> — a blog about one ordinary person using AI to navigate investing, side hustles, and building things in public. All events in this simulator are based on documented historical accounts of Soichiro Honda's life.</p>
+      </div>
+
+      <div class="sim-links" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-left:4px solid var(--accent,#60a5fa);border-radius:12px;padding:18px 20px;margin-bottom:14px;">
+  
+  <p style="font-size:13px;font-weight:700;color:inherit;margin-bottom:10px;">🎮 Try another legendary life:</p>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;">
+    <a href="zhangxue-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🏍️ Zhang Xue</a>
+    <a href="disney-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🏰 Walt Disney</a>
+    <a href="curie-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">⚗️ Marie Curie</a>
+    <a href="jobs-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">📱 Steve Jobs</a>
+    <a href="rowling-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">📚 J.K. Rowling</a>
+    <a href="oprah-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🌟 Oprah Winfrey</a>
+    <a href="musk-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🛸 Elon Musk</a>
+    <a href="mandela-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">✊ Nelson Mandela</a>
+    <a href="buffett-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">💰 Warren Buffett</a>
+    <a href="hawking-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🔭 Stephen Hawking</a>
+  </div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);">
+    <a href="https://ordinarymantrying.com/tools/" style="font-size:13px;color:var(--accent,#60a5fa);font-weight:700;text-decoration:none;">→ See all 11 simulators + free tools</a>
+  </div>
+</div>
+      <button class="replay-btn" onclick="location.reload()">↺ Play again</button>
+      <div style="height:48px;"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+var TOTAL = 7;
+var DECISIONS = {
+  1: { zx: 'D', dim: 'passion' },
+  2: { zx: 'D', dim: 'passion' },
+  3: { zx: 'D', dim: 'resilience' },
+  4: { zx: 'D', dim: 'resilience' },
+  5: { zx: 'D', dim: 'vision' },
+  6: { zx: 'D', dim: 'vision' },
+  7: { zx: 'D', dim: 'passion' }
+};
+var NEXT_SEG = { 1:'seg-1', 2:'seg-2', 3:'seg-3', 4:'seg-4', 5:'seg-5', 6:'seg-6', 7:'seg-epilogue' };
+var DIM_MAX = { passion: 3, resilience: 2, vision: 2 };
+var scores = { passion: 0, resilience: 0, vision: 0 };
+var totalCorrect = 0;
+var answered = {};
+
+function startStory() {
+  document.getElementById('cover').style.display = 'none';
+  document.getElementById('story').style.display = 'block';
+  document.getElementById('topbar-score').style.display = 'block';
+  document.getElementById('topbar-score').textContent = '0 / ' + TOTAL;
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function answer(num, chosen) {
+  if (answered[num]) return;
+  answered[num] = chosen;
+  var d = DECISIONS[num];
+  var correct = (chosen === d.zx);
+  if (correct) { totalCorrect++; scores[d.dim]++; }
+
+  var opts = document.querySelectorAll('#opts-' + num + ' .dopt');
+  opts.forEach(function(btn) {
+    btn.classList.add('disabled');
+    var id = btn.querySelector('.dopt-id').textContent.trim();
+    if (id === chosen && correct)  btn.classList.add('right');
+    if (id === chosen && !correct) btn.classList.add('wrong');
+    if (id === d.zx && !correct)   btn.classList.add('correct');
+  });
+
+  var badge = document.getElementById('badge-' + num);
+  if (correct) {
+    badge.className = 'reveal-badge badge-y';
+    badge.textContent = '✓ Same as Soichiro Honda';
+  } else {
+    badge.className = 'reveal-badge badge-n';
+    badge.textContent = '✗ You chose ' + chosen + ' — Honda chose ' + d.zx;
+  }
+
+  document.getElementById('rev-' + num).style.display = 'block';
+  document.getElementById('topbar-score').textContent = totalCorrect + ' / ' + TOTAL;
+
+  setTimeout(function() {
+    var next = document.getElementById(NEXT_SEG[num]);
+    next.classList.add('shown');
+    setTimeout(function() { next.scrollIntoView({ behavior:'smooth', block:'start' }); }, 80);
+    if (num === TOTAL) showResults();
+  }, 950);
+}
+
+function showResults() {
+  setTimeout(function() {
+    var s = totalCorrect;
+    var trophies = ['🌱','🌱','🔩','🔩','🏁','🏁','🥇','🔧'];
+    document.getElementById('res-trophy').textContent = trophies[s] || '🔧';
+    document.getElementById('res-score').innerHTML = s + '<span>/' + TOTAL + '</span>';
+
+    var title, desc;
+    if (s === TOTAL) {
+      title = 'You think like Soichiro Honda.';
+      desc = 'Perfect score. Every decision matched his. You have the same instinct he did: when the tools are gone, improvise. When the factory is bombed, rebuild. When they laugh at your declaration, keep it anyway.';
+    } else if (s >= 5) {
+      title = 'You have his stubbornness.';
+      desc = s + ' out of 7. You made the hard call most of the time. The gaps are exactly where Honda refused to be reasonable — and that refusal is what built the company.';
+    } else if (s >= 3) {
+      title = 'You have his instinct.';
+      desc = s + ' out of 7. More than half matching his choices already puts you in rare company. Honda\'s logic at every step looked reckless in the moment and obvious in retrospect.';
+    } else {
+      title = 'You\'re sensible. He wasn\'t.';
+      desc = s + ' out of 7. Your choices were logical. Honda\'s were not — they were driven by something that doesn\'t respond to logic. "Success is 99% failure," he said. He proved it by failing first and succeeding second, every single time.';
+    }
+    document.getElementById('res-title').textContent = title;
+    document.getElementById('res-desc').textContent = desc;
+
+    setTimeout(function() {
+      var pMax = DIM_MAX.passion, rMax = DIM_MAX.resilience, vMax = DIM_MAX.vision;
+      document.getElementById('d-p-num').textContent = scores.passion + '/' + pMax;
+      document.getElementById('d-r-num').textContent = scores.resilience + '/' + rMax;
+      document.getElementById('d-v-num').textContent = scores.vision + '/' + vMax;
+      document.getElementById('d-p-bar').style.width = ((scores.passion/pMax)*100) + '%';
+      document.getElementById('d-r-bar').style.width = ((scores.resilience/rMax)*100) + '%';
+      document.getElementById('d-v-bar').style.width = ((scores.vision/vMax)*100) + '%';
+    }, 300);
+
+    document.getElementById('share-pre').textContent =
+      'I just played the Soichiro Honda Life Simulator and matched ' + totalCorrect + '/' + TOTAL + ' of his real decisions.\n\n'
+      + 'Honda\'s factory was bombed to rubble. He started over with ¥3,500 and army surplus engines.\n'
+      + 'He built the world\'s largest motorcycle company. At every turning point, you make the call.\n\n'
+      + 'Passion ' + scores.passion + '/' + DIM_MAX.passion
+      + '  ·  Resilience ' + scores.resilience + '/' + DIM_MAX.resilience
+      + '  ·  Vision ' + scores.vision + '/' + DIM_MAX.vision + '\n\n'
+      + 'Would you have made the same choices? ordinarymantrying.com/tools/honda-simulator.html';
+
+    document.getElementById('seg-epilogue').scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 600);
+}
+
+function shareTweet(){var text=document.getElementById('share-pre').textContent;if(!text||text.trim()===''){alert('Finish the simulator first to share your result!');return false;}var url='https://x.com/intent/tweet?text='+encodeURIComponent(text.substring(0,240));window.open(url,'_blank','width=550,height=450');return false;}
+function copyShare(evt) {
+  var text = document.getElementById('share-pre').textContent;
+  var btn = evt.target;
+  function restore() { btn.textContent = 'Copy to clipboard'; }
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = '✓ Copied!'; setTimeout(restore, 2000);
+    });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent = '✓ Copied!'; setTimeout(restore, 2000);
+  }
+}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buckminster Fuller Life Simulator — Geodesic Dome &amp; Redesigning the World | Ordinary Man Trying</title>
+<meta name="description" content="Live Buckminster Fuller's life across 8 pivotal decisions — from near-suicide at 32 to the geodesic dome, from Dymaxion House to World Game, to the inventor who decided to become an experiment in what one human could do.">
+<style>
+:root{
+  --bg:#EEF2EE;--card:#F5F9F5;--ink:#060E06;--muted:#204020;--line:#B0C8B0;
+  --accent:#183818;--accent-bg:#D0E8D0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,242,238,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#060E06;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #80B080;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#040C04;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#D0E8D0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#D0E8D0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #80B080;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #80B080;border-radius:999px;margin-bottom:12px;gap:8px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Buckminster Fuller</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #99 of 100</p>
+  <h1 class="cover-title">At 32, He Planned to Kill Himself.<br>Instead, He Decided to Become an Experiment.</h1>
+  <p class="cover-sub">Richard Buckminster Fuller — "Bucky" — was expelled from Harvard twice, fired from multiple jobs, and financially ruined by 32. Standing on the shore of Lake Michigan in 1927, contemplating suicide, he had a different idea: he would live as if he were an experiment — one man's attempt to discover what a single human being, with no resources, could do for humanity. He then invented the geodesic dome, the Dymaxion car, the World Game, and coined the phrase "Spaceship Earth." He held 28 patents and received 47 honorary doctorates. He wore three watches: one for his current time zone, one for wherever he was going, one for wherever he had been.</p>
+  <div class="cover-facts">
+    <p>⬡ Invented the geodesic dome — structurally the strongest shape per unit of material &nbsp;·&nbsp; 🌍 "Spaceship Earth" and World Game — thinking about resource distribution globally &nbsp;·&nbsp; 🚗 Dymaxion car and Dymaxion House — redesigning fundamentals of transportation and shelter &nbsp;·&nbsp; ⌚ Wore 3 watches — current, destination, origin time zones &nbsp;·&nbsp; 📐 Held 28 patents; received 47 honorary doctorates; Presidential Medal of Freedom 1983 &nbsp;·&nbsp; 1895–1983 · Milton, Massachusetts to Los Angeles</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Fuller's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1927</div>
+  <div class="timeline-dot">Lake Michigan, Chicago · Age 32</div>
+  <div class="narrative">
+    <p>You are standing at the edge of Lake Michigan. You are thirty-two years old. You have been expelled from Harvard twice. You have failed at a building materials company. Your daughter Alexandra died of meningitis at age four, and you have blamed yourself. You have a wife (Anne) and a newborn daughter (Allegra) and you cannot support them. You are considering jumping into the lake. Then — by your later account — something stops you. Not a voice exactly, not a vision. A decision. You decide that your life does not belong to you, that you have no right to throw it away, and that the only responsible use of a life is to find out what one human being can do that might benefit all human beings. You decide to become an experiment: one person, no resources, seeing what is possible. You commit never to work for money alone, only for the benefit of humanity, trusting that survival will follow if the work is genuinely useful. You are beginning from zero, with a wife, a baby, and no income. You have never been more certain of anything.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1927</div>
+    <p class="decision-q">Fuller decided at the moment of contemplating suicide to become "an experiment in what one human can do." What made this decision transformative rather than just a resolution?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. The specific framing — calling himself "an experiment" gave the decision a scientific character that made it feel rigorous rather than merely motivational, and the scientific framing was what sustained it over decades.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. The shift from ego to function — the decision was not "I will succeed" (which is about self) but "I will find out what is possible" (which is about a question). The commitment was not to personal achievement but to a research project in which he was the subject. This reframing removed the pressure of personal failure: an experiment can produce surprising results, including results that seem like failures. The failure of the building materials company was data; his own inadequacy was a variable to be worked around. By making himself an experiment rather than a hero, he made the work sustainable across decades of difficulty.</p>
+      <button class="dopt" onclick="choose(this,1,false)">C. The desperation — having nothing left to lose freed him from the conventional constraints on ambition that had limited his earlier work, and the poverty of 1927 was actually the enabling condition for the subsequent productivity.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. The presence of a family to support — the birth of Allegra gave him a concrete reason to continue and a specific obligation that made the abstract decision concrete. The decision was enabled by responsibility rather than by the philosophical insight about experimentation.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You stand at the edge of Lake Michigan at thirty-two, bankrupt and planning to jump.</strong> You have been expelled from Harvard twice, your four-year-old daughter has died of meningitis, and your business has failed. Instead of jumping, you make the strangest decision of your life: to stop working for money and become a one-man experiment in what a human being can do for humanity. You will log every fifteen minutes of your life for the next forty-two years. You call it the Dymaxion Chronofile.</p>
+      <strong>The 1927 decision:</strong> Fuller's account of the Lake Michigan moment appears in multiple lectures and writings, most fully in "Critical Path" (1981). The decision he describes is specifically about the priority of function over self: "I need not commit suicide. I need merely commit ego suicide. I need merely commit to working for humanity rather than for myself." The philosopher Peter Sloterdijk, in "You Must Change Your Life" (2013), analyzes this kind of "turnaround" as a characteristic of what he calls "acrobatic" existence — a restructuring of one's relationship to one's own life so radical that it creates a different person. Whether Fuller's account is precise autobiography or somewhat mythologized is uncertain; what is documentable is that the quality and direction of his work changed dramatically after 1927.
+    </div>
+  </div>
+
+  <div class="year-banner">1929</div>
+  <div class="timeline-dot">Chicago · Age 34</div>
+  <div class="narrative">
+    <p>You are designing the Dymaxion House — a prefabricated dwelling suspended from a central mast, hexagonal in plan, light enough to be delivered by dirigible, designed to be mass-produced and universally affordable. The name "Dymaxion" — a portmanteau of dynamic, maximum, and tension — you apply to all your designs that pursue maximum performance from minimum material. The Dymaxion House is never commercially produced. The reasons are complicated: manufacturing readiness, investor caution, the failure of the related Wichita House prototype. But the design principles — structural efficiency, minimum material, prefabrication, universality — inform everything you subsequently build. The house was ahead of what manufacturing could execute. The ideas were not wasted; they were premature.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1929</div>
+    <p class="decision-q">The Dymaxion House was never commercially produced. What does this reveal about Fuller's relationship to his inventions?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. That he was impractical — his designs consistently outran what manufacturing and markets could absorb, and a more practically oriented inventor would have designed for what was buildable rather than what was optimal.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. That he was designing for a future he was trying to accelerate rather than for the present he was operating in — the Dymaxion House was not wrong; it was premature. The principles it embodied (prefabrication, mass production of housing, maximum material efficiency) have been increasingly influential in 21st-century architecture, though not in the specific form he designed. This is the characteristic pattern of certain kinds of innovation: the ideas are right but the conditions (manufacturing capacity, market readiness, material science) are not yet adequate. The inventor's relationship to these ideas is not failure but correct timing that the present cannot yet receive.</p>
+      <button class="dopt" onclick="choose(this,2,false)">C. That design elegance and market success require different skills — Fuller's genius was analytical and structural, and the commercial path from design to market required promotional and organizational skills he consistently underestimated or lacked.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. That the housing market's conservatism is the primary obstacle to radical improvement in dwelling design — Fuller's designs were buildable and affordable, and the failure to produce them reflects market failure rather than design failure.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>The Wichita House receives 37,000 unsolicited orders before a single one is built. The manufacturer cancels anyway. You have been here before: correct idea, wrong century.</strong></p>
+      <strong>The Dymaxion House:</strong> The Wichita House (1944–1946), a production-ready version of the Dymaxion concept, received 37,000 unsolicited orders before manufacturing had even begun. The manufacturer (Beech Aircraft, which had agreed to produce it using aircraft manufacturing techniques) ultimately declined to go forward, partly due to post-WWII economic uncertainty and partly due to Fuller's unwillingness to compromise the design for easier manufacture. The 37,000 orders suggest the market failure was not about demand. The historian Marco Aurelio de Oliveira has documented that many of the Dymaxion House's structural and efficiency principles appear in prefabricated housing innovations of the 1990s-2020s, decades after Fuller's death. He was not wrong; he was early.
+    </div>
+  </div>
+
+  <div class="year-banner">1947</div>
+  <div class="timeline-dot">Black Mountain College, North Carolina · Age 52</div>
+  <div class="narrative">
+    <p>You have been developing the mathematics of the geodesic dome — a structure built from triangulated elements arranged on the surface of a sphere. The triangle is the most rigid geometric element: under load, a triangle distributes stress to all three corners, while a rectangle can collapse by changing angles. A dome built entirely of triangles is therefore structurally one of the strongest shapes possible per unit of material. At Black Mountain College — the experimental art and design school where you are teaching — you attempt to build a full-scale prototype. It collapses. You rebuild it. The mathematics work. The patents are filed in 1954. The US military is immediately interested. The geodesic dome can be shipped in pieces and assembled quickly without heavy equipment. By 1957, over a thousand geodesic domes are built by the US military around the Arctic DEW line. By 1970, there are over 300,000 worldwide.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1947</div>
+    <p class="decision-q">The geodesic dome is the strongest structure per unit of material known. What principle underlies this?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,true)">A. That efficiency comes from distributing stress across the entire structure rather than concentrating it — in a conventional rectangular building, corners bear most of the load; the rest of the structure is relatively inert. In a geodesic dome, every element is in either tension or compression, and all elements share the load. This means the material is being used rather than merely present. Fuller's insight was that most conventional structures are vastly over-engineered for their actual structural role; the geodesic geometry reduces material to the minimum needed for the actual forces involved.</p>
+      <button class="dopt" onclick="choose(this,3,false)">B. The spherical shape — a sphere encloses maximum volume per unit of surface area, making the dome inherently more material-efficient than any rectangular structure of equivalent volume.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. The triangular elements — triangles are individually rigid, and a structure built entirely of triangles transfers this individual rigidity to the whole, making the completed structure stronger than the sum of its elements.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. The absence of internal supports — a geodesic dome of any size requires no internal columns or load-bearing walls, allowing the full interior volume to be used without structural interruption. The material efficiency follows from this structural self-sufficiency.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>You build the first full-scale geodesic dome at Black Mountain College. It collapses. You rebuild it. It holds. Thirty-eight years later, chemists discover a carbon molecule shaped like your dome and name it Buckminsterfullerene. You win a Nobel Prize posthumously, in the sense that molecules don't usually get named after the living.</strong></p>
+      <strong>Geodesic geometry:</strong> Fuller's structural insight is related to what engineers call "tensegrity" (tensional integrity) — structures in which compression members float in a sea of continuous tension, with no compression member touching another. The geodesic dome is not a pure tensegrity structure, but it operates on a related principle: no element is redundant, all elements share load, and the system behaves more efficiently as a whole than any part would independently. The structural engineer Robert Marks, who collaborated with Fuller on "The Dymaxion World of Buckminster Fuller" (1960), documented the comparison: a geodesic dome enclosing a given volume uses approximately one-third the material of a conventional rectangular building of equivalent volume. The Union Tank Car Company dome in Baton Rouge (1958, 384 feet in diameter) was the largest clear-span structure in the world at the time of its construction.
+    </div>
+  </div>
+
+  <div class="year-banner">1954</div>
+  <div class="timeline-dot">Ford Rotunda, Dearborn · Age 59</div>
+  <div class="narrative">
+    <p>The Ford Motor Company wants a dome over the Ford Rotunda exhibition hall in Dearborn, Michigan. The existing roof cannot bear additional load: a conventional dome would be too heavy. You propose a geodesic dome. A 93-foot aluminum dome is fabricated off-site and lifted into place in a single day by crane. It weighs 8.5 tons — compared to the 160 tons a conventional structure would have weighed. The project demonstrates simultaneously the material efficiency of the geodesic design and the prefabrication advantage Fuller has been developing since the Dymaxion House: the dome can be built in a factory, shipped, and assembled on site without specialized skills or heavy equipment. It is the largest aluminum geodesic dome in the world at the time. It works perfectly. Fuller is vindicated. Architects and engineers begin to pay serious attention. The US military is already paying attention. So is the rest of the world.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1954</div>
+    <p class="decision-q">The Ford Rotunda dome weighed 8.5 tons where a conventional structure would have weighed 160 tons — a 95% material reduction. What does this demonstrate about the relationship between conventional design and optimal design?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. That conventional design is wasteful by nature — established professional practice builds in redundancy as a safety measure, and the gap between conventional and optimal design is a function of professional risk-aversion rather than genuine structural necessity.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. That accumulated convention can diverge significantly from optimum — the rectangular building tradition evolved for reasons of fabrication ease (right-angle cuts, standard lumber), social organization (rooms), and cultural preference (familiar shapes), not structural efficiency. Once these accumulated choices are recognized as choices rather than necessities, it becomes possible to ask what the structurally optimal solution would look like independent of convention. The 95% material reduction is not the result of one clever insight; it is what happens when the question is asked from first principles rather than from incremental modification of existing practice.</p>
+      <button class="dopt" onclick="choose(this,4,false)">C. That aluminum and new materials explain most of the difference — conventional structures of equivalent material (aluminum) would also be significantly lighter than steel or wood conventional structures, and the geodesic geometry's contribution is smaller relative to the material choice than it appears.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. That large clear-span structures are a special case — the material efficiency advantage of the geodesic dome is most pronounced at very large scales and in situations without internal supports, and the comparison overstates the general advantage of geodesic over conventional construction for typical building types.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>A conventional dome over the Ford Rotunda would weigh 160 tons. Yours weighs 8.5. They lift it into place in a single day. You have been saying this was possible for twenty years while people nodded politely and built rectangles.</strong></p>
+      <strong>First principles design:</strong> Fuller's concept of "ephemeralization" — doing more with less — is the principle that the Ford Rotunda dome demonstrates. He predicted in the 1950s that computing would eventually allow a computer to be small enough to fit in a pocket, based on the same principle: the information processing capability per unit of material would keep improving until the hardware constraints became trivial. This prediction (made when computers occupied entire rooms) was correct. The geodesic dome is ephemeralization applied to shelter: enclosing space with the minimum material the physics of the problem actually requires. The conventional building tradition had never asked the question "what is the physical minimum?" because it hadn't needed to.
+    </div>
+  </div>
+
+  <div class="year-banner">1961</div>
+  <div class="timeline-dot">Washington DC / World Lecture Tours · Age 66</div>
+  <div class="narrative">
+    <p>You have been lecturing continuously for decades — at colleges, corporations, military establishments, arts festivals. Your lectures are famously long: six, eight, twelve hours. You do not apologize for the length. You say: "If it took God only seven days to create the world, it takes me at least that long to explain why it went wrong." You are developing the World Game — a simulation in which teams of players attempt to solve global resource distribution problems: how do you ensure that everyone on Earth has sufficient food, water, shelter, and energy, using only the resources known to exist? The rules: no political borders, no military spending, full knowledge of global resources. Can it be done? You believe yes. You are trying to make the question into a curriculum. You will spend the remaining twenty-two years of your life on this question.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1961</div>
+    <p class="decision-q">The World Game asks: can all humans be provided for using existing resources, without military conflict, if distribution is optimized? What is the value of this question?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Primarily rhetorical — the game demonstrates the theoretical possibility of universal provision, which is useful for political argument, but the actual obstacles (national interests, cultural differences, political systems) are not addressable through optimization, making the game's conclusions inapplicable to reality.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. It changes the default assumption — the usual framing of global poverty is as a problem of insufficient resources (there isn't enough). Fuller's analysis (resources are sufficient; distribution is inefficient) reframes the problem as primarily a design and political problem rather than a physical one. If the assumption of scarcity is wrong, then the politics built on scarcity ("we can't afford to help everyone") is built on a false foundation. The World Game is an educational instrument for shifting this assumption. Whether the simulation is technically accurate is secondary to whether it produces a different way of thinking about the problem.</p>
+      <button class="dopt" onclick="choose(this,5,false)">C. Technical value — the World Game as a resource optimization exercise developed real computational tools and data sets that influenced subsequent work in operations research, systems analysis, and global development modeling.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. Historical value only — the World Game was a significant intellectual and educational experiment in the 1960s-1980s context, but subsequent developments (climate change, population growth, ecosystem collapse) have complicated the resource abundance assumption in ways that make Fuller's analysis less applicable to current conditions.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>You run the numbers using UN data and conclude that the existing resources on Earth are sufficient to provide a decent standard of living for every human being alive. The problem is distribution, not scarcity. Nobody in government wants to hear this.</strong></p>
+      <strong>The World Game:</strong> Fuller first proposed the World Game concept in 1961 as a counter to the "war games" that military planners were using to simulate conflict scenarios. His analysis, based on data collected from the UN and other sources, concluded that existing global resources (food, energy, materials) were sufficient to provide a "high standard of living" for every person on Earth if distributed by need rather than by purchasing power. This analysis has been updated by subsequent researchers using better data. The general conclusion — that global poverty is primarily a distribution problem rather than a resource scarcity problem — remains supported by most development economists, though the complications Fuller set aside (political systems, governance, incentive structures) are increasingly recognized as central rather than peripheral.
+    </div>
+  </div>
+
+  <div class="year-banner">1967</div>
+  <div class="timeline-dot">Montreal, Expo 67 · Age 72</div>
+  <div class="narrative">
+    <p>The United States Pavilion at Expo 67 in Montreal is a geodesic dome 250 feet in diameter and 200 feet high — the largest geodesic structure yet built, and the most visible demonstration of your ideas to a global audience. Visitors enter through an escalator system threading through a transparent framework. The dome houses an exhibition on American technological achievement. The dome itself is the achievement. Over fifty million people visit Expo 67 in Montreal. The dome is photographed from across the St. Lawrence River, from aircraft, from the other pavilions. It is the visual icon of the entire exhibition. You have spent forty years working toward this moment, though you would not describe it that way: you would say you have spent forty years working on a problem, and the dome is one solution, and there are many more solutions still needed.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1967</div>
+    <p class="decision-q">Fuller said "Spaceship Earth" — the idea that Earth is a finite vehicle with finite resources requiring careful management. What did this metaphor accomplish?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. It introduced environmental thinking to mainstream discourse — by framing Earth as a vehicle with finite fuel (resources), Fuller gave environmentalism a non-moralistic, engineering-based vocabulary that appealed to audiences who were unmoved by nature-based conservation arguments.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. It changed the unit of analysis from nation to planet — all previous political and economic thinking took the nation-state as the fundamental unit. "Spaceship Earth" insists that the correct unit is the whole planet: we are all passengers on the same vehicle, with the same finite resources, and the idea that national interests can be pursued at the expense of planetary health is as absurd as passengers in a submarine competing over the oxygen supply. The metaphor does not argue for any specific policy; it changes the frame within which policy is argued. This is the function of good metaphors: they make certain positions feel obvious and others feel absurd.</p>
+      <button class="dopt" onclick="choose(this,6,false)">C. It popularized systems thinking — by framing Earth as an engineered system with inputs, outputs, and finite capacity, Fuller made the systems analysis approach available to non-specialists and contributed to the development of environmental systems science.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. Primarily rhetorical impact rather than analytical value — "Spaceship Earth" is a powerful slogan that generates the feeling of insight without providing the analytical tools to act on it, and its influence has been more inspirational than practically useful for environmental policy.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>You coin "Spaceship Earth" in lectures in the early 1960s. Fifty million people visit your dome at Expo 67 in Montreal. The phrase enters environmental policy vocabulary worldwide. The dome is still standing on an island in the St. Lawrence River, even after a fire. Some structures are harder to kill than others.</strong></p>
+      <strong>"Spaceship Earth":</strong> Fuller's "Operating Manual for Spaceship Earth" (1969) extended the metaphor into a comprehensive analysis of global resource management. The phrase itself predates the book — it appears in Fuller's lectures in the early 1960s and was independently used by Adlai Stevenson in a 1965 UN speech. The concept was adopted by the environmental movement and influenced the development of systems ecology (Howard and Eugene Odum), the Gaia hypothesis (James Lovelock), and the concept of "planetary boundaries" (Johan Rockström). The specific analytical claim — that Earth is a closed system with finite resources requiring explicit management — is the foundation of contemporary sustainability science, regardless of whether the "spaceship" metaphor is used explicitly.
+    </div>
+  </div>
+
+  <div class="year-banner">1983</div>
+  <div class="timeline-dot">Los Angeles · Age 87</div>
+  <div class="narrative">
+    <p>June 1983. Your wife Anne is dying of cancer in a hospital in Los Angeles. You have been married since 1917 — sixty-six years. You visit her daily. On July 1, 1983, sitting at her bedside, you say: "She is squeezing my hand." Then you fall unconscious. You die of a heart attack thirty-six hours before Anne does. You are eighty-seven. Anne dies on July 3, aged eighty-eight. You are buried together in Mount Auburn Cemetery in Cambridge, Massachusetts. You received the Presidential Medal of Freedom from Ronald Reagan on July 9, 1983 — eight days after your death. The medal is accepted on your behalf.</p>
+    <p>You held 28 patents. You coined the words "tensegrity," "ephemeralization," "synergetics," and "Spaceship Earth." You built 300,000 geodesic domes worldwide. You gave 2,000 lectures. You published 28 books. You wore three watches. At 32, standing at Lake Michigan, you decided to become an experiment. The experiment ran for fifty-five more years. The results are still being analyzed.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1983</div>
+    <p class="decision-q">Fuller committed at 32 to work only for the benefit of humanity, trusting that survival would follow. Fifty-five years later: did the commitment work?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Yes, completely — the geodesic dome, Spaceship Earth, World Game, and the 28 patents demonstrate that the commitment to working for humanity rather than for money produced genuine value, and the hypothesis was confirmed.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. Partially — the ideas were valuable, but Fuller spent much of his life in financial difficulty and depended on academic appointments, lecture fees, and family support. The promise that "survival will follow useful work" was partially but not reliably fulfilled.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. The experiment produced useful data but cannot be cleanly evaluated as success or failure — Fuller did survive, and the work did have genuine impact, and the three-watch eccentric inventor who lectured for twelve hours was also clearly not comfortable in conventional economic terms. What the experiment demonstrated is more nuanced: a commitment to doing genuinely useful work, maintained over decades and over repeated commercial failures, produces a different kind of output than a commitment to producing profitable work. Whether this output is "better" depends on what you value. Fuller valued the ideas over the income. The experiment demonstrated that this preference is sustainable, though not comfortable. This is the most honest summary of what fifty-five years of experiment produced.</p>
+      <button class="dopt" onclick="choose(this,7,false)">D. The commitment was partially honored — Fuller frequently compromised the purity of his mission-driven approach by taking corporate consulting fees, military contracts, and institutional positions that involved conventional economic exchange. The "pure experiment" framing was more inspirational than operational.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>You stop mid-lecture when Anne collapses into a coma. You fly to her bedside. She dies July 3. You die July 1 — thirty-six hours earlier, holding her hand. You are buried together. The Presidential Medal of Freedom arrives eight days after your death. It is accepted on your behalf.</strong></p>
+      <strong>Fuller's economic reality:</strong> The biographer Alec Nevala-Lee, in "Inventor of the Future: The Visionary Life of Buckminster Fuller" (2022), provides a detailed account of Fuller's actual financial situation across his career. He held academic appointments at Southern Illinois University (1959–1975), received significant fees for corporate consulting (including from American Airlines, which used his geodesic concepts for airport structures), and benefited substantially from the commercial success of the geodesic dome patents. He was not in poverty after the 1940s. The tension between the "no money" commitment of 1927 and the subsequent comfortable (if not wealthy) life is real. What is also real is that he consistently declined opportunities that would have made him much wealthier if they required compromising the design principles.
+    </div>
+  </div>
+
+  <div class="year-banner">Legacy</div>
+  <div class="timeline-dot">1983 and beyond</div>
+  <div class="narrative">
+    <p>The geodesic dome is the most widely constructed structure type that did not exist before 1950. 300,000+ domes exist worldwide. The carbon molecule C60 — sixty carbon atoms arranged in a spherical pattern of pentagons and hexagons — was discovered in 1985 and named Buckminsterfullerene (or "buckyball") because its structure was recognized as a geodesic sphere. A Nobel Prize was awarded for its discovery in 1996. Fuller, dead since 1983, has a molecule named after him. "Spaceship Earth" is in the vocabulary of environmental policy. "Ephemeralization" — doing more with less — is the operating principle of the technology industry. The three watches are on display at the Stanford University Libraries. The experiment, designed in 1927, is still producing data.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · Legacy</div>
+    <p class="decision-q">What is the most important thing Buckminster Fuller demonstrated?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. The geodesic dome — a practical structural innovation that has housed millions of people and demonstrated that the material efficiency of buildings can be radically improved through principled design.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. "Spaceship Earth" — a metaphor that changed how people think about the relationship between human civilization and planetary resources, and that underlies most contemporary environmental thinking.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. The viability of comprehensive design thinking — Fuller attempted to address the largest possible problems (global shelter, global resource distribution, the design of civilization) from first principles, without accepting the conventional assumption that these problems were too large for one person or one discipline. The specific solutions he found (geodesic dome, Dymaxion House, World Game) are less important than the demonstration that this approach produces results. He showed that the question "what would be the best possible design for human shelter, given all the physics and all the materials?" is a tractable question with a better answer than the conventional answer. This is the permission his life granted: that comprehensive, first-principles thinking about the largest problems is not grandiosity but legitimate intellectual work.</p>
+      <button class="dopt" onclick="choose(this,8,false)">D. The 1927 decision itself — the demonstration that a person with no resources who commits to working for the benefit of humanity, rather than for personal gain, can produce significant value. The story is more influential than any specific technical achievement.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>In 1985, chemists discover a carbon molecule with sixty atoms arranged in a perfect geodesic sphere. They name it Buckminsterfullerene. The discovery wins the Nobel Prize in Chemistry in 1996. You have been dead since 1983. A molecule has your name. The experiment is still producing data.</strong></p>
+      <strong>Fuller's comprehensive approach:</strong> The design theorist Victor Papanek, in "Design for the Real World" (1971), cited Fuller as the primary influence on what he called "comprehensive design" — approaching design problems at the level of systems rather than objects, and with explicit concern for the full range of people affected rather than only the paying customer. This approach has influenced participatory design, sustainable design, and the "social innovation" movement. The architect Norman Foster, who knew Fuller personally and built several projects using geodesic and structural efficiency principles, has said that Fuller's most important contribution was "the permission to think globally while designing locally." The permission — that a designer's responsibility is to humanity rather than to a client — is what differentiates Fuller from other significant 20th-century inventors.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Buckminster Fuller · 1895–1983</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"You never change things by fighting the existing reality. To change something, build a new model that makes the existing model obsolete."<br><em style="font-size:13px;color:var(--muted);">— Buckminster Fuller</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="cousteau-simulator.html" class="next-card">
+        <div class="next-card-name">Jacques Cousteau</div>
+        <div class="next-card-sub">Invented scuba &amp; explored the silent world</div>
+      </a>
+      <a href="earhart-simulator.html" class="next-card">
+        <div class="next-card-name">Amelia Earhart</div>
+        <div class="next-card-sub">First woman to fly the Atlantic solo</div>
+      </a>
+      <a href="babbage-simulator.html" class="next-card">
+        <div class="next-card-name">Charles Babbage</div>
+        <div class="next-card-sub">Analytical Engine — the first computer concept</div>
+      </a>
+      <a href="tesla-simulator.html" class="next-card">
+        <div class="next-card-name">Nikola Tesla</div>
+        <div class="next-card-sub">AC electricity &amp; the war with Edison</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understood Fuller\'s method: ask what is physically possible, not what convention permits. The experiment he began at Lake Michigan in 1927 is still running.';else if(pct>=0.625)t.textContent='You grasped most of Fuller\'s essential insights — the experiment framing, the geodesic logic, the World Game. A few of the nuances slipped past you.';else if(pct>=0.375)t.textContent='You followed the biography but missed the underlying principle: Fuller was doing first-principles design on civilization itself, and you treated it as a series of clever inventions.';else t.textContent='You saw the three watches and the dome but not what they share: the refusal to accept convention as necessity.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

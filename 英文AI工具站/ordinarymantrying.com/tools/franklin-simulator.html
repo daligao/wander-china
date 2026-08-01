@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rosalind Franklin Life Simulator — Photo 51, DNA &amp; the Credit She Never Received | Ordinary Man Trying</title>
+<meta name="description" content="Navigate Rosalind Franklin's life across 8 pivotal decisions — from mastering X-ray crystallography to producing Photo 51, being excluded from the Watson-Crick collaboration, and dying at 37 before the Nobel was awarded.">
+<style>
+:root{
+  --bg:#EEF0F5;--card:#F5F7FB;--ink:#08080E;--muted:#303048;--line:#C0C0D8;
+  --accent:#181838;--accent-bg:#D8D8F0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,240,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#08080E;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #A0A0C8;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#040408;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#D8D8F0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#D8D8F0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #A0A0C8;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #A0A0C8;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Rosalind Franklin</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #85 of 100</p>
+  <h1 class="cover-title">She Took the Image That<br>Revealed the Double Helix.</h1>
+  <p class="cover-sub">Rosalind Franklin was the finest X-ray crystallographer of her generation. In 1952, she produced Photograph 51 — the clearest image of DNA's structure ever taken — and calculated its dimensions with mathematical precision. James Watson saw it without her knowledge or consent, immediately understood what it showed, and with Francis Crick built the correct model of DNA. The 1962 Nobel Prize went to Watson, Crick, and Wilkins. Franklin had died of cancer in 1958, aged thirty-seven. The Nobel is not awarded posthumously. Watson's later memoir described her as obstructionist and difficult. She was not.</p>
+  <div class="cover-facts">
+    <p>🔬 X-ray crystallography expert — coal research, then DNA at King's College London &nbsp;·&nbsp; 📸 Photo 51 taken May 1952 — clearest B-form DNA image ever &nbsp;·&nbsp; 🧬 Watson saw Photo 51 without permission, January 1953 &nbsp;·&nbsp; 🏆 Nobel Prize 1962: Watson, Crick, Wilkins — not Franklin &nbsp;·&nbsp; Died April 16, 1958 · Age 37 · ovarian cancer · London</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Franklin's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1946</div>
+  <div class="timeline-dot">Paris, France · Age 26</div>
+  <div class="narrative">
+    <p>You have joined the Laboratoire Central des Services Chimiques de l'Etat in Paris, working under Jacques Mering — one of the world's leading X-ray crystallographers. The technique involves bombarding crystallized or fibrous specimens with X-rays and analyzing the diffraction patterns that emerge to deduce molecular structure. It is technically demanding: specimen preparation must be perfect, humidity precisely controlled, exposures can last hours or days, and the resulting diffraction patterns require sophisticated mathematical analysis to interpret. Done well, it reveals molecular architecture at a precision no other technique can match.</p>
+    <p>You spend four years in Paris applying X-ray crystallography to the structure of coal and carbon materials. The work produces five papers of genuine scientific merit. More importantly, it makes you one of the most technically skilled X-ray crystallographers in Europe. When John Randall at King's College London offers you a position applying this expertise to DNA in 1950, you are unusually well-prepared for what comes next.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1946</div>
+    <p class="decision-q">Franklin spends four years perfecting X-ray crystallography on coal — unglamorous work. What kind of scientist does this training produce?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. An experimentalist who prefers practical work to theoretical ambition — the coal research reflects a preference for reliable established techniques over high-risk pioneering questions.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. An experimentalist of extraordinary precision — the coal work trains her to draw only conclusions the data supports, to control every variable, and to produce the clearest possible images. These habits, applied to DNA, will produce Photo 51. Preparation and rigor compound over time.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. A careful scientist who avoids controversy — coal structure is less politically sensitive than biological molecules, and the choice reflects a preference for low-conflict research environments.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. A generalist — crystallography is applicable to any molecular structure, training breadth over depth of expertise.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+<p><strong>You spend four years in Paris taking X-ray photographs of coal. This is not glamorous work. It makes you, when you turn to DNA, the most technically precise crystallographer in the entire story — which is exactly why what happens next is so consequential.</strong></p>
+      <strong>Franklin's training:</strong> Her Paris colleagues described her as technically exceptional — an unusually precise hand with specimen preparation and unusual patience for long exposures. She was also rigorous about not claiming more than the data showed. This combination of technical excellence and interpretive caution is exactly what produced Photo 51 — an image of such clarity that Watson recognized its implications immediately on seeing it — and it is also what put her in conflict with Watson and Crick's model-building approach, which proposed structures and tested them against available data rather than waiting for data to compel a conclusion.
+    </div>
+  </div>
+
+  <div class="year-banner">1951</div>
+  <div class="timeline-dot">King's College, London · Age 31</div>
+  <div class="narrative">
+    <p>You arrive at King's College London with a clear mandate from John Randall: you are to take charge of the X-ray crystallography work on DNA. Maurice Wilkins has been at King's working on DNA since 1950, but Randall's letter to you states explicitly that the DNA work will be your domain. The problem: Wilkins was not informed of this. When you arrive, he assumes you are his technical assistant. You are not — you are the lead researcher on your project. This misunderstanding is never properly resolved.</p>
+    <p>The institutional culture at King's does not help. King's has a men's common room that women are not permitted to enter. You are a specialist scientist in an institution that still treats women researchers as peripheral. You are also direct in manner, not inclined toward social smoothing, and professionally confident in ways that read as arrogance to colleagues who expect deference. You do your work. You produce results. You do not manage the political situation well enough. It will cost you.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1951</div>
+    <p class="decision-q">The role misunderstanding at King's — Franklin as lead, Wilkins assuming assistant — was never resolved. What was the scientific consequence?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. Minimal — the personal conflict didn't affect the science, which proceeded independently regardless of the professional relationship.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. It created conditions for the ethical breach that followed — Wilkins, treating Franklin as a subordinate, felt entitled to share her data with Watson without consulting her. The structural misunderstanding produced the circumstances in which Photo 51 was shown to a competitor without her knowledge.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. It slowed the DNA work — the conflict consumed time and energy that would otherwise have gone into research, delaying results by at least a year.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. Franklin should have managed the relationship differently — a more politically skilled scientist would have clarified role boundaries early and maintained a workable professional relationship despite the initial misunderstanding.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+<p><strong>You arrive at King's College London in 1951 as the lead researcher on DNA. Maurice Wilkins assumes you are his technical assistant. This misunderstanding is never formally corrected. It creates the conditions for everything that follows.</strong></p>
+      <strong>The King's College environment:</strong> In 1951, King's College had a men's common room that women were not permitted to enter — Franklin had to eat lunch elsewhere. The assumption that she was Wilkins's assistant was consistent with institutional culture that had difficulty placing women scientists in positions of authority. Wilkins's perception of the relationship — shaped by this culture and by Randall's failure to communicate clearly — meant he never asked Franklin's permission before sharing her data. He thought he was sharing a subordinate's work product. He was sharing an independent researcher's unpublished findings.
+    </div>
+  </div>
+
+  <div class="year-banner">1952</div>
+  <div class="timeline-dot">King's College, London · Age 32</div>
+  <div class="narrative">
+    <p>May 1952. You have been refining your techniques for a year. You have discovered that DNA comes in two structural forms — A-form (dry) and B-form (wet) — and learned to control humidity to convert between them. The B-form, which DNA takes in its natural biological environment, diffracts X-rays in a particularly informative pattern. You set up the exposure: a carefully prepared DNA fiber, precisely aligned, in a camera designed to maintain controlled humidity. The exposure takes one hundred hours.</p>
+    <p>When you develop the plate, Photograph 51 emerges: a clear X-shaped pattern of diffraction spots. The X is the crystallographic signature of a helix. The spacing and angle of the spots allow precise calculation of the helix's pitch (34 angstroms per turn), diameter (20 angstroms), and phosphate backbone position on the outside. Photo 51 is the clearest picture of DNA structure ever taken. You know what it shows. You are methodically verifying the conclusions before publishing them. You are a scientist who does not speculate beyond her data.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1952</div>
+    <p class="decision-q">Photo 51 shows a helix clearly. Franklin continues systematic analysis before claiming a structural model. Was this the right approach?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. No — in competitive science, the first publication establishes priority. She should have immediately published even preliminary conclusions.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. Yes as scientific practice — rigorous science requires verifying conclusions before claiming them, and Franklin was doing this correctly. The problem was not her method but the unauthorized sharing of her data, which made her method's normal timeline competitively fatal through no fault of her own.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. It was correct but naive about competitive realities — she knew Watson and Crick were working on DNA at Cambridge and should have factored competitive risk into her publication timeline.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. Her laboratory notebooks show she was uncertain about the helical interpretation — the delay reflected genuine scientific doubt, not methodical rigor.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+<p><strong>You spend one hundred hours exposing a single X-ray plate in May 1952. Photograph 51 is the clearest image of DNA structure ever produced. Watson sees it without your knowledge eight months later and immediately understands what it shows.</strong></p>
+      <strong>Franklin's analysis:</strong> The claim that Franklin "rejected" or was "confused about" the helical interpretation — repeated in Watson's memoir and early popular accounts — is contradicted by her laboratory notebooks, which historians have examined closely. Franklin had recognized the B-form as helical by mid-1952 and was systematically quantifying the parameters. She was verifying, not doubting. Her caution about the A-form (where the interpretation was genuinely harder) has been misrepresented as general confusion about helical structures. She was right to be careful about the A-form; she was not confused about what Photo 51 showed.
+    </div>
+  </div>
+
+  <div class="year-banner">1953</div>
+  <div class="timeline-dot">London and Cambridge · Age 33</div>
+  <div class="narrative">
+    <p>January 1953. James Watson visits King's College. Wilkins shows him Photo 51. Watson does not ask Franklin's permission. Wilkins does not inform Franklin that he is sharing her data. Watson sees Photo 51 and understands immediately: the X-pattern is unmistakably helical, the dimensions can be read from the spot positions, the image is far clearer than anything Watson or Crick have been working from. He returns to Cambridge and tells Crick. They also receive, through Max Perutz, a Medical Research Council progress report containing Franklin's precise measurements of DNA's unit cell dimensions — measurements she has spent months deriving.</p>
+    <p>February 28, 1953: Watson and Crick build the double helix model. Their paper appears in Nature on April 25, 1953. Franklin and Wilkins publish supporting papers in the same issue. Franklin's paper — the experimental evidence that the model is correct — appears alongside Watson and Crick's paper claiming the discovery. She does not publicly object at the time. She does not yet know the full extent of how her data was used.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1953</div>
+    <p class="decision-q">Watson saw Photo 51 without Franklin's knowledge or consent and used her measurements to build the DNA model. How serious was this breach?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. Minor — scientific competition involves sharing data and the norms of 1953 were different from today. What Watson did was unusual but not seriously wrong by the standards of his time.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. Serious — Franklin's data was shared without her knowledge by a colleague who had no legitimate authority to share it, used without attribution in a publication claiming priority over her work, and the full extent of this use was not acknowledged until decades after her death. By any fair standard, this was a significant ethical breach.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. Moderate — sharing a colleague's data informally was normal in 1950s British science. The real breach was failure to acknowledge the source in publication, which is clearly wrong but relatively common.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. The blame belongs to Wilkins, not Watson — Watson didn't ask to see the photograph and cannot be blamed for acting on information presented to him, even if the presentation was inappropriate.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+<p><strong>Watson sees Photo 51 without your knowledge or consent, uses your precise measurements in the double helix paper without crediting you, and you do not learn the full extent of this until his memoir appears in 1968 — ten years after your death.</strong></p>
+      <strong>The ethical record:</strong> Watson's own account describes seeing Photo 51 in a way that makes clear he understood he was seeing something he shouldn't. He writes that his mouth fell open and he almost blurted out to Wilkins how perfect the X-pattern was. He did not go back to Franklin, identify himself, and ask to see the data officially. Max Perutz later acknowledged he should have checked whether sharing the MRC report with Watson and Crick was appropriate. Franklin herself did not learn the full extent of how her data was used until Watson's book was published in 1968 — ten years after her death.
+    </div>
+  </div>
+
+  <div class="year-banner">1953</div>
+  <div class="timeline-dot">Birkbeck College, London · Age 33</div>
+  <div class="narrative">
+    <p>After the Watson-Crick publication, you leave King's College and join J.D. Bernal's group at Birkbeck College. The move is professional and practical — you are ready to leave King's regardless of the DNA situation, and Bernal's laboratory is one of the finest X-ray crystallography groups in the world. At Birkbeck, you work on the structure of tobacco mosaic virus (TMV) and later on other plant viruses. The work is excellent: your TMV papers are among the most important structural biology publications of the decade.</p>
+    <p>You collaborate effectively with Aaron Klug, who will later win the 1982 Nobel Prize in Chemistry, partly for work he began with you. You travel to the United States for research visits. You correspond with Watson on the TMV structure — a cordial and productive scientific relationship that suggests the antagonism in his later memoir was more his than hers. By 1956, you are one of the most respected structural biologists in Britain. You are thirty-six years old. You are very ill.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1953</div>
+    <p class="decision-q">After the DNA publication, Franklin moves to new research and produces excellent virology work. What does this reveal?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. That she was resigned to losing the DNA credit and chose to move on rather than fight for recognition she knew she couldn't obtain.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. That she was primarily a scientist rather than a credit-seeker — she moved to Birkbeck because it was a good scientific environment, worked on viruses because the questions interested her, and produced excellent results because that is what she did. The DNA situation was not her whole story, even if it became her whole story in retrospect.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. That she was unaware of the full extent of how her DNA data was used — if she had known, she would have objected publicly rather than continuing normal scientific relations with Watson.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. That her post-DNA reputation has been inflated — she was simply a very good scientist, and the DNA story has become disproportionate because of its subsequent cultural significance.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+<p><strong>You leave King's College for Birkbeck in 1953 and spend the next five years producing some of the finest structural biology of the decade on tobacco mosaic and plant viruses. Aaron Klug, who wins the 1982 Nobel, says you were one of the finest scientists he ever knew. Watson's portrait of you does not match any account from Birkbeck.</strong></p>
+      <strong>Franklin beyond DNA:</strong> Her tobacco mosaic virus work at Birkbeck is independently important — she correctly determined that TMV's RNA is embedded in a helical protein coat and published papers that remain foundational. Aaron Klug said she was one of the finest scientists he ever knew, and his 1982 Nobel lecture cited her contribution explicitly. Watson's portrait of Franklin as obstructionist and difficult is contradicted by everyone who worked with her at Birkbeck, by her correspondence with Watson on TMV (which was cordial), and by the scientific output of those years. The Watson memoir reflects his perception, not the documentary record.
+    </div>
+  </div>
+
+  <div class="year-banner">1956</div>
+  <div class="timeline-dot">London, England · Age 36</div>
+  <div class="narrative">
+    <p>Late 1956. You are diagnosed with ovarian cancer. You are thirty-six years old. The cause may include the X-ray radiation you have worked with throughout your career — radiation safety standards in the 1950s were less rigorous than they would later become. You continue working through two operations and periods of chemotherapy. You are in the laboratory when you can be. You submit papers. You attend conferences. You are working on the structure of the polio virus when you can no longer continue.</p>
+    <p>April 16, 1958. You die at the Royal Marsden Hospital in London, aged thirty-seven. Your colleague Aaron Klug completes the virus work and publishes the papers with your authorship. John Bernal writes an obituary in Nature that describes your scientific contributions accurately: a crystallographer of the first rank, whose TMV work was excellent, whose contribution to understanding nucleic acid structure was significant. His obituary is correct about all of these things.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1956</div>
+    <p class="decision-q">Franklin is diagnosed with terminal cancer at 36 and continues working until she cannot. What does this reveal?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. It was a kind of denial — continuing to work while terminally ill was a way of avoiding facing what was happening to her.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. Science was genuinely her vocation, not merely her career — she worked because the questions interested her and because doing the work well was its own purpose. The continuity through illness was not heroism or denial but simply who she was.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. She was racing to finish her TMV work before she died, knowing that incomplete results would be published posthumously without her final verification.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. The working conditions at Birkbeck were unusually supportive — Bernal arranged conditions that would have been impossible in most research environments.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+<p><strong>You are diagnosed with ovarian cancer in 1956 at thirty-six. You tell almost no colleagues how ill you are. You travel, submit papers, attend conferences, and work on the polio virus structure until you cannot continue. You die at the Royal Marsden Hospital on April 16, 1958.</strong></p>
+      <strong>Franklin's final two years:</strong> She traveled to the United States for research visits during her illness. She submitted papers for publication. She attended conferences. She did not tell most colleagues how ill she was — partly from privacy, partly because she was genuinely able to work during periods of remission. Aaron Klug described her as having an extraordinary ability to separate the laboratory from everything else. The two final years produced several important virus papers. She was working on the polio virus structure when she died. The science continued until the science could not.
+    </div>
+  </div>
+
+  <div class="year-banner">1962</div>
+  <div class="timeline-dot">Stockholm · Age — (died 1958)</div>
+  <div class="narrative">
+    <p>October 1962. Nobel Prize in Physiology or Medicine: James Watson, Francis Crick, and Maurice Wilkins "for their discoveries concerning the molecular structure of nucleic acids and its significance for information transfer in living material." Rosalind Franklin has been dead for four years. The Nobel Prize is not awarded posthumously. Franklin's name appears in none of the Nobel lectures' acknowledgments. Wilkins mentions her in passing. Watson and Crick do not.</p>
+    <p>1968: Watson publishes his memoir about the DNA discovery. The book describes Franklin as hostile, dowdy, and unable to see what her own data showed. It uses a nickname she disliked. The book is enormously popular. Many readers' first impression of Franklin comes from a description written by a man who took her data without permission, fifteen years after the fact. The backlash begins immediately. By 1975, the scientific community has substantially revised the account. Franklin's contribution is now fully acknowledged in the scientific record, in textbooks, and in the culture.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1962</div>
+    <p class="decision-q">The Nobel cannot be awarded posthumously, so Franklin is excluded from the 1962 prize. Is this the right rule?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. Yes — posthumous awards create complex precedent problems and the Nobel Committee's rule avoids these while focusing recognition on living scientists.</button>
+      <button class="dopt" onclick="choose(this,7,true)">B. The rule is defensible in general but its application here reveals a specific injustice — Franklin died at 37 partly from radiation exposure related to her work, and the prize was awarded four years later. The rule's operation is not a neutral policy outcome but a particular case that the scientific community has widely recognized as unjust.</button>
+      <button class="dopt" onclick="choose(this,7,false)">C. The rule is wrong in principle — Nobel Prizes should recognize the best work regardless of the researcher's life status.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. The prize was correctly awarded — Watson, Crick, and Wilkins built and established the structure. Franklin's contribution was experimental support, not the discovery itself.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+<p><strong>The 1962 Nobel in Physiology or Medicine goes to Watson, Crick, and Wilkins for the molecular structure of nucleic acids. You have been dead for four years. The Nobel is not awarded posthumously. Neither Watson's nor Crick's Nobel lecture mentions your name.</strong></p>
+      <strong>The posthumous prize question:</strong> The Nobel's no-posthumous-award rule exists for legitimate reasons and has been maintained consistently. But the specific facts here — she died very young, from cancer possibly caused by the very work involved, four years before the prize — make the rule's application particularly pointed. The scientific consensus since the 1970s has been that Franklin deserved to share the prize, that her contribution was essential rather than merely supportive, and that the failure to acknowledge this in 1962 was a significant error in Nobel history. Whether the rule itself is wrong is a separate question. The injustice in this specific case is clear.
+    </div>
+  </div>
+
+  <div class="year-banner">2003</div>
+  <div class="timeline-dot">Franklin's legacy · Half a century on</div>
+  <div class="narrative">
+    <p>The reappraisal of Rosalind Franklin's contribution began with Anne Sayre's 1975 biography and accelerated with Brenda Maddox's 2002 biography "Rosalind Franklin: The Dark Lady of DNA." The laboratory notebooks that show she correctly identified the B-form helix months before Watson saw Photo 51 are published and widely cited. The Royal Society established the Rosalind Franklin Award in 2003 for contributions to science. University College London named its life sciences building after her. NASA named its Mars rover Rosalind Franklin in 2019.</p>
+    <p>She worked precisely. She photographed clearly. She measured exactly. She drew only the conclusions her data compelled. She was, by any technical measure, the finest experimentalist in the DNA story — and, in her virus work, one of the finest structural biologists of her generation. Photo 51, produced in a hundred-hour exposure in May 1952, is one of the most important experimental images in the history of science.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · Legacy</div>
+    <p class="decision-q">What is the most important lesson of Rosalind Franklin's story?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. That women scientists face systemic barriers preventing recognition in their lifetimes — the lesson is primarily about gender discrimination in mid-century science.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. That research ethics matter — the unauthorized sharing of Photo 51 is a case study in what happens when competitive pressure overrides ethical norms.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. Both simultaneously: her story demonstrates how gender discrimination shaped her professional environment at King's, how competitive pressure produced the ethical breach with Photo 51, and how experimental rigor — the kind she embodied — is the foundation all theoretical model-building depends on. Separating the technical injustice from the gender injustice from the ethical breach misses that they are the same story.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. That the history of science is written by the winners — the eventual correction of the record is reassuring, but the lesson is about how recognition is distributed in real time, not how it is corrected retrospectively.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+<p><strong>The Royal Society names an award after you in 2003. NASA names its Mars rover Rosalind Franklin in 2019. Your laboratory notebooks, when examined by historians, show you had correctly identified the B-form helix months before Watson ever saw Photo 51.</strong></p>
+      <strong>Franklin's full significance:</strong> Her story has been simplified in two directions: as pure victim of gender discrimination, and as simply one contributor among several who received appropriate credit for her own work if not the Nobel. The truth is more tangled. She worked in a discriminatory environment that shaped every professional interaction at King's. She was also an independently significant scientist whose virus work would have established a major reputation without DNA. The ethical breach over Photo 51 was real and consequential. And she was an experimentalist of genuine greatness who, had she lived, would have produced another decade or more of important science. All of these are true at once.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Rosalind Franklin · 1920–1958</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"Science and everyday life cannot and should not be separated."<br><em style="font-size:13px;color:var(--muted);">— Rosalind Franklin</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="curie-simulator.html" class="next-card">
+        <div class="next-card-name">Marie Curie</div>
+        <div class="next-card-sub">Two Nobel Prizes &amp; the element she named</div>
+      </a>
+      <a href="turing-simulator.html" class="next-card">
+        <div class="next-card-name">Alan Turing</div>
+        <div class="next-card-sub">The machine that thinks — and the cost</div>
+      </a>
+      <a href="hypatia-simulator.html" class="next-card">
+        <div class="next-card-name">Hypatia of Alexandria</div>
+        <div class="next-card-sub">Mathematics, philosophy &amp; the mob</div>
+      </a>
+      <a href="fleming-simulator.html" class="next-card">
+        <div class="next-card-name">Alexander Fleming</div>
+        <div class="next-card-sub">The petri dish that changed medicine</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understood Franklin\'s story without simplifying it — the Paris precision that produced Photo 51\'s extraordinary clarity, the institutional failure at King\'s that created conditions for the ethical breach, the rigorous data-first approach that was correct as science and fatally exposed to competitive theft, and the independently significant virus work at Birkbeck that her story would include even without DNA. You read the whole scientist.';else if(pct>=0.625)t.textContent='You grasped the major facts of Franklin\'s life — the Photo 51 breach, the institutional context at King\'s, the posthumous Nobel exclusion. A few of the connections between her methods and what happened to her work required more careful reading than a first pass allows.';else if(pct>=0.375)t.textContent='You caught some of Franklin\'s story but missed the through-lines connecting her Paris crystallography training to Photo 51\'s unmatched clarity to the competitive breach to the Birkbeck work. The story is more connected than it appears from the headline alone.';else t.textContent='Franklin\'s story has been simplified in both directions — pure victim and simply one contributor. She was an extraordinarily precise scientist in a discriminatory environment whose unpublished data was used without consent, who then produced independently significant work that her story would include even if DNA had never happened. All of these are true at once.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

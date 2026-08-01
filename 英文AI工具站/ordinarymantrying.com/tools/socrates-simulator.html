@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Socrates?</title>
+<meta name="description" content="He wrote nothing. He questioned everything. At 70, Athens put him on trial for corrupting the youth. He refused to stop. 8 decisions from the father of Western philosophy.">
+<meta property="og:title" content="What Would You Do If You Were Socrates?">
+<meta property="og:description" content="The philosopher who said he knew nothing and changed everything. 8 decisions from the life of Socrates.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/socrates-simulator.html">
+<style>
+:root{
+  --bg:#F0EDE8;--card:#FAF8F4;--ink:#18140A;--muted:#5A5040;--line:#D0C8B0;
+  --accent:#2C2410;--accent-bg:#EDE8D8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(240,237,232,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#18140A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C0B890;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#281C08;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F8F4E8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.5);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#18100A;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F8F4E8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C0B890;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#281C08;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#18140A;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F8F4E8;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C0B890;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:24px 0 36px;}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px;}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4;}
+.cta-box{background:var(--accent);color:#F8F4E8;border-radius:14px;padding:20px 22px;margin:0 0 36px;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#C8B870;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}.next-grid{grid-template-columns:1fr;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Socrates</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #28</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Socrates?</h1>
+  <p class="cover-sub">He never wrote a single word. Everything we know about him comes from his students. He spent his life asking questions in the marketplace of Athens — questions that made powerful men feel foolish. At 70, the city put him on trial for corrupting the youth and impiety. He could have escaped. He chose the hemlock. <strong>8 decisions — what would you have done?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Socrates</strong> (c. 470–399 BC) · Athenian philosopher · Son of a stonemason and a midwife · Served as a soldier in three military campaigns · Married Xanthippe; had three sons · Never charged money for his teaching · Primary sources: Plato's dialogues, Xenophon's memoirs, Aristophanes' comedies · Tried and convicted by an Athenian jury of 501 citizens in 399 BC · Executed by drinking hemlock · Founding figure of Western philosophy — all subsequent Western philosophy has been called "footnotes to Plato," and Plato's philosophy is largely Socrates speaking.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 450 BC, Athens</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Oracle</span></div>
+<div class="year-banner">430 BC</div>
+<div class="timeline-dot">Athens · Age ~40</div>
+<div class="narrative">
+  <p>A friend of yours, Chaerephon, has visited the Oracle at Delphi and asked: "Is anyone wiser than Socrates?" The Oracle answered: "No one is wiser."</p>
+  <p>When you hear this, you are puzzled. You do not believe you are wise. You know you know nothing — you are certain of it. So you set out to find someone wiser than you, to prove the Oracle wrong.</p>
+  <p>You visit the politicians of Athens, the poets, the craftsmen. Each group believes themselves wise. When you question them, you discover they are not. The politicians know nothing of justice but believe they do. The poets cannot explain their own work. Only the craftsmen have genuine knowledge — but they mistake their technical skill for wisdom about everything.</p>
+  <p>Your conclusion: you are wiser than these men because, unlike them, you do not think you know what you do not know. The Oracle was right for a strange reason.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Meaning of the Oracle</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The Oracle said no one is wiser than you. You believe you know nothing. How do you reconcile this?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">A</span><span class="dopt-body">Wisdom begins with knowing what you don't know. Most people are confident about things they haven't examined. The examination reveals the ignorance. Knowing you're ignorant is the beginning of wisdom.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">The Oracle was simply wrong or speaking metaphorically. No god can know who is wisest among humans — this is a category error about divine knowledge.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">The Oracle meant something practical: Socrates asks the right questions. Wisdom isn't knowledge — it's method. The questioning method is the wisdom.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">Socratic ignorance — what Plato recorded</div>
+      <p><strong>You respond to the Oracle by spending the next 30 years making every powerful man in Athens feel publicly foolish. The politicians, poets, and craftsmen most humiliated by your questioning are the ones who will vote 280-221 to execute you at 70.</strong> This story comes from Plato's *Apology*, Socrates' defense speech at his trial. His interpretation of the Oracle is one of the founding moments in philosophy: the claim that true wisdom begins with recognizing one's own ignorance. This idea became known as "Socratic ignorance" or the "Socratic paradox" — "I know that I know nothing" (though the exact phrase doesn't appear in Plato in this form). What makes it powerful: it's not mere humility or self-deprecation. It's a structural claim about knowledge. The people who *believe* they know are more ignorant than the person who *knows* they don't know. This is the engine of the Socratic method: the examination always reveals that the confident person's confidence is groundless.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Method</span></div>
+<div class="year-banner">420 BC</div>
+<div class="timeline-dot">Agora, Athens · Age ~50</div>
+<div class="narrative">
+  <p>You spend your days in the marketplace, the gymnasium, the homes of friends — asking questions. You never lecture. You never state your own views directly. You ask questions that lead your interlocutor to examine what they believe, until the belief collapses under examination.</p>
+  <p>This is the elenchus — the method of refutation. You ask a powerful Athenian what justice is. He gives a definition. You find a counterexample. He revises the definition. You find another counterexample. Eventually he either abandons the conversation in frustration or admits he doesn't know what justice is.</p>
+  <p>This is not popular. You are making powerful men feel stupid in public. Some of them find it enlightening. Many find it infuriating.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Socratic Method</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Socrates never stated his own views directly — only asked questions. Was this genuine modesty or a rhetorical strategy?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Genuine modesty. He truly believed he didn't know the answers. Asking questions was the honest method for a man who claimed ignorance.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">B</span><span class="dopt-body">Rhetorical strategy. The questioning format is more powerful than assertion — it forces the other person to examine themselves, which is more convincing than being told what to think.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — and the distinction may not matter. If you genuinely don't know the answer, the honest method is to ask questions. If questions also happen to be the most powerful rhetorical tool, the honesty and the strategy align perfectly. Socrates couldn't have separated them even if he'd wanted to.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">The irony problem in Plato's dialogues</div>
+      <p><strong>You write nothing. Everything attributed to you is filtered through students — primarily Plato, who portrays a different Socrates in his early dialogues than in his middle and late works. The most influential philosopher in Western history is the one we know least directly. What we have is Plato's Socrates, not Socrates.</strong> Scholars have debated for centuries whether Socrates' claimed ignorance was genuine (the "aporetic" reading — the dialogues end in genuine uncertainty) or ironic (the "maieutic" reading — Socrates knows the answers and is helping others give birth to the same conclusions). Plato himself seems to use Socrates differently in different dialogues: in the early dialogues, Socrates genuinely doesn't resolve the questions; in the middle dialogues, Socrates seems to have definite views (the Theory of Forms). Most scholars now believe the early dialogues are closer to the historical Socrates, and the middle dialogues are more Plato. The question of whether Socrates' ignorance was real or performed may be unresolvable — which is very Socratic.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Daimon</span></div>
+<div class="year-banner">410 BC</div>
+<div class="timeline-dot">Athens · Age ~60</div>
+<div class="narrative">
+  <p>You speak occasionally of a "daimon" — an inner voice or divine sign that warns you away from certain actions. It never tells you what to do; it only tells you what not to do. When you are about to take a path that would be wrong, the voice stops you.</p>
+  <p>You have served in the military when called — at Potidaea, Amphipolis, Delium. At Delium, you fought in a losing battle and were among the last to retreat, protecting others as you withdrew. You are not physically cowardly. But the daimon stopped you from entering politics. Every time you considered it, the voice intervened.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — Avoiding Politics</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Socrates said his inner voice kept him out of politics. Was this wisdom or avoidance?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">A</span><span class="dopt-body">Wisdom. He said it directly: a man who genuinely tries to do right in politics will be killed before he can accomplish anything. His life demonstrates this — the city killed him anyway, and he hadn't even entered politics. In politics, he would have died earlier and less meaningfully.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">Avoidance. Philosophy in the marketplace is safe compared to the real arena. True courage would have been to take the ideas into the political system and try to change it from inside.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">The daimon was a convenient rationalization for a temperamental preference. Socrates liked conversation better than administration. He was unsuited for politics and knew it.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Socrates said about politics in the Apology</div>
+      <p><strong>You avoid politics for 70 years, saying anyone who genuinely tries to do right in public life will be killed before he can accomplish anything. Athens kills you anyway, at 70, for doing philosophy in private life. You were right. You just underestimated how far the problem extended.</strong> In the *Apology*, Socrates explicitly addresses why he avoided politics: "I want you to know that if I had entered politics, I would have died long ago, and I would have done no good to you or to myself... A man who really fights for justice must lead a private, not a public life, if he is to survive for even a short time." This is not presented as timidity but as strategic calculation: the philosopher who enters the political arena gets destroyed before he can do the work. His prediction proved correct about himself — the city killed him at 70 despite him never holding office. He had spent 40 years doing something more durable than politics: teaching people to question.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The Trial</span></div>
+<div class="year-banner">399 BC</div>
+<div class="timeline-dot">Athens · Age 70</div>
+<div class="narrative">
+  <p>You are charged with two crimes: impiety (not believing in the gods of the city and introducing new divinities) and corrupting the youth. The penalty prosecutors are seeking is death.</p>
+  <p>The jury is 501 Athenian citizens. You are given the opportunity to make a defense speech. Your friends urge you to be conciliatory — apologize, show remorse, appeal to the jury's emotions. The charges are not impossible to defend against. Many defendants have survived similar trials through strategic humility.</p>
+  <p>You refuse to be conciliatory. You give the speech that Plato records as the <em>Apology</em>. You tell the jury you are a gift from the god to Athens. You say you cannot stop questioning. You say the unexamined life is not worth living.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The Defense Speech</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Socrates could have been conciliatory and probably survived. He chose not to. Was this courage or stubbornness?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Stubbornness. A genuinely wise man would have recognized when strategic humility was the appropriate response. Dying unnecessarily doesn't serve the mission of philosophy.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">B</span><span class="dopt-body">Courage combined with consistency. He had spent 40 years saying that the examined life is the only life worth living. Abandoning that position to save himself would have made the 40 years meaningless. He was his own argument.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">A deliberate choice to die on his own terms. He was 70, in a city that had turned against him. He chose the death that would make his life into a statement rather than the survival that would have compromised it.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">The vote — and what it showed</div>
+      <p><strong>The jury votes 280-221 to convict — a margin of 59 votes, close enough that a few changed votes would have saved you. You are then allowed to propose your own penalty. You suggest the city provide you free meals for life as an honor. The jury, infuriated, votes 360-141 for death — a larger majority than the original conviction. Your penalty speech cost you more votes than the trial itself.</strong> The jury voted 280-221 to convict — a margin of 59 votes. Scholars note that this was not a landslide: more than 220 Athenians voted to acquit. After conviction, each side proposed a penalty. The prosecutors proposed death. Socrates was allowed to propose a counter-penalty. He initially suggested the state provide him free meals for life (as an honor for his service to Athens) — which infuriated the jury — then, pushed by friends, proposed a small fine. The jury, apparently angered by his response to the conviction, voted for death by a larger margin (360-141) than the original conviction. His manner in the penalty phase almost certainly cost him his life. He seemed, by all accounts, to know this and to choose it anyway.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Escape</span></div>
+<div class="year-banner">399 BC</div>
+<div class="timeline-dot">Prison, Athens · Age 70</div>
+<div class="narrative">
+  <p>You are in prison awaiting execution. Your friend Crito arrives before dawn with a plan: he has bribed the guards, arranged transportation to Thessaly, and has money to support you there. Everything is prepared. You need only to leave with him now, before dawn, before the execution ship returns from Delos.</p>
+  <p>You refuse to leave. You sit in prison and discuss, with Crito and then with a group of friends, why you cannot escape. You argue that a just man cannot disobey the laws of his city even when those laws condemn him unjustly — that the laws of Athens gave you everything, and to flee would be to betray the compact you've lived by.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — The Escape</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Socrates refused to escape from an unjust death sentence. Was he right?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">No. An unjust law doesn't deserve obedience. Escaping from an unjust conviction is not the same as lawlessness — it's self-defense against a corrupt system.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">Yes — for him, specifically. He had lived 70 years in Athens, benefited from its laws, raised his family there, and accepted its authority in everything. Fleeing at the moment the authority turned against him would have been inconsistent with everything he'd argued. You can't accept the law only when it goes your way.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">The question is undecidable. His argument in the Crito is one of the strongest defenses of law-abiding ever written. His argument in the Apology that he cannot stop questioning is an equally strong justification for civil disobedience. He held two contradictory positions simultaneously.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">The Crito argument — and its critics</div>
+      <p><strong>Crito arrives before dawn with a plan: bribed guards, arranged transport to Thessaly, money to live on. Everything is ready. You refuse to leave. You spend the night arguing — with the man who came to rescue you — that fleeing an unjust law is still breaking a law, and you cannot live with that. Crito goes home. The execution proceeds as scheduled.</strong> In the *Crito*, Socrates imagines the Laws of Athens speaking to him: they point out that they gave him birth, education, and the ability to live the examined life. If he flees now, he betrays the compact. This argument has been used for millennia to justify obedience to law — and criticized for millennia as the reasoning of someone with a death wish. The philosopher who said "know thyself" and "the unexamined life is not worth living" chose the examined death. Whether this was consistency or self-destruction depends on what you think the examined life requires. He thought it required dying honestly rather than living by compromise. Two and a half millennia later, people still argue about whether he was right.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Writing Nothing</span></div>
+<div class="year-banner">399 BC</div>
+<div class="timeline-dot">Prison, Athens · Final days</div>
+<div class="narrative">
+  <p>In prison, in the days before execution, you write poetry for the first time in your life. You have never written philosophy — everything Plato records is from memory and interpretation, not your hand. The poetry disappears.</p>
+  <p>You chose, deliberately and over seventy years, not to write. You taught Plato, who wrote everything down. You taught Xenophon, who wrote memoirs. You taught Alcibiades, who became a disastrous military leader. You taught Critias, who became a tyrannical oligarch. The students you produced range from the greatest philosopher in history to some of the worst men Athens ever knew.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — Writing Nothing</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Socrates chose not to write. Everything we know about him is filtered through his students. Was this a deliberate philosophical choice?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">A</span><span class="dopt-body">Yes — he believed writing was inferior to dialogue. A written text gives the same answer to everyone; a dialogue responds to the specific person in front of you. Philosophy, for him, required live conversation. Writing would have been a betrayal of the method.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">B</span><span class="dopt-body">Practical: he was always in conversation, always in the marketplace. There was no time or context for writing. The decision was circumstantial, not philosophical.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">We can't know — everything we have about his reasoning is through Plato, who had obvious incentives to present Socrates' choices as deliberate and philosophical rather than accidental.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">Plato's Phaedrus — on the inferiority of writing</div>
+      <p><strong>You teach Plato, who founds the Academy and preserves your method for 2,500 years. You also teach Critias, who leads the Thirty Tyrants and murders 1,500 Athenians. You teach Alcibiades, who betrays Athens to Sparta. You charge nothing, to anyone, for any of it.</strong> In the *Phaedrus*, Plato records Socrates telling a myth about the invention of writing by the Egyptian god Thoth. When Thoth presents writing to the king as a tool for memory and wisdom, the king rejects it: writing will produce forgetfulness, not memory, because people will rely on external marks rather than internal understanding. Writing gives the same answer to every question; it cannot adapt to the reader. Dialogue can. This argument appears in a written text, which is one of the great ironies in philosophy. Plato — who wrote everything — seems to be channeling a Socrates who would have rejected what Plato was doing. Whether Plato agreed with the argument or was recording it faithfully is one of many things we cannot know.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Hemlock</span></div>
+<div class="year-banner">399 BC</div>
+<div class="timeline-dot">Prison, Athens · The last day</div>
+<div class="narrative">
+  <p>The day of execution. Your friends gather. You spend the day discussing the immortality of the soul — whether the soul survives death, what the afterlife might be like. You are calm. You say that a philosopher spends his life preparing for death — learning to separate the soul from the body through reason, to care for the soul's good rather than the body's comfort. Death is simply the completion of this practice.</p>
+  <p>At sunset, you drink the hemlock. You walk around until your legs feel heavy. You lie down. Your last words, as recorded by Plato, are: "Crito, we owe a cock to Asclepius. Please, don't forget to pay the debt." Asclepius is the god of medicine. A cock was the traditional offering when someone recovered from an illness. You seem to be saying: death is a cure. You have recovered from life.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — The Last Words</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">"We owe a cock to Asclepius." What did Socrates mean by his last words?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">A literal religious obligation — he had promised the offering and didn't want the debt to go unpaid. His last concern was keeping a promise.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">A philosophical statement: death is recovery from the illness of life. The offering to the god of medicine thanks him for the cure. It's Socrates' last, compressed argument that the soul is better off without the body — delivered as a debt repayment reminder.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">We can't know — Plato was present but these were the words of a dying man, and "last words" are often retrospectively shaped by those who record them. The philosophical reading may be what Plato wanted us to hear.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">Two millennia of interpretation</div>
+      <p><strong>Your last recorded words are a reminder to pay a debt — a cock owed to Asclepius, the god of healing. The traditional offering when someone recovers from illness. You spent 70 years arguing that death holds no terror. Your final sentence is either a philosophical statement that death is a cure, or a mundane errand from a man who kept his promises, or both.</strong> Nietzsche, in *The Gay Science*, argued that Socrates' last words were a condemnation of life: "Life is a sickness. This is said by someone who had his whole life long been a great despiser of life." Nietzsche saw Socratic philosophy as fundamentally life-denying — the ascent from body to soul is a rejection of the living world. Other interpreters see the words as serenely cheerful — a debt is a small thing, and Socrates is simply tying up a loose end with his characteristic orderliness. A third reading: it's a joke. Socrates spent his life asking what death was. Now he knows. And his response is to make an offering to the god of healing. He is, to the very end, equivocal.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Legacy</span></div>
+<div class="year-banner">After 399 BC</div>
+<div class="timeline-dot">History · Enduring</div>
+<div class="narrative">
+  <p>Socrates left no written work. His students went in opposite directions: Plato founded the Academy and wrote the dialogues that preserved Socrates' method and built one of the great philosophical systems. Xenophon wrote memoirs that give a different, more practical Socrates. Aristophanes lampooned him in comedy.</p>
+  <p>Two thousand five hundred years later, the Socratic method is taught in law schools. The idea of productive ignorance — not knowing as a starting point — is fundamental to modern science. The trial of Socrates has been called the greatest miscarriage of justice in Western history.</p>
+  <p>He changed the direction of Western thought without writing a word.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Method's Legacy</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Socrates wrote nothing but is arguably the most influential thinker in Western history. What does this tell us about how ideas travel?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">Ideas need great disciples more than great originators. Socrates survived because Plato was a genius communicator. The lesson: find a Plato, not a method.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">The method itself is transmissible regardless of the person. The Socratic dialogue format works whether or not you know who Socrates was. The tool outlived the man.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">Both — the method is genuinely powerful and transmissible, AND Plato's genius was required to record and systematize it. Great ideas need great originators and great transmitters. The survival of Socrates required both.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">The Socratic method today</div>
+      <p><strong>You write nothing. Plato writes everything. Two and a half thousand years later, the Socratic method is standard curriculum at Harvard Law School, applied in pediatric medicine, and used in cognitive behavioral therapy. It requires no technology, no institution, no funding. It requires only one person willing to ask: "But what do you mean by that?"</strong> The Socratic method is taught at Harvard Law School and most major law schools worldwide — the professor asks questions rather than lectures, forcing students to defend positions until they discover their own limits. Pediatric medicine uses a version of it in diagnosis. Therapy uses it in cognitive behavioral techniques. The "Socratic seminar" is a teaching technique in secondary education in dozens of countries. The original method — ask questions until confident beliefs collapse, then rebuild from what survives — has been more durable than almost any other educational technology ever developed. It works without technology, without funding, without institutions. All it requires is one person willing to ask: "But what do you mean by that?"</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Socrates' decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="next-sims">
+  <p class="next-label">Explore More Lives</p>
+  <div class="next-grid">
+    <a href="nietzsche-simulator.html" class="next-card">
+      <span class="next-name">Friedrich Nietzsche</span>
+      <span class="next-desc">The philosopher who declared God dead — and went mad at 44</span>
+    </a>
+    <a href="confucius-simulator.html" class="next-card">
+      <span class="next-name">Confucius</span>
+      <span class="next-desc">Traveled 14 years. Not one state adopted his ideas in his lifetime.</span>
+    </a>
+    <a href="kafka-simulator.html" class="next-card">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">Asked his friend to burn everything. The friend didn't.</span>
+    </a>
+    <a href="shakespeare-simulator.html" class="next-card">
+      <span class="next-name">William Shakespeare</span>
+      <span class="next-desc">Wrote 37 plays, never published one, went home at 48.</span>
+    </a>
+  </div>
+</div>
+<div class="cta-box">
+  <p>Socrates wrote nothing, questioned everything, and was executed at 70 for asking too many questions. Two and a half millennia later, his method is taught in every law school in the world. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/simulators.html">→ All Life Simulators — Darwin, Kafka, Einstein and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/nietzsche-simulator.html" style="color:var(--accent)">Nietzsche Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Socrates";body="You grasped that Socratic ignorance is structural rather than humble, that the method's honesty and strategy are inseparable, that avoiding politics was wisdom not avoidance, that the defense speech was consistency not stubbornness, and that the last words were a philosophical statement delivered as a debt reminder. That's the full Socrates.";}else if(pct>=0.625){title="The Questioner";body="You understood the core: that wisdom begins with knowing what you don't know, that the method produces more than assertion does, and that dying consistently is sometimes the right choice. Where you may have simplified: Socrates rarely had single causes for his decisions — the method was honest AND strategic, the escape refusal was principled AND chosen.";}else if(pct>=0.375){title="The Pragmatist";body="You tended to choose the practical or skeptical reading. Socrates was practical — he thought the examined life was genuinely better, not just philosophically interesting. But his practice was also philosophical. The line between his life and his ideas was thinner than you may have allowed.";}else{title="The Skeptic";body="You questioned whether Socrates meant what Plato recorded, whether the choices were really deliberate, whether the legacy was really his or Plato's. These are legitimate questions — every serious scholar asks them. But the historical Socrates, as best as we can reconstruct him, seems to have been genuinely consistent: he lived and died by the same principles he spent 70 years teaching."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

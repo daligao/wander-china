@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guangzhou Travel Planner 2025 — Free AI Itinerary Generator</title>
+<meta name="description" content="Plan your perfect Guangzhou trip in seconds. Smart route optimizer for Canton Tower, Pearl River Night Cruise, Guangdong Museum and 9 more top Tianhe District attractions. Free, no signup needed.">
+<meta name="keywords" content="guangzhou travel planner, guangzhou itinerary, canton tower, pearl river cruise, guangzhou trip 2025, tianhe attractions, guangzhou day trip">
+<meta property="og:title" content="Guangzhou Travel Planner 2025 — AI Itinerary Generator">
+<meta property="og:description" content="Build a smart, optimized Guangzhou itinerary in seconds. Covers 12 top Tianhe attractions with transport, local food picks, and one-click sharing.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/guangzhou-travel-planner.html">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --teal:#0D9488;--teal-d:#0F766E;--teal-bg:#F0FDFA;--teal-l:#CCFBF1;
+  --amber:#F59E0B;--amber-l:#FEF3C7;
+  --text:#1E293B;--text2:#64748B;--text3:#94A3B8;
+  --border:#E2E8F0;--bg:#F8FAFC;--white:#fff;
+  --r:12px;--shadow:0 2px 12px rgba(0,0,0,.08);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);}
+button,input{font-family:inherit;cursor:pointer;}
+
+/* HEADER */
+.site-hd{background:var(--teal-d);padding:12px 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
+.site-logo{color:#fff;font-weight:800;font-size:17px;}
+.site-logo span{opacity:.7;font-weight:400;margin-left:4px;font-size:13px;}
+.hd-back{margin-left:auto;background:rgba(255,255,255,.15);border:none;color:#fff;
+  padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;display:none;}
+.hd-back.on{display:block;}
+.hd-back:hover{background:rgba(255,255,255,.25);}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0F766E,#0D9488 50%,#0E7490);padding:36px 20px 28px;text-align:center;color:#fff;}
+.hero h1{font-size:clamp(22px,5vw,38px);font-weight:800;line-height:1.2;margin-bottom:10px;}
+.hero p{font-size:15px;opacity:.85;max-width:520px;margin:0 auto 20px;line-height:1.6;}
+.hero-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.hero-tag{background:rgba(255,255,255,.15);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;}
+
+/* STEPS BAR */
+.steps-bar{background:var(--white);border-bottom:1px solid var(--border);padding:12px 20px;
+  display:flex;align-items:center;justify-content:center;gap:4px;}
+.stp{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text3);}
+.stp.active{color:var(--teal);}
+.stp.done{color:var(--text2);}
+.stp-n{width:24px;height:24px;border-radius:50%;border:2px solid currentColor;
+  display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.stp.done .stp-n{background:var(--teal);border-color:var(--teal);color:#fff;font-size:12px;}
+.stp-line{width:40px;height:2px;background:var(--border);}
+.stp-line.done{background:var(--teal);}
+@media(max-width:400px){.stp-lb{display:none;}.stp-line{width:20px;}}
+
+/* MAIN */
+.main{max-width:1000px;margin:0 auto;padding:20px 16px 40px;}
+
+/* SECTION HEAD */
+.sec-hd{margin-bottom:16px;}
+.sec-hd h2{font-size:19px;font-weight:800;margin-bottom:4px;}
+.sec-hd p{color:var(--text2);font-size:14px;}
+
+/* SPOT GRID */
+.spots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:16px;}
+@media(max-width:500px){.spots-grid{grid-template-columns:1fr 1fr;gap:8px;}}
+@media(min-width:900px){.spots-grid{grid-template-columns:repeat(4,1fr);}}
+
+.sc{border-radius:var(--r);overflow:hidden;cursor:pointer;border:3px solid transparent;
+  transition:transform .15s,box-shadow .15s;background:#fff;box-shadow:var(--shadow);position:relative;}
+.sc:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.12);}
+.sc.sel{border-color:var(--teal);box-shadow:0 0 0 1px var(--teal);}
+.sc-img{height:110px;display:flex;align-items:flex-end;padding:10px;position:relative;
+  background-size:cover;background-position:center;transition:opacity .3s;}
+.sc-img-overlay{position:absolute;inset:0;border-radius:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.15) 0%,rgba(0,0,0,.55) 100%);}
+.sc-emoji{font-size:30px;text-shadow:0 2px 6px rgba(0,0,0,.5);position:relative;z-index:1;}
+.sc-ck{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:12px;color:var(--teal);opacity:0;transition:opacity .15s;font-weight:800;z-index:2;}
+.sc.sel .sc-ck{opacity:1;}
+.sc-body{padding:10px;}
+.sc-name{font-size:13px;font-weight:800;margin-bottom:3px;}
+.sc-tag{font-size:11px;color:var(--text2);line-height:1.4;margin-bottom:6px;}
+.sc-bgs{display:flex;gap:3px;flex-wrap:wrap;}
+.sc-bg{font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;}
+.bg-free{background:#DCFCE7;color:#166534;}
+.bg-paid{background:#FEE2E2;color:#991B1B;}
+.bg-night{background:#EDE9FE;color:#5B21B6;}
+.bg-indoor{background:#DBEAFE;color:#1E40AF;}
+.bg-book{background:#FEF3C7;color:#92400E;}
+
+/* SEL BAR */
+.sel-bar{background:var(--white);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.sel-info{flex:1;min-width:140px;}
+.sel-ct{font-size:14px;font-weight:700;}
+.sel-ct span{color:var(--teal);}
+.sel-names{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.4;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:12px 22px;border-radius:8px;font-size:15px;font-weight:700;border:none;
+  transition:background .15s,transform .1s;}
+.btn:active{transform:scale(.98);}
+.btn-teal{background:var(--teal);color:#fff;width:100%;}
+.btn-teal:hover{background:var(--teal-d);}
+.btn-teal:disabled{background:var(--text3);cursor:not-allowed;transform:none;}
+.btn-outline{background:transparent;border:2px solid var(--teal);color:var(--teal);}
+.btn-outline:hover{background:var(--teal-bg);}
+.btn-ghost{background:var(--white);border:1px solid var(--border);color:var(--text2);}
+.btn-ghost:hover{background:var(--bg);}
+
+/* CONFIG CARDS */
+.cfg-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px 16px;margin-bottom:12px;}
+.cfg-card h3{font-size:15px;font-weight:800;margin-bottom:12px;}
+.opt-grp{display:flex;gap:8px;flex-wrap:wrap;}
+.opt{padding:8px 16px;border-radius:8px;border:2px solid var(--border);background:var(--white);
+  font-size:14px;font-weight:600;color:var(--text2);transition:all .15s;cursor:pointer;}
+.opt.on{border-color:var(--teal);background:var(--teal-bg);color:var(--teal);}
+.weather-note{margin-top:12px;background:var(--amber-l);border-radius:8px;padding:10px 12px;
+  font-size:12px;color:#78350F;line-height:1.6;}
+
+/* ITINERARY */
+.itin-hd{background:linear-gradient(135deg,var(--teal-d),#0E7490);color:#fff;
+  border-radius:var(--r);padding:20px;margin-bottom:14px;}
+.itin-title{font-size:19px;font-weight:800;margin-bottom:8px;line-height:1.3;}
+.itin-meta{display:flex;gap:8px;flex-wrap:wrap;}
+.itin-badge{background:rgba(255,255,255,.2);border-radius:16px;padding:3px 10px;font-size:12px;font-weight:700;}
+.itin-budget{margin-top:10px;font-size:12px;opacity:.85;line-height:1.6;}
+
+.day-card{background:var(--white);border-radius:var(--r);border:1px solid var(--border);margin-bottom:12px;overflow:hidden;}
+.day-hd{padding:12px 16px;background:var(--teal-bg);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.day-num{background:var(--teal);color:#fff;width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+.day-theme{font-size:15px;font-weight:800;color:var(--teal-d);}
+.day-meta{font-size:12px;color:var(--text2);margin-top:1px;}
+
+.srow{padding:14px 16px;border-bottom:1px solid var(--border);}
+.srow:last-child{border-bottom:0;}
+.srow-top{display:flex;gap:10px;}
+.srow-time{font-size:12px;font-weight:700;color:var(--teal);min-width:80px;padding-top:2px;white-space:nowrap;}
+.srow-em{font-size:20px;flex-shrink:0;}
+.srow-info{flex:1;}
+.srow-name{font-size:15px;font-weight:800;margin-bottom:3px;}
+.srow-tips{font-size:12px;color:var(--text2);line-height:1.55;margin-top:4px;}
+.tip-warn{display:inline-block;background:#FEF3C7;color:#92400E;border-radius:4px;
+  padding:1px 6px;font-size:11px;font-weight:700;margin-bottom:3px;}
+
+.trow{padding:6px 16px;background:#F8FAFC;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);}
+
+.mrow{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;}
+.mrow:last-child{border-bottom:0;}
+.mrow-ic{font-size:16px;flex-shrink:0;margin-top:1px;}
+.mrow-body{flex:1;}
+.mrow-type{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.mrow-name{font-size:13px;font-weight:700;margin-bottom:2px;}
+.mrow-det{font-size:11px;color:var(--text2);}
+.mtag{display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;margin-right:3px;}
+.mtag-b{background:#DCFCE7;color:#166534;}
+.mtag-m{background:#DBEAFE;color:#1E40AF;}
+.mtag-f{background:#F3E8FF;color:#6B21A8;}
+
+.safety-box{background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--r);padding:14px 16px;margin-top:12px;}
+.safety-box h4{font-size:13px;font-weight:800;color:#92400E;margin-bottom:8px;}
+.safety-box p{font-size:12px;color:#78350F;line-height:1.65;}
+
+.itin-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+.itin-acts .btn{flex:1;min-width:120px;padding:11px 16px;font-size:14px;}
+
+/* RELATED */
+.related-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-top:16px;}
+.related-box h4{font-size:14px;font-weight:800;margin-bottom:10px;}
+.rlinks{display:flex;flex-direction:column;gap:7px;}
+.rlink{font-size:13px;color:var(--teal);text-decoration:none;}
+.rlink:hover{text-decoration:underline;}
+
+/* SHARE MODAL */
+.sov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;
+  display:flex;align-items:flex-end;justify-content:center;padding:16px;
+  opacity:0;pointer-events:none;transition:opacity .2s;}
+.sov.open{opacity:1;pointer-events:auto;}
+@media(min-width:500px){.sov{align-items:center;}}
+.spanel{background:#fff;border-radius:var(--r);width:100%;max-width:420px;padding:20px;}
+.spanel-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.spanel-hd-t{font-size:16px;font-weight:800;}
+.spanel-close{background:none;border:none;font-size:22px;color:var(--text3);}
+.surl{background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  padding:10px 12px;font-size:11px;color:var(--text2);word-break:break-all;
+  margin-bottom:10px;font-family:monospace;line-height:1.5;max-height:90px;overflow-y:auto;}
+.scopy-btn{display:block;width:100%;padding:11px;border-radius:8px;border:none;
+  background:var(--teal);color:#fff;font-size:14px;font-weight:700;margin-bottom:8px;}
+.scopy-btn:hover{background:var(--teal-d);}
+.scopy-note{font-size:11px;color:var(--text3);text-align:center;}
+
+/* LOADING */
+.ld-ov{position:fixed;inset:0;background:rgba(255,255,255,.96);z-index:150;
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+.ld-ov.on{display:flex;}
+.ld-spin{width:48px;height:48px;border:5px solid var(--teal-l);border-top-color:var(--teal);
+  border-radius:50%;animation:spin .8s linear infinite;}
+.ld-txt{font-size:15px;font-weight:700;color:var(--teal-d);}
+.ld-sub{font-size:13px;color:var(--text2);}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* TOAST */
+#__toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(0);
+  background:rgba(15,30,15,.85);color:#fff;padding:8px 22px;border-radius:20px;
+  font-size:13px;font-weight:700;z-index:300;transition:opacity .3s;pointer-events:none;opacity:0;white-space:nowrap;}
+
+@media print{.site-hd,.steps-bar,.sel-bar,.cfg-card,.itin-acts,.sov,.related-box,#__toast,.ld-ov{display:none!important;}
+  body{background:#fff;}
+  .itin-hd{background:var(--teal-d)!important;-webkit-print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-hd">
+  <div class="site-logo">🗺️ Guangzhou Planner <span>by OrdinaryManTrying</span></div>
+  <button class="hd-back" id="hd-back" onclick="goBack()">← Back</button>
+</header>
+
+<!-- STEPS BAR -->
+<div class="steps-bar" id="steps-bar">
+  <div class="stp active" id="stp1"><div class="stp-n"><span>1</span></div><div class="stp-lb">Choose Spots</div></div>
+  <div class="stp-line" id="sl1"></div>
+  <div class="stp active" id="stp2"><div class="stp-n"><span>2</span></div><div class="stp-lb">Trip Details</div></div>
+  <div class="stp-line" id="sl2"></div>
+  <div class="stp" id="stp3"><div class="stp-n"><span>3</span></div><div class="stp-lb">Your Itinerary</div></div>
+</div>
+
+<!-- LOADING -->
+<div class="ld-ov" id="ldov">
+  <div class="ld-spin"></div>
+  <div class="ld-txt">Planning your trip…</div>
+  <div class="ld-sub">Optimizing route across your chosen spots</div>
+</div>
+
+<!-- TOAST -->
+<div id="__toast"></div>
+
+<!-- ═══════════ STEP 1: SPOT SELECTOR ═══════════ -->
+<section id="s1">
+  <div class="hero">
+    <h1>Plan Your Guangzhou Trip</h1>
+    <p>Select the attractions you want to visit — our AI optimizer will build the perfect route, with local food picks and transport tips.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">🏙️ 12 Top Attractions</span>
+      <span class="hero-tag">🚇 Metro-Friendly Routes</span>
+      <span class="hero-tag">🍜 Local Food Picks</span>
+      <span class="hero-tag">📤 Shareable Itinerary</span>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="sec-hd">
+      <h2>Choose Your Attractions</h2>
+      <p>Select at least 3 spots. We'll optimize the order and timing for you.</p>
+    </div>
+
+    <div class="spots-grid" id="spots-grid"></div>
+
+    <div class="sel-bar" id="sel-bar">
+      <div class="sel-info">
+        <div class="sel-ct"><span id="sel-count">0</span> selected · need at least 3</div>
+        <div class="sel-names" id="sel-names">No spots selected yet</div>
+      </div>
+      <button class="btn btn-teal" id="next-btn" onclick="goStep2()" disabled style="width:auto;padding:10px 24px;">
+        Next: Set Details →
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ STEP 2: TRIP CONFIG ═══════════ -->
+<section id="s2" style="display:none">
+  <div class="main">
+    <div class="sec-hd" style="margin-top:8px;">
+      <h2>Trip Details</h2>
+      <p>Tell us a bit more so we can build the perfect schedule.</p>
+    </div>
+
+    <div class="cfg-card">
+      <h3>🗓️ How many days?</h3>
+      <div class="opt-grp" id="days-grp">
+        <button class="opt" data-v="1" onclick="setOpt('days',1)">1 Day</button>
+        <button class="opt on" data-v="2" onclick="setOpt('days',2)">2 Days</button>
+        <button class="opt" data-v="3" onclick="setOpt('days',3)">3 Days</button>
+        <button class="opt" data-v="4" onclick="setOpt('days',4)">4 Days</button>
+      </div>
+    </div>
+
+    <div class="cfg-card">
+      <h3>🚇 Preferred transport</h3>
+      <div class="opt-grp" id="trans-grp">
+        <button class="opt on" data-v="metro" onclick="setOpt('trans','metro')">🚇 Metro (cheapest)</button>
+        <button class="opt" data-v="taxi" onclick="setOpt('trans','taxi')">🚕 Taxi / Didi</button>
+        <button class="opt" data-v="both" onclick="setOpt('trans','both')">🔀 Mix of both</button>
+      </div>
+    </div>
+
+    <div class="cfg-card">
+      <h3>💰 Budget per day</h3>
+      <div class="opt-grp" id="budget-grp">
+        <button class="opt" data-v="low" onclick="setOpt('budget','low')">🪙 Budget (~¥150/day)</button>
+        <button class="opt on" data-v="mid" onclick="setOpt('budget','mid')">😊 Standard (~¥350/day)</button>
+        <button class="opt" data-v="high" onclick="setOpt('budget','high')">✨ Comfort (~¥800+/day)</button>
+      </div>
+    </div>
+
+    <div class="cfg-card">
+      <h3>☀️ Visiting in summer (June–Sep)?</h3>
+      <div class="opt-grp" id="summer-grp">
+        <button class="opt on" data-v="yes" onclick="setOpt('summer','yes')">Yes — 32–36°C, humid</button>
+        <button class="opt" data-v="no" onclick="setOpt('summer','no')">No — cooler weather</button>
+      </div>
+      <div class="weather-note" id="summer-note">
+        ⚠️ <strong>Summer advisory:</strong> Plan indoor spots (museum, aquarium, mall) between 11am–3pm to avoid peak heat and UV index 10+. Afternoon showers are common — carry a compact umbrella. Schedule outdoor spots (Canton Tower, Pearl River Cruise) for early morning or evening.
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      <button class="btn btn-ghost" onclick="goStep1()" style="flex:0 0 auto;padding:12px 20px;">← Back</button>
+      <button class="btn btn-teal" onclick="generate()">✨ Build My Itinerary</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ STEP 3: ITINERARY ═══════════ -->
+<section id="s3" style="display:none">
+  <div class="main">
+    <div id="itin-out"></div>
+
+    <div class="related-box">
+      <h4>📖 Related Reading</h4>
+      <div class="rlinks">
+        <a class="rlink" href="/guangzhou-travel-tips">Guangzhou Travel Tips: What No Guidebook Tells You</a>
+        <a class="rlink" href="/canton-tower-guide">Canton Tower Complete Guide — Tickets, Timing &amp; Night Views</a>
+        <a class="rlink" href="/pearl-river-cruise">Pearl River Night Cruise: Everything You Need to Know</a>
+        <a class="rlink" href="/guangdong-museum-guide">Guangdong Provincial Museum: Free Entry, Advance Booking Required</a>
+        <a class="rlink" href="/guangzhou-food-guide">Cantonese Food 101: What to Eat in Guangzhou</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHARE MODAL -->
+<div class="sov" id="sov" onclick="if(event.target===this)closeShare()">
+  <div class="spanel">
+    <div class="spanel-hd">
+      <div class="spanel-hd-t">📤 Share Your Itinerary</div>
+      <button class="spanel-close" onclick="closeShare()">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px;">Your itinerary is encoded in the link — no personal data stored anywhere.</p>
+    <div class="surl" id="share-url"></div>
+    <button class="scopy-btn" id="scopy-btn" onclick="copyShareUrl()">📋 Copy Link</button>
+    <button class="scopy-btn" onclick="copyText()" style="background:var(--bg);color:var(--teal);border:1px solid var(--teal);margin-top:0;">📝 Copy as Text</button>
+    <div class="scopy-note">Link never expires · No account needed · Safe to share</div>
+  </div>
+</div>
+
+<script>
+/* ═════════════════════════════════════════════
+   DATA — 12 Tianhe District Attractions
+   ═════════════════════════════════════════════ */
+const SP=[
+  {id:'canton',name:'Canton Tower',emoji:'🗼',wiki:'Canton_Tower',
+   tagline:"Guangzhou's iconic 600m twisted skyscraper — panoramic city views",
+   hours:'09:30–22:30 (last entry 22:00)',closed:null,
+   metro:'Line 3 / APM · Canton Tower Station',
+   price:'¥150+ (varies by level)',free:false,rating:4.9,
+   dmin:90,dmax:180,pref:'any',
+   tips:"Go at 4pm to catch daytime views, sunset, and the night skyline in one visit. Light show on Mon/Wed/Fri at 8pm is spectacular. Book online — saves money and skips queues. 5-min walk to Pearl River cruise pier.",
+   grad:'linear-gradient(150deg,#BF360C,#FF5722)'},
+  {id:'flower',name:'Flower City Square',emoji:'🌸',wiki:'Zhujiang_New_Town',
+   tagline:'Guangzhou\'s grand civic plaza in Zhujiang New Town — free entry',
+   hours:'Open 24h (musical fountain evening only)',closed:null,
+   metro:'Line 3/5 · Zhujiang New Town Station (Exit D)',
+   price:'Free',free:true,rating:4.8,
+   dmin:60,dmax:120,pref:'any',
+   tips:"⚠️ Musical fountain: NO shows Mon & Thu; Tue/Wed/Fri have one show at 8pm; weekends add a 3pm show. Shows cancelled in rain. The square connects directly to Guangdong Museum and Opera House on foot.",
+   grad:'linear-gradient(150deg,#1A237E,#283593)'},
+  {id:'opera',name:'Guangzhou Opera House',emoji:'🎭',wiki:'Guangzhou_Opera_House',
+   tagline:'Zaha Hadid masterpiece — one of the world\'s ten best opera houses',
+   hours:'Exterior always open; interior Sat–Sun & holidays 10:00–16:00',closed:'Mondays',
+   metro:'APM Line · Grand Theatre Station (Exit B, direct)',
+   price:'Exterior free; interior ¥15 (advance booking required)',free:true,rating:4.7,
+   dmin:45,dmax:90,pref:'day',
+   tips:"⚠️ Interior tours: weekends & public holidays only, must book 5 working days ahead by calling 020-38392666. The exterior is photogenic anytime — best in the blue hour after sunset. Closed Mondays.",
+   grad:'linear-gradient(150deg,#37474F,#4A6572)'},
+  {id:'museum',name:'Guangdong Provincial Museum',emoji:'🏛️',wiki:'Guangdong_Museum',
+   tagline:'5,000 years of Cantonese culture — free, but advance reservation required',
+   hours:'Tue–Sun 09:00–17:00 (last entry 16:00)',closed:'Mondays',
+   metro:'APM Line · Grand Theatre Station (Exit B, 3-min walk)',
+   price:'Free — online reservation required',free:true,rating:4.8,
+   dmin:120,dmax:180,pref:'day',
+   tips:"⚠️ No walk-in entry. Book via the museum's official WeChat account — slots released daily at 10pm for dates 1–7 days ahead. Weekend slots sell out in seconds. Bring your passport for entry.",
+   grad:'linear-gradient(150deg,#3E2723,#6D4C41)'},
+  {id:'park',name:'Pearl River Park',emoji:'🌳',wiki:null,
+   tagline:'Free urban green lung in Zhujiang New Town',
+   hours:'06:00–21:00',closed:null,
+   metro:'Line 5 · Zhujiang New Town Station',
+   price:'Free',free:true,rating:4.5,
+   dmin:45,dmax:90,pref:'any',
+   tips:"Quiet escape between sightseeing. 5-min walk to Guangdong Museum and Opera House. Good spot to rest and recharge before the evening cruise or Canton Tower.",
+   grad:'linear-gradient(150deg,#1B5E20,#2E7D32)'},
+  {id:'grandview',name:'Grandview Mall',emoji:'🏬',wiki:'Grandview_Mall',
+   tagline:'Tianhe\'s mega shopping complex — entertainment + retail + dining',
+   hours:'10:00–22:00',closed:null,
+   metro:'Line 1 · Gymnasium Station (Exit D3, direct)',
+   price:'Free entry (Aquarium separate)',free:true,rating:4.6,
+   dmin:60,dmax:240,pref:'any',
+   tips:"South China's largest mall. Besides the Aquarium, it houses a rainforest garden, ice rink, and natural history museum. Great rainy-day option for the whole day.",
+   grad:'linear-gradient(150deg,#880E4F,#C2185B)'},
+  {id:'aquarium',name:'Grandview Aquarium',emoji:'🐬',wiki:null,
+   tagline:'South China\'s largest polar aquarium — beluga whales, sharks, and more',
+   hours:'10:00–22:00 (last entry 21:30)',closed:null,
+   metro:'Line 1 · Gymnasium Station (Exit D3, inside Grandview Mall)',
+   price:'Adults ¥220; Evening (after 6pm) ~¥99–128; Kids ¥130',free:false,rating:4.7,
+   dmin:120,dmax:180,pref:'day',
+   tips:"Beluga whale shows: 4 times daily (11:00 / 14:00 / 15:30 / 17:00). Mermaid shows: 10:30 / 13:30 / 15:30 / 17:00. Evening tickets after 6pm offer best value. Great for families.",
+   grad:'linear-gradient(150deg,#006064,#00838F)'},
+  {id:'taikoo',name:'Taikoo Hui',emoji:'🛍️',wiki:'Taikoo_Hui',
+   tagline:"Guangzhou's premium lifestyle mall — flagship stores & upscale dining",
+   hours:'10:00–22:00',closed:null,
+   metro:'Line 1/3 · Tiyu Xilu Station',
+   price:'Free entry',free:true,rating:4.6,
+   dmin:60,dmax:150,pref:'any',
+   tips:"Adjacent to Grandview Mall and Tianhe City Mall — the three form Guangzhou's main shopping strip. Excellent dining on the top floor and B2. Good spot for a lunch or dinner break between attractions.",
+   grad:'linear-gradient(150deg,#4A148C,#7B1FA2)'},
+  {id:'thpark',name:'Tianhe Park',emoji:'⛰️',wiki:null,
+   tagline:'Tianhe\'s largest park — lakes, hills, and forest trails',
+   hours:'06:00–22:00',closed:null,
+   metro:'Line 21 · Tianhe Park Station (Exit E1)',
+   price:'Free',free:true,rating:4.5,
+   dmin:90,dmax:180,pref:'any',
+   tips:"Guangzhou's best urban park for a proper nature walk. In autumn, bald cypress trees turn red — a popular photo spot. Paddle boats available (~¥20/hr). Less crowded than central attractions.",
+   grad:'linear-gradient(150deg,#33691E,#558B2F)'},
+  {id:'liede',name:'Liede Ancient Village',emoji:'🏘️',wiki:'Liede_Village',
+   tagline:'Urban village wonder — century-old ancestral halls beside skyscrapers',
+   hours:'Always open',closed:null,
+   metro:'Line 5 · Liede Station (Exit B/C, 3–5 min walk)',
+   price:'Free',free:true,rating:4.4,
+   dmin:45,dmax:90,pref:'day',
+   tips:"Guangzhou's most famous 'urban village', home to 4 century-old clan temples. The pedestrian walkway on Liede Bridge is the classic spot to photograph Canton Tower and Pearl River together.",
+   grad:'linear-gradient(150deg,#BF360C,#E64A19)'},
+  {id:'scut',name:'SCUT Campus',emoji:'🎓',wiki:'South_China_University_of_Technology',
+   tagline:'South China University of Technology — stunning Republican-era architecture',
+   hours:'Weekends & holidays 09:00–18:00 only',closed:'Weekdays closed to visitors',
+   metro:'Line 3 · Wushan Station (Exit C, East Gate)',
+   price:'Free — advance reservation required',free:true,rating:4.7,
+   dmin:90,dmax:150,pref:'day',
+   tips:"⚠️ Open to visitors ONLY on weekends and public holidays. Must book 1 day ahead via the 'Hua Yuan Travel' (华园出行通) WeChat mini-program. The red-brick Republican-era buildings are stunning. March–April kapok blooms make it especially photogenic.",
+   grad:'linear-gradient(150deg,#0D47A1,#1565C0)'},
+  {id:'cruise',name:'Pearl River Night Cruise',emoji:'🚢',wiki:'Pearl_River_(Guangdong)',
+   tagline:"Drift past Guangzhou's glittering skyline on a historic river",
+   hours:'18:30–22:30 (departures every ~30 min, last boarding 21:30)',closed:null,
+   metro:'Haixin Pier: APM · Haixin Sha Station; Canton Tower Pier: Line 3 · Canton Tower Station',
+   price:'Standard cabin ¥48–108; Upper deck ¥138–168',free:false,rating:4.8,
+   dmin:60,dmax:90,pref:'night',
+   tips:"Best departure time: 7:30pm — you'll catch the sunset then the full city light-up. Book online at least 3 days ahead during holidays. Bring a light jacket (river breeze). Passport required for boarding check.",
+   grad:'linear-gradient(150deg,#0D47A1,#1A237E)'},
+];
+
+/* 12×12 travel time matrix [metro_min, taxi_min] — same for all trips */
+const TM=[
+  [[0,0],[8,5],[8,6],[10,7],[11,10],[15,15],[15,15],[16,17],[20,24],[9,8],[38,45],[5,3]],
+  [[8,5],[0,0],[4,4],[4,5],[6,8],[12,10],[12,10],[13,12],[18,18],[5,7],[35,42],[7,5]],
+  [[8,6],[4,4],[0,0],[3,4],[6,8],[13,11],[13,11],[14,13],[17,19],[4,7],[34,41],[6,6]],
+  [[10,7],[4,5],[3,4],[0,0],[7,9],[14,12],[14,12],[15,14],[19,20],[5,8],[35,42],[8,7]],
+  [[11,10],[6,8],[6,8],[7,9],[0,0],[10,12],[10,12],[11,13],[14,15],[4,6],[30,38],[9,10]],
+  [[15,15],[12,10],[13,11],[14,12],[10,12],[0,0],[2,2],[5,5],[12,15],[10,12],[26,30],[15,15]],
+  [[15,15],[12,10],[13,11],[14,12],[10,12],[2,2],[0,0],[5,5],[12,15],[10,12],[26,30],[15,15]],
+  [[16,17],[13,12],[14,13],[15,14],[11,13],[5,5],[5,5],[0,0],[13,16],[11,13],[27,29],[16,17]],
+  [[20,24],[18,18],[17,19],[19,20],[14,15],[12,15],[12,15],[13,16],[0,0],[16,19],[22,28],[20,24]],
+  [[9,8],[5,7],[4,7],[5,8],[4,6],[10,12],[10,12],[11,13],[16,19],[0,0],[31,37],[8,8]],
+  [[38,45],[35,42],[34,41],[35,42],[30,38],[26,30],[26,30],[27,29],[22,28],[31,37],[0,0],[37,44]],
+  [[5,3],[7,5],[6,6],[8,7],[9,10],[15,15],[15,15],[16,17],[20,24],[8,8],[37,44],[0,0]],
+];
+
+/* Food picks — 3 options per spot (budget / mid / fine dining) */
+const FOOD={
+  canton:[
+    {name:'Cai Lan HK Dim Sum (B1)',level:'Budget',price:'¥80',tip:'Famous flaky BBQ pork bun — at the tower base'},
+    {name:'Tao Tao Ju (Flower City Hub)',level:'Mid-range',price:'¥120',tip:'Century-old Cantonese dim sum, 10-min walk'},
+    {name:'Conrad Hotel Sky Buffet (43F)',level:'Fine',price:'¥350',tip:'Aerial views of Canton Tower — splurge-worthy'},
+  ],
+  flower:[
+    {name:'Qixiaoluo Rice Noodle (South Hub)',level:'Budget',price:'¥25',tip:'Fried egg rice noodle — local favorite'},
+    {name:'Tao Tao Ju (Flower City Hub)',level:'Mid-range',price:'¥120',tip:'Shrimp dumplings + century-old roast goose'},
+    {name:'Lei Garden (ICC)',level:'Fine',price:'¥320',tip:'Michelin 1-star Cantonese cuisine'},
+  ],
+  opera:[
+    {name:'Yin Ji Rice Noodle (Central Hub)',level:'Budget',price:'¥20',tip:'Steamed shrimp & beef rice noodles — iconic local breakfast'},
+    {name:'Qiao Mei Gourmet (Zhujiang New Town)',level:'Mid-range',price:'¥130',tip:'Heritage slow-roasted pigeon — must order'},
+    {name:'Bingsheng Restaurant (Liede)',level:'Fine',price:'¥200',tip:'Secret black char siu — Guangzhou\'s best BBQ pork'},
+  ],
+  museum:[
+    {name:'Lionhead Braised Meat (Flower City Hub)',level:'Budget',price:'¥20',tip:'Braised pork rice — best value in the area'},
+    {name:'Din Tai Dak (Gaode Plaza)',level:'Mid-range',price:'¥100',tip:'Cantonese dim sum chain — just across the street'},
+    {name:'Lei Garden (ICC)',level:'Fine',price:'¥320',tip:'Michelin 1-star — best Cantonese in the area'},
+  ],
+  park:[
+    {name:'Liede Homestyle Kitchen',level:'Budget',price:'¥45',tip:'Soy-braised noodles + taro congee'},
+    {name:'Lianxianglou Pavilion (South Gate)',level:'Mid-range',price:'¥110',tip:'Century-old Cantonese restaurant'},
+    {name:'Bingsheng Restaurant (Liede)',level:'Fine',price:'¥200',tip:'Black char siu + crispy char siu combo'},
+  ],
+  grandview:[
+    {name:'Hakata Tempura (B1)',level:'Budget',price:'¥55',tip:'Fresh-fried tiger prawn tempura'},
+    {name:'Motor Canteen (B1)',level:'Mid-range',price:'¥107',tip:'Popular Japanese rice bowl — queue expected'},
+    {name:'Tao Tao Ju (6F)',level:'Fine',price:'¥120',tip:'Century-old dim sum brand — upscale setting'},
+  ],
+  aquarium:[
+    {name:'Cai Lan HK Dim Sum (in-mall)',level:'Budget',price:'¥80',tip:'Family-friendly, mild flavors'},
+    {name:'Grandma\'s Kitchen',level:'Mid-range',price:'¥75',tip:'Hangzhou-style — tea-smoked chicken is excellent'},
+    {name:'Lucky Tea Restaurant',level:'Fine',price:'¥110',tip:'Coconut milk egg puff + durian egg tart'},
+  ],
+  taikoo:[
+    {name:'Gui Man Long (Japanese hot pot)',level:'Budget',price:'¥85',tip:'Shabu-shabu beef set — great value'},
+    {name:'DOZO Japanese Cuisine',level:'Mid-range',price:'¥160',tip:'Refined kaiseki-style set menu'},
+    {name:'Tang Court (Mandarin Oriental)',level:'Fine',price:'¥380',tip:'Michelin 1-star Cantonese — the area\'s finest'},
+  ],
+  thpark:[
+    {name:'Tianhe Park Tea House',level:'Budget',price:'¥30',tip:'In-park teahouse — fried noodles, congee'},
+    {name:'Woodhouse BBQ',level:'Mid-range',price:'¥80',tip:'Outdoor grill — great for evening groups'},
+    {name:'Tang·Yi Wagyu BBQ',level:'Fine',price:'¥180',tip:'Premium wagyu grilling — book ahead'},
+  ],
+  liede:[
+    {name:'Liede Traditional Dessert Shop',level:'Budget',price:'¥15',tip:'Taro balls + double-skin milk custard — village staple'},
+    {name:'Liede Homestyle Kitchen',level:'Mid-range',price:'¥75',tip:'Village banquet dishes — soy chicken + steamed fish'},
+    {name:'Bingsheng Restaurant',level:'Fine',price:'¥200',tip:'Signature black char siu — Guangzhou institution'},
+  ],
+  scut:[
+    {name:'SCUT West Canteen (5F)',level:'Budget',price:'¥25',tip:'Legendary university canteen — surprisingly good'},
+    {name:'SCUT East Halal Canteen',level:'Budget',price:'¥20',tip:'Lamb noodle stew + flatbread — hearty'},
+    {name:'Science Park Innovation Café',level:'Mid-range',price:'¥55',tip:'Trendy café in the tech campus — good for a break'},
+  ],
+  cruise:[
+    {name:'Haixin Pier Hawker Stalls',level:'Budget',price:'¥50',tip:'Stir-fried rice noodles + morning glory — eat before boarding'},
+    {name:'Cai Lan HK Dim Sum (Flower City Hub)',level:'Mid-range',price:'¥80',tip:'Walking distance from the pier'},
+    {name:'Pearl River Cruise Buffet Ship',level:'Fine',price:'¥188',tip:'Dinner cruise with buffet included — a two-in-one experience'},
+  ],
+};
+
+/* ═════════════════════════════════════════════
+   STATE
+   ═════════════════════════════════════════════ */
+const IDS=SP.map(s=>s.id);
+let selected=new Set();
+let cfg={days:2,trans:'metro',budget:'mid',summer:'yes'};
+let itinerary=null;
+let shareUrl='';
+
+/* ═════════════════════════════════════════════
+   TSP — NEAREST NEIGHBOR GREEDY
+   ═════════════════════════════════════════════ */
+function tmVal(a,b,trans){
+  const ai=IDS.indexOf(a),bi=IDS.indexOf(b);
+  if(ai<0||bi<0)return 20;
+  const pair=TM[ai][bi];
+  return trans==='taxi'?pair[1]:pair[0];
+}
+
+function tsp(ids,trans){
+  if(ids.length===0)return[];
+  const rem=new Set(ids);
+  const route=[];
+  // start with morning-friendly spot (prefer non-night spots)
+  const start=ids.find(id=>SP.find(s=>s.id===id)?.pref!=='night')||ids[0];
+  route.push(start);rem.delete(start);
+  while(rem.size){
+    const cur=route[route.length-1];
+    let best=null,bestT=Infinity;
+    rem.forEach(id=>{const t=tmVal(cur,id,trans);if(t<bestT){bestT=t;best=id;}});
+    route.push(best);rem.delete(best);
+  }
+  return route;
+}
+
+function groupByDay(route,days,trans){
+  const grps=Array.from({length:days},()=>[]);
+  const totalMins=480*days; // ~8h per day
+  let used=0,day=0;
+  for(const id of route){
+    const sp=SP.find(s=>s.id===id);
+    const dur=Math.round((sp.dmin+sp.dmax)/2);
+    const trans_t=used>0?tmVal(grps[day][grps[day].length-1],id,trans):0;
+    if(used+dur+trans_t>480&&day<days-1){day++;used=0;}
+    grps[day].push(id);
+    used+=dur+(used>0?trans_t:0);
+  }
+  // push night spots to end of their day
+  grps.forEach(g=>{
+    const night=g.filter(id=>SP.find(s=>s.id===id)?.pref==='night');
+    const rest=g.filter(id=>SP.find(s=>s.id===id)?.pref!=='night');
+    g.length=0;g.push(...rest,...night);
+  });
+  return grps.filter(g=>g.length>0);
+}
+
+/* ═════════════════════════════════════════════
+   SKELETON BUILDER
+   ═════════════════════════════════════════════ */
+function minToTime(m){
+  return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+}
+
+function pickFood(id,budget){
+  const opts=FOOD[id]||[];
+  if(!opts.length)return null;
+  if(budget==='low')return opts[0];
+  if(budget==='high')return opts[2];
+  return opts[1];
+}
+
+function buildItinerary(){
+  const ids=Array.from(selected);
+  const route=tsp(ids,cfg.trans);
+  const grps=groupByDay(route,cfg.days,cfg.trans);
+
+  const days=grps.map((group,di)=>{
+    let cursor=cfg.summer==='yes'?510:540; // 8:30am or 9:00am start
+    const spots=[];
+    let lunchDone=false,dinnerDone=false,lunchFood=null,dinnerFood=null;
+
+    group.forEach((id,si)=>{
+      // transport from previous spot
+      let trans_time=0;
+      if(si>0){
+        trans_time=tmVal(group[si-1],id,cfg.trans);
+        cursor+=trans_time;
+      }
+      const sp=SP.find(s=>s.id===id);
+      const dur=Math.round((sp.dmin+sp.dmax)/2);
+
+      // summer: skip outdoor in peak heat
+      if(cfg.summer==='yes'&&cursor>=660&&cursor<=900&&sp.pref!=='night'){
+        // try to inject indoor time gap note — handled in render
+      }
+
+      const arrival=minToTime(cursor);
+      cursor+=dur;
+      const departure=minToTime(cursor);
+
+      let transportToNext=null;
+      if(si<group.length-1){
+        const nt=tmVal(id,group[si+1],cfg.trans);
+        transportToNext=cfg.trans==='taxi'?`🚕 Taxi (~${nt} min)`:`🚇 Metro (~${nt} min)`;
+      }
+
+      // insert lunch / dinner
+      if(!lunchDone&&cursor>=720){
+        lunchDone=true;
+        const lf=pickFood(id,cfg.budget);
+        if(lf)lunchFood={...lf,time:minToTime(cursor)};
+        cursor+=45;
+      }
+      if(!dinnerDone&&cursor>=1080){
+        dinnerDone=true;
+        const df=pickFood(group[Math.max(0,si-1)]||id,cfg.budget);
+        if(df)dinnerFood={...df,time:minToTime(cursor)};
+        cursor+=60;
+      }
+
+      spots.push({id,name:sp.name,emoji:sp.emoji,arrival,departure,
+        dur,tips:sp.tips,transportToNext,trans_time});
+    });
+
+    const theme=di===0?'Highlights & Landmarks':di===1?'Culture & Discovery':'Hidden Gems & Leisure';
+    const totalSpots=group.length;
+    return{day:di+1,theme,spots,lunch:lunchFood,dinner:dinnerFood,totalSpots};
+  });
+
+  // budget estimate
+  const budgetStr=cfg.budget==='low'?'~¥100–200/day (metro + free spots)':
+    cfg.budget==='high'?'~¥800+/day (taxi + paid attractions + fine dining)':
+    '~¥250–400/day (metro + 1–2 paid spots + casual dining)';
+
+  return{days,totalSpots:ids.length,budget:budgetStr,params:cfg};
+}
+
+/* ═════════════════════════════════════════════
+   RENDER
+   ═════════════════════════════════════════════ */
+function render(){
+  const out=document.getElementById('itin-out');
+  const it=itinerary;
+
+  // header
+  let html=`<div class="itin-hd">
+    <div class="itin-title">Your Guangzhou Itinerary · ${it.days.length} Day${it.days.length>1?'s':''}</div>
+    <div class="itin-meta">
+      <span class="itin-badge">📍 ${it.totalSpots} Attractions</span>
+      <span class="itin-badge">${cfg.trans==='taxi'?'🚕 Taxi':'🚇 Metro'} Routes</span>
+      <span class="itin-badge">${cfg.summer==='yes'?'☀️ Summer Plan':'🌤️ Mild Weather'}</span>
+    </div>
+    <div class="itin-budget">💰 Estimated budget: ${it.budget}</div>
+  </div>`;
+
+  // day cards
+  it.days.forEach(day=>{
+    html+=`<div class="day-card">
+      <div class="day-hd">
+        <div class="day-num">${day.day}</div>
+        <div><div class="day-theme">Day ${day.day}: ${day.theme}</div>
+        <div class="day-meta">${day.totalSpots} stops · includes local food picks</div></div>
+      </div>`;
+
+    day.spots.forEach((s,si)=>{
+      const sp=SP.find(x=>x.id===s.id);
+      const needBook=s.tips.includes('⚠️');
+      html+=`<div class="srow">
+        <div class="srow-top">
+          <div class="srow-time">${s.arrival}–${s.departure}</div>
+          <div class="srow-em">${s.emoji}</div>
+          <div class="srow-info">
+            <div class="srow-name">${s.name}</div>
+            ${needBook?'<span class="tip-warn">⚠️ Advance booking required</span>':''}
+            <div class="srow-tips">${s.tips}</div>
+            <div style="margin-top:6px;font-size:11px;color:var(--text3);">
+              🕐 Allow ${s.dur} min · ${sp.metro} · ${sp.price}
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+      // insert lunch after this spot if applicable
+      if(day.lunch&&si===Math.floor(day.spots.length/2)-1){
+        const lv=day.lunch.level;
+        const tag=lv==='Budget'?'mtag-b':lv==='Fine'?'mtag-f':'mtag-m';
+        html+=`<div class="mrow">
+          <div class="mrow-ic">🍜</div>
+          <div class="mrow-body">
+            <div class="mrow-type">Lunch</div>
+            <div class="mrow-name">${day.lunch.name}</div>
+            <div class="mrow-det"><span class="mtag ${tag}">${day.lunch.level}</span>${day.lunch.price} · ${day.lunch.tip}</div>
+          </div>
+        </div>`;
+      }
+
+      // transport row
+      if(s.transportToNext){
+        html+=`<div class="trow">
+          <span>${cfg.trans==='taxi'?'🚕':'🚇'}</span>
+          <span>${s.transportToNext} to next stop</span>
+        </div>`;
+      }
+    });
+
+    // dinner
+    if(day.dinner){
+      const lv=day.dinner.level;
+      const tag=lv==='Budget'?'mtag-b':lv==='Fine'?'mtag-f':'mtag-m';
+      html+=`<div class="mrow">
+        <div class="mrow-ic">🍽️</div>
+        <div class="mrow-body">
+          <div class="mrow-type">Dinner</div>
+          <div class="mrow-name">${day.dinner.name}</div>
+          <div class="mrow-det"><span class="mtag ${tag}">${day.dinner.level}</span>${day.dinner.price} · ${day.dinner.tip}</div>
+        </div>
+      </div>`;
+    }
+
+    html+=`</div>`;// end day card
+  });
+
+  // safety / practical info
+  const safetyText=cfg.summer==='yes'
+    ?`<strong>Summer in Guangzhou (Jun–Sep)</strong> means 32–36°C, humidity 80–90%, and strong UV (index 10+). Plan indoor attractions from 11am–3pm. Afternoon thundershowers (30–60 min) are common — pack a compact umbrella.<br><br>
+    🌡️ Heatstroke prevention: stay hydrated, wear light clothing, find AC between outdoor attractions.<br>
+    🚨 Scam alert: ignore street touts offering "cheap 1-day tours" near tourist spots — they're always shopping traps. Buy Pearl River cruise tickets only on official platforms.<br>
+    🆘 Emergency: Police 110 · Ambulance 120 · Tourist complaint hotline 12345`
+    :`<strong>Travel Essentials:</strong> Guangzhou is safe and easy to navigate with a transit app (Alipay or WeChat). The metro connects all 12 spots listed here.<br><br>
+    🚇 Get an Alipay or WeChat account for metro QR codes — it's far cheaper than buying tickets per trip.<br>
+    🚨 Keep a photo of your passport and hotel address in Chinese characters on your phone.<br>
+    🆘 Emergency: Police 110 · Ambulance 120 · Tourist complaint hotline 12345`;
+
+  html+=`<div class="safety-box"><h4>⚠️ Practical Tips</h4><p>${safetyText}</p></div>`;
+
+  // action buttons
+  html+=`<div class="itin-acts">
+    <button class="btn btn-ghost" onclick="goStep1()">← Start Over</button>
+    <button class="btn btn-outline" onclick="window.print()">🖨️ Save as PDF</button>
+    <button class="btn btn-teal" onclick="openShare()">📤 Share</button>
+  </div>`;
+
+  out.innerHTML=html;
+}
+
+/* ═════════════════════════════════════════════
+   SPOT CARDS — STEP 1
+   ═════════════════════════════════════════════ */
+function renderSpots(){
+  const grid=document.getElementById('spots-grid');
+  grid.innerHTML=SP.map(sp=>{
+    const badges=[];
+    if(sp.free)badges.push('<span class="sc-bg bg-free">Free</span>');
+    else badges.push('<span class="sc-bg bg-paid">Paid</span>');
+    if(sp.pref==='night')badges.push('<span class="sc-bg bg-night">Evening</span>');
+    if(sp.pref==='day')badges.push('<span class="sc-bg bg-indoor">Daytime</span>');
+    if(sp.tips.includes('⚠️'))badges.push('<span class="sc-bg bg-book">Pre-book</span>');
+
+    return`<div class="sc" id="sc-${sp.id}" onclick="toggleSpot('${sp.id}')">
+      <div class="sc-img" id="sci-${sp.id}" style="background:${sp.grad}">
+        <div class="sc-img-overlay"></div>
+        <span class="sc-emoji">${sp.emoji}</span>
+        <div class="sc-ck">✓</div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-name">${sp.name}</div>
+        <div class="sc-tag">${sp.tagline}</div>
+        <div class="sc-bgs">${badges.join('')}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSpot(id){
+  if(selected.has(id))selected.delete(id);
+  else selected.add(id);
+  document.getElementById('sc-'+id).classList.toggle('sel',selected.has(id));
+  updateSelBar();
+}
+
+function updateSelBar(){
+  const n=selected.size;
+  document.getElementById('sel-count').textContent=n;
+  document.getElementById('next-btn').disabled=n<3;
+  const names=Array.from(selected).map(id=>SP.find(s=>s.id===id)?.name||id);
+  document.getElementById('sel-names').textContent=
+    n?names.join(' · '):'No spots selected yet';
+}
+
+/* ═════════════════════════════════════════════
+   STEP NAVIGATION
+   ═════════════════════════════════════════════ */
+function showStep(n){
+  document.getElementById('s1').style.display=n===1?'':'none';
+  document.getElementById('s2').style.display=n===2?'':'none';
+  document.getElementById('s3').style.display=n===3?'':'none';
+
+  const back=document.getElementById('hd-back');
+  back.classList.toggle('on',n>1);
+
+  // steps bar
+  [1,2,3].forEach(i=>{
+    const el=document.getElementById('stp'+i);
+    el.className='stp'+(i<n?' done':i===n?' active':'');
+    if(i<3){
+      const ln=document.getElementById('sl'+i);
+      if(ln)ln.className='stp-line'+(i<n?' done':'');
+    }
+  });
+
+  // step indicator visibility
+  if(n===1){
+    document.querySelector('.hero').style.display='';
+  }
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function goStep1(){showStep(1);}
+function goStep2(){if(selected.size<3){toast('Please select at least 3 spots');return;}showStep(2);}
+function goBack(){const cur=[1,2,3].find(n=>document.getElementById('s'+n).style.display!=='none')||1;if(cur>1)showStep(cur-1);}
+
+function generate(){
+  document.getElementById('ldov').classList.add('on');
+  setTimeout(()=>{
+    try{
+      itinerary=buildItinerary();
+      render();
+      generateShareUrl();
+      document.getElementById('ldov').classList.remove('on');
+      showStep(3);
+    }catch(e){
+      document.getElementById('ldov').classList.remove('on');
+      toast('Error building itinerary: '+e.message);
+    }
+  },600);
+}
+
+/* ═════════════════════════════════════════════
+   CONFIG HELPERS
+   ═════════════════════════════════════════════ */
+function setOpt(key,val){
+  cfg[key]=val;
+  const grp=document.getElementById(key+'-grp');
+  if(grp)grp.querySelectorAll('.opt').forEach(b=>b.classList.toggle('on',b.dataset.v===String(val)));
+  if(key==='summer'){
+    document.getElementById('summer-note').style.display=val==='yes'?'':'none';
+  }
+}
+
+/* ═════════════════════════════════════════════
+   SHARE
+   ═════════════════════════════════════════════ */
+function generateShareUrl(){
+  if(typeof LZString==='undefined')return;
+  const payload=JSON.stringify({
+    selected:Array.from(selected),
+    cfg,
+    ts:Date.now(),
+  });
+  const compressed=LZString.compressToEncodedURIComponent(payload);
+  shareUrl=location.origin+location.pathname+'#share='+compressed;
+  document.getElementById('share-url').textContent=shareUrl;
+}
+
+function openShare(){
+  if(!shareUrl)generateShareUrl();
+  document.getElementById('sov').classList.add('open');
+}
+function closeShare(){document.getElementById('sov').classList.remove('open');}
+
+function copyShareUrl(){
+  const btn=document.getElementById('scopy-btn');
+  const done=()=>{btn.textContent='✓ Copied!';setTimeout(()=>btn.textContent='📋 Copy Link',2200);};
+  navigator.clipboard?.writeText(shareUrl).then(done).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=shareUrl;
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);done();
+  });
+}
+
+function copyText(){
+  if(!itinerary)return;
+  let txt='🗺️ My Guangzhou Itinerary\n';
+  txt+=`${itinerary.days.length} days · ${itinerary.totalSpots} attractions · ${itinerary.budget}\n\n`;
+  itinerary.days.forEach(d=>{
+    txt+=`═══ Day ${d.day}: ${d.theme} ═══\n`;
+    d.spots.forEach(s=>txt+=`${s.arrival}–${s.departure}  ${s.emoji} ${s.name}\n`);
+    if(d.lunch)txt+=`🍜 Lunch: ${d.lunch.name} (${d.lunch.price})\n`;
+    if(d.dinner)txt+=`🍽️ Dinner: ${d.dinner.name} (${d.dinner.price})\n`;
+    txt+='\n';
+  });
+  txt+='— Generated at ordinarymantrying.com/tools/guangzhou-travel-planner.html';
+  navigator.clipboard?.writeText(txt)
+    .then(()=>toast('✓ Copied as text!'))
+    .catch(()=>toast('Long-press to copy'));
+}
+
+function loadFromHash(){
+  try{
+    const h=location.hash;
+    if(!h.startsWith('#share=')||typeof LZString==='undefined')return;
+    const compressed=h.slice('#share='.length);
+    const payload=JSON.parse(LZString.decompressFromEncodedURIComponent(compressed));
+    if(payload.selected){
+      selected=new Set(payload.selected);
+      selected.forEach(id=>{const el=document.getElementById('sc-'+id);if(el)el.classList.add('sel');});
+      updateSelBar();
+    }
+    if(payload.cfg){
+      cfg={...cfg,...payload.cfg};
+      setOpt('days',cfg.days);
+      setOpt('trans',cfg.trans);
+      setOpt('budget',cfg.budget);
+      setOpt('summer',cfg.summer);
+    }
+    history.replaceState(null,'',location.pathname);
+    generate();
+  }catch(e){console.warn('Could not load share link',e);}
+}
+
+/* ═════════════════════════════════════════════
+   TOAST
+   ═════════════════════════════════════════════ */
+function toast(msg){
+  const t=document.getElementById('__toast');
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2200);
+}
+
+/* ═════════════════════════════════════════════
+   WIKIPEDIA IMAGE LOADER
+   ═════════════════════════════════════════════ */
+async function loadWikiImages(){
+  const spots=SP.filter(s=>s.wiki);
+  if(!spots.length)return;
+  const titles=spots.map(s=>s.wiki).join('|');
+  try{
+    const url=`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(titles)}&prop=pageimages&pithumbsize=500&format=json&origin=*`;
+    const res=await fetch(url);
+    const data=await res.json();
+    const pages=data?.query?.pages||{};
+    Object.values(pages).forEach(page=>{
+      const src=page?.thumbnail?.source;
+      if(!src)return;
+      const sp=spots.find(s=>s.wiki===page.title||s.wiki===page.title.replace(/ /g,'_'));
+      if(!sp)return;
+      const el=document.getElementById('sci-'+sp.id);
+      if(!el)return;
+      const img=new Image();
+      img.onload=()=>{
+        el.style.backgroundImage=`url(${src})`;
+        el.style.backgroundSize='cover';
+        el.style.backgroundPosition='center';
+      };
+      img.src=src;
+    });
+  }catch(e){/* fail silently — gradients remain */}
+}
+
+/* ═════════════════════════════════════════════
+   INIT
+   ═════════════════════════════════════════════ */
+renderSpots();
+updateSelBar();
+setOpt('summer','yes'); // summer note visible by default
+loadWikiImages(); // async, non-blocking
+if(location.hash.startsWith('#share='))loadFromHash();
+else showStep(1);
+</script>
+</body>
+</html>

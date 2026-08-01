@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Charles Darwin?</title>
+<meta name="description" content="He discovered natural selection in 1838. He didn't publish for 20 years. When a competitor sent him the same idea in 1858, he had 90 days to decide everything. 8 decisions.">
+<meta property="og:title" content="What Would You Do If You Were Charles Darwin?">
+<meta property="og:description" content="You know the theory that will change everything. Your wife is devout. Your friends say wait. The church will destroy you. 8 decisions across the most consequential delay in the history of science.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/darwin-simulator.html">
+<style>
+:root{
+  --bg:#F4F8F2;--card:#FAFCF9;--ink:#0E1A0E;--muted:#4A6040;--line:#C8D8C0;
+  --accent:#2A5A20;--accent-bg:#EBF4E7;
+  --right:#1A6B3A;--right-bg:#E6F5EC;--wrong:#7B2020;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(244,248,242,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#0A200A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #B0D0A0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#1A3A10;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0FBF0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.3);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#1A3A10;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0FBF0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #B0D0A0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#1A3A10;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.quote-block{background:var(--ink);color:#F0F8EE;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#7AB07A;margin-top:12px;font-family:var(--mono);}
+.specimen-card{background:#fff;border:1px solid #C0D8B0;border-radius:10px;padding:14px 16px;margin:20px 0;font-size:13px;color:#2A4A20;line-height:1.6;}
+.specimen-card .sc-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.specimen-card p{margin:0;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#0A200A;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#F0FBF0;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #B0D0A0;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.cta-box{background:var(--accent);color:#F0FBF0;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#A0E0A0;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Charles Darwin</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #19</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Darwin?</h1>
+  <p class="cover-sub">He sailed around the world for five years and came back with an idea that would shatter everything humans believed about themselves. Then he sat on it for <strong>twenty years</strong>. His wife was devout. His friends told him to wait. He was afraid of what publication would do to her faith, to his reputation, to the Church. Then a letter arrived from a stranger with the exact same idea. He had 90 days.</p>
+  <div class="cover-facts">
+    <p><strong>Charles Darwin</strong> (1809–1882) · English naturalist · Sailed on HMS Beagle 1831–1836 · Formed the theory of natural selection by 1838 · Published <em>On the Origin of Species</em> 1859, 21 years later · Married his first cousin Emma Wedgwood, a devout Anglican · Had 10 children, two of whom died in childhood · Suffered from a chronic illness his entire adult life that no one has ever definitively identified · Spent his later years studying earthworms, orchids, and barnacles with the same intensity he brought to evolution.</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1831, Cambridge</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The Voyage</span></div>
+<div class="year-banner">1831</div>
+<div class="timeline-dot">Cambridge · Age 22</div>
+<div class="narrative">
+  <p>You are 22, newly graduated from Cambridge with a degree in theology — a degree you pursued because it was the respectable path, not because you believed in it. You have spent most of your time at university collecting beetles, reading geology, and listening to the professor John Stevens Henslow, who sees something in you that you don't quite see in yourself.</p>
+  <p>Henslow sends you a letter. The naturalist's position on HMS Beagle has been offered. The ship will sail around the world on a survey mission. You would be the captain's companion — an educated gentleman to provide intellectual conversation on a five-year voyage. You are not the first choice. At least three others have turned it down.</p>
+  <p>Your father Robert Darwin, a wealthy doctor, is fiercely opposed. "A disreputable way of life," he says. "A wild scheme." He tells you that no man of sense would go — and that if you can find one man of sense who thinks it a good idea, he will reconsider.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The Beagle</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Your father is against it. The voyage is 5 years. The ship is small. But the opportunity is unlike anything that will come again. Do you go?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">A</span><span class="dopt-body">Find the one man of sense your father mentioned — your uncle Josiah Wedgwood II — convince him to argue the case, and go. The opportunity doesn't come twice.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Respect your father's judgment. He has supported you financially and knows the world better than you do. A career in the Church provides security, status, and a comfortable life.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">C</span><span class="dopt-body">Negotiate. Ask for a shorter voyage — a year, or a single destination — rather than committing to five years at sea. The exposure matters more than the duration.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Darwin actually did</div>
+      <p><strong>You go — and every other version of your life disappears.</strong> Darwin wrote to his uncle Josiah Wedgwood that same day, who immediately agreed the voyage was an extraordinary opportunity and wrote a letter to Robert Darwin outlining exactly why his objections were wrong, one by one. Robert Darwin, to his credit, reversed his position upon reading it and funded the trip generously. Darwin sailed on December 27, 1831, on a ship he described as small, crowded, and perpetually nauseating. He was seasick for nearly the entire five-year voyage. He later wrote that the Beagle voyage was "by far the most important event in my life, and has determined my whole career." The alternative — parish priest in rural England — is what he would almost certainly have been.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Galapagos</span></div>
+<div class="year-banner">1835</div>
+<div class="timeline-dot">Galapagos Islands · Age 26</div>
+<div class="narrative">
+  <p>You have been at sea for four years. You have collected thousands of specimens — beetles, fossils, birds, plants — and sent them back to England in crates. You have seen the fossils of giant extinct animals that resemble smaller living ones. You have noticed, on different islands of the Galapagos archipelago, mockingbirds that are slightly different from island to island.</p>
+  <p>The vice-governor of the Galapagos mentions something in passing: he can tell which island a giant tortoise comes from by the shape of its shell. The tortoises on each island are different. The birds on each island are different. The islands are only a few miles apart.</p>
+  <div class="specimen-card">
+    <div class="sc-label">Field notebook · Galapagos, September 1835</div>
+    <p>The distribution of the inhabitants of this archipelago would not be nearly so wonderful, if, for instance, one island had a mocking thrush, and a second island some other quite distinct genus — but all the islands possess their own species of the genus, each species being confined to its own island.</p>
+  </div>
+  <p>You will only realize the full significance of what you are seeing when you get back to England and ornithologist John Gould examines the birds. They are not mockingbirds of different varieties. They are 13 distinct species of finch. Each one has evolved to fill a different ecological niche on its island.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Finches</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You are beginning to suspect that species are not fixed — that they change over generations in response to their environment. This is heresy. What do you do with this suspicion?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Note the observation carefully but say nothing yet. You need a mechanism — a process that would explain how and why species change. The observation alone is not enough without the theory.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">Collect as comprehensively as possible. Label specimens by island, cross-reference every variant. The data is the foundation — the theory can only be as good as the evidence underneath it.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Share the suspicion with Captain FitzRoy and test it in conversation. FitzRoy is intelligent and well-read — if the idea can survive his scrutiny it can survive anyone's.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Darwin actually did</div>
+      <p><strong>Your greatest discovery — and you forget to label half of it.</strong> Darwin collected specimens meticulously but, embarrassingly, failed to label the finches by island in the field — he had not yet grasped their significance while collecting them. He had to later reconstruct island-of-origin from other specimens on the ship and from information given by other crew members. He also did not bring his finch suspicion to FitzRoy — FitzRoy was a deeply literal biblical creationist who would later, at a meeting of the British Association in 1860, stand up holding a Bible and declare that the book answered all of Darwin's arguments. Their friendship ended badly. Darwin's lesson learned: collect comprehensively and label everything, because you don't always know what is significant while it is happening in front of you.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>I am almost convinced (quite contrary to the opinion I started with) that species are not (it is like confessing a murder) immutable.</q>
+  <div class="q-attr">— Charles Darwin, private letter to botanist Joseph Hooker, January 1844</div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Theory</span></div>
+<div class="year-banner">1838</div>
+<div class="timeline-dot">London · Age 29</div>
+<div class="narrative">
+  <p>You have been back in England for two years. John Gould has identified your Galapagos finches. The evidence is mounting. And then, in October 1838, you read a book by the economist Thomas Malthus: <em>An Essay on the Principle of Population</em>.</p>
+  <p>Malthus argued that human populations tend to grow faster than the food supply — which produces competition, and competition produces selection. The weakest die; the strongest survive.</p>
+  <p>In that moment, reading Malthus, everything clicks. You see it. The mechanism you've been missing. In nature, far more offspring are born than can possibly survive. There is constant competition for food, for mates, for territory. The ones with traits slightly better suited to their environment survive longer and reproduce more. Over time — vast amounts of time — these small advantages accumulate. Species change. New species emerge. This is how it works.</p>
+  <p>You write it in your notebook. You have the theory of natural selection.</p>
+  <p>You tell almost no one. You sit on it for 20 years.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — Twenty Years of Silence</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have the theory. You're 29. Why won't you publish?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">The theory isn't complete. The mechanism of inheritance is missing — you don't understand how traits are passed from parents to offspring. Without it, critics will tear the theory apart.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">B</span><span class="dopt-body">The social consequences. Your wife Emma is deeply religious. Your scientific mentor Adam Sedgwick is deeply religious. Publication will destroy important relationships and expose you to the fury of the Church.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">C</span><span class="dopt-body">Both. The theory is incomplete and the consequences are terrifying. You need the evidence to be so overwhelming that the theory cannot be dismissed, and the preparation for the reaction to be so thorough that it can be managed.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Darwin actually thought</div>
+      <p><strong>You have the theory at 29. You hide it for 20 years. Both fears are real — and both are holding you back.</strong> Darwin later listed several reasons for his delay. The mechanism of inheritance was genuinely missing — Mendel's work on genetics was being done in an obscure monastery in what is now Czechia, entirely unknown to Darwin, and Darwin would die never knowing how traits were inherited. The social consequences were also real: his wife Emma wrote him a heartfelt letter expressing her concern that his views might separate them in the afterlife. Darwin kept the letter for the rest of his life, annotated with the words "when I am dead, know that many times, I have kissed and cried over this." He also wanted the evidence to be unanswerable — so he spent a decade becoming the world's foremost expert on barnacles, partly to earn the credibility needed to make such a large claim.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · Emma</span></div>
+<div class="year-banner">1844</div>
+<div class="timeline-dot">Down House, Kent · Age 35</div>
+<div class="narrative">
+  <p>You have been married to Emma Wedgwood for six years. She is intelligent, kind, practical, and deeply Anglican. She is also aware that your views on religion are increasingly at odds with hers — not just about evolution, but about the truth of Christianity more broadly.</p>
+  <p>In 1844, you write a 230-page draft of your theory and give it to Emma with a note: if you die before publishing, she should arrange to have it published. She reads it. She writes you a letter. She does not ask you to suppress the work. But she asks you to consider whether your mind might be "in a state to reason with perfect fairness" about religious questions, given your medical troubles and your consuming preoccupation with the subject.</p>
+  <p>She has continued to attend church every Sunday. She brings the children. You stay home. The household has reached a kind of practiced accord — a marriage that works despite fundamental disagreement about the deepest questions.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — Faith and Marriage</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Emma has written her letter. She has not asked you to stop. But you know publication will hurt her. How do you handle this?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">A</span><span class="dopt-body">Continue working, but be genuinely open with Emma about every step. Let her read drafts. Don't publish anything she hasn't seen first. The work must be done — but she deserves to know exactly what's coming.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">B</span><span class="dopt-body">Keep the work separate from the marriage. The professional and the personal can coexist without forcing Emma to engage with material she finds distressing. Discretion is a form of respect.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">Ask Emma directly: do you want me to publish this? Her answer determines the timeline. She has the right to influence a decision this consequential to your shared life.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What Darwin actually did</div>
+      <p><strong>You keep publishing. She keeps going to church. For 43 years, neither of you flinches — and neither of you wins.</strong> Darwin and Emma reached a working arrangement that neither was fully comfortable with and that both honored throughout their lives. He continued the work openly, she continued to read drafts and flag passages she found theologically troubling. He almost always made the changes she suggested — not suppressing the science but softening the language where it was unnecessarily antagonistic. Their marriage lasted 43 years. Emma outlived him by 14 years. After his death, she edited his autobiography to remove or soften some passages she found objectionable to Christian readers. Darwin had left the manuscript to her with full editorial rights. He seems to have known she would do this, and to have accepted it.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · The Letter</span></div>
+<div class="year-banner">1858</div>
+<div class="timeline-dot">Down House · Age 49</div>
+<div class="narrative">
+  <p>A letter arrives from Alfred Russel Wallace, a young naturalist collecting specimens in the Malay Archipelago. You and Wallace have corresponded before, in a general way. He has enclosed a paper for your comment: "On the Tendency of Varieties to Depart Indefinitely from the Original Type."</p>
+  <p>You read it. Your stomach drops.</p>
+  <p>It is your theory. Not a partial version, not an approximation — the full theory of natural selection by competition and differential reproduction, described clearly, argued elegantly, citing Malthus as the key insight. Wallace has arrived, independently, at precisely the same place you have been sitting for twenty years.</p>
+  <div class="dialogue">"I never saw a more striking coincidence," you write to your friend Charles Lyell. "If Wallace had my manuscript sketch written out in 1842, he could not have made a better short abstract!"</div>
+  <p>Wallace has asked you to review the paper and, if you think it worthy, pass it to Lyell for publication. He does not know about your priority. He trusts you completely.</p>
+  <p>You have perhaps 90 days before the scientific community learns about this, one way or another.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Wallace's Letter</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Wallace has sent you his paper — your theory — and asked you to forward it for publication. What do you do?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Forward the paper to Lyell exactly as Wallace asked, without adding your own priority claim. If Wallace arrives at the same discovery independently, it is his to publish. Twenty years of delay are your own fault.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">B</span><span class="dopt-body">Delay forwarding the paper and rush to complete a full book manuscript that you can publish first. Your 20-year priority entitles you to be first. The book will be more comprehensive anyway.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">C</span><span class="dopt-body">Ask Lyell and Hooker to arrange a joint presentation to the Linnaean Society — both Wallace's paper and your own prior sketches, establishing simultaneous discovery. Then publish the book as fast as possible.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Darwin actually did</div>
+      <p><strong>A stranger sends you your own life's work. He trusts you completely. He doesn't know he's giving you 20 years of your own priority back.</strong> Darwin was devastated. "So all my originality, whatever it may amount to, will be smashed," he wrote. He forwarded the letter to Lyell and Hooker with the problem laid out honestly. Lyell and Hooker arranged a joint presentation to the Linnaean Society on July 1, 1858 — Darwin's sketches from 1844, a letter from 1857, and Wallace's paper were all read together, establishing simultaneous discovery. Wallace was in Malaysia and had no input into the arrangement. He was, remarkably, completely gracious about it — he spent the rest of his life calling Darwin the real discoverer and campaigning to have Darwin's pension increased. Darwin then wrote the Origin in 13 months. He called it an "abstract" because it was — the full book he had been planning would have been four times longer.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · Publication</span></div>
+<div class="year-banner">1859</div>
+<div class="timeline-dot">London, John Murray Publisher · Age 50</div>
+<div class="narrative">
+  <p><em>On the Origin of Species by Means of Natural Selection, or the Preservation of Favoured Races in the Struggle for Life</em> is published on November 24, 1859. The first printing of 1,250 copies sells out on the first day.</p>
+  <p>The response is immediate and ferocious. The Athenaeum calls it "a hypothesis resting on a most insecure foundation." Adam Sedgwick, your old geology professor who was kind to you as an undergraduate, writes that it "repels me from its first page to its last" and that it "makes a ruin of all my untried efforts and hopes." The Bishop of Oxford, Samuel Wilberforce, prepares a detailed scientific (and theatrical) rebuttal for a major public debate.</p>
+  <p>You do not attend any public debates. You are sick — the mysterious illness that has plagued you for twenty years intensifies. You retreat to a water-cure establishment. Your friend Thomas Huxley, who has described himself as "sharpening his claws and beak" for the fight, handles the public defense. You communicate by letter from your sickbed.</p>
+  <p>You understand that the book has done its work. Now it must survive on its own.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Debate</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The attacks are coming from all directions — religious, scientific, popular. Thomas Huxley wants to fight in public. You are genuinely ill. Do you enter the public debate yourself?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Yes. The author is the best defender of a book. Public debate is part of the scientific process, and your absence creates a vacuum that your enemies will fill with distortions.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">B</span><span class="dopt-body">Let Huxley fight. You built the case for twenty years — the evidence is in the book. You are better as the quiet correspondent who arms his defenders with facts than as a combatant who can be drawn into personal attacks.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">Prepare a detailed written response to every significant critic. Public debates are theater. A careful printed rebuttal addresses the substance rather than the spectacle.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What Darwin actually did</div>
+      <p><strong>You stay home, sick, and write letters while Huxley brawls with bishops on your behalf. It looks like cowardice. It is the correct strategy.</strong> Darwin almost never appeared in public to defend the theory — partly because of his genuine illness, partly because of temperament. Huxley became "Darwin's bulldog," fighting the public battles with enormous energy and considerable personal ferocity. Darwin revised the Origin through six editions, incorporating new evidence and responding to scientific objections. He wrote 15,000 letters in his lifetime, many of them arming friends and allies with arguments. The strategy worked: by the time Darwin died in 1882, evolution was accepted by virtually every major scientist in the world. He is buried in Westminster Abbey, next to Newton.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Expression</span></div>
+<div class="year-banner">1871</div>
+<div class="timeline-dot">Down House · Age 62</div>
+<div class="narrative">
+  <p>The world thinks of you as the man who explained where species come from. You have published <em>The Descent of Man</em>, which explicitly applies evolution to humans. Now you are working on something smaller and, in some ways, more intimate: a study of how animals express emotions — fear, joy, grief, affection — and how these expressions connect humans to other animals.</p>
+  <p>You send questionnaires to missionaries, colonial administrators, and naturalists across the world, asking them to observe whether indigenous people in different cultures show emotions the same way Europeans do. You study your own children's faces. You watch dogs and horses and cats.</p>
+  <p>Your conclusion will be radical: human emotional expressions are not learned or cultural — they are universal, biological, inherited. Grief looks the same in a New Zealand Maori and an English aristocrat. A dog's fear and a child's fear use the same muscular structure. Emotion is evolution too.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — After the Big Book</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have transformed biology. You could spend your remaining years on grand synthesis — the master theory, the big lectures, the international recognition. Instead you study earthworms, orchids, and facial expressions. Why?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">A</span><span class="dopt-body">The small studies are just recovery — rest between the big work. Detailed naturalist work is what you know and what keeps your mind active. There is no deeper purpose.</span></button>
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">B</span><span class="dopt-body">The small studies ARE the big work, continued by other means. Every earthworm, every orchid pollination mechanism, every infant facial expression is another instance of evolution in action. There is no such thing as a minor observation.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">The small studies are the safest territory after the battles over Origin and Descent. They cannot be weaponized as political or religious attacks. They are a retreat to quieter work.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Darwin actually did</div>
+      <p><strong>His most popular book in his lifetime was about earthworms. Not evolution. Earthworms. He found them just as interesting at 70 as finches at 26.</strong> Darwin's later work was driven by genuine fascination rather than strategic retreat. His book on earthworms — "The Formation of Vegetable Mould through the Action of Worms" — sold faster on publication than the Origin of Species did. His orchid studies showed how evolution produced extraordinarily complex structures (a direct answer to the "design" argument). His work on emotions prefigured modern evolutionary psychology by a century. He wrote 19 books after the Origin. His final book, on earthworms, was his most popular in his lifetime. He found the small questions — how a plant turned to face light, how a worm sensed vibration — as interesting at 70 as he had at 22.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · Westminster</span></div>
+<div class="year-banner">1882</div>
+<div class="timeline-dot">Down House · Age 73</div>
+<div class="narrative">
+  <p>You are dying. Heart disease. You are at peace. In your autobiography, which you wrote partly as a private letter to your family, you have written honestly about your loss of religious faith — how it faded gradually, not in a sudden break, but slowly over the decades as the evidence accumulated. You have written that the old argument from design — a beautiful watch implies a watchmaker — seems strong, but that natural selection explains the watch without the watchmaker.</p>
+  <p>You have also written about the mystery that remains. The consciousness question — why there is something it is like to be alive, to see, to feel — that is not explained by evolution. You do not pretend otherwise.</p>
+  <p>Emma is with you. She has been with you for 43 years. The children are nearby. You have asked to be buried in the churchyard at Downe, next to your brother Erasmus. Your scientific friends — Huxley, Hooker — have different ideas. They want you in Westminster Abbey. They are lobbying Parliament.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Burial</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You wanted the village churchyard. Your friends want Westminster Abbey. What matters more — where you lie, or what you leave behind?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">The village churchyard. You spent your life at Down House. That is where you belong. The institutional honor is for other people's comfort, not yours.</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">B</span><span class="dopt-body">It doesn't matter where you lie. What matters is what you leave: the 20 years of evidence, the careful, honest work, the books that cannot be unwritten. Let your friends put you where they think best.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">C</span><span class="dopt-body">Westminster is important as a symbol — that science and England are not in conflict, that the theory is not disreputable. Support the Abbey burial as a public statement.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What actually happened</div>
+      <p><strong>You asked for the village churchyard. Parliament said Westminster Abbey. You were already dead, so you didn't get a vote.</strong> Darwin died on April 19, 1882. He wanted the village churchyard; his family initially agreed. Huxley and the scientific establishment lobbied urgently, and within days had secured permission from the Dean of Westminster and signed a letter from 20 members of Parliament. Darwin was buried in Westminster Abbey on April 26, next to the astronomer John Herschel and near Isaac Newton. Emma attended. She lived until 1896, outliving him by 14 years. She returned to Down House and continued her routines. She never stopped going to church. She edited his autobiography, softening the passages about religious unbelief. He had left her the manuscript. He knew she would.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Darwin's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="cta-box">
+  <p>Darwin spent 20 years doing the work and 20 years afraid to show it. When forced to show it, he showed it correctly and humbly. He was one of the most careful thinkers in the history of science — and also one of the most anxious human beings. Both things were necessary. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/index.html#simulators">→ All Life Simulators — Newton, Einstein, Van Gogh, Tesla, Da Vinci and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/newton-simulator.html" style="color:var(--accent)">Newton Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="The Architect of Patient Truth";body="You matched Darwin's choices at almost every turn — the voyage, the 20-year wait, the joint credit with Wallace, letting Huxley fight while you armed him from the sidelines. This is what changing the world actually looks like: not a moment of heroic courage, but two decades of barnacles and anxiety and letters to a wife whose faith you were quietly destroying. Darwin understood something most brilliant people never learn: patience is not the same as cowardice. The theory survived because he waited until it was unanswerable. So did you.";}else if(pct>=0.625){title="The Almost-Darwin";body="You shared his caution but diverged at the moments that cost the most — the Wallace letter, or how to hold Emma's faith alongside your own work. Darwin's generosity in those moments wasn't instinct. It was a choice, made under pressure, again and again. He shared credit with a stranger who didn't know he had a claim. He let his wife edit his autobiography after his death, knowing she'd soften the hard parts. You chose right some of the time. Darwin chose right almost every time. The gap is small. It matters.";}else if(pct>=0.375){title="The Man Who Publishes Too Early";body="You would have published in 1840 — before the barnacle decade, before the credibility was established, before the evidence was unanswerable. The Church would have attacked you, and this time they'd have had a point: a vast claim on thin evidence from an unknown young naturalist. Darwin's maddening 20-year delay was not weakness. It was the thing that made the theory bulletproof. You had the right idea at the wrong moment. History might have buried it with you.";}else{title="The Comfortable Parish Priest";body="You made the safe choices: stayed home from the voyage, avoided the controversy, let science happen somewhere else. There's a version of this life that isn't a failure — a quiet parish, a stable marriage, beetles in the garden on Sunday afternoons. Darwin almost chose it. His father nearly convinced him. One letter from his uncle was the difference. You declined to write that letter. The theory waited. Maybe 50 years. Maybe longer. Maybe it never came."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

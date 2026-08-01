@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chinese Writing Toolkit · 中文写作练习</title>
+<style>
+  :root{
+    --red:#C0392B; --red-d:#922B21; --red-s:rgba(192,57,43,.08); --red-l:#E8B4B0;
+    --bg:#F5F0EF; --card:#FFFFFF; --ink:#1E2330; --soft:#556; --faint:#8A93A6;
+    --line:#E6E0DF; --line2:#D8D0CE;
+    --mono:'SF Mono',ui-monospace,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --shad:0 1px 2px rgba(30,35,48,.04),0 4px 14px rgba(30,35,48,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:780px;margin:0 auto;padding:20px 18px 70px}
+  header h1{font-size:1.5rem;margin:0;letter-spacing:-.01em}
+  header .sub{color:var(--soft);font-size:.86rem;margin-top:3px}
+  .crumbs{display:flex;align-items:center;gap:8px;margin:14px 0 8px;font-size:.84rem;color:var(--soft);flex-wrap:wrap}
+  .crumbs button{border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:5px 13px;cursor:pointer;color:var(--red-d);font-family:var(--sans);font-size:.84rem}
+  .crumbs button:hover{border-color:var(--red)}
+  .crumbs span.sep{color:var(--faint)}
+  .catsec{margin-top:22px}
+  .catsec h2{font-size:1.04rem;margin:0 0 4px;display:flex;align-items:center;gap:9px}
+  .catsec h2 .dot{width:9px;height:9px;border-radius:50%;background:var(--red)}
+  .catsec .cdesc{font-size:.8rem;color:var(--faint);margin:0 0 11px}
+  .tgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tcard{text-align:left;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:13px 14px;cursor:pointer;box-shadow:var(--shad);font-family:var(--sans)}
+  .tcard:hover{border-color:var(--red)}
+  .tcard b{display:block;font-size:.98rem;color:var(--ink)}
+  .tcard i{font-style:normal;font-size:.74rem;color:var(--faint)}
+  .bigcard{display:block;width:100%;text-align:left;border:1px dashed var(--red-l);background:var(--red-s);border-radius:14px;padding:14px 16px;cursor:pointer;margin-top:10px;font-family:var(--sans)}
+  .bigcard:hover{border-color:var(--red)}
+  .bigcard b{font-size:1rem;color:var(--red-d)} .bigcard p{margin:5px 0 0;font-size:.82rem;color:var(--soft)}
+  .doc h2{font-size:1.35rem;margin:6px 0 2px} .doc .den{font-family:var(--mono);color:var(--faint);font-size:.84rem;margin-bottom:10px}
+  .intro{background:var(--red-s);border-left:3px solid var(--red);border-radius:0 10px 10px 0;padding:11px 14px;font-size:.9rem;margin-bottom:18px}
+  .intro .lab{color:var(--red-d);font-weight:700}
+  .block{margin-bottom:20px}
+  .block h3{font-size:1.04rem;margin:0 0 9px;padding-left:11px;border-left:4px solid var(--red-l)}
+  .struct{display:flex;flex-direction:column;gap:7px}
+  .struct .st{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:9px 12px}
+  .struct .st .sp{flex:none;background:var(--red);color:#fff;border-radius:7px;padding:1px 9px;font-size:.8rem;font-weight:700}
+  .struct .st .sd{font-size:.88rem;color:var(--ink)}
+  .sent{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:9px 12px;margin-bottom:7px}
+  .sent .se{font-size:.95rem;display:flex;gap:8px;align-items:flex-start}
+  .sent .se .say{flex:none;border:1px solid var(--red-l);background:var(--red-s);border-radius:7px;padding:0 7px;cursor:pointer;font-size:.8rem;line-height:1.7;color:var(--red-d)}
+  .sent .sz{font-size:.82rem;color:var(--soft);margin-top:4px;padding-top:4px;border-top:1px dashed var(--line2)}
+  .skeleton{white-space:pre-wrap;background:#1f2330;color:#e8e8f0;border-radius:12px;padding:14px 16px;font-family:var(--mono);font-size:.86rem;line-height:1.8}
+  .skeleton .bk{color:#ffd479}
+  .note{font-size:.78rem;color:var(--faint);margin-top:6px}
+  .model{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 16px;box-shadow:var(--shad)}
+  .model .mp{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+  .model .mp .say{flex:none;border:1px solid var(--red-l);background:var(--red-s);border-radius:7px;padding:0 8px;cursor:pointer;font-size:.8rem;line-height:1.7;color:var(--red-d)}
+  .model .mp .mt{font-size:.97rem;line-height:1.75;white-space:pre-wrap}
+  .model .mz{display:none;border-top:1px dashed var(--line2);margin-top:6px;padding-top:10px;color:var(--soft);font-size:.88rem;white-space:pre-wrap}
+  .model .mz.show{display:block}
+  .btn-toggle-en{border:1px solid var(--line2);background:var(--card);border-radius:8px;padding:6px 12px;font-size:.82rem;cursor:pointer;color:var(--soft);font-family:var(--sans);margin-top:6px}
+  .btn-toggle-en:hover{border-color:var(--red);color:var(--red-d)}
+  table.gt{width:100%;border-collapse:collapse;margin-top:4px;font-size:.88rem}
+  table.gt th,table.gt td{border:1px solid var(--line2);padding:7px 10px;text-align:left;vertical-align:top}
+  table.gt th{background:var(--red-s);color:var(--red-d)}
+  table.gt td.k{font-size:1rem;color:var(--ink)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .chip{background:var(--red-s);border:1px solid var(--red-l);border-radius:999px;padding:3px 11px;font-size:.84rem;color:var(--red-d)}
+  .grp{margin-bottom:13px} .grp .gh{font-size:.85rem;font-weight:700;color:var(--ink);margin-bottom:5px}
+  .pat{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin-bottom:8px}
+  .pat .pn{font-size:.8rem;color:var(--red-d);font-weight:700;margin-bottom:3px}
+  .pat .pe{font-size:.92rem;display:flex;gap:8px;align-items:flex-start}
+  .pat .pe .say{flex:none;border:1px solid var(--red-l);background:var(--red-s);border-radius:7px;padding:0 7px;cursor:pointer;font-size:.78rem;color:var(--red-d)}
+  .pat .pz{font-size:.82rem;color:var(--soft);margin-top:4px;padding-top:4px;border-top:1px dashed var(--line2)}
+  .check li{font-size:.88rem;margin:5px 0 5px 2px;list-style:none;position:relative;padding-left:24px}
+  .check li::before{content:'';position:absolute;left:0;color:var(--red);font-size:1rem}
+  .pad textarea{width:100%;min-height:300px;border:1px solid var(--line2);border-radius:12px;padding:14px;font-size:1.05rem;line-height:1.9;font-family:var(--sans);resize:vertical}
+  .pad textarea:focus{outline:none;border-color:var(--red)}
+  .padbar{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .padbar .wc{font-size:.84rem;color:var(--soft);margin-right:auto}
+  .padbar button{border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:8px 14px;font-size:.85rem;cursor:pointer;color:var(--soft);font-family:var(--sans)}
+  .padbar button.primary{background:var(--red);border-color:var(--red);color:#fff;font-weight:600}
+  .btnrow{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .btnrow button{flex:1;min-width:130px;border:1.5px solid var(--line2);background:#fff;border-radius:12px;padding:12px;font-size:.92rem;font-weight:700;cursor:pointer;color:var(--soft);font-family:var(--sans)}
+  .btnrow button.primary{background:var(--red);border-color:var(--red);color:#fff}
+  footer{margin-top:30px;text-align:center;color:var(--faint);font-size:.74rem}
+  @media(max-width:560px){.tgrid{grid-template-columns:1fr}.wrap{padding:16px 14px 50px}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Chinese Writing Toolkit <span style="font-size:.7em;color:var(--faint)">· 中文写作练习</span></h1>
+    <div class="sub" id="sub-line">9 letter types · sentence banks · word upgrades · practice pad · for HSK4–6 learners · <a href="https://ordinarymantrying.com/tools/" style="color:var(--red-d)" target="_blank">more free tools</a></div>
+  </header>
+  <div class="crumbs" id="crumbs"></div>
+  <div id="view"></div>
+  <footer>Offline · No login · Runs in browser · Progress saved locally<br>Made with ♥ by <a href="https://ordinarymantrying.com" style="color:var(--red-d);text-decoration:none" target="_blank">ordinarymantrying.com</a> · More free tools at <a href="https://ordinarymantrying.com/tools/" style="color:var(--red-d);text-decoration:none" target="_blank">Tools page</a></footer>
+</div>
+<script>
+const W = {
+  applied: [
+    {
+      id:'invite', name:'邀请信', en:'Invitation Letter',
+      scene:'Inviting a friend, teacher, or guest to an event: party, contest, trip, lecture, etc.',
+      points:'Use 您 for formal contexts, 你 for friends. Use 将 for upcoming events. Tone: warm and polite.',
+      structure:[
+        ['开头 Opening','State your purpose — invite the reader to a specific event.'],
+        ['主体 Body','Give event details: time, place, content, why you are inviting them.'],
+        ['结尾 Closing','Express hope they will attend and ask for a reply.']
+      ],
+      opens:[
+        {zh:'我写信是想邀请您参加……',en:'I am writing to invite you to ……'},
+        {zh:'我诚心邀请您来参加我们的……',en:'I sincerely invite you to join our ……'},
+        {zh:'我很荣幸地邀请您出席……',en:'It is my honour to invite you to attend ……'}
+      ],
+      bodies:[
+        {zh:'活动将于……在……举行。',en:'The event will be held at …… on ……'},
+        {zh:'届时我们将……，相信您一定会喜欢。',en:'We will …… and I believe you will enjoy it very much.'},
+        {zh:'我们邀请您的原因是……',en:'The reason we are inviting you is that ……'},
+        {zh:'如果您能来，将会为我们增添很多光彩。',en:'Your presence would mean a great deal to us.'}
+      ],
+      closes:[
+        {zh:'真诚希望您能来，期待您的回复。',en:'I sincerely hope you can come and look forward to your reply.'},
+        {zh:'如果您能参加，将是我们的荣幸。',en:'It would be our great honour if you could join us.'},
+        {zh:'请尽快告知您是否能够出席。',en:'Please let us know as soon as possible whether you can attend.'}
+      ],
+      template:'亲爱的___，\n  我写信是想邀请您参加___（活动名称）。活动将于___（时间）在___（地点）举行。\n  届时我们将___（活动内容/安排）。我们邀请您的原因是___。\n  真诚希望您能来，期待您的回复。\n您的，___',
+      model:{
+        zh:'亲爱的史密斯先生，\n  我写信是想邀请您参加我们学校的中文演讲比赛。比赛将于下周五下午三点在学校报告厅举行。\n  届时将有十位同学围绕「我与中国」主题发表演讲。作为我们的中文老师，诚挚邀请您担任评委，您的专业点评对我们意义重大。\n  真诚希望您能来，期待您的回复。\n您的，李明',
+        en:'Dear Mr. Smith,\n  I am writing to invite you to our school\'s Chinese Speech Contest. It will be held in the school lecture hall at 3 p.m. next Friday.\n  Ten students will give speeches on the theme of "Me and China". As our Chinese teacher, you are warmly invited to be one of the judges. Your professional feedback means a great deal to us.\n  I sincerely hope you can come and look forward to your reply.\nYours, Li Ming'
+      }
+    },
+    {
+      id:'thanks', name:'感谢信', en:'Thank-you Letter',
+      scene:'Thanking someone for their help, hospitality, guidance, or a gift.',
+      points:'Use past tense to recall what they did. Be specific. Tone: sincere and warm.',
+      structure:[
+        ['开头 Opening','Express gratitude and state what you are thankful for.'],
+        ['主体 Body','Describe what they did and the impact it had on you.'],
+        ['结尾 Closing','Thank them again; express a wish to repay their kindness.']
+      ],
+      opens:[
+        {zh:'我写信是为了向您表示衷心的感谢。',en:'I am writing to express my sincere gratitude to you.'},
+        {zh:'语言难以表达我对您帮助的感激之情。',en:'Words cannot fully express how grateful I am for your help.'},
+        {zh:'感谢您在……期间给予我的帮助。',en:'Thank you so much for the help you gave me during ……'}
+      ],
+      bodies:[
+        {zh:'多亏了您的帮助，我……',en:'Thanks to your help, I ……'},
+        {zh:'您……的行为让我非常感动。',en:'I was deeply moved by your act of ……'},
+        {zh:'没有您的支持，我不可能……',en:'Without your support, I could not have ……'},
+        {zh:'您的帮助对我来说意义深远。',en:'Your help has made a profound difference to me.'}
+      ],
+      closes:[
+        {zh:'我真的非常感激，希望有机会能报答您的好意。',en:'I am truly grateful and hope to repay your kindness someday.'},
+        {zh:'再次向您致以最衷心的感谢。',en:'Once again, thank you from the bottom of my heart.'},
+        {zh:'希望您一切顺利，身体健康。',en:'I wish you all the best and good health.'}
+      ],
+      template:'亲爱的___，\n  我写信是为了向您表示衷心的感谢，感谢您___（感谢的具体事项）。\n  多亏了您的帮助，我___（具体影响/结果）。您___的行为让我非常感动。\n  我真的非常感激，希望有机会能报答您的好意。\n您的，___',
+      model:{
+        zh:'亲爱的王老师，\n  我写信是为了向您表示衷心的感谢，感谢您在我学习中文期间给予我的悉心指导。\n  多亏了您耐心的讲解，我的口语进步了很多。您总是鼓励我多开口说话，这让我克服了对说中文的恐惧。没有您的支持，我不可能在这么短的时间内取得这样的进步。\n  再次向您致以最衷心的感谢，希望有机会能请您吃顿饭。\n您的，Tom',
+        en:'Dear Teacher Wang,\n  I am writing to express my sincere gratitude for your patient guidance during my Chinese studies.\n  Thanks to your encouragement to speak up, I have overcome my fear of speaking Chinese and improved a great deal. Without your support, I could not have made such progress in so short a time.\n  Once again, thank you from the bottom of my heart. I hope to treat you to dinner sometime soon.\nYours, Tom'
+      }
+    },
+    {
+      id:'advice', name:'建议信', en:'Letter of Advice',
+      scene:'Giving suggestions on someone\'s problem: studying Chinese, adapting to China, health, etc.',
+      points:'Use 建议/应该/最好 for suggestions. Give 2-3 specific, practical points. Tone: friendly and helpful.',
+      structure:[
+        ['开头 Opening','Acknowledge the person\'s problem and say you would like to help.'],
+        ['主体 Body','Give 2-3 specific suggestions with brief reasons.'],
+        ['结尾 Closing','Express hope the suggestions will help.']
+      ],
+      opens:[
+        {zh:'得知您在……方面遇到了困难，我想提供一些建议。',en:'I\'m sorry to hear you\'re having trouble with …… Here are some suggestions.'},
+        {zh:'我写信是想就……向您提供一些建议。',en:'I am writing to offer some advice on ……'},
+        {zh:'希望以下几点建议对您有所帮助。',en:'I hope the following suggestions will be of help to you.'}
+      ],
+      bodies:[
+        {zh:'首先，我建议您……',en:'First of all, I suggest that you ……'},
+        {zh:'此外，……也是个好主意。',en:'What\'s more, it would also be a good idea to ……'},
+        {zh:'最后，您最好……',en:'Last but not least, you\'d better ……'},
+        {zh:'这样做的原因是……',en:'The reason for this is that ……'}
+      ],
+      closes:[
+        {zh:'希望这些建议对您有所帮助。',en:'I hope these suggestions will be of some help to you.'},
+        {zh:'如果照做，相信情况一定会好转。',en:'I am sure things will get better if you follow them.'},
+        {zh:'如有需要，请随时告诉我。',en:'Please feel free to let me know if you need anything else.'}
+      ],
+      template:'亲爱的___，\n  得知您在___方面遇到了困难，我想提供一些建议。\n  首先，我建议您___。此外，___也是个好主意。最后，您最好___。\n  希望这些建议对您有所帮助。\n您的，___',
+      model:{
+        zh:'亲爱的Sarah，\n  得知您在学习中文方面遇到了困难，我想提供一些建议。\n  首先，我建议您每天看带中文字幕的中国电视剧，这样既有趣又能提高听力。此外，找一个中国笔友练习写作也是个好主意。最后，您最好坚持每天背十个新词，积累词汇量非常重要。\n  希望这些建议对您有所帮助，相信您的中文一定会越来越好！\n您的，李华',
+        en:'Dear Sarah,\n  I\'m sorry to hear you\'re having trouble learning Chinese. Here are some suggestions.\n  First, I suggest watching Chinese TV dramas with subtitles every day — it\'s fun and great for your listening. What\'s more, finding a Chinese pen pal to practise writing would also be a great idea. Last but not least, you\'d better memorise ten new words every day, as building vocabulary is essential.\n  I hope these suggestions help. I believe your Chinese will get better and better!\nYours, Li Hua'
+      }
+    },
+    {
+      id:'apology', name:'道歉信', en:'Letter of Apology',
+      scene:'Apologising for being late, missing an appointment, damaging something, or causing trouble.',
+      points:'Apologise first, then explain the reason, then offer a remedy. Tone: sincere and humble.',
+      structure:[
+        ['开头 Opening','Express your apology and state what you are apologising for.'],
+        ['主体 Body','Explain the reason; offer to make it up.'],
+        ['结尾 Closing','Apologise again and ask for understanding.']
+      ],
+      opens:[
+        {zh:'我写信是为了就……向您道歉。',en:'I am writing to apologise to you for ……'},
+        {zh:'请接受我对……的诚挚歉意。',en:'Please accept my sincere apology for ……'},
+        {zh:'我非常抱歉地告诉您……',en:'I am very sorry to tell you that ……'}
+      ],
+      bodies:[
+        {zh:'原因是……',en:'The reason for this was that ……'},
+        {zh:'为了弥补，我想……',en:'To make it up to you, I would like to ……'},
+        {zh:'我绝非有意给您添麻烦。',en:'I never meant to cause you any trouble.'},
+        {zh:'我保证以后不会再发生类似的事情。',en:'I promise this will not happen again.'}
+      ],
+      closes:[
+        {zh:'真心希望您能理解并原谅我。',en:'I sincerely hope you can understand and forgive me.'},
+        {zh:'再次为给您带来的不便深表歉意。',en:'Once again, I am truly sorry for the inconvenience caused.'},
+        {zh:'期待您的回复。',en:'I look forward to your reply.'}
+      ],
+      template:'亲爱的___，\n  我写信是为了就___向您道歉。\n  原因是___。为了弥补，我想___。我保证以后不会再发生类似的事情。\n  真心希望您能理解并原谅我。\n您的，___',
+      model:{
+        zh:'亲爱的张老师，\n  我写信是为了就上周迟到参加中文课向您道歉。\n  原因是我在路上遇到了严重的堵车，公交车晚点了将近四十分钟。为了弥补，我已经从同学那里借来了课堂笔记，并把错过的内容都补上了。我保证以后会提前出发，不会再迟到了。\n  真心希望您能理解并原谅我。再次为给您带来的不便深表歉意。\n您的，David',
+        en:'Dear Teacher Zhang,\n  I am writing to apologise for arriving late to Chinese class last week.\n  The reason was that I was caught in heavy traffic and the bus was nearly forty minutes late. To make it up, I have borrowed notes from a classmate and caught up on everything I missed. I promise I will leave earlier in the future and will not be late again.\n  I sincerely hope you can understand and forgive me. Once again, I am truly sorry.\nYours, David'
+      }
+    },
+    {
+      id:'apply', name:'申请信', en:'Application Letter',
+      scene:'Applying for a volunteer role, club membership, scholarship, exchange programme, or job.',
+      points:'State the position/programme, then give 2-3 reasons you are a good fit. Tone: confident and polite.',
+      structure:[
+        ['开头 Opening','State what you are applying for and where you heard about it.'],
+        ['主体 Body','Give your qualifications, skills, and relevant experience.'],
+        ['结尾 Closing','Express hope to be selected; thank them for considering your application.']
+      ],
+      opens:[
+        {zh:'我写信是想申请……职位/项目。',en:'I am writing to apply for the position/programme of ……'},
+        {zh:'我想申请成为……的……',en:'I would like to apply to be a …… in ……'},
+        {zh:'得知贵方正在招募……，我希望能提交申请。',en:'Having learned that you are recruiting ……, I would like to submit my application.'}
+      ],
+      bodies:[
+        {zh:'我认为我能胜任此职，理由如下。',en:'I believe I am a good fit for the following reasons.'},
+        {zh:'首先，我能说一口流利的中英文。',en:'First, I can speak both Chinese and English fluently.'},
+        {zh:'此外，我曾参加……，积累了丰富的经验。',en:'Besides, I have participated in …… and gained valuable experience.'},
+        {zh:'我性格开朗，善于与人沟通。',en:'I am outgoing and good at communicating with people.'}
+      ],
+      closes:[
+        {zh:'如蒙录用，我将不胜感激。',en:'I would be truly grateful if I could be selected.'},
+        {zh:'感谢您考虑我的申请，期待您的回复。',en:'Thank you for considering my application. I look forward to your reply.'},
+        {zh:'我相信这次机会对我来说意义重大。',en:'I believe this opportunity would mean a great deal to me.'}
+      ],
+      template:'尊敬的___，\n  我写信是想申请___（职位/项目）。我认为我能胜任此职，理由如下。\n  首先，___。此外，___。我相信___。\n  如蒙录用，我将不胜感激。感谢您考虑我的申请。\n您的，___',
+      model:{
+        zh:'尊敬的负责人，\n  我写信是想申请担任即将举行的中国文化节的志愿者向导。我认为我能胜任此职，理由如下。\n  首先，我学习中文已有两年，能用中文进行日常交流，也能帮助中外来宾相互沟通。此外，我曾在学校组织过类似的志愿服务活动，积累了丰富的经验。我性格开朗，热爱中国文化，相信能为文化节的顺利进行贡献一份力量。\n  如蒙录用，我将不胜感激。感谢您考虑我的申请。\n您的，Emily',
+        en:'Dear Organiser,\n  I am writing to apply for a volunteer guide position at the upcoming China Cultural Festival. I believe I am a good fit for the following reasons.\n  First, I have been studying Chinese for two years and can hold everyday conversations in Chinese, which will help me assist both Chinese and international visitors. Besides, I have organised similar volunteer activities at school and have gained valuable experience. I am outgoing, passionate about Chinese culture, and confident I can contribute to the success of the festival.\n  I would be truly grateful if I could be selected. Thank you for considering my application.\nYours, Emily'
+      }
+    },
+    {
+      id:'notice', name:'通知', en:'Notice / Announcement',
+      scene:'Announcing an event, recruiting members, or sharing important information.',
+      points:'Title 通知 centred at top. Cover 5W: what/when/where/who/how. End with contact or sign-off.',
+      structure:[
+        ['标题 Title','Write 通知 centred at the top.'],
+        ['正文 Body','State the event, time, place, audience, and how to sign up.'],
+        ['落款 Sign-off','The name of the issuing group/person.']
+      ],
+      opens:[
+        {zh:'为了……，我校将举行……',en:'In order to ……, our school will hold ……'},
+        {zh:'……将于……举行，欢迎大家踊跃参加。',en:'…… will take place on ……. Everyone is warmly welcome.'},
+        {zh:'经研究决定，……',en:'It has been decided that ……'}
+      ],
+      bodies:[
+        {zh:'活动将于……在……举行。',en:'The event will take place at …… on ……'},
+        {zh:'欢迎所有感兴趣的同学参加。',en:'All interested students are welcome to participate.'},
+        {zh:'请于……前到……报名。',en:'Please sign up at …… before ……'},
+        {zh:'如有疑问，请联系……',en:'For more information, please contact ……'}
+      ],
+      closes:[
+        {zh:'请大家积极参与，不要错过！',en:'Please join us actively — don\'t miss it!'},
+        {zh:'欢迎大家踊跃参加。',en:'Everyone is warmly welcome to participate.'}
+      ],
+      template:'通知\n  为了___，我校将举行___（活动名称）。\n  活动将于___（时间）在___（地点）举行。欢迎所有___参加。请于___前到___报名。\n  如有疑问，请联系___。\n  ___（发出通知的单位）',
+      model:{
+        zh:'通知\n  为了丰富大家的课余生活，中文学习协会将于下月举办中文书法比赛。\n  比赛将于11月15日下午两点在图书馆三楼举行。欢迎所有学习中文的同学参加，不限水平。请于11月10日前扫描下方二维码报名。\n  如有疑问，请联系协会邮箱：chinese@school.edu。\n  中文学习协会',
+        en:'Notice\n  In order to enrich students\' extracurricular life, the Chinese Learning Society will hold a Chinese Calligraphy Contest next month.\n  The contest will take place on the afternoon of November 15th at 3F of the library. All Chinese-learning students are welcome, regardless of level. Please scan the QR code below to sign up before November 10th.\n  For enquiries, please email: chinese@school.edu.\n  Chinese Learning Society'
+      }
+    },
+    {
+      id:'speech', name:'演讲稿', en:'Speech',
+      scene:'A speech at a club meeting, school event, or Chinese class presentation.',
+      points:'Open with a greeting. Make 2-3 clear points with examples. Close with a call to action or thanks.',
+      structure:[
+        ['开头 Opening','Greet the audience; state your topic clearly.'],
+        ['主体 Body','Develop 2-3 points; use examples and connectors.'],
+        ['结尾 Closing','Summarise, call to action, thank the audience.']
+      ],
+      opens:[
+        {zh:'大家好！很荣幸能就……发表演讲。',en:'Hello everyone! It is my honour to speak about ……'},
+        {zh:'女士们、先生们，今天我想和大家分享……',en:'Ladies and gentlemen, today I would like to share …… with you.'},
+        {zh:'各位同学，大家好！今天我演讲的题目是……',en:'Dear fellow students, good morning! My speech today is about ……'}
+      ],
+      bodies:[
+        {zh:'一方面，……；另一方面，……',en:'On the one hand, ……; on the other hand, ……'},
+        {zh:'以我自己为例，……',en:'Take myself as an example — ……'},
+        {zh:'毫无疑问，……',en:'There is no doubt that ……'},
+        {zh:'研究表明，……',en:'Research shows that ……'}
+      ],
+      closes:[
+        {zh:'总之，让我们……。谢谢大家！',en:'In short, let us all ……. Thank you very much!'},
+        {zh:'我的演讲到此结束，感谢大家的聆听！',en:'That\'s all for my speech. Thank you for listening!'},
+        {zh:'希望我的演讲对大家有所启发。',en:'I hope my speech has given you something to think about.'}
+      ],
+      template:'大家好！\n  很荣幸能就___发表演讲。\n  一方面，___。另一方面，___。以我自己为例，___。\n  总之，___。我的演讲到此结束，感谢大家的聆听！',
+      model:{
+        zh:'大家好！\n  很荣幸能就学习中文的乐趣发表演讲。毫无疑问，学习一门新语言是一件很有意义的事。\n  一方面，学中文让我能够了解五千年的中国文化，包括诗词、书法和传统节日。另一方面，它也为我打开了新的大门——我现在可以用中文和朋友聊天，这让我很有成就感。以我自己为例，刚开始学中文时，四声让我头疼，但坚持下来之后，现在我已经能看懂简单的中文短文了。\n  总之，学中文是一段美妙的旅程，我鼓励大家勇敢尝试。我的演讲到此结束，感谢大家的聆听！',
+        en:'Hello everyone!\n  It is my honour to speak about the joy of learning Chinese. There is no doubt that learning a new language is a deeply rewarding experience.\n  On the one hand, learning Chinese has allowed me to explore five thousand years of culture — poetry, calligraphy, and traditional festivals. On the other hand, it has opened new doors: I can now chat with friends in Chinese, which gives me a real sense of achievement. Take myself as an example — when I started, the four tones drove me crazy, but after persisting, I can now read simple Chinese texts.\n  In short, learning Chinese is a wonderful journey and I encourage everyone to give it a try. That\'s all for my speech. Thank you for listening!'
+      }
+    },
+    {
+      id:'inquiry', name:'询问信', en:'Letter of Inquiry',
+      scene:'Asking about a course, event, product, school, or cultural programme.',
+      points:'State your purpose clearly. Ask 2-3 specific, polite questions. Use 请问/能否/是否 for politeness.',
+      structure:[
+        ['开头 Opening','State you are writing to ask about something specific.'],
+        ['主体 Body','Ask 2-3 clear, specific questions.'],
+        ['结尾 Closing','Thank them and say you look forward to their reply.']
+      ],
+      opens:[
+        {zh:'我写信是想咨询有关……的信息。',en:'I am writing to ask for information about ……'},
+        {zh:'如蒙告知有关……的详情，将不胜感激。',en:'I would be grateful if you could provide details about ……'},
+        {zh:'我对贵方的……非常感兴趣，想进一步了解。',en:'I am very interested in your …… and would like to learn more.'}
+      ],
+      bodies:[
+        {zh:'首先，我想知道……',en:'First, I would like to know ……'},
+        {zh:'另外，请问是否……？',en:'In addition, could you tell me whether ……?'},
+        {zh:'我还想了解……',en:'I am also wondering about ……'},
+        {zh:'请问费用大概是多少？',en:'Could you also let me know roughly how much it costs?'}
+      ],
+      closes:[
+        {zh:'期待您的早日回复，谢谢。',en:'I look forward to your early reply. Thank you.'},
+        {zh:'您的帮助将不胜感激。',en:'Your help would be greatly appreciated.'},
+        {zh:'如有任何宣传材料，请一并寄来。',en:'If you have any brochures or materials, please feel free to send them along.'}
+      ],
+      template:'尊敬的___，\n  我写信是想咨询有关___的信息。\n  首先，我想知道___。另外，请问是否___？我还想了解___。\n  期待您的早日回复，谢谢。\n您的，___',
+      model:{
+        zh:'尊敬的负责人，\n  我写信是想咨询有关贵校暑期中文强化课程的信息。\n  首先，我想知道课程将于何时开始，共持续多少周。另外，请问课程是否提供住宿？我还想了解课程的收费标准以及是否有针对初学者的班级。\n  期待您的早日回复，谢谢。\n您的，James',
+        en:'Dear Sir or Madam,\n  I am writing to ask for information about your summer intensive Chinese programme.\n  First, I would like to know when the programme begins and how many weeks it lasts. In addition, could you tell me whether accommodation is provided? I am also wondering about the tuition fees and whether there are classes for complete beginners.\n  I look forward to your early reply. Thank you.\nYours, James'
+      }
+    },
+    {
+      id:'complaint', name:'投诉信', en:'Complaint Letter',
+      scene:'Complaining about poor service, a defective product, noise, or any problem that needs solving.',
+      points:'Be factual, not emotional. State what happened → impact → what you want done. Use 由于/因此. Tone: firm but polite.',
+      structure:[
+        ['开头 Opening','State the problem clearly — when, where, what happened.'],
+        ['主体 Body','Describe the impact; give specific details. State your request.'],
+        ['结尾 Closing','Set a deadline for a response; say you expect a satisfactory resolution.']
+      ],
+      opens:[
+        {zh:'我写信是为了就……问题表达我的强烈不满。',en:'I am writing to express my strong dissatisfaction with ……'},
+        {zh:'我非常遗憾地告诉您，……的服务令我十分失望。',en:'I regret to inform you that the service at …… has been very disappointing.'},
+        {zh:'我是……的顾客，此次写信是想反映一个严重问题。',en:'I am a customer of …… and I am writing to report a serious problem.'},
+        {zh:'上周，我在……遇到了一次非常不愉快的经历。',en:'Last week, I had a very unpleasant experience at ……'},
+        {zh:'我希望贵方能认真对待以下投诉内容。',en:'I hope you will take the following complaint seriously.'}
+      ],
+      bodies:[
+        {zh:'具体情况如下：……',en:'The specific situation is as follows: ……'},
+        {zh:'由于……，我遭受了……方面的损失。',en:'Due to ……, I suffered losses in terms of ……'},
+        {zh:'更令我失望的是，……',en:'What disappointed me even more was that ……'},
+        {zh:'这种情况严重影响了我的……',en:'This situation seriously affected my ……'},
+        {zh:'我认为贵方应该对此负责，并采取以下措施：……',en:'I believe you should take responsibility for this and take the following steps: ……'},
+        {zh:'作为忠实顾客，我希望此问题能够得到妥善处理。',en:'As a loyal customer, I hope this matter can be handled satisfactorily.'}
+      ],
+      closes:[
+        {zh:'希望您能在……之前给予回复，并提出解决方案。',en:'I hope to receive your reply and a proposed solution before ……'},
+        {zh:'如问题得不到解决，我将不得不采取进一步行动。',en:'If this matter is not resolved, I will have no choice but to take further action.'},
+        {zh:'期待您的认真对待与及时回复。',en:'I look forward to your serious attention and prompt response.'},
+        {zh:'我相信贵方一定能妥善处理此次投诉。',en:'I trust that you will handle this complaint satisfactorily.'}
+      ],
+      template:'尊敬的___，\n  我写信是为了就___问题表达我的强烈不满。\n  具体情况如下：___。由于___，我遭受了___方面的损失。我认为贵方应该___。\n  希望您能在___之前给予回复，并提出解决方案。\n您的，___',
+      model:{
+        zh:'尊敬的酒店经理，\n  我写信是为了就上周我在贵酒店入住期间遇到的问题表达我的强烈不满。\n  具体情况如下：我预订的是一间安静的标准间，但实际分配给我的房间正对着停车场，噪音极大，严重影响了我的休息。更令我失望的是，当我向前台反映时，工作人员态度冷漠，未能提供任何有效的解决方案。由于整夜无法入睡，我第二天的重要会议受到了很大影响。\n  我认为贵酒店应该对此负责，并予以合理赔偿。希望您能在一周之内给予书面回复，并提出解决方案。\n您的，Michael',
+        en:'Dear Hotel Manager,\n  I am writing to express my strong dissatisfaction with the problems I encountered during my stay at your hotel last week.\n  The specific situation is as follows: I had booked a quiet standard room, but the room I was given faced the car park and was extremely noisy, seriously affecting my rest. What disappointed me even more was that when I raised the issue with the front desk, the staff were indifferent and failed to offer any effective solution. Due to being unable to sleep all night, my important meeting the following day was greatly affected.\n  I believe your hotel should take responsibility for this and provide reasonable compensation. I hope to receive a written reply within one week along with a proposed solution.\nYours, Michael'
+      }
+    }
+  ],
+  toolbox:{
+    replace:[
+      {plain:'很好',better:['非常好','出色','优秀','极佳','相当不错','令人满意']},
+      {plain:'很多',better:['大量','众多','丰富的','相当多的','为数不少的','不计其数的']},
+      {plain:'但是',better:['然而','不过','尽管如此','即便如此','话虽如此','与此同时']},
+      {plain:'因为',better:['由于','鉴于','正是因为','究其原因','归根结底']},
+      {plain:'所以',better:['因此','于是','从而','进而','由此可见','不难看出']},
+      {plain:'我认为',better:['在我看来','就我个人而言','我坚信','我深信不疑','依我之见']},
+      {plain:'说',better:['表示','指出','强调','提到','提出','阐述','倡导']},
+      {plain:'很',better:['十分','非常','极其','格外','相当','颇为','尤为']},
+      {plain:'希望',better:['期望','渴望','盼望','衷心希望','殷切期盼','真诚期待']},
+      {plain:'帮助',better:['协助','给予帮助','发挥重要作用','起到关键作用','做出贡献','鼎力相助']},
+      {plain:'知道',better:['了解','意识到','深知','清楚地认识到','深刻体会到']},
+      {plain:'好处',better:['益处','优势','积极影响','正面效应','不可忽视的价值']},
+      {plain:'问题',better:['困境','挑战','难题','棘手之处','亟待解决的问题']},
+      {plain:'高兴',better:['欣喜','欣慰','倍感振奋','不胜欣喜','喜出望外']},
+      {plain:'努力',better:['不懈努力','锲而不舍','全力以赴','孜孜不倦','奋发图强']},
+      {plain:'改变',better:['改善','革新','焕然一新','发生深刻变化','带来质的飞跃']},
+      {plain:'重要',better:['至关重要','不可或缺','举足轻重','具有深远意义','弥足珍贵']},
+      {plain:'去',better:['前往','奔赴','抵达','踏上……之旅','赶赴']},
+      {plain:'告诉',better:['通知','告知','使……了解','让……明白','郑重提醒']},
+      {plain:'学习',better:['钻研','深造','潜心学习','汲取知识','精进技能']},
+      {plain:'有名',better:['享誉','声名远播','赫赫有名','闻名遐迩','久负盛名']},
+      {plain:'得到',better:['获得','赢得','取得','荣获','收获丰厚']},
+      {plain:'完成',better:['圆满完成','顺利竣工','如期完成','付诸实践','落到实处']},
+      {plain:'方法',better:['途径','策略','举措','有效机制','切实可行的方案']},
+      {plain:'开始',better:['着手','随即','付诸行动','迈出第一步','正式启动']}
+    ],
+    connectors:[
+      {group:'并列/递进 (Adding)',words:['此外','另外','同时','而且','加之','不仅如此','更重要的是','值得一提的是']},
+      {group:'转折/对比 (Contrast)',words:['然而','但是','不过','尽管如此','即便如此','与此相反','话虽如此','事实上']},
+      {group:'因果 (Cause & Effect)',words:['因此','所以','于是','从而','由于','鉴于','由此可见','正是因为这一原因']},
+      {group:'举例/说明 (Example)',words:['例如','比如','以……为例','换句话说','具体来说','举例而言','不妨以……为证']},
+      {group:'顺序/时间 (Sequence)',words:['首先','其次','再者','最后','与此同时','在此基础上','随后','最终']},
+      {group:'总结 (Summary)',words:['总之','综上所述','总而言之','由此可见','简而言之','不难得出结论']},
+      {group:'条件/假设 (Condition)',words:['如果','假如','一旦','倘若','只要','在……的前提下','除非']}
+    ],
+    patterns:[
+      {name:'不但……而且 (Not only … but also)',zh:'他不但学习努力，而且乐于助人。',en:'He is not only hardworking but also always ready to help others.'},
+      {name:'虽然……但是 (Although … yet)',zh:'虽然学中文很难，但是我从未放弃。',en:'Although learning Chinese is difficult, I have never given up.'},
+      {name:'只有……才 (Only if … can)',zh:'只有坚持练习，才能真正学好中文。',en:'Only by practising consistently can one truly master Chinese.'},
+      {name:'越来越 (More and more)',zh:'他的中文越来越流利了。',en:'His Chinese is becoming more and more fluent.'},
+      {name:'是……的 Emphasis',zh:'我是去年开始学中文的。',en:'It was last year that I started learning Chinese.'},
+      {name:'使/让 Causative',zh:'这次经历让我对中国文化有了更深的了解。',en:'This experience gave me a much deeper understanding of Chinese culture.'},
+      {name:'以……为例 (Taking … as an example)',zh:'以北京为例，这座城市将传统与现代完美融合。',en:'Taking Beijing as an example, the city perfectly blends tradition and modernity.'},
+      {name:'由此可见 (From this we can see)',zh:'由此可见，学好语言需要长期的坚持。',en:'From this we can see that mastering a language requires long-term persistence.'},
+      {name:'之所以……是因为 (The reason … is)',zh:'我之所以学中文，是因为我对中国文化充满好奇。',en:'The reason I study Chinese is that I am deeply curious about Chinese culture.'},
+      {name:'无论……都 (No matter … always)',zh:'无论遇到多大的困难，他都不放弃。',en:'No matter what difficulties he faces, he never gives up.'},
+      {name:'不仅……还 (Not only … but also)',zh:'这次旅行不仅让我开阔了眼界，还结交了许多新朋友。',en:'This trip not only broadened my horizons but also helped me make many new friends.'},
+      {name:'通过……来 (Through … to)',zh:'通过每天坚持练习，他逐渐掌握了中文的发音。',en:'By practising consistently every day, he gradually mastered Chinese pronunciation.'},
+      {name:'尽管……仍然 (Despite … still)',zh:'尽管面临重重挑战，我们仍然坚持了下来。',en:'Despite facing numerous challenges, we persisted all the same.'}
+    ],
+    formal:[
+      {zh:'特此函告，……',en:'We hereby inform you that ……'},
+      {zh:'兹通知各位……',en:'This is to notify all parties that ……'},
+      {zh:'如蒙垂询，请随时联系。',en:'Should you require further information, please do not hesitate to contact us.'},
+      {zh:'敬请谅解，如有不便，深感抱歉。',en:'Your understanding is appreciated; we apologise for any inconvenience caused.'},
+      {zh:'烦请不吝赐复。',en:'Your kind reply would be most appreciated.'},
+      {zh:'随函附上相关材料，供您参考。',en:'Please find enclosed the relevant materials for your reference.'},
+      {zh:'此致敬礼。',en:'Yours sincerely. (standard formal close)'},
+      {zh:'请予关照，不胜感激。',en:'Your kind attention to this matter is greatly appreciated.'},
+      {zh:'有劳您拨冗回复。',en:'Thank you for taking the time to reply.'},
+      {zh:'如有疑问，欢迎进一步沟通。',en:'Please feel free to reach out if you have any questions.'}
+    ],
+    opens:[
+      {zh:'如今，越来越多的人开始意识到……的重要性。',en:'Nowadays, more and more people are beginning to realise the importance of ……'},
+      {zh:'正如中国谚语所说：「……」',en:'As a Chinese saying goes: \'……\''},
+      {zh:'谈到……，人们的看法各不相同。',en:'When it comes to ……, opinions vary from person to person.'},
+      {zh:'近年来，……已经成为人们关注的热点话题。',en:'In recent years, …… has become a hot topic that attracts widespread attention.'},
+      {zh:'众所周知，……对我们的生活有着深远的影响。',en:'As is well known, …… has a profound impact on our lives.'},
+      {zh:'在当今社会，……的问题日益突出。',en:'In today\'s society, the issue of …… is becoming increasingly prominent.'},
+      {zh:'随着时代的发展，……已经成为不可忽视的重要课题。',en:'With the development of the times, …… has become an issue that can no longer be ignored.'},
+      {zh:'每当提起……，我总是感慨万千。',en:'Whenever …… is mentioned, I am filled with deep feelings.'}
+    ],
+    closes:[
+      {zh:'总之，只有……，我们才能……',en:'In short, only by …… can we ……'},
+      {zh:'我坚信，只要……，未来一定会更美好。',en:'I firmly believe that as long as ……, the future will certainly be brighter.'},
+      {zh:'由此可见，……的重要性不言而喻。',en:'From this we can see that the importance of …… goes without saying.'},
+      {zh:'让我们携手共进，为……而努力。',en:'Let us work together and strive for ……'},
+      {zh:'希望通过我们的共同努力，……能够早日实现。',en:'I hope that through our joint efforts, …… can be achieved as soon as possible.'},
+      {zh:'无论前路多么漫长，我都将坚定地走下去。',en:'No matter how long the road ahead, I will continue walking steadily forward.'},
+      {zh:'相信这次机会对我们双方来说都是宝贵的。',en:'I believe this opportunity will be valuable for both of us.'}
+    ],
+    checklist:[
+      {zh:'文体对了吗？（信件/通知/演讲稿 格式正确？）',en:'Correct format? (letter / notice / speech layout)'},
+      {zh:'要点齐全？有没有漏掉重要信息？',en:'All key points covered? Nothing important missing?'},
+      {zh:'是否分段清晰——开头、主体、结尾各就各位？',en:'Clear paragraphs? Opening, body, and closing in place?'},
+      {zh:'用了2-3个高分句型吗？（不但…而且/虽然…但是/只有…才）',en:'Used 2–3 advanced patterns? (不但…而且 / 虽然…但是 / 只有…才)'},
+      {zh:'句子之间有连接词吗？逻辑顺畅？',en:'Connectors between sentences? Logic flows well?'},
+      {zh:'是否把「很/好/说」换成了更高级的表达？',en:'Upgraded plain words? (很→十分, 好→出色, 说→指出)'},
+      {zh:'标点符号正确吗？中文用全角标点（，。！？）',en:'Punctuation correct? Chinese uses full-width marks（，。！？）'},
+      {zh:'字数达标了吗？',en:'Word/character count meets the requirement?'}
+    ]
+  },
+  extra:[
+  ]
+};
+
+let ALL_TYPES = W.applied;
+
+fetch('cwt-extra.json')
+  .then(r=>{ if(!r.ok) throw new Error(); return r.json(); })
+  .then(extra=>{ ALL_TYPES = [...W.applied, ...extra]; renderHome(); })
+  .catch(()=>{ renderHome(); });
+
+const $=id=>document.getElementById(id);
+const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function speak(t){
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='zh-CN';u.rate=.9;speechSynthesis.speak(u);}catch(e){}
+}
+
+function setCrumbs(arr){
+  $('crumbs').innerHTML=arr.map(c=>c.go?'<button data-go="'+c.go+'">'+esc(c.t)+'</button>':'<span>'+esc(c.t)+'</span>').join('<span class="sep">&#x203A;</span>');
+  $('crumbs').querySelectorAll('button').forEach(b=>b.onclick=()=>route(b.dataset.go));
+}
+
+function route(g){
+  if(g==='home') renderHome();
+  else if(g==='tool') renderTool();
+  else if(g==='pad') renderPad();
+}
+
+function wireSay(){
+  $('view').querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>speak(b.dataset.say));
+}
+
+function sentList(arr){
+  return arr.map(s=>`
+    <div class="sent">
+      <div class="se"><button class="say" data-say="${esc(s.zh)}">&#x1F50A;</button><span>${esc(s.zh)}</span></div>
+      <div class="sz">${esc(s.en)}</div>
+    </div>`).join('');
+}
+
+function renderHome(){
+  window.scrollTo({top:0});
+  setCrumbs([{t:'Home'}]);
+  const typeCount = ALL_TYPES.length;
+  let h='';
+  if(!ON_SITE){
+    h+=`<div style="background:var(--red-s);border:1px solid var(--red-l);border-radius:12px;padding:12px 15px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="font-size:.9rem;color:var(--red-d)">&#x2728; <strong>Full version (11 types + more examples)</strong> free at <a href="https://ordinarymantrying.com/tools/chinese-writing-toolkit.html" style="color:var(--red-d);font-weight:700" target="_blank">ordinarymantrying.com</a> — written by a real person learning Chinese, not AI.</span>
+    </div>`;
+  }
+  h+='<div class="catsec"><h2><span class="dot"></span>Applied Writing &#x5E94;&#x7528;&#x6587;&#x5199;&#x4F5C;</h2>';
+  h+=`<p class="cdesc">${typeCount} letter types for HSK writing, business Chinese, and everyday communication. Select a type to see structure, sentence banks, and a full model essay.</p>`;
+  h+='<div class="tgrid">';
+  ALL_TYPES.forEach(g=>{h+=`<button class="tcard" data-id="${g.id}"><b>${esc(g.name)}</b><i>${esc(g.en)}</i></button>`;});
+  h+='</div></div>';
+  h+='<div class="catsec"><h2><span class="dot"></span>Word Upgrade Toolbox &#x63D0;&#x5206;&#x5DE5;&#x5177;&#x7B71;</h2>';
+  h+='<p class="cdesc">Replace plain words with high-level Chinese. Connectors, advanced patterns, and a writing checklist.</p>';
+  h+='<button class="bigcard" data-go="tool"><b>Open Toolbox &#x2192;</b><p>Swap &#x5F88;&#x597D;/&#x4F46;&#x662F;/&#x6211;&#x8BA4;&#x4E3A; for more sophisticated expressions. Includes grammar patterns that impress.</p></button></div>';
+  h+='<div class="catsec"><h2><span class="dot"></span>Practice Pad &#x7EC3;&#x4E60;&#x672C;</h2>';
+  h+='<p class="cdesc">Write in Chinese here. Auto character count, save locally, and check against the writing checklist.</p>';
+  h+='<button class="bigcard" data-go="pad"><b>Open Practice Pad &#x2192;</b><p>Type in Chinese, count characters, save your draft, and self-check before submitting.</p></button></div>';
+  if(!ON_SITE){
+    h+=`<div class="catsec" style="text-align:center;padding:18px;border:1px dashed var(--red-l);border-radius:14px;background:var(--red-s)">
+      <div style="font-size:1rem;font-weight:700;color:var(--red-d);margin-bottom:6px">&#x1F4DD; 求职信 &amp; 自我介绍 — unlocked at the full version</div>
+      <div style="font-size:.85rem;color:var(--soft);margin-bottom:10px">Cover Letter + Self-introduction, with model essays and sentence banks</div>
+      <a href="https://ordinarymantrying.com/tools/chinese-writing-toolkit.html" target="_blank" style="display:inline-block;background:var(--red);color:#fff;border-radius:10px;padding:9px 22px;font-size:.9rem;font-weight:700;text-decoration:none">Open Full Version &#x2192;</a>
+    </div>`;
+  }
+  $('view').innerHTML=h;
+  $('view').querySelectorAll('.tcard').forEach(b=>b.onclick=()=>renderGenre(b.dataset.id));
+  $('view').querySelectorAll('.bigcard').forEach(b=>b.onclick=()=>route(b.dataset.go));
+}
+
+function renderGenre(id){
+  window.scrollTo({top:0});
+  const g=ALL_TYPES.find(x=>x.id===id); if(!g) return;
+  setCrumbs([{t:'Home',go:'home'},{t:g.name+' '+g.en}]);
+  let h=`<div class="doc"><h2>${esc(g.name)}</h2><div class="den">${esc(g.en)}</div>`;
+  h+=`<div class="intro"><div><span class="lab">Situation &#x9002;&#x7528;&#x573A;&#x666F;&#xFF1A;</span>${esc(g.scene)}</div><div style="margin-top:5px"><span class="lab">Key tips &#x5199;&#x4F5C;&#x8981;&#x70B9;&#xFF1A;</span>${esc(g.points)}</div></div>`;
+  h+='<div class="block"><h3>Structure &#x8C0B;&#x7BC7;&#x7ED3;&#x6784;</h3><div class="struct">';
+  g.structure.forEach(s=>{h+=`<div class="st"><span class="sp">${esc(s[0])}</span><span class="sd">${esc(s[1])}</span></div>`;});
+  h+='</div></div>';
+  h+='<div class="block"><h3>Opening sentences &#x5F00;&#x5934;&#x53E5;</h3>'+sentList(g.opens)+'</div>';
+  h+='<div class="block"><h3>Body sentences &#x4E3B;&#x4F53;&#x53E5;</h3>'+sentList(g.bodies)+'</div>';
+  h+='<div class="block"><h3>Closing sentences &#x7ED3;&#x5C3E;&#x53E5;</h3>'+sentList(g.closes)+'</div>';
+  const skel=esc(g.template).replace(/___/g,'<span class="bk">______</span>');
+  h+=`<div class="block"><h3>Template &#x4E07;&#x80FD;&#x6A21;&#x677F;</h3><div class="skeleton">${skel}</div><div class="note">Replace the highlighted blanks with your specific content.</div></div>`;
+  h+=`<div class="block"><h3>Model Essay &#x8303;&#x6587;</h3><div class="model">
+    <div class="mp"><button class="say" data-say="${esc(g.model.zh)}">&#x1F50A;</button><div class="mt">${esc(g.model.zh)}</div></div>
+    <button class="btn-toggle-en" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'&#x25BC; Hide English':'&#x25B6; Show English translation'">&#x25B6; Show English translation</button>
+    <div class="mz">${esc(g.model.en)}</div>
+    </div></div>`;
+  h+='<div class="btnrow"><button onclick="renderHome()">&#x2190; Back</button><button class="primary" onclick="renderPad()">Practice pad &#x2192;</button></div></div>';
+  $('view').innerHTML=h;
+  wireSay();
+}
+
+function renderTool(){
+  window.scrollTo({top:0});
+  setCrumbs([{t:'Home',go:'home'},{t:'Toolbox &#x5DE5;&#x5177;&#x7B71;'}]);
+  const T=W.toolbox;
+  let h='<div class="block"><h3>Word Upgrade &#x8BCD;&#x8BED;&#x63D0;&#x5347;</h3><table class="gt"><tr><th>Plain &#x666E;&#x901A;</th><th>Better &#x9AD8;&#x7EA7;&#x8868;&#x8FBE;</th></tr>';
+  T.replace.forEach(r=>{h+=`<tr><td class="k">${esc(r.plain)}</td><td><div class="chips">${r.better.map(b=>`<span class="chip">${esc(b)}</span>`).join('')}</div></td></tr>`;});
+  h+='</table></div>';
+  h+='<div class="block"><h3>Connectors &#x8FDE;&#x63A5;&#x8BCD;</h3>';
+  T.connectors.forEach(c=>{h+=`<div class="grp"><div class="gh">${esc(c.group)}</div><div class="chips">${c.words.map(w=>`<span class="chip">${esc(w)}</span>`).join('')}</div></div>`;});
+  h+='</div>';
+  h+='<div class="block"><h3>Advanced Patterns &#x9AD8;&#x5206;&#x53E5;&#x578B;</h3>';
+  T.patterns.forEach(p=>{h+=`<div class="pat"><div class="pn">${esc(p.name)}</div><div class="pe"><button class="say" data-say="${esc(p.zh)}">&#x1F50A;</button><span>${esc(p.zh)}</span></div><div class="pz">${esc(p.en)}</div></div>`;});
+  h+='</div>';
+  h+='<div class="block"><h3>Formal Phrases &#x6B63;&#x5F0F;&#x5957;&#x8BED;</h3>';
+  h+='<p style="font-size:.8rem;color:var(--faint);margin:0 0 9px">Set phrases for formal letters and announcements. Copy and adapt as needed.</p>';
+  T.formal.forEach(f=>{h+=`<div class="sent"><div class="se"><button class="say" data-say="${esc(f.zh)}">&#x1F50A;</button><span>${esc(f.zh)}</span></div><div class="sz">${esc(f.en)}</div></div>`;});
+  h+='</div>';
+  h+='<div class="block"><h3>Opening sentences &#x4E07;&#x80FD;&#x5F00;&#x5934;</h3>'+sentList(T.opens)+'</div>';
+  h+='<div class="block"><h3>Closing sentences &#x4E07;&#x80FD;&#x7ED3;&#x5C3E;</h3>'+sentList(T.closes)+'</div>';
+  h+='<div class="block"><h3>Self-check Checklist &#x5199;&#x4F5C;&#x81EA;&#x68C0;&#x6E05;&#x5355;</h3><ul class="check">';
+  T.checklist.forEach(c=>{h+=`<li><span style="color:var(--ink)">${esc(c.zh)}</span><span style="display:block;font-size:.8rem;color:var(--faint);margin-top:1px">${esc(c.en)}</span></li>`;});
+  h+='</ul></div>';
+  $('view').innerHTML=h;
+  wireSay();
+}
+
+const KEY='zh-writing-v1';
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+
+function renderPad(){
+  window.scrollTo({top:0});
+  setCrumbs([{t:'Home',go:'home'},{t:'Practice Pad &#x7EC3;&#x4E60;&#x672C;'}]);
+  const saved=lsGet(KEY)||'';
+  const T=W.toolbox;
+  let h=`<div class="block"><h3>Write in Chinese &#x5728;&#x8FD9;&#x91CC;&#x5199;&#x4E2D;&#x6587;</h3><div class="pad">
+    <textarea id="pad-ta" placeholder="&#x5F00;&#x59CB;&#x5199;&#x4F5C;&#x2026;&#x2026;&#xFF08;Start writing in Chinese here&#xFF09;" oninput="updateWc()">${esc(saved)}</textarea>
+    <div class="padbar">
+      <span class="wc" id="wc">0 characters</span>
+      <button id="btn-save" onclick="lsSet('${KEY}',document.getElementById('pad-ta').value);document.getElementById('btn-save').textContent='Saved ✓';setTimeout(()=>{document.getElementById('btn-save').textContent='Save draft'},1500)">Save draft</button>
+      <button onclick="if(confirm('Clear the pad?')){document.getElementById('pad-ta').value='';updateWc();}">Clear</button>
+      <button id="btn-copy" class="primary" onclick="navigator.clipboard.writeText(document.getElementById('pad-ta').value).then(()=>{document.getElementById('btn-copy').textContent='Copied ✓';setTimeout(()=>{document.getElementById('btn-copy').textContent='Copy'},1500)})">Copy</button>
+    </div></div></div>`;
+  h+='<div class="block"><h3>Self-check Checklist &#x5199;&#x4F5C;&#x81EA;&#x68C0;&#x6E05;&#x5355;</h3><ul class="check">';
+  T.checklist.forEach(c=>{h+=`<li><span style="color:var(--ink)">${esc(c.zh)}</span><span style="display:block;font-size:.8rem;color:var(--faint);margin-top:1px">${esc(c.en)}</span></li>`;});
+  h+='</ul></div>';
+  $('view').innerHTML=h;
+  updateWc();
+}
+
+function updateWc(){
+  const ta=$('pad-ta'); if(!ta) return;
+  const n=ta.value.replace(/\s/g,'').length;
+  $('wc').textContent=n+' character'+(n===1?'':'s');
+}
+
+// init triggered by fetch above
+</script>
+</body>
+</html>

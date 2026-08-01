@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aristotle Life Simulator — Student Who Became the Master</title>
+<meta name="description" content="Make the same decisions as Aristotle — from Plato's Academy to tutoring Alexander the Great. Can you categorize all human knowledge in one lifetime?">
+<style>
+:root{
+  --bg:#EEF2EA;--card:#F5F8F2;--ink:#0A180A;--muted:#506040;--line:#D0DCC8;
+  --accent:#2A4010;--accent-bg:#E4EDE0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">Macedonia → Athens · 384–322 BC</div>
+  <h1>Could You Have Been<br>Aristotle?</h1>
+  <div class="cover-sub">He studied under the greatest philosopher alive — then disagreed with him. He tutored the boy who would conquer the world. He catalogued all of human knowledge. Could you have made the same eight choices?</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">200+</div><div class="stat-l">Works written</div></div>
+    <div class="stat"><div class="stat-n">2,300</div><div class="stat-l">Years of influence</div></div>
+    <div class="stat"><div class="stat-n">1</div><div class="stat-l">Student: Alexander the Great</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · Athens, 367 BC · Age 17</div>
+<p class="narrative">You have just arrived in Athens from Macedonia — a foreign boy, the son of a court physician, carrying a physician's habit of looking at the actual world rather than at ideals about it. Plato's Academy is the most celebrated school in the ancient world. But Plato teaches that the physical world is just a flawed shadow of pure, eternal Forms. You sit in his lectures and feel, quietly but insistently, that he has it backwards.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Disagreement</div>
+  <div class="d-situation">Plato is the greatest mind of the age and your beloved teacher. You disagree with the core of his philosophy. Do you say so?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Push back respectfully but clearly — "Plato is dear to me, but truth is dearer"</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. Defer completely while you're a student — question after you've graduated</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Leave the Academy and find a teacher whose ideas you can accept</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Aristotle stayed at the Academy for 20 years — and disagreed openly the entire time. The line "Plato is dear to me, but truth is dearer" (or its variants) became one of philosophy's most famous statements. Plato called him "the mind of the school" but also reportedly compared him to a foal that kicks its mother after drinking her milk. The tension was productive. Two thousand years of Western thought grew from the gap between them.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · Athens, 347 BC · Plato Dies</div>
+<p class="narrative">You are 37, the most brilliant mind at the Academy. Plato has died. Everyone assumes you will take over. Then the announcement comes: the inheritance goes to Speusippus — Plato's nephew — a man whose mediocre philosophy you barely respect. You've been passed over, almost certainly because you're a foreign-born Macedonian. The Academy's greatest mind is now an outsider.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Snub</div>
+  <div class="d-situation">The institution that shaped you has rejected you for its leadership. What do you do?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Leave Athens — independence matters more than any institution's approval</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. Stay and challenge Speusippus — fight for what should be yours</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Stay as a senior teacher — the Academy still needs you</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Aristotle left. He traveled to Assos, then Lesbos, and spent years doing something most philosophers never did: fieldwork. He dissected sea creatures, catalogued hundreds of species, and observed animal behavior with meticulous care. This period of exile produced his groundbreaking biological works — some of which weren't surpassed until the 19th century. Being passed over was the best thing that ever happened to his science.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Macedonia, 343 BC · Age 41</div>
+<p class="narrative">A messenger arrives from King Philip II of Macedon. The king wants you — specifically you — to tutor his 13-year-old son, Alexander. Philip offers a rebuilt hometown, released prisoners, and a generous salary. Alexander is already showing signs of exceptional intelligence and a volcanic temper. He will either change the world or burn it down. The question is which.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Royal Student</div>
+  <div class="d-situation">A king is offering you proximity to power and wealth to teach a brilliant, dangerous boy. Do you take it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Accept — access to power funds all your future research and the boy is worth teaching</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Decline — tutoring a prince is a distraction from real philosophy</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Accept but try immediately to mold Alexander into a philosopher-king</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Aristotle accepted and taught Alexander for three years. He gave the boy annotated copies of Homer (Alexander slept with one under his pillow alongside a dagger) and introduced him to medicine, philosophy, and rhetoric. Whether the tutoring made Alexander "great" or merely "great and Greek-influenced" is still debated. What's certain: Philip's patronage funded Aristotle's eventual return to Athens and the founding of the Lyceum. The philosopher needed the prince as much as the prince needed the philosopher.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · Athens, 335 BC · The Lyceum</div>
+<p class="narrative">Back in Athens, you found your own school — the Lyceum — and develop your method: walk while thinking (your followers become known as "Peripatetics," from the Greek word for walking). But your approach is the opposite of Plato's. Where Plato said the eternal, invisible Form of a horse was more real than any actual horse, you say: the actual horse in front of you is what's real. Observe it. Measure it. Dissect it.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · Theory vs World</div>
+  <div class="d-situation">You now have your own school. Do you explicitly build your philosophy as a rejection of Plato's, or teach empiricism without attacking the master?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Make the disagreement explicit — the Forms are fictional; reality is what you can observe</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Teach empiricism but honor Plato publicly — no need to attack a dead man</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Synthesize both — suggest that Forms exist but only inside actual things</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Aristotle actually chose option C — with nuance. He argued that form exists, but not separately from matter; a horse's "horseness" is real, but it doesn't exist in some other world, it exists in every actual horse. This position (later called "hylomorphism") allowed him to honor Plato while fundamentally replacing his framework. He also directly critiqued Plato in writing — most famously in the Nicomachean Ethics. The disagreement was productive precisely because it was engaged, not dismissed.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · Athens, 330s BC · Everything</div>
+<p class="narrative">You are writing simultaneously on logic, physics, biology, ethics, politics, poetry, rhetoric, meteorology, and the nature of the soul. Friends joke that you've started more books than most men read in a lifetime. They say you're spreading too thin — that no one can do all of this well. Plato did one thing brilliantly. Why can't you just pick a lane?</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · Breadth vs Depth</div>
+  <div class="d-situation">You are attempting to systematize all of human knowledge. Critics say focus. Do you agree?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Reject the advice — knowledge is one connected whole and you will map all of it</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. Focus on ethics and politics — the most practically useful branches</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Focus on logic — without a solid foundation, all other inquiry is guesswork</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Aristotle mapped everything. His surviving works cover formal logic (which dominated Western thought for 2,000 years), zoology (he classified over 500 species and described animal behavior with stunning accuracy), physics, astronomy, metaphysics, psychology, ethics, politics, poetics, and rhetoric. His biological works alone weren't improved upon until Darwin. The breadth wasn't dilettantism — it was a unified theory that each field illuminates the others.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Athens, 330s BC · The Syllogism</div>
+<p class="narrative">You have invented something that seems almost embarrassingly simple: a three-part logical structure. "All men are mortal. Socrates is a man. Therefore Socrates is mortal." Any valid argument, you claim, can be reduced to this form. Colleagues shrug — isn't this obvious? Do we really need to write it down?</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · Formalizing the Obvious</div>
+  <div class="d-situation">The syllogism seems trivial. Is it worth creating a complete formal system around it?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Yes — making the obvious rigorous and universal creates the foundation for all rational thought</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. No — it's too simple, and spending your writing time on this is beneath you</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Develop it but don't publish it — it's a teaching tool, not a philosophical contribution</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Aristotle formalized it completely in the "Prior Analytics" — and it became the foundation of Western logic. For nearly 2,000 years, Aristotelian logic was the only logic. It structured medieval scholasticism, Islamic philosophy, legal reasoning, and scientific argument. Kant, writing in the 18th century, said Aristotle had given logic its "definitive" form. The "obvious" tool turned out to be civilization's most powerful intellectual machine.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · Athens, 323 BC · Alexander Dies</div>
+<p class="narrative">Alexander the Great has died at 32 in Babylon. Athens erupts. Anti-Macedonian mobs fill the streets. Your connection to Alexander makes you a target. A charge of "impiety" is brought against you — the same charge that killed Socrates, who stood trial and drank the hemlock. You are not Socrates. You remember what happened to Socrates.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · Trial or Flight</div>
+  <div class="d-situation">You face the same charge that killed Socrates 76 years ago. Do you stay and defend yourself as Socrates did?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. Flee to Chalcis — "I will not allow Athens to sin twice against philosophy"</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. Stay and defend yourself — you've done nothing wrong and won't run</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. Publicly denounce your Macedonian connections to calm the mob</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> Aristotle fled to Chalcis, where his mother had family. He reportedly said he would not "allow Athens to sin twice against philosophy" — a reference to Socrates's execution. He died in Chalcis a year later, in 322 BC, of a digestive illness. The line, whether apocryphal or real, perfectly captures the difference between Socrates's martyrdom and Aristotle's pragmatism. Both choices were philosophically defensible. Aristotle chose survival — and managed one more year of work.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · Legacy · The Lost Aristotle</div>
+<p class="narrative">Here is a strange fact about history: the Aristotle the world knows — dense, dry, technical, sometimes exhausting — is not the Aristotle his contemporaries admired. His published dialogues, written for general audiences and praised for their beautiful prose, are lost. What survived are his lecture notes and research papers, never intended for publication. History preserved his working drafts, not his finished books.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · The Aristotle We Have</div>
+  <div class="d-situation">Knowing that the "popular" Aristotle is lost and only the technical notes survive — what does this mean for his legacy?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. The lecture notes are enough — systematic rigor survives in any form and content outlasts style</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. The loss is catastrophic — the real Aristotle is unrecoverable and we've misjudged him ever since</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. The lecture notes are actually better — polish is for entertainment; the unpolished form shows genuine thought</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> The lecture notes survived — barely. They were hidden in a cellar for 200 years, then recovered, then edited by Andronicus of Rhodes around 60 BC. This edited collection became the Aristotle that shaped Islamic philosophy, medieval Christian theology, and the Renaissance. Thomas Aquinas built his entire theology around it. The Arab world called Aristotle simply "The Philosopher." All of this from notes that were never meant to be published. The content was the thing.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Aristotle Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="plato-simulator.html">
+      <span class="next-name">Plato</span>
+      <span class="next-desc">Aristotle's teacher — the philosopher who said reality is just a shadow on a cave wall</span>
+    </a>
+    <a class="next-card" href="newton-simulator.html">
+      <span class="next-name">Isaac Newton</span>
+      <span class="next-desc">The man who replaced Aristotle's physics — 2,000 years after Aristotle wrote it</span>
+    </a>
+    <a class="next-card" href="darwin-simulator.html">
+      <span class="next-name">Charles Darwin</span>
+      <span class="next-desc">Aristotle was the first great biologist — Darwin finished what he started</span>
+    </a>
+    <a class="next-card" href="archimedes-simulator.html">
+      <span class="next-name">Archimedes</span>
+      <span class="next-desc">Born 3 years after Aristotle died — the mathematician who inherited his world</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators →</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=Math.round(score/TOTAL*100);document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='Remarkable. You think like Aristotle — empirical, systematic, willing to disagree with genius and to start again from scratch when institutions fail you. You have the rare combination of intellectual courage and patient rigor that makes civilizations.';else if(score>=5)t.textContent='Solid philosophical instincts. You understood most of Aristotle\'s key moves — the empiricism, the breadth, the pragmatism. A few deferences to authority crept in, but you\'d have produced genuinely significant work.';else if(score>=3)t.textContent='You had the intelligence but defaulted to institutional loyalty at crucial moments. Aristotle\'s genius lay in his willingness to follow an argument wherever it led — even when it led away from Plato, away from Athens, away from everything comfortable.';else t.textContent='You would have been a brilliant student of Plato — and nothing more. Aristotle\'s greatness began precisely when he chose truth over loyalty, observation over authority, and independence over institutional belonging.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

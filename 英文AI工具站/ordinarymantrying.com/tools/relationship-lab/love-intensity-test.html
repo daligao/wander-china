@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's Your Love Intensity? 15-Scenario Romance Quiz (2026) | OrdinaryManTrying</title>
+<meta name="description" content="Answer 15 brutally honest love scenarios and discover your romance style — from Romantically Frozen to Romance Royalty. Share your result and dare your person to beat your score.">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(160deg,#e8edf5 0%,#dce4f0 45%,#e8dfd4 100%);min-height:100vh;color:#2d3142}
+.wrap{max-width:500px;margin:0 auto;padding:28px 16px 64px}
+
+/* Cover */
+#cover{text-align:center;padding:52px 0 36px}
+.cover-emoji{font-size:68px;margin-bottom:18px}
+h1{font-size:1.85rem;font-weight:800;line-height:1.2;margin-bottom:12px}
+.cover-sub{font-size:.97rem;color:#6b7280;margin-bottom:14px;line-height:1.65}
+.cover-note{font-size:.8rem;color:#9ca3af;margin-bottom:36px}
+.btn-start{display:inline-block;background:#4f6ef7;color:#fff;font-size:1.05rem;font-weight:700;padding:15px 44px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 4px 22px rgba(79,110,247,.35);transition:transform .15s,box-shadow .15s}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(79,110,247,.42)}
+
+/* Quiz */
+#quiz{display:none}
+.prog-bar-wrap{margin-bottom:22px}
+.prog-meta{display:flex;justify-content:space-between;font-size:.78rem;color:#6b7280;margin-bottom:7px}
+.prog-track{height:6px;background:rgba(0,0,0,.1);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#4f6ef7,#7c9cf8);border-radius:3px;transition:width .4s ease}
+.q-card{background:#fff;border-radius:22px;padding:28px 22px 24px;box-shadow:0 2px 22px rgba(0,0,0,.08)}
+.q-label{font-size:.7rem;font-weight:700;letter-spacing:.14em;color:#4f6ef7;text-transform:uppercase;margin-bottom:14px}
+.q-text{font-size:1.18rem;font-weight:700;line-height:1.45;margin-bottom:22px}
+.options{display:flex;flex-direction:column;gap:11px}
+.opt{display:flex;align-items:flex-start;gap:13px;background:#f7f8fc;border:2px solid transparent;border-radius:16px;padding:16px 18px;cursor:pointer;transition:border-color .15s,background .15s;text-align:left;width:100%}
+.opt:active{transform:scale(.99)}
+.opt.selected{background:#eef0fb;border-color:#4f6ef7}
+.opt-letter{min-width:30px;height:30px;border-radius:50%;background:#e2e5f0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#4f6ef7;flex-shrink:0;margin-top:1px;transition:background .15s,color .15s}
+.opt.selected .opt-letter{background:#4f6ef7;color:#fff}
+.opt-text{font-size:.94rem;line-height:1.48;color:#374151}
+.nav{display:flex;justify-content:flex-end;margin-top:18px}
+.btn-next{background:#4f6ef7;color:#fff;font-size:.92rem;font-weight:700;padding:13px 34px;border-radius:50px;border:none;cursor:pointer;opacity:.45;pointer-events:none;transition:opacity .2s,transform .15s}
+.btn-next.active{opacity:1;pointer-events:auto}
+.btn-next.active:hover{transform:translateY(-1px)}
+
+/* Result */
+#result{display:none;text-align:center}
+.ring-wrap{position:relative;width:170px;height:170px;margin:0 auto 18px}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:#e2e5f0;stroke-width:14}
+.ring-fill{fill:none;stroke:url(#ringGrad);stroke-width:14;stroke-linecap:round;stroke-dasharray:439.8;stroke-dashoffset:439.8;transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1)}
+.ring-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct{font-size:2.1rem;font-weight:800;color:#4f6ef7}
+.ring-lbl{font-size:.68rem;color:#9ca3af;letter-spacing:.08em;margin-top:2px}
+.tier-badge{display:inline-flex;align-items:center;gap:9px;background:#fff;border-radius:50px;padding:9px 22px;font-size:.95rem;font-weight:700;box-shadow:0 2px 14px rgba(0,0,0,.1);margin-bottom:10px}
+.keyword-pill{display:inline-block;background:#eef0fb;color:#4f6ef7;font-size:.8rem;font-weight:700;letter-spacing:.08em;padding:5px 16px;border-radius:20px;margin-bottom:18px}
+.result-desc{background:#fff;border-radius:18px;padding:20px 22px;font-size:.93rem;line-height:1.68;color:#374151;margin-bottom:16px;text-align:left}
+.viral-text{font-size:.85rem;color:#6b7280;background:#f7f8fc;border-radius:14px;padding:14px 18px;margin-bottom:20px;line-height:1.5}
+.viral-text strong{color:#2d3142}
+
+/* Tiers list */
+.tiers-list{background:#fff;border-radius:18px;padding:16px 20px;margin-bottom:24px;text-align:left}
+.tiers-title{font-size:.7rem;font-weight:700;letter-spacing:.14em;color:#9ca3af;text-transform:uppercase;margin-bottom:12px}
+.tier-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f3f4f6;font-size:.87rem;color:#6b7280}
+.tier-row:last-child{border-bottom:none}
+.tier-row.current{color:#4f6ef7;font-weight:700}
+.tier-row .t-icon{font-size:1.1rem;width:26px;text-align:center;flex-shrink:0}
+.tier-row .t-kw{font-size:.72rem;color:#9ca3af;margin-left:4px}
+.tier-row.current .t-kw{color:#7c9cf8}
+.t-you{margin-left:auto;font-size:.72rem;background:#eef0fb;color:#4f6ef7;padding:2px 9px;border-radius:20px;font-weight:700;flex-shrink:0}
+
+/* Share section */
+.share-section{margin-bottom:28px}
+.share-title{font-size:.75rem;font-weight:700;letter-spacing:.12em;color:#9ca3af;text-transform:uppercase;margin-bottom:12px}
+.share-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.btn-share{display:flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:2px solid #e2e5f0;border-radius:50px;padding:12px 16px;font-size:.85rem;font-weight:700;color:#374151;cursor:pointer;transition:border-color .15s,color .15s;width:100%}
+.btn-share:hover{border-color:#4f6ef7;color:#4f6ef7}
+.btn-share-img{grid-column:1/-1;background:linear-gradient(135deg,#4f6ef7,#7c9cf8);color:#fff;border:none;border-radius:50px;padding:13px 24px;font-size:.9rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s}
+.btn-share-img:hover{opacity:.9}
+.btn-retry{display:inline-block;background:transparent;border:2px solid #e2e5f0;color:#6b7280;font-size:.9rem;font-weight:700;padding:12px 36px;border-radius:50px;cursor:pointer;margin-bottom:32px;transition:border-color .15s}
+.btn-retry:hover{border-color:#4f6ef7;color:#4f6ef7}
+
+/* Blog CTA */
+.next-tests{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:16px 20px;margin-bottom:28px;text-align:left}
+.next-tests-label{font-size:.68rem;font-weight:700;letter-spacing:.12em;color:#6b21a8;text-transform:uppercase;margin-bottom:12px}
+.next-tests a{display:flex;align-items:center;justify-content:space-between;color:#a78bfa;font-size:.88rem;font-weight:600;text-decoration:none;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.next-tests a:last-child{border-bottom:none}
+.next-tests a:hover{color:#818cf8}
+.blog-cta{border-top:1px solid rgba(0,0,0,.07);padding-top:24px;text-align:center}
+.blog-cta-lbl{font-size:.68rem;letter-spacing:.12em;color:#9ca3af;margin-bottom:10px}
+.blog-cta a{display:inline-block;color:#4f6ef7;font-size:.9rem;font-weight:700;text-decoration:none;border:1px solid rgba(79,110,247,.28);border-radius:11px;padding:11px 24px;transition:background .15s}
+.blog-cta a:hover{background:#eef0fb}
+.blog-cta-sub{font-size:.74rem;color:#9ca3af;margin-top:7px}
+
+/* Toast */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d3142;color:#fff;font-size:.85rem;font-weight:600;padding:11px 24px;border-radius:50px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- Cover -->
+<div id="cover">
+  <div class="cover-emoji">💌</div>
+  <h1>What's Your Love Intensity?</h1>
+  <div class="cover-sub">15 brutally honest love scenarios.<br>No right answers — just the truth about how you love.</div>
+  <div class="cover-note">Takes ~2 minutes · Shareable result card</div>
+  <button class="btn-start" onclick="startQuiz()">Start the Test →</button>
+</div>
+
+<!-- Quiz -->
+<div id="quiz">
+  <div class="prog-bar-wrap">
+    <div class="prog-meta">
+      <span id="q-num">Question 1 of 15</span>
+      <span id="q-pct">7%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:7%"></div></div>
+  </div>
+  <div class="q-card">
+    <div class="q-label">Love Scenario <span id="q-idx">1</span></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+  </div>
+  <div class="nav"><button class="btn-next" id="btn-next" onclick="nextQ()">Next →</button></div>
+</div>
+
+<!-- Result -->
+<div id="result">
+  <div class="ring-wrap">
+    <svg width="170" height="170" viewBox="0 0 150 150">
+      <defs>
+        <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#4f6ef7"/>
+          <stop offset="100%" style="stop-color:#7c9cf8"/>
+        </linearGradient>
+      </defs>
+      <circle class="ring-bg" cx="75" cy="75" r="70"/>
+      <circle class="ring-fill" id="ring-fill" cx="75" cy="75" r="70"/>
+    </svg>
+    <div class="ring-text"><span class="ring-pct" id="res-pct">0%</span><span class="ring-lbl">LOVE INTENSITY</span></div>
+  </div>
+  <div class="tier-badge"><span id="res-icon"></span><span id="res-tier"></span></div><br>
+  <div class="keyword-pill" id="res-keyword"></div>
+  <div class="result-desc" id="res-desc"></div>
+  <div class="viral-text">💬 <strong>Dare your person to take this test.</strong> Send them the link and compare scores — who loves louder?</div>
+
+  <div class="tiers-list">
+    <div class="tiers-title">All Levels</div>
+    <div id="tiers-rows"></div>
+  </div>
+
+  <div class="share-section">
+    <div class="share-title">Share Your Result</div>
+    <div class="share-grid">
+      <button class="btn-share" onclick="copyText()">📋 Copy Result</button>
+      <button class="btn-share" onclick="nativeShare()">🔗 Share Link</button>
+      <button class="btn-share-img" onclick="downloadCard()">⬇ Download Result Card (PNG)</button>
+    </div>
+  </div>
+  <button class="btn-retry" onclick="retry()">↺ Retake the Test</button>
+
+  <div class="next-tests">
+    <div class="next-tests-label">More in the Relationship Lab</div>
+    <a href="situationship-detector.html">💔 Situationship Detector <span>→</span></a>
+    <a href="attachment-style-test.html">🧠 Attachment Style Test <span>→</span></a>
+    <a href="conflict-style-test.html">💥 Conflict Style Test <span>→</span></a>
+    <a href="love-language-quiz.html">💬 Love Language Quiz <span>→</span></a>
+    <a href="index.html">🧪 All 8 Tests → <span></span></a>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+// score = intensity weight per option (shuffled on render)
+const Qs=[
+  {q:"Your date shows up 30 minutes late. You...", opts:[
+    {t:"Smile and say 'Oh, I just got here too!'", s:2},
+    {t:"Feel a little hurt but say nothing", s:1},
+    {t:"Honestly tell them you waited a long time", s:3},
+    {t:"Tease: 'Being late means you're buying dessert 🍰'", s:4}
+  ]},
+  {q:"Your crush sends an ambiguous message... then immediately unsends it. You...", opts:[
+    {t:"Pretend you didn't see it", s:1},
+    {t:"Screenshot it and ask your friends what it means", s:2},
+    {t:"Ask directly: 'What did you just send?'", s:3},
+    {t:"Reply: 'Too late — I already saw it 😏'", s:4}
+  ]},
+  {q:"Your crush texts you first, out of nowhere. Your first instinct?", opts:[
+    {t:"Heart pounding — type, delete, type, delete...", s:3},
+    {t:"Take three deep breaths before replying", s:2},
+    {t:"Play it cool and reply instantly like it's nothing", s:1},
+    {t:"Flirt right back without hesitation", s:4}
+  ]},
+  {q:"On a date, you catch them secretly staring at you. You...", opts:[
+    {t:"Blush and look down at your phone", s:2},
+    {t:"Pretend not to notice", s:1},
+    {t:"Smile and ask 'What are you looking at?'", s:3},
+    {t:"Hold eye contact and slowly wink", s:4}
+  ]},
+  {q:"They text: 'I miss you a little.' Your reply?", opts:[
+    {t:"You read it, heart racing... but don't reply", s:1},
+    {t:"Send a funny meme to dodge the moment", s:2},
+    {t:"'I miss you too 🙂'", s:3},
+    {t:"'How much exactly? Tell me everything.'", s:4}
+  ]},
+  {q:"You see a photo of them with someone attractive on Instagram. You...", opts:[
+    {t:"Zoom in repeatedly but say nothing", s:2},
+    {t:"Like it and scroll past", s:1},
+    {t:"Ask casually 'Who's that?'", s:3},
+    {t:"Comment: 'I want a photo with you too! 📸'", s:4}
+  ]},
+  {q:"Their birthday is coming up. You...", opts:[
+    {t:"Think a lot but end up just texting 'Happy Birthday'", s:1},
+    {t:"Spend forever picking something safe and practical", s:2},
+    {t:"Put real thought into something personal and meaningful", s:3},
+    {t:"Handmade gift + surprise visit + heartfelt letter", s:4}
+  ]},
+  {q:"After an argument, they apologize first. You...", opts:[
+    {t:"Say 'It's fine' — but you're still annoyed inside", s:1},
+    {t:"Make up, but mentally file it away for later", s:2},
+    {t:"Talk it through honestly and move forward", s:3},
+    {t:"Accept the apology and immediately pull them into a hug", s:4}
+  ]},
+  {q:"They suggest wearing matching outfits. You...", opts:[
+    {t:"Cringe internally and politely decline", s:1},
+    {t:"'Maybe if it's something subtle...'", s:2},
+    {t:"Happily browse options together", s:3},
+    {t:"'I want the loudest, most obvious set they have!'", s:4}
+  ]},
+  {q:"They show affection in front of your friends. You...", opts:[
+    {t:"Die of embarrassment and pull away", s:1},
+    {t:"Feel awkward but secretly love every second", s:2},
+    {t:"Go along with it naturally", s:3},
+    {t:"Out-romanticize them on the spot", s:4}
+  ]},
+  {q:"Your anniversary is coming. You plan to...", opts:[
+    {t:"Cook a quiet dinner at home", s:1},
+    {t:"Return to the restaurant from your first date", s:2},
+    {t:"Plan a little weekend trip together", s:3},
+    {t:"Write a letter + plan a surprise + document the whole day", s:4}
+  ]},
+  {q:"What matters most to you in love?", opts:[
+    {t:"Trust and mutual respect", s:1},
+    {t:"Understanding each other and feeling safe", s:2},
+    {t:"Passion and romance", s:3},
+    {t:"Courage and radical honesty", s:4}
+  ]},
+  {q:"They say 'I love you' for the first time. You...", opts:[
+    {t:"Panic and say '...thank you'", s:1},
+    {t:"Smile and squeeze their hand", s:2},
+    {t:"Say 'I love you too' quietly", s:3},
+    {t:"Say it back louder, then kiss them", s:4}
+  ]},
+  {q:"You're sick in bed. They offer to come over. You...", opts:[
+    {t:"'I'm fine, please don't bother'", s:1},
+    {t:"'Only if it's really not too much trouble'", s:2},
+    {t:"'Yes please — that would mean a lot'", s:3},
+    {t:"Already texted your address before they finished asking", s:4}
+  ]},
+  {q:"It's 2AM and you can't sleep. You...", opts:[
+    {t:"Scroll your phone in silence", s:1},
+    {t:"Think about them but don't reach out", s:2},
+    {t:"Send a 'you up?' text", s:3},
+    {t:"Call just to hear their voice", s:4}
+  ]}
+];
+
+const TIERS=[
+  {min:0,  max:20, icon:"🧊", name:"Romantically Frozen",  kw:"The Closed Door",    desc:"Love hasn't quite found its way through yet — or maybe it has, and you're just not ready to let it. The walls are real. But so is the warmth behind them. Whenever you're ready."},
+  {min:21, max:40, icon:"🌱", name:"Secretly Smitten",     kw:"The Slow Burn",      desc:"You feel it deeply — the butterflies, the second-guessing, the racing heart. You just guard it carefully. That quiet intensity is not weakness. It's a whole universe in a whisper."},
+  {min:41, max:60, icon:"🎯", name:"Hot & Cold Player",    kw:"The Push-Pull",      desc:"You care deeply and you show it — but only up to a point. The tension you carry is magnetic. The people you love feel it even when you don't say it. Imagine if you did."},
+  {min:61, max:80, icon:"🔥", name:"Love Enthusiast",      kw:"The Hopeless Romantic", desc:"You wear your heart on your sleeve, and honestly? That's rare. You're present, expressive, and the people you love actually feel loved. Don't let anyone tell you that's too much."},
+  {min:81, max:100,icon:"👑", name:"Romance Royalty",      kw:"The Chaotic Romantic",desc:"Full throttle. No brakes. You love loudly, boldly, and without a single apology. Surprise gestures, matching outfits, 2AM calls — you're all in, every time. The person who gets you is extraordinarily lucky."}
+];
+
+const minPossible=Qs.reduce((s,q)=>s+Math.min(...q.opts.map(o=>o.s)),0);
+const maxPossible=Qs.reduce((s,q)=>s+Math.max(...q.opts.map(o=>o.s)),0);
+
+let cur=0, scores=[], shuffledOpts=[], selectedScore=-1;
+
+function shuffle(arr){return [...arr].sort(()=>Math.random()-.5)}
+
+function startQuiz(){
+  const saved=localStorage.getItem('lit_state');
+  if(saved){
+    try{
+      const st=JSON.parse(saved);
+      if(st.scores&&st.scores.length>0&&st.scores.length<Qs.length){
+        cur=st.scores.length;
+        scores=st.scores;
+      }
+    }catch(e){}
+  }
+  document.getElementById('cover').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  renderQ();
+}
+
+function renderQ(){
+  const q=Qs[cur];
+  shuffledOpts=shuffle(q.opts);
+  const pct=Math.round((cur+1)/Qs.length*100);
+  document.getElementById('q-idx').textContent=cur+1;
+  document.getElementById('q-num').textContent=`Question ${cur+1} of ${Qs.length}`;
+  document.getElementById('q-pct').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('q-text').textContent=q.q;
+  const letters=['A','B','C','D'];
+  document.getElementById('options').innerHTML=shuffledOpts.map((o,i)=>`
+    <button class="opt" id="opt-${i}" onclick="pick(${o.s},this)">
+      <div class="opt-letter">${letters[i]}</div>
+      <div class="opt-text">${o.t}</div>
+    </button>`).join('');
+  selectedScore=-1;
+  document.getElementById('btn-next').classList.remove('active');
+}
+
+function pick(score,el){
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedScore=score;
+  document.getElementById('btn-next').classList.add('active');
+}
+
+function nextQ(){
+  if(selectedScore<0)return;
+  scores.push(selectedScore);
+  localStorage.setItem('lit_state',JSON.stringify({scores}));
+  if(cur<Qs.length-1){cur++;renderQ();}
+  else showResult();
+}
+
+function getTier(pct){return TIERS.find(t=>pct>=t.min&&pct<=t.max)||TIERS[4];}
+
+function showResult(){
+  localStorage.removeItem('lit_state');
+  document.getElementById('quiz').style.display='none';
+  const total=scores.reduce((a,b)=>a+b,0);
+  const pct=Math.round((total-minPossible)/(maxPossible-minPossible)*100);
+  const tier=getTier(pct);
+
+  document.getElementById('result').style.display='block';
+  document.getElementById('res-pct').textContent=pct+'%';
+  document.getElementById('res-icon').textContent=tier.icon+' ';
+  document.getElementById('res-tier').textContent=tier.name;
+  document.getElementById('res-keyword').textContent=tier.kw;
+  document.getElementById('res-desc').textContent=tier.desc;
+
+  const C=2*Math.PI*70;
+  setTimeout(()=>{document.getElementById('ring-fill').style.strokeDashoffset=C*(1-pct/100);},120);
+
+  document.getElementById('tiers-rows').innerHTML=TIERS.map(t=>`
+    <div class="tier-row${t.name===tier.name?' current':''}">
+      <span class="t-icon">${t.icon}</span>
+      <span>${t.name}</span><span class="t-kw">· ${t.kw}</span>
+      ${t.name===tier.name?'<span class="t-you">You</span>':''}
+    </div>`).join('');
+
+  gtag('event','quiz_complete',{love_intensity:pct,tier:tier.name});
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function getResultText(){
+  const pct=document.getElementById('res-pct').textContent;
+  const tier=document.getElementById('res-tier').textContent;
+  const kw=document.getElementById('res-keyword').textContent;
+  return `My Love Intensity: ${pct} — ${tier} (${kw})\nDare you take the test? → ${location.href}`;
+}
+
+function copyText(){
+  navigator.clipboard.writeText(getResultText())
+    .then(()=>showToast('Copied to clipboard!'))
+    .catch(()=>showToast('Press Ctrl+C to copy'));
+}
+
+function nativeShare(){
+  const pct=document.getElementById('res-pct').textContent;
+  const tier=document.getElementById('res-tier').textContent;
+  if(navigator.share){
+    navigator.share({title:'Love Intensity Test',text:`I scored ${pct} — ${tier}. Dare you take this?`,url:location.href});
+  } else copyText();
+}
+
+function downloadCard(){
+  const pct=parseInt(document.getElementById('res-pct').textContent);
+  const tier=document.getElementById('res-tier').textContent;
+  const kw=document.getElementById('res-keyword').textContent;
+  const tierObj=getTier(pct);
+
+  const C=document.createElement('canvas');
+  C.width=1080;C.height=1080;
+  const ctx=C.getContext('2d');
+
+  // Background
+  const bg=ctx.createLinearGradient(0,0,1080,1080);
+  bg.addColorStop(0,'#e8edf5');bg.addColorStop(.5,'#dce4f0');bg.addColorStop(1,'#e8dfd4');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,1080,1080);
+
+  // White card
+  ctx.fillStyle='rgba(255,255,255,.88)';
+  rrect(ctx,60,60,960,960,40);ctx.fill();
+
+  // Header
+  ctx.fillStyle='#9ca3af';
+  ctx.font='600 30px Arial, sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText('LOVE INTENSITY TEST · ordinarymantrying.com',540,135);
+
+  // Ring track
+  ctx.beginPath();ctx.arc(540,430,200,0,Math.PI*2);
+  ctx.strokeStyle='#e2e5f0';ctx.lineWidth=24;ctx.stroke();
+
+  // Ring fill
+  const grad=ctx.createLinearGradient(340,430,740,430);
+  grad.addColorStop(0,'#4f6ef7');grad.addColorStop(1,'#7c9cf8');
+  ctx.beginPath();ctx.arc(540,430,200,-Math.PI/2,-Math.PI/2+(pct/100)*Math.PI*2,false);
+  ctx.strokeStyle=grad;ctx.lineWidth=24;ctx.lineCap='round';ctx.stroke();
+
+  // Percentage
+  ctx.fillStyle='#4f6ef7';
+  ctx.font='bold 130px Arial, sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText(pct+'%',540,475);
+
+  // "Love Intensity" label
+  ctx.fillStyle='#9ca3af';
+  ctx.font='400 34px Arial, sans-serif';
+  ctx.fillText('Love Intensity',540,530);
+
+  // Divider
+  ctx.fillStyle='#e2e5f0';
+  ctx.fillRect(300,590,480,2);
+
+  // Tier
+  ctx.fillStyle='#2d3142';
+  ctx.font='bold 58px Arial, sans-serif';
+  ctx.fillText(tierObj.icon+' '+tier,540,680);
+
+  // Keyword pill background
+  const kpW=ctx.measureText(kw).width+80;
+  ctx.fillStyle='#eef0fb';
+  rrect(ctx,540-kpW/2,710,kpW,56,28);ctx.fill();
+  ctx.fillStyle='#4f6ef7';
+  ctx.font='bold 34px Arial, sans-serif';
+  ctx.fillText(kw,540,748);
+
+  // CTA
+  ctx.fillStyle='#6b7280';
+  ctx.font='32px Arial, sans-serif';
+  ctx.fillText('Dare your person to beat your score 👀',540,850);
+
+  // URL
+  ctx.fillStyle='#9ca3af';
+  ctx.font='26px Arial, sans-serif';
+  ctx.fillText('ordinarymantrying.com/tools/relationship-lab/love-intensity-test.html',540,960);
+
+  const link=document.createElement('a');
+  link.download=`love-intensity-${pct}pct.png`;
+  link.href=C.toDataURL('image/png');
+  link.click();
+  showToast('Card saved!');
+}
+
+function rrect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function retry(){
+  cur=0;scores=[];shuffledOpts=[];selectedScore=-1;
+  document.getElementById('result').style.display='none';
+  document.getElementById('ring-fill').style.strokeDashoffset=439.8;
+  document.getElementById('quiz').style.display='block';
+  renderQ();
+}
+</script>
+</body>
+</html>

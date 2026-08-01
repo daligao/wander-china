@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-DBR2PMLR61");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Walt Disney?</title>
+<meta name="description" content="An interactive story about Walt Disney — the man who went bankrupt at 21, lost his first character at 26, and was told Snow White would ruin him. At every turning point, you make the call.">
+<style>
+:root {
+  --bg: #F5F0E8;
+  --card: #FDFCF8;
+  --ink: #1C2128;
+  --muted: #6B7280;
+  --line: #E0D9CC;
+  --accent: #1A3C78;
+  --accent-bg: #EDF2FB;
+  --gold: #B07A1A;
+  --gold-bg: #FBF5E6;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Consolas, monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.7;
+  -webkit-tap-highlight-color: transparent;
+}
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(245,240,232,.93);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  padding: 10px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-title { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.topbar-score { font-family: var(--mono); font-size: 12px; color: var(--ink); font-weight: 700; display: none; }
+.cover { max-width: 680px; margin: 0 auto; padding: 48px 20px 0; }
+.cover-eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 16px; }
+.cover-title { font-family: var(--serif); font-size: 36px; font-weight: 700; line-height: 1.2; letter-spacing: -.02em; margin-bottom: 20px; }
+.cover-sub { font-size: 16px; color: #3c4148; line-height: 1.8; margin-bottom: 28px; }
+.cover-img { width: 100%; aspect-ratio: 16/9; background: #E8E2D8; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 28px; }
+.cover-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover-img .ph { text-align: center; padding: 24px; }
+.cover-img .ph .icon { font-size: 40px; margin-bottom: 10px; }
+.cover-img .ph .cap { font-size: 12px; color: var(--muted); font-style: italic; line-height: 1.5; }
+.start-btn { appearance: none; cursor: pointer; border: none; background: var(--accent); color: #fff; font-family: var(--sans); font-weight: 700; font-size: 16px; padding: 16px 24px; border-radius: 12px; width: 100%; transition: filter .15s, transform .08s; }
+.start-btn:hover { filter: brightness(1.15); }
+.start-btn:active { transform: scale(.99); }
+#story { display: none; }
+.story-wrap { max-width: 680px; margin: 0 auto; padding: 0 20px; }
+.narrative { padding: 36px 0 8px; }
+.narrative p { font-family: var(--serif); font-size: 17px; line-height: 1.9; color: var(--ink); margin-bottom: 18px; }
+.narrative p:last-child { margin-bottom: 0; }
+.dialogue { border-left: 3px solid var(--accent); padding-left: 16px; margin: 20px 0; font-style: italic; color: #3c4148; font-family: var(--serif); font-size: 17px; line-height: 1.8; }
+.story-img { width: 100%; aspect-ratio: 4/3; background: #E8E2D8; border-radius: 10px; overflow: hidden; margin: 24px 0 6px; display: flex; align-items: center; justify-content: center; }
+.story-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.story-img .ph { text-align: center; padding: 24px; }
+.story-img .ph .icon { font-size: 30px; margin-bottom: 8px; }
+.story-img .ph .cap { font-size: 12px; color: var(--muted); font-style: italic; line-height: 1.45; }
+.img-caption { font-size: 12px; color: var(--muted); font-style: italic; text-align: center; line-height: 1.5; margin-bottom: 20px; }
+.chapter-divider { padding: 32px 0 20px; text-align: center; }
+.chapter-divider .cline { height: 1px; background: var(--line); margin-bottom: 16px; }
+.chapter-label { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.decision-block { background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; margin: 28px 0; overflow: hidden; }
+.decision-header { background: var(--accent); color: #fff; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; padding: 9px 18px; display: flex; align-items: center; justify-content: space-between; }
+.d-num { opacity: .45; }
+.decision-body { padding: 20px 18px 18px; }
+.decision-q { font-family: var(--serif); font-size: 18px; line-height: 1.45; margin-bottom: 18px; }
+.dopts { display: flex; flex-direction: column; gap: 10px; }
+.dopt { appearance: none; cursor: pointer; text-align: left; width: 100%; background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 13px 15px; font-family: var(--sans); font-size: 14px; color: var(--ink); display: flex; gap: 12px; align-items: flex-start; transition: border-color .15s, background .15s; line-height: 1.45; }
+.dopt:hover { border-color: var(--accent); background: #fff; }
+.dopt.disabled { cursor: default; pointer-events: none; }
+.dopt-id { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--muted); margin-top: 1px; transition: all .15s; }
+.dopt:hover .dopt-id { border-color: var(--accent); color: var(--accent); }
+.dopt-body { flex: 1; }
+.dopt-text { display: block; }
+.dopt-grade { display: none; }
+.dopt.right { border-color: var(--gold); background: var(--gold-bg); }
+.dopt.right .dopt-id { background: var(--gold); border-color: var(--gold); color: #fff; }
+.dopt.wrong { border-color: #C0392B; background: #FDF3F2; opacity: .7; }
+.dopt.wrong .dopt-id { background: #C0392B; border-color: #C0392B; color: #fff; }
+.dopt.correct { border-color: var(--gold); background: var(--gold-bg); border-width: 2px; }
+.dopt.correct .dopt-id { background: var(--gold); border-color: var(--gold); color: #fff; }
+.reveal { display: none; border-top: 1.5px solid var(--line); padding: 20px 18px; animation: slideIn .35s ease; }
+@keyframes slideIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+.reveal-badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; padding: 4px 11px; border-radius: 20px; margin-bottom: 14px; }
+.badge-y { background: var(--gold-bg); color: var(--gold); border: 1px solid #DDB85A; }
+.badge-n { background: #FDF3F2; color: #C0392B; border: 1px solid #F0A898; }
+.reveal-wd-label { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
+.reveal-wd-text { font-family: var(--serif); font-size: 17px; line-height: 1.5; margin-bottom: 14px; }
+.reveal-explain { font-size: 14px; line-height: 1.85; color: #3c4148; }
+.seg { display: none; }
+.seg.shown { display: block; animation: fadeIn .4s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.results { padding: 40px 0 20px; }
+.results-hero { text-align: center; padding: 20px 0 28px; }
+.results-trophy { font-size: 56px; display: block; margin-bottom: 10px; }
+.results-score-big { font-family: var(--serif); font-size: 64px; font-weight: 700; line-height: 1; letter-spacing: -.03em; }
+.results-score-big span { font-size: 24px; color: var(--muted); }
+.results-sub { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+.results-title { font-family: var(--serif); font-size: 22px; font-weight: 700; margin: 18px 0 10px; line-height: 1.3; }
+.results-desc { font-size: 14px; color: #3c4148; line-height: 1.85; margin-bottom: 24px; }
+.divider { height: 1px; background: var(--line); margin: 24px 0; }
+.dim-rows { display: flex; flex-direction: column; gap: 14px; margin: 16px 0 24px; }
+.dim-row-head { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.dim-row-name { font-size: 13px; font-weight: 700; }
+.dim-row-num { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.bar-bg { height: 7px; background: var(--line); border-radius: 6px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 6px; width: 0; transition: width 1.1s ease; }
+.bar-v { background: var(--accent); }
+.bar-r { background: var(--gold); }
+.bar-e { background: #2A7A4F; }
+.res-card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+.res-card .rc-title { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.share-pre { font-family: var(--mono); font-size: 12px; background: #EDE9E0; border: 1px solid var(--line); border-radius: 8px; padding: 14px; line-height: 1.8; white-space: pre-wrap; margin-bottom: 12px; }
+.copy-btn { appearance: none; cursor: pointer; border: none; background: var(--accent); color: #fff; font-family: var(--sans); font-weight: 700; font-size: 15px; padding: 14px 20px; border-radius: 10px; width: 100%; transition: filter .15s; }
+.copy-btn:hover { filter: brightness(1.15); }
+.video-teaser { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+.video-teaser p { font-size: 14px; color: #3c4148; line-height: 1.7; margin-bottom: 10px; }
+.video-teaser a { color: var(--accent); font-weight: 700; text-decoration: none; font-size: 14px; }
+.video-teaser a:hover { text-decoration: underline; }
+.replay-btn { appearance: none; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--muted); font-family: var(--sans); font-weight: 600; font-size: 14px; padding: 13px 20px; border-radius: 10px; width: 100%; }
+.story-img-REMOVED { display: none; }
+.img-caption { display: none; }
+@media (max-width: 480px) {
+  .cover-title { font-size: 28px; }
+  .narrative p { font-size: 16px; }
+  .dialogue { font-size: 16px; }
+}
+
+.tweet-btn{display:inline-block;margin-left:10px;padding:9px 18px;background:#000;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .2s;}
+.tweet-btn:hover{opacity:0.8;}
+
+.next-sims{margin:32px 0 8px;text-align:center;}
+.next-sims h3{font-size:14px;color:#888;margin-bottom:14px;font-weight:400;letter-spacing:.05em;text-transform:uppercase;}
+.next-sims-grid{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.next-sim-btn{display:inline-block;padding:10px 18px;border:1px solid rgba(0,0,0,.15);border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;color:var(--ink,#2d2d2d);background:#fff;transition:all .2s;}
+.next-sim-btn:hover{border-color:var(--accent,#8B6914);color:var(--accent,#8B6914);transform:translateY(-1px);}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ordinarymantrying.com/tools/disney-simulator.html">
+<meta property="og:title" content="Walt Disney Life Simulator — Would You Have Kept Going?">
+<meta property="og:description" content="An interactive story about Walt Disney — who went bankrupt at 21, lost his first character to a contract trick, and was told Mickey Mouse would never work. 7 real decisions.">
+<meta property="og:site_name" content="Ordinary Man Trying">
+<meta property="og:locale" content="en_US">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Game",
+  "name": "Walt Disney Life Simulator",
+  "description": "Make the real decisions Walt Disney faced, including proceeding with Snow White when every studio head said it would fail.",
+  "url": "https://ordinarymantrying.com/tools/disney-simulator.html",
+  "genre": [
+    "Educational",
+    "Simulation"
+  ],
+  "gamePlatform": "Web Browser",
+  "applicationCategory": "Game",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Ordinary Man Trying",
+    "url": "https://ordinarymantrying.com"
+  }
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Walt Disney</span>
+  <span class="topbar-score" id="topbar-score"></span>
+</div>
+
+<!-- COVER -->
+<div class="cover" id="cover">
+  <div class="cover-eyebrow">True Story · Interactive</div>
+  <h1 class="cover-title">He went bankrupt at 21, lost his first character at 26, and was told Snow White would destroy him. At every turning point, you make the call.</h1>
+  <p class="cover-sub">This is a life simulation. At each critical moment in Walt Disney's real story, you face the same choice he did — before you're told what he actually did.</p>
+  <button class="start-btn" onclick="startStory()">Start the Simulation →</button>
+</div>
+
+<!-- STORY -->
+<div id="story">
+<div class="story-wrap">
+
+  <!-- INTRO -->
+  <div class="narrative">
+    <p>Walter Elias Disney was born on December 5, 1901, in Chicago, Illinois. His family moved to a small farm in Marceline, Missouri, when he was four. It was there — watching animals in the fields, drawing on scraps of paper, absorbing the peaceful shape of a small American town — that something formed in him that no failure would ever fully undo.</p>
+    <p>He was not a gifted student. He was not from money. He was not connected to anyone important. He was just a boy from Missouri who could not stop drawing, and who had learned something dangerous: that imagination was the most powerful tool a person could possess.</p>
+    <p>In 1917, the United States entered World War I. Walt Disney was 15 years old — and desperate to go.</p>
+  </div>
+
+
+  <!-- DECISION 1 -->
+  <div class="decision-block" id="d1">
+    <div class="decision-header"><span>Decision 1 · 1917 · Age 15</span><span class="d-num">1 / 7</span></div>
+    <div class="decision-body">
+      <p class="decision-q">Walt desperately wants to serve in World War I. But he is 15 — too young to enlist. The minimum age is 17. His friends are joining. The war may be over before he's old enough to go. If you were Walt Disney, what would you do?</p>
+      <div class="dopts" id="opts-1">
+        <button class="dopt" onclick="answer(1,'A')">
+          <div class="dopt-id">A</div>
+          <div class="dopt-body"><span class="dopt-text">Wait. Rules are rules. Serve when you're legally old enough.</span><span class="dopt-grade">retreat</span></div>
+        </button>
+        <button class="dopt" onclick="answer(1,'B')">
+          <div class="dopt-id">B</div>
+          <div class="dopt-body"><span class="dopt-text">Volunteer at home — support drives, fundraising. Contribute without breaking any laws.</span><span class="dopt-grade">average</span></div>
+        </button>
+        <button class="dopt" onclick="answer(1,'C')">
+          <div class="dopt-id">C</div>
+          <div class="dopt-body"><span class="dopt-text">Apply to a non-combat support role that accepts younger volunteers.</span><span class="dopt-grade">bold</span></div>
+        </button>
+        <button class="dopt" onclick="answer(1,'D')">
+          <div class="dopt-id">D</div>
+          <div class="dopt-body"><span class="dopt-text">Alter your birth certificate to show you're 17. Apply to the Red Cross as an ambulance driver. Go.</span><span class="dopt-grade">Walt</span></div>
+        </button>
+      </div>
+      <div class="reveal" id="rev-1">
+        <div class="reveal-badge" id="badge-1"></div>
+        <div class="reveal-wd-label">What Walt Disney Did</div>
+        <div class="reveal-wd-text"><strong>You forge a birth certificate at 16, ship out to France, and discover that cartoons drawn on the side of an ambulance can make wounded soldiers smile — which turns out to be the thing you spend the rest of your life doing.</strong> He falsified his birth certificate, adding a year to his age, and joined the American Red Cross as an ambulance driver. He was 16.</div>
+        <div class="reveal-explain">Walt arrived in France after the Armistice, so he never saw combat. But the experience shaped him profoundly. He spent months driving wounded soldiers and ferrying supplies, decorating his ambulance with cartoons. It was here he first discovered that his drawings made people smile under the worst conditions — and that this mattered. He returned to the United States in 1919, at 17, with one clear conviction: he was going to be an artist.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEG 1 -->
+  <div class="seg" id="seg-1">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1921 · Age 19 · Kansas City, Missouri</div></div>
+    <div class="narrative">
+      <p>Back from Europe, Walt eventually landed a stable job at the Kansas City Film Ad Company, creating simple animated advertisements for movie theaters. He had a salary. He had a routine. He was learning animation — but slowly, on someone else's terms.</p>
+      <p>In his spare time, he experimented with his own cartoons using borrowed equipment. He was convinced he could do better. He had a name picked out for his studio: Laugh-O-Gram.</p>
+      <p>He was 19 years old, with no savings, no investors, and no guarantee that anyone would buy what he wanted to make.</p>
+    </div>
+
+    <div class="story-img-REMOVED">
+      <div class="ph"><div class="icon">📷</div><div class="cap">Kansas City, 1921 — Walt's first studio was a small rented space<br>Laugh-O-Gram Films was born here</div></div>
+    </div>
+    <div class="img-caption">The dream was bigger than the budget — always</div>
+
+    <div class="decision-block" id="d2">
+      <div class="decision-header"><span>Decision 2 · 1921 · Age 19</span><span class="d-num">2 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Walt has a stable job and is learning the craft. He wants to quit and launch his own animation studio. He has almost no money and no clients. His colleagues think he's being reckless. What do you do?</p>
+        <div class="dopts" id="opts-2">
+          <button class="dopt" onclick="answer(2,'A')">
+            <div class="dopt-id">A</div>
+            <div class="dopt-body"><span class="dopt-text">Stay at the job. Build savings for a few years first, then start the studio from a safer position.</span><span class="dopt-grade">retreat</span></div>
+          </button>
+          <button class="dopt" onclick="answer(2,'B')">
+            <div class="dopt-id">B</div>
+            <div class="dopt-body"><span class="dopt-text">Ask for more creative freedom at the current job. Use it as a launchpad rather than walking away.</span><span class="dopt-grade">average</span></div>
+          </button>
+          <button class="dopt" onclick="answer(2,'C')">
+            <div class="dopt-id">C</div>
+            <div class="dopt-body"><span class="dopt-text">Moonlight on the studio project evenings and weekends. Quit only when you have paying clients lined up.</span><span class="dopt-grade">bold</span></div>
+          </button>
+          <button class="dopt" onclick="answer(2,'D')">
+            <div class="dopt-id">D</div>
+            <div class="dopt-body"><span class="dopt-text">Quit now. Rent a space, hire animators, and launch Laugh-O-Gram Films. The right time will never come — so go.</span><span class="dopt-grade">Walt</span></div>
+          </button>
+        </div>
+        <div class="reveal" id="rev-2">
+          <div class="reveal-badge" id="badge-2"></div>
+          <div class="reveal-wd-label">What Walt Disney Did</div>
+          <div class="reveal-wd-text"><strong>You quit, launch Laugh-O-Gram, hire animators on credit — and go bankrupt at 21 when your distributor fails to pay a single invoice.</strong> He quit. He founded Laugh-O-Gram Films, hired a small team of animators, and began producing animated fairy tales.</div>
+          <div class="reveal-explain">Laugh-O-Gram produced several short films — modernized versions of fairy tales like Cinderella and Jack and the Beanstalk — that were genuinely clever and inventive. A Kansas City theater chain initially agreed to distribute them. But the distributor went bankrupt before paying. Without revenue, Laugh-O-Gram couldn't make payroll. Walt tried everything: he took on commissioned films, borrowed money, lived on beans. Nothing was enough. In 1923, when Walt was 21 years old, Laugh-O-Gram Studios filed for bankruptcy.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEG 2 -->
+  <div class="seg" id="seg-2">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1923 · Age 21 · Kansas City → Hollywood</div></div>
+    <div class="narrative">
+      <p>Bankrupt at 21. His studio gone. His savings gone. His animators dispersed. A business he had poured everything into for two years had dissolved without paying a single dividend.</p>
+      <p>The reasonable conclusion: Walt Disney had tried the animation business and it had not worked. He should find a different career.</p>
+      <p>He had one asset: a suitcase. Inside it were some clothes, a few unfinished reels of film, and $40 in cash.</p>
+      <p>He was deciding what to do next.</p>
+    </div>
+
+    <div class="decision-block" id="d3">
+      <div class="decision-header"><span>Decision 3 · 1923 · After Bankruptcy</span><span class="d-num">3 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Your studio just went bankrupt. You're 21 with $40 to your name. You've tried the animation business — it failed. What do you do?</p>
+        <div class="dopts" id="opts-3">
+          <button class="dopt" onclick="answer(3,'A')">
+            <div class="dopt-id">A</div>
+            <div class="dopt-body"><span class="dopt-text">Accept the signal. Find a stable job in commercial art or advertising. Animation was a dream — it didn't work.</span><span class="dopt-grade">retreat</span></div>
+          </button>
+          <button class="dopt" onclick="answer(3,'B')">
+            <div class="dopt-id">B</div>
+            <div class="dopt-body"><span class="dopt-text">Stay in Kansas City. Rebuild locally. You know the market here — try again with a smaller, more careful operation.</span><span class="dopt-grade">average</span></div>
+          </button>
+          <button class="dopt" onclick="answer(3,'C')">
+            <div class="dopt-id">C</div>
+            <div class="dopt-body"><span class="dopt-text">Write letters to studios in New York and Hollywood, looking for an animation job before committing to anything.</span><span class="dopt-grade">bold</span></div>
+          </button>
+          <button class="dopt" onclick="answer(3,'D')">
+            <div class="dopt-id">D</div>
+            <div class="dopt-body"><span class="dopt-text">Pack the suitcase. Take the $40. Move to Hollywood — where the film business is — and start over from zero.</span><span class="dopt-grade">Walt</span></div>
+          </button>
+        </div>
+        <div class="reveal" id="rev-3">
+          <div class="reveal-badge" id="badge-3"></div>
+          <div class="reveal-wd-label">What Walt Disney Did</div>
+          <div class="reveal-wd-text"><strong>You take the suitcase, buy a train ticket with the last of the $40, and move to Hollywood — where your only contact is your brother Roy, who is recovering from tuberculosis in a veterans' hospital.</strong> He took his suitcase and $40, bought a train ticket to Los Angeles, and moved in with his brother Roy, who was recovering from tuberculosis in a veterans' hospital.</div>
+          <div class="reveal-explain">Walt's initial plan was to become a live-action film director. Every major studio turned him down. So he went back to animation. In his uncle's garage, with Roy's help, he started the Disney Brothers Cartoon Studio. Within months he had signed a deal with a New York distributor for a series called the "Alice Comedies" — a live-action girl interacting with animated characters. It was modest, but it was real. He was in business again.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEG 3 -->
+  <div class="seg" id="seg-3">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1928 · Age 26 · New York City</div></div>
+    <div class="narrative">
+      <p>By 1927, Walt had created his most successful character yet: Oswald the Lucky Rabbit, distributed by Universal Pictures through a producer named Charles Mintz. The cartoons were popular. The future looked bright.</p>
+      <p>In February 1928, Walt traveled to New York to negotiate a new contract with Mintz. He expected a raise. Instead, Mintz delivered the opposite news.</p>
+      <p>Oswald the Lucky Rabbit belonged to Universal — not to Walt. The contract said so. Mintz could keep making Oswald cartoons without Walt. And he was about to: he had quietly hired away most of Walt's animators.</p>
+      <p class="dialogue">"Work for me at a lower rate," Mintz told him. "Or I take Oswald, take your animators, and you walk away with nothing."</p>
+      <p>Walt Disney sat across from Charles Mintz and made a decision in that room.</p>
+    </div>
+
+    <div class="story-img-REMOVED">
+      <div class="ph"><div class="icon">📷</div><div class="cap">New York, 1928 — the meeting that changed animation history<br>Oswald the Lucky Rabbit, about to be taken away</div></div>
+    </div>
+    <div class="img-caption">Lose the character or lose your independence. Walt chose a third option.</div>
+
+    <div class="decision-block" id="d4">
+      <div class="decision-header"><span>Decision 4 · 1928 · The Ultimatum</span><span class="d-num">4 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Charles Mintz has just told you: Oswald belongs to Universal. Half your animators are already signed to him. Accept his terms at a lower rate — or walk away and lose your character entirely. What do you do?</p>
+        <div class="dopts" id="opts-4">
+          <button class="dopt" onclick="answer(4,'A')">
+            <div class="dopt-id">A</div>
+            <div class="dopt-body"><span class="dopt-text">Accept his terms. Lower rate, but you stay employed and connected to your creation. Better than nothing.</span><span class="dopt-grade">retreat</span></div>
+          </button>
+          <button class="dopt" onclick="answer(4,'B')">
+            <div class="dopt-id">B</div>
+            <div class="dopt-body"><span class="dopt-text">Threaten legal action. Fight for Oswald. There must be something in the contract that protects your rights.</span><span class="dopt-grade">average</span></div>
+          </button>
+          <button class="dopt" onclick="answer(4,'C')">
+            <div class="dopt-id">C</div>
+            <div class="dopt-body"><span class="dopt-text">Ask for time to think. Go back to LA, consult a lawyer, explore every option before deciding.</span><span class="dopt-grade">bold</span></div>
+          </button>
+          <button class="dopt" onclick="answer(4,'D')">
+            <div class="dopt-id">D</div>
+            <div class="dopt-body"><span class="dopt-text">Walk away. Refuse his terms. Go home and create a brand new character that you will own — forever.</span><span class="dopt-grade">Walt</span></div>
+          </button>
+        </div>
+        <div class="reveal" id="rev-4">
+          <div class="reveal-badge" id="badge-4"></div>
+          <div class="reveal-wd-label">What Walt Disney Did</div>
+          <div class="reveal-wd-text"><strong>You walk away from Oswald — your most successful character, the thing you spent two years building — and sketch a mouse on the train home. You own the mouse. You will always own the mouse.</strong> He refused Mintz's terms. He walked away from Oswald. On the train back to California, he sketched a new character: a mouse.</div>
+          <div class="reveal-explain">Walt later said he "learned my lesson" about contracts that day. He vowed that from that moment on, he would always retain ownership of his characters — no exceptions. The mouse he sketched on the train home became Mickey Mouse. Within months, Walt added something no animated cartoon had ever had before: synchronized sound. Steamboat Willie, released in November 1928, was a sensation. Mickey Mouse belonged entirely to Walt Disney. Oswald belonged to Universal. History recorded only one of those characters.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEG 4 -->
+  <div class="seg" id="seg-4">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1934 · Age 32 · Burbank, California</div></div>
+    <div class="narrative">
+      <p>Mickey Mouse had made Walt Disney famous. The studio was thriving. Short cartoons were reliable, profitable, manageable. Everything was working.</p>
+      <p>And Walt Disney was bored.</p>
+      <p>He had been thinking, for years, about making a feature-length animated film. A real movie — full length, full story, full orchestra. No one had ever done it. The technology barely existed. The costs would be enormous.</p>
+      <p>In 1934, he gathered his animators in a room and acted out — by himself, playing every part — the entire plot of Snow White and the Seven Dwarfs. He wanted to make it a feature film. He wanted $1.5 million to do it.</p>
+      <p>The Hollywood press had already named it before it began. They called it <em>Disney's Folly</em>.</p>
+      <p>His wife Lillian begged him not to do it. His brother Roy, who controlled the finances, was horrified. The Bank of America loan officer who eventually reviewed the project called it the most reckless thing he'd ever seen.</p>
+    </div>
+
+    <div class="story-img-REMOVED">
+      <div class="ph"><div class="icon">📷</div><div class="cap">Walt Disney acting out Snow White for his animators, 1934<br>Every character. Every voice. By himself. For two hours.</div></div>
+    </div>
+    <div class="img-caption">"Disney's Folly" — that's what they called it before a single frame was drawn</div>
+
+    <div class="decision-block" id="d5">
+      <div class="decision-header"><span>Decision 5 · 1934 · Disney's Folly</span><span class="d-num">5 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Everything is working. Short cartoons are profitable and safe. Making Snow White as a feature film will cost $1.5 million, risk the entire studio, and has never been done before. Everyone around you thinks you're making a catastrophic mistake. What do you do?</p>
+        <div class="dopts" id="opts-5">
+          <button class="dopt" onclick="answer(5,'A')">
+            <div class="dopt-id">A</div>
+            <div class="dopt-body"><span class="dopt-text">Drop the idea. The short cartoon business is working — why gamble everything on an unproven format?</span><span class="dopt-grade">retreat</span></div>
+          </button>
+          <button class="dopt" onclick="answer(5,'B')">
+            <div class="dopt-id">B</div>
+            <div class="dopt-body"><span class="dopt-text">Make a 30-minute version first. Test the concept at lower cost before committing to a full feature.</span><span class="dopt-grade">average</span></div>
+          </button>
+          <button class="dopt" onclick="answer(5,'C')">
+            <div class="dopt-id">C</div>
+            <div class="dopt-body"><span class="dopt-text">Seek a major studio partnership to share the financial risk in exchange for a share of ownership.</span><span class="dopt-grade">bold</span></div>
+          </button>
+          <button class="dopt" onclick="answer(5,'D')">
+            <div class="dopt-id">D</div>
+            <div class="dopt-body"><span class="dopt-text">Go all in. Borrow every dollar you can. Hire 300 animators. Spend three years making it — whatever it costs.</span><span class="dopt-grade">Walt</span></div>
+          </button>
+        </div>
+        <div class="reveal" id="rev-5">
+          <div class="reveal-badge" id="badge-5"></div>
+          <div class="reveal-wd-label">What Walt Disney Did</div>
+          <div class="reveal-wd-text"><strong>You mortgage the studio, watch the budget balloon from $1.5 million to $2.5 million, and screen an unfinished cut for a banker to get the final loan — then Snow White earns $8 million and the press that called it "Disney's Folly" goes quiet.</strong> He mortgaged the studio. The budget swelled from $1.5 million to $2.5 million. He nearly ran out of money before the film was finished and had to screen an incomplete version for the Bank of America to get the final loan.</div>
+          <div class="reveal-explain">Snow White and the Seven Dwarfs premiered on December 21, 1937. It earned $8 million in its initial release — roughly $170 million in today's dollars. It was the highest-grossing sound film ever made at that point. The press that had called it "Disney's Folly" was now calling it a masterpiece. Walt Disney used the profits to build a proper studio in Burbank. He used it to prove that animation was not a novelty — it was an art form.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEG 5 -->
+  <div class="seg" id="seg-5">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">1952 · Age 50 · Burbank, California</div></div>
+    <div class="narrative">
+      <p>Walt Disney was 50 years old, famous, and rich. The studio was producing acclaimed films. Cinderella, Alice in Wonderland, Peter Pan — the pipeline was full.</p>
+      <p>And yet Walt Disney could not stop thinking about a piece of land in Anaheim.</p>
+      <p>He had been dreaming of a theme park for years — a place families could visit together, where the stories his studio told would become real and walkable. He called it "The Happiest Place on Earth."</p>
+      <p>He had pitched it to banks. All of them had rejected him. He had pitched it to his brother Roy. Roy thought it was a distraction from the film business. The studio board was skeptical. His own advisors told him he didn't understand real estate, construction, or tourism operations.</p>
+      <p>The estimated cost: $17 million. Walt had none of it.</p>
+    </div>
+
+    <div class="story-img-REMOVED">
+      <div class="ph"><div class="icon">📷</div><div class="cap">Walt Disney pointing at the plans for Disneyland, early 1950s<br>Every bank in America had already said no</div></div>
+    </div>
+    <div class="img-caption">A 160-acre orange grove in Anaheim. A dream that no one else could see.</div>
+
+    <div class="decision-block" id="d6">
+      <div class="decision-header"><span>Decision 6 · 1952 · The Theme Park</span><span class="d-num">6 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Every bank has turned you down. Your brother thinks it's a mistake. Your board is skeptical. You have no construction experience and no real estate background. The park will cost $17 million you don't have. Do you keep pursuing it?</p>
+        <div class="dopts" id="opts-6">
+          <button class="dopt" onclick="answer(6,'A')">
+            <div class="dopt-id">A</div>
+            <div class="dopt-body"><span class="dopt-text">Let it go. When every bank and your own brother say no, that's a signal, not an obstacle.</span><span class="dopt-grade">retreat</span></div>
+          </button>
+          <button class="dopt" onclick="answer(6,'B')">
+            <div class="dopt-id">B</div>
+            <div class="dopt-body"><span class="dopt-text">Scale it down dramatically — a smaller, cheaper version that banks might actually fund.</span><span class="dopt-grade">average</span></div>
+          </button>
+          <button class="dopt" onclick="answer(6,'C')">
+            <div class="dopt-id">C</div>
+            <div class="dopt-body"><span class="dopt-text">Hire a real estate and construction expert to co-lead it. Maybe the idea is right but the execution team is wrong.</span><span class="dopt-grade">bold</span></div>
+          </button>
+          <button class="dopt" onclick="answer(6,'D')">
+            <div class="dopt-id">D</div>
+            <div class="dopt-body"><span class="dopt-text">Find another way. Cash out your life insurance policy. Sell your vacation home. Then pitch a television network — offer them a TV show in exchange for investment in the park.</span><span class="dopt-grade">Walt</span></div>
+          </button>
+        </div>
+        <div class="reveal" id="rev-6">
+          <div class="reveal-badge" id="badge-6"></div>
+          <div class="reveal-wd-label">What Walt Disney Did</div>
+          <div class="reveal-wd-text"><strong>You cash out your life insurance, sell your vacation home, and offer ABC a weekly television show in exchange for funding a park that doesn't exist yet — then 90 million Americans watch the show and decide they want to visit.</strong> He cashed out his life insurance policy. He sold his vacation home. He formed a separate company — WED Enterprises — to develop the park outside the studio's control. Then he went to ABC television.</div>
+          <div class="reveal-explain">Television was seen as the enemy by Hollywood studios in the early 1950s. Walt Disney went the other direction: he offered ABC an unprecedented deal. Disney would produce a weekly television anthology series — Disneyland — in exchange for ABC investing $500,000 in the park and guaranteeing $4.5 million in loans. ABC, desperate for content, agreed. The show became one of the highest-rated programs in America. It also served as a 60-minute advertisement for a park that didn't exist yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEG 6 -->
+  <div class="seg" id="seg-6">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">July 17, 1955 · Anaheim, California · Opening Day</div></div>
+    <div class="narrative">
+      <p>Disneyland opened on July 17, 1955. Walt Disney had been working toward this day for years.</p>
+      <p>It was a disaster.</p>
+      <p>Counterfeit tickets flooded the gates — twice as many people entered as expected. The asphalt on Main Street USA was freshly laid and still soft; women's high heels sank into it as they walked. A plumbers' strike had forced a choice between working drinking fountains and working restrooms — Walt chose restrooms. Guests went thirsty in 95-degree heat and accused Disney of charging for water.</p>
+      <p>Rides broke down. The Mark Twain Riverboat was so overloaded it nearly capsized. Fantasyland was closed for hours due to a gas leak. The live television broadcast, watched by 90 million Americans, captured every malfunction in real time.</p>
+      <p>The next morning, a reporter asked Walt Disney for his response.</p>
+    </div>
+
+    <div class="story-img-REMOVED">
+      <div class="ph"><div class="icon">📷</div><div class="cap">Disneyland Opening Day, July 17, 1955<br>28,000 people arrived. Rides failed. Asphalt melted. Walt watched.</div></div>
+    </div>
+    <div class="img-caption">Opening Day was called "Black Sunday" by the press. Walt called it a beginning.</div>
+
+    <div class="decision-block" id="d7">
+      <div class="decision-header"><span>Decision 7 · 1955 · Opening Day Disaster</span><span class="d-num">7 / 7</span></div>
+      <div class="decision-body">
+        <p class="decision-q">Opening Day was publicly humiliating — the press is calling it "Black Sunday." Rides broke down, the park was overloaded, guests complained about everything. 90 million people watched it fail on live television. How do you respond?</p>
+        <div class="dopts" id="opts-7">
+          <button class="dopt" onclick="answer(7,'A')">
+            <div class="dopt-id">A</div>
+            <div class="dopt-body"><span class="dopt-text">Issue a formal public apology. Acknowledge the failures. Promise refunds and fixes before reopening.</span><span class="dopt-grade">retreat</span></div>
+          </button>
+          <button class="dopt" onclick="answer(7,'B')">
+            <div class="dopt-id">B</div>
+            <div class="dopt-body"><span class="dopt-text">Close for two weeks. Fix every problem completely. Reopen only when everything works perfectly.</span><span class="dopt-grade">average</span></div>
+          </button>
+          <button class="dopt" onclick="answer(7,'C')">
+            <div class="dopt-id">C</div>
+            <div class="dopt-body"><span class="dopt-text">Meet with the press directly. Explain what went wrong, take full responsibility, and outline the fix plan.</span><span class="dopt-grade">bold</span></div>
+          </button>
+          <button class="dopt" onclick="answer(7,'D')">
+            <div class="dopt-id">D</div>
+            <div class="dopt-body"><span class="dopt-text">Open again tomorrow. Fix problems as they appear. The park will never be finished — that is the whole point.</span><span class="dopt-grade">Walt</span></div>
+          </button>
+        </div>
+        <div class="reveal" id="rev-7">
+          <div class="reveal-badge" id="badge-7"></div>
+          <div class="reveal-wd-label">What Walt Disney Did</div>
+          <div class="reveal-wd-text"><strong>Disneyland opens the next morning with the asphalt still soft — and seven weeks later, one million people have visited a park the press called a disaster on live television.</strong> Disneyland opened again the next day. And the day after that. Walt Disney said: "Disneyland will never be completed. It will continue to grow as long as there is imagination left in the world."</div>
+          <div class="reveal-explain">Within seven weeks of opening, one million guests had visited Disneyland. By the end of its first year, it had welcomed 3.6 million people. The park turned profitable faster than any projection had predicted. The "Black Sunday" coverage, it turned out, had been seen by 90 million Americans — and most of them wanted to visit. Walt Disney spent the rest of his life adding to the park, expanding it, iterating on it. It was never finished. That was the point.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EPILOGUE / RESULTS -->
+  <div class="seg" id="seg-epilogue">
+    <div class="chapter-divider"><div class="cline"></div><div class="chapter-label">December 15, 1966 · Burbank, California</div></div>
+    <div class="narrative">
+      <p>Walt Disney died on December 15, 1966, at the age of 65, from lung cancer — a complication of a lifetime of heavy smoking. He had been planning a second theme park, Walt Disney World in Florida, until the week he died. He did not live to see it open.</p>
+      <p>He had gone bankrupt. He had been told his ideas were impossible. He had been fired, betrayed, rejected, and publicly humiliated — more than once.</p>
+      <p>He had also created Mickey Mouse, Fantasia, Bambi, Cinderella, Peter Pan, Sleeping Beauty, and Mary Poppins. He had built Disneyland. He had won 22 Academy Awards — more than any individual in history. He had turned a garage in Hollywood into one of the most recognized brands on earth.</p>
+      <p>Not because he was the most talented. Not because he was the most educated. But because at every moment when the reasonable choice was to stop, he chose not to.</p>
+    </div>
+
+    <div class="results" id="seg-results">
+      <div class="results-hero">
+        <span class="results-trophy" id="res-trophy">✨</span>
+        <div class="results-score-big" id="res-score">0<span>/7</span></div>
+        <div class="results-sub">decisions matched Walt Disney</div>
+      </div>
+      <h2 class="results-title" id="res-title"></h2>
+      <p class="results-desc" id="res-desc"></p>
+
+      <div class="divider"></div>
+      <div class="dim-rows">
+        <div>
+          <div class="dim-row-head">
+            <span class="dim-row-name">Vision</span>
+            <span class="dim-row-num" id="d-v-num">0/3</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill bar-v" id="d-v-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head">
+            <span class="dim-row-name">Resilience</span>
+            <span class="dim-row-num" id="d-r-num">0/2</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill bar-r" id="d-r-bar"></div></div>
+        </div>
+        <div>
+          <div class="dim-row-head">
+            <span class="dim-row-name">Execution</span>
+            <span class="dim-row-num" id="d-e-num">0/2</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill bar-e" id="d-e-bar"></div></div>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="rc-title">Share your result</div>
+        
+<div class="next-sims"><h3>Try another simulator</h3><div class="next-sims-grid"><a class="next-sim-btn" href="jobs-simulator.html">Steve Jobs</a><a class="next-sim-btn" href="musk-simulator.html">Elon Musk</a><a class="next-sim-btn" href="honda-simulator.html">Soichiro Honda</a></div></div>
+<div class="share-pre" id="share-pre"></div>
+        <button class="copy-btn" onclick="copyShare(event)">Copy to clipboard</button>
+<a class="tweet-btn" id="tweet-btn" href="#" onclick="return shareTweet()" rel="noopener">𝕏 Share Result</a>
+      </div>
+
+      <div class="res-card" style="text-align:center;">
+        <div class="rc-title">📚 Go Deeper — Read the Book</div>
+        <p style="font-size:14px;line-height:1.7;margin-bottom:14px;">The definitive biography of Walt Disney — how a farm boy from Missouri imagined impossible worlds, survived bankruptcy, and built the most beloved entertainment empire on earth.</p>
+        <a href="https://amzn.to/43NWejD" target="_blank" rel="noopener" style="display:inline-block;background:#FF9900;color:#111;font-weight:700;padding:10px 22px;border-radius:6px;text-decoration:none;font-size:14px;">📖 View on Amazon →</a>
+        <p style="font-size:11px;color:#999;margin-top:10px;">As an Amazon Associate I earn from qualifying purchases.</p>
+      </div>
+
+      <div class="video-teaser">
+        <p>Try the other simulators in this series — each one a different kind of impossible life.</p>
+        <a href="https://ordinarymantrying.com/tools/zhangxue-simulator.html">Zhang Xue →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/honda-simulator.html">Soichiro Honda →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/curie-simulator.html">Marie Curie →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/jobs-simulator.html">Steve Jobs →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/rowling-simulator.html">J.K. Rowling →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/oprah-simulator.html">Oprah Winfrey →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/musk-simulator.html">Elon Musk →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/mandela-simulator.html">Nelson Mandela →</a>&nbsp;&nbsp;
+        <a href="https://ordinarymantrying.com/tools/buffett-simulator.html">Warren Buffett →</a>
+      </div>
+
+      <div class="res-card">
+        <div class="rc-title">About this simulator</div>
+        <p style="font-size:14px;color:#3c4148;line-height:1.85;">This simulator is part of <a href="https://ordinarymantrying.com" style="color:var(--accent);font-weight:700;text-decoration:none;">ordinarymantrying.com</a> — a blog about one ordinary person using AI to navigate investing, side hustles, and building things in public. All events in this simulator are based on documented historical accounts of Walt Disney's life.</p>
+      </div>
+
+      <div class="sim-links" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-left:4px solid var(--accent,#60a5fa);border-radius:12px;padding:18px 20px;margin-bottom:14px;">
+  
+  <p style="font-size:13px;font-weight:700;color:inherit;margin-bottom:10px;">🎮 Try another legendary life:</p>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;">
+    <a href="zhangxue-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🏍️ Zhang Xue</a>
+    <a href="honda-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🔧 Soichiro Honda</a>
+    <a href="curie-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">⚗️ Marie Curie</a>
+    <a href="jobs-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">📱 Steve Jobs</a>
+    <a href="rowling-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">📚 J.K. Rowling</a>
+    <a href="oprah-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🌟 Oprah Winfrey</a>
+    <a href="musk-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🛸 Elon Musk</a>
+    <a href="mandela-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">✊ Nelson Mandela</a>
+    <a href="buffett-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">💰 Warren Buffett</a>
+    <a href="hawking-simulator.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--accent,#60a5fa);text-decoration:none;transition:background .15s;margin-bottom:4px;">🔭 Stephen Hawking</a>
+  </div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);">
+    <a href="https://ordinarymantrying.com/tools/" style="font-size:13px;color:var(--accent,#60a5fa);font-weight:700;text-decoration:none;">→ See all 11 simulators + free tools</a>
+  </div>
+</div>
+      <button class="replay-btn" onclick="location.reload()">↺ Play again</button>
+      <div style="height:48px;"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+var TOTAL = 7;
+var DECISIONS = {
+  1: { zx: 'D', dim: 'resilience' },
+  2: { zx: 'D', dim: 'execution' },
+  3: { zx: 'D', dim: 'resilience' },
+  4: { zx: 'D', dim: 'vision' },
+  5: { zx: 'D', dim: 'vision' },
+  6: { zx: 'D', dim: 'execution' },
+  7: { zx: 'D', dim: 'vision' }
+};
+var NEXT_SEG = { 1:'seg-1', 2:'seg-2', 3:'seg-3', 4:'seg-4', 5:'seg-5', 6:'seg-6', 7:'seg-epilogue' };
+var DIM_MAX = { vision: 3, resilience: 2, execution: 2 };
+var scores = { vision: 0, resilience: 0, execution: 0 };
+var totalCorrect = 0;
+var answered = {};
+
+function startStory() {
+  document.getElementById('cover').style.display = 'none';
+  document.getElementById('story').style.display = 'block';
+  document.getElementById('topbar-score').style.display = 'block';
+  document.getElementById('topbar-score').textContent = '0 / ' + TOTAL;
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function answer(num, chosen) {
+  if (answered[num]) return;
+  answered[num] = chosen;
+  var d = DECISIONS[num];
+  var correct = (chosen === d.zx);
+  if (correct) { totalCorrect++; scores[d.dim]++; }
+
+  var opts = document.querySelectorAll('#opts-' + num + ' .dopt');
+  opts.forEach(function(btn) {
+    btn.classList.add('disabled');
+    var id = btn.querySelector('.dopt-id').textContent.trim();
+    if (id === chosen && correct)  btn.classList.add('right');
+    if (id === chosen && !correct) btn.classList.add('wrong');
+    if (id === d.zx && !correct)   btn.classList.add('correct');
+  });
+
+  var badge = document.getElementById('badge-' + num);
+  if (correct) {
+    badge.className = 'reveal-badge badge-y';
+    badge.textContent = '✓ Same as Walt Disney';
+  } else {
+    badge.className = 'reveal-badge badge-n';
+    badge.textContent = '✗ You chose ' + chosen + ' — Walt chose ' + d.zx;
+  }
+
+  document.getElementById('rev-' + num).style.display = 'block';
+  document.getElementById('topbar-score').textContent = totalCorrect + ' / ' + TOTAL;
+
+  setTimeout(function() {
+    var next = document.getElementById(NEXT_SEG[num]);
+    next.classList.add('shown');
+    setTimeout(function() { next.scrollIntoView({ behavior:'smooth', block:'start' }); }, 80);
+    if (num === TOTAL) showResults();
+  }, 950);
+}
+
+function showResults() {
+  setTimeout(function() {
+    var s = totalCorrect;
+    var trophies = ['🌱','🌱','💪','💪','🎖','🎖','🥇','✨'];
+    document.getElementById('res-trophy').textContent = trophies[s] || '✨';
+    document.getElementById('res-score').innerHTML = s + '<span>/' + TOTAL + '</span>';
+
+    var title, desc;
+    if (s === TOTAL) {
+      title = 'You Would Have Named the Mouse.';
+      desc = 'Perfect score — every decision matched Walt Disney\'s. You forged the birth certificate, quit for Laugh-O-Gram, moved to Hollywood with $40, walked away from Oswald, mortgaged the studio for Snow White, cashed your life insurance for Disneyland, and opened again the morning after Black Sunday. This is what Walt\'s pattern looks like from the inside: not confidence, but a specific inability to stop. The mouse sketched on the train. The incomplete Snow White screened for a banker. Disneyland reopened at dawn with the asphalt still warm.';
+    } else if (s >= 5) {
+      title = 'You Have His Stubbornness.';
+      desc = s + ' out of 7. You matched Walt\'s choices when it mattered most — including at least one decision where the gap between his choice and the reasonable choice was widest: walking away from Oswald, or mortgaging the studio for Snow White, or reopening Disneyland the morning after Black Sunday. The moments where you diverged are exactly the ones Walt refused to back down from. Those specific refusals are why Mickey Mouse exists.';
+    } else if (s >= 3) {
+      title = 'Braver Than Most.';
+      desc = s + ' out of 7. More than half your choices matched his, which already makes you unusual. The gaps are where Walt chose the option that looked like delusion — quitting his only job for Laugh-O-Gram with no savings, moving to Hollywood with $40 after bankruptcy, walking away from Oswald the Lucky Rabbit to draw a mouse on a train. Those choices made no practical sense in the moment. They also produced Mickey Mouse, Snow White, and Disneyland.';
+    } else {
+      title = 'A Reasonable Person.';
+      desc = s + ' out of 7. Your choices made sense at every decision point. Walt Disney\'s rarely did. He went bankrupt at 21 and moved to Hollywood with $40. He walked away from his most successful character to sketch a mouse. He mortgaged his studio to make the first feature-length animated film when every expert told him it would ruin him. The distance between sensible and legendary is precisely the gap between your answers and his.';
+    }
+    document.getElementById('res-title').textContent = title;
+    document.getElementById('res-desc').textContent = desc;
+
+    setTimeout(function() {
+      var vMax = DIM_MAX.vision, rMax = DIM_MAX.resilience, eMax = DIM_MAX.execution;
+      document.getElementById('d-v-num').textContent = scores.vision + '/' + vMax;
+      document.getElementById('d-r-num').textContent = scores.resilience + '/' + rMax;
+      document.getElementById('d-e-num').textContent = scores.execution + '/' + eMax;
+      document.getElementById('d-v-bar').style.width = ((scores.vision/vMax)*100) + '%';
+      document.getElementById('d-r-bar').style.width = ((scores.resilience/rMax)*100) + '%';
+      document.getElementById('d-e-bar').style.width = ((scores.execution/eMax)*100) + '%';
+    }, 300);
+
+    document.getElementById('share-pre').textContent =
+      'I just played the Walt Disney Life Simulator and matched ' + totalCorrect + '/' + TOTAL + ' of his real decisions.\n\n'
+      + 'Walt Disney went bankrupt at 21, lost his first character at 26, and was told Snow White would destroy him.\n'
+      + 'At every turning point in his story, you make the call before seeing what he actually did.\n\n'
+      + 'Vision ' + scores.vision + '/' + DIM_MAX.vision
+      + '  ·  Resilience ' + scores.resilience + '/' + DIM_MAX.resilience
+      + '  ·  Execution ' + scores.execution + '/' + DIM_MAX.execution + '\n\n'
+      + 'Would you have made the same choices? ordinarymantrying.com/tools/disney-simulator.html';
+
+    document.getElementById('seg-epilogue').scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 600);
+}
+
+function shareTweet(){var text=document.getElementById('share-pre').textContent;if(!text||text.trim()===''){alert('Finish the simulator first to share your result!');return false;}var url='https://x.com/intent/tweet?text='+encodeURIComponent(text.substring(0,240));window.open(url,'_blank','width=550,height=450');return false;}
+function copyShare(evt) {
+  var text = document.getElementById('share-pre').textContent;
+  var btn = evt.target;
+  function restore() { btn.textContent = 'Copy to clipboard'; }
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = '✓ Copied!'; setTimeout(restore, 2000);
+    });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent = '✓ Copied!'; setTimeout(restore, 2000);
+  }
+}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

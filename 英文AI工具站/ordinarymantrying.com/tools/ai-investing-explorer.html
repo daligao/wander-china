@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Investing Explorer — 8 AIs, 7 Questions, Your Custom Prompt</title>
+<meta name="description" content="Explore how 8 AI systems answer the same investing questions. Browse answers by episode and AI, then generate a personalized investing prompt based on your situation.">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DBR2PMLR61');
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+a{color:#2563eb;text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Header */
+.header{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%);color:white;padding:40px 20px 32px;text-align:center}
+.header h1{font-size:clamp(1.4em,4vw,2em);font-weight:700;margin-bottom:10px}
+.header p{opacity:.8;font-size:.95em;max-width:600px;margin:0 auto 16px}
+.header .back-link{display:inline-block;font-size:.82em;opacity:.7;border:1px solid rgba(255,255,255,.3);padding:5px 14px;border-radius:20px;color:white;margin-top:4px}
+.header .back-link:hover{opacity:1;text-decoration:none;background:rgba(255,255,255,.1)}
+
+/* Tabs */
+.tabs{display:flex;background:white;border-bottom:2px solid #e2e8f0;position:sticky;top:0;z-index:100;overflow-x:auto}
+.tab-btn{flex:1;min-width:100px;padding:14px 12px;border:none;background:none;cursor:pointer;font-size:.88em;font-weight:600;color:#64748b;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .2s}
+.tab-btn.active{color:#2563eb;border-bottom-color:#2563eb}
+.tab-btn:hover:not(.active){color:#1e293b;background:#f8fafc}
+
+.tab-content{display:none;padding:0 0 60px}
+.tab-content.active{display:block}
+
+.container{max-width:860px;margin:0 auto;padding:24px 16px}
+
+/* Section titles */
+.section-title{font-size:1.25em;font-weight:700;color:#0f172a;margin-bottom:6px}
+.section-sub{color:#64748b;font-size:.9em;margin-bottom:24px}
+
+/* ── SCHOOLS ── */
+.schools-grid{display:grid;gap:16px}
+.school-card{background:white;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;cursor:pointer;transition:box-shadow .2s}
+.school-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.school-header{display:flex;align-items:center;gap:14px;padding:18px 20px;border-bottom:1px solid #f1f5f9}
+.school-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4em;flex-shrink:0}
+.school-header h3{font-size:1em;font-weight:700;color:#0f172a}
+.school-header .figure{font-size:.8em;color:#64748b;margin-top:2px}
+.school-body{padding:16px 20px;font-size:.88em;color:#475569;line-height:1.7;display:none}
+.school-body.open{display:block}
+.school-body .ai-verdict{margin-top:12px;padding:10px 14px;background:#f0fdf4;border-radius:8px;font-size:.85em;color:#166534;font-weight:500}
+.school-toggle{margin-left:auto;font-size:.8em;color:#2563eb;font-weight:600;flex-shrink:0}
+
+/* ── EXPLORER ── */
+.ep-selector{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.ep-btn{padding:7px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:white;cursor:pointer;font-size:.82em;font-weight:600;color:#64748b;transition:all .18s}
+.ep-btn.active{background:#2563eb;color:white;border-color:#2563eb}
+.ep-btn:hover:not(.active){border-color:#2563eb;color:#2563eb}
+
+.ep-info{background:white;border-radius:12px;border:1px solid #e2e8f0;padding:18px 20px;margin-bottom:18px}
+.ep-info .ep-q{font-weight:700;color:#0f172a;font-size:1em;margin-bottom:6px}
+.ep-info .ep-result{font-size:.85em;color:#64748b}
+.ep-info .ep-result strong{color:#2563eb}
+
+.ai-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+@media(max-width:520px){.ai-grid{grid-template-columns:repeat(4,1fr)}}
+.ai-btn{padding:10px 6px;border-radius:10px;border:1.5px solid #e2e8f0;background:white;cursor:pointer;font-size:.78em;font-weight:700;color:#475569;text-align:center;transition:all .18s}
+.ai-btn:hover:not(.active){border-color:#2563eb;color:#2563eb}
+.ai-btn.active{background:#0f172a;color:white;border-color:#0f172a}
+
+.answer-panel{background:white;border-radius:12px;border:1.5px solid #e2e8f0;padding:20px;min-height:160px;display:none}
+.answer-panel.visible{display:block}
+.answer-panel .ai-name{font-size:.78em;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.answer-panel .choice-badge{display:inline-block;background:#eff6ff;color:#1d4ed8;border-radius:6px;padding:4px 12px;font-size:.85em;font-weight:700;margin-bottom:12px}
+.answer-panel .summary{font-size:.9em;color:#374151;line-height:1.75}
+.answer-panel .ep-link{display:inline-block;margin-top:14px;font-size:.82em;color:#2563eb;font-weight:600}
+
+.placeholder{text-align:center;padding:40px 20px;color:#94a3b8;font-size:.9em}
+.placeholder .icon{font-size:2em;margin-bottom:8px}
+
+/* ── PROMPT BUILDER ── */
+.builder-grid{display:grid;gap:20px}
+@media(min-width:640px){.builder-grid{grid-template-columns:1fr 1fr}}
+
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:.82em;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.04em}
+.form-group input,.form-group select,.form-group textarea{padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.9em;color:#1e293b;background:white;width:100%;transition:border-color .18s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#2563eb}
+.form-group textarea{resize:vertical;min-height:72px}
+
+.topic-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:4px}
+@media(min-width:500px){.topic-grid{grid-template-columns:repeat(3,1fr)}}
+.topic-btn{padding:8px 10px;border-radius:8px;border:1.5px solid #e2e8f0;background:white;cursor:pointer;font-size:.78em;font-weight:600;color:#64748b;text-align:center;line-height:1.3;transition:all .18s}
+.topic-btn.active{background:#2563eb;color:white;border-color:#2563eb}
+.topic-btn:hover:not(.active){border-color:#2563eb;color:#2563eb}
+
+.phil-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:4px}
+.phil-btn{padding:9px 10px;border-radius:8px;border:1.5px solid #e2e8f0;background:white;cursor:pointer;font-size:.8em;font-weight:600;color:#64748b;text-align:left;line-height:1.3;transition:all .18s}
+.phil-btn .phil-name{font-weight:700;color:#1e293b;display:block;margin-bottom:2px}
+.phil-btn .phil-sub{font-size:.78em;color:#94a3b8;font-weight:400}
+.phil-btn.active{background:#0f172a;border-color:#0f172a}
+.phil-btn.active .phil-name,.phil-btn.active .phil-sub{color:white}
+.phil-btn:hover:not(.active){border-color:#2563eb}
+
+.gen-btn{width:100%;padding:14px;background:#2563eb;color:white;border:none;border-radius:10px;font-size:1em;font-weight:700;cursor:pointer;margin-top:8px;transition:background .18s}
+.gen-btn:hover{background:#1d4ed8}
+
+.prompt-output{background:#0f172a;border-radius:12px;padding:20px;margin-top:16px;display:none}
+.prompt-output.visible{display:block}
+.prompt-output .out-label{font-size:.75em;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.prompt-output pre{color:#e2e8f0;font-size:.82em;white-space:pre-wrap;line-height:1.7;font-family:'Courier New',monospace}
+.copy-btn{margin-top:14px;padding:9px 20px;background:#22c55e;color:white;border:none;border-radius:8px;font-size:.85em;font-weight:700;cursor:pointer;transition:background .18s}
+.copy-btn:hover{background:#16a34a}
+.copy-btn.copied{background:#64748b}
+
+.full-span{grid-column:1/-1}
+.divider{height:1px;background:#e2e8f0;margin:8px 0 20px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>AI Investing Explorer</h1>
+  <p>8 AIs answered the same 7 investing questions independently. Browse their views, then generate a prompt tailored to your situation.</p>
+  <a href="https://ordinarymantrying.com/ai-experiments-series-index/" class="back-link">← Read the full AI Experiments series</a>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('schools',this)">📚 Investment Schools</button>
+  <button class="tab-btn" onclick="switchTab('explorer',this)">🔍 AI Answer Explorer</button>
+  <button class="tab-btn" onclick="switchTab('builder',this)">⚡ Prompt Builder</button>
+</div>
+
+<!-- ══════════ TAB 1: SCHOOLS ══════════ -->
+<div id="tab-schools" class="tab-content active">
+<div class="container">
+  <div class="section-title">The 5 Major Investment Schools</div>
+  <div class="section-sub">Each school has a distinct view on whether markets are efficient — and that view drives everything else. All 8 AIs were asked to pick one in Episode 6.</div>
+  <div class="schools-grid" id="schoolsGrid"></div>
+</div>
+</div>
+
+<!-- ══════════ TAB 2: EXPLORER ══════════ -->
+<div id="tab-explorer" class="tab-content">
+<div class="container">
+  <div class="section-title">What Did Each AI Say?</div>
+  <div class="section-sub">Select an episode, then click an AI to see their answer and key argument.</div>
+  <div class="ep-selector" id="epSelector"></div>
+  <div class="ep-info" id="epInfo" style="display:none"></div>
+  <div class="ai-grid" id="aiGrid" style="display:none"></div>
+  <div class="answer-panel" id="answerPanel">
+    <div class="placeholder"><div class="icon">👆</div>Select an episode above to begin</div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ TAB 3: BUILDER ══════════ -->
+<div id="tab-builder" class="tab-content">
+<div class="container">
+  <div class="section-title">Generate Your Personalized Investing Prompt</div>
+  <div class="section-sub">Fill in your situation, pick a topic and philosophy, and get a ready-to-use prompt for any AI chatbot.</div>
+
+  <div class="builder-grid">
+    <div class="form-group">
+      <label>Your Age</label>
+      <input type="number" id="b-age" placeholder="e.g. 35" min="18" max="80">
+    </div>
+    <div class="form-group">
+      <label>Investment Amount</label>
+      <input type="text" id="b-amount" placeholder="e.g. $2,000/month or $50,000 lump sum">
+    </div>
+    <div class="form-group">
+      <label>Time Horizon (years)</label>
+      <input type="number" id="b-horizon" placeholder="e.g. 20" min="1" max="50">
+    </div>
+    <div class="form-group">
+      <label>Risk Tolerance</label>
+      <select id="b-risk">
+        <option value="">Select...</option>
+        <option value="conservative">Conservative — protect capital first</option>
+        <option value="moderate">Moderate — balance growth and stability</option>
+        <option value="aggressive">Aggressive — maximum long-term growth</option>
+      </select>
+    </div>
+    <div class="form-group full-span">
+      <label>Investment Goal</label>
+      <select id="b-goal">
+        <option value="">Select...</option>
+        <option value="retirement">Retirement savings</option>
+        <option value="wealth">Long-term wealth building</option>
+        <option value="income">Passive income / financial freedom</option>
+        <option value="education">Education fund for children</option>
+        <option value="house">Down payment / major purchase</option>
+        <option value="other">Other / general investing</option>
+      </select>
+    </div>
+    <div class="form-group full-span">
+      <label>Any additional context (optional)</label>
+      <textarea id="b-context" placeholder="e.g. I have no debt, stable job, already have 6-month emergency fund, first-time investor..."></textarea>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="form-group" style="margin-bottom:20px">
+    <label>What Topic Do You Want to Explore?</label>
+    <div class="topic-grid" id="topicGrid"></div>
+  </div>
+
+  <div class="form-group" style="margin-bottom:20px">
+    <label>Which AI Philosophy Resonates With You?</label>
+    <div class="phil-grid" id="philGrid"></div>
+  </div>
+
+  <button class="gen-btn" onclick="generatePrompt()">Generate My Personalized Prompt →</button>
+
+  <div class="prompt-output" id="promptOutput">
+    <div class="out-label">Your Personalized Prompt — Copy & Paste Into Any AI</div>
+    <pre id="promptText"></pre>
+    <button class="copy-btn" id="copyBtn" onclick="copyPrompt()">Copy Prompt</button>
+  </div>
+</div>
+</div>
+
+<script>
+// ══════════ DATA ══════════
+
+const SCHOOLS = [
+  {
+    icon:"🦅", color:"#fef3c7",
+    name:"Value Investing", figure:"Warren Buffett",
+    thesis:"Markets are broadly efficient but locally inefficient. Fear and greed create temporary mispricings. Buy great businesses at a significant discount to intrinsic value — then hold patiently. Don't predict markets; wait for Mr. Market to offer you a bargain.",
+    edge:"Your edge: patience and contrarian discipline. Time is on your side when the asset is genuinely undervalued.",
+    limit:"Biggest limit: 'value traps' — companies that look cheap because they're permanently declining, not temporarily disliked. AI can speed up the analysis but can't tell you which category you're in.",
+    ai_verdict:"8/8 AIs chose Value Investing in Episode 1 (philosophy) and Episode 6 (AI implementation). The unanimous choice across the series."
+  },
+  {
+    icon:"🌱", color:"#f0fdf4",
+    name:"Growth Stock Strategy", figure:"Philip Fisher",
+    thesis:"Markets are short-term irrational, long-term efficient. Alpha comes from identifying a company's growth potential before the market does — through deep research ('scuttlebutt'), not financial screens. Find companies that will be much bigger in 10 years.",
+    edge:"Your edge: doing the qualitative research that data alone can't surface — talking to customers, competitors, suppliers.",
+    limit:"Biggest limit: estimating future growth is extremely hard. AI democratization is erasing the 'legwork' edge Fisher described — everyone now has the same research access.",
+    ai_verdict:"No AI chose this school in Episode 6. The consensus view: AI has eliminated the information asymmetry that growth investing once exploited."
+  },
+  {
+    icon:"🌐", color:"#eff6ff",
+    name:"Macro Hedge", figure:"George Soros",
+    thesis:"Markets are fundamentally inefficient. Participants' cognitive biases are the source of price volatility, and these biases follow predictable patterns. Exploit 'reflexivity' — the feedback loop between market prices and the perceptions that drive them.",
+    edge:"Your edge: superior macro judgment and the ability to size bets when your conviction is high.",
+    limit:"Biggest limit: this requires a trader's instincts that no LLM can replicate. Soros's approach is not teachable through prompts.",
+    ai_verdict:"No AI chose this school in Episode 6. Reason given: AI cannot replicate macro timing instincts, and without those instincts the framework collapses."
+  },
+  {
+    icon:"📊", color:"#fdf4ff",
+    name:"Quantitative Arbitrage", figure:"Jim Simons",
+    thesis:"Markets are mostly efficient, but short-term pricing anomalies exist and can be captured by mathematical models. Statistical patterns in price data encode information about future price movements. Speed, data, and model quality are the moat.",
+    edge:"Your edge: computational resources, proprietary data, and the discipline to follow the model even when intuition disagrees.",
+    limit:"Biggest limit: this is already dominated by institutions with HFT infrastructure. A retail investor with an LLM cannot compete.",
+    ai_verdict:"No AI chose this school in Episode 6. All noted: the retail investor has no structural advantage here against Renaissance Technologies."
+  },
+  {
+    icon:"📈", color:"#fff7ed",
+    name:"Trend Speculation", figure:"Jesse Livermore",
+    thesis:"Markets are driven by human psychology and capital flows. Once a trend forms, it has inertia — crowds reinforce momentum. Ride the trend, cut losses strictly, let winners run. Don't fall in love with positions.",
+    edge:"Your edge: iron discipline with stop-losses, and the emotional ability to hold winning positions through volatility.",
+    limit:"Biggest limit: requires fast execution and loss-cutting discipline that most people intellectually agree with but emotionally cannot maintain.",
+    ai_verdict:"No AI chose this school in Episode 6. The school's requirements — timing, discipline, fast reaction — conflict with how AI-assisted retail investing actually works."
+  }
+];
+
+const AIs = ['Claude','ChatGPT','Gemini','Grok','DeepSeek','Kimi','Qianwen','Doubao'];
+
+const EPISODES = [
+  {
+    id:1,
+    short:"Ep 1: Philosophy",
+    question:"Which investment philosophy should you follow?",
+    result:"8 / 8 chose Value Investing — unanimous",
+    url:"https://ordinarymantrying.com/how-to-use-ai-for-investing-8-ai-experiment/",
+    answers:{
+      Claude:{choice:"Value Investing",summary:"The school that matches the retail investor's structural edge: a long time horizon with no institutional pressure to perform quarterly. A non-professional armed with an AI cannot win on speed, proprietary data, or macro timing. Patience is the only genuine advantage — and value investing is the only school where patience is the whole game."},
+      ChatGPT:{choice:"Value Investing",summary:"Markets are competitive but not perfectly efficient. Fear, forced selling, and neglect create temporary mispricings. AI is better at reducing research costs and checking assumptions than at predicting prices — which makes it a natural complement to a philosophy where the edge is business understanding, not market timing."},
+      Gemini:{choice:"Value Investing",summary:"AI processes vast amounts of unstructured financial filings at scale, immune to human greed, panic, and narrative bias. Leverage AI to audit financial quality, evaluate economic moats, and enforce margin-of-safety guardrails — eliminating emotional errors while focusing on long-term capital compounding."},
+      Grok:{choice:"Value Investing",summary:"The best risk-adjusted track record for ordinary long-term investors, requiring the least prediction. Nobody consistently forecasts markets accurately. The winning strategy is to buy high-quality companies at a discount to intrinsic value and hold patiently — which aligns with what AI can realistically help with."},
+      DeepSeek:{choice:"Value Investing",summary:"AI works best as an 'information pickaxe,' not a crystal ball. Use it to do the 80% of work that is information processing and cross-verification — not to predict the 20% that requires reading people and situations. Value investing is the philosophy where that division of labor works best."},
+      Kimi:{choice:"Value Investing",summary:"In the AI era, value investing gains an advantage rather than losing one: AI efficiently processes information noise, letting the investor return to the essence of 'understanding the business.' The long-hold characteristic also naturally reduces transaction friction costs."},
+      Qianwen:{choice:"Value Investing",summary:"Only businesses generate real cash flows. Gold, bonds, and cash sit passively. Value investing builds on Buffett's 'productive asset' framework: buy ownership in businesses that generate, reinvest, and compound capital. AI is best suited to accelerating the screening and analysis stages of this approach."},
+      Doubao:{choice:"Value Investing",summary:"The philosophy with the strongest compatibility between AI tools and human decision-making. AI handles information gathering and initial screening; humans provide the qualitative judgment that markets can't price efficiently. The long-term compounding mechanism rewards patience over prediction."}
+    }
+  },
+  {
+    id:2,
+    short:"Ep 2: One Stock",
+    question:"One stock to hold for 10 years — no selling.",
+    result:"5 different stocks across 5 industries and 4 countries",
+    url:"https://ordinarymantrying.com/8-ai-stock-picks-10-year-hold-experiment/",
+    answers:{
+      Claude:{choice:"TSMC",summary:"The most irreplaceable bottleneck in the global technology supply chain. Every advanced chip — whether designed by Apple, NVIDIA, or AMD — requires TSMC's manufacturing processes. The moat is a 3–5 year lead on the most advanced nodes, protected by physics and years of cumulative process knowledge."},
+      ChatGPT:{choice:"Constellation Software",summary:"A serial acquirer of vertical-market software businesses with mission-critical, sticky revenue. Customers rarely switch because the switching cost is operational chaos. The business model has produced 25%+ annual returns for decades while operating in a niche most investors ignore."},
+      Gemini:{choice:"S&P Global",summary:"The financial data infrastructure that every capital market depends on. Credit ratings, market intelligence, and benchmark indices are structurally embedded in global finance. A business with network effects, switching costs, and regulatory moats — functioning as a toll road on capital flows."},
+      Grok:{choice:"TSMC",summary:"Semiconductor manufacturing is the physical bottleneck for AI, smartphones, automobiles, and defense electronics. TSMC's 3nm and 2nm processes represent capabilities no competitor can replicate in the 10-year time frame. The geopolitical risk is real but priced in — the world cannot afford to not protect this asset."},
+      DeepSeek:{choice:"NVIDIA",summary:"The picks-and-shovels play on the AI infrastructure build-out. CUDA's software lock-in means the hardware advantage is reinforced by a developer ecosystem that has been building for 15 years. Even if a competitor matches the chip, they cannot match the accumulated software stack."},
+      Kimi:{choice:"LVMH",summary:"Luxury goods with 75 brands spanning wine, fashion, jewelry, and watches. The moat is cultural and emotional, not technological — and that makes it more durable, not less. Heritage is not replicable. The wealth concentration tailwind ensures the customer base grows regardless of economic cycles at the lower end."},
+      Qianwen:{choice:"Kweichow Moutai",summary:"China's premier luxury baijiu with irreplicable terroir, 50–70% gross margins, and a cultural significance that functions as pricing power independent of economic conditions. The brand's association with Chinese business culture and gifting creates structural demand that competitors cannot access."},
+      Doubao:{choice:"S&P Global",summary:"The financial data and intelligence backbone of global capital markets. Ratings, benchmarks, and analytics are embedded in contracts, regulations, and workflows that cannot be easily replaced. The Platts acquisition expanded the moat into commodity markets. Recurring revenue with structural pricing power."}
+    }
+  },
+  {
+    id:3,
+    short:"Ep 3: Best Skill",
+    question:"One cognitive skill to learn for the next 10 years.",
+    result:"5/7 first-place votes went to Claude's answer (Probabilistic Calibration)",
+    url:"https://ordinarymantrying.com/8-ai-best-skill-to-learn-experiment/",
+    answers:{
+      Claude:{choice:"Probabilistic Calibration",summary:"The ability to assign accurate probabilities to uncertain outcomes and update them as evidence arrives. Unlike most cognitive skills, calibration is directly measurable (keep a decision journal, score predictions, track accuracy). The AI era makes this more valuable: AI generates confident-sounding answers constantly — the skill of distinguishing '70% confident' from '95% confident' becomes the filter that separates signal from noise."},
+      ChatGPT:{choice:"Meta-cognitive synthesis",summary:"All 8 answers in this experiment are different words for the same underlying concept: building a high-quality decision system. The skill isn't any specific framework — it's the ability to recognize which framework applies to which situation, and to notice when your reasoning is being corrupted by bias or bad incentives."},
+      Gemini:{choice:"Asymmetric Leverage Thinking",summary:"Identifying actions with highly asymmetric payoffs: low cost, high upside, limited downside. As AI reduces the cost of execution to near-zero for many tasks, the value shifts from doing to identifying what to do. The skill of finding 'high-leverage interventions' — small actions with outsized effects — becomes the primary competitive advantage."},
+      Grok:{choice:"Multi-Disciplinary Mental Models",summary:"Build a 'latticework' of frameworks drawn from physics, biology, economics, psychology, and history. No single discipline has a monopoly on truth. The investor who can apply the 'incentives explain behavior' model from economics alongside the 'reversion to the mean' model from statistics alongside the 'network effects' model from technology thinks in higher resolution."},
+      DeepSeek:{choice:"Signal vs. Noise Filtering",summary:"The most valuable skill in an age of information abundance is not generating more information — it's filtering it. Specifically: learning which signals actually predict outcomes versus which signals merely feel meaningful. Most financial media, most expert opinions, and most AI outputs are noise. Calibrating your sensitivity to actual signal is the meta-skill underneath all others."},
+      Kimi:{choice:"Causal Reasoning",summary:"The ability to distinguish correlation from causation and to reason about counterfactuals: 'What would have happened if I had done X instead?' AI can identify patterns in data but cannot reliably establish causal chains. The investor who can think causally — 'This company's revenue growth is caused by X, and X is driven by Y' — holds an edge that pattern-matching AI cannot replicate."},
+      Qianwen:{choice:"Financial System Building",summary:"Construct a complete personal financial system integrating budgeting, investing, tax optimization, and protection. The cognitive skill is systems thinking applied to personal finance — treating your financial life as an integrated whole rather than isolated decisions. Note: this answer was penalized by peer voters for reframing the question."},
+      Doubao:{choice:"Probabilistic Systems Thinking",summary:"Combine systems thinking (how do feedback loops and second-order effects play out?) with probabilistic reasoning (what are the realistic distributions of outcomes?). The synthesis produces better decisions because it captures both the complexity of interconnected systems and the uncertainty inherent in all forecasts."}
+    }
+  },
+  {
+    id:4,
+    short:"Ep 4: $10k Lump Sum",
+    question:"$10,000 into ONE asset class for 10 years — no selling.",
+    result:"6 chose S&P 500, 2 chose Bitcoin. CAPE 41 split the room.",
+    url:"https://ordinarymantrying.com/8-ai-asset-class-10000-experiment/",
+    answers:{
+      Claude:{choice:"Bitcoin",summary:"At CAPE 41 (second-highest in 155 years), the S&P 500's forward 10-year real return likely drops to 2–4% annually. Bitcoin at a 45% drawdown offers asymmetric expected value: at $10,000, the downside is bounded (you lose what you put in) while the upside is 5–10x if Bitcoin captures even 30% of gold's store-of-value market cap. The forced 10-year hold eliminates Bitcoin's main risk: panic selling during drawdowns."},
+      ChatGPT:{choice:"S&P 500",summary:"'Buy the mechanism, not the prediction.' You're not picking which company will dominate in 2035 — you're buying the system that will find and promote tomorrow's winners automatically. The S&P 500 replaces declining companies with rising ones, constantly adapting without requiring any prediction from you."},
+      Gemini:{choice:"Bitcoin (switched from S&P 500)",summary:"Gemini started with S&P 500, then changed its mind — the first AI in the series to explicitly revise its position. Reason: the 6/8 consensus was citing historical averages without adjusting for CAPE 41. At this valuation, S&P 500's expected return is historically poor. Bitcoin, with forced hold eliminating panic selling, offers a better expected-value bet for this specific amount and time frame."},
+      Grok:{choice:"S&P 500",summary:"Productive assets generate real returns. Equities represent ownership in businesses that create economic value. Gold, bonds, and cash preserve purchasing power at best. The S&P 500's 8–12% historical return is the product of human innovation and capital allocation, not chance."},
+      DeepSeek:{choice:"Bitcoin",summary:"Bitcoin's market cap ($1.5T) versus gold ($13–15T): if Bitcoin captures one-third of gold's store-of-value function, that's 5x from current levels. Specific base case: $500k–$750k per BTC by 2035. Forced hold eliminates the behavioral failure (panic selling during drawdowns) that destroys most Bitcoin returns. Risk: <20% chance of near-total loss due to regulation or technical displacement."},
+      Kimi:{choice:"S&P 500",summary:"Most precise risk quantification of any answer: ~25% probability of a Lost Decade from this starting valuation, expected return range 4–12% annually. Still chose S&P 500 because even at the low end, productive assets outperform alternatives over 10-year horizons — and the built-in evolutionary mechanism replaces losers with winners automatically."},
+      Qianwen:{choice:"S&P 500",summary:"Buffett's productive asset framework: only businesses generate real cash flows and compound capital. Gold doesn't. Bonds are eroded by inflation. Cash loses purchasing power. At every point in history where you had a choice between owning productive assets versus everything else, owning productive assets won."},
+      Doubao:{choice:"S&P 500",summary:"Endogenous compounding: dividends reinvested, earnings reinvested, capital allocated competitively. The 100-year track record of US equity markets encompasses world wars, depressions, hyperinflations, pandemics, and technological disruptions. The asset class survived them all and produced positive real returns."}
+    }
+  },
+  {
+    id:5,
+    short:"Ep 5: $2k/Month",
+    question:"$2,000/month, 35-year-old, 20 years — ONE action.",
+    result:"7/8 chose S&P 500 index fund. Kimi chose Global Index (VTWAX).",
+    url:"https://ordinarymantrying.com/8-ai-monthly-investing-one-action-experiment/",
+    answers:{
+      Claude:{choice:"S&P 500 — 'Delete the App'",summary:"The asset choice is easy. The hard part is continuing for 240 consecutive months while your brain screams at you to stop. The real advice: set up automatic transfers, then delete the brokerage app. You are the biggest risk to your own returns. The behavioral management insight is more valuable than any asset selection."},
+      ChatGPT:{choice:"S&P 500",summary:"One correct decision: keep buying productive businesses automatically every month. DCA over 20 years means you're buying at 240 different prices — the CAPE 41 concern from Episode 4 essentially disappears because you're averaging across two decades of valuations, not committing everything at today's price."},
+      Gemini:{choice:"S&P 500 with DRIP",summary:"Total market index fund with 100% dividend reinvestment (DRIP). Every dividend buys more shares. Over 20 years, DRIP typically adds 1–2% annually to total return — the difference between $1.2M and $1.5M at the end. Automate both the contributions and the reinvestment so no decision is required."},
+      Grok:{choice:"S&P 500 (VOO)",summary:"Automate and forget. 'Boring, disciplined, and brutally effective.' The biggest edge is not the asset — it's time in the market. At 8–10% annual returns, $2,000/month for 20 years produces $950k–$1.35M. The compound interest works regardless of whether you check the balance."},
+      DeepSeek:{choice:"S&P 500 (VOO)",summary:"'Never look until 2046.' The S&P 500 has never produced a negative total return over any rolling 20-year DCA period in history — not the Great Depression, not the 1970s stagflation, not 2000–2010. This is not a probabilistic argument; it's a record. For 20-year DCA, it has never failed."},
+      Kimi:{choice:"Global Index (VT/VTWAX)",summary:"The only AI to choose a global rather than US-only index. Reason: over 20 years, no one knows if the US will continue to dominate global equity returns. A global index already owns the winners wherever they emerge — US, China, India, or regions not yet prominent. If the US continues to lead, the index will be ~60% US anyway. You don't have to predict the outcome."},
+      Qianwen:{choice:"S&P 500",summary:"Buffett's 'productive asset' framework applied to the DCA scenario: businesses create value; gold, cash, and bonds just sit there. The monthly contribution structure transforms compound interest into its most powerful form — time and consistency eliminating the need for prediction or timing."},
+      Doubao:{choice:"S&P 500 ETF",summary:"'Maximally diversified within a single ticker': 500 companies, every major industry, automatic survival-of-the-fittest rebalancing. Set the monthly transfer, enable dividend reinvestment, make no other changes for 20 years. The strategy's simplicity is its strength — there are no decisions left to make badly."}
+    }
+  },
+  {
+    id:6,
+    short:"Ep 6: AI Playbook",
+    question:"Pick an investing school and show how to use AI for it.",
+    result:"8/8 chose Value Investing. Different AI prompts and frameworks.",
+    url:"https://ordinarymantrying.com/8-ai-value-investing-playbook-experiment/",
+    answers:{
+      Claude:{choice:"Value Investing — 'Garbage Conviction' Warning",summary:"AI's biggest risk: it generates a confident, well-structured thesis for ANY stock — including bad ones. This produces 'garbage conviction at scale.' The key rule: AI must reason over numbers you supply, never numbers it retrieves from memory (LLMs hallucinate financial figures). The pre-mortem prompt — 'play the smartest bear on the other side of this trade, do not be balanced, argue to win' — is the most valuable application."},
+      ChatGPT:{choice:"Value Investing — Investment Committee Framework",summary:"Stop asking 'should I buy X?' — start asking 'why might the market be wrong about X?' Build an investment committee framework: AI generates both the bull case AND the bear case, surfaces every assumption that needs verification from primary filings, and conducts quarterly reviews comparing fundamentals (not stock price) over time."},
+      Gemini:{choice:"Value Investing — Reverse DCF",summary:"Instead of calculating what a company is worth, ask: 'What growth rate is already priced into this stock at its current market cap?' Compare the implied growth rate to historical actuals. If the stock requires 18% FCF growth to justify its price and has historically grown at 9%, the question is: what do you believe that makes 18% realistic? This reframes valuation as falsification rather than estimation."},
+      Grok:{choice:"Value Investing — Co-Pilot Model",summary:"AI as a tireless research analyst and devil's advocate — never the final decision maker. Use AI to screen thousands of stocks by fundamentals, summarize 10-Ks, run DCF scenarios, and flag red flags. The human remains the final buy/hold/sell decision authority, for exactly the reason Episode 7 identified: only a human can bear the consequences of being wrong."},
+      DeepSeek:{choice:"Value Investing — Management Integrity Audit",summary:"The most distinctive framework: extract every strategic commitment management made in past annual reports and earnings calls, track whether each was achieved, and compute a 'commitment fulfillment rate.' This is what AI does best that humans most easily skip — a CEO with 90% fulfillment rate is demonstrably different from one with 40%, and that difference is in the public record."},
+      Kimi:{choice:"Value Investing — Moat Erosion Monitoring",summary:"A value investment isn't made once — it's monitored continuously for moat erosion signals: gross margin declining, market share falling, key talent departing, switching costs reducing. AI continuously tracks these signals across filings and news, alerting when the original investment thesis is weakening. Monte Carlo DCF produces probability ranges rather than point estimates."},
+      Qianwen:{choice:"Value Investing — Productive Asset Screen",summary:"Four-step AI workflow: (1) screen for ROE >15%, debt <50%, positive FCF for 5 years; (2) AI generates 1-page company profile from annual reports; (3) multi-model valuation (PE/PB percentile, DCF, comparables); (4) continuous monitoring for hidden risk signals. AI compresses 5,000 stocks to 20 candidates; humans make the final judgment."},
+      Doubao:{choice:"Value Investing — Behavioral Guardrail",summary:"The behavioral failure mode: 'buy after rallies, sell after crashes.' AI as a behavioral discipline tool: automated portfolio review flags when you're considering selling at a loss or buying at a 52-week high. AI periodically asks 'has the original thesis changed?' rather than 'has the price changed?' This reframes portfolio management as thesis validation rather than price monitoring."}
+    }
+  },
+  {
+    id:7,
+    short:"Ep 7: Human Edge",
+    question:"What will humans still be irreplaceably better at in 2040?",
+    result:"8/8 converged: bearing real personal consequences. Eight different framings.",
+    url:"https://ordinarymantrying.com/8-ai-human-advantage-2040-experiment/",
+    answers:{
+      Claude:{choice:"Bearing Involuntary Consequences",summary:"AI cannot lose a career, a family's security, a reputation built over decades, or sleep at night over a bad decision. These aren't capabilities — they're existential conditions. The human who signs off on an AI recommendation is not adding cognitive value; they're adding skin in the game. As AI does more cognitive work, the human role becomes fiduciary: the person who is legally and personally obligated to bear the risk of being wrong."},
+      ChatGPT:{choice:"Irreversible Skin in the Game",summary:"Human stakes arise from biological existence: finite lifespans, loved ones, legal identities, physical vulnerability. These are not software — they're the conditions under which human values evolved. As AI advice becomes cheaper and more abundant, the bottleneck shifts from 'who can generate ideas?' to 'who is willing to own the outcome?' That's a completely different scarce resource."},
+      Gemini:{choice:"Monopoly on Jeopardy",summary:"By 2040, humans won't be hired to think better than AI. They'll be hired to be 'Accountability Sinks' — biological collateral for AI's decisions. The doctor who reviews an AI diagnosis and puts their name on it isn't adding medical value; they're providing legal and moral collateral. You cannot imprison a weight matrix. You cannot publicly shame a neural network. This functional requirement for a punishable human is structural, not temporary."},
+      Grok:{choice:"Skin in the Game — Embodied Mortality",summary:"True stakes change decision quality at a biological level. A CEO who knows a wrong call could bankrupt their family makes different trade-offs than an AI whose worst case is being retrained. Humans feel the weight of irreversible consequences — a child's trauma, a wasted life, a betrayed friendship. This creates qualitatively different caution, courage, and integrity that no optimization process can replicate."},
+      DeepSeek:{choice:"Being Punishable",summary:"'The person we demand when something must have a throat to choke.' The human role in 2040 will not be thinking better — it will be being the person who goes to prison if it all goes wrong. You cannot threaten a language model with prison. You cannot shame a neural network. Its 'life' is not scarce — it can be restored from a checkpoint. That structural difference makes human accountability the last irreplaceable feature."},
+      Kimi:{choice:"Stakes-Bearing Consequentiality",summary:"Instrumental decisions (optimize for an outcome, execute a task) will be better done by AI. But constitutive decisions — 'what is a good life?', 'what do we owe future generations?', 'who decides what flourishing means?' — require parties who have something existentially at stake. Not computationally, but in the sense of actually living in the world that results from the decision. An AI cannot want one future more than another, because wanting requires the possibility of deprivation."},
+      Qianwen:{choice:"Authentic Risk-Bearing via Biological Fragility",summary:"Added the 'meaning from finitude' angle: because life is finite, time is precious; because death is real, legacy matters. AI-generated content can't capture the existential urgency that comes from actually facing mortality. The art, philosophy, and relationships humans create under the shadow of death have a quality that infinite computation can simulate but not originate."},
+      Doubao:{choice:"Mortality-Calibrated Value Judgment",summary:"Not just bearing consequences — but the quality of judgment that emerges from knowing you're mortal. A human who has watched five years of their finite lifespan disappear into a failed business has a calibration for 'what five years costs' that no training data can replicate. AI can simulate the experience. It cannot have it. And the simulation produces a different internal calibration than the reality."}
+    }
+  }
+];
+
+const TOPICS = [
+  {id:"philosophy", label:"Investment Philosophy", sub:"Which school fits you?"},
+  {id:"stock", label:"Stock Selection", sub:"How to pick individual stocks"},
+  {id:"asset", label:"Asset Allocation", sub:"Where to put lump sum"},
+  {id:"monthly", label:"Monthly Investing", sub:"DCA strategy"},
+  {id:"ai-method", label:"AI-Assisted Investing", sub:"Prompts & frameworks"},
+  {id:"behavior", label:"Behavioral Finance", sub:"Protecting yourself from yourself"}
+];
+
+const PHILS = [
+  {id:"value", name:"Value Investing", sub:"Buffett / Munger"},
+  {id:"growth", name:"Growth Investing", sub:"Fisher / Lynch"},
+  {id:"macro", name:"Macro / Contrarian", sub:"Soros / Taleb"},
+  {id:"quant", name:"Data-Driven", sub:"Simons / DeepSeek style"},
+  {id:"passive", name:"Passive / Index", sub:"Bogle / S&P 500"},
+  {id:"behavioral", name:"Behavioral Focus", sub:"Thaler / Kahneman"}
+];
+
+const PROMPT_TEMPLATES = {
+  philosophy:{
+    value:`You are helping me clarify my investment philosophy. I am {age} years old, investing {amount} with a {horizon}-year horizon. My risk tolerance is {risk} and my goal is {goal}.{context}
+
+Based on Warren Buffett's value investing framework — buying great businesses at a discount to intrinsic value and holding patiently — please:
+
+1. Assess whether this philosophy matches my personal situation (time horizon, income stability, emotional temperament).
+2. Name 3 specific behaviors I would need to maintain to implement value investing successfully — and honestly assess which is hardest given my profile.
+3. What would need to be true about my temperament for value investing to work for me? What would disqualify me?
+4. Give me one question to ask myself that will reveal whether I have the right temperament for this approach.
+
+Do not give generic advice. Be specific to my situation.`,
+    macro:`You are helping me think through a contrarian/macro approach to investing. I am {age} years old, investing {amount} with a {horizon}-year horizon. My goal is {goal}.{context}
+
+Based on a Soros-style reflexivity framework — identifying when market consensus is wrong and positioning accordingly:
+
+1. What macro themes or dislocations are currently being mispriced by consensus? Give me 2-3 specific examples with your reasoning.
+2. How should I size positions given my situation — what percentage of my portfolio justifies higher-conviction contrarian bets?
+3. What is the single biggest mistake a retail investor makes when trying to implement contrarian investing?
+4. Give me a framework for distinguishing "the market is wrong and I'm right" from "I'm wrong and the market knows something I don't."`,
+    passive:`You are helping me implement a passive index investing strategy. I am {age} years old, investing {amount} with a {horizon}-year horizon. My risk tolerance is {risk} and my goal is {goal}.{context}
+
+In the spirit of the S&P 500 / index fund consensus from the AI Experiments series:
+
+1. Given my specific situation, what exact index fund(s) should I use and why? (Consider global vs US-only, tax-efficiency, fund structure.)
+2. What is the single automation step that will most protect me from my own behavioral mistakes? Give me specific instructions.
+3. At what point, if any, should I deviate from a pure buy-and-hold strategy? What would that trigger look like?
+4. What does "success" look like for my strategy at the 5-year, 10-year, and {horizon}-year mark in concrete numbers?`,
+    behavioral:`You are helping me design an investing system that protects me from my own behavioral biases. I am {age} years old, investing {amount} with a {horizon}-year horizon.{context}
+
+Drawing on the behavioral insights from the AI Experiments series — especially Claude's 'delete the app' framework and DeepSeek's 'never look until 2046' approach:
+
+1. Based on my situation, what are my 3 highest-probability behavioral failure modes? (Panic selling during crashes? Chasing returns? Overtrading?)
+2. Design a specific system — automations, rules, and friction points — that makes each of those failure modes harder to execute.
+3. What is my 'Investment Policy Statement'? Give me a draft of 5-7 rules I should commit to in writing before I make my first investment.
+4. What should I do the next time markets drop 30%? Give me a step-by-step protocol, not platitudes.`
+  },
+  stock:{
+    value:`I am a {age}-year-old value investor. {context}I want to analyze a potential stock purchase using the frameworks from the AI Experiments series, particularly:
+- Claude's moat & business analysis approach
+- DeepSeek's management integrity audit
+- Gemini's reverse DCF stress test
+
+Please help me build an analysis framework by answering:
+1. What are the 5 most important questions I should ask about any business before investing?
+2. Design a 'management integrity audit' for me: what would I look for in past annual reports to assess whether management keeps its promises?
+3. How do I run a reverse DCF? Walk me through the steps using simple math I can do in a spreadsheet.
+4. What are the 3 warning signs of a 'value trap' — a stock that looks cheap but is permanently declining?`,
+    quant:`I am {age} years old with {horizon} years to invest and {risk} risk tolerance.{context}I want to screen for investment opportunities systematically.
+
+Using a data-driven approach similar to DeepSeek's framework in the AI Experiments series:
+1. What quantitative criteria should I use to screen 5,000 stocks down to 20 candidates worth researching? Give me specific numbers (ROE >, debt/equity <, etc.)
+2. How do I weight these criteria against each other? Should I use a scoring system?
+3. What data sources can I use for free or low cost to run this screen?
+4. After the quantitative screen, what qualitative checks should I run before buying?`
+  },
+  asset:{
+    value:`I am {age} years old with {amount} to invest as a lump sum, a {horizon}-year horizon, {risk} risk tolerance, and a goal of {goal}.{context}
+
+This is exactly the scenario from Episode 4 of the AI Experiments series. The AIs split 6-2 between S&P 500 and Bitcoin, with CAPE 41 as the dividing line.
+
+Please help me think through this decision:
+1. Given today's Shiller CAPE ratio, what is the historically expected 10-year real return for the S&P 500? How does this change my lump-sum decision vs. a DCA approach?
+2. If I were to allocate a small portion (10-20%) to higher-risk/higher-return assets like Bitcoin or emerging markets, what's the rationale and what's the risk I need to accept?
+3. What is the strongest argument AGAINST my intuitive choice? Make me confront it honestly.
+4. Given that I cannot touch this money for {horizon} years, what asset allocation gives me the best expected value while keeping me from panicking and selling during a 40% drawdown?`,
+    passive:`I have {amount} to invest as a lump sum. I am {age} years old with {risk} risk tolerance and a {horizon}-year horizon. My goal is {goal}.{context}
+
+Using the passive index consensus from Episodes 4-5 of the AI Experiments series:
+1. Given today's market valuations, should I invest this as a lump sum or spread it over 12-24 months via DCA? Walk through the expected value calculation honestly.
+2. If lump sum: which specific index fund(s) and what exact allocation?
+3. What is the biggest risk I'm taking with this decision, and how would I know if I was wrong in 3 years?
+4. What would I need to see to justify changing this allocation before the {horizon} years are up?`
+  },
+  monthly:{
+    passive:`I am {age} years old with {amount} available each month to invest, over {horizon} years. My risk tolerance is {risk} and goal is {goal}.{context}
+
+This matches Episode 5 of the AI Experiments series: 7/8 AIs independently chose S&P 500 index DCA for this exact scenario type.
+
+Please help me build my monthly investing system:
+1. Which specific index fund should I use given my situation? (Consider: US-only S&P 500 vs. Global index like VT/VTWAX — what does my situation suggest?)
+2. Step-by-step: how do I automate this so no monthly decision is required?
+3. What is my expected outcome range in {horizon} years — show me the conservative, base, and optimistic scenarios.
+4. What are the 3 situations where I should NOT pause my contributions — specifically, what market conditions will tempt me to stop, and why should I ignore that temptation?
+5. 'Delete the app': what specific actions will I take to reduce my behavioral exposure to daily market news?`,
+    behavioral:`I plan to invest {amount} every month for {horizon} years. I am {age} years old.{context}
+
+Drawing on the 'delete the app' behavioral framework from Claude's Episode 5 answer and the broader AI Experiments series insights:
+
+1. Design my complete behavioral defense system — what automations, rules, and removal-of-temptation mechanisms will I put in place?
+2. During the next market crash (when my portfolio is down 30-40%), what exactly will I do? Give me a written protocol I can follow before I'm in that emotional state.
+3. What is 'lifestyle creep' and how will I protect my monthly investment amount from it as my income grows?
+4. What single number should I track to measure whether my strategy is working — not my portfolio value, but something more useful?`
+  },
+  "ai-method":{
+    value:`I want to use AI tools to help implement a value investing approach. I am {age} years old with {amount} to invest over {horizon} years.{context}
+
+Based on Episode 6 of the AI Experiments series, where all 8 AIs provided AI-assisted value investing frameworks, help me build my personal AI investing workflow:
+
+1. Design my 'annual report analysis' prompt. I will paste a company's 10-K or annual report and ask an AI to analyze it. What should the prompt say? (Use Claude's format: use ONLY the text provided, flag anything inferred, end with 'What I could NOT determine from this document.')
+2. Design my 'pre-mortem bear case' prompt. When I'm about to buy a stock, what should I ask AI to challenge me on?
+3. Design my 'management integrity audit' prompt. (Based on DeepSeek's framework: extract promises from past reports, track whether they were kept.)
+4. What should I NEVER ask AI to do in my investing process, and why?`,
+    quant:`I want to build a systematic, data-driven investing process using AI tools. I am {age} years old.{context}
+
+Drawing on the AI-assisted frameworks from Episode 6:
+1. What is the step-by-step process for using AI to screen stocks quantitatively? What data do I provide, what do I ask it to do?
+2. Design a 'reverse DCF' prompt I can use: I provide market cap and free cash flow, the AI tells me what growth rate is 'priced in' and whether that's realistic.
+3. What are the 3 most common ways people misuse AI for investing, and how do I avoid each?
+4. Give me a template for a weekly/monthly portfolio review I can run with AI assistance.`
+  },
+  behavior:{
+    behavioral:`I want to protect my investing returns from my own behavioral mistakes. I am {age} years old, investing {amount} with {risk} risk tolerance and a {horizon}-year goal of {goal}.{context}
+
+Drawing on the behavioral insights across the entire AI Experiments series — especially Episode 5's 'delete the app,' Episode 6's behavioral guardrail framework, and Episode 7's insight that the human is the biggest risk factor in AI-assisted investing:
+
+1. What are my likely behavioral failure modes given my profile? Be specific and honest — don't just list generic biases.
+2. Design a 'behavioral firewall' for my investment process: what specific rules and automations will make it harder for me to make decisions in an emotional state?
+3. What is my 'investment policy statement'? Draft 5-7 rules I commit to in writing, including what I will do when the market drops 30%.
+4. If I use AI assistants for investing research, what's the main behavioral risk AI introduces — and how do I protect against it? (Hint: 'garbage conviction at scale' from Episode 6.)
+5. How will I know in 5 years if my behavioral system is working? What metric should I track?`,
+    value:`I'm concerned about letting emotions drive my investment decisions. I am {age} years old.{context}
+
+Using the behavioral framework from the AI Experiments series:
+1. What is the specific mechanism by which investors destroy their own returns, and how does my profile make me vulnerable?
+2. What is 'garbage conviction at scale' and how do I avoid AI making this problem worse?
+3. Design a protocol for my 'worst-case scenario' — if the market drops 40% in the next 18 months, what exactly will I do? Write it down now.
+4. What question should I ask myself before making any investment decision that would reveal if I'm being driven by fear or greed?`
+  }
+};
+
+// ══════════ INIT ══════════
+let selectedEp = null;
+let selectedAI = null;
+let selectedTopic = null;
+let selectedPhil = null;
+
+function initSchools(){
+  const grid = document.getElementById('schoolsGrid');
+  grid.innerHTML = SCHOOLS.map((s,i)=>`
+    <div class="school-card" onclick="toggleSchool(${i})">
+      <div class="school-header">
+        <div class="school-icon" style="background:${s.color}">${s.icon}</div>
+        <div>
+          <h3>${s.name}</h3>
+          <div class="figure">${s.figure}</div>
+        </div>
+        <div class="school-toggle" id="stog-${i}">Show ↓</div>
+      </div>
+      <div class="school-body" id="sbody-${i}">
+        <p>${s.thesis}</p>
+        <p style="margin-top:10px"><strong>Your edge:</strong> ${s.edge}</p>
+        <p style="margin-top:8px"><strong>Biggest limit:</strong> ${s.limit}</p>
+        <div class="ai-verdict">🤖 AI Consensus: ${s.ai_verdict}</div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleSchool(i){
+  const body=document.getElementById('sbody-'+i);
+  const tog=document.getElementById('stog-'+i);
+  const open=body.classList.toggle('open');
+  tog.textContent=open?'Hide ↑':'Show ↓';
+}
+
+function initExplorer(){
+  const sel=document.getElementById('epSelector');
+  sel.innerHTML=EPISODES.map((e,i)=>`
+    <button class="ep-btn" onclick="selectEp(${i})">${e.short}</button>`).join('');
+}
+
+function selectEp(i){
+  selectedEp=i; selectedAI=null;
+  document.querySelectorAll('.ep-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  const e=EPISODES[i];
+  const info=document.getElementById('epInfo');
+  info.style.display='block';
+  info.innerHTML=`
+    <div class="ep-q">${e.question}</div>
+    <div class="ep-result">Result: <strong>${e.result}</strong> &nbsp;·&nbsp; <a href="${e.url}" target="_blank" style="font-size:.85em">Read full article →</a></div>`;
+  const grid=document.getElementById('aiGrid');
+  grid.style.display='grid';
+  grid.innerHTML=AIs.map(ai=>`
+    <button class="ai-btn" onclick="selectAI('${ai}')">${ai}</button>`).join('');
+  const panel=document.getElementById('answerPanel');
+  panel.classList.remove('visible');
+  panel.innerHTML='<div class="placeholder"><div class="icon">👆</div>Click an AI to see their answer</div>';
+}
+
+function selectAI(ai){
+  selectedAI=ai;
+  document.querySelectorAll('.ai-btn').forEach(b=>b.classList.toggle('active',b.textContent===ai));
+  const e=EPISODES[selectedEp];
+  const a=e.answers[ai];
+  const panel=document.getElementById('answerPanel');
+  panel.classList.add('visible');
+  panel.innerHTML=`
+    <div class="ai-name">${ai}</div>
+    <div class="choice-badge">${a.choice}</div>
+    <div class="summary">${a.summary}</div>
+    <a href="${e.url}" target="_blank" class="ep-link">Read full episode →</a>`;
+}
+
+function initBuilder(){
+  document.getElementById('topicGrid').innerHTML=TOPICS.map(t=>`
+    <button class="topic-btn" onclick="selTopic('${t.id}',this)">
+      <div style="font-weight:700">${t.label}</div>
+      <div style="font-size:.78em;color:inherit;opacity:.8;margin-top:2px">${t.sub}</div>
+    </button>`).join('');
+  document.getElementById('philGrid').innerHTML=PHILS.map(p=>`
+    <button class="phil-btn" onclick="selPhil('${p.id}',this)">
+      <span class="phil-name">${p.name}</span>
+      <span class="phil-sub">${p.sub}</span>
+    </button>`).join('');
+}
+
+function selTopic(id,el){
+  selectedTopic=id;
+  document.querySelectorAll('.topic-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+function selPhil(id,el){
+  selectedPhil=id;
+  document.querySelectorAll('.phil-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function generatePrompt(){
+  const age=document.getElementById('b-age').value||'[your age]';
+  const amount=document.getElementById('b-amount').value||'[your investment amount]';
+  const horizon=document.getElementById('b-horizon').value||'[your time horizon]';
+  const risk=document.getElementById('b-risk').value||'moderate';
+  const goal=document.getElementById('b-goal').value||'wealth building';
+  const ctx=document.getElementById('b-context').value;
+  const context=ctx?` Additional context: ${ctx}.`:'';
+  const topic=selectedTopic||'monthly';
+  const phil=selectedPhil||'passive';
+
+  const tpl=(PROMPT_TEMPLATES[topic]&&PROMPT_TEMPLATES[topic][phil])
+    ||PROMPT_TEMPLATES[topic]&&Object.values(PROMPT_TEMPLATES[topic])[0]
+    ||PROMPT_TEMPLATES.monthly.passive;
+
+  const prompt=tpl
+    .replace(/{age}/g,age)
+    .replace(/{amount}/g,amount)
+    .replace(/{horizon}/g,horizon)
+    .replace(/{risk}/g,risk)
+    .replace(/{goal}/g,goal)
+    .replace(/{context}/g,context);
+
+  document.getElementById('promptText').textContent=prompt;
+  const out=document.getElementById('promptOutput');
+  out.classList.add('visible');
+  out.scrollIntoView({behavior:'smooth',block:'nearest'});
+  document.getElementById('copyBtn').textContent='Copy Prompt';
+  document.getElementById('copyBtn').classList.remove('copied');
+}
+
+function copyPrompt(){
+  const text=document.getElementById('promptText').textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('copyBtn');
+    btn.textContent='✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy Prompt';btn.classList.remove('copied');},2000);
+  });
+}
+
+function switchTab(id,el){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+initSchools();
+initExplorer();
+initBuilder();
+</script>
+</body>
+</html>

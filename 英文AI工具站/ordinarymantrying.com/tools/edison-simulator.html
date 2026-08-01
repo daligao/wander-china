@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Simulator · What Would You Do If You Were Thomas Edison?</title>
+<meta name="description" content="He invented the phonograph, the motion picture camera, and practical electric light. He also stole credit, electrocuted elephants for PR, and destroyed Nikola Tesla. 8 decisions.">
+<meta property="og:title" content="What Would You Do If You Were Thomas Edison?">
+<meta property="og:description" content="1,093 patents. The world's first industrial research lab. The War of Currents against Westinghouse and Tesla. 8 decisions from the most relentless inventor in history.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://ordinarymantrying.com/tools/edison-simulator.html">
+<style>
+:root{
+  --bg:#FBF8F2;--card:#FDFCF8;--ink:#140E00;--muted:#6A5820;--line:#DDD0A8;
+  --accent:#B87010;--accent-bg:#FDF5E0;
+  --right:#2A6B2A;--right-bg:#E6F5E6;--wrong:#8B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(251,248,242,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#200E00;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #D8C080;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#3A2800;line-height:1.7;margin:0;}
+.cover-facts strong{color:var(--ink);}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#FFF8E0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s,transform .08s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.3);}
+.start-btn:active{transform:scale(.99);}
+#story{display:none;}
+.story-wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.narrative p:last-child{margin-bottom:0;}
+.dialogue{border-left:3px solid var(--accent);padding-left:16px;margin:20px 0;font-style:italic;color:#2A1800;font-family:var(--serif);font-size:17px;line-height:1.8;}
+.chapter-divider{padding:32px 0 20px;text-align:center;}
+.chapter-divider .cline{height:1px;background:var(--line);margin-bottom:16px;}
+.chapter-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#FFF8E0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;}
+.d-num{opacity:.45;}
+.decision-body{padding:20px 18px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;}
+.dopts{display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-family:var(--sans);font-size:14px;color:var(--ink);display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s;line-height:1.45;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.disabled{cursor:default;pointer-events:none;}
+.dopt-id{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--muted);margin-top:1px;transition:all .15s;}
+.dopt:hover .dopt-id{border-color:var(--accent);color:var(--accent);}
+.dopt-body{flex:1;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.right .dopt-id{background:var(--right);border-color:var(--right);color:#fff;}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.wrong .dopt-id{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #D8C080;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;}
+.reveal-box.show{display:block;}
+.reveal-box p{font-size:14px;line-height:1.7;color:#2A1800;margin:0;}
+.reveal-box .reveal-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.patent-block{background:#FFF;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:20px 0;font-family:var(--mono);font-size:12px;color:#4A3800;line-height:1.6;}
+.patent-block .p-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.quote-block{background:var(--ink);color:#FFF8E8;border-radius:14px;padding:28px 24px;margin:32px 0;}
+.quote-block q{font-family:var(--serif);font-size:20px;line-height:1.65;display:block;quotes:none;}
+.quote-block .q-attr{font-size:13px;color:#B09050;margin-top:12px;font-family:var(--mono);}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 48px;text-align:center;}
+.ending-score{font-family:var(--mono);font-size:48px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ending-label{font-size:14px;color:var(--muted);margin-bottom:20px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;}
+.ending-title{font-family:var(--serif);font-size:24px;font-weight:700;margin-bottom:16px;}
+.ending-body{font-size:15px;line-height:1.8;color:#1A0E00;margin-bottom:24px;}
+.restart-btn{appearance:none;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;transition:.15s;}
+.restart-btn:hover{background:var(--accent);color:#FFF8E0;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #D8C080;border-radius:999px;margin-bottom:12px;}
+.timeline-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.cta-box{background:var(--accent);color:#FFF8E0;border-radius:14px;padding:20px 22px;margin:36px 0;}
+.cta-box p{font-size:14px;line-height:1.6;margin-bottom:10px;}
+.cta-box a{color:#FFE080;text-decoration:underline;font-weight:600;}
+@media(max-width:480px){.cover-title{font-size:28px;}.year-banner{font-size:52px;}.ending-score{font-size:36px;}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Thomas Edison</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+<div class="cover">
+  <div class="cover-eyebrow">Life Simulator Series · #20</div>
+  <h1 class="cover-title">What Would You Do<br>If You Were Edison?</h1>
+  <p class="cover-sub">He held 1,093 patents. He built the world's first industrial research laboratory. He lit up lower Manhattan and changed how the world thought about invention itself. He also stole credit, waged a savage PR campaign against a competitor that included electrocuting animals in public, and broke Nikola Tesla's career. <strong>8 decisions — how ruthless would you be?</strong></p>
+  <div class="cover-facts">
+    <p><strong>Thomas Alva Edison</strong> (1847–1931) · American inventor · Deaf in one ear from childhood · Invented or developed: the phonograph, practical incandescent light bulb, motion picture camera, electrical power distribution system, alkaline battery, carbon microphone · Founded Menlo Park (world's first industrial R&D lab) · Founded General Electric (as Edison Electric) · Married twice, had 6 children · Slept 4 hours a night, often on a table in his lab · Said "Genius is one percent inspiration and ninety-nine percent perspiration."</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin — 1869, New York City</button>
+</div>
+<div id="story">
+<div class="story-wrap">
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter One · The First Sale</span></div>
+<div class="year-banner">1869</div>
+<div class="timeline-dot">New York City · Age 22</div>
+<div class="narrative">
+  <p>You are 22, nearly broke, sleeping on the floor of a telegraph office in New York. You have no formal education past age 12. You have been working as a telegraph operator since you were a teenager, and you have spent every free hour you have studying electricity and tinkering with telegraph equipment.</p>
+  <p>You have just invented something: an improved stock ticker that can transmit financial data faster and more clearly than anything currently in use. The Gold and Stock Telegraph Company needs this badly — the current equipment is failing under the load of the post-Civil War financial markets.</p>
+  <p>You go to meet the president of the company, General Marshall Lefferts. He asks what you want for the invention. You have rehearsed asking for $5,000 — a number that terrifies you because it seems impossibly high. But you hesitate.</p>
+  <div class="dialogue">"Mr. Edison," Lefferts says, "how would $40,000 strike you?"</div>
+  <p>You nearly fall over. You manage to say that would be entirely satisfactory. He writes you a check. You have never held a check before. You go to the bank, and the teller, seeing your worn clothes and confused expression, sends you back to get the check countersigned. You didn't know what countersigning was.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 1 — The First $40,000</span><span class="d-num">01 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have $40,000. You are 22. What do you do with it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">A</span><span class="dopt-body">Save it. You have been poor your entire life. Financial security should come before more risk. Invest the money and live off the returns while working on future inventions at your own pace.</span></button>
+      <button class="dopt" onclick="choose(this,1,false)"><span class="dopt-id">B</span><span class="dopt-body">Partner with an established company. Use the money as leverage to negotiate a position with a major telegraph firm where you'll have resources and stability to invent properly.</span></button>
+      <button class="dopt" onclick="choose(this,1,true)"><span class="dopt-id">C</span><span class="dopt-body">Build a laboratory. The money is the foundation for a new kind of operation — a professional invention factory where you hire talented people and systematically solve whatever problem you decide to take on next.</span></button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <div class="reveal-label">What Edison actually did</div>
+      <p><strong>You walk into the bank with a $40,000 check and the teller sends you back to get it countersigned — you have never held a check before and don't know what countersigning means. You will turn this money into the world's first industrial research laboratory.</strong> Edison used the money to set up his first proper workshop in Newark, New Jersey, and began hiring. Within a few years, he would move to Menlo Park and build the world's first industrial research laboratory — a place where the process of invention itself was systematized. Rather than lone-genius tinkering, Edison organized teams of skilled workers on specific problems with a production target. He famously promised to deliver "a minor invention every ten days and a big thing every six months or so." This model — organized, commercial, deadline-driven invention — changed how the world thought about technology development.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Two · The Phonograph</span></div>
+<div class="year-banner">1877</div>
+<div class="timeline-dot">Menlo Park, New Jersey · Age 30</div>
+<div class="narrative">
+  <p>It is the invention that makes you famous. Not the light bulb — the phonograph comes first, and it is, in some ways, more miraculous. You have figured out how to record and replay sound. No one has done this before. No one even imagined it was possible.</p>
+  <p>The first time the machine plays back the words you recorded — "Mary had a little lamb" — your team falls silent. Then they burst into cheering. You take the machine to Washington and demonstrate it to President Rutherford Hayes and Congress. Hayes wakes his wife at midnight because he cannot contain his excitement about what he has just seen.</p>
+  <p>You call yourself the "Wizard of Menlo Park." The newspapers agree. Scientific American is so astonished by the demonstration that they write: "We have already had occasion to call attention to a remarkable invention by Mr. Edison, but we confess that nothing he has done has surprised us as much as this."</p>
+  <p>Now: what do you do with it? The phonograph can be a music machine or a business dictation machine. These are two very different markets.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 2 — The Use of Sound</span><span class="d-num">02 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">The phonograph can record and play back anything. How do you position it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">A</span><span class="dopt-body">Music. The mass market is consumers, not businesspeople. If anyone can play music in their home, the phonograph becomes as universal as the piano — but for everyone, not just the trained.</span></button>
+      <button class="dopt" onclick="choose(this,2,true)"><span class="dopt-id">B</span><span class="dopt-body">Business dictation. Office workers, lawyers, and executives generating mountains of written correspondence is the immediate, high-value market. Consumer music is a frivolity — business efficiency is a necessity.</span></button>
+      <button class="dopt" onclick="choose(this,2,false)"><span class="dopt-id">C</span><span class="dopt-body">Both at once. License the music application to one company and the business application to another. Maximize revenue across both markets simultaneously.</span></button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <div class="reveal-label">What Edison actually did — and got wrong</div>
+      <p><strong>You invent the machine that will eventually hold every song ever recorded, and you try to sell it to law offices. Columbia Phonograph Company sees what you miss — people want music at home — and builds the recorded music industry while you chase dictation contracts.</strong> Edison was convinced the phonograph's primary market was business dictation. He licensed it to the North American Phonograph Company for office use. While he delayed developing the consumer music side, a competitor — Columbia Phonograph Company (later Columbia Records) — realized that playing music was what people actually wanted and built a business around pre-recorded cylinders. Edison eventually entered the music market, but he was years behind. He also famously had terrible taste: he dismissed jazz and most popular music as noise and refused to record what the public wanted, insisting on the classical music he personally preferred. His phonograph operation was eventually outcompeted by disk-based players, partly because he misjudged what consumers wanted and why they wanted it.</p>
+    </div>
+  </div>
+</div>
+
+<div class="quote-block">
+  <q>I have not failed. I've just found 10,000 ways that won't work.</q>
+  <div class="q-attr">— Thomas Edison (attributed, likely paraphrased from contemporaries)</div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Three · The Light Bulb</span></div>
+<div class="year-banner">1878</div>
+<div class="timeline-dot">Menlo Park · Age 31</div>
+<div class="narrative">
+  <p>You have announced to the press that you will solve the problem of practical incandescent electric light. This was bold, even reckless — you had no idea yet how to do it. But the announcement brought investors to your door and generated enormous public excitement, which is what you wanted.</p>
+  <p>The actual problem is brutal. You need a filament that will glow brightly without burning out — that can survive at high temperature in a vacuum for hours, days, weeks. You and your team test thousands of materials. Carbonized thread. Carbonized fishing line. Carbonized cardboard. Hair. Coconut fiber. You are systematic and relentless.</p>
+  <p>Your competitor Hiram Maxim is also working on the light bulb. Joseph Swan in England has already demonstrated a working bulb, though less practical than yours. There is a race.</p>
+  <patent-block class="patent-block">
+    <div class="p-label">Menlo Park Laboratory Log, 1879</div>
+    <p>Tested 6,000 species of plant fiber for filament material. Carbonized Japanese bamboo shows most promise. 13.5 hours at full brilliance in vacuum. Team believes we have it.</p>
+  </patent-block>
+  <p>You demonstrate the bulb publicly on December 31, 1879 — a New Year's Eve show at Menlo Park, the streets lit by 40 electric lamps powered by a central generator. Three thousand people come to watch. It is exactly the kind of theater you understand.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 3 — The System</span><span class="d-num">03 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You have a working light bulb. But the bulb is only useful if you also build the entire electrical distribution system — generators, wiring, meters, everything. This is a far larger problem than the bulb. Do you build it?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">A</span><span class="dopt-body">License the bulb to other companies and let them figure out distribution. You are an inventor, not a utility company. The manufacturing and infrastructure side will consume resources that should go to the next invention.</span></button>
+      <button class="dopt" onclick="choose(this,3,true)"><span class="dopt-id">B</span><span class="dopt-body">Build the whole system. The bulb is only valuable with the infrastructure. Control the system and you control the market. Design every component — generators, conductors, meters, switches — yourself.</span></button>
+      <button class="dopt" onclick="choose(this,3,false)"><span class="dopt-id">C</span><span class="dopt-body">Partner with an established utility or gas company to handle distribution. They have the capital and the existing relationships with cities and buildings. You provide the technology; they provide the infrastructure.</span></button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <div class="reveal-label">What Edison actually did</div>
+      <p><strong>You throw the switch at J.P. Morgan's office on September 4, 1882, lighting 508 customers and 10,000 lamps in lower Manhattan. It is the most expensive demonstration in the history of electricity. It works. You have now committed everything to DC — which will lose.</strong> Edison built the whole system. He designed and built the generators, the underground conductors, the meters, the switches, and the safety systems. He persuaded J.P. Morgan and a group of New York financiers to fund the first commercial power station on Pearl Street in Manhattan, which began operating on September 4, 1882. Within a few months, it was serving 508 customers and 10,000 lamps. Edison sat in Morgan's office at 23 Wall Street and threw the switch himself. Morgan was the first private residence in New York lit by Edison's system. This end-to-end approach was brilliant and also hugely capital-intensive — it required Edison to raise and spend money at a scale that would eventually cost him control of his own company.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Four · The War of Currents</span></div>
+<div class="year-banner">1887</div>
+<div class="timeline-dot">New York · Age 40</div>
+<div class="narrative">
+  <p>Your power network runs on Direct Current — DC. It works, but it has a fatal limitation: DC cannot be efficiently transmitted over long distances. Every mile of cable loses power. To serve a city, you need a power station every mile or so. It is enormously expensive.</p>
+  <p>George Westinghouse, a rival industrialist, has licensed Alternating Current — AC — technology from Nikola Tesla, a Serbian-American engineer who briefly worked for you. AC can be stepped up to high voltage for transmission and then stepped down for use, meaning a single power station can serve an entire region. It is technically superior for large-scale distribution.</p>
+  <p>You are not wrong that there are safety issues with high-voltage AC — it is more dangerous if improperly handled. But the primary reason you oppose AC is economic: your entire empire is built on DC infrastructure. AC winning means your investment is obsolete.</p>
+  <p>Your campaign against AC escalates. You begin a public demonstration program — publicly electrocuting animals with AC current to prove it is dangerous, calling it "Westinghousing." You support the development of the first electric chair (using AC) to associate the current with death in the public mind.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 4 — The AC Campaign</span><span class="d-num">04 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Westinghouse's AC system is technically better for large-scale distribution. Do you fight it with a PR campaign, or adapt?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">A</span><span class="dopt-body">Fight it. DC is good enough for most purposes, and you can improve it. A concentrated campaign highlighting AC's genuine safety risks can slow Westinghouse long enough to improve your own technology.</span></button>
+      <button class="dopt" onclick="choose(this,4,true)"><span class="dopt-id">B</span><span class="dopt-body">Adapt. Acknowledge that AC has advantages at scale and pivot to where DC remains superior: traction motors, industrial applications, storage batteries. Competing on a technical losing ground wastes resources you need elsewhere.</span></button>
+      <button class="dopt" onclick="choose(this,4,false)"><span class="dopt-id">C</span><span class="dopt-body">Buy Westinghouse out or license the technology. If AC is winning, control it. Acquire the threat rather than fighting it.</span></button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <div class="reveal-label">What Edison actually did — and lost</div>
+      <p><strong>You publicly electrocute dogs and calves to prove AC is dangerous. You fund the first electric chair — using AC — to brand your competitor's technology with death. Westinghouse wins the 1893 Chicago World's Fair contract anyway. Every electrical grid in the world runs on AC today.</strong> Edison waged the campaign. He publicly electrocuted dogs and calves with AC, funded the development of the AC electric chair (to associate AC with execution), and lobbied legislators to ban high-voltage AC lines. The campaign failed. Westinghouse won the contract to light the 1893 Chicago World's Fair with AC — a massive public relations coup that effectively ended the War of Currents. Edison Electric merged in 1892, without Edison's approval, to become General Electric. Edison's name was removed from the company. He lost control of his greatest corporate creation in part because he'd spent resources fighting a technical battle he couldn't win instead of adapting. The irony: today's electrical grid uses AC everywhere. Edison's DC systems were all eventually replaced.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Five · Tesla</span></div>
+<div class="year-banner">1884</div>
+<div class="timeline-dot">Menlo Park · Age 37</div>
+<div class="narrative">
+  <p>A young Serbian engineer named Nikola Tesla has come to work for you. He has been referred by one of your European associates with a letter that reads: "I know two great men, and you are one of them. The other is this young man."</p>
+  <p>Tesla is extraordinary. He has an almost supernatural ability to visualize electrical systems in three dimensions in his mind, running entire machines in mental simulation before building a single component. He speaks eight languages. He is meticulous, almost pathologically so, where you are rough-and-tumble. He is also, you will find, absolutely inflexible on questions he considers matters of principle.</p>
+  <p>You give Tesla the problem of redesigning your DC generators to improve efficiency. You tell him that if he succeeds, you'll pay him $50,000. He works around the clock for months. He succeeds — the redesigned generators represent a significant improvement. You tell him the $50,000 was a joke; he doesn't understand American humor. You offer him a $10 raise instead.</p>
+  <p>Tesla resigns.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 5 — Tesla</span><span class="d-num">05 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Tesla has resigned after you told him the $50,000 offer was a joke. He is about to go work on AC systems. Do you keep him?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">A</span><span class="dopt-body">Pay him the $50,000 or negotiate something close to it. This man is exceptional — the cost of keeping him is far less than the cost of having him work against you.</span></button>
+      <button class="dopt" onclick="choose(this,5,true)"><span class="dopt-id">B</span><span class="dopt-body">Let him go. Your lab works on your methods — trial and error, massive iteration, teamwork. Tesla is too individual, too impractical with money, too inflexible. The conflict would never resolve.</span></button>
+      <button class="dopt" onclick="choose(this,5,false)"><span class="dopt-id">C</span><span class="dopt-body">Make a counter-offer: equity in your DC operations instead of cash. If his improvements succeed at scale, he profits directly. Align his incentives with yours.</span></button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <div class="reveal-label">What Edison actually did</div>
+      <p><strong>You tell the man who solved your generator problem that the $50,000 offer was a joke. He digs ditches for $2 a day, finds new backers, and builds the AC system that makes your entire DC empire obsolete. The electrical system that still powers the world is his.</strong> Edison let Tesla go. Tesla then worked as a ditch-digger briefly — the $50K betrayal had left him broke — before setting up his own laboratory with backing from investors. He developed the AC induction motor and polyphase AC power system, sold the patents to Westinghouse, and became Edison's greatest rival. Tesla's AC systems won the War of Currents and electrified the world. Meanwhile, Tesla himself ended his life broke and alone in a hotel room in Manhattan, his later work on wireless power transmission having consumed his fortune. The irony is complete: the man Edison drove away created the electrical system that made Edison's own DC infrastructure obsolete.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Six · The Movies</span></div>
+<div class="year-banner">1891</div>
+<div class="timeline-dot">West Orange, New Jersey · Age 44</div>
+<div class="narrative">
+  <p>Your team has developed the Kinetoscope — a device that allows a single person to watch a short film through a peephole. Your engineer William Dickson has done most of the actual technical work. You have filed patents. Now the question is how to deploy it.</p>
+  <p>The Lumière brothers in France will soon develop a projector that allows an entire room of people to watch a film together. The theater model — one copy of a film, many viewers, ticket revenue — is enormously more profitable than the peephole model.</p>
+  <p>You are also aggressive about patents. You have formed the Motion Picture Patents Company — a trust that controls nearly every key patent in the film industry and requires filmmakers to license from you to operate legally. Independent filmmakers who refuse your terms are forced to operate outside your territory. Many flee to California, where your patent enforcers are harder to reach. The colony they build there is called Hollywood.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 6 — The Film Trust</span><span class="d-num">06 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">You control the key film patents and can lock down the entire industry. Do you use the patent trust aggressively to extract licensing fees from everyone, or allow more open development?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">A</span><span class="dopt-body">Use the trust aggressively. You invented this technology, you funded the development, you took the risk. Patents are your property and you are entitled to enforce them fully.</span></button>
+      <button class="dopt" onclick="choose(this,6,true)"><span class="dopt-id">B</span><span class="dopt-body">License broadly at reasonable rates. A larger industry generates more total revenue through your equipment sales and a higher fee base than a restricted industry generates through tight licensing. Don't kill the market you created.</span></button>
+      <button class="dopt" onclick="choose(this,6,false)"><span class="dopt-id">C</span><span class="dopt-body">Focus on equipment and distribution, not content. Sell projectors and film stock to everyone; let others make the films. Vertical integration into content creates conflicts with your own customers.</span></button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <div class="reveal-label">What Edison actually did</div>
+      <p><strong>You sue independent filmmakers out of New Jersey so relentlessly that they flee to California to escape your lawyers. The colony they build there becomes Hollywood. The Supreme Court dissolves your film trust in 1915 as an illegal monopoly.</strong> Edison used the patent trust aggressively. The Motion Picture Patents Company (MPPC) sued hundreds of independent filmmakers and attempted to control every stage of film production and distribution. The independent filmmakers fled to California, partly for the sunshine (which enabled outdoor shooting year-round) and partly to be physically distant from Edison's lawyers in New Jersey. The US Supreme Court dissolved the MPPC in 1915 as an illegal monopoly. By then, the independents Edison had chased to California had built a film industry far larger than anything Edison controlled. Hollywood exists partly as Edison's unintended creation — the place where the people he tried to crush went to build something bigger than him.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Seven · The Laboratory Fire</span></div>
+<div class="year-banner">1914</div>
+<div class="timeline-dot">West Orange · Age 67</div>
+<div class="narrative">
+  <p>Your laboratory complex at West Orange burns down. The fire begins in the film storage buildings — nitrocellulose film is extraordinarily flammable — and spreads. Your son Charles runs to find you. He expects to find you devastated. Instead, he finds you standing in the firelight, calmly watching the flames.</p>
+  <div class="dialogue">"Go get your mother and all her friends," you tell him. "They'll never see a fire like this again."</div>
+  <p>The next morning you tell a reporter: "Although I am over 67 years old, I'll start all over again tomorrow."</p>
+  <p>The total losses are more than $7 million — roughly $200 million today. The insurance covered less than $250,000. You had inadequate coverage because you considered the buildings fireproof (they were not).</p>
+  <p>You are 67. You have been working for 50 years. You have 1,093 patents. The fire destroyed what you estimated to be nearly all of your current research files.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 7 — After the Fire</span><span class="d-num">07 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">At 67, with the lab destroyed and millions lost, do you actually start over?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,true)"><span class="dopt-id">A</span><span class="dopt-body">Yes. Start rebuilding immediately. The fire destroyed the lab; it did not destroy what is in your head. The same relentless process that built it once can build it again, and you have more experience now than you had then.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">B</span><span class="dopt-body">Rebuild, but scale down. At 67, the full-scale industrial lab was a younger man's project. Focus the remaining years on one specific problem — the storage battery, or the phonograph improvements — rather than trying to replicate the full operation.</span></button>
+      <button class="dopt" onclick="choose(this,7,false)"><span class="dopt-id">C</span><span class="dopt-body">Step back from direct invention and focus on managing and mentoring. The next generation of engineers is more likely to make the key breakthroughs now. Your role is to build the infrastructure for their work.</span></button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <div class="reveal-label">What Edison actually did</div>
+      <p><strong>At 67, you watch your laboratory — 13 years of work, $2 million in property — burn through the night. Your son watches you survey the ruins and describes your reaction as "childlike enthusiasm." You start rebuilding the next morning.</strong> Edison rebuilt. Within three weeks, the West Orange complex was producing again. He used the opportunity to modernize the layout. His son Charles wrote later that the fire was one of the most formative experiences of his life — watching his 67-year-old father lose millions of dollars of work and react with "childlike enthusiasm." Edison continued working through his 70s and into his 80s. During World War I, at President Wilson's request, he chaired the Naval Consulting Board, working on submarine detection and ship communications. He died at 84, still working, still filing patents. His last patent was filed when he was 83.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><div class="cline"></div><span class="chapter-label">Chapter Eight · The Legacy</span></div>
+<div class="year-banner">1929</div>
+<div class="timeline-dot">Dearborn, Michigan · Age 82</div>
+<div class="narrative">
+  <p>Henry Ford has organized "Light's Golden Jubilee" — a celebration of the 50th anniversary of your light bulb demonstration, held at the reconstructed Menlo Park laboratory that Ford had moved, piece by piece, to his museum in Dearborn. The President of the United States is there. The ceremony is broadcast on national radio. You and Ford reenact the original moment of the light bulb's invention.</p>
+  <p>You are 82. Almost everything has gone through revisions that make your original technologies unrecognizable. AC beat DC. The film industry you tried to control has become Hollywood, which operates entirely outside your influence. The phonograph has been largely replaced by competing formats that others developed. General Electric, the company built on your ideas, has your name nowhere in its official history.</p>
+  <p>But the model you created — the industrial research laboratory, the systematic approach to invention, the team solving commercial problems on a deadline — that model is how the world does technology now. Bell Labs. RAND Corporation. Xerox PARC. Google X. Every major corporate R&D operation in history traces its lineage to what you built at Menlo Park.</p>
+</div>
+<div class="decision-block">
+  <div class="decision-header"><span>Decision 8 — The Real Legacy</span><span class="d-num">08 / 08</span></div>
+  <div class="decision-body">
+    <div class="decision-q">Standing in the reconstructed Menlo Park, what is the most important thing you actually did?</div>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">A</span><span class="dopt-body">The light bulb. It is the most recognized, most used, most symbolically important invention in the history of technology. The bulb is how civilization understands electricity.</span></button>
+      <button class="dopt" onclick="choose(this,8,false)"><span class="dopt-id">B</span><span class="dopt-body">The phonograph. You made the invisible visible — you proved that sound, ephemeral and gone in an instant, could be captured and preserved. The whole recorded music industry, every song ever recorded, follows from that first "Mary had a little lamb."</span></button>
+      <button class="dopt" onclick="choose(this,8,true)"><span class="dopt-id">C</span><span class="dopt-body">The laboratory itself. Not any single invention, but the idea that invention is a process — systematic, commercial, organized, replicable — rather than a lucky accident. You industrialized creativity. That is the invention no one can see but everyone uses.</span></button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <div class="reveal-label">What history actually concluded</div>
+      <p><strong>General Electric, built on your ideas, mentions your name nowhere in its official history. AC beat DC. Hollywood operates entirely outside your influence. The phonograph has been replaced by formats others developed. Every R&D department in every company on earth still uses the model you invented.</strong> The historical consensus is that Menlo Park — the model of organized, systematic, commercially-oriented research — is Edison's most enduring creation. The specific inventions have been revised, replaced, or outcompeted. But the idea that companies should organize smart people into laboratories with specific commercial goals and give them resources to solve defined problems: that idea runs through every technology company on earth. When Google employs researchers, when Apple has hardware teams, when pharmaceutical companies have R&D departments — all of that is the industrialization of invention that Edison pioneered. He died on October 18, 1931. Cities across America turned off their electric lights for one minute in tribute. It seemed, at the time, like the appropriate gesture.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score">0</div>
+  <div class="ending-label">Edison's decisions matched</div>
+  <h2 class="ending-title" id="final-title"></h2>
+  <p class="ending-body" id="final-body"></p>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+<div class="cta-box">
+  <p>Edison's famous line was that genius is 1% inspiration and 99% perspiration. What he didn't say: the 1% inspiration was usually "can I sell this?" He was not a pure scientist. He was an inventor-businessman, and the distinction mattered enormously. <strong>Step into another life.</strong></p>
+  <p><a href="https://ordinarymantrying.com/tools/index.html#simulators">→ All Life Simulators — Tesla, Newton, Darwin, Einstein and more. Free, no login.</a></p>
+</div>
+<div style="padding:0 0 32px;text-align:center;font-size:13px;color:var(--muted)">
+  Built by <a href="https://ordinarymantrying.com" style="color:var(--accent)">Ordinary Man Trying</a> ·
+  <a href="https://ordinarymantrying.com/tools/tesla-simulator.html" style="color:var(--accent)">Tesla Simulator</a> ·
+  <a href="https://ordinarymantrying.com/tools/index.html" style="color:var(--accent)">All Free Tools</a>
+</div>
+</div>
+</div></div>
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){document.getElementById('ending').style.display='block';const pct=score/TOTAL;let title,body;if(pct>=0.875){title="You Think Like Edison";body="You matched Edison's commercial logic at almost every turn — build the whole system, let Tesla go, acknowledge when the technology doesn't matter and the model does. Edison was not lovable, but he was effective. You understood the difference between what was admirable and what worked.";}else if(pct>=0.625){title="The Practical Inventor";body="You matched Edison on the foundational decisions — building the lab, building the full electrical system — but probably diverged on the darker ones: the AC campaign, the patent trust, Tesla. Edison's willingness to fight dirty is the most uncomfortable part of his biography. Most people would have handled those differently.";}else if(pct>=0.375){title="The Better Businessman";body="You would have paid Tesla, licensed the film patents more openly, adapted to AC instead of fighting it. These are more generous and arguably more economically rational choices. The question is whether a more ethical Edison would have been as relentless — and whether the lab model that changed the world would have emerged without that particular, specific ruthlessness.";}else{title="The Scientist's Path";body="You consistently chose the more technically pure or ethically clean option over Edison's characteristic commercial aggression. There is a reason Tesla is remembered more fondly than Edison by engineers. There is also a reason Edison's model — and not Tesla's — is how the technology industry actually works. History kept both lessons."}document.getElementById('final-score').textContent=score+'/'+TOTAL;document.getElementById('final-title').textContent=title;document.getElementById('final-body').textContent=body;document.getElementById('ending').scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

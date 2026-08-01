@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Antoine de Saint-Exupéry Life Simulator — The Pilot Who Wrote The Little Prince | Ordinary Man Trying</title>
+<meta name="description" content="Navigate Antoine de Saint-Exupéry's life across 8 pivotal decisions — desert crash landings, wartime exile, writing The Little Prince in New York, and the final reconnaissance flight that never returned.">
+<style>
+:root{
+  --bg:#EEF2F8;--card:#F5F8FC;--ink:#060C1A;--muted:#2A3858;--line:#B8C8DC;
+  --accent:#1A3870;--accent-bg:#D8E4F5;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,242,248,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#060C1A;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #A0B8D0;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#040810;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#E0E8F5;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#E0E8F5;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #A0B8D0;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #A0B8D0;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Antoine de Saint-Exupéry</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #81 of 100</p>
+  <h1 class="cover-title">He Flew the Mail Through<br>Mountains. Then He Drew a Prince.</h1>
+  <p class="cover-sub">Antoine de Saint-Exupéry crashed in the Sahara Desert and nearly died of thirst before walking to safety. He crashed again in Guatemala. He crashed in the Libyan desert in 1935 and survived four days without water. He was the greatest pilot-writer who ever lived: a man for whom the cockpit and the page were the same instrument for understanding the world. He wrote <em>The Little Prince</em> in New York in 1942, an exile who could not go home. In July 1944, at forty-three, on a reconnaissance mission over the Mediterranean, he did not come back.</p>
+  <div class="cover-facts">
+    <p>✈️ Flew mail routes: Toulouse–Dakar, Patagonia, Trans-Saharan &nbsp;·&nbsp; 🏜️ Survived Libyan desert crash 1935 (4 days, nearly died) &nbsp;·&nbsp; 📖 <em>The Little Prince</em> written in NYC exile, 1942 &nbsp;·&nbsp; 🎖️ Insisted on flying combat missions at age 43 despite being too old &nbsp;·&nbsp; Missing July 31, 1944 · Age 44 · Wreckage found 2000</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Saint-Exupéry's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1926</div>
+  <div class="timeline-dot">Toulouse, France · Age 26</div>
+  <div class="narrative">
+    <p>You are twenty-six, from an old but impoverished aristocratic family, and you have failed at several careers — the Naval Academy entrance exam, business school, various desk jobs. What you have not failed at is flying. You obtained your pilot's license during military service, and you have pursued aviation with the single-minded attachment of someone who has finally found what fits. The Latécoère company — later Aéropostale — is hiring pilots for its mail routes between Europe, Africa, and South America. The routes cross the Sahara, the Atlas mountains, the Andes. They are genuinely dangerous. Pilots die.</p>
+    <p>You will spend the next decade flying these routes, managing airfield outposts in the Sahara, navigating mountains in darkness and fog, landing in places with no radio and no runway, rescuing crashed colleagues from the desert, and being rescued in turn. This life will produce three books — <em>Southern Mail</em>, <em>Night Flight</em>, <em>Wind, Sand and Stars</em> — that will make you France's most celebrated writer before you are forty. But first you have to survive the routes.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1926</div>
+    <p class="decision-q">You take the dangerous mail pilot job when you could pursue safer careers. What drives this choice?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Financial desperation — after multiple career failures, flying was the only job available to someone with your lack of commercial qualifications.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. The conviction that only work involving genuine risk reveals what is essential — that a life without stakes is not fully lived, and that the desert and the cockpit strip away everything false and leave only what is real.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. Romantic ideas about aviation from reading Blériot and other pioneer aviators — the appeal was more to an image of freedom than to a genuine philosophy of risk.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Social ambition — aviation was glamorous in the 1920s, and he saw the mail routes as a path to celebrity that other careers could not offer.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <strong>In 1926, you signed on to fly mail routes across the Sahara and the Atlas mountains at night — routes where pilots had already died — because you believed a life without genuine stakes was not worth having.</strong> <strong>Saint-Exupéry on work and risk:</strong> His writing returns obsessively to the idea that genuine human connection requires shared danger and shared purpose. In <em>Wind, Sand and Stars</em> he describes the bond between mail pilots — the shared route, the mutual rescues, the knowledge that someone will come looking if you don't arrive — as more real than most civilian friendships, precisely because it cannot be faked. The stakes guarantee authenticity. This is not a rationalization of danger but a genuine philosophical position: that what is important reveals itself when the unimportant is stripped away, and the desert strips everything.
+    </div>
+  </div>
+
+  <div class="year-banner">1931</div>
+  <div class="timeline-dot">Buenos Aires, Argentina · Age 31</div>
+  <div class="narrative">
+    <p>You are now chief of the Aeroposta Argentina route network, based in Buenos Aires. <em>Night Flight</em> (<em>Vol de nuit</em>) has just won the Prix Femina and made you one of the most celebrated novelists in France. André Gide writes the preface. The novel is based on your experiences managing the night mail routes over the Andes: a pilot named Fabien disappears in a storm while the operations director Rivière, on the ground, makes the decisions that extend the flight and therefore cause the death. Rivière is not a villain; he is a man who believes that the mail must go through because something larger than individual safety depends on it. Whether he is right is the novel's question.</p>
+    <p>You have also recently married Consuelo Suncín, a Salvadoran widow of remarkable temperament. The marriage will be one of the great turbulent relationships of literary history — passionate, unfaithful on both sides, permanently unresolved. She will be, in one reading, the rose in <em>The Little Prince</em>: beautiful, demanding, impossible to live with, impossible to leave.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1931</div>
+    <p class="decision-q">In <em>Night Flight</em>, operations director Rivière sends a pilot into a storm that kills him, believing the mail must go through. Is Rivière right?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. No — the novel is a critique of managerial responsibility that sacrifices individuals for institutional goals; Rivière represents a dangerous form of utilitarian calculus.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. The novel refuses to answer simply — Rivière acts from a genuine belief that human civilization depends on people accepting that some things matter more than individual survival, but the cost is real and the book does not minimize it. The question is Saint-Exupéry's question, not his answer.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. Yes — Saint-Exupéry explicitly endorses Rivière's position; the mail pilot who dies does so in service of something larger, and that is the right trade.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. The moral question is secondary — the novel is primarily concerned with the aesthetic experience of night flight and the technical challenges of early aviation.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <strong>By 1931, you had run an airfield in the Sahara where men died under your operational decisions — and you turned that experience into a novel that refused to tell the reader whether the director who sent a pilot to his death was right or wrong.</strong> <strong>Rivière's dilemma:</strong> Saint-Exupéry's own position as operations director had required him to make similar decisions — to send pilots into dangerous conditions because the route must be maintained. Gide, in his preface, read Rivière as a hero of duty. André Maurois read him as a tragic figure. The ambiguity is deliberate: Saint-Exupéry believed that collective human enterprises require individuals to accept personal risk for shared goods, and also knew — from the inside — what it costs the person who orders others into danger. Both things are true simultaneously. The novel holds them without resolving them.
+    </div>
+  </div>
+
+  <div class="year-banner">1935</div>
+  <div class="timeline-dot">Libyan Desert, Egypt/Libya border · Age 35</div>
+  <div class="narrative">
+    <p>December 29, 1935. You are attempting to break the speed record for the Paris-to-Saigon route, flying for a prize of 150,000 francs that would solve your persistent financial problems. Your navigator is André Prévot. At 2 AM, somewhere over Libya, you lose altitude, misjudge the terrain, and crash. The aircraft is wrecked. You are in the Libyan desert, far off the mail routes, in conditions of extreme dehydration and sun. You have no water. You have no radio contact. No one knows where you are.</p>
+    <p>You walk. And walk. For four days you walk, your mouth so dry that you can barely swallow, seeing mirages, hallucinating. On the fourth day, a Bedouin caravan finds you. They give you camel milk. You have survived. The experience — dying of thirst in a desert, the mirages, the moment of rescue that seems impossible — will become the central image in <em>Wind, Sand and Stars</em>, and one of the seeds, later, of the pilot who lands in the desert and meets a small prince from an asteroid.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1935</div>
+    <p class="decision-q">What does the Libyan desert survival teach Saint-Exupéry that becomes foundational to his writing?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. The physical limits of human endurance — the crash provides factual material about desert survival that enriches the technical accuracy of his adventure writing.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. That extreme suffering strips everything away until only what genuinely matters remains visible — in the desert, dying of thirst, he realized that what he wanted was not money or fame but people: his wife, his friends, the warm ordinary world of human connection. The desert taught him what the rose teaches the Little Prince.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. The importance of proper navigation equipment — the crash was a technical failure that led him to campaign for better aviation safety standards.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. The arbitrariness of survival — that luck rather than will or skill determines who lives, which produces a philosophical fatalism visible in his later work.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <strong>On December 29, 1935, your aircraft went down in the Libyan desert at 2 AM, and you spent the next four days walking through hallucinations of water that wasn't there — learning, in the process, what you actually wanted from your life.</strong> <strong>The desert as teacher:</strong> In <em>Wind, Sand and Stars</em>, Saint-Exupéry describes the hallucinations of thirst in detail — the mirages that offer water that isn't there, the body's declining ability to distinguish real from unreal. But the deeper insight he records is simpler: as the body fails, what the mind returns to is not achievement or possession but the faces of specific people. The desert removed everything he had thought he wanted and revealed what he actually valued. This insight — that we only understand what matters when it is taken away — is the emotional core of <em>The Little Prince</em>. The prince only understands the rose after he has left the rose.
+    </div>
+  </div>
+
+  <div class="year-banner">1939</div>
+  <div class="timeline-dot">Paris, France · Age 39</div>
+  <div class="narrative">
+    <p><em>Wind, Sand and Stars</em> (<em>Terre des hommes</em>) is published in 1939 and wins the Grand Prix du Roman of the Académie française and, in the United States, the National Book Award. It is your finest work to date — part memoir, part philosophy, the crash stories interwoven with meditations on human meaning and solidarity. You are now the most celebrated French writer alive. Then France falls.</p>
+    <p>June 1940: France signs an armistice with Germany. The defeat is catastrophic and humiliating. You are in the air force — you fly reconnaissance missions during the fall of France, missions you know are strategically useless but which you fly anyway, because refusing seems worse than futility. In December 1940 you travel to the United States, where your books are enormously popular, to argue for American intervention. You will spend the next three years in New York, growing increasingly depressed, watching France occupied, unable to go home.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1940</div>
+    <p class="decision-q">France has fallen. You are in America. What is the most difficult thing about exile for Saint-Exupéry?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. The physical distance from France — being unable to participate in the Resistance while others were risking their lives at home created an unbearable guilt.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. The sense of uselessness — his entire philosophy of meaning was built around work that involves risk and direct consequence. In New York, making speeches and attending parties while his country was occupied, he felt he was performing rather than living. The exile stripped him of the sense that his life had stakes.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. The French exile community's political divisions — the arguments between Gaullists and Vichy supporters among French exiles in America consumed enormous energy and made collective action nearly impossible.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. The commercial pressure — American publishers and lecture agencies expected him to perform a role as famous French author that conflicted with his private anguish about the war.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <strong>Between 1940 and 1943, you attended cocktail parties in Manhattan while France was occupied — famous, comfortable, and miserable in a way your earlier desert crashes had never made you.</strong> <strong>Saint-Exupéry in New York:</strong> His letters from the New York years are among his most despairing. He was famous, well-treated, comfortable — and miserable. He wrote to friends about the feeling of living outside of reality, of watching the war from a position of complete impotence. He drank heavily. The marriage to Consuelo was in crisis. He wrote <em>Flight to Arras</em> in 1942 (a memoir of his wartime reconnaissance missions) and <em>The Little Prince</em> in 1942, both of them written from the same source of grief: a man who had spent his life believing that meaning comes from shared work and shared danger, stranded in safety.
+    </div>
+  </div>
+
+  <div class="year-banner">1942</div>
+  <div class="timeline-dot">New York, USA · Age 42</div>
+  <div class="narrative">
+    <p>New York. A borrowed house in Northport, Long Island. It is autumn. You are sitting at your desk in the middle of the night, unable to sleep, and you begin drawing. You have always drawn, always sketched little figures in the margins of letters and manuscripts. The figure you keep drawing is a small boy with golden hair, standing on a tiny planet. You don't know exactly what he is yet. You write around him, into him, through him. A pilot crashes in the Sahara. The small prince arrives from Asteroid B-612. There is a rose who is beautiful and demanding and whom the prince loves but cannot live with. There are grown-ups who understand numbers but not things.</p>
+    <p><em>The Little Prince</em> will be published simultaneously in French and English in April 1943 by Reynal and Hitchcock. Saint-Exupéry will not live to see it succeed. He will be dead within two years. The prince returns to his rose by allowing a snake to bite him. "And now here is my secret," says the fox, "a very simple secret: It is only with the heart that one can see rightly; what is essential is invisible to the eye."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1942</div>
+    <p class="decision-q">What is <em>The Little Prince</em> actually about, beneath the surface of a fairy tale for children?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. A children's story that Saint-Exupéry wrote to distract himself from depression — it should not be over-interpreted as containing serious philosophical content.</button>
+      <button class="dopt" onclick="choose(this,5,true)">B. A meditation on love, responsibility, and loss — the rose is the impossible person you love who cannot love you back in the way you need; the prince leaves and returns because he must, and the essential things cannot be seen with the eyes. It is Saint-Exupéry's account of what the desert and the exile have taught him about what matters.</button>
+      <button class="dopt" onclick="choose(this,5,false)">C. A political allegory about the occupation of France — the prince's journey from planet to planet represents France under German control, and the snake represents liberation through sacrifice.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. An argument against adult materialism and bureaucracy — the grown-ups who only understand numbers and titles represent the modern industrial world that has destroyed genuine human connection.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <strong>In autumn 1942, in a borrowed house on Long Island, unable to sleep, you began drawing a small boy with golden hair on a tiny planet — and wrote the book that would be translated into 300 languages, which you did not live to see happen.</strong> <strong>The Little Prince and its sources:</strong> The fox's lesson — "you become responsible, forever, for what you have tamed" — describes both love and the roses that grow in desert wastelands. The rose is, in most biographical readings, Consuelo: beautiful, impossible, demanding, the source of both his deepest suffering and his deepest attachment. The pilot stranded in the desert is himself, literally: the opening scene uses images directly from the 1935 Libya crash. The book is not primarily an allegory but a crystallization of things Saint-Exupéry had been thinking for twenty years about what is real, what is essential, and what can only be seen through loss.
+    </div>
+  </div>
+
+  <div class="year-banner">1943</div>
+  <div class="timeline-dot">North Africa, USAAF Base · Age 43</div>
+  <div class="narrative">
+    <p>You have finally gotten what you wanted: you have returned to active military service, flying reconnaissance missions over occupied France and North Africa from USAAF bases in Tunisia and then Sardinia. The American authorities are reluctant: at forty-three, you are officially too old for the P-38 Lightning reconnaissance aircraft you will be flying, and you have a partially paralyzed shoulder from a previous crash that makes it difficult to reach the canopy controls. You have lobbied for months. You have used every connection available. You have promised that you will retire after five missions.</p>
+    <p>You do not retire after five missions. You fly more. The missions are unarmed reconnaissance — you go over enemy territory, photograph what you can, and come home without being able to fight back if intercepted. You love the work. You write to friends about the clean simplicity of having something to do. You are finally, after three years of useless safety, in a position where your actions matter and the stakes are real.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1943</div>
+    <p class="decision-q">Saint-Exupéry insists on flying combat missions at 43, against regulations, with a bad shoulder. Why?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. Recklessness — the years of depression had produced a suicidal tendency that expressed itself as indifference to personal safety.</button>
+      <button class="dopt" onclick="choose(this,6,false)">B. Obligation to France — he felt that a writer who had spent the war in American safety while others fought could not maintain moral authority without at minimum sharing some of the risk.</button>
+      <button class="dopt" onclick="choose(this,6,true)">C. The deepest consistency of his entire life's philosophy — he had always believed that meaning requires real stakes, that the work that matters is the work where failure has actual consequences. Flying the missions was not recklessness but the logical continuation of everything he had always thought.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. Practical reasons — P-38 reconnaissance photography was the specific work where his combination of writing skills (for mission reports) and piloting experience were genuinely useful to the Allied cause.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <strong>In 1943, at forty-three, with a partially paralyzed shoulder and a medical disqualification, you lobbied for months to rejoin the war — and in at least one instance flew a mission without authorization before anyone could stop you.</strong> <strong>The final missions:</strong> His commanding officers tried to ground him repeatedly. He argued, lobbied, and in one case simply flew without authorization and reported the mission as complete before anyone could stop him. His letters from this period show someone who is genuinely happy in a way the New York letters never do — purposeful, at work, part of something larger than himself. Whether he was also, at some level, seeking an ending is a question biographers have asked and cannot definitively answer. His last letter, to a friend, speaks of the joy of being airborne again.
+    </div>
+  </div>
+
+  <div class="year-banner">1944</div>
+  <div class="timeline-dot">Corsica, France · Age 44</div>
+  <div class="narrative">
+    <p>July 31, 1944. Morning. You take off from Borgo airfield in Corsica at 8:45 AM in a Lockheed P-38 Lightning (French designation F-5B). Your mission is photographic reconnaissance over the Rhône valley and the Grenoble-Annecy region — part of the preparation for the Allied landings in southern France that will occur on August 15. The weather is clear. You are expected back by early afternoon.</p>
+    <p>You do not return. No radio contact is made. No emergency is reported. You simply disappear over the Mediterranean. There are no witnesses. For decades, theories accumulate: shot down by German fighters, mechanical failure, pilot error (you were known to daydream in the cockpit), even voluntary disappearance. In 1998, a fisherman finds a silver identity bracelet engraved with your name in the sea near Marseille. In 2000, wreckage of a P-38 is found on the seabed. In 2008, a German pilot named Horst Rippert claims he shot you down, not knowing who you were, and that he regrets it. The Mediterranean keeps its version of the story. You are forty-four years old.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1944</div>
+    <p class="decision-q">Saint-Exupéry disappears on July 31, 1944. What is the most truthful way to understand his final flight?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. A random casualty of war — he was shot down or suffered mechanical failure, and the disappearance without trace is simply how aerial combat kills people rather than anything meaningful.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. A deliberate exit — someone who had survived so many crashes and knew so much about flying doesn't simply disappear unless, at some level, he allowed it.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. The ending he had always written toward — a man who believed that a life without stakes was not worth living, who had survived the Sahara and the Andes and the Libyan desert, who flew past the age limit against regulations to be part of something real. The final flight is the last expression of the only philosophy he ever had.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. An unresolved mystery — we simply cannot know what happened, and imposing a narrative on the disappearance falsifies the genuine uncertainty that the silence contains.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <strong>On July 31, 1944, at 8:45 AM, you took off from Borgo airfield in Corsica on a photographic reconnaissance mission over occupied France — and did not return, as the Mediterranean closed over whatever happened next.</strong> <strong>The final flight:</strong> The German pilot Horst Rippert, who in 2008 claimed to have shot down the P-38 over the Mediterranean that day, said he had been a fan of Saint-Exupéry's books before the war and would not have fired if he had known who was in the aircraft. Whether this is true cannot be confirmed. What is true is that Saint-Exupéry flew the mission willingly, past regulations and against the advice of his commanders, in an aircraft that was difficult for him to manage with his damaged shoulder. He flew because not flying was worse than any alternative. This is the same calculation he had been making since 1926, when he took the dangerous mail route over the Sahara.
+    </div>
+  </div>
+
+  <div class="year-banner">2000</div>
+  <div class="timeline-dot">Mediterranean Sea · 56 years later</div>
+  <div class="narrative">
+    <p>In September 2000, divers working off the coast near Marseille locate wreckage on the seabed at a depth of seventy meters: a Lockheed P-38 Lightning aircraft. The registration number is confirmed as that of Saint-Exupéry's aircraft. He has been missing for fifty-six years. <em>The Little Prince</em> has been translated into 300 languages, has sold over 200 million copies, and is one of the best-selling books in the history of publishing. It has never been out of print.</p>
+    <p>The prince, on the last page of the book, tells the pilot that it will look as though he has died, but this is not how it will be. "In one of the stars I shall be living. In one of them I shall be laughing. And so it will be as if all the stars were laughing when you look at the sky at night. You — only you — will have stars that can laugh." The pilot, left alone in the desert with the broken aircraft, says: "And no grown-up will ever understand that this is a matter of so much importance!"</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · Legacy</div>
+    <p class="decision-q">What is the most enduring insight in <em>The Little Prince</em> — the idea that survives translation into 300 languages and 200 million copies?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. "It is only with the heart that one can see rightly" — the argument against purely rational ways of knowing that privileges emotional and intuitive understanding.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. "What is essential is invisible to the eye" — the critique of materialism and measurement as ways of understanding what matters in life.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. "You become responsible, forever, for what you have tamed" — love is not a feeling but a commitment created by the act of caring for something or someone. Responsibility is not a constraint on love but its definition. This is the hardest and most important lesson in the book, and the one most often forgotten.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. The prince's decision to return to his rose by dying — the argument that love sometimes requires sacrifice of everything, including life itself.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <strong>The book you wrote in exile in 1942, which you did not live to see succeed, has sold over 200 million copies in 300 languages and has never been out of print — because you found, at the bottom of your depression, the exact words for what the desert had taught you about love.</strong> <strong>The fox's lesson:</strong> The fox asks the prince to tame him — to spend time with him, to return at the same hour each day, to make him unique. The taming creates a bond that is also a responsibility: "You are responsible for your rose." This is the philosophical heart of the book and the answer to the question of why the prince goes back. He did not return to his rose because she was perfect or because she loved him well. He returned because he had tended her, watered her, put up windscreens for her against the wind. The care creates the obligation, and the obligation is inseparable from the love. This is Saint-Exupéry on his marriage to Consuelo, on France, and on the routes he flew.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Antoine de Saint-Exupéry · 1900–1944</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"It is only with the heart that one can see rightly; what is essential is invisible to the eye."<br><em style="font-size:13px;color:var(--muted);">— Antoine de Saint-Exupéry, The Little Prince</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="hugo-simulator.html" class="next-card">
+        <div class="next-card-name">Victor Hugo</div>
+        <div class="next-card-sub">19 years of exile & 2 million at the funeral</div>
+      </a>
+      <a href="fitzgerald-simulator.html" class="next-card">
+        <div class="next-card-name">F. Scott Fitzgerald</div>
+        <div class="next-card-sub">The green light, the parties, the long fall</div>
+      </a>
+      <a href="melville-simulator.html" class="next-card">
+        <div class="next-card-name">Herman Melville</div>
+        <div class="next-card-sub">The obsession that became Moby-Dick</div>
+      </a>
+      <a href="earhart-simulator.html" class="next-card">
+        <div class="next-card-name">Amelia Earhart</div>
+        <div class="next-card-sub">Solo across the Atlantic — and beyond</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understand Saint-Exupéry at the level he understood himself — that meaning requires genuine stakes, that the desert strips away everything false, and that you are responsible, forever, for what you have tamed. You would have flown that last mission too.';else if(pct>=0.625)t.textContent='You grasped the central tensions of his life — the philosophy of risk, the exile\'s uselessness, the rose as impossible love — but missed some of the harder edges where his thinking cuts deepest. You understand the Little Prince; you\'re still working on the pilot.';else if(pct>=0.375)t.textContent='You sensed the weight of what Saint-Exupéry was carrying but didn\'t quite follow him into the desert where he learned it. You understand that the book is about something real — you\'re less sure what that real thing is.';else t.textContent='You made the safe choices. Saint-Exupéry\'s whole life was an argument against safe choices — that the essential things only become visible when the unessential is stripped away, and the desert strips everything. You would have stayed in Paris.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

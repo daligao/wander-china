@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arthur Conan Doyle Life Simulator — Sherlock Holmes, Fairies &amp; the Man Behind the Detective | Ordinary Man Trying</title>
+<meta name="description" content="Follow Arthur Conan Doyle across 8 pivotal decisions — from creating Sherlock Holmes to killing him at Reichenbach Falls, believing in fairy photographs, championing the wrongly convicted, and his spiritualist obsession.">
+<style>
+:root{
+  --bg:#EEF0EC;--card:#F5F7F4;--ink:#080C06;--muted:#2A3028;--line:#B8C4B4;
+  --accent:#1A2818;--accent-bg:#D4E0D0;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(238,240,236,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#080C06;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #90A890;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#040804;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#D4E0D0;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#D4E0D0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #90A890;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #90A890;border-radius:999px;margin-bottom:12px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Arthur Conan Doyle</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #88 of 100</p>
+  <h1 class="cover-title">He Created the World's Greatest<br>Detective. Then He Believed in Fairies.</h1>
+  <p class="cover-sub">Arthur Conan Doyle was a physician who created Sherlock Holmes, grew to resent the detective's dominance of his life, killed him at Reichenbach Falls in 1893, was forced by public outcry to bring him back, and spent his final decades championing Spiritualism — believing in communication with the dead, investigating spirit photographs, and publicly declaring the Cottingley fairy photographs genuine. The man who created the most famous advocate of rational deduction spent his last twenty years as a credulous defender of the supernatural. Both things are completely, genuinely true.</p>
+  <div class="cover-facts">
+    <p>🔍 Sherlock Holmes first appeared 1887 in "A Study in Scarlet" &nbsp;·&nbsp; ⚰️ Killed Holmes at Reichenbach Falls 1893 — public mourning, black armbands in London &nbsp;·&nbsp; ✨ Declared Cottingley fairy photographs genuine, 1920 &nbsp;·&nbsp; ⚖️ Campaigned for Roger Casement &amp; George Edalji (wrongly convicted) &nbsp;·&nbsp; 🌿 Died July 7, 1930 · Age 71 · Sussex</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Doyle's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1882</div>
+  <div class="timeline-dot">Southsea, Portsmouth · Age 22</div>
+  <div class="narrative">
+    <p>You are twenty-two, recently qualified as a physician from Edinburgh, and you have opened a practice in Southsea, Portsmouth. The practice is small and slow. Between patients — there are not many — you write. You have been writing since university: short stories, magazine pieces, whatever can be sold. You are good at it. You are also a physician trained in careful observation, and your most important Edinburgh teacher has been Joseph Bell, a surgeon of remarkable diagnostic ability who can deduce a patient's occupation, recent travels, and physical history from observation alone before the patient has spoken a word. Bell performs medical detection the way a great detective performs crime detection. You are taking notes.</p>
+    <p>You begin sketching a detective story featuring a consulting detective named Sherrinford Holmes — the name will change — and his companion Ormond Sacker — the name will also change. The detective is a man of extraordinary observational gifts who applies medical diagnostic method to crime. You need a foil: someone of ordinary intelligence through whose eyes the reader sees the detective's brilliance. You name him Watson. You write the story in six weeks. You call it "A Study in Scarlet."</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1882</div>
+    <p class="decision-q">Sherlock Holmes is based primarily on Joseph Bell. What does this origin tell us about Holmes?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. That Holmes is essentially a fantasy — an idealized version of what medical diagnosis could be if extended to all domains of observation, but not a realistic character.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. That the method of deduction Holmes exemplifies — systematic observation, inference from evidence, rejection of premature conclusions — is the method of clinical medicine applied to crime. Holmes works because the method is real, not because the character is realistic. Bell performed exactly this kind of reasoning in his hospital rounds; Doyle simply transported it to Baker Street.</button>
+      <button class="dopt" onclick="choose(this,1,false)">C. That Holmes's famous arrogance derives from Bell's professional manner — the clinical detachment that makes great diagnosticians also made Bell seem cold, and Doyle translated this into Holmes's social indifference.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. That Doyle's medical training was the most important element in his fiction — without Edinburgh and Bell, there is no Sherlock Holmes.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+      <p><strong>You base the world's most famous detective on a real man: your Edinburgh medical professor Joseph Bell, who could look at a patient who had not yet spoken and deduce their occupation, recent travels, and physical history from observation alone. You transport Bell's clinical method from hospital wards to crime scenes. The resulting character outlives both of you by a century.</strong> <strong>Holmes and Bell:</strong> Doyle wrote to Bell in 1892: "It is most certainly to you that I owe Sherlock Holmes." Bell's diagnostic method was exactly as described: he could look at a patient who had said nothing and identify that they had served in the military, had recently returned from a warm climate, and were suffering from a specific ailment — all from observation of posture, tan line, calluses, and gait. This is deductive reasoning from evidence, and it is what Holmes does. The fictional extension — applying medical observation to criminal investigation — was Doyle's invention. But the underlying epistemic method was real, proven to work, and belonged to Bell.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1891</div>
+  <div class="timeline-dot">London, England · Age 31</div>
+  <div class="narrative">
+    <p>You have abandoned medicine for writing. "A Study in Scarlet" (1887) and "The Sign of the Four" (1890) established Holmes but didn't make you rich. Then The Strand Magazine launches, needs monthly content, and you begin writing Holmes short stories for them. The first twelve — "The Adventures of Sherlock Holmes" — make you the most popular author in Britain. The Strand's circulation rises by 300,000 copies with each Holmes story. You are thirty-one, famous, financially secure, and you hate Sherlock Holmes.</p>
+    <p>What you hate, specifically, is that Holmes is consuming your creative life. You have historical novels to write — "The White Company," serious Arthurian fiction, historical adventure — the kind of work you consider genuinely significant. Holmes is popular and easy and crowds out everything else. You write to your mother: "I think of slaying Holmes." Your mother writes back advising against it. You kill him anyway.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1891</div>
+    <p class="decision-q">Doyle hates Sherlock Holmes despite the character making him famous and wealthy. What does this reveal about the relationship between popular success and creative fulfillment?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. That popular success is inherently at odds with artistic ambition — the formula that produces a mass audience is never the same as the work the artist values most.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. That a specific creation can become a prison if it dominates your identity and crowds out the work you consider more important — Holmes was commercially valuable and artistically not-quite-respectable (detective fiction was genre fiction), and the combination made Doyle feel that his real work was being prevented by his most successful work. This is a specific kind of creative trap, not a universal law.</button>
+      <button class="dopt" onclick="choose(this,2,false)">C. Doyle's error in judgment — his "serious" historical novels are now largely unread while Holmes is immortal, and his disdain for Holmes reflected a misunderstanding of the relative quality of his own work.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. That financial success corrupts artistic integrity — the enormous financial rewards of Holmes stories made it impossible to stop writing them even when Doyle recognized they were limiting his development.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+      <p><strong>Holmes is making you the most famous author in Britain. The Strand Magazine's circulation rises by 300,000 copies with each story you publish. You have historical novels you consider genuinely important that Holmes is crowding out. You write to your mother that you intend to kill him. Your mother advises against it.</strong> <strong>Doyle and Holmes:</strong> The historical irony is sharp: Doyle's "Micah Clarke" and "The White Company," which he considered his real work, are read today only by Doyle scholars. Holmes is read by everyone. Posterity has confirmed that the work Doyle considered secondary was his primary contribution — and that his disdain for Holmes reflected not an accurate assessment of relative quality but his frustration with the genre category (detective fiction as popular entertainment rather than serious literature). He was wrong about the hierarchy, but he was not wrong that Holmes was preventing him from developing other things he cared about.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1893</div>
+  <div class="timeline-dot">Reichenbach Falls, Switzerland (in fiction)</div>
+  <div class="narrative">
+    <p>"The Final Problem" is published in December 1893 in The Strand. In it, Holmes and his arch-nemesis Professor Moriarty — whom Doyle invents specifically to kill Holmes — fall together from Reichenbach Falls in Switzerland. Their bodies are not recovered. Holmes is dead. Doyle reports that he felt a weight lift from his shoulders when he wrote the final scene. The public reaction is not relief. Twenty thousand subscribers cancel their Strand subscriptions. Men in London wear black armbands. Letters arrive at 221B Baker Street mourning Holmes's death. A young woman stops Doyle in the street and slaps him.</p>
+    <p>You do not bring Holmes back. Not immediately. You write your historical novels. You write "The Hound of the Baskervilles" — a prequel Holmes story set before Reichenbach, which you justify to yourself as historical rather than resurrecting the character. Eventually, in 1903, the money and the public pressure become irresistible. You bring Holmes back with the explanation that he survived by using a Japanese wrestling technique called Baritsu. The fans are delighted. You are somewhat embarrassed. Holmes will live for another twenty-seven stories.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1893</div>
+    <p class="decision-q">Doyle kills Holmes, receives enormous public grief, and eventually brings him back. What does this episode reveal about the relationship between a creator and their creation?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. That popular characters belong to the public — Holmes's audiences had as much claim to him as Doyle did, and killing him was an act of creative arrogance that the public correctly resisted.</button>
+      <button class="dopt" onclick="choose(this,3,true)">B. That a sufficiently vivid fictional character can achieve a kind of independent existence in the imagination of readers — Holmes felt real to people in a way that made his "death" feel like an actual loss, and this reality (not the public's error in confusing fiction for fact) is what Doyle was up against. The resurrection followed because the character was more alive to his readers than Doyle's artistic preferences could be.</button>
+      <button class="dopt" onclick="choose(this,3,false)">C. That Doyle was commercially motivated — the decision to bring Holmes back was pure financial calculation, and the artistic justifications are retrospective rationalization.</button>
+      <button class="dopt" onclick="choose(this,3,false)">D. That Doyle ultimately lacked the conviction of his artistic principles — a stronger writer would have kept Holmes dead and developed his historical fiction despite commercial pressure.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+      <p><strong>You kill Sherlock Holmes at Reichenbach Falls in December 1893 and feel, you say, a weight lift from your shoulders. Twenty thousand Strand subscribers cancel immediately. Men in London wear black armbands. A woman stops you in the street and slaps you. You bring Holmes back in 1903 with the explanation that he survived using a Japanese wrestling technique called Baritsu.</strong> <strong>Holmes's independent existence:</strong> The letters that arrived at 221B Baker Street addressed to Holmes — asking for his help in solving real crimes, recommending Watson for medical appointments, expressing condolence at his death — are now collected at the Conan Doyle Estate. They continued to arrive throughout the 20th century. Holmes is one of the fictional characters most thoroughly confused with a real person, and this confusion is not a symptom of stupidity in the people who feel it: it reflects the quality of Doyle's creation. A character vivid enough to feel real has achieved something that transcends the creator's intentions. Doyle's ambivalence about this achievement — pride and resentment in equal measure — is one of the most honest responses in literary history.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1906</div>
+  <div class="timeline-dot">Birmingham, England · Age 47</div>
+  <div class="narrative">
+    <p>George Edalji is a solicitor in Great Wyrley — the son of a Parsee Indian father and an English mother. In 1903, he was convicted of maiming horses and cattle, based on evidence that included handwriting analysis and the implausible theory that the near-blind Edalji had navigated dark fields at night to commit the crimes. He served three years before public pressure won him release, but no formal pardon was issued and his legal career was ruined. Anonymous letters had been harassing the Edalji family for years, apparently written by someone with a grudge against the family's racial background.</p>
+    <p>You take up the case. You examine the evidence with the systematic attention of a detective — you note that Edalji has severe myopia that would make the alleged night crimes impossible, that the handwriting analysis is worthless, that the prosecution's case is circumstantial to the point of non-existence. You publish articles and a pamphlet. The case contributes to the establishment of the Court of Criminal Appeal in 1907. Edalji receives some compensation but never a full formal pardon. You also take up the case of Oscar Slater, wrongly convicted of murder in 1908. Both cases demonstrate that Doyle's real detective work was not fictional.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1906</div>
+    <p class="decision-q">Doyle campaigns for the wrongly convicted, applying Holmesian method to real cases. What does this reveal about the relationship between his fiction and his values?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,false)">A. That Doyle used Holmes cases as PR — championing real cases was a way of maintaining his identity as the creator of the world's greatest detective while writing less fiction.</button>
+      <button class="dopt" onclick="choose(this,4,true)">B. That the Holmesian method — careful examination of evidence, rejection of premature conclusions, willingness to follow evidence against established authority's preferred narrative — was not just a fictional device but a genuine intellectual commitment that Doyle applied when he saw injustice. Holmes was a vehicle for values Doyle actually held.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. That his medical training was more important than his fiction in the real cases — his ability to evaluate the physical evidence (Edalji's myopia, Slater's alibi) came from medical expertise rather than Holmesian reasoning.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. That Doyle's campaigns were primarily motivated by his opposition to racial prejudice — both Edalji (Parsee) and Slater (German Jewish) cases involved the targeting of racial minorities, and this is what motivated Doyle rather than commitment to evidence-based reasoning per se.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>George Edalji is nearly blind. The prosecution says he navigated dark fields at night to mutilate livestock. You examine the case file and apply Holmesian method to a real injustice: you take each prosecution claim, demonstrate its inadequacy, show that the alleged crimes were physically impossible for a near-blind man, and publish a pamphlet that helps establish the Court of Criminal Appeal in 1907.</strong> <strong>Doyle the real detective:</strong> His pamphlet on the Edalji case is a model of evidence-based argument: he takes each piece of prosecution evidence and demonstrates its inadequacy, then shows what a proper investigation would have found. The Edalji case directly contributed to legal reform in England. The Oscar Slater case — which Doyle pursued for nearly twenty years until Slater's full exoneration in 1928 — shows the same systematic commitment. The man who created Sherlock Holmes was, in practice, a more careful examiner of evidence than the legal system that convicted both men. The irony that the man who later believed in fairies also had this record of rigorous evidence-examination is genuine, not symbolic.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1916</div>
+  <div class="timeline-dot">London, England · Age 56</div>
+  <div class="narrative">
+    <p>Your son Kingsley is wounded in the Somme in 1916. He will die of pneumonia in 1918, weakened by his wounds. Your brother Innes will also die in 1919. The war has taken people you love. You have been interested in Spiritualism — the belief that the dead can communicate with the living through mediums — for twenty years, but hesitantly, as a possibility rather than a conviction. The deaths of Kingsley and Innes convert hesitation to certainty. You become, in the final decade and a half of your life, the most prominent advocate of Spiritualism in the world. You tour the globe giving lectures, write books, investigate mediums, and spend a significant fraction of your considerable fortune on the cause.</p>
+    <p>Your friendship with Harry Houdini — the great escape artist and debunker of fraudulent mediums — defines the period. He respects you. He admires you. He cannot believe that the man who created Sherlock Holmes genuinely believes what he says he believes. He is wrong: you believe completely. The friendship ends when Houdini refuses to confirm that his dead mother communicated with him at a seance you organize. You believe she did. He knows she didn't.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1916</div>
+    <p class="decision-q">Doyle — who created the great rationalist detective — becomes a fervent Spiritualist. How should this be understood?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. As cognitive decline — Doyle in his 50s and 60s was less rigorous than the young author who created Holmes, and the Spiritualism represents intellectual deterioration.</button>
+      <button class="dopt" onclick="choose(this,5,false)">B. As simple grief — the deaths of his son and brother produced an emotional need that overcame his rational capacities, and Spiritualism filled the gap. The grief explains everything.</button>
+      <button class="dopt" onclick="choose(this,5,true)">C. As consistent with a mind that was always more comfortable with evidence it wanted to believe than evidence that contradicted it — Doyle's Edalji and Slater cases show him at his best (rigorous, skeptical of authority). His Spiritualist cases show him at his worst (credulous, motivated to believe). Both are the same mind operating on different motivational terrains. He was not uniquely irrational about Spiritualism; he was human about grief.</button>
+      <button class="dopt" onclick="choose(this,5,false)">D. As a second career — Doyle had exhausted his Holmes material and turned to Spiritualism as a new subject of genuine intellectual interest, with the grief as a facilitating but not primary cause.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>Your son Kingsley dies in 1918, weakened by wounds from the Somme. Your brother Innes dies in 1919. The man who created the great rationalist detective becomes, in the final fifteen years of his life, the world's most prominent Spiritualist — spending a quarter of a million pounds touring the globe to lecture on communication with the dead.</strong> <strong>Doyle and motivated reasoning:</strong> Houdini spent years trying to demonstrate to Doyle that specific mediums Doyle believed in were fraudulent. Doyle's response to each demonstration was to find a reason why the demonstration didn't apply — the medium was disturbed by Houdini's skepticism, the conditions weren't right, Houdini himself might be a medium without knowing it. This is the same pattern of motivated reasoning that produces false confessions, wrongful convictions, and all the other errors that Doyle exposed in the Edalji and Slater cases when the motivated reasoning ran the other way. His Spiritualism is not inexplicable — it is the normal human pattern of being rigorous about claims we want to disprove and credulous about claims we want to believe, in his case intensified by grief.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1920</div>
+  <div class="timeline-dot">Bradford, England · Age 61</div>
+  <div class="narrative">
+    <p>Frances Griffiths, aged ten, and Elsie Wright, aged sixteen, from Cottingley, Bradford, have produced photographs that appear to show them with fairies. The photographs are genuine photographs — they are not double exposures or darkroom manipulations of the kind that Spiritualist photographers routinely used. They are photographs of actual objects that look like fairies. The "fairies" are in fact cardboard cut-outs based on illustrations from a children's book.</p>
+    <p>The photographs come to your attention through Edward Gardner, a leading Theosophist. You examine them with the help of photographic experts from Kodak. You publish an article in The Strand Magazine in December 1920, later expanded into the book "The Coming of the Fairies" (1922), in which you declare the photographs genuine evidence of fairy existence. Houdini, reading the article, writes to you with exasperated affection. The girls, now elderly women, will not confirm the fraud until 1983, when Frances admits they were card cut-outs. Doyle dies in 1930, certain the fairies were real.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1920</div>
+    <p class="decision-q">Doyle declares the Cottingley fairy photographs genuine. What is the most precise account of his error?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. He was deceived by expert analysis — the Kodak experts he consulted couldn't determine the photographs were faked, and Doyle was acting on their authority rather than his own judgment.</button>
+      <button class="dopt" onclick="choose(this,6,true)">B. He examined the evidence through the prior belief that such things were possible — his Spiritualist conviction meant that photographs of fairies were evidence confirming an existing belief rather than an extraordinary claim requiring extraordinary evidence. The same man who would have demanded rigorous proof in an Edalji case accepted fairy photographs because he wanted them to be real.</button>
+      <button class="dopt" onclick="choose(this,6,false)">C. He was simply wrong about the photographs' technical authenticity — a better photographic expert would have identified the card cut-outs, and the error was technical rather than epistemological.</button>
+      <button class="dopt" onclick="choose(this,6,false)">D. The episode has been unfairly used against Doyle — he declared the photographs "possibly genuine" rather than "certainly genuine," and contemporary reporting has overstated his credulity.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>Two girls from Bradford — aged ten and sixteen — show you photographs they say depict fairies in their garden. The "fairies" are cardboard cut-outs from a children's picture book, pinned to the ground with hatpins. You consult photographic experts, find no darkroom manipulation (there is none), and publish a Strand Magazine article declaring the photographs genuine evidence of fairy existence. The girls confess the fraud in 1983. You died in 1930, certain the fairies were real.</strong> <strong>The Cottingley fairies:</strong> The Kodak experts said they could find no evidence of double exposure or darkroom manipulation — which is true, because there wasn't any. The fraud used cardboard cut-outs pinned into position, which left no photographic artifact. Doyle's error was not in failing to spot a darkroom manipulation that wasn't there; it was in not applying the same skeptical questions he would have applied to a fraud claim in a criminal case. Why are we first hearing of fairies from two teenage girls? What corroborating evidence exists? Why are the fairies visible only in photographs? These questions were not asked because Doyle wanted the answer to be yes, and "yes" was easier than rigorous investigation.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1927</div>
+  <div class="timeline-dot">London, England · Age 67</div>
+  <div class="narrative">
+    <p>You are sixty-seven. You have published sixty Holmes stories. You have lectured on Spiritualism in Australia, America, South Africa, and across Europe. You have spent, by some estimates, a quarter of a million pounds on the Spiritualist cause — an enormous fortune. Oscar Slater, the man you championed for nearly twenty years, is finally exonerated and released from prison in 1928. The Court of Criminal Appeal is established and functioning. Your public campaigns for justice have contributed to real legal reform. You are, simultaneously, one of the most ridiculous public figures in Britain on the subject of Spiritualism and one of the most effective advocates for criminal justice reform of your era.</p>
+    <p>You write the final Holmes story — "The Adventure of Shoscombe Old Place" — published in March 1927. Holmes is retired, keeping bees in Sussex. You visit Sherlock Holmes's lodgings at 221B Baker Street in your imagination one last time and close the door quietly. You have other business. The spirits are waiting.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1927</div>
+    <p class="decision-q">The final Holmes story is published in 1927. How should Doyle's total legacy be assessed — the great detective and the fairy photographs together?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. The Spiritualism discredits the rest — a man who publicly declares fairy photographs genuine cannot be trusted on any evidential matter, and his reputation should be treated accordingly.</button>
+      <button class="dopt" onclick="choose(this,7,false)">B. The Spiritualism should be separated from the rest — it was a personal grief-response that should not contaminate assessment of his fiction or his legal campaigns.</button>
+      <button class="dopt" onclick="choose(this,7,true)">C. All of it is the same person operating in different conditions — Doyle at his best (Edalji, Slater, Holmes's method) and Doyle at his worst (fairies, Spiritualism) are not two different people but one person whose rigorous and credulous capacities were activated by different motivations. Holding both together produces a more accurate and more interesting portrait than selecting either.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Posterity has judged correctly — Holmes is what survives, and the rest, including both the Spiritualism and the historical novels, has faded into minor footnotes.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>You write sixty Holmes stories while maintaining that your historical novels are your real work. Your historical novels are now read almost exclusively by Doyle scholars. The man who freed two wrongly convicted men using careful evidence examination also declared cardboard fairies genuine. The champion of rational deduction spent his last fifteen years promoting séances. These are not two different people.</strong> <strong>Doyle complete:</strong> The same Doyle who created a character devoted to evidence and reason spent fifteen years promoting Spiritualism. The same Doyle who publicly championed George Edalji and Oscar Slater against established authority's wrongful convictions also declared cut-out fairies genuine in a children's garden. These are not separate men; they are one man whose most famous creation embodies the values he applied selectively. The selectivity does not make the values false. It makes Doyle human. Sherlock Holmes cannot be human — his rationalism is perfect. His creator's was not.</p>
+    </div>
+  </div>
+
+  <div class="year-banner">1930</div>
+  <div class="timeline-dot">Crowborough, Sussex · Age 71</div>
+  <div class="narrative">
+    <p>July 7, 1930. You die at your home in Crowborough, Sussex, aged seventy-one, of a heart attack. You die holding a flower, with your wife and children present. Your last words are addressed to your wife: "You are wonderful." You are buried in the garden at Windlesham Manor. At your memorial service in the Royal Albert Hall — ten thousand people attend — your wife sits in the chair beside her own, which is left empty for you, believing you will communicate from the other side. You do not communicate, in any way that could be verified. Your widow continues to believe you are present.</p>
+    <p>Sherlock Holmes continues to exist. He receives mail at 221B Baker Street. He is mentioned in the news when a crime resembles one of his cases. He is portrayed by actors in films, television adaptations, and theatrical productions. He was last portrayed on major television as recently as the 21st century in settings ranging from Victorian London to modern Manhattan. He is more alive than almost anyone who actually lived in 1887. You would not have been surprised, and you would have had mixed feelings.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · 1930</div>
+    <p class="decision-q">What is the most important thing Sherlock Holmes represents — not as a character but as a cultural phenomenon that has outlasted his creator by nearly a century?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. The appeal of certainty — Holmes's method promises that evidence, properly read, always leads to the truth. In an uncertain world, this promise is irresistible.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. The archetype of the brilliant outsider — Holmes succeeds where institutions fail, which appeals to any reader who distrusts official authority.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. The proposition that careful attention to evidence is the most powerful tool available to a thinking person — that what you can observe, if you look properly, is sufficient to understand what has happened and what is true. In a world of noise and distraction and motivated reasoning, this proposition is eternally valuable and eternally difficult to practice. Holmes embodies it perfectly. Doyle, his creator, embodies the difficulty of practicing it.</button>
+      <button class="dopt" onclick="choose(this,8,false)">D. The friendship between Holmes and Watson — the human element that makes rational method emotionally compelling. Without Watson, Holmes is a calculating machine; with him, the method is placed in a human relationship that readers can enter.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>Your last words to your wife are: "You are wonderful." Ten thousand people attend your memorial service at the Royal Albert Hall. Your widow leaves a chair empty beside her own, believing you will communicate from the other side. You do not communicate in any verifiable way. Sherlock Holmes continues to receive mail at 221B Baker Street, and those letters are still answered today.</strong> <strong>Holmes's lasting significance:</strong> "Elementary, my dear Watson" — actually never said in any Doyle story, a later invention — has become synonymous with the proposition that evidence clearly seen should yield obvious conclusions. The slogan's appeal is exactly the appeal of Holmes: the world is understandable if you look at it carefully enough. The irony that Doyle's own life demonstrated how hard this is — how consistently we are defeated by motivated reasoning, grief, and the desire to believe what we want to believe — gives the Holmes stories a tragic undertone that they don't explicitly contain. Holmes can look at a crime scene and know what happened. His creator looked at photographs of cardboard fairies and saw proof of magic. Both things are true, and together they are very human.</p>
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Arthur Conan Doyle · 1859–1930</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"When you have eliminated the impossible, whatever remains, however improbable, must be the truth."<br><em style="font-size:13px;color:var(--muted);">— Sherlock Holmes (Arthur Conan Doyle), The Sign of the Four</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="christie-simulator.html" class="next-card">
+        <div class="next-card-name">Agatha Christie</div>
+        <div class="next-card-sub">The 11-day disappearance &amp; 66 mysteries</div>
+      </a>
+      <a href="wilde-simulator.html" class="next-card">
+        <div class="next-card-name">Oscar Wilde</div>
+        <div class="next-card-sub">Art for art's sake — until the trial</div>
+      </a>
+      <a href="dickens-simulator.html" class="next-card">
+        <div class="next-card-name">Charles Dickens</div>
+        <div class="next-card-sub">Blacking factory, Pickwick Papers, reform</div>
+      </a>
+      <a href="chesterton-simulator.html" class="next-card">
+        <div class="next-card-name">G.K. Chesterton</div>
+        <div class="next-card-sub">Father Brown, orthodoxy &amp; paradox</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You think like Doyle at his best — following evidence wherever it leads, even when the conclusion embarrasses powerful institutions. The Holmesian method is not a fictional device; it is a genuine epistemic commitment, and you demonstrated it consistently.';else if(pct>=0.625)t.textContent='You got the method right most of the time. Where you diverged is exactly where Doyle himself diverged: the Holmesian method is easy to apply when you want to disprove something and hard to apply when you want it to be true. That asymmetry is not a flaw in Doyle — it is a feature of being human.';else if(pct>=0.375)t.textContent='You chose the interpretations that kept Holmes a fiction and Doyle\'s Spiritualism a separate matter. The point of Doyle is that they are not separate. The man who applied clinical observation to crime also declared cardboard fairies genuine. Understanding how the same mind produced both is the most interesting question his life poses.';else t.textContent='You missed what makes Doyle interesting — not that he created Holmes, but that the creator of the world\'s greatest rationalist detective spent his last fifteen years promoting communication with the dead. Both halves are real. The explanation is not decline or grief alone but what happens to rigorous thinking when it meets what it desperately wants to believe.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

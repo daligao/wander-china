@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Isadora Duncan Life Simulator — The Barefoot Dancer Who Invented Modern Dance | Ordinary Man Trying</title>
+<meta name="description" content="Live Isadora Duncan's life across 8 pivotal decisions — from rejecting ballet to dancing in bare feet, from the death of her children to her Russian schools to her scarf and the car that ended everything.">
+<style>
+:root{
+  --bg:#F8F0F0;--card:#FCF7F7;--ink:#180808;--muted:#503030;--line:#D8B8B8;
+  --accent:#681818;--accent-bg:#F0D8D8;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(248,240,240,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.topbar-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;display:none;}
+.cover{max-width:680px;margin:0 auto;padding:48px 20px 0;}
+.cover-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;}
+.cover-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin-bottom:20px;}
+.cover-sub{font-size:16px;color:#180808;line-height:1.8;margin-bottom:28px;}
+.cover-facts{background:var(--accent-bg);border:1px solid #C09090;border-radius:12px;padding:18px;margin-bottom:28px;}
+.cover-facts p{font-size:14px;color:#100606;line-height:1.7;margin:0;}
+.start-btn{appearance:none;cursor:pointer;border:none;background:var(--accent);color:#F0D8D8;font-family:var(--sans);font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;width:100%;transition:filter .15s;margin-bottom:48px;display:block;}
+.start-btn:hover{filter:brightness(1.4);}
+#story{display:none;max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.narrative{padding:36px 0 8px;}
+.narrative p{font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--ink);margin-bottom:18px;}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin:28px 0;overflow:hidden;}
+.decision-header{background:var(--accent);color:#F0D8D8;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:9px 18px;}
+.decision-q{font-family:var(--serif);font-size:18px;line-height:1.45;margin-bottom:18px;padding:20px 18px 0;}
+.dopts{padding:0 18px 20px;display:flex;flex-direction:column;gap:10px;}
+.dopt{appearance:none;cursor:pointer;text-align:left;width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);transition:all .15s;}
+.dopt:hover{border-color:var(--accent);background:#fff;}
+.dopt.right{border-color:var(--right);background:var(--right-bg);}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:.7;}
+.dopt.disabled{pointer-events:none;}
+.reveal-box{background:var(--accent-bg);border:1.5px solid #C09090;border-radius:10px;padding:16px 18px;margin-top:16px;display:none;font-size:14px;line-height:1.7;}
+.reveal-box.show{display:block;}
+.ending{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px 24px;margin:32px 0 16px;text-align:center;display:none;}
+.progress-bar{height:3px;background:var(--line);position:fixed;top:0;left:0;right:0;z-index:200;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.22,1,.36,1);}
+.timeline-dot{display:inline-flex;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:6px 12px;background:var(--accent-bg);border:1px solid #C09090;border-radius:999px;margin-bottom:12px;gap:8px;}
+.year-banner{font-family:var(--serif);font-size:72px;font-weight:700;color:var(--line);line-height:1;margin-bottom:-8px;letter-spacing:-.03em;}
+.next-sims{margin:40px 0 0;padding:28px 0 0;border-top:1px solid var(--line);}
+.next-sims h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.next-card-name{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:4px;}
+.next-card-sub{font-size:12px;color:var(--muted);}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="topbar">
+  <span class="topbar-title">Life Simulator · Isadora Duncan</span>
+  <span class="topbar-score" id="score-display">Score: 0</span>
+</div>
+
+<div class="cover">
+  <p class="cover-eyebrow">Life Simulator · #97 of 100</p>
+  <h1 class="cover-title">She Took Off Her Shoes.<br>She Invented Modern Dance.</h1>
+  <p class="cover-sub">Isadora Duncan looked at a ballet dancer and saw a distortion of the human body. She looked at ancient Greek friezes and saw what movement should look like: free, natural, barefoot, flowing from the solar plexus. She invented modern dance not by building on ballet but by rejecting it entirely. She danced to Beethoven, Schubert, and Wagner — music that classical ballet would never touch. She opened schools. She lost her children to a drowning accident. She kept dancing. She married a Russian poet twenty years younger. She lost her money, her schools, and finally her life when her trademark long scarf caught in the wheel of a sports car in Nice in 1927.</p>
+  <div class="cover-facts">
+    <p>💃 Founder of modern dance — rejected ballet, danced barefoot in flowing robes &nbsp;·&nbsp; 🏛️ Inspired by ancient Greek art: movement from the solar plexus, not the toe-point &nbsp;·&nbsp; 💔 Both children drowned in a runaway car, 1913 — she kept dancing within months &nbsp;·&nbsp; 🌹 Married Sergei Yesenin, Russian poet 20 years younger, 1922 &nbsp;·&nbsp; 🧣 Died 1927: her long scarf caught in a car wheel in Nice — "Farewell, my friends, I go to glory" &nbsp;·&nbsp; 1877–1927 · San Francisco to Nice</p>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin Duncan's Life →</button>
+</div>
+
+<div id="story">
+
+  <div class="year-banner">1895</div>
+  <div class="timeline-dot">Chicago, USA · Age 18</div>
+  <div class="narrative">
+    <p>You are eighteen, from a poor but intellectually ambitious San Francisco family. Your mother played piano; your father abandoned the family early; you and your siblings performed entertainments for neighbors to help pay the rent. You have been teaching dance lessons — polka, the fashionable dances — to local children. You have also been taking classical ballet lessons. You hate them. The pointing of toes, the turnout of hips, the artificial rigidity of the spine — you believe it deforms the human body and violates the natural grace of movement. You quit. You begin developing your own system of movement, derived partly from what you see in ancient Greek art (the figures on Greek urns move freely, organically) and partly from watching natural phenomena: waves, trees in wind, birds. You believe the source of all human movement is the solar plexus — the center of gravity and emotional feeling — and that dance should flow from there outward. You have no idea that you are inventing a new art form.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1895</div>
+    <p class="decision-q">Duncan rejected ballet and looked to ancient Greek art for inspiration. What does this choice of source material reveal about her approach?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,1,false)">A. Romanticism — like many 19th-century artists, she idealized classical antiquity as more natural and pure than contemporary civilization, and the Greek sources are a romantic projection rather than a genuine alternative method for dance.</button>
+      <button class="dopt" onclick="choose(this,1,true)">B. She was looking for a different standard of beauty — not the European aristocratic standard (ballet was developed for French and Russian courts) but a standard she believed was universal and human. Greek art showed bodies in motion that hadn't been trained by court convention; they moved as bodies move when movement comes from internal impulse rather than external discipline. Whether her reading of Greek art was historically accurate is secondary to what the choice accomplished: it gave her a reference point outside the tradition she was rejecting, which is what you need when you want to move outside that tradition. You can't reject ballet by doing ballet differently; you need to look somewhere else.</p>
+      <button class="dopt" onclick="choose(this,1,false)">C. Practical strategy — by associating her work with ancient Greek art (which had cultural prestige), she gave her unconventional performances a legitimizing context that bare feet and flowing robes alone would not have had with European audiences.</button>
+      <button class="dopt" onclick="choose(this,1,false)">D. Nature worship — her choice of Greek art alongside natural phenomena (waves, birds) reflects a Rousseauian rejection of all convention in favor of the "natural," and the Greek element is just another version of the same preference for uncultured expressiveness.</button>
+    </div>
+    <div class="reveal-box" id="r1">
+<p><strong>You quit ballet at eighteen, look at the poses on ancient Greek urns, and announce you have found the true source of human movement. Every ballet teacher you have ever had disagrees. You are not wrong.</strong></p>
+      <strong>Duncan and Greek art:</strong> The dance historian Ann Daly, in "Done Into Dance: Isadora Duncan in America" (1995), documents Duncan's actual engagement with Greek art — she studied the Elgin Marbles in the British Museum and the Greek vase collection at the Louvre specifically to understand how bodies moved in classical representations. Her subsequent performances in Paris (1900–1903) consistently referenced these visual sources. The practical effect was exactly what Duncan intended: European audiences who would have dismissed barefoot dancing in a salon accepted it in a context that invoked Greek antiquity, which was the canonical standard of beauty for 19th-century European high culture. The ideological justification and the practical legitimation worked simultaneously.
+    </div>
+  </div>
+
+  <div class="year-banner">1900</div>
+  <div class="timeline-dot">Paris, France · Age 23</div>
+  <div class="narrative">
+    <p>You are in Paris. You are performing in private salons for the intellectual and artistic elite — Rodin, Whistler, the Comtesse Greffulhe. Your performances are different from anything Paris has seen: you dance alone, in a loose Greek-style tunic, bare feet, to piano music by Chopin and Beethoven — music that classical dance never accompanied. You are not performing a narrative ballet. You are interpreting music through movement. You have no technique in the ballet sense; what you have is a physical intelligence for translating musical phrase into bodily motion. The Paris avant-garde is fascinated. Rodin says: "Miss Duncan has attained sculpture's ideal. She has given life to marble and to painting." You are twenty-three. You are not yet famous. You are extremely certain you are right.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1900</div>
+    <p class="decision-q">Duncan danced to Beethoven, Chopin, and Schubert — composers whose music was considered too serious to be accompanied by dancing. What did she understand about the relationship between music and movement?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,2,false)">A. That all music has an implicit kinetic dimension — the rhythmic and dynamic qualities of any music describe movement, and translating this to visible motion simply makes audible what the music already contains.</button>
+      <button class="dopt" onclick="choose(this,2,true)">B. That the prohibition on dancing to serious music was itself a class-based convention rather than an aesthetic necessity — ballet used purpose-built dance music (Tchaikovsky, Delibes) partly because ballet's movement vocabulary was too conventionalized to respond organically to music written for other purposes. Duncan's free movement, which she claimed arose spontaneously from the music rather than applying pre-learned steps to it, could in principle respond to any music. By dancing to Beethoven and Schubert, she was claiming that her movement vocabulary was flexible enough to be responsive to great music — which ballet's was not. This was both an artistic claim and an implicit argument about which approach to movement was superior.</p>
+      <button class="dopt" onclick="choose(this,2,false)">C. That serious music needed a new audience and visual accompaniment could make it more accessible — by presenting Beethoven with dancing, she was democratizing concert music for audiences who didn't attend symphony halls.</button>
+      <button class="dopt" onclick="choose(this,2,false)">D. Primarily shock value — dancing to Beethoven was a provocation that guaranteed attention, and the specific music was chosen for its scandalous juxtaposition with dance rather than for any genuine aesthetic fit between the music and her movement vocabulary.</button>
+    </div>
+    <div class="reveal-box" id="r2">
+<p><strong>You play Beethoven in a Paris salon in 1900 — music everyone agrees is too serious and too pure to accompany dancing — and the avant-garde falls silent. Rodin says you have given life to marble. You are twenty-three years old.</strong></p>
+      <strong>Duncan and serious music:</strong> The composer and critic Carl Van Vechten attended Duncan's performances in the 1910s and wrote that she "did not dance to music but with music" — meaning that her movement appeared to arise from the specific phrase and dynamic of each piece rather than to be imposed on it. Later modern dancers, including Martha Graham and Doris Humphrey, cited Duncan's relationship to music as a foundational model for their own work, even when they departed from her specific aesthetic. The distinction between dancing "to" music (using it as accompaniment for pre-determined movement sequences) and "with" music (letting the movement arise from the music's specific qualities) is still used in modern dance pedagogy.
+    </div>
+  </div>
+
+  <div class="year-banner">1913</div>
+  <div class="timeline-dot">Paris, France · Age 36</div>
+  <div class="narrative">
+    <p>April 19, 1913. Your two children — Deirdre, seven, and Patrick, three — are in a car with their nanny, returning to the school in Versailles after visiting you. The car stalls on a steep road above the Seine, rolls backward, and goes into the river. The children and the nanny drown. You are notified. You do not stop dancing. Within months — many accounts say six weeks — you are performing again. Your friends are appalled. Your public expects grief that takes years. You say later: "The only way I can live is to work." You have another child, the following year, who lives only a few hours. You continue. Your choreography becomes darker. Your autobiography describes the period as "a long nightmare." But you dance through it, and you teach, and you maintain the school at Bellevue.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1913</div>
+    <p class="decision-q">Duncan returned to performing within weeks of losing both children. How should we understand this?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,3,false)">A. As pathological avoidance — the quick return to work was a refusal to grieve properly, and the psychological consequences of this suppression are visible in the instability of her subsequent personal life.</button>
+      <button class="dopt" onclick="choose(this,3,false)">B. As performance pressure — she was financially dependent on touring and performing, and the economic necessity rather than psychological health drove the early return to the stage.</button>
+      <button class="dopt" onclick="choose(this,3,true)">C. As a genuine coping mechanism that was specific to her — the work was her primary means of being fully in the present, of expressing what she couldn't otherwise say, of being held by something larger than her individual grief. "The only way I can live is to work" is not everyone's truth, but it may have been hers. People grieve differently, and the assumption that returning to work quickly indicates insufficient grief is itself a cultural convention. Her subsequent work demonstrates that the grief was processed — the choreography of the years after 1913 is consistently described as darker and more emotionally complex than her pre-1913 work.</p>
+      <button class="dopt" onclick="choose(this,3,false)">D. As courage — the return to performance was a conscious choice to not be destroyed by what had happened, made with full awareness that the public and her friends expected otherwise. It was an act of will rather than avoidance or necessity.</button>
+    </div>
+    <div class="reveal-box" id="r3">
+<p><strong>Your two children and their nanny drown in the Seine on April 19, 1913, when the car rolls backward off a steep road into the river. Within months you are back on stage. Your friends are appalled. You say: "The only way I can live is to work."</strong></p>
+      <strong>After the drowning:</strong> Duncan's own account in "My Life" (1927) describes the period after the children's deaths with unusual directness. She writes: "All about me was chaos and darkness. I wanted to die, but death did not come to me." She also writes of throwing herself back into dance as the only alternative to complete collapse. The biographer Peter Kurth, in "Isadora: A Sensational Life" (2001), documents the timeline more precisely: she performed in private within weeks and in public within a few months. Performers who knew her in this period describe her dancing after 1913 as qualitatively different — more physically intense, less decorative, more directly emotional. The grief entered the work. Whether this represents healing or pathological suppression is genuinely uncertain and probably not the right frame: the work absorbed the grief, which is neither purely one nor the other.
+    </div>
+  </div>
+
+  <div class="year-banner">1921</div>
+  <div class="timeline-dot">Moscow, Russia · Age 44</div>
+  <div class="narrative">
+    <p>The Soviet government has invited you to Moscow to open a school of dance for working-class children. You accept — you have long believed that dance should be available to everyone, not only to the children of the wealthy, and the Soviet project of universal education appeals to you. You arrive in Moscow in 1921 with almost no money; the government's promised support materializes slowly and incompletely. You nonetheless open the school, taking in poor children and beginning to teach. In 1922 you meet Sergei Yesenin, a famous Russian lyric poet twenty years younger than you. You marry him to facilitate his travel to the United States and Western Europe. The marriage is chaotic — Yesenin's alcoholism and instability, Duncan's financial difficulties, the bewilderment of both at the other's language and world. You tour the United States together in 1922–1923. It does not go well.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1921</div>
+    <p class="decision-q">Duncan went to the Soviet Union to teach dance to working-class children — bringing her art to people who couldn't otherwise access it. What does her Soviet project reveal about her vision of dance?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,4,true)">A. That she consistently understood dance as a democratic art — her rejection of ballet was partly a rejection of its aristocratic social context (court entertainment for royalty), and the Soviet schools represented the positive version of this rejection: dance that anyone could practice because it required no expensive training, no pointe shoes, no academy. The Soviet invitation aligned with her existing beliefs about what dance should be and for whom.</p>
+      <button class="dopt" onclick="choose(this,4,false)">B. That she was politically naive — her enthusiasm for the Soviet project did not account for the degree to which Soviet cultural policy would eventually restrict the kind of free expressive movement she taught, and the schools she founded did not survive in the form she intended.</button>
+      <button class="dopt" onclick="choose(this,4,false)">C. That the Soviet visit was primarily financial — by the early 1920s Duncan was significantly in debt, the Moscow invitation offered housing and support, and the democratic rhetoric was cover for practical necessity.</button>
+      <button class="dopt" onclick="choose(this,4,false)">D. That her version of democratic art was itself elitist — by teaching her specific aesthetic (Greek-inspired free movement) to working-class children, she was imposing her own artistic vision on people who had their own traditional dance forms that she made no effort to learn or incorporate.</button>
+    </div>
+    <div class="reveal-box" id="r4">
+      <p><strong>The Soviet government invites you to Moscow to teach dance to working-class children. You arrive with almost no money. The promised support materializes slowly. You begin teaching immediately, in a language you do not speak, to children you have never met. This is the positive version of everything you have been saying about dance for thirty years.</strong></p>
+      <strong>The Moscow schools:</strong> Duncan's school in Moscow is documented in her correspondence and in Soviet cultural records. She taught approximately forty children in 1921–1922. The school survived her departure (she left Russia with Yesenin in 1922) but eventually merged with Soviet state dance institutions. The aesthetic conflict the biographer Kurth describes — the Soviet cultural authorities preferred folk dance and revolutionary themes; Duncan taught free expressive movement to symphonic music — was real but not immediately fatal. What the Moscow period demonstrates most clearly is that Duncan's commitment to the idea of accessible dance was genuine: she arrived with almost no resources and began teaching immediately, in a language she didn't speak, to children she had never met.
+    </div>
+  </div>
+
+  <div class="year-banner">1922</div>
+  <div class="timeline-dot">USA Tour · Age 45</div>
+  <div class="narrative">
+    <p>You are on tour in the United States with Yesenin. At a performance in Boston, you wave a red scarf and make a speech supporting the Soviet Union and criticizing American materialism. The tour is immediately controversial. American newspapers call you a Bolshevik. The Boston performance is shut down by the mayor. Yesenin, unable to speak English, drinks heavily and becomes increasingly violent and erratic. You are defending him publicly while privately managing his breakdowns. Your American reputation, which was considerable in the early 1910s, is damaged by the association. You return to Europe in 1923. The marriage disintegrates. Yesenin returns to Russia, where he hangs himself in 1925. You are writing your autobiography in the south of France. You are nearly penniless. You are still dancing.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1922</div>
+    <p class="decision-q">Duncan waved a red scarf and praised the Soviet Union to an American audience in 1922. What did this moment cost her?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,5,false)">A. Her American career — the Boston controversy and the "Bolshevik" labeling effectively ended her major American touring career, which was her primary source of significant income, and the financial consequences persisted until her death.</button>
+      <button class="dopt" onclick="choose(this,5,false)">B. Very little — the immediate controversy was real but her European reputation was strong enough that the American damage was limited, and her subsequent years in France were not primarily constrained by the 1922 tour's aftermath.</button>
+      <button class="dopt" onclick="choose(this,5,true)">C. Her financial security and mainstream acceptability, both of which she had accepted losing as the cost of being honest — she could have given a different speech, waved a different scarf, performed political neutrality as other European artists did in America in the 1920s. She chose not to. The cost was real and lasting. The question is whether she was wrong to make this choice, and the answer depends on whether you think artistic integrity includes honest political speech or requires avoiding political controversy to protect the career. Duncan appears to have believed the former, and paid for it.</p>
+      <button class="dopt" onclick="choose(this,5,false)">D. Her legacy — the 1922 controversy permanently associated her name with Soviet politics in American memory, which simplified her significance from "founder of modern dance" to "the Bolshevik dancer," obscuring the artistic achievement.</button>
+    </div>
+    <div class="reveal-box" id="r5">
+      <p><strong>You wave a red scarf at a Boston audience in 1922, praise the Soviet Union, and criticize American materialism. The mayor shuts down the performance. The tour that was supposed to restore your finances ends in debt. You are unapologetic in your autobiography, written five years later with four months left to live.</strong></p>
+      <strong>The Boston controversy:</strong> The 1922 Boston performance and its aftermath are documented in newspaper accounts and Duncan's autobiography. The Boston mayor's response (closing the performance) was extreme; most of her other American venues were more circumspect. The financial damage was real: the 1922–1923 American tour was supposed to restore her finances; it ended in debt. Duncan's European reputation survived more or less intact — she was performing in Paris through the mid-1920s — but the American market, which was her largest potential income source, remained hostile. Her autobiography ("My Life"), published shortly before her death in 1927, is largely unapologetic about the political statements, describing them as consistent with her long-held views on art, freedom, and economics.
+    </div>
+  </div>
+
+  <div class="year-banner">1927</div>
+  <div class="timeline-dot">Nice, France · Age 50</div>
+  <div class="narrative">
+    <p>September 14, 1927. You are fifty years old, in Nice, working on your autobiography. A young mechanic has offered you a ride in his sports car — an Amilcar. You are wearing your long silk scarf, as you always do. You get in. You wave to your friends watching from the sidewalk. You say: "Adieu, mes amis, je vais à la gloire!" — "Farewell, my friends, I go to glory!" The car moves. The scarf catches in the open spokes of the rear wheel. You die instantly of a broken neck. The mechanic is thrown from the car. The scarf — the dramatic accessory that was as much a part of your visual language as the bare feet and the Greek tunic — is what kills you. There is a particular quality to this ending: it is too on-the-nose to have been invented, too precise to have been anything but accidental.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Decision Point · 1927</div>
+    <p class="decision-q">Duncan died when her trademark scarf caught in a car wheel. What is the right way to hold this ending?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,6,false)">A. As symbolic — the scarf that was her artistic signature became the instrument of her death; this resonance between life and death is meaningful and should be acknowledged as part of understanding who she was.</button>
+      <button class="dopt" onclick="choose(this,6,false)">B. As pure accident — a scarf caught in a wheel, as has happened to other people, and reading meaning into the specific object is the imposition of narrative on what is simply a mechanical accident.</button>
+      <button class="dopt" onclick="choose(this,6,true)">C. As both: the accident is a mechanical fact (silk scarf, open wheel spokes, physics) and the resonance with her visual identity is real — her last words and the specific mode of her death are too precise to ignore, even if they are accidental. We can hold the factual accident and the symbolic resonance simultaneously. The resonance is not a cause; it is not supernatural; it is not significant in any deep sense. But it is real in the sense that stories are real: it is what we will always say about how she died, because it is also perfectly expressive of who she was. The scarf is the life.</p>
+      <button class="dopt" onclick="choose(this,6,false)">D. As evidence of carelessness — a more cautious person would not have worn a long silk scarf in an open sports car; the death reflects a pattern of living without sufficient attention to practical safety that was visible throughout her life.</button>
+    </div>
+    <div class="reveal-box" id="r6">
+      <p><strong>September 14, 1927. You are getting into a sports car in Nice. You wave to your friends on the sidewalk. Your last words are: "Farewell, my friends, I go to glory." The long silk scarf catches in the open spoke of the rear wheel. Your neck breaks instantly. The thing that kills you is the thing most associated with you. It is too precise to have been invented.</strong></p>
+      <strong>The death:</strong> Contemporary witnesses (including the novelist Mary Desti, Duncan's closest friend in her last years) provide accounts of the evening of September 14, 1927. The car was an Amilcar GS, with open wire-spoke wheels (common on sports cars of the era). The scarf — a long, fringed silk scarf painted by the Russian artist Roman Chatoff — wrapped around the rear axle when the car moved and snapped Duncan's neck. The mechanic, Benoît Falchetto, was thrown clear and survived. Duncan's last words ("Adieu, mes amis, je vais à la gloire!") were widely reported; the precise version varies between accounts but the sentiment is consistent. She was buried in the Père Lachaise cemetery in Paris, beside her children.
+    </div>
+  </div>
+
+  <div class="year-banner">Legacy</div>
+  <div class="timeline-dot">1927 and beyond</div>
+  <div class="narrative">
+    <p>She had no formal school at her death, no company, no institution to carry her work forward in the way that ballet companies carry classical technique forward. Her students — some of whom she called "Isadorables" — continued performing and teaching her repertoire. But modern dance as it developed — through Martha Graham, Doris Humphrey, José Limón, Merce Cunningham — owes its existence to the possibility Duncan opened. She said a woman's body was not something to be hidden and contorted by training; she said any music could be danced to; she said movement could be expressive rather than decorative; she said dance was an art equal to music and painting. Before Isadora Duncan said these things and demonstrated them on stages across Europe and America, they were not obvious. After her, they were the foundation of a whole art form.</p>
+  </div>
+  <div class="decision-block">
+    <div class="decision-header">Final Reflection · Legacy</div>
+    <p class="decision-q">What is Duncan's most important contribution to dance and to culture more broadly?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,7,false)">A. The specific movements she developed — the walk, the run, the skip, the arm gestures derived from Greek art — which became the vocabulary of early modern dance and can still be seen in the work of her direct students.</button>
+      <button class="dopt" onclick="choose(this,7,true)">B. The permission she granted — by dancing publicly in bare feet, in loose robes, without technique in the classical sense, to music that had never accompanied dancing, she demonstrated that movement could be a vehicle for serious artistic expression independent of established forms. This is not primarily a technical contribution; it is a permission structure. Before Duncan, the category "serious art" in movement was ballet. After Duncan, the category expanded to include any movement done with sufficient intentionality and artistic intelligence. This permission enabled everything that followed: Graham, Humphrey, Cunningham, Twyla Tharp, and contemporary dance in all its variety.</p>
+      <button class="dopt" onclick="choose(this,7,false)">C. Her rejection of ballet — by articulating clearly what ballet was doing wrong (in her view) and demonstrating the alternative, she created the critical framework that modern dance would use to define itself against the classical tradition.</button>
+      <button class="dopt" onclick="choose(this,7,false)">D. Her schools — by insisting that dance education should be available to poor children and by actually opening schools in France, Germany, Russia, and America, she created the institutional model for modern dance education that her successors built upon.</button>
+    </div>
+    <div class="reveal-box" id="r7">
+      <p><strong>You leave no school, no company, no institution with your name on it. Your students carry what you taught them. Martha Graham, Doris Humphrey, José Limón, Merce Cunningham — they all dance on the permission you opened. You started it by taking off your shoes in a Paris salon in 1900 and refusing to put them back on.</strong></p>
+      <strong>Duncan's legacy:</strong> The dance historian Sally Banes, in "Democracy's Body: Judson Dance Theater, 1962–1964," traces the lineage from Duncan through Graham and Humphrey to the Judson Dance Theater — the 1960s New York group that included Yvonne Rainer, Trisha Brown, and Steve Paxton, and which represents the most radical extension of Duncan's original permission: if any movement can be dance when done with intentionality, then walking, running, or falling are as valid as any choreographed sequence. Banes argues that this permission traces directly to Duncan's 1899–1900 Paris performances, where movement without ballet vocabulary first achieved serious artistic recognition. The permission is now so thoroughly established that we have forgotten it was ever refused.
+    </div>
+  </div>
+
+  <div class="decision-block">
+    <div class="decision-header">Final Question</div>
+    <p class="decision-q">Duncan's life — barefoot dancing, Soviet schools, red scarves, the children's drowning, the scarf death — was excessive by most standards. Is this relevant to the art?</p>
+    <div class="dopts">
+      <button class="dopt" onclick="choose(this,8,false)">A. Irrelevant — the art stands or falls on its own terms, and the biographical excess is interesting as biography but irrelevant to the evaluation of the dance itself.</button>
+      <button class="dopt" onclick="choose(this,8,false)">B. Detrimental — the personal instability (financial chaos, Yesenin, the political controversies) distracted from sustained artistic development and produced a smaller and less systematic body of work than a more regulated life would have allowed.</button>
+      <button class="dopt" onclick="choose(this,8,true)">C. Inseparable — for Duncan specifically, the excess was constitutive rather than incidental. The barefoot dancing, the flowing scarves, the political speeches, the love affairs, the grief, the schools — all of it expressed the same underlying commitment to living and moving without constraint, fully and without withdrawal. This is the thesis her body made concrete in performance. A more cautious Duncan would have made more cautious art. Whether the life was "worth it" in some accounting sense is not a question she appears to have asked; she simply lived as fully as she danced. The scarf catching in the wheel is almost the right ending for a life organized around the principle that freedom is worth the risk.</p>
+      <button class="dopt" onclick="choose(this,8,false)">D. Relevant as context but not as evaluation — understanding the life helps interpret the art (the darker choreography after 1913, the political dimension of the Soviet work), but this is context rather than a claim that the excess of the life was necessary for or explanatory of the art's quality.</button>
+    </div>
+    <div class="reveal-box" id="r8">
+      <p><strong>The barefoot dancing, the Soviet schools, the red scarves, the two drowned children, the Russian poet twenty years younger, the scarf in the wheel — all of it is the same thing: you, moving without constraint, all the way to the end.</strong></p>
+      <strong>Life and art:</strong> The philosopher Richard Shusterman's concept of "somaesthetics" — the philosophical study of bodily experience as a basis for knowledge and art — provides one framework for understanding Duncan: she was not making art about the body; she was making art with the body, and the body that made the art was the same body that lived the life. This is more true of dance than of almost any other art form: the instrument and the artist are the same thing. For Duncan, the instrument had to live as freely as it danced. Whether this is a philosophy or a rationalization is an open question. The result was both a great deal of art and a great deal of chaos. Both were real.
+    </div>
+  </div>
+
+  <div class="ending" id="ending">
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Life Complete</p>
+    <h2 style="font-family:var(--serif);font-size:28px;margin-bottom:16px;">Isadora Duncan · 1877–1927</h2>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:20px;">You scored <strong id="final-score"></strong> correct decisions</p>
+    <p id="ending-text" style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;color:var(--ink);"></p>
+    <p style="font-family:var(--serif);font-size:16px;line-height:1.8;margin-bottom:24px;">"You were once wild here. Don't let them tame you."<br><em style="font-size:13px;color:var(--muted);">— Isadora Duncan</em></p>
+    <button onclick="restart()" style="appearance:none;cursor:pointer;border:1.5px solid var(--line);background:transparent;font-size:14px;padding:10px 20px;border-radius:8px;color:var(--ink);">Try Again</button>
+  </div>
+
+  <div class="next-sims">
+    <h3>More Lives to Simulate</h3>
+    <div class="next-grid">
+      <a href="chanel-simulator.html" class="next-card">
+        <div class="next-card-name">Coco Chanel</div>
+        <div class="next-card-sub">From orphanage to liberating women's fashion</div>
+      </a>
+      <a href="earhart-simulator.html" class="next-card">
+        <div class="next-card-name">Amelia Earhart</div>
+        <div class="next-card-sub">First woman to fly the Atlantic solo</div>
+      </a>
+      <a href="chesterton-simulator.html" class="next-card">
+        <div class="next-card-name">G.K. Chesterton</div>
+        <div class="next-card-sub">Father Brown, orthodoxy &amp; paradox</div>
+      </a>
+      <a href="gauguin-simulator.html" class="next-card">
+        <div class="next-card-name">Paul Gauguin</div>
+        <div class="next-card-sub">Left Paris for Tahiti — a desperate wager</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.getElementById('score-display').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}const rev=document.getElementById('r'+num);if(rev)rev.classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';const pct=score/TOTAL;const t=document.getElementById('ending-text');document.getElementById('final-score').textContent=score+'/'+TOTAL;if(pct>=0.875)t.textContent='You understood what Duncan understood: the thing she was doing with her body was the same thing she was doing with her life. Freedom all the way down.';else if(pct>=0.625)t.textContent='You followed most of her trajectory — the rejection of ballet, the grief, the schools. The final equation between life and art still eludes you.';else if(pct>=0.375)t.textContent='You saw the biography but treated the excess as incidental. For Duncan, the excess was the point.';else t.textContent='Duncan would say: you are still wearing the shoes. Take them off.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){location.reload();}
+</script>
+<div style="text-align:center;padding:32px 20px 40px;border-top:1px solid rgba(148,163,184,.12);margin-top:40px;background:#0B1120;">
+  <p style="font-size:13px;color:#8E9FBA;margin-bottom:14px;">Enjoyed this? There are 98 more historical figures waiting.</p>
+  <a href="simulators.html" style="display:inline-block;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px;text-decoration:none;">Browse All 100 Life Simulators →</a>
+</div>
+</body>
+</html>

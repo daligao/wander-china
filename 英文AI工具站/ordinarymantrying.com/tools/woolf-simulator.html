@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Virginia Woolf Life Simulator — The Mind That Changed Modern Fiction</title>
+<meta name="description" content="Make the same decisions as Virginia Woolf — who invented stream-of-consciousness fiction while battling severe bipolar disorder, founded a publishing house, and walked into a river with stones in her pockets.">
+<style>
+:root{
+  --bg:#F0EEF5;--card:#F7F5FA;--ink:#100A18;--muted:#4A3860;--line:#D8D0EC;
+  --accent:#2A0848;--accent-bg:#EAE4F5;
+  --right:#1A6B3A;--right-bg:#E6F5EE;--wrong:#7B1A1A;--wrong-bg:#F8ECEC;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);transition:width .4s;z-index:99}
+.topbar-score{position:fixed;top:8px;right:14px;font-family:var(--mono);font-size:12px;background:var(--card);padding:3px 10px;border-radius:20px;border:1px solid var(--line);z-index:98}
+.cover{max-width:680px;margin:0 auto;padding:60px 24px 40px}
+.cover-era{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:12px;color:var(--ink)}
+.cover-sub{font-size:17px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.cover-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.stat{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 18px}
+.stat-n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.start-btn:hover{opacity:.88}
+#story{display:none;max-width:680px;margin:0 auto;padding:24px 24px 60px}
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.narrative{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.decision-block{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:12px}
+.d-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.d-situation{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.d-opts{display:flex;flex-direction:column;gap:8px}
+.dopt{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px;text-align:left;cursor:pointer;transition:border-color .15s;color:var(--ink)}
+.dopt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-bg)}
+.dopt.disabled{cursor:default;opacity:.7}
+.dopt.right{border-color:var(--right);background:var(--right-bg);color:var(--right)}
+.dopt.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.reveal-box{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none}
+.reveal-box.show{display:block}
+.ending{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:32px;text-align:center;margin-top:24px}
+.ending-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ending h2{font-family:var(--serif);font-size:22px;margin-bottom:12px}
+.ending p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.restart-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer}
+.next-sims{margin:24px 0 36px}
+.next-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.next-card{display:block;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .1s}
+.next-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.next-name{display:block;font-family:var(--serif);font-size:15px;font-weight:700;margin-bottom:4px}
+.next-desc{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}.cover-stats{gap:12px}}
+.cta-box{background:var(--accent-bg);border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;text-align:center}
+.cta-box h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.cta-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cta-box a{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:9px 22px;font-size:13px;text-decoration:none}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DBR2PMLR61"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-DBR2PMLR61');</script>
+</head>
+<body>
+<div id="prog"></div>
+<div class="topbar-score" style="display:none" id="score-display">Score: 0</div>
+
+<div class="cover">
+  <div class="cover-era">England · 1882–1941</div>
+  <h1>Could You Have Been<br>Virginia Woolf?</h1>
+  <div class="cover-sub">She invented a new way for fiction to work — the unbroken flow of a character's consciousness, thought bleeding into memory bleeding into sensation. She wrote nine novels, hundreds of essays, and co-founded Hogarth Press while managing a mind that tried to kill her several times. On March 28, 1941, she filled her coat pockets with stones and walked into the River Ouse. The last sentence of her suicide note to her husband was: "I don't think two people could have been happier than we have been."</div>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-n">9</div><div class="stat-l">Novels — including Mrs Dalloway, To the Lighthouse, The Waves</div></div>
+    <div class="stat"><div class="stat-n">1917</div><div class="stat-l">Founded Hogarth Press in her dining room</div></div>
+    <div class="stat"><div class="stat-n">59</div><div class="stat-l">Years of age — the last 4 decades in a war with her own mind</div></div>
+  </div>
+  <button class="start-btn" onclick="startStory()">Begin the Simulation →</button>
+</div>
+
+<div id="story">
+
+<div class="chapter">
+<div class="chapter-title">Chapter 1 · London, 1895–1904 · The First Darkness</div>
+<p class="narrative">You are the daughter of the eminent Victorian critic Leslie Stephen. You grow up in a household of books and intellect — but no formal education for girls. Your brothers go to Cambridge. You stay home and read your father's library. At 13, your mother dies, and you have your first breakdown — voices, extreme agitation, refusal to eat. You are 22 when your father dies and the voices return more violently. Two of your half-siblings have also had breakdowns. The pattern is becoming clear: you have inherited something from your family beyond books, and it is going to cost you. You survive. You move to Bloomsbury with your siblings. You begin to write.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 1 · The Mind</div>
+  <div class="d-situation">You have experienced severe mental breakdowns by your early twenties. Writing brings you clarity. What relationship will you have with your own mental illness?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,1,true)">A. Accept that the illness and the gift are part of the same mind — manage it carefully and use the lucid periods to produce the work</button>
+    <button class="dopt" onclick="choose(this,1,false)">B. Treat the illness as purely medical — rest, avoid triggers, protect stability above all else even if it costs some writing</button>
+    <button class="dopt" onclick="choose(this,1,false)">C. Ignore the illness entirely — great writing requires full intensity; protecting yourself is protecting mediocrity</button>
+  </div>
+</div>
+<div class="reveal-box" id="r1"><strong>What actually happened:</strong> Woolf managed the illness with painful sophistication — she learned over decades to recognize the warning signs of mania and depression, to rest before a breakdown rather than after, and to schedule her most intense creative work for the periods of stability between episodes. She was not always successful. But the pattern of her life shows a mind that understood itself well enough to produce extraordinary work in the gaps between disasters. Her diaries are a continuous record of self-monitoring: "I think the river is rising. I feel my brain is full of little bubbles." She noticed. And she worked anyway.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 2 · London, 1912 · Leonard</div>
+<p class="narrative">Leonard Woolf is a colonial civil servant back from Ceylon, a writer and a Fabian, an extraordinarily practical man in love with an extraordinarily impractical one. He knows about the breakdowns. He knows about the voices. He proposes anyway. You are not sure you love him in the conventional way. You are not sure you are capable of conventional love. Your half-sister Stella died at 28. Your mother at 49. The women in your family do not have easy fates. You are 30 and what you know about yourself is that the writing requires stability and that the illness takes stability away. Leonard offers stability. But marriage is not a medical prescription.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 2 · The Marriage</div>
+  <div class="d-situation">Leonard Woolf offers you stability, support, and genuine care — but you are uncertain about conventional romantic love. Do you marry him?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,2,true)">A. Yes — stability is not a small thing when your mind is what yours is; love can be built in a form that suits two unconventional people</button>
+    <button class="dopt" onclick="choose(this,2,false)">B. No — marrying someone you are uncertain about is a greater risk to your work than living alone with the illness</button>
+    <button class="dopt" onclick="choose(this,2,false)">C. Yes, but with complete transparency — tell him exactly what he is taking on and make sure both of you understand the terms</button>
+  </div>
+</div>
+<div class="reveal-box" id="r2"><strong>What actually happened:</strong> Woolf married Leonard in August 1912, writing him a letter beforehand of astonishing honesty: she told him she might not be capable of what most women could give in marriage, that she did not know if she could be what he wanted, and that her mind was unreliable. He married her anyway. They built a marriage that was unconventional by every standard of their era — intellectually and emotionally equal, accommodating her multiple loves of women, arranged around the needs of her work and her health. Leonard monitored her moods, controlled her diet during episodes, and kept detailed notes on her breakdowns. She called him "the one person in the world who I could not do without."</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 3 · Richmond, 1917 · Hogarth Press</div>
+<p class="narrative">Leonard buys you a printing press as a therapeutic activity — something to do with your hands during the periods when you cannot write. You set type together in the dining room of Hogarth House. The first publication is Two Stories, printed in an edition of about 150, containing one story by each of you. Within a few years, Hogarth Press is publishing T.S. Eliot, Katherine Mansfield, and the first English edition of Freud's complete works. It is no longer therapy. It is one of the most important literary publishers in England — and it gives you complete editorial independence forever.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 3 · The Press</div>
+  <div class="d-situation">Hogarth Press is growing beyond a hobby. You can keep running it as a small independent or seek a larger publisher's resources. What do you do?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,3,true)">A. Keep it independent — editorial control over your own work and others' is worth more than commercial reach; the press remains small and excellent</button>
+    <button class="dopt" onclick="choose(this,3,false)">B. Sell it to a larger house — the administrative burden is taking time from the fiction and the novels should come first</button>
+    <button class="dopt" onclick="choose(this,3,false)">C. Bring in a professional editor to run it — you retain ownership but step away from the day-to-day work</button>
+  </div>
+</div>
+<div class="reveal-box" id="r3"><strong>What actually happened:</strong> Woolf kept the Press independent. The independence it gave her was extraordinary — she never had to write for an editor who didn't understand what she was doing, never had to justify her formal experiments to a commercial publisher's committee. When she wanted to render the interior of a single day in Mrs Dalloway, she could. When she wanted to write The Waves as nine monologues with no conventional narrative, she could. That freedom was Hogarth. The press eventually published her complete works and continued long after her death.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 4 · London, 1925 · Mrs Dalloway</div>
+<p class="narrative">You have been working for years on a technique you call the "stream of consciousness" — fiction written from inside the continuous flow of a character's thoughts, memories, and perceptions, rather than from an omniscient narrator describing external events. Mrs Dalloway moves through a single day in London, 1923, carrying the weight of Clarissa Dalloway's interior life and the shell-shocked veteran Septimus Smith's shattered one. The form is radical. Your publisher at Duckworth has been nervous about your experimentalism for years. But Hogarth will publish anything you write.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 4 · The Form</div>
+  <div class="d-situation">Your narrative technique has no clear precedent in English fiction. Critics may not understand it. Do you pursue it fully or accommodate a more conventional reader?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,4,true)">A. Pursue the form completely — the technique exists because conventional narrative cannot capture what you are trying to show; compromise destroys the point</button>
+    <button class="dopt" onclick="choose(this,4,false)">B. Combine it with conventional elements — interior monologue for the key moments, traditional narration for the connecting tissue</button>
+    <button class="dopt" onclick="choose(this,4,false)">C. Write the conventional novel first and experiment afterward — establish your commercial reputation before risking it</button>
+  </div>
+</div>
+<div class="reveal-box" id="r4"><strong>What actually happened:</strong> Woolf pursued the form completely. Mrs Dalloway had almost no conventional narrative skeleton — it was pure consciousness, past and present flowing together without clear markers. It was immediately recognized as extraordinary and immediately criticized as unreadable by those who found it unreadable. It is now on every list of the greatest novels in the English language and has been in continuous print for a century. She did not compromise the form. The compromise would have killed the book.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 5 · London, 1929 · A Room of One's Own</div>
+<p class="narrative">You have been invited to speak at two women's colleges at Cambridge on the subject of women and fiction. The resulting essay — A Room of One's Own — makes one of the most cited arguments in literary history: that a woman must have money and a room of her own if she is to write fiction. You invent the figure of "Shakespeare's sister" — a woman of equal genius to Shakespeare, who lived in Elizabethan England with no access to education, theatre, or patronage, who died without writing a word, possibly by her own hand. The argument is feminist, economic, and literary simultaneously.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 5 · The Argument</div>
+  <div class="d-situation">A Room of One's Own is explicit about the economic and social conditions that suppress women's creative work. It will make enemies. Do you publish it as written?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,5,true)">A. Yes, as written — the argument is inseparable from the evidence; softening it softens the truth</button>
+    <button class="dopt" onclick="choose(this,5,false)">B. Moderate the economic argument — focus on creativity and psychology rather than money and rooms</button>
+    <button class="dopt" onclick="choose(this,5,false)">C. Publish it anonymously — the ideas are important but the personal attacks from male critics will harm your work</button>
+  </div>
+</div>
+<div class="reveal-box" id="r5"><strong>What actually happened:</strong> Woolf published it under her own name, exactly as written. The response was immediate and polarized — admired by many, furiously rejected by others who thought she was being unfair to male writers, or hysterical about conditions that weren't as bad as she said, or simply wrong. She was not wrong. The argument about material conditions for creative work is now considered one of the foundational texts of feminist criticism and economic analysis of literature. "A woman must have money and a room of her own if she is to write fiction" has been quoted approximately forever.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 6 · Sussex, 1936 · The Years and the Breaking</div>
+<p class="narrative">You are 54. The Years, your most conventionally structured novel, has taken five years and nearly destroyed you — you have revised it more times than any other book, have burned one entire draft, have called it "a failure" in your diary more times than you can count. Leonard is worried. The breakdowns are becoming more frequent. The voices are louder. The European situation — Hitler, Spain, the certainty of another war — fills you with a dread that is both political and personal. You know what war does to your mind. You remember 1914.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 6 · The Revision Spiral</div>
+  <div class="d-situation">You have revised The Years dozens of times and still consider it a failure. Leonard urges you to stop and publish it. Do you?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,6,true)">A. Yes — at some point a book must leave the writer; perfectionism beyond a certain threshold becomes self-destruction</button>
+    <button class="dopt" onclick="choose(this,6,false)">B. Revise it one more time — you will know when it is right; submitting something you know is wrong is a different kind of failure</button>
+    <button class="dopt" onclick="choose(this,6,false)">C. Abandon it entirely — some books should not be published; move to the next one without looking back</button>
+  </div>
+</div>
+<div class="reveal-box" id="r6"><strong>What actually happened:</strong> Woolf published The Years in 1937. It became her best-selling novel in her lifetime, an immediate commercial success that surprised her. She had been so close to it for so long that she could no longer see it. The breakdowns following its publication were severe — she spent months unable to write. But Between the Acts, her final novel, was completed in 1941 despite everything. She was still writing within weeks of her death.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 7 · Sussex, March 1941 · The Last Letters</div>
+<p class="narrative">The bombing of London has destroyed your Bloomsbury house. Between the Acts is finished but you believe it is a failure. The voices have been continuous for weeks. You have written two letters — one to Leonard, one to your sister Vanessa. The letter to Leonard ends: "You have given me the greatest possible happiness. You have been in every way all that anyone could be. I don't think two people could have been happier than we have been." On March 28 you walk to the River Ouse. You put a large stone in the pocket of your coat. You walk into the water. You are 59.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 7 · The Final Question</div>
+  <div class="d-situation">She wrote nine novels, hundreds of essays, and changed the form of fiction. She also suffered for decades and chose how to end her suffering. How do we hold both of these things?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,7,true)">A. With honesty — the life and the death were both real; honoring her requires accepting that she was both a great writer and a person in terrible pain</button>
+    <button class="dopt" onclick="choose(this,7,false)">B. By focusing on the work — the art outlives the suffering and the death; to dwell on how she died reduces her to her illness</button>
+    <button class="dopt" onclick="choose(this,7,false)">C. By focusing on the illness — the death was a medical event, not a choice; separating her from mental illness misunderstands her life</button>
+  </div>
+</div>
+<div class="reveal-box" id="r7"><strong>What actually happened:</strong> Woolf is remembered as all three simultaneously — a great writer, a person in great pain, and someone whose mental illness shaped everything, including the work. Her diaries, published after her death, show a mind that understood itself with unusual clarity: she could describe the onset of a breakdown from inside it, track its progress, and record what came after. The suffering and the artistic achievement were not separate. They were produced by the same mind. Separating them falsifies both.</div>
+</div>
+
+<div class="chapter">
+<div class="chapter-title">Chapter 8 · The Legacy</div>
+<p class="narrative">Between the Acts was published posthumously in 1941, two months after her death. It is now considered among her finest novels. Mrs Dalloway, To the Lighthouse, and The Waves are permanent fixtures of the literary canon. A Room of One's Own is assigned in universities across the world. The stream-of-consciousness technique she developed — and she was not alone in developing it, but she took it furthest — became the dominant mode of 20th century literary fiction. She changed how the novel thinks about time, consciousness, and the interior life.</p>
+<div class="decision-block">
+  <div class="d-label">Decision 8 · What Made This Possible</div>
+  <div class="d-situation">The novels exist because she pursued the form completely, managed her illness imperfectly, and wrote in every available hour. What was most essential?</div>
+  <div class="d-opts">
+    <button class="dopt" onclick="choose(this,8,true)">A. The form — she understood exactly what she was doing technically and pursued it without compromise; everything else enabled that</button>
+    <button class="dopt" onclick="choose(this,8,false)">B. Leonard — without his monitoring, care, and Hogarth Press, the work would not have survived the illness; the partnership was essential</button>
+    <button class="dopt" onclick="choose(this,8,false)">C. The Bloomsbury Group — the intellectual community she lived inside gave her the stimulation and argument that sharpened the essays and informed the novels</button>
+  </div>
+</div>
+<div class="reveal-box" id="r8"><strong>What actually happened:</strong> All three answers are defensible, which is part of what makes the life interesting. Without Leonard, the breakdowns likely kill her before 1920. Without Hogarth Press, the experimental novels might never find publication or might be compromised by conventional editors. Without the Bloomsbury intellectual community, the essays lack the sharpness they have. But all of those things served the form — the technique she invented and pursued. The form is the reason the books survive while almost everything else from the same period has faded.</div>
+</div>
+
+<div id="ending" style="display:none">
+<div class="ending">
+  <div class="ending-score" id="final-score"></div>
+  <h2>Your Virginia Woolf Legacy</h2>
+  <p id="ending-text"></p>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+</div>
+
+<div class="next-sims">
+  <div class="next-label">Continue Exploring</div>
+  <div class="next-grid">
+    <a class="next-card" href="plath-simulator.html">
+      <span class="next-name">Sylvia Plath</span>
+      <span class="next-desc">Another writer who produced her finest work while managing a mind that was trying to kill her</span>
+    </a>
+    <a class="next-card" href="kafka-simulator.html">
+      <span class="next-name">Franz Kafka</span>
+      <span class="next-desc">Another modernist who invented a new way for fiction to work — and asked that it be burned after his death</span>
+    </a>
+    <a class="next-card" href="austen-simulator.html">
+      <span class="next-name">Jane Austen</span>
+      <span class="next-desc">The writer who transformed what the English novel could do in the generation before Woolf</span>
+    </a>
+    <a class="next-card" href="maryshelly-simulator.html">
+      <span class="next-name">Mary Shelley</span>
+      <span class="next-desc">Another woman who wrote against the expectations of her era and was only partially credited for it</span>
+    </a>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Explore More Historical Simulators</h3>
+  <p>50+ historical figures — scientists, artists, composers, writers. Each one, eight decisions.</p>
+  <a href="/tools/simulators.html">See All Simulators</a>
+</div>
+
+</div>
+
+<script>
+let score=0,answered=0;const TOTAL=8;
+function startStory(){document.querySelector('.cover').style.display='none';document.getElementById('story').style.display='block';document.querySelector('.topbar-score').style.display='block';window.scrollTo({top:0,behavior:'smooth'});updateProgress(0);}
+function choose(btn,num,correct){const block=btn.closest('.decision-block');const opts=block.querySelectorAll('.dopt');opts.forEach(o=>o.classList.add('disabled'));if(correct){btn.classList.add('right');score++;}else{btn.classList.add('wrong');opts.forEach(o=>{if(o.getAttribute('onclick')&&o.getAttribute('onclick').includes(',true)'))o.classList.add('right');});}document.getElementById('r'+num).classList.add('show');answered++;document.getElementById('score-display').textContent='Score: '+score+'/'+answered;updateProgress(answered/TOTAL*100);if(answered===TOTAL)setTimeout(showEnding,800);}
+function updateProgress(pct){document.getElementById('prog').style.width=pct+'%';}
+function showEnding(){const el=document.getElementById('ending');el.style.display='block';document.getElementById('final-score').textContent=score+'/'+TOTAL;const t=document.getElementById('ending-text');if(score>=7)t.textContent='You think exactly like Woolf — accept the illness as part of the mind, keep the form radical, hold the press independent, publish honestly. That combination of clear-eyed self-knowledge and formal courage is exactly what produced Mrs Dalloway and To the Lighthouse.';else if(score>=5)t.textContent='Strong instincts. You understood the central choices — the form, the press, the honesty. A few moments of seeking safety or moderation crept in, but you would have produced significant modernist fiction.';else if(score>=3)t.textContent='You sought stability and accommodation more than Woolf did. Safer choices would have produced safer books — more publishable, more conventional, more quickly forgotten. The experimentalism is inseparable from the survival of the work.';else t.textContent='You deferred to convention — in form, in publication, in the framing of the mental illness. Woolf did none of this. The novels survive because they refused every accommodation. A conventional Woolf would be a forgotten Woolf.';el.scrollIntoView({behavior:'smooth',block:'start'});}
+function restart(){score=0;answered=0;document.querySelectorAll('.dopt').forEach(o=>o.classList.remove('right','wrong','disabled'));document.querySelectorAll('.reveal-box').forEach(r=>r.classList.remove('show'));document.getElementById('ending').style.display='none';document.getElementById('score-display').textContent='Score: 0';updateProgress(0);window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>
